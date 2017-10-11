@@ -3,18 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.pennant.pff</groupId>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.16.12</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
-
+	
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-test-suite</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- Module Dependencies -->
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>PFSWeb</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
@@ -29,12 +32,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-		    <version>4.3.4.RELEASE</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-test</artifactId>
-		    <version>4.3.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
@@ -44,7 +45,6 @@
 		<dependency>
 		    <groupId>org.apache.tomcat</groupId>
 		    <artifactId>tomcat-dbcp</artifactId>
-		    <version>8.5.12</version>
 		    <scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -3,30 +3,32 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.pennant.pff</groupId>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.16.12</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
-
+	
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>PFSBatch</artifactId>
+	<version>${pff.version}</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
 			
 		<!-- Module Dependencies -->
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>PFSJava</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	 	<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-interface-bajaj</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -35,19 +37,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
-			<version>${spring.batch.version}</version>
 		</dependency>
 		
 		<!-- Apache Commons -->
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
