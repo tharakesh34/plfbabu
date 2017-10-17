@@ -59,6 +59,7 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -93,6 +94,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
+import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
@@ -158,7 +160,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -296,7 +297,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Tab											summaryDetailsTab;
 	protected Tab											repaymentDetailsTab;
 	protected Tab											effectiveScheduleTab;
-	private Div												graphDivTabDiv;
 	private BigDecimal										financeAmount;
 
 	//Buttons
@@ -348,7 +348,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 																										.getPaymentApportionment();
 
 	private MailUtil										mailUtil;
-
+	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	/**
 	 * default constructor.<br>
 	 */
@@ -3064,7 +3064,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Tab tab = new Tab("Dashboard");
 			tab.setId("dashboardTab");
 			tabsIndexCenter.appendChild(tab);
-
+			ComponentsCtrl.applyForward(tab, "onSelect=onSelectDashboardTab");
+			
 			tabpanel = new Tabpanel();
 			tabpanel.setId("graphTabPanel");
 			tabpanel.setStyle("overflow:auto;");
@@ -3080,10 +3081,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		graphDivTabDiv = new Div();
-		graphDivTabDiv.setHeight("100%");
-		graphDivTabDiv.setStyle("overflow:auto;");
-		tabpanel.appendChild(graphDivTabDiv);
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		logger.debug("Leaving ");
 	}
@@ -3097,7 +3094,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		ChartDetail chartDetail = new ChartDetail();
-		ChartUtil chartUtil = new ChartUtil();
 
 		//For Finance Vs Amounts Chart z
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
@@ -3111,19 +3107,17 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Pie"));
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_3D"));
 		aDashboardConfiguration.setMultiSeries(false);
-		chartsConfig.setRemarks("pieRadius='90' startingAngle='310'"
-				+ "formatNumberScale='0'enableRotation='1'  forceDecimals='1'  decimals='" + formatter + "'");
+		chartsConfig.setRemarks(ChartType.Pie3D.getDefaultRemarks()+" decimals='" + formatter + "'");
 		String chartStrXML = chartsConfig.getChartXML();
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_FinanceVsAmounts");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("Pie3D.swf");
-		chartDetail.setChartHeight("160");
+		chartDetail.setChartType(ChartType.Pie3D.toString());
+		chartDetail.setChartHeight("180");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("200px");
 		chartDetail.setiFrameWidth("95%");
-
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
 
 		//For Repayments Chart 
 		chartsConfig = new ChartsConfig("Payments", "", "", "");
@@ -3133,21 +3127,19 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_2D"));
 		aDashboardConfiguration.setMultiSeries(true);
 		chartsConfig
-				.setRemarks("labelDisplay='ROTATE' formatNumberScale='0'"
-						+ "rotateValues='0' startingAngle='310' showValues='0' forceDecimals='1' skipOverlapLabels='0'  decimals='"
-						+ formatter + "'");
+				.setRemarks(ChartType.MSLine.getDefaultRemarks()+" decimals='"+ formatter + "'");
 		chartStrXML = chartsConfig.getSeriesChartXML(aDashboardConfiguration.getRenderAs());
 
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_Repayments");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("MSLine.swf");
+		chartDetail.setChartType(ChartType.MSLine.toString());
 		chartDetail.setChartHeight("270");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("320px");
 		chartDetail.setiFrameWidth("95%");
-
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
+	
 		logger.debug("Leaving ");
 	}
 
@@ -3456,6 +3448,24 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 
 	}
+	
+	/** new code to display chart by skipping jsps code start */
+	public void onSelectDashboardTab(Event event) throws InterruptedException {
+		logger.debug("Entering");
+		for (ChartDetail chartDetail : chartDetailList) {
+			String strXML = chartDetail.getStrXML();
+			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
+			strXML = StringEscapeUtils.escapeJavaScript(strXML);
+			chartDetail.setStrXML(strXML);
+
+			Executions.createComponents("/Charts/Chart.zul",
+					(Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
+					Collections.singletonMap("chartDetail", chartDetail));
+		}
+		chartDetailList =  new ArrayList<ChartDetail>(); // Resetting 
+		logger.debug("Leaving");
+	}
+	/** new code to display chart by skipping jsps code end */
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -39,7 +39,7 @@
 		<property name="dashboardConfigurationService" ref="dashboardConfigurationService" />
 	</bean>
 
-	<bean id="chartwindowCtrl" class="com.pennant.webui.index.ChartCtrl"
+	<bean id="chartsimulatorwindowCtrl" class="com.pennant.webui.index.ChartSimulatorCtrl"
 		parent="basisCtrl" scope="prototype" />
 
 	<!-- ====================================================== -->

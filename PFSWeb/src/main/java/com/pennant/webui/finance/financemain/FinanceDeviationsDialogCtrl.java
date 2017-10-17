@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -1182,7 +1183,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	private ChartUtil		chartUtil;
 	public DashboardCreate	dashboardCreate;
 	public Cell col_html;
-
+	
 	/**
 	 * Create DashBoards
 	 * 
@@ -1190,7 +1191,6 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	 * @param info
 	 */
 	public void createDashboards() {
-		chartUtil = new ChartUtil();
 		JdbcSearchObject<DashboardConfiguration> jdbcSearchObject = new JdbcSearchObject<DashboardConfiguration>(DashboardConfiguration.class);
 		PagedListService pagedListService=(PagedListService) SpringUtil.getBean("pagedListService");
 		jdbcSearchObject.addFilterEqual("DashboardCode", "CCBYFINAMT");
@@ -1204,10 +1204,16 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 			chartDetail.setiFrameHeight("100%");
 			chartDetail.setiFrameWidth("100%");
 			dashboardCreate.setChartDetail(chartDetail);
-			//Get HTML Content which renders fusion chart by calling chartUtil.getHtmlContent(chartDetail)
-			col_html.appendChild(chartUtil.getHtmlContent(chartDetail));
-		}
+			
+			//new code to display chart by skipping jsps
+			String strXML = chartDetail.getStrXML();
+			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
+			strXML = StringEscapeUtils.escapeJavaScript(strXML);
+			chartDetail.setStrXML(strXML);
 
+			Executions.createComponents("/Charts/Chart.zul", col_html,
+					Collections.singletonMap("chartDetail", chartDetail));
+		}
 	}
 	
 	public ChartUtil getChartUtil() {

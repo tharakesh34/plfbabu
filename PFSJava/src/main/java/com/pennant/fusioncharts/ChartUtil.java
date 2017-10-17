@@ -1,11 +1,9 @@
 package com.pennant.fusioncharts;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +11,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Html;
 
-import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 
 public class ChartUtil {
@@ -201,28 +197,28 @@ public class ChartUtil {
 	}
 
 	/**
-	 * This method return SWF file(flash file name ) against DashBoard type and dimension
-	 * eg:if type is pie and dimension is 2d return "Pie2D.swf"
-	 *          else type is pie and dimension is 3d return "Pie3D.swf"
+	 * This method return chart type against DashBoard type and dimension
+	 * eg:if type is pie and dimension is 2d return "Pie2D"
+	 *          else type is pie and dimension is 3d return "Pie3D"
 	 * @param aDashboardConfiguration
 	 * @return
 	 */
 
-	public String getSWFFileName (DashboardConfiguration aDashboardConfiguration){
+	public String getChartType(DashboardConfiguration aDashboardConfiguration){
 		String type=aDashboardConfiguration.getDashboardType();
 		String dimension=aDashboardConfiguration.getDimension();
 		if(type.equals(Labels.getLabel("label_Select_Bar"))){
 			if(!aDashboardConfiguration.isMultiSeries()){
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "Bar2D.swf";
+					return "Bar2D";
 				}else{
-					return "Column3D.swf";
+					return "Column3D";
 				}
 			}else{
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "MSBar2D.swf";
+					return "MSBar2D";
 				}else{
-					return "MSBar3D.swf";
+					return "MSBar3D";
 				}
 			}
 		}
@@ -230,15 +226,15 @@ public class ChartUtil {
 		if(type.equals(Labels.getLabel("label_Select_Column"))){
 			if(!aDashboardConfiguration.isMultiSeries()){
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "Column2D.swf";
+					return "Column2D";
 				}else{
-					return "Column3D.swf";
+					return "Column3D";
 				}
 			}else{
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "MSColumn2D.swf";
+					return "MSColumn2D";
 				}else{
-					return "MSColumn3D.swf";
+					return "MSColumn3D";
 				}
 			}
 		}
@@ -246,212 +242,67 @@ public class ChartUtil {
 		if(type.equals(Labels.getLabel("label_Select_Line"))){
 			
 			if(!aDashboardConfiguration.isMultiSeries()){
-					return "Line.swf";
+					return "Line";
 			}else{
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "MSLine.swf";
+					return "MSLine";
 				}else{
-					return "MSCombi3D.swf";
+					return "MSCombi3D";
 				}
 			}
 		}
 
 		if(type.equals(Labels.getLabel("label_Select_Area"))){
 			if(!aDashboardConfiguration.isMultiSeries()){
-					return "Area2D.swf";
+					return "Area2D";
 			}else{
 				if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-					return "MSArea.swf";
+					return "MSArea";
 				}else{
-					return "MSCombi3D.swf";
+					return "MSCombi3D";
 				}
 			}
 		}
 		
 		if(type.equals(Labels.getLabel("label_Select_Pie"))){
 			if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-				return"Pie2D.swf";
+				return"Pie2D";
 			}else{
-				return "Pie3D.swf";
+				return "Pie3D";
 			}
 
 		}
 
 		if(type.equals(Labels.getLabel("label_Select_Staked"))){
 			if(dimension.equals(Labels.getLabel("label_Select_2D"))){
-				return"StackedBar2D.swf";
+				return"StackedBar2D";
 			}else{
-				return"StackedBar3D.swf";
+				return"StackedBar3D";
 			}
 		}
 
 		if(type.equals(Labels.getLabel("label_Select_Funnel"))){
-				return"Funnel.swf";
+				return"Funnel";
 		}
 
 		if(type.equals(Labels.getLabel("label_Select_Pyramid"))){
-			return"Pyramid.swf";
+			return"Pyramid";
 		}
 		
 		
 		if(type.equals(Labels.getLabel("label_Select_Cylinder"))){
-			return"Cylinder.swf";
+			return"Cylinder";
 		}
 		
 		if(type.equals(Labels.getLabel("label_Select_AngularGauge"))){
-			return"AngularGauge.swf";
+			return"AngularGauge";
 		}
 
 		if(type.equals(Labels.getLabel("label_Select_HLinearGauge"))){
-			return"HLinearGauge.swf";
+			return"HLinearGauge";
 		}
 
-		return "Column3D.swf";
-	}
-	/**
-	 * This method do the following
-	 *  1) This is posting a request to FusionChart.jsp with the parameters 
-	 * Chart id,Data XML as String,SWF File ,chart height and width
-	 * 2)The resultant response is a chart .we are keeping that in IFrame 
-	 * @param chartDetail
-	 * @return chartFormHtml(org.zk.zul.Html)
-	 */
-	public Html getHtmlContent(ChartDetail chartDetail){
-		logger.debug("Entering");
-		String strXML=chartDetail.getStrXML().replaceAll("\\n", "");
-		strXML=strXML.replaceAll("\'", "&quot;");
-
-		Html chartFormHtml = new Html();
-		String formID="'Form"+chartDetail.getChartId()+"'";
-		String iFrame="iframe"+chartDetail.getChartId()+"'";
-		StringBuffer htmlCode= new StringBuffer(); 
-		htmlCode.append("<form id="+formID+" target="+iFrame+"  method='post' action='./Charts/FusionChart.jsp'>" );
-
-		htmlCode.append("<input type='hidden' name='chartID' value='"+chartDetail.getChartId()+"'/>");
-		htmlCode.append("<input type='hidden' name='strlXml' value='"+strXML+"'/>");
-		htmlCode.append("<input type='hidden' name='swfFile' value='"+chartDetail.getSwfFile()+"'/>");
-		htmlCode.append("<input type='hidden' name='width'   value='"+chartDetail.getChartWidth()+"'/>");
-		htmlCode.append("<input type='hidden' name='height'  value='"+chartDetail.getChartHeight()+"'/>");
-		htmlCode.append("</form>");
-		htmlCode.append("<iframe id ="+iFrame+"  name="+iFrame+" border='0' frameborder='0' height='"
-				+chartDetail.getiFrameHeight()+"' width='"+chartDetail.getiFrameWidth()+"'></iframe>");
-		htmlCode.append("<script type='text/javascript'>");
-		htmlCode.append(" document.getElementById("+formID+").submit();");
-		htmlCode.append("</script>");
-		chartFormHtml.setContent(htmlCode.toString());
-		logger.debug("Leaving");
-		return chartFormHtml;
-	}
-
-
-	/**
-	 * 
-	 * @param definitionMap
-	 * @return
-	 */
-	private static String getStyleDefinition(Map<String, ChartStyleDefinition> definitionMap){
-		logger.debug("Entering");
-		StringBuffer definition= new StringBuffer(); 
-
-		Collection<ChartStyleDefinition> definitions = definitionMap.values();
-
-		if(definitions.size()>0){
-			definition.append("<definition>");
-			definition.append("\n");
-		}else{
-			return definition.toString();
-		}
-
-		Iterator<ChartStyleDefinition> iterator = definitions.iterator();
-
-		while (iterator.hasNext()){ 
-			ChartStyleDefinition styleDefinition= iterator.next();
-			if("font".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getFontStyle());
-			}else if("ANIMATION".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getAnimationStyle());
-			}else if("Shadow".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getShadowStyle());
-			}else if("Glow".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getGlowStyle());
-			}else if("Bevel".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getBevelStyle());
-			}else if("Blur".equalsIgnoreCase(styleDefinition.getType())){
-				definition.append(styleDefinition.getBlurStyle());
-			}
-
-			definition.append("\n");
-		} 
-
-
-		definition.append("</definition>");
-		definition.append("\n");
-		logger.debug("Leaving");
-		return definition.toString();
-
-	}
-	/**
-	 * This method returns application tag of chart
-	 * @param applicationMap
-	 * @return
-	 */
-	private static String getApplication(Map<String, ChartStyleApplication> applicationMap){
-		logger.debug("Entering");
-		StringBuffer application= new StringBuffer(); 
-
-		Collection<ChartStyleApplication> definitions = applicationMap.values();
-
-		if(definitions.size()>0){
-			application.append("<application>");
-			application.append("\n");
-		}else{
-			return application.toString();
-		}
-
-		Iterator<ChartStyleApplication> iterator = definitions.iterator();
-
-		while (iterator.hasNext()){ 
-			ChartStyleApplication styleApplication= iterator.next();
-			application.append(styleApplication.getApplicationString());
-			application.append("\n");
-		}
-
-		application.append("</definition>");
-		application.append("\n");
-		logger.debug("Leaving");
-		return application.toString();
-	}
-	/**
-	 * This method returns Style tags of Chart
-	 * @param definitionMap
-	 * @param applicationMap
-	 * @return
-	 */
-	public static String getStyles(Map<String, ChartStyleDefinition> definitionMap,Map<String, ChartStyleApplication> applicationMap){
-
-		StringBuffer styles= new StringBuffer(); 
-
-		String definition = getStyleDefinition(definitionMap);
-		String application = getApplication(applicationMap);
-
-		if(StringUtils.isNotBlank(definition)){
-
-			styles.append(" <styles>");
-			styles.append(definition);
-			styles.append("\n");
-
-		}else{
-			return "";
-		}
-
-		if(StringUtils.isNotBlank(application)){
-			styles.append(application);
-			styles.append("\n");
-		}
-
-		styles.append(" </styles>");
-
-		return styles.toString();
+		return "Column3D";
 	}
 	/**
 	 * 

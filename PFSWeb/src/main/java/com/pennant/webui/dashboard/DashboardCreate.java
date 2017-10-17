@@ -51,13 +51,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.fusionchart.Fusionchart;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.MaximizeEvent;
 import org.zkoss.zkmax.zul.Portalchildren;
+import org.zkoss.zkmax.zul.Portallayout;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Panelchildren;
 
@@ -78,7 +78,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 public class DashboardCreate extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = -4201689911130684236L;
 	private static final Logger logger = Logger.getLogger(DashboardCreate.class);
-	protected Fusionchart fusionchart;
 	public ChartDetail chartDetail;
 	private int height = getContentAreaHeight() * 85/100 /2;
 	ChartUtil chartUtil = new ChartUtil();
@@ -121,7 +120,7 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 	private void createComponenet(DashboardConfiguration info, Portalchildren portalchildren, Panel panel) {
 		panel.setTitle(info.getDashboardDesc());
 		panel.setBorder("normal");
-		panel.setStyle("padding:1px;");
+		panel.setSclass("panel_style");
 		panel.setCollapsible(true);
 		panel.setClosable(true);
 		panel.setMaximizable(true);
@@ -130,16 +129,26 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		Panelchildren panelchildren = null;
 		if(panel.getFirstChild() != null && panel.getFirstChild() instanceof Panelchildren) {
 			panelchildren = (Panelchildren) panel.getFirstChild();
+			Portallayout dashBoardsPortalLayout = (Portallayout) portalchildren.getParent();
+			if (isMaximized) { // for single panel maximize issue
+				dashBoardsPortalLayout.setHeight(height + height +(height/13)+ "px");
+				panel.setHeight(height + height + (height/13)+"px");
+			} else {
+				dashBoardsPortalLayout.setHeight(null);
+				panel.setHeight(height + "px");
+			}
 		} else {
 			panelchildren = new Panelchildren();
 			panel.appendChild(panelchildren);
 			portalchildren.appendChild(panel);
 		}
-			
+		
+		panelchildren.setSclass("panelchildren_style");
 
 		chartDetail = getChartDetail(info);
 	
 		String strXML = chartDetail.getStrXML();
+		strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
 		strXML = StringEscapeUtils.escapeJavaScript(strXML);
 
 		chartDetail.setStrXML(strXML);
@@ -149,7 +158,7 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		if(isMaximized) {
 			chartDetail.setChartHeight(height + 160 + "px");
 		} else {
-			chartDetail.setChartHeight(height - 80 + "px");
+			chartDetail.setChartHeight(height - 50 + "px"); // previously height - 80
 		} 
 		
 		chartDetail.setiFrameHeight("100%");
@@ -161,7 +170,7 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 			panelchildren.getChildren().clear();
 		}
 
-		Executions.createComponents("/Charts/FusionChart.zul", panelchildren, Collections.singletonMap("chartDetail", chartDetail));
+		Executions.createComponents("/Charts/Chart.zul", panelchildren, Collections.singletonMap("chartDetail", chartDetail));
 	}
 
 	/**
@@ -186,7 +195,7 @@ public class DashboardCreate extends GFCBaseListCtrl<Object> {
 		ChartDetail chartDetail = new ChartDetail();
 		chartDetail.setStrXML(chartStrXML);
 		ChartUtil chartUtil = new ChartUtil();
-		chartDetail.setSwfFile(chartUtil.getSWFFileName(aDBConfig));
+		chartDetail.setChartType(chartUtil.getChartType(aDBConfig));
 		
 		logger.debug("Leaving ");
 		return chartDetail;

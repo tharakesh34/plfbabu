@@ -1,6 +1,70 @@
 pff 4.0.0, 2017-10-17
 ---------------------
-- 
+- Changed dashboard component
+	. Upgraded fusion charts
+	. Field swfFile of ChartDetail changed to chartType.
+ 	. Removed dependency org.zkoss.fusionchart.fusionchart-2.2.50.jar
+	. Removed below classes from the package com.pennant.fusioncharts:
+			ChartDivisionalLineGrid
+			ChartNumberFormatAndScale
+			ColumnAndBarCharts
+			ChartCosmetics
+			ChartStyleApplication
+			ChartStyleDefinition
+            PieAndDoughnutCharts
+	. Removed below methods from ChartUtill and ChartConfig class
+            getStyle()
+            getStyleDefination()
+            getApplication()
+            getHtmlContent()
+	. Removed below JSP files from WebContent/Charts folder:
+	        FusionChart.jsp
+	        FusionChartsRenderer.jsp
+    . Removed below SWF files from WebContent/Charts folder:
+			AngularGauge.swf
+			Area2D.swf
+			Bar2D.swf
+			Column2D.swf
+			Column3D.swf
+			Cylinder.swf
+			FCExporter.swf
+			Funnel.swf
+			HLinearGauge.swf
+			Line.swf
+			MSArea.swf
+			MSBar2D.swf
+			MSBar3D.swf
+			MSColumn2D.swf
+			MSColumn3D.swf
+			MSCombi2D.swf
+			MSCombi3D.swf
+			Pyramid.swf
+			StackedBar2D.swf
+			StackedBar3D.swf
+	. Changed file name of "FusionChart.zul" to "Chart.zul".
+    . Changed file name of "Chart.zul" to "chartSimulator.zul".
+    . Moved above two files into WebContent/Charts folder.  
+    . Removed old  files from WebContent/Charts folder. below  are the files.
+            FusionCharts.HC.Charts.js
+            FusionCharts.HC.js
+            FusionCharts.jqueryplugin.js
+            FusionCharts.js
+            jquery.min.js
+            firebug-lite.js
+            Data.xml
+            FusionChart.jsp
+            FusionChartsRenderer.jsp
+    . Added new js files in WebContent/Charts/FusionCharts/themes
+            fusioncharts.theme.carbon.js
+            fusioncharts.theme.fint.js
+            fusioncharts.theme.ocean.js
+            fusioncharts.theme.zune.js
+    . Added new js files in WebContent/Charts/FusionCharts
+             fusioncharts.charts.js
+             fusioncharts.js
+             fusioncharts.ssgrid.js
+             fusioncharts.zoomscatter.js
+    . Added ChartType enum to get chart type and default remark in com.pennant package.
 - Introduced dependency management to consolidate and centralize the management of dependency versions.
 - Changed artifact group identifier to "com.pennanttech.pennapps.pff" and added new properties for the same along with version.
 - Upgraded spring batch to 3.0.8.RELEASE.

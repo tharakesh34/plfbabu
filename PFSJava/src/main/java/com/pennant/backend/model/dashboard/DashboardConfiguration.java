@@ -44,7 +44,6 @@
 package com.pennant.backend.model.dashboard;
 
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.fusioncharts.ChartCosmetics;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -71,7 +70,6 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	private  boolean        adtDataSource;
 	private  boolean        multiSeries;
 	private ChartsConfig    lovDescChartsConfig;
-	private ChartCosmetics 	lovDescChartCosmetics;
 	private String seriesType;
 	private String seriesValues;
 	private String fieldQuery;
@@ -209,15 +207,7 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	public ChartsConfig getLovDescChartsConfig() {
 		return lovDescChartsConfig;
 	}
-
-	public void setLovDescChartCosmetics(ChartCosmetics lovDesChartCosmetics) {
-		this.lovDescChartCosmetics = lovDesChartCosmetics;
-	}
-
-	public ChartCosmetics getLovDescChartCosmetics() {
-		return lovDescChartCosmetics;
-	}
-
+	
 	public void setAdtDataSource(boolean adtDataSource) {
 		this.adtDataSource = adtDataSource;
 	}
