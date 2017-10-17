@@ -1,0 +1,6 @@
+pff 4.0.0, 2017-10-17
+---------------------
+- 
+- Introduced dependency management to consolidate and centralize the management of dependency versions.
+- Changed artifact group identifier to "com.pennanttech.pennapps.pff" and added new properties for the same along with version.
+- Upgraded spring batch to 3.0.8.RELEASE.
