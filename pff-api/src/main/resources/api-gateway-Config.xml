@@ -503,6 +503,35 @@
 	<!-- SOAP container -->
 	<jaxws:endpoint id="systemDateSoapService" implementor="#wsSystemDateService"
 		address="/systemDateSoap" publish="false"/>
+
+	<!-- ExtendedFieldDetail API gateway -->
+	<!-- rest container -->
+	<bean id="wsExtendedFieldDetailService"
+		class="com.pennanttech.service.impl.ExtendedFieldDetailWebServiceImpl" />
+
+	<jaxrs:server id="extendedFieldDetailRestService" address="/extendedFieldDetailRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsExtendedFieldDetailService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="extendedFieldDetailSoapService" implementor="#wsExtendedFieldDetailService"
+	 address="/extendedFieldDetailSoap" publish="false" />	
 		
 
 </beans>

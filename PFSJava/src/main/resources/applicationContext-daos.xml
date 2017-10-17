@@ -3713,6 +3713,7 @@
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="productDAO" ref="productDAO" />
 	</bean>
 
 	<!--============ Finance Type Details ============== -->

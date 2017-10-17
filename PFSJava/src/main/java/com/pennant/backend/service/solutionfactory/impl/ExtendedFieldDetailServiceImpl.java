@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -62,6 +63,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>ExtendedFieldDetail</b>.<br>
@@ -73,7 +75,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	private AuditHeaderDAO auditHeaderDAO;
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
-
+	private ProductDAO				productDAO;
 	public ExtendedFieldDetailServiceImpl() {
 		super();
 	}
@@ -101,6 +103,14 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	}
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public ProductDAO getProductDAO() {
+		return productDAO;
+	}
+
+	public void setProductDAO(ProductDAO productDAO) {
+		this.productDAO = productDAO;
 	}
 
 	/**
@@ -713,4 +723,108 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		extendedFieldDetailDAO.revertColumn(efd);
 	}
 
+	/**
+	 * Validate ExtendedFieldHeader details
+	 * 
+	 * @param extendedFieldHeader
+	 * 
+	 * @return List<ErrorDetails>
+	 */
+	@Override
+	public List<ErrorDetails> doValidations(ExtendedFieldHeader extendedFieldHeader) {
+		logger.debug(Literal.ENTERING);
+		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		//verify module name is blank or not
+		if (StringUtils.isBlank(extendedFieldHeader.getModuleName())) {
+			ErrorDetails errorDetail = new ErrorDetails();
+			String[] valueParm = new String[1];
+			valueParm[0] = "module";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm));
+			errorDetails.add(errorDetail);
+		} else {
+			// verify the module either CUSTOMER or LOAN
+			if (!StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_CUSTOMER)
+					&& !StringUtils.equals(extendedFieldHeader.getModuleName(),PennantConstants.FINANCE_INQUIRY_LOAN)) {
+				ErrorDetails errorDetail = new ErrorDetails();
+				String[] valueParm = new String[2];
+				valueParm[0] = extendedFieldHeader.getModuleName();
+				valueParm[1] = PennantConstants.FINANCE_INQUIRY_CUSTOMER + "," + PennantConstants.FINANCE_INQUIRY_LOAN;
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90337", valueParm));
+				errorDetails.add(errorDetail);
+			}
+			//verify subModule name is blank or not
+			if (StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
+				ErrorDetails errorDetail = new ErrorDetails();
+				String[] valueParm = new String[1];
+				valueParm[0] = "subModule";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm));
+				errorDetails.add(errorDetail);
+			}
+
+			// if module is CUSTOMER then subModule must be RETAIL || CORP || SME
+			if (StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_CUSTOMER)) {
+				if (!StringUtils.equals(extendedFieldHeader.getSubModuleName(), PennantConstants.PFF_CUSTCTG_INDIV)
+						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_CORP)
+						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_SME)) {
+
+					ErrorDetails errorDetail = new ErrorDetails();
+					String[] valueParm = new String[2];
+					valueParm[0] = extendedFieldHeader.getSubModuleName();
+					valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV + "," + PennantConstants.PFF_CUSTCTG_CORP + ","
+							+ PennantConstants.PFF_CUSTCTG_SME;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90337", valueParm));
+					errorDetails.add(errorDetail);
+				}
+
+			}
+
+			// if module is LOAN then Check subModule is a valid productCode or not
+			if (StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_LOAN)&&
+					!StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
+				// check the productCode(subModule) is valid or not
+				if (productDAO.getProductByID("", extendedFieldHeader.getSubModuleName(), "") == null) {
+					ErrorDetails errorDetail = new ErrorDetails();
+					String[] valueParm = new String[2];
+					valueParm[0] = "subModule";
+					valueParm[1] = extendedFieldHeader.getSubModuleName();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm));
+					errorDetails.add(errorDetail);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetails;
+	}
+
+	/**
+	 * getExtendedFieldHeaderByModuleName fetch the details by using ExtendedFieldHeaderDAO's
+	 * getExtendedFieldHeaderByModuleName method
+	 * 
+	 * @param moduleName
+	 *            (String)
+	 * @param subModuleName
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return ExtendedFieldHeader
+	 */
+	@Override
+	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String type) {
+		return extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(moduleName, subModuleName, type);
+	}
+
+	/**
+	 * getExtendedFieldDetailByModuleID fetch the details by using ExtendedFieldDetailDAO's getExtendedFieldDetailById
+	 * method
+	 * 
+	 * @param id
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return List<ExtendedFieldDetail>
+	 */
+	@Override
+	public List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type) {
+		return extendedFieldDetailDAO.getExtendedFieldDetailById(id, type);
+	}
 }

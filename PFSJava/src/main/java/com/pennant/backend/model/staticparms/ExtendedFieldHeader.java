@@ -49,9 +49,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -60,13 +63,17 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>ExtendedFieldHeader table</b>.<br>
  *
  */
+@XmlType(propOrder = { "moduleName", "subModuleName", "extendedFieldDetailList","returnStatus" })
+@XmlRootElement(name = "extendedDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entity {
 	
 	private static final long	serialVersionUID	= 5219478530421796781L;
 	
 	private long moduleId = Long.MIN_VALUE;
+	@XmlElement(name = "module")
 	private String moduleName="";
+	@XmlElement(name = "subModule")
 	private String subModuleName="";
 	private String tabHeading;
 	private String numberOfColumns;
@@ -80,6 +87,8 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	private List<ExtendedFieldDetail> extendedFieldDetailList;
 	
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	@XmlElement
+	private WSReturnStatus returnStatus;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -181,5 +190,13 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
     	this.auditDetailMap = auditDetailMap;
     }
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
 
 }
