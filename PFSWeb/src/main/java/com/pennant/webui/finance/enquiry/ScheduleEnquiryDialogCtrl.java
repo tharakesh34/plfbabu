@@ -405,12 +405,12 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Pie"));
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_3D"));
 		aDashboardConfiguration.setMultiSeries(false);
-		chartsConfig.setRemarks(ChartType.Pie3D.getDefaultRemarks()+" decimals='"+formatter+"'");
+		chartsConfig.setRemarks(ChartType.PIE3D.getRemarks()+" decimals='"+formatter+"'");
 		String chartStrXML=chartsConfig.getChartXML();
 		chartDetail=new ChartDetail();
 		chartDetail.setChartId("form_FinanceVsAmounts");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setChartType(ChartType.Pie3D.toString());
+		chartDetail.setChartType(ChartType.PIE3D.toString());
 		chartDetail.setChartHeight("180");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("200px");
@@ -424,13 +424,13 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Bar"));
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_2D"));
 		aDashboardConfiguration.setMultiSeries(true);
-		chartsConfig.setRemarks(ChartType.MSLine.getDefaultRemarks()+" decimals='"+formatter+"'");
+		chartsConfig.setRemarks(ChartType.MSLINE.getRemarks()+" decimals='"+formatter+"'");
 		chartStrXML = chartsConfig.getSeriesChartXML(aDashboardConfiguration.getRenderAs());
 
 		chartDetail=new ChartDetail();
 		chartDetail.setChartId("form_Repayments");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setChartType(ChartType.MSLine.toString());
+		chartDetail.setChartType(ChartType.MSLINE.toString());
 		chartDetail.setChartHeight("270");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("320px");

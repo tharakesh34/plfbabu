@@ -15,15 +15,15 @@ package com.pennant;
  * Enumerates the chart types that were used in business logic layer.
  */
 public enum ChartType {
-	Pie3D("pieRadius='90' startingAngle='310' formatNumberScale='0' enableRotation='1' forceDecimals='1'"), MSLine("labelDisplay='ROTATE' formatNumberScale='0' rotateValues='0' startingAngle='310' showValues='0' forceDecimals='1' skipOverlapLabels='0'");
+	PIE3D("pieRadius='90' startingAngle='310' formatNumberScale='0' enableRotation='1' forceDecimals='1'"), MSLINE("labelDisplay='ROTATE' formatNumberScale='0' rotateValues='0' startingAngle='310' showValues='0' forceDecimals='1' skipOverlapLabels='0'");
 
-	private String value;
+	private String remark;
 
-	private ChartType(String value) {
-		this.value = value;
+	private ChartType(String remark) {
+		this.remark = remark;
 	}
 
-	public String getDefaultRemarks() {
-		return value;
+	public String getRemarks() {
+		return remark;
 	}
 }
