@@ -35,6 +35,11 @@ public class ExtendedFieldConstants {
 	public static final String DFTDATETYPE_APPDATE 			= "APPDATE";
 	public static final String DFTDATETYPE_SYSDATE 			= "SYSDATE";
 	public static final String DFTDATETYPE_SYSTIME 			= "SYSTIME";
+
+	
+	// Module Types
+	public static final String MODULE_CUSTOMER 			= "CUSTOMER";
+	public static final String MODULE_LOAN 			= "LOAN";
 	
 	
 }

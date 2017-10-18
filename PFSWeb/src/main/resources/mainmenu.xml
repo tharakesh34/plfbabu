@@ -233,7 +233,9 @@
 		<!-- <menuItem id="menu_Item_HolidayMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterList.zul"   rightName="menuItem_SolutionFactory_HolidayMaster"/> -->
 		<menuItem id="menu_Item_CollateralStructure" zulNavigation="/WEB-INF/pages/Collateral/CollateralStructure/CollateralStructureList.zul" rightName="menuItem_collateral_CollateralStructure"/>
 		<menuItem id="menu_Item_CollateralReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=COLLATERAL&amp;event=Origination" rightName="menuItem_SolutionFactory_CollateralReferenceDetail"/>
-		<menuItem id="menu_Item_CollateralWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=COLLATERAL&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_CollateralWorkFlow" />
+		<menuItem id="menu_Item_CollateralWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=COLLATERAL&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_CollateralWorkFlow" />             
+		<menuItem id="menu_Item_ExtendedFieldsConfiguration" zulNavigation="/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtFieldConfigList.zul" rightName="menuItem_SolutionFactory_ExtendedFieldConfiguration"/>
+
 	<!-- 	<menuItem id="menu_Item_CommitmentReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=COMMITMENT&amp;event=Origination" rightName="menuItem_SolutionFactory_CommitmentReferenceDetail"/>
 		<menuItem id="menu_Item_CommitmentWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=COMMITMENT&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_CommitmentWorkFlow" /> -->
 	<!-- 	

@@ -33,7 +33,6 @@ import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
-import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -90,11 +89,11 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
-import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
@@ -139,9 +138,8 @@ public class FinanceDataValidation {
 	private CityDAO							cityDAO;
 	private FinanceDetail					financeDetail;
 	private CustomerDocumentService			customerDocumentService;
-	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
-	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
-	private PartnerBankDAO					partnerBankDAO;
+	private PartnerBankDAO				partnerBankDAO;
+	private ExtendedFieldDetailsService	extendedFieldDetailsService;
 
 	public FinanceDataValidation() {
 		super();
@@ -689,7 +687,8 @@ public class FinanceDataValidation {
 										if(extendedDetail.isFieldMandatory()) {
 											exdMandConfigCount++;
 										}
-										List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(extendedDetail, extendedFieldData);
+											List<ErrorDetails> errList = extendedFieldDetailsService
+													.validateExtendedFieldData(extendedDetail, extendedFieldData);
 										errorDetails.addAll(errList);
 										isFeild = true;
 									}
@@ -4299,24 +4298,17 @@ public class FinanceDataValidation {
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
-	public void setExtendedFieldDetailsValidation(ExtendedFieldDetailsValidation extendedFieldDetailsValidation) {
-		this.extendedFieldDetailsValidation = extendedFieldDetailsValidation;
-	}
-	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
-		if (extendedFieldDetailsValidation == null) {
-			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
-		}
-		return extendedFieldDetailsValidation;
-	}
-	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
-		return extendedFieldRenderDAO;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
 	
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
+
+	/**
+	 * @param extendedFieldDetailsService
+	 *            the extendedFieldDetailsService to set
+	 */
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

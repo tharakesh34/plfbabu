@@ -64,6 +64,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldsValidation;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;

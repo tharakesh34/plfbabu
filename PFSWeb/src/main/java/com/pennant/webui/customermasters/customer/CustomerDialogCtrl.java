@@ -42,7 +42,6 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -86,6 +85,8 @@ import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -123,6 +124,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.CustomerType;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -135,12 +138,14 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -176,6 +181,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	protected Window							window_CustomerDialog;														// autowired
 
+	protected Tabs								tabsIndexCenter;
+	protected Tabpanels							tabpanelsBoxIndexCenter;
+	
 	protected North								north;																		// autowired
 	protected South								south;																		// autowired
 	protected Textbox							custCIF;																	// autowired
@@ -374,8 +382,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label								label_CustomerDialog_CustNationality;
 	private transient DirectorDetailService		directorDetailService;
 	Date										appDate							= DateUtility.getAppDate();
-	Date										startDate						= SysParamUtil
-			.getValueAsDate("APP_DFT_START_DATE");
+	Date										startDate						= SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	private String								empStatus_Temp					= "";
 	private String								empName_Temp					= "";
@@ -400,6 +407,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public boolean								validateCustDocs				= true;
 	private String								moduleName;
 	private List<CustomerBankInfo>				CustomerBankInfoList;
+	
+	//Extended fields
+	private ExtendedFieldCtrl					extendedFieldCtrl				= null;
 
 	/**
 	 * default constructor.<br>
@@ -1137,6 +1147,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
 
+		// Extended Field Details
+		appendExtendedFieldDetails(aCustomerDetails);
+				
 		if (!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())) {
 			doFillCustomerDirectory(aCustomerDetails.getCustomerDirectorList());
 			doSetShareHoldersDesignationCode(aCustomerDetails.getCustomerDirectorList());
@@ -1149,6 +1162,42 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
+	
+	/**
+	 * This method is for append extended field details
+	 */
+	private void appendExtendedFieldDetails(CustomerDetails aCustomerDetails) {
+		logger.debug("Entering");
+
+		try {
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_CUSTOMER, aCustomerDetails.getCustomer().getCustCtgCode());
+			
+			if (extendedFieldHeader == null) {
+				return;
+			}
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+					.getExtendedFieldRender(aCustomerDetails.getCustomer().getCustCIF());
+			
+			this.extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			aCustomerDetails.setExtendedFieldHeader(extendedFieldHeader);
+			aCustomerDetails.setExtendedFieldRender(extendedFieldRender);
+
+			if (aCustomerDetails.getBefImage() != null) {
+				aCustomerDetails.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				aCustomerDetails.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+			extendedFieldCtrl.setCcyFormat(2);
+			extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -1559,6 +1608,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		aCustomer.setCustPassportNo(getCustDocID(PennantConstants.PASSPORT));
 		aCustomer.setPhoneNumber(getMobileNumber());
+		
+		// Extended Field validations
+		extendedFieldCtrl.setParentTab(custTab);
+		aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save());
 
 		// Set KYC details
 		Cloner cloner = new Cloner();
@@ -2892,6 +2945,30 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomerDetails.setCustID(aCustomer.getCustID());
 		aCustomerDetails.setCustomer(aCustomer);
 		aCustomerDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
+		
+		// Extended Field details
+		if (aCustomerDetails.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aCustomerDetails.getExtendedFieldRender();
+			details.setReference(aCustomerDetails.getCustomer().getCustCIF());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(aCustomerDetails.getCustomer().getRecordStatus());
+			details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
+			details.setVersion(aCustomerDetails.getCustomer().getVersion());
+			details.setWorkflowId(aCustomerDetails.getCustomer().getWorkflowId());
+			details.setTaskId(taskId);
+			details.setNextTaskId(nextTaskId);
+			details.setRoleCode(getRole());
+			details.setNextRoleCode(nextRoleCode);
+			details.setNewRecord(aCustomerDetails.getCustomer().isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(aCustomerDetails.getCustomer().getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+		
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			aCustomer.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -5857,5 +5934,4 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCustomerBankInfoList(List<CustomerBankInfo> customerBankInfoList) {
 		CustomerBankInfoList = customerBankInfoList;
 	}
-
 }

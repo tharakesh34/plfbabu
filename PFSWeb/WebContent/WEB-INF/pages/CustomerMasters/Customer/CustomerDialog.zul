@@ -65,18 +65,14 @@
 				<div width="100%" height="100%">
 					<groupbox id="finBasicdetails"></groupbox>
 					<tabbox width="100%" height="100%">
-						<tabs>
-							<tab label="Basic Details"
-								id="basicDetails" />
+						<tabs id="tabsIndexCenter">
+							<tab label="Basic Details" id="basicDetails" />
 							<tab label="KYC Details" id="tabkYCDetails" />
-							<tab id="tabfinancial" label="Financials"
-								visible="false" />
-							<tab id="directorDetails"
-								label="Share Holder Details" visible="false" />
-							<tab label="Banking Details"
-								id="tabbankDetails" />
+							<tab id="tabfinancial" label="Financials" visible="false" />
+							<tab label="Share Holder Details" id="directorDetails"  visible="false" />
+							<tab label="Banking Details" id="tabbankDetails" />
 						</tabs>
-						<tabpanels>
+						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto"
 								ca:data-scrollable="true">
 								<div id="divKeyDetails">

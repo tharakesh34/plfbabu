@@ -87,8 +87,6 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
-import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
@@ -125,11 +123,10 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
-import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
-import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -152,15 +149,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private AuditHeaderDAO					auditHeaderDAO;
 	private VASRecordingDAO					vASRecordingDAO;
 	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
-	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private DocumentDetailsDAO				documentDetailsDAO;
 
 	private CheckListDetailService			checkListDetailService;
 	private VASConfigurationService			vASConfigurationService;
 	private CustomerDetailsService			customerDetailsService;
 
-	private ExtendedFieldHeaderDAO			extendedFieldHeaderDAO;
-	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 	private DocumentManagerDAO				documentManagerDAO;
 	private FinanceCheckListReferenceDAO	financeCheckListReferenceDAO;
 	private DocumentTypeDAO					documentTypeDAO;
@@ -171,25 +165,26 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	// Validation Service Classes
 	private DocumentDetailValidation		vasDocumentValidation;
-	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private CustomerDAO						customerDAO;
 	private CollateralSetupDAO				collateralSetupDAO;
 	private VasRecordingValidation			vasRecordingValidation;
-	private PostingsDAO 					postingsDAO;
-	private AccountProcessUtil 				accountProcessUtil;
-	private FinanceMainDAO 					financeMainDAO;
-	private FinanceScheduleDetailDAO 		financeScheduleDetailDAO;
+	private PostingsDAO						postingsDAO;
+	private AccountProcessUtil				accountProcessUtil;
+	private FinanceMainDAO					financeMainDAO;
+	private FinanceScheduleDetailDAO		financeScheduleDetailDAO;
 	private FinanceDisbursementDAO			financeDisbursementDAO;
 	private RepayInstructionDAO				repayInstructionDAO;
 	private RelationshipOfficerDAO			relationshipOfficerDAO;
-	private ScriptValidationService 		scriptValidationService;
 	private PostingsPreparationUtil			postingsPreparationUtil;
 	private FinanceWorkFlowService			financeWorkFlowService;
-	
-	
+
+	private ExtendedFieldDetailsService		extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -197,6 +192,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public VASRecordingDAO getVASRecordingDAO() {
 		return vASRecordingDAO;
 	}
+
 	public void setVASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
@@ -208,6 +204,21 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return this.vasRecordingValidation;
 	}
 
+	/**
+	 * @param extendedFieldDetailsService
+	 *            the extendedFieldDetailsService to set
+	 */
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	/**
+	 * @param extendedFieldRenderDAO
+	 *            the extendedFieldRenderDAO to set
+	 */
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
 
 	/**
 	 * @return the vASRecording
@@ -252,7 +263,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -268,7 +280,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// VAS Cancellation process verification
 		String errorCode = procVasCancellation(vASRecording, false);
-		if(StringUtils.isNotBlank(errorCode)){
+		if (StringUtils.isNotBlank(errorCode)) {
 			ErrorDetails errorDetail = new ErrorDetails(errorCode, null);
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(errorDetail, auditHeader.getUsrLanguage()));
 			logger.debug("Leaving");
@@ -303,7 +315,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		// Vas Extended field Details
 		if (vASRecording.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = vASRecording.getAuditDetailMap().get("ExtendedFieldDetail");
-			details = processingExtendedFieldDetailList(details, vASRecording, tableType);
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					vASRecording.getVasConfiguration().getExtendedFieldHeader(), tableType);
+
 			auditDetails.addAll(details);
 		}
 
@@ -341,7 +355,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		getVASRecordingDAO().delete(vASRecording, "");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new VASRecording(), vASRecording.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], vASRecording.getBefImage(), vASRecording));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				vASRecording.getBefImage(), vASRecording));
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -367,10 +382,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if (vasRecording != null) {
 
 			// VasconfigurationDetails
-			vasRecording.setVasConfiguration(getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
+			vasRecording.setVasConfiguration(
+					getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
 
 			//Set CustomerDetails
-			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst()));
+			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(),
+					vasRecording.getPostingAgainst()));
 
 			// Extended Field Details
 			StringBuilder tableName = new StringBuilder();
@@ -379,7 +396,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			tableName.append(vasRecording.getProductCode());
 			tableName.append("_ED");
 
-			Map<String, Object> extFieldMap = getExtendedFieldRenderDAO().getExtendedField(vasReference, tableName.toString(), "_View");
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(vasReference,
+					tableName.toString(), "_View");
 			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
 			if (extFieldMap != null) {
 				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
@@ -392,17 +410,27 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? "" : String.valueOf(extFieldMap.get("RoleCode")));
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
 				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
-				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? "" : String.valueOf(extFieldMap.get("TaskId")));
+				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+						: String.valueOf(extFieldMap.get("TaskId")));
 				extFieldMap.remove("TaskId");
-				extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+				extendedFieldRender
+						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextTaskId")));
 				extFieldMap.remove("NextTaskId");
-				extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? "" : String.valueOf(extFieldMap.get("RecordType")));
+				extendedFieldRender
+						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordType")));
 				extFieldMap.remove("RecordType");
 				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 				extFieldMap.remove("WorkflowId");
@@ -413,7 +441,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			// Not Required Other Process details for the Enquiry
 			if (!isEnquiry) {
 				// Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(vasReference, VASConsatnts.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(vasReference,
+						VASConsatnts.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
 				if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 					vasRecording.getDocuments().addAll(documentList);
 				} else {
@@ -424,8 +453,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (StringUtils.isNotEmpty(vasRecording.getRecordType())
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode, FinanceConstants.FINSER_EVENT_ORG);
-				}else if(StringUtils.equals("C", vasRecording.getVasStatus())|| StringUtils.isEmpty(vasRecording.getRecordType())){
+					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode,
+							FinanceConstants.FINSER_EVENT_ORG);
+				} else if (StringUtils.equals("C", vasRecording.getVasStatus())
+						|| StringUtils.isEmpty(vasRecording.getRecordType())) {
 
 					// Get details from Postings
 					// Reversals of Tran Code and & DEBIT -CREDIT
@@ -433,9 +464,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
-					list = getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
+					list = getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(),
+							AccountEventConstants.ACCEVENT_VAS_FEE);
 
-					for(ReturnDataSet returnDataSet:list){
+					for (ReturnDataSet returnDataSet : list) {
 						String tranCode = returnDataSet.getTranCode();
 						String revTranCode = returnDataSet.getRevTranCode();
 						String debitOrCredit = returnDataSet.getDrOrCr();
@@ -452,8 +484,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					vasRecording.setReturnDataSetList(list);
 				}
-			}else{
-				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE));
+			} else {
+				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(),
+						AccountEventConstants.ACCEVENT_VAS_FEE));
 			}
 		}
 		logger.debug("Leaving");
@@ -462,7 +495,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/*
-	 * Getting the customer details usnig teh 
+	 * Getting the customer details usnig teh
 	 */
 	@Override
 	public VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst) {
@@ -474,8 +507,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/**
-	 * getApprovedVASRecordingByCode fetch the details by using VASRecordingDAO's getApprovedVASRecordingByCode method . with
-	 * parameter productCode . it fetches the approved records from the VASRecording.
+	 * getApprovedVASRecordingByCode fetch the details by using VASRecordingDAO's getApprovedVASRecordingByCode method .
+	 * with parameter productCode . it fetches the approved records from the VASRecording.
 	 * 
 	 * @param productCode
 	 *            (String)
@@ -500,9 +533,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 
 	public AuditHeader doApprove(AuditHeader aAuditHeader) {
@@ -523,7 +556,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// VAS Cancellation process verification
 		String errorCode = procVasCancellation(vASRecording, true);
-		if(StringUtils.isNotBlank(errorCode)){
+		if (StringUtils.isNotBlank(errorCode)) {
 			ErrorDetails errorDetail = new ErrorDetails(errorCode, null);
 			aAuditHeader.setErrorDetails(ErrorUtil.getErrorDetail(errorDetail, auditHeader.getUsrLanguage()));
 			logger.debug("Leaving");
@@ -531,8 +564,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		// Processing Accounting Details
-		if(StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW) 
-				|| StringUtils.equals(vASRecording.getVasStatus(),VASConsatnts.STATUS_CANCEL)){
+		if (StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW)
+				|| StringUtils.equals(vASRecording.getVasStatus(), VASConsatnts.STATUS_CANCEL)) {
 			executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
 
@@ -570,10 +603,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetails.addAll(details);
 			}
 
-			// VAS Extended field Details
+			// Vas Extended field Details
 			if (vASRecording.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = vASRecording.getAuditDetailMap().get("ExtendedFieldDetail");
-				details = processingExtendedFieldDetailList(details, vASRecording, "");
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						vASRecording.getVasConfiguration().getExtendedFieldHeader(), "");
+
 				auditDetails.addAll(details);
 			}
 		}
@@ -585,13 +620,15 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			auditDetailList.addAll(listDeletion(vASRecording, "_Temp", auditHeader.getAuditTranType()));
 			getVASRecordingDAO().delete(vASRecording, "_Temp");
 
-			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], vASRecording.getBefImage(), vASRecording));
+			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					vASRecording.getBefImage(), vASRecording));
 			auditHeader.setAuditDetails(auditDetailList);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], vASRecording.getBefImage(), vASRecording));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				vASRecording.getBefImage(), vASRecording));
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -624,7 +661,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new VASRecording(), vASRecording.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], vASRecording.getBefImage(), vASRecording));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				vASRecording.getBefImage(), vASRecording));
 
 		auditDetails.addAll(listDeletion(vASRecording, "_Temp", auditHeader.getAuditTranType()));
 		getVASRecordingDAO().delete(vASRecording, "_Temp");
@@ -640,36 +678,41 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	/**
 	 * Method for Checking Cancellation of VAS Record
+	 * 
 	 * @param recording
 	 */
-	private String procVasCancellation(VASRecording recording, boolean approvalProcess){
+	private String procVasCancellation(VASRecording recording, boolean approvalProcess) {
 		logger.debug("Entering");
 
 		// VAS Cancellation validations
-		if(!StringUtils.equals(recording.getVasStatus(), VASConsatnts.STATUS_CANCEL) || !recording.isFinanceProcess()){
+		if (!StringUtils.equals(recording.getVasStatus(), VASConsatnts.STATUS_CANCEL)
+				|| !recording.isFinanceProcess()) {
 			logger.debug("Leaving");
 			return null;
 		}
 
 		// Get Fee detail record
 		FinFeeDetail vasFeeDetail = finFeeDetailDAO.getVasFeeDetailById(recording.getVasReference(), false, "");
-		if(vasFeeDetail == null){
+		if (vasFeeDetail == null) {
 			logger.debug("Leaving");
 			return "90323";
 		}
 
 		// If No Balance amount to schedule effected
-		if(vasFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) == 0){
+		if (vasFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) == 0) {
 			finFeeDetailDAO.statusUpdate(vasFeeDetail.getFeeID(), FinanceConstants.FEE_STATUS_CANCEL, false, "");
 			logger.debug("Leaving");
 			return null;
 		}
 
 		// If No Schedule Maintenance , no need to check Finance Details
-		if(!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE) &&
-				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) &&
-				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) &&
-				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)){
+		if (!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)
+				&& !StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+				&& !StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+				&& !StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)) {
 
 			finFeeDetailDAO.statusUpdate(vasFeeDetail.getFeeID(), FinanceConstants.FEE_STATUS_CANCEL, false, "");
 			logger.debug("Leaving");
@@ -678,7 +721,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Check Finance Maintenance Status if any and stop except "Deduct From Disbursement"
 		boolean finOnMaintenance = financeMainDAO.isFinReferenceExists(recording.getPrimaryLinkRef(), "_Temp", false);
-		if(finOnMaintenance){
+		if (finOnMaintenance) {
 			logger.debug("Leaving");
 			return "90324";
 		}
@@ -690,14 +733,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		Date recalFromDate = null;
 		for (int i = 1; i < schdList.size(); i++) {
 			FinanceScheduleDetail curSchd = schdList.get(i);
-			if(recalFromDate == null){
+			if (recalFromDate == null) {
 				recalFromDate = curSchd.getSchDate();
 			}
-			if(curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || 
-					curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 ||
-					curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 ||
-					curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0){
-				if(!StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())){
+			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (!StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
 					isSchdPaid = true;
 					break;
 				}
@@ -705,13 +748,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		// If Schedules Paid for any dates then VAS cancellation not allowed
-		if(isSchdPaid){
+		if (isSchdPaid) {
 			logger.debug("Leaving");
 			return "90325";
 		}
 
 		// If not approval Process, No need of actual updations Only validation is enough
-		if(!approvalProcess){
+		if (!approvalProcess) {
 			logger.debug("Leaving");
 			return null;
 		}
@@ -720,7 +763,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		// 1. Deduct From Disbursement : No Change
 		// 2. Add to Disbursement on Profit Calculation : Do partial Settlement on Start Date and Recalculate total EMI
 		// 3. Schedule Terms(First Term / N Terms / Entire Tenor) : Schedule Reversal of Sum Amount in Fees
-		if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+		if (StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 
 			FinanceMain financeMain = scheduleData.getFinanceMain();
 			financeMain.setEventFromDate(financeMain.getFinStartDate());
@@ -731,7 +774,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Disbursement Details updation
 			for (FinanceDisbursement cusrDisb : scheduleData.getDisbursementDetails()) {
-				if(DateUtility.compare(cusrDisb.getDisbDate(), financeMain.getFinStartDate()) == 0){
+				if (DateUtility.compare(cusrDisb.getDisbDate(), financeMain.getFinStartDate()) == 0) {
 					cusrDisb.setFeeChargeAmt(cusrDisb.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
 					break;
 				}
@@ -739,7 +782,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Schedule Details Updation
 			for (FinanceScheduleDetail curSchd : schdList) {
-				if(DateUtility.compare(curSchd.getSchDate(), financeMain.getFinStartDate()) == 0){
+				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getFinStartDate()) == 0) {
 					curSchd.setFeeChargeAmt(curSchd.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
 					break;
 				}
@@ -756,16 +799,20 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			financeMainDAO.update(scheduleData.getFinanceMain(), TableType.MAIN_TAB, false);
 			listSave(scheduleData);
 
-		}else if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) ||
-				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
-				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)){
+		} else if (StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+				CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+				|| StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+				|| StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)) {
 
-			List<FinFeeScheduleDetail> feeSchdList = finFeeScheduleDetailDAO.getFeeScheduleByFeeID(vasFeeDetail.getFeeID(), false, "");
+			List<FinFeeScheduleDetail> feeSchdList = finFeeScheduleDetailDAO
+					.getFeeScheduleByFeeID(vasFeeDetail.getFeeID(), false, "");
 			for (FinFeeScheduleDetail feeSchd : feeSchdList) {
 
 				// Schedule Details Updation
 				for (FinanceScheduleDetail curSchd : schdList) {
-					if(DateUtility.compare(curSchd.getSchDate(), feeSchd.getSchDate()) == 0){
+					if (DateUtility.compare(curSchd.getSchDate(), feeSchd.getSchDate()) == 0) {
 						curSchd.setFeeSchd(curSchd.getFeeSchd().subtract(feeSchd.getSchAmount()));
 						curSchd.setSchdFeeOS(curSchd.getSchdFeeOS().subtract(feeSchd.getSchAmount()));
 						break;
@@ -773,7 +820,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			}
 
-			financeScheduleDetailDAO.deleteByFinReference(scheduleData.getFinanceMain().getFinReference(), "", false, 0);
+			financeScheduleDetailDAO.deleteByFinReference(scheduleData.getFinanceMain().getFinReference(), "", false,
+					0);
 			financeScheduleDetailDAO.saveList(schdList, "", false);
 
 		}
@@ -792,14 +840,15 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 *            (String)
 	 * @param isWIF
 	 *            (boolean)
-	 * **/
+	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
 		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
-		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finReference,"", false));
+		finSchData
+				.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false));
 		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, "", false));
 		logger.debug("Leaving");
 		return finSchData;
@@ -830,12 +879,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
 		}
 		financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
-		
+
 		for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
 			schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
 		}
 		financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "", false);
-		
+
 		for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
 			schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
 		}
@@ -845,14 +894,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 
-	 * 1) validate the audit detail 
-	 * 2) if any error/Warnings then assign the to auditHeader 
-	 * 3) identify the next process
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the next process
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -860,7 +908,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		AuditDetail auditDetail = getVasRecordingValidation().validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = getVasRecordingValidation().validation(auditHeader.getAuditDetail(),
+				auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
@@ -889,12 +938,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if (vasRecording.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = vasRecording.getAuditDetailMap().get("ExtendedFieldDetail");
 			ExtendedFieldHeader extendedFieldHeader = vasRecording.getVasConfiguration().getExtendedFieldHeader();
-			StringBuilder sb = new StringBuilder();
-			sb.append(extendedFieldHeader.getModuleName());
-			sb.append("_");
-			sb.append(extendedFieldHeader.getSubModuleName());
-			sb.append("_ED");
-			details = getExtendedFieldDetailsValidation().vaildateDetails(details, method, usrLanguage, sb.toString());
+			details = extendedFieldDetailsService.validateExtendedDdetails(extendedFieldHeader, details, method,
+					usrLanguage);
 			auditDetails.addAll(details);
 		}
 
@@ -906,7 +951,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return auditHeader;
 
 	}
-
 
 	/**
 	 * Method for Fetching Finance Reference Details List by using FinReference
@@ -921,7 +965,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Fetch Total Process editor Details 
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_VASVIEW");
+				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+				"_VASVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {
@@ -957,7 +1002,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param tableType
 	 * @return
 	 */
-	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, VASRecording vasRecording, String tableType) {
+	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, VASRecording vasRecording,
+			String tableType) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -1056,7 +1102,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					getDocumentDetailsDAO().update(documentDetails, tableType);
 				}
 
-				if (deleteRecord && ((StringUtils.isEmpty(tableType) && !isTempRecord) || (StringUtils.isNotEmpty(tableType)))) {
+				if (deleteRecord
+						&& ((StringUtils.isEmpty(tableType) && !isTempRecord) || (StringUtils.isNotEmpty(tableType)))) {
 					if (!tableType.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
 						getDocumentDetailsDAO().delete(documentDetails, tableType);
 					}
@@ -1122,132 +1169,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Extended FieldDetails
-	 * 
-	 * @param auditDetails
-	 * @param vasRecording
-	 * @param tableType
-	 * @return
-	 */
-	private List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> auditDetails, VASRecording vasRecording, String tableType) {
-		logger.debug("Entering");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		StringBuilder tableName = new StringBuilder();
-		tableName.append(VASConsatnts.MODULE_NAME);
-		tableName.append("_");
-		tableName.append(vasRecording.getProductCode());
-		tableName.append("_ED");
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) auditDetails.get(i).getModelData();
-
-			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
-				continue;
-			}
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(tableType)) {
-				approveRec = true;
-				extendedFieldRender.setRoleCode("");
-				extendedFieldRender.setNextRoleCode("");
-				extendedFieldRender.setTaskId("");
-				extendedFieldRender.setNextTaskId("");
-			}
-
-			//Table Name addition for Audit
-			extendedFieldRender.setTableName(tableName.toString());
-			extendedFieldRender.setWorkflowId(0);
-
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (extendedFieldRender.isNewRecord()) {
-				saveRecord = true;
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (extendedFieldRender.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-			if (approveRec) {
-				rcdType = extendedFieldRender.getRecordType();
-				recordStatus = extendedFieldRender.getRecordStatus();
-				extendedFieldRender.setRecordType("");
-				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-			if (saveRecord || updateRecord) {
-				if (saveRecord) {
-					mapValues.put("Reference", extendedFieldRender.getReference());
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-				}
-				mapValues.put("Version", extendedFieldRender.getVersion());
-				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-				mapValues.put("TaskId", extendedFieldRender.getTaskId());
-				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-				mapValues.put("RecordType", extendedFieldRender.getRecordType());
-				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-			}
-
-			if (saveRecord) {
-				getExtendedFieldRenderDAO().save(extendedFieldRender.getMapValues(), tableType, tableName.toString());
-			}
-
-			if (updateRecord) {
-				getExtendedFieldRenderDAO().update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), tableType, tableName.toString());
-			}
-
-			if (deleteRecord) {
-				getExtendedFieldRenderDAO().delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableType, tableName.toString());
-			}
-			if (approveRec) {
-				extendedFieldRender.setRecordType(rcdType);
-				extendedFieldRender.setRecordStatus(recordStatus);
-			}
-
-			// Setting Extended field is to identify record related to Extended fields
-			extendedFieldRender.setBefImage(extendedFieldRender);
-			auditDetails.get(i).setExtended(true);
-			auditDetails.get(i).setModelData(extendedFieldRender);
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
 	 * @param auditHeader
@@ -1298,7 +1219,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// VAS Extended Field Details
 		if (vasRecording.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetail", setExtendedFieldsAuditData(vasRecording, auditTranType, method));
+			auditDetailMap.put("ExtendedFieldDetail", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(vasRecording.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetail"));
 		}
 
@@ -1318,7 +1240,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param method
 	 * @return
 	 */
-	public List<AuditDetail> setDocumentDetailsAuditData(VASRecording vasRecording, String auditTranType, String method) {
+	public List<AuditDetail> setDocumentDetailsAuditData(VASRecording vasRecording, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1375,7 +1298,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for checkLists 
+	 * Method For Preparing List of AuditDetails for checkLists
 	 * 
 	 * @param vasRecording
 	 * @param auditTranType
@@ -1434,7 +1357,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setExtendedFieldsAuditData(VASRecording vasRecording, String auditTranType, String method) {
+	private List<AuditDetail> setExtendedFieldsAuditData(VASRecording vasRecording, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1491,7 +1415,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		extendedFieldRender.setAuditMapValues(auditMapValues);
 
 		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-		AuditDetail auditDetail = new AuditDetail(auditTranType,  1, fields[0], fields[1], extendedFieldRender.getBefImage(), extendedFieldRender);
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1],
+				extendedFieldRender.getBefImage(), extendedFieldRender);
 		auditDetail.setExtended(true);
 		auditDetails.add(auditDetail);
 
@@ -1534,58 +1459,19 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = vasRecording.getAuditDetailMap().get("ExtendedFieldDetail");
-
-		ExtendedFieldRender fieldRender = null;
 		if (extendedDetails != null && extendedDetails.size() > 0) {
-
 			ExtendedFieldHeader extendedFieldHeader = vasRecording.getVasConfiguration().getExtendedFieldHeader();
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(extendedFieldHeader.getModuleName());
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_ED");
+			auditList.addAll(extendedFieldDetailsService.delete(extendedFieldHeader, vasRecording.getVasReference(),
+					tableType, auditTranType, extendedDetails));
 
-			for (int i = 0; i < extendedDetails.size(); i++) {
-				fieldRender = (ExtendedFieldRender) extendedDetails.get(i).getModelData();
-				fieldRender.setTableName(tableName.toString());
-
-				if (StringUtils.isEmpty(tableType)) {
-					fieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else {
-					fieldRender.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-				}
-				// Audit Details Preparation
-				HashMap<String, Object> auditMapValues = (HashMap<String, Object>) fieldRender.getMapValues();
-				auditMapValues.put("Reference", vasRecording.getVasReference());
-				auditMapValues.put("SeqNo", fieldRender.getSeqNo());
-				auditMapValues.put("Version", fieldRender.getVersion());
-				auditMapValues.put("LastMntOn", fieldRender.getLastMntOn());
-				auditMapValues.put("LastMntBy", fieldRender.getLastMntBy());
-				auditMapValues.put("RecordStatus", fieldRender.getRecordStatus());
-				auditMapValues.put("RoleCode", fieldRender.getRoleCode());
-				auditMapValues.put("NextRoleCode", fieldRender.getNextRoleCode());
-				auditMapValues.put("TaskId", fieldRender.getTaskId());
-				auditMapValues.put("NextTaskId", fieldRender.getNextTaskId());
-				auditMapValues.put("RecordType", fieldRender.getRecordType());
-				auditMapValues.put("WorkflowId", fieldRender.getWorkflowId());
-
-				// Audit Saving Purpose
-				fieldRender.setAuditMapValues(auditMapValues);
-				fieldRender.setBefImage(fieldRender);
-
-				String[] fields = PennantJavaUtil.getExtendedFieldDetails(fieldRender);
-				AuditDetail auditDetail = new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fieldRender.getBefImage(), fieldRender);
-				auditDetail.setExtended(true);
-				auditList.add(auditDetail);
-			}
-			getExtendedFieldRenderDAO().deleteList(vasRecording.getVasReference(), tableName.toString(), tableType);
 		}
+
 		logger.debug("Leaving");
 		return auditList;
 	}
 
 	/**
-	 * Method for Deleting  CheckLists related records in _Temp/Main tables depend on method type
+	 * Method for Deleting CheckLists related records in _Temp/Main tables depend on method type
 	 * 
 	 * @param vasRecording
 	 * @param tableType
@@ -1602,8 +1488,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			for (int i = 0; i < checkList.size(); i++) {
 				vasCheckListRef = checkList.get(i);
 				String[] fields = PennantJavaUtil.getFieldDetails(checklist, checklist.getExcludeFields());
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-						vasCheckListRef.getBefImage(), vasCheckListRef));
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], vasCheckListRef.getBefImage(),
+						vasCheckListRef));
 			}
 			getFinanceCheckListReferenceDAO().delete(vasCheckListRef.getFinReference(), tableType);
 		}
@@ -1668,11 +1554,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	/**
 	 * Method for Execute posting Details on Core Banking Side
+	 * 
 	 * @param auditHeader
 	 * @param curBDay
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
 	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
@@ -1681,7 +1568,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
 
-		if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
@@ -1689,27 +1576,27 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.setFinReference(vASRecording.getVasReference());
 			aeEvent.setValueDate(curBDay);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			if(amountCodes == null){
+			if (amountCodes == null) {
 				amountCodes = new AEAmountCodes();
 			}
 
 			// Based on VAS Created Against, details will be captured  
-			if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
+			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
 				FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
 				amountCodes.setFinType(financeMain.getFinType());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
-			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())){
-				Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(),"");
+			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())) {
+				Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
 				aeEvent.setBranch(customer.getCustDftBranch());
 				aeEvent.setCcy(customer.getCustBaseCcy());
 				aeEvent.setCustID(customer.getCustID());
-			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())){
-				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
-						vASRecording.getPrimaryLinkRef(),"");
+			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())) {
+				CollateralSetup collateralSetup = collateralSetupDAO
+						.getCollateralSetupByRef(vASRecording.getPrimaryLinkRef(), "");
 				//TODO:Need to modify for getting branch as per performance
-				Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(),"");
+				Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(), "");
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
 				aeEvent.setBranch(customer.getCustDftBranch());
@@ -1720,16 +1607,18 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
 			postingsPreparationUtil.postAccounting(aeEvent);
 
-		}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
+		} else if (StringUtils.equals("C", vASRecording.getVasStatus())) {
 			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference());
 		}
 
 		logger.debug("Leaving");
 	}
+
 	@Override
 	public List<VASRecording> getVasRecordingsByPrimaryLinkRef(String primaryLinkRef) {
-		return vASRecordingDAO.getVASRecordingsByLinkRef(primaryLinkRef,"");
+		return vASRecordingDAO.getVASRecordingsByLinkRef(primaryLinkRef, "");
 	}
+
 	//validations For API Specific
 	@Override
 	public AuditDetail doValidations(VASRecording vasRecording) {
@@ -1752,14 +1641,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			} else {
-				if(StringUtils.equals("Loan", vasRecording.getPostingAgainst())){
+				if (StringUtils.equals("Loan", vasRecording.getPostingAgainst())) {
 					vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 				}
 			}
 
 			if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
-					|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst()) || StringUtils
-					.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
+					|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst())
+					|| StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "postingAgainst";
 				valueParm[1] = vasRecording.getPostingAgainst();
@@ -1789,8 +1678,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
-					.getProductCode());
+			VASConfiguration vASConfiguration = vASConfigurationService
+					.getVASConfigurationByCode(vasRecording.getProductCode());
 			if (vASConfiguration == null || !vASConfiguration.isActive()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Product";
@@ -1801,7 +1690,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
 					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
-			if(financeWorkFlow == null){
+			if (financeWorkFlow == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = vasRecording.getProductCode();
 				valueParm[1] = "workflow";
@@ -1826,7 +1715,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst())) {
+			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_FINANCE,
+					vasRecording.getPostingAgainst())) {
 				int count = financeMainDAO.getFinanceCountById(vasRecording.getPrimaryLinkRef(), "", false);
 				if (count <= 0) {
 					String[] valueParm = new String[1];
@@ -1905,7 +1795,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						|| vasRecording.getValueDate().after(DateUtility.getAppDate())) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "Value Date";
-					valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
+					valueParm[1] = DateUtility
+							.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
 					valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 					return auditDetail;
@@ -1919,8 +1810,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
-					if(vasRecording.getAccrualTillDate().before(DateUtility.getAppDate())
-							|| vasRecording.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+					if (vasRecording.getAccrualTillDate().before(DateUtility.getAppDate()) || vasRecording
+							.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "AccrualTillDate";
 						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
@@ -1931,7 +1822,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 				}
 			} else {
-				if(vasRecording.getAccrualTillDate() != null){
+				if (vasRecording.getAccrualTillDate() != null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "accrualTillDate";
 					valueParm[1] = "FeeAccrued";
@@ -1949,8 +1840,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
-					if(vasRecording.getRecurringDate().before(DateUtility.getAppDate())
-							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+					if (vasRecording.getRecurringDate().before(DateUtility.getAppDate())
+							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "RecurringDate";
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
@@ -1960,7 +1851,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					}
 				}
 			} else {
-				if(vasRecording.getRecurringDate() != null){
+				if (vasRecording.getRecurringDate() != null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "RecurringDate";
 					valueParm[1] = "RecurringType is Active";
@@ -1971,7 +1862,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				vasRecording.setRecurringDate(DateUtility.getAppDate());
 				vasRecording.setRenewalFee(BigDecimal.ZERO);
 			}
-			if (StringUtils.isNotBlank(vasRecording.getDsaId())){
+			if (StringUtils.isNotBlank(vasRecording.getDsaId())) {
 				RelationshipOfficer relationshipOfficer = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
 				if (relationshipOfficer == null) {
@@ -1982,10 +1873,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (StringUtils.isNotBlank(vasRecording.getDmaId())){
-				RelationshipOfficer dmaCode = relationshipOfficerDAO
-						.getRelationshipOfficerById(vasRecording.getDmaId(), "");
-				if (dmaCode == null ) {
+			if (StringUtils.isNotBlank(vasRecording.getDmaId())) {
+				RelationshipOfficer dmaCode = relationshipOfficerDAO.getRelationshipOfficerById(vasRecording.getDmaId(),
+						"");
+				if (dmaCode == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDmaId();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm));
@@ -2004,7 +1895,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (StringUtils.isNotBlank(vasRecording.getReferralId())){
+			if (StringUtils.isNotBlank(vasRecording.getReferralId())) {
 				RelationshipOfficer referralId = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getReferralId(), "");
 				if (referralId == null) {
@@ -2039,8 +1930,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
-					int count = getCustomerDocumentDAO()
-							.getCustCountryCount(detail.getCustDocIssuedCountry());
+					int count = getCustomerDocumentDAO().getCustCountryCount(detail.getCustDocIssuedCountry());
 					if (count <= 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "custDocIssuedCountry";
@@ -2051,10 +1941,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					if (StringUtils.equals(detail.getDocCategory(), "03")) {
 						Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
-						if(detail.getCustDocTitle() !=null){
-							detail.setCustDocTitle(detail.getCustDocTitle().toUpperCase());;
+						if (detail.getCustDocTitle() != null) {
+							detail.setCustDocTitle(detail.getCustDocTitle().toUpperCase());
+							;
 							Matcher matcher = pattern.matcher(detail.getCustDocTitle());
-							if(matcher.find() == false ){
+							if (matcher.find() == false) {
 								String[] valueParm = new String[0];
 								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm));
 								auditDetail.setErrorDetail(errorDetail);
@@ -2072,7 +1963,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							return auditDetail;
 						}
 					}
-					DocumentType docType = documentTypeDAO.getDocumentTypeById(detail.getDocCategory(),"");
+					DocumentType docType = documentTypeDAO.getDocumentTypeById(detail.getDocCategory(), "");
 					if (docType == null || docType.isDocIsCustDoc()) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
@@ -2080,17 +1971,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
-					if(!(StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_PDF) 
-							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_DOC)
-							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_DOCX)
-							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_IMAGE))){
+					if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDoctype();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-					String docFormate = detail.getDocName()
-							.substring(detail.getDocName().lastIndexOf(".") + 1);
+					String docFormate = detail.getDocName().substring(detail.getDocName().lastIndexOf(".") + 1);
 					if (StringUtils.equals(detail.getDocName(), docFormate)) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "docName: " + docFormate;
@@ -2117,7 +2007,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			}
 			int extendedDetailsCount = 0;
-			List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails();
+			List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader()
+					.getExtendedFieldDetails();
 			if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
 				for (ExtendedFieldDetail detail : exdFldConfig) {
 					if (detail.isFieldMandatory()) {
@@ -2125,12 +2016,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					}
 				}
 			}
-			if (extendedDetailsCount > 0 && (vasRecording.getExtendedDetails() == null
-					|| vasRecording.getExtendedDetails().isEmpty())) {
+			if (extendedDetailsCount > 0
+					&& (vasRecording.getExtendedDetails() == null || vasRecording.getExtendedDetails().isEmpty())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "ExtendedDetails";
-				 auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-				 return auditDetail;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return auditDetail;
 			}
 			if (vasRecording.getExtendedDetails() != null && !vasRecording.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
@@ -2155,11 +2046,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							for (ExtendedFieldDetail detail : vASConfiguration.getExtendedFieldHeader()
 									.getExtendedFieldDetails()) {
 								if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
-									if(detail.isFieldMandatory()) {
+									if (detail.isFieldMandatory()) {
 										exdMandConfigCount++;
 									}
-									List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(detail, 
-											extendedFieldData);
+									List<ErrorDetails> errList = extendedFieldDetailsService
+											.validateExtendedFieldData(detail, extendedFieldData);
 									auditDetail.getErrorDetails().addAll(errList);
 									isFeild = true;
 								}
@@ -2180,8 +2071,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 
 			}
-			Map<String, Object>	mapValues = new HashMap<String, Object>();
-			if(vasRecording.getExtendedDetails() != null){
+			Map<String, Object> mapValues = new HashMap<String, Object>();
+			if (vasRecording.getExtendedDetails() != null) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 						for (ExtendedFieldDetail detail : exdFldConfig) {
@@ -2202,18 +2093,20 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			// do script pre validation and post validation
 			ScriptErrors errors = null;
 			if (vASConfiguration.isPostValidationReq()) {
-				errors = scriptValidationService.getPostValidationErrors(vASConfiguration.getPostValidation(), mapValues);
+				errors = extendedFieldDetailsService.getPostValidationErrors(vASConfiguration.getPostValidation(),
+						mapValues);
 			}
 			if (errors != null) {
 				List<ScriptError> errorsList = errors.getAll();
 				for (ScriptError error : errorsList) {
-					auditDetail.setErrorDetail(new ErrorDetails("","90909","",error.getValue(),null,null));
+					auditDetail.setErrorDetail(new ErrorDetails("", "90909", "", error.getValue(), null, null));
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -2238,14 +2131,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.vASConfigurationService = vASConfigurationService;
 	}
 
-	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
-		return extendedFieldRenderDAO;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
@@ -2260,22 +2145,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
-	}
-
-	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
-		return extendedFieldHeaderDAO;
-	}
-
-	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
-		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
-	}
-
-	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
-		return extendedFieldDetailDAO;
-	}
-
-	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
-		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 	}
 
 	public DocumentManagerDAO getDocumentManagerDAO() {
@@ -2302,13 +2171,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vasDocumentValidation;
 	}
 
-	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
-		if (extendedFieldDetailsValidation == null) {
-			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
-		}
-		return extendedFieldDetailsValidation;
-	}
-
 	public VASRecordingDAO getvASRecordingDAO() {
 		return vASRecordingDAO;
 	}
@@ -2333,13 +2195,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.vasDocumentValidation = vasDocumentValidation;
 	}
 
-	public void setExtendedFieldDetailsValidation(ExtendedFieldDetailsValidation extendedFieldDetailsValidation) {
-		this.extendedFieldDetailsValidation = extendedFieldDetailsValidation;
-	}
-
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
+
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
@@ -2347,6 +2206,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public TransactionEntryDAO getTransactionEntryDAO() {
 		return transactionEntryDAO;
 	}
+
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
@@ -2354,6 +2214,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
+
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
@@ -2361,19 +2222,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public AccountProcessUtil getAccountProcessUtil() {
 		return accountProcessUtil;
 	}
+
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public ScriptValidationService getScriptValidationService() {
-		return scriptValidationService;
-	}
-	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
-		this.scriptValidationService = scriptValidationService;
 	}
 
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
@@ -2411,9 +2266,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
+
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}

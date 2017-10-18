@@ -82,16 +82,12 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Column;
-import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -203,9 +199,9 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
-import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
@@ -227,6 +223,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
@@ -238,6 +235,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
@@ -260,7 +258,6 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -753,7 +750,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
 	private MailUtil										mailUtil;
-	private AdditionalDetailValidation						additionalDetailValidation;
 	private StepPolicyService								stepPolicyService;
 	private FinanceReferenceDetailService					financeReferenceDetailService;
 	private RuleExecutionUtil								ruleExecutionUtil;
@@ -831,6 +827,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	private boolean											isBranchanged;
+
+	//Extended fields
+	private ExtendedFieldCtrl								extendedFieldCtrl		= null;
 
 	/**
 	 * default constructor.<br>
@@ -1584,10 +1583,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
 
-		// Additional Detail Tab Dynamic Display
-		if (StringUtils.isEmpty(moduleDefiner)) {
-			//appendAddlDetailsTab(onLoad);
-		}
+		// Extended Field Details
+		appendExtendedFieldDetails(aFinanceDetail);
 
 		logger.debug("Leaving");
 	}
@@ -2113,81 +2110,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Preparation of Additional Details Tab
-	 * 
-	 * @throws ParseException
-	 */
-	protected void appendAddlDetailsTab(boolean onLoad) throws ParseException {
-		logger.debug("Entering");
-		List<ExtendedFieldDetail> extendedFieldDetails = null;
-		if (getFinanceDetail().getExtendedFieldHeader() != null) {
-			extendedFieldDetails = getFinanceDetail().getExtendedFieldHeader().getExtendedFieldDetails();
-		}
-		if (extendedFieldDetails != null && !extendedFieldDetails.isEmpty()) {
-			if (onLoad) {
-				createTab(AssetConstants.UNIQUE_ID_ADDITIONALFIELDS, true);
-			} else {
-
-				Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_ADDITIONALFIELDS);
-				//append financeBasic details
-				Groupbox gb_finBasicdetails = new Groupbox();
-				gb_finBasicdetails.setZclass("null");
-				tabpanel.appendChild(gb_finBasicdetails);
-
-				Groupbox gbAdditionalDetail = new Groupbox();
-				Caption caption = new Caption();
-				caption.setLabel(Labels.getLabel("finAdditionalDetails"));
-				caption.setParent(gbAdditionalDetail);
-				caption.setStyle("font-weight:bold;color:#FF6600;");
-				Grid addlGrid = new Grid();
-				addlGrid.setSclass("GridLayoutNoBorder");
-				addlGrid.setSizedByContent(true);
-				tabpanel.appendChild(gbAdditionalDetail);
-
-				try {
-					final HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("parentCtrl", tabpanel);
-					map.put("addlFields", true);
-					map.put("finMainBaseCtrl", this);
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
-							gb_finBasicdetails, map);
-				} catch (Exception e) {
-					logger.debug(e);
-				}
-
-				Columns cols = new Columns();
-				addlGrid.appendChild(cols);
-				int columnCount = Integer.parseInt(getFinanceDetail().getExtendedFieldHeader().getNumberOfColumns());
-
-				Column col = new Column();
-				col.setWidth("250px");
-				cols.appendChild(col);
-				col = new Column();
-				col.setWidth("5px");
-				cols.appendChild(col);
-				col = new Column();
-				cols.appendChild(col);
-				if (columnCount == 2) {
-					col = new Column();
-					col.setWidth("250px");
-					cols.appendChild(col);
-					col = new Column();
-					col.setWidth("5px");
-					cols.appendChild(col);
-					col = new Column();
-					cols.appendChild(col);
-				}
-				additionalDetails = new Rows();
-				addlGrid.appendChild(additionalDetails);
-				addlGrid.setParent(gbAdditionalDetail);
-				getAdditionalDetailValidation().doPrepareAdditionalDetails(
-						getFinanceDetail().getLovDescExtendedFieldValues(), extendedFieldDetails, getMainWindow(),
-						additionalDetails, columnCount, isReadOnly("FinanceMainDialog_addlDetail"));
-			}
-		}
-		logger.debug("Leaving");
-	}
 
 	/**
 	 * Method for Preparation of Check List Details Window
@@ -3647,10 +3569,48 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_secondaryAccount.setVisible(false);
 			}
 		}
-
+				
 		logger.debug("Leaving");
 	}
 
+	
+	/**
+	 * This method is for append extended field details
+	 */
+	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail) {
+		logger.debug("Entering");
+ 
+		try {
+			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+			if (aFinanceMain == null) {
+				return;
+			}
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
+					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory());
+			if (extendedFieldHeader == null) {
+				return;
+			}
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+					.getExtendedFieldRender(aFinanceMain.getFinReference());
+			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			aFinanceDetail.setExtendedFieldHeader(extendedFieldHeader);
+			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
+
+			if (aFinanceDetail.getBefImage() != null) {
+				aFinanceDetail.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				aFinanceDetail.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+		logger.debug("Leaving");
+	}
+	
 	public void onChangecustPayAmount(Event event) {
 		logger.debug("Entering" + event.toString());
 		BigDecimal totalCustPayAmt = BigDecimal.ZERO;
@@ -5478,6 +5438,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
 
+		// Extended Field validations
+		aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+				
 		//Save Contributor List Details
 		if (isRIAExist) {
 			aFinanceDetail = contributorDetailsDialogCtrl.doSaveContributorsDetail(aFinanceDetail,
@@ -5940,12 +5903,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}else{
 			aFinanceDetail.setTaxDetail(null);
 		}
-
-		// Finance Additional Details Tab ----> For Saving The Additional Fields
-
-		aFinanceDetail = getAdditionalDetailValidation().doSaveAdditionFieldDetails(aFinanceDetail,
-				this.additionalDetails, new ArrayList<WrongValueException>(),
-				getTab(AssetConstants.UNIQUE_ID_ADDITIONALFIELDS), isReadOnly("FinanceMainDialog_addlDetail"));
 
 		//Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
@@ -6574,7 +6531,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (aFinanceDetail.getExtendedFieldRenderList() != null
 				&& !aFinanceDetail.getExtendedFieldRenderList().isEmpty()) {
 			for (ExtendedFieldRender extendedFieldDetail : aFinanceDetail.getExtendedFieldRenderList()) {
-				extendedFieldDetail.setReference(aFinanceDetail.getFinReference());
+				extendedFieldDetail.setReference(afinanceMain.getFinReference());
 				extendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 				extendedFieldDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				extendedFieldDetail.setRecordStatus(afinanceMain.getRecordStatus());
@@ -6592,6 +6549,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// Extended Field details
+		if (aFinanceDetail.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
+			details.setReference(afinanceMain.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(afinanceMain.getRecordStatus());
+			details.setRecordType(afinanceMain.getRecordType());
+			details.setVersion(afinanceMain.getVersion());
+			details.setWorkflowId(afinanceMain.getWorkflowId());
+			details.setTaskId(taskId);
+			details.setNextTaskId(nextTaskId);
+			details.setRoleCode(getRole());
+			details.setNextRoleCode(nextRoleCode);
+			details.setNewRecord(aFinanceDetail.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(afinanceMain.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+		
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -11167,7 +11147,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setInitiateDate(DateUtility.getAppDate());
 			}
 		}
-
+ 
 		return wve;
 	}
 
@@ -15696,14 +15676,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public MailUtil getMailUtil() {
 		return mailUtil;
-	}
-
-	public AdditionalDetailValidation getAdditionalDetailValidation() {
-		return additionalDetailValidation;
-	}
-
-	public void setAdditionalDetailValidation(AdditionalDetailValidation additionalDetailValidation) {
-		this.additionalDetailValidation = additionalDetailValidation;
 	}
 
 	public Window getMainWindow() {

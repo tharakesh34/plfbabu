@@ -97,7 +97,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName," );
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ModuleId = :ModuleId ");
@@ -131,7 +132,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
@@ -224,9 +226,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ModuleId, ModuleName, SubModuleName, TabHeading, NumberOfColumns, ");
+		insertSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :TabHeading, :NumberOfColumns, ");
+		insertSql.append(" :PreValidationReq, :PostValidationReq, :PreValidation, :PostValidation, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -260,6 +264,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" Set  ModuleName = :ModuleName, " );
 		updateSql.append(" SubModuleName = :SubModuleName, TabHeading = :TabHeading, " );
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
+		updateSql.append(" PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, ");
+		updateSql.append(" PreValidation = :PreValidation, PostValidation = :PostValidation, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

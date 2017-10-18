@@ -1248,13 +1248,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-
-				// For Saving The Additional Fields
-				// Additional Field Details Validation and Saving
-				afinanceDetail = getAdditionalDetailValidation().doSaveAdditionFieldDetails(afinanceDetail,
-						this.additionalDetails, new ArrayList<WrongValueException>(), addlDetailTab,
-						isReadOnly("FinanceMainDialog_addlDetail"));
-
 			}
 
 			try {
@@ -1454,14 +1447,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
-
-		// Finance Additional Details Tab ----> For Saving The Additional Fields
-		// if (this.additionalDetails!=null) {
-		// aFinanceDetail =
-		// getAdditionalDetailValidation().doSaveAdditionFieldDetails(aFinanceDetail,
-		// this.additionalDetails, new ArrayList<WrongValueException>(),
-		// addlDetailTab, isReadOnly("FinanceMainDialog_addlDetail"));
-		// }
 
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 

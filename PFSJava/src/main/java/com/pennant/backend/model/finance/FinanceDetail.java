@@ -202,7 +202,9 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	//Additional Fields
 	//**********************************************************************
-	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldHeader						extendedFieldHeader;
+	private ExtendedFieldRender						extendedFieldRender;
+	
 	private HashMap<String, Object> lovDescExtendedFieldValues = new HashMap<String, Object>(1);
 	//WriteoffPayment
 	private FinWriteoffPayment finwriteoffPayment;
@@ -847,6 +849,20 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setProcessStage(String processStage) {
 		this.processStage = processStage;
+	}
+
+	/**
+	 * @return the extendedFieldRender
+	 */
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	/**
+	 * @param extendedFieldRender the extendedFieldRender to set
+	 */
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
 	}
 
 

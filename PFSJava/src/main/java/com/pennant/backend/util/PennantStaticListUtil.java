@@ -209,6 +209,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
+	private static ArrayList<ValueLabel> configTypes;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -2859,5 +2860,15 @@ public class PennantStaticListUtil {
 		return monthEndList;
 	}
 	
+
+	public static ArrayList<ValueLabel> getConfigTypes() {
+
+		if (configTypes == null) {
+			configTypes = new ArrayList<ValueLabel>(3);
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_CUSTOMER, Labels.getLabel("label_ExtendedFieldModule_Customer.value")));
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_LOAN, Labels.getLabel("label_ExtendedFieldModule_Loan.value")));
+		}
+		return configTypes;
+	}
 }
 
