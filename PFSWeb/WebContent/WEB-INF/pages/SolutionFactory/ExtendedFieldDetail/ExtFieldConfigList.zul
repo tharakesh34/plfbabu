@@ -87,7 +87,7 @@
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
 									
-									<label  value="${c:l('label_ExtendedFieldConfig_RecordType.value')}" />
+									<label  value="${c:l('label_ExtendedFieldConfig_RecordOperation.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>

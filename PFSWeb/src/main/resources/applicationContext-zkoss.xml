@@ -1570,6 +1570,18 @@
 
 	<!--============ Extended Field Detail ============== -->
 
+	<bean id="extendedFieldDetailListCtrl"
+		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
+	</bean>
+
+	<bean id="extendedFieldDetailDialogCtrl"
+		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
+	</bean>
+	
 	<bean id="extendedFieldDialogCtrl"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
