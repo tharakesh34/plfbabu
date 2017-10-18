@@ -68,4 +68,17 @@ public class MenuDomain extends MenuItemDomain {
 	}
 
 	private List<IMenuDomain> items = new ArrayList<IMenuDomain>();
+	
+	public MenuDomain getCopy(List<IMenuDomain> items) {
+		MenuDomain menu = new MenuDomain();
+		menu.setId(getId());
+		menu.setZulNavigation(getZulNavigation());
+		menu.setLabel(getLabel());
+		menu.setRightName(getRightName());
+		menu.setWithOnClickAction(isWithOnClickAction());
+		menu.setIconName(getIconName());
+		menu.setItems(items);
+
+		return menu;
+	}
 }

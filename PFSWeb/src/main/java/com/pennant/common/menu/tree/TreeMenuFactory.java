@@ -67,14 +67,24 @@ public class TreeMenuFactory extends MenuFactory {
 	}
 
 	@Override
-	protected MenuFactoryDto createMenuComponent(Component parent) {
+	protected MenuFactoryDto createMenuComponent(Component parent,int level) {
 		Treeitem treeitem = new Treeitem();
 		parent.appendChild(treeitem);
-		
 
 		ILabelElement item = insertTreeCell(treeitem);
 		Treecell treecell = (Treecell) treeitem.getTreerow().getChildren().get(0);
-		treecell.setSclass("mainItem");
+
+		switch (level) {
+		case 1:
+			treecell.setSclass("menu-group-1");
+			break;
+		case 2:
+			treecell.setSclass("menu-group-2");
+			break;
+		default:
+			treecell.setSclass("menu-group-3");
+		}
+
 		ComponentsCtrl.applyForward(treeitem, "onClick=onMenuItemSelected");
 		Treechildren treechildren = new Treechildren();
 		treeitem.appendChild(treechildren);
@@ -89,9 +99,8 @@ public class TreeMenuFactory extends MenuFactory {
 
 		ILabelElement item = insertTreeCell(treeitem);
 		Treecell treecell = (Treecell) treeitem.getTreerow().getChildren().get(0);
-		treecell.setSclass("subItem");
+		treecell.setSclass("menu-item");
 
-		
 		return item;
 	}
 
