@@ -44,7 +44,9 @@
 package com.pennant.backend.model.staticparms;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -108,6 +110,11 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 		this.setId(id);
 	}
 
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("returnStatus");
+		return excludeFields;
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
