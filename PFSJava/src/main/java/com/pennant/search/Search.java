@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 /**
  * A convenient fully-featured implementation of ISearch and IMutableSearch for general use in Java code.
@@ -511,9 +510,10 @@ public class Search implements IMutableSearch, Serializable {
 				values[cnt + i] = listValues.get(i);
 			}
 
-			if (App.DATABASE == Database.ORACLE ) {
-				Filter[] filters = null;
-
+			Filter[] filters = null;
+			
+			switch (App.DATABASE) {
+			case ORACLE:
 				if (emptyEqual) {
 					filters = new Filter[2];
 					filters[0] = Filter.isNull(field);
@@ -524,9 +524,9 @@ public class Search implements IMutableSearch, Serializable {
 				}
 
 				this.addFilterOr(filters);
-			}	if ( App.DATABASE == Database.PSQL) {
-				Filter[] filters = null;
-
+				break;
+				
+			case PSQL:
 				if (emptyEqual) {
 					filters = new Filter[3];
 					filters[0] = Filter.isNull(field);
@@ -536,12 +536,12 @@ public class Search implements IMutableSearch, Serializable {
 					filters = new Filter[1];
 					filters[0] = Filter.in(field, listValues);
 				}
-
 				this.addFilterOr(filters);
-			}  
-			
-			else {
+				break;
+				
+			default:
 				this.addFilterIn(field, values);
+				break;
 			}
 		}
 	}
