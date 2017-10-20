@@ -11,10 +11,10 @@ import org.testng.annotations.Test;
 public class AuthKey {
 	private static Logger logger = Logger.getLogger(AuthKey.class);
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void generate() throws UnsupportedEncodingException {
 		// Usage: user:<user name>:<password>
-		String authDetails = "user:maker:test";
+		String authDetails = "user:admin:test";
 		String authKey = new String(Base64.encode(authDetails.getBytes()), "UTF-8");
 
 		logger.info(authDetails);
@@ -22,9 +22,9 @@ public class AuthKey {
 		Assert.assertNotNull(authKey);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void crackDown() throws UnsupportedEncodingException {
-		String authKey = "dXNlcjpiZnNkOlBlbm5hbnRAMTIz";
+		String authKey = "dXNlcjphZG1pbjpQZW5uYW50QDEyMw==";
 		String authDetails = new String(Base64.decode(authKey.getBytes()), "UTF-8");
 
 		logger.info(authKey);
