@@ -20,27 +20,8 @@ pff 4.0.0, 2017-10-17
 	. Removed below JSP files from WebContent/Charts folder:
 	        FusionChart.jsp
 	        FusionChartsRenderer.jsp
-    . Removed below SWF files from WebContent/Charts folder:
-			AngularGauge.swf
-			Area2D.swf
-			Bar2D.swf
-			Column2D.swf
-			Column3D.swf
-			Cylinder.swf
-			FCExporter.swf
-			Funnel.swf
-			HLinearGauge.swf
-			Line.swf
-			MSArea.swf
-			MSBar2D.swf
-			MSBar3D.swf
-			MSColumn2D.swf
-			MSColumn3D.swf
-			MSCombi2D.swf
-			MSCombi3D.swf
-			Pyramid.swf
-			StackedBar2D.swf
-			StackedBar3D.swf
+    . Removed all SWF files from WebContent/Charts folder.
+			*.swf (Search with swf)
 	. Changed file name of "FusionChart.zul" to "Chart.zul".
     . Changed file name of "Chart.zul" to "chartSimulator.zul".
     . Moved above two files into WebContent/Charts folder.  

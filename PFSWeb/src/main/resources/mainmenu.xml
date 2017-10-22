@@ -297,6 +297,12 @@
 		<menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" rightName="menuItem_Facility_Facility"/>
 		<menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul"  rightName="menuItem_Facility_Corp"/>
 	</menu>-->
+	
+	<menu id="menu_Category_DashBoard" rightName="menuCat_DashBoard">
+		<menuItem id="menuItem_Dashboard_DashboardConfiguration"
+			zulNavigation="/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationList.zul"
+			rightName="menuItem_Dashboard_DashboardConfiguration" />
+	</menu>
 
 	<!-- Administration Menu Tree -->
 	<menu id="menu_Category_Administration" rightName="menuCat_Administration">
@@ -623,10 +629,6 @@
 	 	<menuItem id="menu_Item_ImportData" zulNavigation="/WEB-INF/pages/ImportData/ImportDataTablesList.zul" rightName="menuItem_BatchAdmin_ImportData" />    
 	</menu>
 	
-	Dash board Details
-	<menu id="menu_Category_DashBoard"  rightName="menuCat_DashBoard">
-		<menuItem id="menuItem_Dashboard_DashboardConfiguration" zulNavigation="/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationList.zul"  rightName="menuItem_Dashboard_DashboardConfiguration"/>
-	</menu>
  -->	<!-- Finance Legal expenses Details -->
 	<!-- <menu id="menu_Category_FinLegalExpenses"  rightName="menuCat_Expenses">
 		<menuItem id="menu_Item_LegalExpenses" zulNavigation="/WEB-INF/pages/Expenses/LegalExpenses/LegalExpensesList.zul"  rightName="menuItem_Expenses_LegalExpenses"/>
