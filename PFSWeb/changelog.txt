@@ -1,5 +1,6 @@
 pff 4.0.0, 2017-10-17
 ---------------------
+- Removed deprecated method SecurityRightDAO.getRoleRights().
 - Changed dashboard component
 	. Upgraded fusion charts
 	. Field swfFile of ChartDetail changed to chartType.

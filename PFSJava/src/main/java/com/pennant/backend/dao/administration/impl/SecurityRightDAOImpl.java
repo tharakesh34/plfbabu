@@ -123,25 +123,6 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
-	@Override
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select distinct RightName");
-		sql.append(" from SecRolesRights_View");
-		sql.append(" where RightType = :RightType and RoleCd in (:RoleCd)");
-		sql.append(" and AppId = :loginAppId and Page = :Page and UsrId = :UsrID");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(secRight);
-		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
-
-		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-	}
-
 	/**
 	 * Setting DataSource
 	 * 

@@ -71,8 +71,6 @@ public interface UserService {
 
 	List<SecurityRole> getUserRolesByUserID(long userID);
 
-	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
-
 	long logLoginAttempt(SecLoginlog logingLog);
 
 	void logLogOut(long loginId);
