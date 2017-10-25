@@ -21,256 +21,155 @@
 <changeSet id="1" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SystemMaster');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_SystemMaster'));
-            
             delete from secrights where rightname='menuCat_SystemMaster';
 		</sql>
 </changeSet>
 <changeSet id="2" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_ApplicationMaster');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_ApplicationMaster'));
-            
             delete from secrights where rightname='menuCat_ApplicationMaster';
 		</sql>
 </changeSet>
 <changeSet id="3" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerMasters');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_CustomerMasters'));
-            
             delete from secrights where rightname='menuCat_CustomerMasters';
 		</sql>
 </changeSet>
 <changeSet id="4" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_eod');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_eod'));
-            
             delete from secrights where rightname='menuCat_eod';
 		</sql>
 </changeSet>
 <changeSet id="5" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Mandates');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Mandates'));
-            
             delete from secrights where rightname='menuCat_Mandates';
 		</sql>
 </changeSet>
 <changeSet id="6" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Disbursement');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Disbursement'));
-            
             delete from secrights where rightname='menuCat_Disbursement';
 		</sql>
 </changeSet>
 <changeSet id="7" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SAPGL');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_SAPGL'));
-            
             delete from secrights where rightname='menuCat_SAPGL';
 		</sql>
 </changeSet>
 <changeSet id="8" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menu_Category_CIBIL');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menu_Category_CIBIL'));
-            
             delete from secrights where rightname='menu_Category_CIBIL';
 		</sql>
 </changeSet>
 <changeSet id="9" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_RulesFactory');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_RulesFactory'));
-            
             delete from secrights where rightname='menuCat_RulesFactory';
 		</sql>
 </changeSet>
 <changeSet id="10" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SolutionFactory');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_SolutionFactory'));
-            
             delete from secrights where rightname='menuCat_SolutionFactory';
 		</sql>
 </changeSet>
 <changeSet id="11" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Finance');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Finance'));
-            
             delete from secrights where rightname='menuCat_Finance';
 		</sql>
 </changeSet>
 <changeSet id="12" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Administration');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Administration'));
-            
             delete from secrights where rightname='menuCat_Administration';
 		</sql>
 </changeSet>
-
-<changeSet id="14" author="Prakash">
+<changeSet id="13" author="Prakash">
 		<sql>
             delete from secrights where rightname='menuCat_StaticParms';
 		</sql>
 </changeSet>
-<changeSet id="15" author="Prakash">
+<changeSet id="14" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceManagement');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_FinanceManagement'));
-            
             delete from secrights where rightname='menuCat_FinanceManagement';
+		</sql>
+</changeSet>
+<changeSet id="15" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceEnquiry');		
+            delete from secrights where rightname='menuCat_FinanceEnquiry';
 		</sql>
 </changeSet>
 <changeSet id="16" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceEnquiry');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_FinanceEnquiry'));
-            
-            delete from secrights where rightname='menuCat_FinanceEnquiry';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerEnquiry');		
+            delete from secrights where rightname='menuCat_CustomerEnquiry';
 		</sql>
 </changeSet>
 <changeSet id="17" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerEnquiry');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_CustomerEnquiry'));
-            
-            delete from secrights where rightname='menuCat_CustomerEnquiry';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Reports');		
+            delete from secrights where rightname='menuCat_Reports';
 		</sql>
 </changeSet>
 <changeSet id="18" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Reports');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Reports'));
-            
-            delete from secrights where rightname='menuCat_Reports';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerTemplates');		
+            delete from secrights where rightname='menuCat_CustomerTemplates';
 		</sql>
 </changeSet>
 <changeSet id="19" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerTemplates');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_CustomerTemplates'));
-            
-            delete from secrights where rightname='menuCat_CustomerTemplates';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CreditReports');		
+            delete from secrights where rightname='menuCat_CreditReports';
 		</sql>
 </changeSet>
 <changeSet id="20" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CreditReports');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_CreditReports'));
-            
-            delete from secrights where rightname='menuCat_CreditReports';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DelinquencyReports');		
+            delete from secrights where rightname='menuCat_DelinquencyReports';
 		</sql>
 </changeSet>
 <changeSet id="21" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DelinquencyReports');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_DelinquencyReports'));
-            
-            delete from secrights where rightname='menuCat_DelinquencyReports';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinReports');		
+            delete from secrights where rightname='menuCat_FinReports';
 		</sql>
 </changeSet>
 <changeSet id="22" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinReports');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_FinReports'));
-            
-            delete from secrights where rightname='menuCat_FinReports';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinDeptReports');		
+            delete from secrights where rightname='menuCat_FinDeptReports';
 		</sql>
 </changeSet>
 <changeSet id="23" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinDeptReports');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_FinDeptReports'));
-            
-            delete from secrights where rightname='menuCat_FinDeptReports';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Limit');		
+            delete from secrights where rightname='menuCat_Limit';
 		</sql>
 </changeSet>
 <changeSet id="24" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Limit');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_Limit'));
-            
-            delete from secrights where rightname='menuCat_Limit';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_LimitEnquiry');		
+            delete from secrights where rightname='menuCat_LimitEnquiry';
 		</sql>
 </changeSet>
 <changeSet id="25" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_LimitEnquiry');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_LimitEnquiry'));
-            
-            delete from secrights where rightname='menuCat_LimitEnquiry';
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_PresentmentDetails');		
+            delete from secrights where rightname='menuCat_PresentmentDetails';
 		</sql>
 </changeSet>
 <changeSet id="26" author="Prakash">
 		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_PresentmentDetails');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_PresentmentDetails'));
-            
-            delete from secrights where rightname='menuCat_PresentmentDetails';
-		</sql>
-</changeSet>
-<changeSet id="27" author="Prakash">
-		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_payment_PaymentInstructions');		
-		
-			delete from SecGroups where Grpid in (select grpid from SecGroupRights where rightid 
-            in (select rightid from secrights where rightname ='menuCat_payment_PaymentInstructions'));
-            
             delete from secrights where rightname='menuCat_payment_PaymentInstructions';
 		</sql>
 </changeSet>
