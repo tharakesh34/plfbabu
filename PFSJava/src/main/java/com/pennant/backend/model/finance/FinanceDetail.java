@@ -78,6 +78,7 @@ import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 
@@ -237,6 +238,11 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name="foreClosures")
 	@XmlElement(name="foreClosure")
 	private List<ForeClosure> foreClosureDetails;
+
+	//API ExtendedDetails
+	@XmlElementWrapper(name="extendedDetails")
+	@XmlElement(name="extendedDetail")
+	private List<ExtendedField> extendedDetails = null;
 
 	public FinanceDetail() {
 		
@@ -863,6 +869,14 @@ public class FinanceDetail implements java.io.Serializable {
 	 */
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
 	}
 
 

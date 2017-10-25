@@ -118,6 +118,7 @@ import com.pennant.backend.service.customermasters.validation.CustomerRatingVali
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -1590,15 +1591,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetail.setErrorDetail(
 					validateMasterCode("RelationshipOfficer", customerDetails.getPrimaryRelationOfficer()));
 		}
-
-		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
-					return auditDetail;
-				}
-			}
+		
+		if(doCheckErrorDetails(auditDetail)!=null){
+			return auditDetail;
 		}
-
+		
 		Customer customer = customerDetails.getCustomer();
 		customer.setCustCtgCode(customerDetails.getCustCtgCode());
 		customer.setCustDftBranch(customerDetails.getCustDftBranch());
@@ -1608,29 +1605,49 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
-
-		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
-					return auditDetail;
-				}
-			}
+		if(doCheckErrorDetails(auditDetail)!=null){
+			return auditDetail;
 		}
 
 		// validate customer details
 		auditDetail = validateCustomerDetails(auditDetail, customerDetails);
-
-		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
-					return auditDetail;
-				}
-			}
+		if(doCheckErrorDetails(auditDetail)!=null){
+			return auditDetail;
+		}
+	
+		// validate ExtendedFieldDetails
+		List<ErrorDetails> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
+				customerDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode());
+		auditDetail.getErrorDetails().addAll(errorDetails);
+	
+		if (doCheckErrorDetails(auditDetail) != null) {
+			return auditDetail;
 		}
 
 		logger.debug("Leaving");
 
 		return auditDetail;
+	}
+
+	/*
+	 * Validate auditDetail object
+	 * 
+	 * @param auditDetail
+	 * 
+	 * @return AuditDetail
+	 * 
+	 * validates the ErrorDetails List in the auditDetail if any error is there return auditDetail otherwise 
+	 * retuen null.
+	 */
+	private AuditDetail doCheckErrorDetails(AuditDetail auditDetail) {
+		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
+			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+					return auditDetail;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -2250,7 +2267,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ErrorDetails validateMasterCode(String moduleName, String fieldValue) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetails errorDetail = null;
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
 		if (moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
@@ -2275,7 +2292,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetails errorDetail = null;
 
 		// validate Master code with PLF system masters
 		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);

@@ -10438,6 +10438,8 @@
 		class="com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService">
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 	</bean>
 	
 </beans>

@@ -3,6 +3,7 @@ package com.pennant.app.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -23,5 +24,6 @@ public class CustomObjectMapper extends ObjectMapper {
 		setDateFormat(dateFormat);
 		setSerializationInclusion(Inclusion.NON_NULL);
 		setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 }

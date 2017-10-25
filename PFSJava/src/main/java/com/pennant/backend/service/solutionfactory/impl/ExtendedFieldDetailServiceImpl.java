@@ -61,6 +61,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -743,12 +744,12 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			errorDetails.add(errorDetail);
 		} else {
 			// verify the module either CUSTOMER or LOAN
-			if (!StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_CUSTOMER)
-					&& !StringUtils.equals(extendedFieldHeader.getModuleName(),PennantConstants.FINANCE_INQUIRY_LOAN)) {
+			if (!StringUtils.equals(extendedFieldHeader.getModuleName(), ExtendedFieldConstants.MODULE_CUSTOMER)
+					&& !StringUtils.equals(extendedFieldHeader.getModuleName(),ExtendedFieldConstants.MODULE_LOAN)) {
 				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[2];
 				valueParm[0] = extendedFieldHeader.getModuleName();
-				valueParm[1] = PennantConstants.FINANCE_INQUIRY_CUSTOMER + "," + PennantConstants.FINANCE_INQUIRY_LOAN;
+				valueParm[1] = ExtendedFieldConstants.MODULE_CUSTOMER + "," + ExtendedFieldConstants.MODULE_LOAN;
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90337", valueParm));
 				errorDetails.add(errorDetail);
 			}
@@ -762,7 +763,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			}
 
 			// if module is CUSTOMER then subModule must be RETAIL || CORP || SME
-			if (StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_CUSTOMER)) {
+			if (StringUtils.equals(extendedFieldHeader.getModuleName(), ExtendedFieldConstants.MODULE_CUSTOMER)) {
 				if (!StringUtils.equals(extendedFieldHeader.getSubModuleName(), PennantConstants.PFF_CUSTCTG_INDIV)
 						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_CORP)
 						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_SME)) {
@@ -779,7 +780,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			}
 
 			// if module is LOAN then Check subModule is a valid productCode or not
-			if (StringUtils.equals(extendedFieldHeader.getModuleName(), PennantConstants.FINANCE_INQUIRY_LOAN)&&
+			if (StringUtils.equals(extendedFieldHeader.getModuleName(), ExtendedFieldConstants.MODULE_LOAN)&&
 					!StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
 				// check the productCode(subModule) is valid or not
 				if (productDAO.getProductByID("", extendedFieldHeader.getSubModuleName(), "") == null) {

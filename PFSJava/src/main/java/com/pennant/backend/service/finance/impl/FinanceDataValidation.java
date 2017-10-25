@@ -1101,6 +1101,15 @@ public class FinanceDataValidation {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
+			
+			//ExtendedFieldDetails Validation
+			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getProductCategory();
+			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
+					ExtendedFieldConstants.MODULE_LOAN, subModule);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
 		}
 
 		return finScheduleData;

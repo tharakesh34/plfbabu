@@ -34,6 +34,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -68,6 +69,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -80,6 +82,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -93,7 +96,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
 
-	private static final Logger			logger	= Logger.getLogger(CreateFinanceController.class);
+	private static final Logger			logger		= Logger.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private CustomerDetailsService		customerDetailsService;
@@ -111,7 +114,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
 	private FinanceWorkFlowService		financeWorkFlowService;
 	private FinPlanEmiHolidayDAO		finPlanEmiHolidayDAO;
-	protected transient WorkflowEngine	workFlow		= null;
+	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
+	protected transient WorkflowEngine	workFlow	= null;
 
 	
 	/**
@@ -377,7 +381,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF,LoggedInUser userDetails,boolean stp) throws IllegalAccessException, InvocationTargetException {
+	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF,LoggedInUser userDetails,boolean stp) 
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
@@ -782,9 +787,36 @@ public class CreateFinanceController extends SummaryDetailService {
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
 			}
 		}
-
+		
+		// process Extended field details
+		// Get the ExtendedFieldHeader for given module and subModule
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO
+				.getExtendedFieldHeaderByModuleName(ExtendedFieldConstants.MODULE_LOAN, financeMain.getProductCategory(), "");
+		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
+		
+		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
+		if (extendedFields != null) {
+			int seqNo = 0;
+			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+			exdFieldRender.setReference(financeMain.getFinReference());
+			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+			exdFieldRender.setSeqNo(++seqNo);
+			exdFieldRender.setNewRecord(true);
+			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			exdFieldRender.setVersion(1);
+			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
+			for (ExtendedField extendedField : extendedFields) {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+					exdFieldRender.setMapValues(mapValues);
+				}
+			}
+			financeDetail.setExtendedFieldRender(exdFieldRender);
+		}
 		logger.debug("Leaving");
-
 	}
 
 	private String getNextTaskId(String taksId,boolean qdp,boolean stp) {
@@ -1285,5 +1317,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setFinPlanEmiHolidayDAO(FinPlanEmiHolidayDAO finPlanEmiHolidayDAO) {
 		this.finPlanEmiHolidayDAO = finPlanEmiHolidayDAO;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
 }

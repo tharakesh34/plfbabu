@@ -17,13 +17,17 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
@@ -37,35 +41,41 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldDetailsService {
 
-	private static final Logger		logger	= Logger.getLogger(ExtendedFieldDetailsService.class);
+	private static final Logger				logger	= Logger.getLogger(ExtendedFieldDetailsService.class);
 
-	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
-	private ScriptValidationService	scriptValidationService;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private ScriptValidationService			scriptValidationService;
+	private ExtendedFieldHeaderDAO			extendedFieldHeaderDAO;
+	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
+	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 
-	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType,
-			String method) {
-
+	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType, String method) {
+		logger.debug(Literal.ENTERING); 
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
 		for (int i = 0; i < details.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = details.get(i);
 			auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method));
 		}
+		
+		logger.debug(Literal.LEAVING); 
 		return auditDetails;
 	}
 
 	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
 			String method) {
-
+		logger.debug(Literal.ENTERING);
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditDetails.add(setExtendedFieldAuditData(extendedFieldRender, tranType, method));
 
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
-	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method) {
-
+	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType, String method) {
+		logger.debug(Literal.ENTERING);
+		
 		if (extendedFieldRender == null) {
 			return null;
 		}
@@ -121,6 +131,8 @@ public class ExtendedFieldDetailsService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, fields[0], fields[1], extendedFieldRender.getBefImage(),
 				extendedFieldRender);
 		auditDetail.setExtended(true);
+		
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -132,9 +144,10 @@ public class ExtendedFieldDetailsService {
 	 * @param type
 	 * @return
 	 */
-	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils,
-			ExtendedFieldHeader extFldHeader, String type) {
+	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils, ExtendedFieldHeader extFldHeader,
+			String type) {
 		logger.debug(Literal.ENTERING);
+		
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
@@ -364,7 +377,7 @@ public class ExtendedFieldDetailsService {
 
 	public List<AuditDetail> delete(ExtendedFieldHeader extFldHeader, String reference, String tableType,
 			String tranType, List<AuditDetail> deatils) {
-
+		logger.debug(Literal.ENTERING);
 		ExtendedFieldRender fieldRender;
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
@@ -411,10 +424,13 @@ public class ExtendedFieldDetailsService {
 			auditList.add(auditDetail);
 		}
 		extendedFieldRenderDAO.deleteList(reference, tableName.toString(), tableType);
+		
+		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
 
 	public List<AuditDetail> delete(List<AuditDetail> details, String module, String reference, String tableType) {
+		logger.debug(Literal.ENTERING);
 		List<String> tableNames = new ArrayList<>();
 		for (int i = 0; i < details.size(); i++) {
 			ExtendedFieldRender detail = (ExtendedFieldRender) details.get(i).getModelData();
@@ -437,6 +453,8 @@ public class ExtendedFieldDetailsService {
 			tableNames.add(detail.getTypeCode());
 			extendedFieldRenderDAO.deleteList(reference, tableName.toString(), tableType);
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return details;
 	}
 
@@ -447,9 +465,9 @@ public class ExtendedFieldDetailsService {
 
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> deatils, String method, String usrLanguage,
-			String tableName) {
-
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> deatils, String method, String usrLanguage, String tableName) {
+		logger.debug(Literal.ENTERING);
+		
 		if (deatils != null && deatils.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < deatils.size(); i++) {
@@ -458,11 +476,14 @@ public class ExtendedFieldDetailsService {
 			}
 			return details;
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return new ArrayList<AuditDetail>();
 	}
 
 	public AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage, String tableName) {
-
+		logger.debug(Literal.ENTERING);
+		
 		ExtendedFieldRender render = (ExtendedFieldRender) auditDetail.getModelData();
 		ExtendedFieldRender tempRender = null;
 
@@ -547,13 +568,15 @@ public class ExtendedFieldDetailsService {
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !render.isWorkflow()) {
 			render.setBefImage(befExtRender);
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
 	public List<ErrorDetails> validateExtendedFieldData(ExtendedFieldDetail deatils, ExtendedFieldData exrFldData) {
-
+		logger.debug(Literal.ENTERING);
+		
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
-
 		String fieldName = exrFldData.getFieldName();
 		String fieldValue = exrFldData.getFieldValue();
 
@@ -937,11 +960,13 @@ public class ExtendedFieldDetailsService {
 		default:
 			break;
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return errors;
 	}
 
-	private List<ErrorDetails> dateValidation(ExtendedFieldDetail exdConfigDetail, Date dateValue,
-			List<ErrorDetails> errors) {
+	private List<ErrorDetails> dateValidation(ExtendedFieldDetail exdConfigDetail, Date dateValue, List<ErrorDetails> errors) {
+		logger.debug(Literal.ENTERING);
 		String[] value = exdConfigDetail.getFieldConstraint().split(",");
 		switch (value[0]) {
 		case "RANGE":
@@ -1012,6 +1037,8 @@ public class ExtendedFieldDetailsService {
 		default:
 			break;
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return errors;
 	}
 
@@ -1028,6 +1055,140 @@ public class ExtendedFieldDetailsService {
 		return sb.toString();
 	}
 
+	public List<ErrorDetails> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module, String subModule) {
+		logger.debug(Literal.ENTERING);
+		
+		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		//get the ExtendedFieldHeader for given module and subModule
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module, subModule, "");
+		List<ExtendedFieldDetail> extendedFieldDetails = null;
+
+		//based on ExtendedFieldHeader moduleId get the ExtendedFieldDetails List
+		if (extendedFieldHeader != null) {
+			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(), "");
+			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
+		} else if (!extendedFieldData.isEmpty()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Extended fields";
+			valueParm[1] = module;
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", "", valueParm)));
+			return errorDetails;
+		}
+
+		//list out the number of mandatory fields from configuration
+		int extendedDetailsCount = 0;
+		if (extendedFieldDetails != null) {
+			for (ExtendedFieldDetail detail : extendedFieldDetails) {
+				if (detail.isFieldMandatory()) {
+					extendedDetailsCount++;
+				}
+			}
+		}
+		if (extendedDetailsCount > 0) {
+			//iterates the loop and check the each fieldName and fieldValue, because both are required
+			if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
+				List<String> fieldList=new ArrayList<String>();
+				for (ExtendedField details : extendedFieldData) {
+					int exdMandConfigCount = 0;
+					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+						//if fieldName is blank then sets FieldName is Mandatory
+						if (StringUtils.isBlank(extFieldData.getFieldName())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldName";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+							return errorDetails;
+						}
+
+						//if fieldValue is blank then sets fieldValue is Mandatory
+						if (StringUtils.isBlank(extFieldData.getFieldValue())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldValue";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+							return errorDetails;
+						}
+
+						boolean isFeild = false;
+						if (extendedFieldDetails != null) {
+							for (ExtendedFieldDetail detail : extendedFieldDetails) {
+
+								//if both fields(in configuraion and json) are equal then it validates the fields and makes isFiels=true
+								if (StringUtils.equals(detail.getFieldName(), extFieldData.getFieldName())) {
+									//if same field given more than one time it raises the Error 
+									if(fieldList.contains(extFieldData.getFieldName())){
+										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+										return errorDetails;
+									}else{
+										fieldList.add(extFieldData.getFieldName());
+									}
+									if (detail.isFieldMandatory()) {
+										exdMandConfigCount++;
+									}
+									//validate the  field with configuration that is already mentioned
+									List<ErrorDetails> errList = getExtendedFieldDetailsValidation()
+											.validateExtendedFieldData(detail, extFieldData);
+									errorDetails.addAll(errList);
+									isFeild = true;
+									break;
+								}
+							}
+							//if field is no there in configuration then is sets the error like
+							//Extended details should be matched with configured extended details in {0}.
+							if (!isFeild) {
+								String[] valueParm = new String[1];
+								valueParm[0] = module + " setup";
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
+								return errorDetails;
+							}
+						}
+					}
+					//extendedDetailsCount :: mandatory fields from configuration
+					//exdMandConfigCount :: mandatory fields from JSON
+					//these are not match then sets the error like
+					//Request should contain configured mandatory extended details.
+					if (extendedDetailsCount != exdMandConfigCount) {
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+						return errorDetails;
+					}
+				}
+
+			} else {
+				//it sets error if mandatory fields are not given
+				//{0} is mandatory in the request.::90502
+				String[] valueParm = new String[1];
+				valueParm[0] = "ExtendedDetails";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return errorDetails;
+			}
+
+		}
+		Map<String, Object> mapValues = new HashMap<String, Object>();
+		if (extendedFieldData != null) {
+			//get the ExtendedField--List from JSON
+			for (ExtendedField details : extendedFieldData) {
+				//get the ExtendedFieldData--List from  ExtendedField
+				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+					//get the each EXTFD that are given in json
+					//exdFldConfig ::EXTFieldDetailslist from configuration
+
+					for (ExtendedFieldDetail detail : extendedFieldDetails) {
+
+						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail.getFieldType())
+								&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+							extFieldData.setFieldName(extFieldData.getFieldName().concat("_BR"));
+						}
+						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())
+								&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+							extFieldData.setFieldName(extFieldData.getFieldName().concat("_SC"));
+						}
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetails;
+	}
+
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set
@@ -1042,6 +1203,25 @@ public class ExtendedFieldDetailsService {
 	 */
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
+		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
+	}
+
+	public void setExtendedFieldDetailsValidation(ExtendedFieldDetailsValidation extendedFieldDetailsValidation) {
+		this.extendedFieldDetailsValidation = extendedFieldDetailsValidation;
+	}
+
+	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
+		if (extendedFieldDetailsValidation == null) {
+			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
+		}
+		return extendedFieldDetailsValidation;
 	}
 
 }
