@@ -209,29 +209,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="28.1" author="DurgaPrasad G">
-		<sql>
-			ALTER TABLE Extendedfieldheader ADD POSTVALIDATION NCLOB;
-			ALTER
-			TABLE Extendedfieldheader ADD PREVALIDATION NCLOB;
-			ALTER TABLE
-			Extendedfieldheader ADD POSTVALIDATIONREQ NUMBER(1);
-			ALTER TABLE
-			Extendedfieldheader ADD PREVALIDATIONREQ NUMBER(1);
-
-			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATION NCLOB;
-			ALTER TABLE
-			Extendedfieldheader_temp ADD PREVALIDATION NCLOB;
-			ALTER TABLE
-			Extendedfieldheader_temp ADD POSTVALIDATIONREQ NUMBER(1);
-			ALTER TABLE
-			Extendedfieldheader_temp ADD PREVALIDATIONREQ NUMBER(1);
-
-			Update Extendedfieldheader set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
-			Update Extendedfieldheader_temp set PREVALIDATIONREQ =
-			0,POSTVALIDATIONREQ = 0;
-		</sql>
-	</changeSet>
 
 	<changeSet id="28" author="DurgaPrasad G">
 		<createView viewName="EXTENDEDFIELDHEADER_VIEW"
