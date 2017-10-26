@@ -180,4 +180,116 @@
 		</sql>
 </changeSet>
 
+<changeSet id="28.1" author="DurgaPrasad G">
+		<sql>
+			ALTER TABLE Extendedfieldheader ADD POSTVALIDATION NCLOB;
+			ALTER TABLE Extendedfieldheader ADD PREVALIDATION NCLOB;
+			ALTER TABLE Extendedfieldheader ADD POSTVALIDATIONREQ  NUMBER(1);
+			ALTER TABLE Extendedfieldheader ADD PREVALIDATIONREQ  NUMBER(1);
+			
+			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATION NCLOB;
+			ALTER TABLE Extendedfieldheader_temp ADD PREVALIDATION NCLOB;
+			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATIONREQ  NUMBER(1);
+			ALTER TABLE Extendedfieldheader_temp ADD PREVALIDATIONREQ  NUMBER(1);
+			
+			Update Extendedfieldheader set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
+			Update Extendedfieldheader_temp set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
+		</sql>
+</changeSet>
+
+<changeSet id="28" author="DurgaPrasad G">
+	<createView viewName="EXTENDEDFIELDHEADER_VIEW" replaceIfExists="true">
+		SELECT		T1.ModuleId, T1.ModuleName, T1.SubModuleName, T1.TabHeading, T1.NumberOfColumns		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			,POSTVALIDATION,PREVALIDATION,POSTVALIDATIONREQ,PREVALIDATIONREQ
+			FROM    	ExtendedFieldHeader_TEMP T1
+		UNION ALL
+		SELECT		T1.ModuleId, T1.ModuleName, T1.SubModuleName, T1.TabHeading, T1.NumberOfColumns		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			,POSTVALIDATION,PREVALIDATION,POSTVALIDATIONREQ,PREVALIDATIONREQ
+			FROM    	ExtendedFieldHeader T1
+		WHERE     NOT EXISTS (SELECT 1 FROM ExtendedFieldHeader_TEMP WHERE ModuleId = T1.ModuleId)
+	</createView>
+</changeSet>
+
+<changeSet id="29" author="DurgaPrasad G">
+	<createView viewName="EXTENDEDFIELDHEADER_AVIEW" replaceIfExists="true">
+	SELECT     ModuleId, ModuleName, SubModuleName, TabHeading, NumberOfColumns, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, 
+                      TaskId, NextTaskId, RecordType, WorkflowId
+					  ,POSTVALIDATION,PREVALIDATION,POSTVALIDATIONREQ,PREVALIDATIONREQ
+	FROM         ExtendedFieldHeader
+	</createView>
+</changeSet>
+
+<changeSet id="30" author="Durgaprasad.g">
+	<sql>
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		
+		Delete from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER';
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'EXTENDEDFIELD_CONFIGURATION_MAKER','WF Maker for extendedfield configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory');
+		Delete from SecRights where RightName = 'menuCat_SolutionFactory';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_SolutionFactory', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration');
+		Delete from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_SolutionFactory_ExtendedFieldConfiguration', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		 
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig');
+		Delete from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_ExtendedFieldConfigList_NewExtendedFieldConfig', 'ExtendedFieldConfigList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave');
+		Delete from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_ExtendedFieldConfigDialog_btnSave', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading');
+		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_tabHeading', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq');
+		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_preValidationReq', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq');
+		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_postValidationReq', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation');
+		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_preValidation', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation');
+		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_postValidation', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		 
+		
+		Delete from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER';
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'EXTENDEDFIELD_CONFIGURATION_APPROVER','WF Approver for extendedfield configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		 
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+</changeSet> 
 </databaseChangeLog>
