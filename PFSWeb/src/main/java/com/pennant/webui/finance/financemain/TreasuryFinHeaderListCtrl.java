@@ -131,13 +131,13 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 				}
 
 				whereClause.append("(',' ");
-				if (App.DATABASE == Database.ORACLE) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
 				}
 				whereClause.append(" nextRoleCode ");
-				if (App.DATABASE == Database.ORACLE) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");

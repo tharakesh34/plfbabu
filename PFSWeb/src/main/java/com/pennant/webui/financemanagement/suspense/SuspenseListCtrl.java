@@ -160,7 +160,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";

@@ -922,7 +922,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND (RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else {
-			if(App.DATABASE == Database.ORACLE){
+			if(App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL){
 				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			}else{
 				whereClause.append(" AND (RcdMaintainSts = '' OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
@@ -2646,7 +2646,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		
 		if(StringUtils.isNotEmpty(workflowCode)){
 			
-			if (App.DATABASE == Database.ORACLE) {
+			if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 				buildedWhereCondition = " (NextRoleCode IS NULL ";
 			} else {
 				buildedWhereCondition = " (NextRoleCode = '' ";

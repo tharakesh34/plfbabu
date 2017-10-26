@@ -159,7 +159,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";
@@ -480,7 +480,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";

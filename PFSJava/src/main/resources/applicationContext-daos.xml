@@ -7746,8 +7746,11 @@
 			<ref bean="securityOperationRolesServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
-			<props>
-				<prop key="save*">PROPAGATION_REQUIRED</prop>
+		<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

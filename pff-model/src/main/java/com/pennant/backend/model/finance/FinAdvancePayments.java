@@ -141,7 +141,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String				phoneNumber;
 	private Date				clearingDate;
 	private String				status;
-	private String				active;
+	private boolean				active;
 	private Date				inputDate;
 	private String				disbCCy;
 	private boolean				pOIssued;
@@ -436,11 +436,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.status = status;
 	}
 
-	public String getActive() {
+	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(String active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 

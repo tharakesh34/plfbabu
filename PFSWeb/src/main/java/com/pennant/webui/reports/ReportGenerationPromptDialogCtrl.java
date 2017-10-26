@@ -1389,7 +1389,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ "))) " + filter + "'"
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
-					if (App.DATABASE == Database.ORACLE) {
+					
+					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 						exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
