@@ -173,5 +173,11 @@
             delete from secrights where rightname='menuCat_payment_PaymentInstructions';
 		</sql>
 </changeSet>
+<changeSet id="27" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DashBoard');		
+            delete from secrights where rightname='menuCat_DashBoard';
+		</sql>
+</changeSet>
 
 </databaseChangeLog>
