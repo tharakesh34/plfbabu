@@ -1,7 +1,8 @@
 pff 4.0.0, 2017-10-17
 ---------------------
 - 
-- Changed in MenuFactory to show tree Structure and deleted menu rights from mainmenu.
+- Removed the rights for menu groups and displaying the menu groups only when any of the child menu items are visible within the hierarchy.
+- Changed the display of menu to easily distinguish the children with different styles (colors).
 - Removed deprecated method SecurityRightDAO.getRoleRights().
 - Changed dashboard component
 	. Upgraded fusion charts
