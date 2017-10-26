@@ -475,4 +475,12 @@
 			0,POSTVALIDATIONREQ = 0;
 		</sql>
 	</changeSet>
+	<changeSet id="31" author="Ganesh.p">
+	<sql>
+		Delete from ErrorDetails where ErrorCode = '90351';
+		INSERT INTO ErrorDetails VALUES('90351','EN','E','No extended field details configured against given module and submodule.',
+		'test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
