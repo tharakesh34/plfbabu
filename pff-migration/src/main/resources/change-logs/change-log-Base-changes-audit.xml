@@ -19,14 +19,26 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
- 
-	 <changeSet id="01" author="DurgaPrasad G">
-	   <sql>
-	   		ALTER TABLE ADTExtendedfieldheader ADD POSTVALIDATION NCLOB;
-			ALTER TABLE ADTExtendedfieldheader ADD PREVALIDATION NCLOB;
-			ALTER TABLE ADTExtendedfieldheader ADD POSTVALIDATIONREQ  NUMBER(1);
-			ALTER TABLE ADTExtendedfieldheader ADD PREVALIDATIONREQ  NUMBER(1);
-	   </sql>
-	 </changeSet>
-	
+
+	<changeSet id="01" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="POSTVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="02" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="PREVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="POSTVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="04" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="PREVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
