@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -17,188 +19,223 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
-<changeSet id="1" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SystemMaster');		
-            delete from secrights where rightname='menuCat_SystemMaster';
-		</sql>
-</changeSet>
-<changeSet id="2" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_ApplicationMaster');		
-            delete from secrights where rightname='menuCat_ApplicationMaster';
-		</sql>
-</changeSet>
-<changeSet id="3" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerMasters');		
-            delete from secrights where rightname='menuCat_CustomerMasters';
-		</sql>
-</changeSet>
-<changeSet id="4" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_eod');		
-            delete from secrights where rightname='menuCat_eod';
-		</sql>
-</changeSet>
-<changeSet id="5" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Mandates');		
-            delete from secrights where rightname='menuCat_Mandates';
-		</sql>
-</changeSet>
-<changeSet id="6" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Disbursement');		
-            delete from secrights where rightname='menuCat_Disbursement';
-		</sql>
-</changeSet>
-<changeSet id="7" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SAPGL');		
-            delete from secrights where rightname='menuCat_SAPGL';
-		</sql>
-</changeSet>
-<changeSet id="8" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menu_Category_CIBIL');		
-            delete from secrights where rightname='menu_Category_CIBIL';
-		</sql>
-</changeSet>
-<changeSet id="9" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_RulesFactory');		
-            delete from secrights where rightname='menuCat_RulesFactory';
-		</sql>
-</changeSet>
-<changeSet id="10" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SolutionFactory');		
-            delete from secrights where rightname='menuCat_SolutionFactory';
-		</sql>
-</changeSet>
-<changeSet id="11" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Finance');		
-            delete from secrights where rightname='menuCat_Finance';
-		</sql>
-</changeSet>
-<changeSet id="12" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Administration');		
-            delete from secrights where rightname='menuCat_Administration';
-		</sql>
-</changeSet>
-<changeSet id="13" author="Prakash">
-		<sql>
-            delete from secrights where rightname='menuCat_StaticParms';
-		</sql>
-</changeSet>
-<changeSet id="14" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceManagement');		
-            delete from secrights where rightname='menuCat_FinanceManagement';
-		</sql>
-</changeSet>
-<changeSet id="15" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceEnquiry');		
-            delete from secrights where rightname='menuCat_FinanceEnquiry';
-		</sql>
-</changeSet>
-<changeSet id="16" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerEnquiry');		
-            delete from secrights where rightname='menuCat_CustomerEnquiry';
-		</sql>
-</changeSet>
-<changeSet id="17" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Reports');		
-            delete from secrights where rightname='menuCat_Reports';
-		</sql>
-</changeSet>
-<changeSet id="18" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerTemplates');		
-            delete from secrights where rightname='menuCat_CustomerTemplates';
-		</sql>
-</changeSet>
-<changeSet id="19" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CreditReports');		
-            delete from secrights where rightname='menuCat_CreditReports';
-		</sql>
-</changeSet>
-<changeSet id="20" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DelinquencyReports');		
-            delete from secrights where rightname='menuCat_DelinquencyReports';
-		</sql>
-</changeSet>
-<changeSet id="21" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinReports');		
-            delete from secrights where rightname='menuCat_FinReports';
-		</sql>
-</changeSet>
-<changeSet id="22" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinDeptReports');		
-            delete from secrights where rightname='menuCat_FinDeptReports';
-		</sql>
-</changeSet>
-<changeSet id="23" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Limit');		
-            delete from secrights where rightname='menuCat_Limit';
-		</sql>
-</changeSet>
-<changeSet id="24" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_LimitEnquiry');		
-            delete from secrights where rightname='menuCat_LimitEnquiry';
-		</sql>
-</changeSet>
-<changeSet id="25" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_PresentmentDetails');		
-            delete from secrights where rightname='menuCat_PresentmentDetails';
-		</sql>
-</changeSet>
-<changeSet id="26" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_payment_PaymentInstructions');		
-            delete from secrights where rightname='menuCat_payment_PaymentInstructions';
-		</sql>
-</changeSet>
-<changeSet id="27" author="Prakash">
-		<sql>
-            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DashBoard');		
-            delete from secrights where rightname='menuCat_DashBoard';
-		</sql>
-</changeSet>
 
-<changeSet id="28.1" author="DurgaPrasad G">
+	<changeSet id="1" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_SystemMaster');
+			delete from secrights where rightname='menuCat_SystemMaster';
+		</sql>
+	</changeSet>
+	<changeSet id="2" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_ApplicationMaster');
+			delete from secrights where rightname='menuCat_ApplicationMaster';
+		</sql>
+	</changeSet>
+	<changeSet id="3" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_CustomerMasters');
+			delete from secrights where rightname='menuCat_CustomerMasters';
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_eod');
+			delete from secrights where rightname='menuCat_eod';
+		</sql>
+	</changeSet>
+	<changeSet id="5" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Mandates');
+			delete from secrights where rightname='menuCat_Mandates';
+		</sql>
+	</changeSet>
+	<changeSet id="6" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Disbursement');
+			delete from secrights where rightname='menuCat_Disbursement';
+		</sql>
+	</changeSet>
+	<changeSet id="7" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_SAPGL');
+			delete from secrights where rightname='menuCat_SAPGL';
+		</sql>
+	</changeSet>
+	<changeSet id="8" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menu_Category_CIBIL');
+			delete from secrights where rightname='menu_Category_CIBIL';
+		</sql>
+	</changeSet>
+	<changeSet id="9" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_RulesFactory');
+			delete from secrights where rightname='menuCat_RulesFactory';
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_SolutionFactory');
+			delete from secrights where rightname='menuCat_SolutionFactory';
+		</sql>
+	</changeSet>
+	<changeSet id="11" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Finance');
+			delete from secrights where rightname='menuCat_Finance';
+		</sql>
+	</changeSet>
+	<changeSet id="12" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Administration');
+			delete from secrights where rightname='menuCat_Administration';
+		</sql>
+	</changeSet>
+	<changeSet id="13" author="Prakash">
+		<sql>
+			delete from secrights where rightname='menuCat_StaticParms';
+		</sql>
+	</changeSet>
+	<changeSet id="14" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_FinanceManagement');
+			delete from secrights where rightname='menuCat_FinanceManagement';
+		</sql>
+	</changeSet>
+	<changeSet id="15" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_FinanceEnquiry');
+			delete from secrights where rightname='menuCat_FinanceEnquiry';
+		</sql>
+	</changeSet>
+	<changeSet id="16" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_CustomerEnquiry');
+			delete from secrights where rightname='menuCat_CustomerEnquiry';
+		</sql>
+	</changeSet>
+	<changeSet id="17" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Reports');
+			delete from secrights where rightname='menuCat_Reports';
+		</sql>
+	</changeSet>
+	<changeSet id="18" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_CustomerTemplates');
+			delete from secrights where rightname='menuCat_CustomerTemplates';
+		</sql>
+	</changeSet>
+	<changeSet id="19" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_CreditReports');
+			delete from secrights where rightname='menuCat_CreditReports';
+		</sql>
+	</changeSet>
+	<changeSet id="20" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_DelinquencyReports');
+			delete from secrights where rightname='menuCat_DelinquencyReports';
+		</sql>
+	</changeSet>
+	<changeSet id="21" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_FinReports');
+			delete from secrights where rightname='menuCat_FinReports';
+		</sql>
+	</changeSet>
+	<changeSet id="22" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_FinDeptReports');
+			delete from secrights where rightname='menuCat_FinDeptReports';
+		</sql>
+	</changeSet>
+	<changeSet id="23" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_Limit');
+			delete from secrights where rightname='menuCat_Limit';
+		</sql>
+	</changeSet>
+	<changeSet id="24" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_LimitEnquiry');
+			delete from secrights where rightname='menuCat_LimitEnquiry';
+		</sql>
+	</changeSet>
+	<changeSet id="25" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_PresentmentDetails');
+			delete from secrights where rightname='menuCat_PresentmentDetails';
+		</sql>
+	</changeSet>
+	<changeSet id="26" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_payment_PaymentInstructions');
+			delete from secrights where
+			rightname='menuCat_payment_PaymentInstructions';
+		</sql>
+	</changeSet>
+	<changeSet id="27" author="Prakash">
+		<sql>
+			delete from SecGroupRights where rightid in (select rightid from secrights
+			where rightname ='menuCat_DashBoard');
+			delete from secrights where rightname='menuCat_DashBoard';
+		</sql>
+	</changeSet>
+
+	<changeSet id="28.1" author="DurgaPrasad G">
 		<sql>
 			ALTER TABLE Extendedfieldheader ADD POSTVALIDATION NCLOB;
-			ALTER TABLE Extendedfieldheader ADD PREVALIDATION NCLOB;
-			ALTER TABLE Extendedfieldheader ADD POSTVALIDATIONREQ  NUMBER(1);
-			ALTER TABLE Extendedfieldheader ADD PREVALIDATIONREQ  NUMBER(1);
-			
-			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATION NCLOB;
-			ALTER TABLE Extendedfieldheader_temp ADD PREVALIDATION NCLOB;
-			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATIONREQ  NUMBER(1);
-			ALTER TABLE Extendedfieldheader_temp ADD PREVALIDATIONREQ  NUMBER(1);
-			
-			Update Extendedfieldheader set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
-			Update Extendedfieldheader_temp set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
-		</sql>
-</changeSet>
+			ALTER
+			TABLE Extendedfieldheader ADD PREVALIDATION NCLOB;
+			ALTER TABLE
+			Extendedfieldheader ADD POSTVALIDATIONREQ NUMBER(1);
+			ALTER TABLE
+			Extendedfieldheader ADD PREVALIDATIONREQ NUMBER(1);
 
-<changeSet id="28" author="DurgaPrasad G">
-	<createView viewName="EXTENDEDFIELDHEADER_VIEW" replaceIfExists="true">
+			ALTER TABLE Extendedfieldheader_temp ADD POSTVALIDATION NCLOB;
+			ALTER TABLE
+			Extendedfieldheader_temp ADD PREVALIDATION NCLOB;
+			ALTER TABLE
+			Extendedfieldheader_temp ADD POSTVALIDATIONREQ NUMBER(1);
+			ALTER TABLE
+			Extendedfieldheader_temp ADD PREVALIDATIONREQ NUMBER(1);
+
+			Update Extendedfieldheader set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
+			Update Extendedfieldheader_temp set PREVALIDATIONREQ =
+			0,POSTVALIDATIONREQ = 0;
+		</sql>
+	</changeSet>
+
+	<changeSet id="28" author="DurgaPrasad G">
+		<createView viewName="EXTENDEDFIELDHEADER_VIEW"
+			replaceIfExists="true">
 		SELECT		T1.ModuleId, T1.ModuleName, T1.SubModuleName, T1.TabHeading, T1.NumberOfColumns		
 			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
 			,POSTVALIDATION,PREVALIDATION,POSTVALIDATIONREQ,PREVALIDATIONREQ
@@ -210,86 +247,255 @@
 			FROM    	ExtendedFieldHeader T1
 		WHERE     NOT EXISTS (SELECT 1 FROM ExtendedFieldHeader_TEMP WHERE ModuleId = T1.ModuleId)
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="29" author="DurgaPrasad G">
-	<createView viewName="EXTENDEDFIELDHEADER_AVIEW" replaceIfExists="true">
+	<changeSet id="29" author="DurgaPrasad G">
+		<createView viewName="EXTENDEDFIELDHEADER_AVIEW"
+			replaceIfExists="true">
 	SELECT     ModuleId, ModuleName, SubModuleName, TabHeading, NumberOfColumns, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, 
                       TaskId, NextTaskId, RecordType, WorkflowId
 					  ,POSTVALIDATION,PREVALIDATION,POSTVALIDATIONREQ,PREVALIDATIONREQ
 	FROM         ExtendedFieldHeader
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="30" author="Durgaprasad.g">
-	<sql>
-		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
-		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
-		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
-		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
-		
-		Delete from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER';
-		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'EXTENDEDFIELD_CONFIGURATION_MAKER','WF Maker for extendedfield configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
-		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory');
-		Delete from SecRights where RightName = 'menuCat_SolutionFactory';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_SolutionFactory', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration');
-		Delete from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_SolutionFactory_ExtendedFieldConfiguration', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		 
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig');
-		Delete from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_ExtendedFieldConfigList_NewExtendedFieldConfig', 'ExtendedFieldConfigList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigList_NewExtendedFieldConfig'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave');
-		Delete from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_ExtendedFieldConfigDialog_btnSave', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading');
-		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_tabHeading', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq');
-		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_preValidationReq', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidationReq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq');
-		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_postValidationReq', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidationReq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation');
-		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_preValidation', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_preValidation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation');
-		Delete from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation';
-		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'ExtendedFieldConfigDialog_postValidation', 'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights where RightName = 'ExtendedFieldConfigDialog_postValidation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		 
-		
-		Delete from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER';
-		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'EXTENDEDFIELD_CONFIGURATION_APPROVER','WF Approver for extendedfield configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
-		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-		 
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from SecRights where RightName = 'button_ExtendedFieldConfigDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		
-		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
-		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
-		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
-		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
-	</sql>
-</changeSet> 
+	<changeSet id="30" author="Durgaprasad.g">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from
+			SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+			SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from
+			SecRoleGroups);
+
+			Delete from SecGroups where GrpCode = 'EXTENDEDFIELD_CONFIGURATION_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups),
+			'EXTENDEDFIELD_CONFIGURATION_MAKER','WF Maker for extendedfield
+			configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL,
+			NULL, NULL,0);
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from
+			SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select MAX(RoleID) from
+			SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP,
+			NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights
+			where RightName = 'menuCat_SolutionFactory');
+			Delete from SecRights where RightName = 'menuCat_SolutionFactory';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0,
+			'menuCat_SolutionFactory', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null,
+			null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights
+			where RightName =
+			'menuItem_SolutionFactory_ExtendedFieldConfiguration');
+			Delete from SecRights where RightName =
+			'menuItem_SolutionFactory_ExtendedFieldConfiguration';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0,
+			'menuItem_SolutionFactory_ExtendedFieldConfiguration', 'MENU', 1,
+			1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName =
+			'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights
+			where RightName =
+			'button_ExtendedFieldConfigList_NewExtendedFieldConfig');
+			Delete from SecRights where RightName =
+			'button_ExtendedFieldConfigList_NewExtendedFieldConfig';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2,
+			'button_ExtendedFieldConfigList_NewExtendedFieldConfig',
+			'ExtendedFieldConfigList', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName =
+			'button_ExtendedFieldConfigList_NewExtendedFieldConfig'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights
+			where RightName = 'button_ExtendedFieldConfigDialog_btnSave');
+			Delete from SecRights where RightName =
+			'button_ExtendedFieldConfigDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2,
+			'button_ExtendedFieldConfigDialog_btnSave',
+			'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'button_ExtendedFieldConfigDialog_btnSave'), 1, 1,
+			1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from
+			SecRights where RightName = 'ExtendedFieldConfigDialog_tabHeading');
+			Delete from SecRights where RightName =
+			'ExtendedFieldConfigDialog_tabHeading';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'ExtendedFieldConfigDialog_tabHeading', 'ExtendedFieldConfigDialog',
+			1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'ExtendedFieldConfigDialog_tabHeading'), 1, 1,
+			1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from
+			SecRights where RightName =
+			'ExtendedFieldConfigDialog_preValidationReq');
+			Delete from SecRights where RightName =
+			'ExtendedFieldConfigDialog_preValidationReq';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'ExtendedFieldConfigDialog_preValidationReq',
+			'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'ExtendedFieldConfigDialog_preValidationReq'), 1,
+			1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from
+			SecRights where RightName =
+			'ExtendedFieldConfigDialog_postValidationReq');
+			Delete from SecRights where RightName =
+			'ExtendedFieldConfigDialog_postValidationReq';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'ExtendedFieldConfigDialog_postValidationReq',
+			'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'ExtendedFieldConfigDialog_postValidationReq'), 1,
+			1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from
+			SecRights where RightName =
+			'ExtendedFieldConfigDialog_preValidation');
+			Delete from SecRights where RightName =
+			'ExtendedFieldConfigDialog_preValidation';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'ExtendedFieldConfigDialog_preValidation',
+			'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'ExtendedFieldConfigDialog_preValidation'), 1, 1,
+			1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from
+			SecRights where RightName =
+			'ExtendedFieldConfigDialog_postValidation');
+			Delete from SecRights where RightName =
+			'ExtendedFieldConfigDialog_postValidation';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'ExtendedFieldConfigDialog_postValidation',
+			'ExtendedFieldConfigDialog', 1, 1000, CURRENT_TIMESTAMP, null, null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_MAKER'), (Select RightID from SecRights
+			where RightName = 'ExtendedFieldConfigDialog_postValidation'), 1, 1,
+			1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+
+			Delete from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups),
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER','WF Approver for extendedfield
+			configuration', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL,
+			NULL, NULL,0);
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from
+			SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select MAX(RoleID) from
+			SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000,
+			CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from
+			SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from
+			SecRights where RightName =
+			'menuItem_SolutionFactory_ExtendedFieldConfiguration'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+			SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+			'EXTENDEDFIELD_CONFIGURATION_APPROVER'), (Select RightID from
+			SecRights where RightName =
+			'button_ExtendedFieldConfigDialog_btnSave'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from
+			SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+			SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from
+			SecRoleGroups);
+		</sql>
+	</changeSet>
+
+	<changeSet id="28.2" author="Jayant">
+		<addColumn tableName="Extendedfieldheader">
+			<column name="POSTVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.3" author="Jayant">
+		<addColumn tableName="Extendedfieldheader">
+			<column name="PREVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.4" author="Jayant">
+		<addColumn tableName="Extendedfieldheader">
+			<column name="POSTVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.5" author="Jayant">
+		<addColumn tableName="Extendedfieldheader">
+			<column name="PREVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.6" author="Jayant">
+		<addColumn tableName="Extendedfieldheader_temp">
+			<column name="POSTVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.7" author="Jayant">
+		<addColumn tableName="Extendedfieldheader_temp">
+			<column name="PREVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.8" author="Jayant">
+		<addColumn tableName="Extendedfieldheader_temp">
+			<column name="POSTVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.9" author="Jayant">
+		<addColumn tableName="Extendedfieldheader_temp">
+			<column name="PREVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.10" author="Jayant">
+		<sql>
+			Update Extendedfieldheader set PREVALIDATIONREQ = 0,POSTVALIDATIONREQ = 0;
+			Update Extendedfieldheader_temp set PREVALIDATIONREQ =
+			0,POSTVALIDATIONREQ = 0;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
