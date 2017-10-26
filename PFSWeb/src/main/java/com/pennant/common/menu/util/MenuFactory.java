@@ -44,6 +44,7 @@
 package com.pennant.common.menu.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,6 +56,7 @@ import org.zkoss.zk.ui.Component;
 import com.pennant.UserWorkspace;
 import com.pennant.common.menu.domain.IMenuDomain;
 import com.pennant.common.menu.domain.MenuDomain;
+import com.pennant.common.menu.domain.MenuItemDomain;
 import com.pennant.common.menu.domain.MetaMenuFactory;
 import com.pennanttech.pff.core.App.AuthenticationType;
 
@@ -75,20 +77,45 @@ abstract public class MenuFactory implements Serializable {
 		this.stack = new LinkedList<Component>();
 		push(component);
 
-		createMenu(MetaMenuFactory.getRootMenuDomain().getItems());
+		List<IMenuDomain> mainMenu = getAuthorizedMenu(MetaMenuFactory.getRootMenuDomain().getItems());
+
+		createMenu(mainMenu, 1);
 	}
 
-	private void createMenu(List<IMenuDomain> items) {
+	private List<IMenuDomain> getAuthorizedMenu(List<IMenuDomain> mainMenu) {
+		List<IMenuDomain> result = new ArrayList<>();
+
+		for (IMenuDomain menu : mainMenu) {
+			if (menu instanceof MenuDomain) {
+				MenuDomain menuGroup = (MenuDomain) menu;
+
+				List<IMenuDomain> itemDomain = getAuthorizedMenu(menuGroup.getItems());
+
+				if (!itemDomain.isEmpty()) {
+					result.add(menuGroup.getCopy(itemDomain));
+				}
+			} else {
+				MenuItemDomain menuItem = (MenuItemDomain) menu;
+
+				if (isAllowed(menuItem)) {
+					result.add(menuItem);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private void createMenu(List<IMenuDomain> items, int level) {
 		if (items.isEmpty()) {
 			return;
 		}
 		for (IMenuDomain menuDomain : items) {
 			if (menuDomain instanceof MenuDomain) {
 				MenuDomain menu = (MenuDomain) menuDomain;
-				if (addSubMenuImpl(menu)) {
-					createMenu(menu.getItems());
-					ebeneHoch();
-				}
+				addSubMenuImpl(menu, level);
+				createMenu(menu.getItems(), level + 1);
+				ebeneHoch();
 			} else {
 				addItemImpl(menuDomain);
 				this.workspace.setHasMenuRights(menuDomain.getId(), StringUtils.trimToEmpty(menuDomain.getRightName()));
@@ -111,20 +138,15 @@ abstract public class MenuFactory implements Serializable {
 
 	abstract protected ILabelElement createItemComponent(Component parent);
 
-	private boolean addSubMenuImpl(MenuDomain menu) {
-		if (isAllowed(menu)) {
-			MenuFactoryDto dto = createMenuComponent(getCurrentComponent());
+	private void addSubMenuImpl(MenuDomain menu, int level) {
+		MenuFactoryDto dto = createMenuComponent(getCurrentComponent(), level);
 
-			setAttributes(menu, dto.getNode());
+		setAttributes(menu, dto.getNode());
 
-			push(dto.getParent());
-
-			return true;
-		}
-		return false;
+		push(dto.getParent());
 	}
 
-	abstract protected MenuFactoryDto createMenuComponent(Component parent);
+	abstract protected MenuFactoryDto createMenuComponent(Component parent, int level);
 
 	private boolean isAllowed(IMenuDomain treecellValue) {
 		
