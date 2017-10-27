@@ -482,5 +482,11 @@
 		'test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="247" author="Srikanth">
+	<sql>
+	Delete from ErrorDetails where ErrorCode = '90337';
+	INSERT INTO ErrorDetails VALUES('90337','EN','E','{0} is invalid, applicable values are {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
