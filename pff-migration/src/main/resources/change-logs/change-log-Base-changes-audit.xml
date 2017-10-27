@@ -40,5 +40,12 @@
 			<column name="PREVALIDATIONREQ" type="SMALLINT"></column>
 		</addColumn>
 	</changeSet>
-
+	<changeSet id="05" author="Ganesh.p">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

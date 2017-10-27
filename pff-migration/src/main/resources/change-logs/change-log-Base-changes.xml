@@ -20,7 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<!-- <changeSet id="1" author="Prakash">
+	<changeSet id="1" author="Prakash">
 		<sql>
 			delete from SecGroupRights where rightid in (select rightid from secrights
 			where rightname ='menuCat_SystemMaster');
@@ -207,7 +207,7 @@
 			where rightname ='menuCat_DashBoard');
 			delete from secrights where rightname='menuCat_DashBoard';
 		</sql>
-	</changeSet> -->
+	</changeSet>
 
 
 	<changeSet id="28" author="DurgaPrasad G">
@@ -487,6 +487,71 @@
 	Delete from ErrorDetails where ErrorCode = '90337';
 	INSERT INTO ErrorDetails VALUES('90337','EN','E','{0} is invalid, applicable values are {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
+	</changeSet>
+
+	<changeSet id="33" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="34" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL_TEMP">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="35" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_VIEW" replaceIfExists="true">
+		  SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                      T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail_TEMP  T1 INNER JOIN
+                      ExtendedFieldHeader_TEMP  T2 ON T1.ModuleId = T2.ModuleId
+			UNION ALL
+		SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                     T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId , T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          ExtendedFieldDetail_TEMP
+                            WHERE      ModuleId = T1.ModuleId AND FieldName = T1.FieldName)
+
+		</createView> 
+	</changeSet>
+	<changeSet id="36" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_AVIEW" replaceIfExists="true">
+  			SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, T1.FieldType, 
+                      T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, 
+                      T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+                      T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.MultiLine, T1.ParentTag, T1.InputElement
+			FROM         		  ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+
+
+		</createView> 
+	</changeSet>
+	<changeSet id="37" author="Ganesh.p">
+		<sql>
+			Insert into SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+		values ((Select MAX(RightID)+1 From SecRights),3,'ExtendedFieldDetailDialog_parentTag','ExtendedFieldDetailDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+		</sql>
+	</changeSet>
+	<changeSet id="38" author="Ganesh.p">
+		<sql>
+		Insert Into secGrouprights (GrpRightID,GrpID,RightID,AccessType,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)
+		values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='EXTENDEDFIELDDETAIL_MAKER'),(select RightId from secRights where RightName='ExtendedFieldDetailDialog_parentTag')
+		,1,0,1000,CURRENT_timestamp, '','','','','','',0);
+
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
