@@ -18,7 +18,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
-<changeSet id="1" author="Prakash">
+<!-- <changeSet id="1" author="Prakash">
 		<sql>
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SystemMaster');		
             delete from secrights where rightname='menuCat_SystemMaster';
@@ -178,6 +178,6 @@
             delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DashBoard');		
             delete from secrights where rightname='menuCat_DashBoard';
 		</sql>
-</changeSet>
+</changeSet> -->
 
 </databaseChangeLog>
