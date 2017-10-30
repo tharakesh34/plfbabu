@@ -1581,17 +1581,12 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
 	</bean>
-
+	
 	<bean id="extendedFieldDialogCtrl"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
 	</bean>
-
-	<bean id="additionalDetailValidation"
-		class="com.pennant.webui.util.constraint.AdditionalDetailValidation"
-		scope="prototype" />
-
+	 
 	<!--============ Finance Type Detail ============== -->
 
 	<bean id="financeTypeListCtrl"
@@ -1803,7 +1798,6 @@
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="mailUtil" ref="mailUtil" />
-		<property name="additionalDetailValidation" ref="additionalDetailValidation" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="financeMainExtService" ref="financeMainExtService" />
@@ -1821,7 +1815,6 @@
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="mailUtil" ref="mailUtil" />
-		<property name="additionalDetailValidation" ref="additionalDetailValidation" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="finDelegationDeviationCtrl" ref="finDelegationDeviationCtrl" />
@@ -4914,4 +4907,22 @@
 	<bean id="dataExtractionListCtrl"
 		class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl" scope="prototype">
 	</bean>
+
+	<!--  Extended Fields Configuration -->
+	<bean id="extFieldConfigListCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="extFieldConfigService" ref="extFieldConfigService" />
+	</bean>
+	
+	<bean id="extFieldConfigDialogCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="extFieldConfigService" ref="extFieldConfigService" />
+	</bean>
+
+	<!-- Extended fields Capture util -->
+	<bean id="extendedFieldCtrl" class="com.pennant.component.extendedfields.ExtendedFieldCtrl">
+		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="extFieldConfigService" ref="extFieldConfigService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+	</bean>
+	
+
 </beans>

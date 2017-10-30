@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -15,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
@@ -33,10 +35,15 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.staticparms.ExtendedField;
+import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
@@ -45,17 +52,18 @@ import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerController {
-	private final Logger logger = Logger.getLogger(CustomerController.class);
+	private final Logger						logger				= Logger.getLogger(CustomerController.class);
 
-	HashMap<String, ArrayList<ErrorDetails>> overideMap;
-	private CustomerService customerService;
-	private CustomerDetailsService customerDetailsService;
-	private ErrorDetailService errorDetailService;
-	private CustomerEmploymentDetailService customerEmploymentDetailService;
-	private DocumentManagerDAO documentManagerDAO;
+	HashMap<String, ArrayList<ErrorDetails>>	overideMap;
+	private CustomerService						customerService;
+	private CustomerDetailsService				customerDetailsService;
+	private ErrorDetailService					errorDetailService;
+	private CustomerEmploymentDetailService		customerEmploymentDetailService;
+	private DocumentManagerDAO					documentManagerDAO;
+	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
 
-	private final String PROCESS_TYPE_SAVE = "Save";
-	private final String PROCESS_TYPE_UPDATE = "Update";
+	private final String						PROCESS_TYPE_SAVE	= "Save";
+	private final String						PROCESS_TYPE_UPDATE	= "Update";
 
 	/**
 	 * 
@@ -89,6 +97,7 @@ public class CustomerController {
 			response = new CustomerDetails();
 			response.setCustomer(null);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
 		}
 
 		// prepare create customer response object
@@ -508,6 +517,35 @@ public class CustomerController {
 				custTotExpense = custTotExpense.add(curCustomerExtLiability.getInstalmentAmount());
 			}
 			
+		}
+		
+		// process Extended field details
+		// Get the ExtendedFieldHeader for given module and subModule
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+		customerDetails.setExtendedFieldHeader(extendedFieldHeader);
+		
+		List<ExtendedField> extendedFields = customerDetails.getExtendedDetails();
+		if (extendedFields != null) {
+			int seqNo = 0;
+			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+			exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
+			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+			exdFieldRender.setSeqNo(++seqNo);
+			exdFieldRender.setNewRecord(true);
+			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			exdFieldRender.setVersion(1);
+			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
+			for (ExtendedField extendedField : extendedFields) {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+					exdFieldRender.setMapValues(mapValues);
+				}
+			}
+			customerDetails.setExtendedFieldRender(exdFieldRender);
 		}
 		curCustomer.setCustTotalIncome(custTotIncomeExp);
 		curCustomer.setCustTotalExpense(custTotExpense);
@@ -1080,6 +1118,10 @@ public class CustomerController {
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
 	
 }

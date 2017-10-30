@@ -177,6 +177,8 @@ public class JdbcSearchProcessor implements Serializable {
 			return getDB2LimitString(query.toString(), offset, pageSize);
 		case MYSQL:
 			return getMYSQLLimitString(query.toString(), offset, pageSize);
+		case PSQL:
+			return getPSQLLimitString(query.toString(), offset, pageSize);
 		default:
 			return query.toString();
 		}
@@ -517,5 +519,34 @@ public class JdbcSearchProcessor implements Serializable {
 		}
 
 		return result.toString();
+	}
+	
+	private String getPSQLLimitString(String sql, int startRow, int pageSize) {
+		// Condition added to by pass the usage of valid item in extended combo
+		// box
+		if (startRow > 1 || pageSize > 1) {
+			sql = sql.trim();
+			boolean isForUpdate = false;
+			if (sql.toLowerCase().endsWith(" for update")) {
+				sql = sql.substring(0, sql.length() - 11);
+				isForUpdate = true;
+			}
+
+			StringBuffer pagingSelect = new StringBuffer(sql.length() + 100);
+			pagingSelect.append(sql);
+			if (startRow > 0) {
+				pagingSelect.append(" limit " + pageSize + " offset " + startRow);
+			} else {
+				pagingSelect.append(" limit " + pageSize);
+			}
+
+			if (isForUpdate) {
+				pagingSelect.append(" for update");
+			}
+
+			return pagingSelect.toString();
+		}
+
+		return sql;
 	}
 }

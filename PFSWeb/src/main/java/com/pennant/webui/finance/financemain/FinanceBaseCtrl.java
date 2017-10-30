@@ -70,15 +70,11 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Column;
-import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -140,7 +136,6 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -168,7 +163,6 @@ import com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -582,7 +576,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
 	private MailUtil										mailUtil;
-	private AdditionalDetailValidation						additionalDetailValidation;
 	private StepPolicyService								stepPolicyService;
 	private LimitCheckDetails								limitCheckDetails;
 	private FinanceMainExtService							financeMainExtService;
@@ -1521,73 +1514,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Preparation of Additional Details Tab
-	 * 
-	 * @throws ParseException
-	 */
-	public void appendAddlDetailsTab() throws ParseException {
-		logger.debug("Entering");
-		List<ExtendedFieldDetail> extendedFieldDetails = null;
-		if (getFinanceDetail().getExtendedFieldHeader() != null) {
-			extendedFieldDetails = getFinanceDetail().getExtendedFieldHeader().getExtendedFieldDetails();
-		}
-
-		if (extendedFieldDetails != null && !extendedFieldDetails.isEmpty()) {
-
-			addlDetailTab = new Tab(getFinanceDetail().getExtendedFieldHeader().getTabHeading());
-			addlDetailTab.setId("addlDetailTab");
-			tabsIndexCenter.appendChild(addlDetailTab);
-
-			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setId("additionalTabPanel");
-			tabpanel.setStyle("overflow:auto");
-			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
-			tabpanel.setParent(tabpanelsBoxIndexCenter);
-
-			Groupbox gbAdditionalDetail = new Groupbox();
-			Caption caption = new Caption();
-			caption.setLabel(Labels.getLabel("finAdditionalDetails"));
-			caption.setParent(gbAdditionalDetail);
-			caption.setStyle("font-weight:bold;color:#FF6600;");
-			Grid addlGrid = new Grid();
-			addlGrid.setSclass("GridLayoutNoBorder");
-			addlGrid.setSizedByContent(true);
-			tabpanel.appendChild(gbAdditionalDetail);
-
-			Columns cols = new Columns();
-			addlGrid.appendChild(cols);
-			int columnCount = Integer.parseInt(getFinanceDetail().getExtendedFieldHeader().getNumberOfColumns());
-
-			Column col = new Column();
-			col.setWidth("250px");
-			cols.appendChild(col);
-			col = new Column();
-			col.setWidth("5px");
-			cols.appendChild(col);
-			col = new Column();
-			cols.appendChild(col);
-			if (columnCount == 2) {
-				col = new Column();
-				col.setWidth("250px");
-				cols.appendChild(col);
-				col = new Column();
-				col.setWidth("5px");
-				cols.appendChild(col);
-				col = new Column();
-				cols.appendChild(col);
-			}
-
-			additionalDetails = new Rows();
-			addlGrid.appendChild(additionalDetails);
-			addlGrid.setParent(gbAdditionalDetail);
-			getAdditionalDetailValidation().doPrepareAdditionalDetails(
-					getFinanceDetail().getLovDescExtendedFieldValues(), extendedFieldDetails, getMainWindow(),
-					additionalDetails, columnCount, isReadOnly("FinanceMainDialog_addlDetail"));
 		}
 		logger.debug("Leaving");
 	}
@@ -7796,14 +7722,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public MailUtil getMailUtil() {
 		return mailUtil;
-	}
-
-	public AdditionalDetailValidation getAdditionalDetailValidation() {
-		return additionalDetailValidation;
-	}
-
-	public void setAdditionalDetailValidation(AdditionalDetailValidation additionalDetailValidation) {
-		this.additionalDetailValidation = additionalDetailValidation;
 	}
 
 	public Window getMainWindow() {

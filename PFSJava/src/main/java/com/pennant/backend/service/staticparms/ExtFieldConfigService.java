@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtendedFieldDetailService.java                                                   * 	  
+ * FileName    		:  ExtFieldConfigService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  28-12-2011    														*
+ * Creation Date    :  29-11-2016    														*
  *                                                                  						*
- * Modified Date    :  28-12-2011    														*
+ * Modified Date    :  29-11-2016    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
+ * 29-11-2016       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,36 +40,23 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.service.solutionfactory;
 
-import java.util.List;
+package com.pennant.backend.service.staticparms;
 
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 
-public interface ExtendedFieldDetailService {
-	
+public interface ExtFieldConfigService {
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName);
+	ExtendedFieldHeader getExtendedFieldHeaderByModule(String moduleName, String subModuleName);
 
-	ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id, String fieldName);
+	ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-
-	ExtendedFieldHeader getExtendedFieldHeaderById(ExtendedFieldHeader extendedFieldHeader);
-
-	void revertColumn(ExtendedFieldDetail efd);
-	
-	List<ErrorDetails> doValidations(ExtendedFieldHeader extendedFieldHeader);
-	
-	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName,String subModuleName,String type);
-	
-	List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type);
 }

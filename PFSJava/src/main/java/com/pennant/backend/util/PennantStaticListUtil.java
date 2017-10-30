@@ -209,7 +209,14 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
+
 	private static ArrayList<ValueLabel> monthEndList;
+
+	private static ArrayList<ValueLabel> configTypes;
+	private static ArrayList<ValueLabel> paymentTypeList;
+	private static ArrayList<ValueLabel> disbursmentParty;
+	private static ArrayList<ValueLabel> disbursmentStatus;
+	private static ArrayList<ValueLabel> disbStatusList;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2864,5 +2871,66 @@ public class PennantStaticListUtil {
 		return monthEndList;
 	}
 	
+	public static ArrayList<ValueLabel> getDisbursmentParty() {
+
+		if(disbursmentParty == null){
+			disbursmentParty = new ArrayList<ValueLabel>(3);
+			disbursmentParty.add(new ValueLabel("VD", Labels.getLabel("label_DisbParty_Vendor")));
+			disbursmentParty.add(new ValueLabel("CS", Labels.getLabel("label_DisbParty_Customer")));
+			disbursmentParty.add(new ValueLabel("TP", Labels.getLabel("label_DisbParty_ThirdParty")));
+						
+		}
+		return disbursmentParty;
+	}
+	
+	
+	public static ArrayList<ValueLabel> getPaymentTypeList() {
+
+		if(paymentTypeList == null){
+			paymentTypeList = new ArrayList<ValueLabel>(8);
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS, Labels.getLabel("label_PaymentType_RTGS")));
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NEFT, Labels.getLabel("label_PaymentType_NEFT")));
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IMPS, Labels.getLabel("label_PaymentType_IMPS")));
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE, Labels.getLabel("label_PaymentType_CHEQUE")));
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD, Labels.getLabel("label_PaymentType_DD")));
+			paymentTypeList.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH, Labels.getLabel("label_PaymentType_CASH")));
+			
+		}
+		return paymentTypeList;
+	}
+	
+	public static ArrayList<ValueLabel> getDisbursmentStatus() {
+
+		if(disbursmentStatus == null){
+			disbursmentStatus = new ArrayList<ValueLabel>(6);
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_NEW, Labels.getLabel("label_DisbStatus_NEW")));
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_APPROVED, Labels.getLabel("label_DisbStatus_APPROVED")));
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_AWAITCON, Labels.getLabel("label_DisbStatus_AWAITCON")));
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_REJECTED, Labels.getLabel("label_DisbStatus_REJECTED")));
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_CANCEL, Labels.getLabel("label_DisbStatus_CANCEL")));
+			disbursmentStatus.add(new ValueLabel(DisbursementConstants.STATUS_PAID, Labels.getLabel("label_DisbStatus_PAID")));
+					
+		}
+		return disbursmentStatus;
+	}
+	
+	public static ArrayList<ValueLabel> getDisbStatusList(){
+		if(disbStatusList == null){
+			disbStatusList = new ArrayList<ValueLabel>(2);
+			disbStatusList.add(new ValueLabel("1", Labels.getLabel("label_QuickDisb_Active")));
+			disbStatusList.add(new ValueLabel("0", Labels.getLabel("label_QuickDisb_Inactive")));
+		}
+		return disbStatusList;
+	}
+
+	public static ArrayList<ValueLabel> getConfigTypes() {
+
+		if (configTypes == null) {
+			configTypes = new ArrayList<ValueLabel>(3);
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_CUSTOMER, Labels.getLabel("label_ExtendedFieldModule_Customer.value")));
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_LOAN, Labels.getLabel("label_ExtendedFieldModule_Loan.value")));
+		}
+		return configTypes;
+	}
 }
 

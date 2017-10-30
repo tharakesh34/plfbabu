@@ -385,6 +385,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	@Override
 	public void alter(ExtendedFieldDetail fieldDetail, String type, boolean drop, boolean recreate, boolean isAudit) {
 		logger.debug("Entering");
+		boolean alter=false;
 		fieldDetail.setLovDescErroDesc(null);
 		StringBuilder syntax = new StringBuilder();
 		syntax.append("alter table ");
@@ -435,6 +436,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					sql.append("modify ");
 				} else {
 					sql.append("alter column ");
+					alter=true;
 				}
 			} else {
 				sql.append("add ");
@@ -447,7 +449,9 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			}else{
 				sql.append(fieldDetail.getFieldName());
 			}
-			
+			if(alter){
+				sql.append(" TYPE ");
+			}
 			sql.append(getDatatype(fieldDetail));
 			logger.debug("SQL: " + sql.toString());
 			
@@ -498,6 +502,10 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(" number(");
 				datatype.append(fieldDetail.getFieldLength());
 				datatype.append(", 0) ");
+			} else if(App.DATABASE == Database.PSQL){
+				datatype.append(" numeric(");
+				datatype.append(fieldDetail.getFieldLength());
+				datatype.append(", 0) ");
 			} else {
 				datatype.append(" decimal(");
 				datatype.append(fieldDetail.getFieldLength());
@@ -507,6 +515,8 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case INT:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" number(10,0) ");
+			} else if (App.DATABASE == Database.PSQL) {
+				datatype.append(" integer ");
 			} else {
 				datatype.append(" int ");
 			}
@@ -525,6 +535,10 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(" number(");
 				datatype.append(fieldDetail.getFieldLength()).append(", ");
 				datatype.append(fieldDetail.getFieldPrec()).append(") ");
+			} else if (App.DATABASE == Database.PSQL) {
+				datatype.append(" numeric(");
+				datatype.append(fieldDetail.getFieldLength()).append(", ");
+				datatype.append(fieldDetail.getFieldPrec()).append(") ");
 			} else {
 				datatype.append(" decimal(");
 				datatype.append(fieldDetail.getFieldLength()).append(", ");
@@ -536,6 +550,8 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case TIME:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" date ");
+			} else if (App.DATABASE == Database.PSQL) {
+				datatype.append(" timestamp without time zone ");
 			} else {
 				datatype.append(" datetime ");
 			}
@@ -543,7 +559,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case BOOLEAN:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" number (1,0) ");
-			} else {
+			}
+			else if(App.DATABASE == Database.PSQL){
+				datatype.append(" boolean ");
+				datatype.append(" DEFAULT FALSE ");
+			}
+			else{
 				datatype.append(" bit DEFAULT (0) ");
 			}
 			break;

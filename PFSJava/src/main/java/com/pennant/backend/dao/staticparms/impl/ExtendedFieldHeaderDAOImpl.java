@@ -97,7 +97,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName," );
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ModuleId = :ModuleId ");
@@ -131,7 +132,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
@@ -224,9 +226,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ModuleId, ModuleName, SubModuleName, TabHeading, NumberOfColumns, ");
+		insertSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :TabHeading, :NumberOfColumns, ");
+		insertSql.append(" :PreValidationReq, :PostValidationReq, :PreValidation, :PostValidation, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -260,6 +264,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" Set  ModuleName = :ModuleName, " );
 		updateSql.append(" SubModuleName = :SubModuleName, TabHeading = :TabHeading, " );
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
+		updateSql.append(" PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, ");
+		updateSql.append(" PreValidation = :PreValidation, PostValidation = :PostValidation, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -383,6 +389,50 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if(i == 2){
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				}else{
+					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+				}
+			}  else if (App.DATABASE == App.Database.PSQL){
+				syntax.append("create table ");
+				if (i == 2) {
+					syntax.append("Adt");
+				}
+				syntax.append(module);
+				syntax.append("_");
+				syntax.append(subModule);
+				syntax.append("_ED");
+				syntax.append(StringUtils.trimToEmpty(tableType));
+				if (i == 2) {
+					syntax.append(" (AuditId 		bigint NOT NULL, ");
+					syntax.append(" AuditDate 		timestamp NOT NULL, ");
+					syntax.append(" AuditSeq 		integer NOT NULL, ");
+					syntax.append(" AuditImage 		char(1) NOT NULL, ");
+					syntax.append(" Reference 		varchar(20) NOT NULL, ");
+				} else {
+					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+				}
+				syntax.append(" SeqNo 			integer NOT NULL, ");
+				syntax.append("	Version 		integer NOT NULL,");
+				syntax.append("	LastMntBy 		bigint NULL,");
+				syntax.append("	LastMntOn 		timestamp NULL,");
+				syntax.append("	RecordStatus 	varchar(50) NULL,");
+				syntax.append("	RoleCode 		varchar(100) NULL,");
+				syntax.append("	NextRoleCode 	varchar(200) NULL,");
+				syntax.append("	TaskId 			varchar(50) NULL,");
+				syntax.append("	NextTaskId 		varchar(200) NULL,");
+				syntax.append("	RecordType 		varchar(50) NULL,");
+				syntax.append("	WorkflowId 		bigint NULL,");
+				syntax.append(" CONSTRAINT PK_");
+				if (i == 2) {
+					syntax.append("Adt");
+				}
+				syntax.append(module);
+				syntax.append("_");
+				syntax.append(subModule);
+				syntax.append("_ED");
+				syntax.append(StringUtils.trimToEmpty(tableType));
+				if (i == 2) {
+					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
+				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
 			}

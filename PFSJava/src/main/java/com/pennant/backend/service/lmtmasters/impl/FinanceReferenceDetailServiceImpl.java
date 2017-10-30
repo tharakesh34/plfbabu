@@ -563,9 +563,25 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 	
 	@Override
-    public List<ValueLabel> getTemplateIdList(String financeType,String finEvent, String roleCode, List<String> lovCodeList) {
-	    return getFinanceReferenceDetailDAO().getTemplateIdList(financeType,finEvent, roleCode, lovCodeList);
-    }
+	public List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
+
+		List<ValueLabel> valueLabelList = new ArrayList<ValueLabel>();
+		
+		Map<Long, String> templateMap = getFinanceReferenceDetailDAO().getTemplateIdList(financeType, finEvent, roleCode, lovCodeList);
+
+		if (templateMap == null) {
+			return valueLabelList;
+		}
+		
+		ValueLabel valueLabel = null;
+		for (Long key : templateMap.keySet()) {
+			valueLabel = new ValueLabel();
+			valueLabel.setValue(String.valueOf(key));
+			valueLabel.setLabel(templateMap.get(key));
+			valueLabelList.add(valueLabel);
+		}
+		return valueLabelList;
+	}
 	
 	@Override
 	public FinanceReferenceDetail getTemplateId(String financeType, String finEvent,String roleCode, String lovCodeList) {

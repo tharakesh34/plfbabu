@@ -19,7 +19,7 @@ public final class App {
 	 * Enumerates the supported databases.
 	 */
 	public enum Database {
-		SQL_SERVER, ORACLE, DB2, MYSQL
+		SQL_SERVER, ORACLE, DB2, MYSQL, PSQL
 	}
 
 	public enum AuthenticationType {
@@ -30,7 +30,7 @@ public final class App {
 	public static final String			CODE		= "PFF";
 	public static final String			NAME		= "pennApps Lending Factory";
 
-	public static final Database	DATABASE	= Database.ORACLE;
+	public static final Database	DATABASE	= Database.PSQL;
 	
 	private App() {
 		super();

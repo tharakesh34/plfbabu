@@ -123,7 +123,7 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		workFlowDetails.setWorkFlowType(workFlowType);
 		
 		String selectListSql = 	"select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc," +
-				" WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive " +
+				" WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive ," +
 				" Version , LastMntBy, LastMntOn from WorkFlowDetails " +
 				" where WorkFlowType =:WorkFlowType AND WorkFlowActive=1"; 
 		logger.debug("selectListSql: " + selectListSql);

@@ -87,7 +87,6 @@ import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
-import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.QueueAssignment;
@@ -166,21 +165,23 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
-import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.LimitConstants;
@@ -212,8 +213,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinContributorDetailDAO			finContributorDetailDAO;
 	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
 	private RuleDAO							ruleDAO;
-	private ExtendedFieldHeaderDAO			extendedFieldHeaderDAO;
-	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 	private AccountingSetDAO				accountingSetDAO;
 	private RuleExecutionUtil				ruleExecutionUtil;
 	private AccountTypeDAO					accountTypeDAO;
@@ -241,9 +240,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FlagDetailValidation			flagDetailValidation;
 	private FinFlagDetailsDAO				finFlagDetailsDAO;
 	private FinTypeInsuranceDAO				finTypeInsuranceDAO;
-	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private VASRecordingDAO					vasRecordingDAO;
-	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private FinTypeFeesDAO					finTypeFeesDAO;
 	private VasRecordingValidation			vasRecordingValidation;
 	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
@@ -253,6 +250,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinanceTaxDetailService			financeTaxDetailService;
 	private GCDCustomerService				gCDCustomerService;
 	
+	private ExtendedFieldDetailsService		extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
+
 	public FinanceDetailServiceImpl() {
 		super();
 	}
@@ -535,10 +536,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			tableName.append("_");
 			tableName.append(assetType.getAssetType());
 			tableName.append("_ED");
-
 			renderedAssetTypes.add(assetType.getAssetType());
 
-			List<Map<String, Object>> renderMapList = getExtendedFieldRenderDAO().getExtendedFieldMap(finReference,
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(finReference,
 					tableName.toString(), "_View");
 			for (int i = 0; i < renderMapList.size(); i++) {
 
@@ -622,7 +622,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			renderedVasProducts.add(recording.getProductCode());
 
-			Map<String, Object> extFieldMap = getExtendedFieldRenderDAO().getExtendedField(recording.getVasReference(),
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(recording.getVasReference(),
 					tableName.toString(), "_View");
 
 			ExtendedFieldRender aExetendedFieldRender = new ExtendedFieldRender();
@@ -2184,27 +2184,43 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 
-			// AssetType Extended field Details
-			if (financeDetail.getExtendedFieldRenderList() != null
-					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-				details = processingExtendedFieldDetailList(details, finReference,
-						AssetConstants.EXTENDEDFIELDS_MODULE, tableType.getSuffix());
-				auditDetails.addAll(details);
-			}
-
 			//Vas Recording Details
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 				details = processingVasRecordngList(details, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
 			//Vas Recording Extended Field Details
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
-				details = processingExtendedFieldDetailList(details, finReference, VASConsatnts.MODULE_NAME,
-						tableType.getSuffix());
+
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						VASConsatnts.MODULE_NAME, tableType.getSuffix());
+				auditDetails.addAll(details);
+			}
+
+			// AssetType Extended field Details
+			if (financeDetail.getExtendedFieldRenderList() != null
+					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+
+				for (int i = 0; i < details.size(); i++) {
+					ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) details.get(i).getModelData();
+					extendedFieldRender.setReference(finReference);
+				}
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						AssetConstants.EXTENDEDFIELDS_MODULE, tableType.getSuffix());
+				auditDetails.addAll(details);
+			}
+
+			//Extended field Details
+			if (financeDetail.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						ExtendedFieldConstants.MODULE_LOAN, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
@@ -2223,6 +2239,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableType.getSuffix(), auditTranType));
 			}
 
+
+				
 		}
 
 		// Finance Fee Details
@@ -2290,135 +2308,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditHeader;
 		
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Check List for Extended FieldDetails
-	 * 
-	 * @param auditDetails
-	 * @param financeDetail
-	 * @param type
-	 * @return
-	 */
-	private List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> auditDetails, String finReference,
-			String moduleName, String type) {
-		logger.debug("Entering");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) auditDetails.get(i).getModelData();
-
-			// Table Name identification
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(moduleName);
-			tableName.append("_");
-			tableName.append(extendedFieldRender.getTypeCode());
-			tableName.append("_ED");
-
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				extendedFieldRender.setRoleCode("");
-				extendedFieldRender.setNextRoleCode("");
-				extendedFieldRender.setTaskId("");
-				extendedFieldRender.setNextTaskId("");
-			}
-
-			//Table Name addition for Audit
-			if (StringUtils.equals(AssetConstants.EXTENDEDFIELDS_MODULE, moduleName)) {
-				extendedFieldRender.setReference(finReference);
-			}
-			extendedFieldRender.setTableName(tableName.toString());
-			extendedFieldRender.setWorkflowId(0);
-
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (extendedFieldRender.isNewRecord()) {
-				saveRecord = true;
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (extendedFieldRender.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-			if (approveRec) {
-				rcdType = extendedFieldRender.getRecordType();
-				recordStatus = extendedFieldRender.getRecordStatus();
-				extendedFieldRender.setRecordType("");
-				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-
-			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-			if (saveRecord || updateRecord) {
-				if (saveRecord) {
-					mapValues.put("Reference", extendedFieldRender.getReference());
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-				}
-
-				mapValues.put("Version", extendedFieldRender.getVersion());
-				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-				mapValues.put("TaskId", extendedFieldRender.getTaskId());
-				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-				mapValues.put("RecordType", extendedFieldRender.getRecordType());
-				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-			}
-
-			if (saveRecord) {
-				getExtendedFieldRenderDAO().save(extendedFieldRender.getMapValues(), type, tableName.toString());
-			}
-
-			if (updateRecord) {
-				getExtendedFieldRenderDAO().update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), type, tableName.toString());
-			}
-
-			if (deleteRecord) {
-				getExtendedFieldRenderDAO().delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						type, tableName.toString());
-			}
-			if (approveRec) {
-				extendedFieldRender.setRecordType(rcdType);
-				extendedFieldRender.setRecordStatus(recordStatus);
-			}
-
-			// Setting Extended field is to identify record related to Extended fields
-			auditDetails.get(i).setExtended(true);
-			auditDetails.get(i).setModelData(extendedFieldRender);
-		}
-		logger.debug("Leaving");
-		return auditDetails;
 	}
 
 	/**
@@ -2864,29 +2753,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getExtendedFieldRenderList() != null
 					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-
-				List<String> tableNames = new ArrayList<>();
-				for (int i = 0; i < details.size(); i++) {
-					ExtendedFieldRender asset = (ExtendedFieldRender) details.get(i).getModelData();
-					details.get(i).setExtended(true);
-					if (tableNames.contains(asset.getTypeCode())) {
-						continue;
-					}
-					tableNames.add(asset.getTypeCode());
-
-					// Table Name identification
-					StringBuilder tableName = new StringBuilder();
-					tableName.append(AssetConstants.EXTENDEDFIELDS_MODULE);
-					tableName.append("_");
-					tableName.append(asset.getTypeCode());
-					tableName.append("_ED");
-
-					// Records Deletion from Table
-					getExtendedFieldRenderDAO().deleteList(financeMain.getFinReference(), tableName.toString(), "");
-				}
-				auditDetails.addAll(details);
+				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
+						financeMain.getFinReference(), "_Temp"));
 			}
 
+			// Vas Recording Details details Prasad
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
+				getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
+				auditDetails.addAll(details);
+
+				// Vas Recording Extended field Details
+				List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
+				auditDetails.addAll(extendedFieldDetailsService.delete(vasExtDetails, VASConsatnts.MODULE_NAME,
+						financeMain.getFinReference(), "_Temp"));
+			}
+
+			// Loan Extended field Details
+			if (financeDetail.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+				auditDetails.addAll(extendedFieldDetailsService.delete(details, ExtendedFieldConstants.MODULE_LOAN,
+						financeMain.getFinReference(), "_Temp"));
+			}
+			
 			// Deleting Finance Insurance Details
 			if (financeDetail.getFinScheduleData().getFinInsuranceList() != null
 					&& !financeDetail.getFinScheduleData().getFinInsuranceList().isEmpty()) {
@@ -3409,7 +3300,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					// Vas Recording Extended Field Details
 					List<AuditDetail> exdDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
-					exdDetails = processingExtendedFieldDetailList(exdDetails, null, VASConsatnts.MODULE_NAME, "");
+					exdDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+							VASConsatnts.MODULE_NAME, "");
 					auditDetails.addAll(exdDetails);
 				}
 
@@ -3646,19 +3538,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(details);
 				}
 
-				// AssetType Extended field Details
-				if (financeDetail.getExtendedFieldRenderList() != null
-						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-					details = processingExtendedFieldDetailList(details, financeMain.getFinReference(),
-							AssetConstants.EXTENDEDFIELDS_MODULE, "");
-					auditDetails.addAll(details);
-				}
-
 				// Fin Flag Details
 				if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
 					details = processingFinFlagDetailList(details, "");
+					auditDetails.addAll(details);
+				}
+
+				// AssetType Extended field Details
+				if (financeDetail.getExtendedFieldRenderList() != null
+						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+
+					for (int i = 0; i < details.size(); i++) {
+						ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) details.get(i).getModelData();
+						extendedFieldRender.setReference(financeMain.getFinReference());
+					}
+					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+							AssetConstants.EXTENDEDFIELDS_MODULE, "");
+					auditDetails.addAll(details);
+				}
+
+				//Extended field Details
+				if (financeDetail.getExtendedFieldRender() != null) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+							ExtendedFieldConstants.MODULE_LOAN, "");
 					auditDetails.addAll(details);
 				}
 
@@ -3814,36 +3719,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getExtendedFieldRenderList() != null
 						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-
-					List<String> tableNames = new ArrayList<>();
-					for (int i = 0; i < details.size(); i++) {
-						ExtendedFieldRender asset = (ExtendedFieldRender) details.get(i).getModelData();
-
-						// Table Name identification
-						StringBuilder tableName = new StringBuilder();
-						tableName.append(AssetConstants.EXTENDEDFIELDS_MODULE);
-						tableName.append("_");
-						tableName.append(asset.getTypeCode());
-						tableName.append("_ED");
-
-						details.get(i).setExtended(true);
-						asset.setReference(financeMain.getFinReference());
-						asset.setTableName(tableName.toString());
-						asset.setWorkflowId(0);
-
-						if (tableNames.contains(asset.getTypeCode())) {
-							continue;
-						}
-						tableNames.add(asset.getTypeCode());
-
-						getExtendedFieldRenderDAO().deleteList(financeMain.getFinReference(), tableName.toString(),
-								"_Temp");
-
-					}
-					auditDetailList.addAll(details);
+					auditDetailList.addAll(extendedFieldDetailsService.delete(details,
+							AssetConstants.EXTENDEDFIELDS_MODULE, financeMain.getFinReference(), "_Temp"));
 				}
 
-				// Vas Recording Details details
+
+				// Vas Recording Details details Prasad
 				if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 					getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
@@ -3851,29 +3732,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					// Vas Recording Extended field Details
 					List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
-
-					List<String> tableNames = new ArrayList<>();
-					for (int i = 0; i < vasExtDetails.size(); i++) {
-						ExtendedFieldRender vas = (ExtendedFieldRender) vasExtDetails.get(i).getModelData();
-						vasExtDetails.get(i).setExtended(true);
-						if (tableNames.contains(vas.getTypeCode())) {
-							continue;
-						}
-						tableNames.add(vas.getTypeCode());
-
-						// Table Name identification
-						StringBuilder tableName = new StringBuilder();
-						tableName.append(VASConsatnts.MODULE_NAME);
-						tableName.append("_");
-						tableName.append(vas.getTypeCode());
-						tableName.append("_ED");
-
-						// Records Deletion from Table
-						getExtendedFieldRenderDAO().deleteList(vas.getReference(), tableName.toString(), "_Temp");
-					}
-					auditDetailList.addAll(vasExtDetails);
+					auditDetailList.addAll(extendedFieldDetailsService.delete(vasExtDetails,
+							VASConsatnts.MODULE_NAME, financeMain.getFinReference(), "_Temp"));
 				}
 
+				
+				// Loan Extended field Details
+				if (financeDetail.getExtendedFieldRender() != null) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+					auditDetailList.addAll(extendedFieldDetailsService.delete(details,
+							ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinReference(), "_Temp"));
+				}
+				
 				// Deleting Finance Insurance Details
 				if (financeDetail.getFinScheduleData().getFinInsuranceList() != null
 						&& !financeDetail.getFinScheduleData().getFinInsuranceList().isEmpty()) {
@@ -4499,7 +4369,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableName.append("_ED");
 
 						// Records Deletion from Table
-						getExtendedFieldRenderDAO().deleteList(financeMain.getFinReference(), tableName.toString(),
+						extendedFieldRenderDAO.deleteList(financeMain.getFinReference(), tableName.toString(),
 								"_Temp");
 					}
 					auditDetails.addAll(details);
@@ -4531,7 +4401,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableName.append("_ED");
 
 						// Records Deletion from Table
-						getExtendedFieldRenderDAO().deleteList(vas.getReference(), tableName.toString(), "_Temp");
+						extendedFieldRenderDAO.deleteList(vas.getReference(), tableName.toString(), "_Temp");
 					}
 					auditDetails.addAll(vasExtDetails);
 				}
@@ -4920,66 +4790,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinAssetTypeDAO().deleteByReference(financeMain.getFinReference(), "_Temp");
 				auditDetails.addAll(details);
 			}
-
+		
 			// AssetType Extended field Details
 			if (financeDetail.getExtendedFieldRenderList() != null
 					&& financeDetail.getExtendedFieldRenderList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-
-				List<String> tableNames = new ArrayList<>();
-				for (int i = 0; i < details.size(); i++) {
-					ExtendedFieldRender asset = (ExtendedFieldRender) details.get(i).getModelData();
-					details.get(i).setExtended(true);
-					if (tableNames.contains(asset.getTypeCode())) {
-						continue;
-					}
-					tableNames.add(asset.getTypeCode());
-
-					// Table Name identification
-					StringBuilder tableName = new StringBuilder();
-					tableName.append(AssetConstants.EXTENDEDFIELDS_MODULE);
-					tableName.append("_");
-					tableName.append(asset.getTypeCode());
-					tableName.append("_ED");
-					asset.setTableName(tableName.toString());
-
-					// Records Deletion from Table
-					getExtendedFieldRenderDAO()
-							.deleteList(financeMain.getFinReference(), tableName.toString(), "_Temp");
-				}
-				auditDetails.addAll(details);
+				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
+						financeMain.getFinReference(), "_Temp"));
 			}
 
-			// Vas Recording Details details
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+			// Vas Recording Details details Prasad
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 				getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
 				auditDetails.addAll(details);
 
 				// Vas Recording Extended field Details
 				List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
+				auditDetails.addAll(extendedFieldDetailsService.delete(vasExtDetails, VASConsatnts.MODULE_NAME,
+						financeMain.getFinReference(), "_Temp"));
+			}
 
-				List<String> tableNames = new ArrayList<>();
-				for (int i = 0; i < vasExtDetails.size(); i++) {
-					ExtendedFieldRender vas = (ExtendedFieldRender) vasExtDetails.get(i).getModelData();
-					vasExtDetails.get(i).setExtended(true);
-					if (tableNames.contains(vas.getTypeCode())) {
-						continue;
-					}
-					tableNames.add(vas.getTypeCode());
-
-					// Table Name identification
-					StringBuilder tableName = new StringBuilder();
-					tableName.append(VASConsatnts.MODULE_NAME);
-					tableName.append("_");
-					tableName.append(vas.getTypeCode());
-					tableName.append("_ED");
-					vas.setTableName(tableName.toString());
-
-					// Records Deletion from Table
-					getExtendedFieldRenderDAO().deleteList(vas.getReference(), tableName.toString(), "_Temp");
-				}
-				auditDetails.addAll(vasExtDetails);
+			// Loan Extended field Details
+			if (financeDetail.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+				auditDetails.addAll(extendedFieldDetailsService.delete(details, ExtendedFieldConstants.MODULE_LOAN,
+						financeMain.getFinReference(), "_Temp"));
 			}
 
 			// Deleting Finance Insurance Details
@@ -5111,13 +4948,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(financeDetail.getAuditDetailMap().get("FinInsuranceDetails"));
 		}
 		// Finance vas recording
-		if (financeDetail.getFinScheduleData().getVasRecordingList() != null
-				&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
-			financeDetail.getAuditDetailMap().put("VasRecordings", setVasAuditData(financeDetail, auditTranType, method));
+		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+			financeDetail.getAuditDetailMap().put("VasRecordings",
+					setVasAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasRecordings"));
 
-			financeDetail.getAuditDetailMap().put("VasExtendedDetails", setVasExtendedAuditData(financeDetail, auditTranType, method));
+			List<AuditDetail> details = new ArrayList<AuditDetail>(); 
+			for (int i = 0; i < vasRecordingList.size(); i++) {
+				VASRecording recording = vasRecordingList.get(i);
+				ExtendedFieldRender extendedFieldRender = recording.getExtendedFieldRender();
+				extendedFieldRender.setTypeCode(recording.getProductCode());
+				extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
+				extendedFieldRender.setReference(recording.getVasReference());
+				details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType,
+						method));
+
+			}
+			financeDetail.getAuditDetailMap().put("VasExtendedDetails", details);
 			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasExtendedDetails"));
+
 		}
 		
 		if (!isWIF && !financeDetail.isExtSource()) {
@@ -5302,7 +5152,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableName.append("_");
 						tableName.append(aExetendedFieldRender.getTypeCode());
 						tableName.append("_ED");
-						assetDetail = getExtendedFieldDetailsValidation().validate(assetDetail, method, usrLanguage,
+						assetDetail = extendedFieldDetailsService.validate(assetDetail, method, usrLanguage,
 								tableName.toString());
 						auditDetails.add(assetDetail);
 					}
@@ -5335,7 +5185,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableName.append("_");
 						tableName.append(aExetendedFieldRender.getTypeCode());
 						tableName.append("_ED");
-						assetDetail = getExtendedFieldDetailsValidation().validate(assetDetail, method, usrLanguage,
+						assetDetail = extendedFieldDetailsService.validate(assetDetail, method, usrLanguage,
 								tableName.toString());
 						auditDetails.add(assetDetail);
 					}
@@ -5432,6 +5282,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		// Extended field details Validation
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
+			ExtendedFieldHeader extendedFieldHeader = financeDetail.getExtendedFieldHeader();
+			StringBuilder sb = new StringBuilder();
+			sb.append(extendedFieldHeader.getModuleName());
+			sb.append("_");
+			sb.append(extendedFieldHeader.getSubModuleName());
+			sb.append("_ED");
+			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, sb.toString());
+			auditDetails.addAll(details);
+		}
+		
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -5680,12 +5543,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Asset Type Extended Field Details
-		if (financeDetail.getExtendedFieldRenderList() != null && !financeDetail.getExtendedFieldRenderList().isEmpty()) {
-			auditDetailMap
-					.put("ExtendedFieldDetails", setExtendedFieldsAuditData(financeDetail, auditTranType, method));
+		List<ExtendedFieldRender> renderList = financeDetail.getExtendedFieldRenderList();
+		if (renderList != null && !renderList.isEmpty()) {
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(renderList, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
+		// Loan Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			auditDetailMap.put("LoanExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
+		}
+		
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -5694,79 +5565,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Extended Field Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @return
-	 */
-	private List<AuditDetail> setExtendedFieldsAuditData(FinanceDetail financeDetail, String auditTranType,
-			String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
-		for (int i = 0; i < financeDetail.getExtendedFieldRenderList().size(); i++) {
-			ExtendedFieldRender extendedFieldRender = financeDetail.getExtendedFieldRenderList().get(i);
-
-			if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
-				continue;
-			}
-			boolean isRcdType = false;
-
-			extendedFieldRender.setReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (extendedFieldRender.isWorkflow()) {
-					isRcdType = true;
-				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				extendedFieldRender.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-			auditMapValues.put("Reference", extendedFieldRender.getReference());
-			auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-			auditMapValues.put("Version", extendedFieldRender.getVersion());
-			auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-			auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-			auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-			auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-			auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-			auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
-			auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-			auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
-			auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-			extendedFieldRender.setAuditMapValues(auditMapValues);
-
-			String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], extendedFieldRender
-					.getBefImage(), extendedFieldRender));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
 
 	/**
 	 * Methods for Creating List of Audit Details for DocumentDetails
@@ -5833,87 +5631,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditDetails;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Extended Field Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @return
-	 */
-	private List<AuditDetail> setVasExtendedAuditData(FinanceDetail financeDetail, String auditTranType, String method) {
-		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		for (int i = 0; i < financeDetail.getFinScheduleData().getVasRecordingList().size(); i++) {
-
-			VASRecording recording = financeDetail.getFinScheduleData().getVasRecordingList().get(i);
-			ExtendedFieldRender extendedFieldRender = recording.getExtendedFieldRender();
-			extendedFieldRender.setTypeCode(recording.getProductCode());
-			extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
-
-			if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
-				continue;
-			}
-			boolean isRcdType = false;
-
-			extendedFieldRender.setReference(recording.getVasReference());
-			extendedFieldRender.setWorkflowId(financeMain.getWorkflowId());
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (financeMain.isWorkflow()) {
-					isRcdType = true;
-				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				extendedFieldRender.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			recording.setRecordStatus(financeMain.getRecordStatus());
-			recording.setUserDetails(financeMain.getUserDetails());
-			recording.setLastMntOn(financeMain.getLastMntOn());
-
-			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
-			auditMapValues.put("Reference", extendedFieldRender.getReference());
-			auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-			auditMapValues.put("Version", extendedFieldRender.getVersion());
-			auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-			auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-			auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-			auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-			auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-			auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
-			auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-			auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
-			auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-			extendedFieldRender.setAuditMapValues(auditMapValues);
-
-			String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], extendedFieldRender
-					.getBefImage(), extendedFieldRender));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
 
 	/**
 	 * Methods for Creating List Finance Flag of Audit Details with detailed fields
@@ -7280,12 +6998,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						.get(financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose());
 			}
 
-			if (!getExtendedFieldDetailDAO().isExist(tableName, financeDetail.getFinScheduleData().getFinReference(),
+			if (!extendedFieldDetailDAO.isExist(tableName, financeDetail.getFinScheduleData().getFinReference(),
 					tableType)) {
-				getExtendedFieldDetailDAO().saveAdditional(financeDetail.getFinScheduleData().getFinReference(),
+				extendedFieldDetailDAO.saveAdditional(financeDetail.getFinScheduleData().getFinReference(),
 						financeDetail.getLovDescExtendedFieldValues(), tableType, tableName);
 			} else {
-				getExtendedFieldDetailDAO().updateAdditional(financeDetail.getLovDescExtendedFieldValues(),
+				extendedFieldDetailDAO.updateAdditional(financeDetail.getLovDescExtendedFieldValues(),
 						financeDetail.getFinScheduleData().getFinReference(), tableType, tableName);
 			}
 		}
@@ -7308,7 +7026,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						.get(financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose());
 			}
 
-			getExtendedFieldDetailDAO().deleteAdditional(financeDetail.getFinScheduleData().getFinReference(),
+			extendedFieldDetailDAO.deleteAdditional(financeDetail.getFinScheduleData().getFinReference(),
 					tableName, tableType);
 		}
 		logger.debug("Leaving");
@@ -8496,22 +8214,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.accountingSetDAO = accountingSetDAO;
 	}
 
-	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
-		return extendedFieldHeaderDAO;
-	}
-
-	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
-		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
-	}
-
-	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
-		return extendedFieldDetailDAO;
-	}
-
-	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
-		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
-	}
-
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
 	}
@@ -8771,21 +8473,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.finTypeInsuranceDAO = finTypeInsuranceDAO;
 	}
 
-	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
-		return extendedFieldRenderDAO;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
-	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
-		if (extendedFieldDetailsValidation == null) {
-			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
-		}
-		return this.extendedFieldDetailsValidation;
-	}
-
 	public VASRecordingDAO getVasRecordingDAO() {
 		return vasRecordingDAO;
 	}
@@ -8853,4 +8540,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
 	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
+		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
+	}
+
 }

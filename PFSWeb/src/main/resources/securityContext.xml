@@ -49,8 +49,8 @@
 	</authentication-manager>
 	
 	<beans:bean id="ldapAuthenticationProvider" class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
-		<beans:constructor-arg value="${ldap.domin.name}"/>
-		<beans:constructor-arg value="${ldap.domin.url}"/>
+		<beans:constructor-arg value="${ldap.domain.name}"/>
+		<beans:constructor-arg value="${ldap.domain.url}"/>
 	</beans:bean>
 		
 	<beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">

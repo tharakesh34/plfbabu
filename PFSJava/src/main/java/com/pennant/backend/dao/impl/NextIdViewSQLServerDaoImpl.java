@@ -100,6 +100,12 @@ public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 			} else {
 				return getSeq(seqName);
 			}
+		case PSQL:
+			if (identity) {
+				return getPsqlSeq(seqName);
+			} else {
+				return getSeq(seqName);
+			}
 		default:
 			return getSeq(seqName);
 		}
@@ -218,6 +224,15 @@ public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 
 		sql = new StringBuilder("select ").append(seqName).append(
 				".NEXTVAL from DUAL");
+
+		return this.namedParameterJdbcTemplate.getJdbcOperations()
+				.queryForObject(sql.toString(), Long.class);
+	}
+	
+	private long getPsqlSeq(String seqName) throws DataAccessException {
+		StringBuilder sql = null;
+
+		sql = new StringBuilder("select nextval('").append(seqName).append("')");
 
 		return this.namedParameterJdbcTemplate.getJdbcOperations()
 				.queryForObject(sql.toString(), Long.class);

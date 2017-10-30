@@ -59,6 +59,9 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.staticparms.ExtendedField;
+import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennanttech.gcd.GcdCustomer;
 
 /**
@@ -68,7 +71,7 @@ import com.pennanttech.gcd.GcdCustomer;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","returnStatus","customerDedupList" })
+		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","extendedDetail","returnStatus","customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -158,6 +161,14 @@ public class CustomerDetails implements java.io.Serializable {
 	private WSReturnStatus returnStatus = null;
 	@XmlElement
 	private boolean dedupReq;
+	
+	@XmlElement(name="extendedDetail")
+	private ExtendedFieldHeader	extendedFieldHeader;
+	private ExtendedFieldRender extendedFieldRender;
+	
+	@XmlElementWrapper(name="extendedDetails")
+	@XmlElement(name="extendedDetail")
+	private List<ExtendedField> extendedDetails = null;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -500,4 +511,35 @@ public class CustomerDetails implements java.io.Serializable {
 		this.gcdCustomer = gcdCustomer;
 	}
 
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	/**
+	 * @return the extendedFieldRender
+	 */
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	/**
+	 * @param extendedFieldRender the extendedFieldRender to set
+	 */
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
+	}
+	
+	
 }

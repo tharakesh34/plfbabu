@@ -43,8 +43,8 @@
 
 package com.pennant.backend.dao.lmtmasters;
 import java.util.List;
+import java.util.Map;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
@@ -64,7 +64,7 @@ public interface FinanceReferenceDetailDAO {
 	List<Long> getRefIdListByFinType(String financeType, String finEvent, String roleCode, String type);
 	List<FinanceReferenceDetail> getFinanceProcessEditorDetails(String financeType, String finEvent, String type);
 	List<FinanceReferenceDetail> getAgreementListByCode(String aggCodes);
-	List<ValueLabel> getTemplateIdList(String financeType, String finEvent, String roleCode, List<String> lovCodeList);
+	Map<Long, String> getTemplateIdList(String financeType, String finEvent, String roleCode, List<String> lovCodeList);
 	FinanceReferenceDetail getTemplateId(String financeType,String finEvent,String roleCode, String lovCodeList);
 	List<FinanceReferenceDetail> getFinanceRefListByFinType(String product, String type);
 	

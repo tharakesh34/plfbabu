@@ -686,4 +686,7 @@ public class PennantConstants {
 	
 	//Fin-one customer creation stored procedure
 	public static final String CUSTOMER_DEDUP_PROCNAME= "CREATE_CUSTOMER_IN_FINNONE";
+	
+	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
+	public static final String FINANCE_INQUIRY_LOAN = "LOAN";
 }

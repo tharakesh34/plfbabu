@@ -191,7 +191,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 
 		if (StringUtils.isNotEmpty(workflowCode)) {
 
-			if (App.DATABASE == Database.ORACLE) {
+			if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 				buildedWhereCondition = " (NextRoleCode IS NULL ";
 			} else {
 				buildedWhereCondition = " (NextRoleCode = '' ";

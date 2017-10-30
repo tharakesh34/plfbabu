@@ -255,13 +255,13 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 				}
 
 				whereClause.append("(',' ");
-				if (App.DATABASE == Database.ORACLE) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
 				}
 				whereClause.append(" LovDescFirstTaskOwner ");
-				if (App.DATABASE == Database.ORACLE) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");

@@ -2537,6 +2537,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getNewProspectCustomerCIF*">PROPAGATION_NOT_SUPPORTED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -2587,6 +2588,7 @@
 		<property name="limitRebuild" ref="limitRebuild" />
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
 		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -2902,6 +2904,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getNewDirectorDetail*">PROPAGATION_NOT_SUPPORTED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -3708,6 +3711,7 @@
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="productDAO" ref="productDAO" />
 	</bean>
 
 	<!--============ Finance Type Details ============== -->
@@ -4090,7 +4094,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -4156,7 +4159,6 @@
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
 		<property name="finAssetTypeDAO" ref="finAssetTypeDAO"></property>
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
@@ -4187,6 +4189,7 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 
 		<!-- GCDCustomers -->
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
@@ -4229,7 +4232,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
 
@@ -7740,8 +7743,11 @@
 			<ref bean="securityOperationRolesServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
-			<props>
-				<prop key="save*">PROPAGATION_REQUIRED</prop>
+		<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -8745,9 +8751,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
-
-		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
-		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
 		<property name="documentTypeDAO" ref="documentTypeDAO" />
@@ -8758,13 +8761,13 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="relationshipOfficerDAO" ref="relationshipOfficerDAO" />
-		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!-- Beneficiary -->
@@ -8828,8 +8831,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
-		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="collateralThirdPartyDAO" ref="collateralThirdPartyDAO" />
 		<property name="coOwnerDetailDAO" ref="coOwnerDetailDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
@@ -8845,7 +8846,6 @@
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="documentTypeService" ref="documentTypeService" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
-		<property name="scriptValidationService" ref="scriptValidationService" />
 	</bean>
 
 	<!-- Collateral ThirdParty details -->
@@ -10407,4 +10407,39 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 	</bean>
+	
+	<!-- Extended field config -->
+
+	<bean id="extFieldConfigService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target"> 
+		<ref bean="extFieldConfigServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="extFieldConfigServiceTarget" class="com.pennant.backend.service.staticparms.impl.ExtFieldConfigServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
+		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+	</bean>
+
+<!-- extendedFieldDetailsService -->
+	<bean id="extendedFieldDetailsService"
+		class="com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService">
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
+	</bean>
+	
 </beans>

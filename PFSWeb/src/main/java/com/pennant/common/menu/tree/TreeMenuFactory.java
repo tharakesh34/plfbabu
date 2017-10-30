@@ -101,7 +101,6 @@ public class TreeMenuFactory extends MenuFactory {
 		Treecell treecell = (Treecell) treeitem.getTreerow().getChildren().get(0);
 		treecell.setSclass("menu-item");
 
-		
 		return item;
 	}
 
