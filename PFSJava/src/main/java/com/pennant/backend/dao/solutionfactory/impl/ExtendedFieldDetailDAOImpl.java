@@ -589,6 +589,14 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append("_SR varchar2(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_MR number(13,9) ) "); 
+			} else if (App.DATABASE == Database.PSQL) {
+				datatype.append("_BR varchar(8) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_SR varchar(8) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_MR decimal(13,9) ");  
 			} else {
 				datatype.append("_BR varchar(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
@@ -611,6 +619,14 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append("_AC varchar2(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_SC varchar2(8) ) "); 
+			} else if (App.DATABASE == Database.PSQL) {
+				datatype.append("_CC varchar(4) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_AC varchar(4) , "); 
+				datatype.append(" add ");
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_SC varchar(8) "); 
 			} else {
 				datatype.append("_CC varchar(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
