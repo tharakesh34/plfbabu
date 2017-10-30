@@ -261,7 +261,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.product.setDescColumn("ProductDesc");
 		this.product.setValidateColumns(new String[] { "ProductCode" });
 		
-		this.tabHeading.setMaxlength(100);
+		this.tabHeading.setMaxlength(20);
 			
 		setStatusDetails();
 

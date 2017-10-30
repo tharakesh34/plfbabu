@@ -43,8 +43,9 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -64,7 +66,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -72,6 +73,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceReferenceDetail model</b> class.<br>
@@ -339,30 +341,42 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 	 * @return
 	 */
 	@Override
-	public List<ValueLabel> getTemplateIdList(final String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
+	public Map<Long, String> getTemplateIdList(final String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
+		
+	
+
+		StringBuilder selectSql = new StringBuilder("Select FinRefId , LovDescCodeLov ");
+		selectSql.append(" From LMTFinRefDetail_ATView ");
+		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent ");
+
+		if (StringUtils.isNotBlank(roleCode)) {
+			selectSql.append(" AND MandInputInStage LIKE '%" + roleCode + ",%' ");
+		}
+
+		if (lovCodeList != null && !lovCodeList.isEmpty()) {
+			selectSql.append(" AND LovDescCodeLov IN (:CodeLovList) ");
+		}
+		logger.debug("selectSql: " + selectSql.toString());
+
 		source.addValue("FinType", financeType);
 		source.addValue("FinEvent", finEvent);
 		source.addValue("CodeLovList", lovCodeList);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinRefId Value, LovDescCodeLov Label ");
-		selectSql.append(" From LMTFinRefDetail_ATView ");
-		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent ");
-		
-		if(StringUtils.isNotBlank(roleCode)){
-			selectSql.append(" AND MandInputInStage LIKE '%"+roleCode +",%' ");
-		}
-		
-		if(lovCodeList != null && !lovCodeList.isEmpty()){
-			selectSql.append(" AND LovDescCodeLov IN (:CodeLovList) ");
-		}
+		final Map<Long, String> map = new HashMap<Long, String>();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		namedParameterJdbcTemplate.query(selectSql.toString(), source, new ResultSetExtractor<Map<Long, String>>() {
+			public Map<Long, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getLong("FinRefId"), rs.getString("LovDescCodeLov"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
 	}
 	
 	/**

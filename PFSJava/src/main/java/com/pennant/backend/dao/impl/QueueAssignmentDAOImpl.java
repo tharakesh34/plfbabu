@@ -44,6 +44,7 @@ package com.pennant.backend.dao.impl;
 
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -499,7 +500,15 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("UserRoleCode", Arrays.asList(StringUtils.trimToEmpty(userRoleCode).split(",")));
 		source.addValue("Module", module);
-		source.addValue("UserId", Arrays.asList(userId.split(",")));
+
+		//PLSQL 
+		List<Long> userIdLongList = new ArrayList<Long>();
+		String[] usrIdList = userId.split(",");
+		for (String id : usrIdList) {
+			userIdLongList.add(Long.valueOf(id));
+		}
+		source.addValue("UserId", userIdLongList);
+		
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select Module,UserId, UserRoleCode,");

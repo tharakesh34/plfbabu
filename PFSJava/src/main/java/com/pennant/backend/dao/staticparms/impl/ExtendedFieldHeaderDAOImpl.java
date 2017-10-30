@@ -391,6 +391,50 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				}else{
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
+			}  else if (App.DATABASE == App.Database.PSQL){
+				syntax.append("create table ");
+				if (i == 2) {
+					syntax.append("Adt");
+				}
+				syntax.append(module);
+				syntax.append("_");
+				syntax.append(subModule);
+				syntax.append("_ED");
+				syntax.append(StringUtils.trimToEmpty(tableType));
+				if (i == 2) {
+					syntax.append(" (AuditId 		bigint NOT NULL, ");
+					syntax.append(" AuditDate 		timestamp NOT NULL, ");
+					syntax.append(" AuditSeq 		integer NOT NULL, ");
+					syntax.append(" AuditImage 		char(1) NOT NULL, ");
+					syntax.append(" Reference 		varchar(20) NOT NULL, ");
+				} else {
+					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+				}
+				syntax.append(" SeqNo 			integer NOT NULL, ");
+				syntax.append("	Version 		integer NOT NULL,");
+				syntax.append("	LastMntBy 		bigint NULL,");
+				syntax.append("	LastMntOn 		timestamp NULL,");
+				syntax.append("	RecordStatus 	varchar(50) NULL,");
+				syntax.append("	RoleCode 		varchar(100) NULL,");
+				syntax.append("	NextRoleCode 	varchar(200) NULL,");
+				syntax.append("	TaskId 			varchar(50) NULL,");
+				syntax.append("	NextTaskId 		varchar(200) NULL,");
+				syntax.append("	RecordType 		varchar(50) NULL,");
+				syntax.append("	WorkflowId 		bigint NULL,");
+				syntax.append(" CONSTRAINT PK_");
+				if (i == 2) {
+					syntax.append("Adt");
+				}
+				syntax.append(module);
+				syntax.append("_");
+				syntax.append(subModule);
+				syntax.append("_ED");
+				syntax.append(StringUtils.trimToEmpty(tableType));
+				if (i == 2) {
+					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
+				} else {
+					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+				}
 			}
 			
 			try {

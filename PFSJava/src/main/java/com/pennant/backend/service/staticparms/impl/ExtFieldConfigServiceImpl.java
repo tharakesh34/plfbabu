@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -377,10 +376,8 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 			String[] fields = PennantJavaUtil.getFieldDetails(new ExtendedFieldDetail());
 			for (int i = 0; i < extendedFieldHeader.getExtendedFieldDetails().size(); i++) {
 				ExtendedFieldDetail extendedFieldDetail = extendedFieldHeader.getExtendedFieldDetails().get(i);
-				if (StringUtils.isNotBlank(extendedFieldDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							extendedFieldDetail.getBefImage(), extendedFieldDetail));
-				}
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						extendedFieldDetail.getBefImage(), extendedFieldDetail));
 			}
 			getExtendedFieldDetailDAO().deleteByExtendedFields(extendedFieldHeader.getId(), tableType);
 		}
@@ -401,7 +398,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -413,8 +410,6 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 		//ExtendedFieldHeader
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
-				extendedFieldHeader));
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
 		auditHeader.setAuditDetails(auditDetailsList);
