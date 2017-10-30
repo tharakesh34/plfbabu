@@ -78,7 +78,7 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager	transactionManager;
 	private DataSource					dataSource;
 
-	private static final String			customerSQL	= "Select CustID from CustomerQueuing  Where ThreadID = :ThreadId and Progress=:Progress";
+	private static final String			customerSQL	= "Select CustID from CustomerQueuing  Where ThreadID = ? and Progress= ?";
 
 	public MicroEOD() {
 
