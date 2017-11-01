@@ -436,29 +436,40 @@ public class ExtendedFieldDetailsValidation {
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
+			double percentage = 0;
 			if (String.valueOf(fieldValue).length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
-			if(Integer.valueOf(String.valueOf(fieldValue))<0 || Integer.valueOf(String.valueOf(fieldValue))>100){
-				String[] valueParm = new String[3];
-				valueParm[0] = fieldName;
-				valueParm[1] = "0";
-				valueParm[2] ="100";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
-			}
-			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-				if (Integer.valueOf(String.valueOf(fieldValue)) > exdConfigDetail.getFieldMaxValue()
-						|| Integer.valueOf(String.valueOf(fieldValue)) < exdConfigDetail.getFieldMinValue()) {
+			try {
+				percentage = Double.valueOf(String.valueOf(fieldValue));
+				if (percentage < 0 || percentage > 100) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
-					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
-					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+					valueParm[1] = "0";
+					valueParm[2] ="100";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 				}
+				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
+					if (percentage > exdConfigDetail.getFieldMaxValue() || percentage < exdConfigDetail.getFieldMinValue()) {
+						String[] valueParm = new String[3];
+						valueParm[0] = fieldName;
+						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
+						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+					}
+				}
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
 			}
+
+			exdFieldData.setFieldValue(percentage);
+			
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_FRQ:
 			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(String.valueOf(fieldValue));
