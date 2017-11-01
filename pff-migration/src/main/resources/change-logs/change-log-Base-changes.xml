@@ -180,4 +180,17 @@
 		</sql>
 </changeSet> -->
 
+<changeSet id="28" author="Amit">
+	<addColumn tableName="BMTDocumentTypes">
+		<column name="IsPdfExtRequired" type="boolean" />
+		<column name="IsPasswordProtected" type="boolean" />
+		<column name="MappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+	<addColumn tableName="BMTDocumentTypes_temp">
+		<column name="IsPdfExtRequired" type="boolean" />
+		<column name="IsPasswordProtected" type="boolean" />
+		<column name="MappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>
