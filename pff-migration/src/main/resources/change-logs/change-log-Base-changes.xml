@@ -264,4 +264,32 @@
 	</createView>
 </changeSet>
   
+  <changeSet id="31" author="Amit" >
+	<createView viewName="BMTDOCUMENTTYPES_AVIEW" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+          DocTypeDesc ,
+          DocIsMandatory ,
+          DocTypeIsActive ,
+          DocIsCustDoc ,
+          Version ,
+          LastMntBy ,
+          LastMntOn ,
+          RecordStatus ,
+          RoleCode ,
+          NextRoleCode ,
+          TaskId ,
+          NextTaskId ,
+          RecordType ,
+          WorkflowId ,
+          DocExpDateIsMand ,
+          DocIssueDateMand ,
+          DocIdNumMand ,
+          DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef   
+     FROM BMTDocumentTypes
+	</createView>
+</changeSet>
+  
 </databaseChangeLog>
