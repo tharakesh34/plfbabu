@@ -193,4 +193,20 @@
 	</addColumn>
 </changeSet>
 
+	<changeSet id="29" author="amit">
+		<renameColumn newColumnName="DocIsPdfExtRequired"
+			oldColumnName="IsPdfExtRequired" tableName="BMTDocumentTypes" />
+		<renameColumn newColumnName="DocIsPasswordProtected"
+			oldColumnName="IsPasswordProtected" tableName="BMTDocumentTypes" />
+		<renameColumn newColumnName="PdfMappingRef"
+			oldColumnName="MappingRef" tableName="BMTDocumentTypes" />
+
+		<renameColumn newColumnName="DocIsPdfExtRequired"
+			oldColumnName="IsPdfExtRequired" tableName="BMTDocumentTypes_Temp" />
+		<renameColumn newColumnName="DocIsPasswordProtected"
+			oldColumnName="IsPasswordProtected" tableName="BMTDocumentTypes_Temp" />
+		<renameColumn newColumnName="PdfMappingRef"
+			oldColumnName="MappingRef" tableName="BMTDocumentTypes_Temp" />
+	</changeSet>
+  
 </databaseChangeLog>
