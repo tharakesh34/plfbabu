@@ -755,6 +755,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(detail.getFieldSeqOrder()));
 			lc.setParent(item);
+			lc = new Listcell(detail.getParentTag());
+			lc.setParent(item);
 			lc = new Listcell();
 			Checkbox unique = new Checkbox();
 			unique.setChecked(detail.isFieldUnique());

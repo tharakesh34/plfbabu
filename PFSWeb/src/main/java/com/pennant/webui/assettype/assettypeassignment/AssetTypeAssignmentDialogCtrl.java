@@ -130,7 +130,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_AssetTypeAssignmentDialog);
-		generator.setRows(extendedFieldRows);
+		//FIXME:Ganesh With the Help of Satish 		
+		//generator.setRows(extendedFieldRows);
 		generator.setReadOnly(isReadOnly);
 		generator.setCcyFormat(ccyFormat);
 

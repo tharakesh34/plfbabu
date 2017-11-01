@@ -672,7 +672,7 @@ public class FinanceDataValidation {
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 								return errorDetails;
 							}
-							if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
+							if (StringUtils.isBlank(String.valueOf(extendedFieldData.getFieldValue()))) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "fieldValue";
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));

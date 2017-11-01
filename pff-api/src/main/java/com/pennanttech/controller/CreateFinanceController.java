@@ -814,6 +814,11 @@ public class CreateFinanceController extends SummaryDetailService {
 					exdFieldRender.setMapValues(mapValues);
 				}
 			}
+			
+			if (extendedFields.isEmpty()) {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+			}
 			financeDetail.setExtendedFieldRender(exdFieldRender);
 		}
 		logger.debug("Leaving");

@@ -125,7 +125,8 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
-		generator.setRows(extendedFieldRows);
+		//FIXME:Ganesh with the help of Satish
+		//generator.setRows(extendedFieldRows);
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 			this.btnSave.setVisible(false);

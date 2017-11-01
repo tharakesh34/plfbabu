@@ -578,7 +578,7 @@ public class ExtendedFieldDetailsService {
 		
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		String fieldName = exrFldData.getFieldName();
-		String fieldValue = exrFldData.getFieldValue();
+		String fieldValue = String.valueOf(exrFldData.getFieldValue());
 
 		switch (deatils.getFieldType()) {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
@@ -1084,83 +1084,81 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 		}
-		if (extendedDetailsCount > 0) {
-			//iterates the loop and check the each fieldName and fieldValue, because both are required
-			if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
-				List<String> fieldList=new ArrayList<String>();
-				for (ExtendedField details : extendedFieldData) {
-					int exdMandConfigCount = 0;
-					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-						//if fieldName is blank then sets FieldName is Mandatory
-						if (StringUtils.isBlank(extFieldData.getFieldName())) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldName";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-							return errorDetails;
-						}
-
-						//if fieldValue is blank then sets fieldValue is Mandatory
-						if (StringUtils.isBlank(extFieldData.getFieldValue())) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldValue";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-							return errorDetails;
-						}
-
-						boolean isFeild = false;
-						if (extendedFieldDetails != null) {
-							for (ExtendedFieldDetail detail : extendedFieldDetails) {
-
-								//if both fields(in configuraion and json) are equal then it validates the fields and makes isFiels=true
-								if (StringUtils.equals(detail.getFieldName(), extFieldData.getFieldName())) {
-									//if same field given more than one time it raises the Error 
-									if(fieldList.contains(extFieldData.getFieldName())){
-										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
-										return errorDetails;
-									}else{
-										fieldList.add(extFieldData.getFieldName());
-									}
-									if (detail.isFieldMandatory()) {
-										exdMandConfigCount++;
-									}
-									//validate the  field with configuration that is already mentioned
-									List<ErrorDetails> errList = getExtendedFieldDetailsValidation()
-											.validateExtendedFieldData(detail, extFieldData);
-									errorDetails.addAll(errList);
-									isFeild = true;
-									break;
-								}
-							}
-							//if field is no there in configuration then is sets the error like
-							//Extended details should be matched with configured extended details in {0}.
-							if (!isFeild) {
-								String[] valueParm = new String[1];
-								valueParm[0] = module + " setup";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
-								return errorDetails;
-							}
-						}
-					}
-					//extendedDetailsCount :: mandatory fields from configuration
-					//exdMandConfigCount :: mandatory fields from JSON
-					//these are not match then sets the error like
-					//Request should contain configured mandatory extended details.
-					if (extendedDetailsCount != exdMandConfigCount) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+		//iterates the loop and check the each fieldName and fieldValue, because both are required
+		if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
+			List<String> fieldList=new ArrayList<String>();
+			for (ExtendedField details : extendedFieldData) {
+				int exdMandConfigCount = 0;
+				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+					//if fieldName is blank then sets FieldName is Mandatory
+					if (StringUtils.isBlank(extFieldData.getFieldName())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
 						return errorDetails;
 					}
-				}
 
-			} else {
-				//it sets error if mandatory fields are not given
-				//{0} is mandatory in the request.::90502
-				String[] valueParm = new String[1];
-				valueParm[0] = "ExtendedDetails";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-				return errorDetails;
+					//if fieldValue is blank then sets fieldValue is Mandatory
+					if (StringUtils.isBlank(String.valueOf(extFieldData.getFieldValue()))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldValue";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+						return errorDetails;
+					}
+
+					boolean isFeild = false;
+					if (extendedFieldDetails != null) {
+						for (ExtendedFieldDetail detail : extendedFieldDetails) {
+
+							//if both fields(in configuraion and json) are equal then it validates the fields and makes isFiels=true
+							if (StringUtils.equals(detail.getFieldName(), extFieldData.getFieldName())) {
+								//if same field given more than one time it raises the Error 
+								if(fieldList.contains(extFieldData.getFieldName())){
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+									return errorDetails;
+								}else{
+									fieldList.add(extFieldData.getFieldName());
+								}
+								if (detail.isFieldMandatory()) {
+									exdMandConfigCount++;
+								}
+								//validate the  field with configuration that is already mentioned
+								List<ErrorDetails> errList = getExtendedFieldDetailsValidation()
+										.validateExtendedFieldData(detail, extFieldData);
+								errorDetails.addAll(errList);
+								isFeild = true;
+								break;
+							}
+						}
+						//if field is no there in configuration then is sets the error like
+						//Extended details should be matched with configured extended details in {0}.
+						if (!isFeild) {
+							String[] valueParm = new String[1];
+							valueParm[0] = module + " setup";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+				//extendedDetailsCount :: mandatory fields from configuration
+				//exdMandConfigCount :: mandatory fields from JSON
+				//these are not match then sets the error like
+				//Request should contain configured mandatory extended details.
+				if (extendedDetailsCount != exdMandConfigCount) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+					return errorDetails;
+				}
 			}
 
+		} else {
+			//it sets error if mandatory fields are not given
+			//{0} is mandatory in the request.::90502
+			String[] valueParm = new String[1];
+			valueParm[0] = "ExtendedDetails";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+			return errorDetails;
 		}
+
 		Map<String, Object> mapValues = new HashMap<String, Object>();
 		if (extendedFieldData != null) {
 			//get the ExtendedField--List from JSON

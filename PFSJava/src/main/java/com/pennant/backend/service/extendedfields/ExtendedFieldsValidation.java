@@ -371,7 +371,7 @@ public class ExtendedFieldsValidation {
 				extendedFieldDetailDAO.delete(extendedFieldDetail, type);
 			}
 
-			if (approveRec) {
+			if (approveRec && extendedFieldDetail.isInputElement()) {
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
 				if (!deleteRecord) {

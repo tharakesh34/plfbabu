@@ -1490,7 +1490,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_VASRecordingDialog);
-		generator.setRows(rows);
+		//FIXME:Ganesh with the help of Satish		
+		//generator.setRows(rows);
 		generator.setCcyFormat(getCcyFormat());
 		if (enqiryModule || isCancelProcess) {
 			generator.setReadOnly(true);

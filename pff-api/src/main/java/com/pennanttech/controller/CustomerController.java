@@ -545,6 +545,11 @@ public class CustomerController {
 					exdFieldRender.setMapValues(mapValues);
 				}
 			}
+			if (extendedFields.isEmpty()) {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+			}
+			
 			customerDetails.setExtendedFieldRender(exdFieldRender);
 		}
 		curCustomer.setCustTotalIncome(custTotIncomeExp);
