@@ -89,6 +89,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -185,18 +186,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),financeDetail.isStp()));
 			if (!stp) {
-				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
-				String processStage = financeDetail.getProcessStage();
-				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
-						financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
-				if (financeWorkFlow != null) {
-					workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
-					if (workFlowDetails != null) {
-						workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-						taskid = workFlow.getUserTaskId(processStage);
-						workFlowId = workFlowDetails.getWorkFlowId();
-						roleCode = financeDetail.getProcessStage();
-					}
+				financeDetail = nonStpProcess(financeDetail);
+				if (financeDetail.getReturnStatus() == null) {
+					taskid = financeMain.getTaskId();
+					roleCode = financeMain.getRoleCode();
+					workFlowId = financeMain.getWorkflowId();
+				} else {
+					return financeDetail;
 				}
 			}
 
@@ -355,9 +351,48 @@ public class CreateFinanceController extends SummaryDetailService {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
-
 		return null;
 	}
+
+	private FinanceDetail nonStpProcess(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+		WorkFlowDetails workFlowDetails = null;
+		String processStage = financeDetail.getProcessStage();
+		financeDetail.setActionSave(true);
+		if (financeWorkFlow != null) {
+			workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+			workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+		} else {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			String[] valueParm = new String[2];
+			valueParm[0] = financeMain.getFinType();
+			valueParm[1] = "workflow";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90339", valueParm));
+			return response;
+		}
+
+		if (StringUtils.isBlank(processStage)) {
+			processStage = workFlow.firstTaskOwner();
+		}
+
+		if (workFlowDetails != null) {
+			String taskId = workFlow.getUserTaskId(processStage);
+			long workflowId = workFlowDetails.getWorkFlowId();
+			String roleCode = processStage;
+			financeMain.setTaskId(taskId);
+			financeMain.setRoleCode(roleCode);
+			financeMain.setWorkflowId(workflowId);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return financeDetail;
+	}
+	
 	private long getLastMntBy(boolean quickDisb, LoggedInUser userDetails) {
 		if (!quickDisb) {
 			return userDetails.getLoginUsrID();
@@ -709,7 +744,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		// execute fee charges
 		String finEvent = "";
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null);
+		executeFeeCharges(financeDetail, finEvent);
 		
 		if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {
@@ -719,10 +754,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.setRcdVisible(false);
 				feeDetail.setVersion(1);
 				feeDetail.setWorkflowId(financeMain.getWorkflowId());
-				//feeDetail.setRoleCode(financeMain.getRoleCode());
-				//feeDetail.setNextRoleCode(financeMain.getNextRoleCode());
-				//feeDetail.setTaskId(financeMain.getTaskId());
-				//feeDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 		}
 
@@ -739,16 +770,19 @@ public class CreateFinanceController extends SummaryDetailService {
 			disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 			finScheduleData.getDisbursementDetails().add(disbursementDetails);
 		}
+		if (financeDetail.getAdvancePaymentsList() != null) {
+			for (FinAdvancePayments advPayments : financeDetail.getAdvancePaymentsList()) {
+				advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
+			}
+			List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(
+					financeDetail.getAdvancePaymentsList(), finScheduleData.getDisbursementDetails(),
+					finScheduleData.getFinanceMain(), true);
+			for (ErrorDetails erroDetails : errors) {
+				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(erroDetails.getErrorCode(), erroDetails.getErrorParameters())));
+			}
+		}
 		
-		for(FinAdvancePayments advPayments: financeDetail.getAdvancePaymentsList()) {
-			advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
-		}
-		List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(),
-				finScheduleData.getDisbursementDetails(), finScheduleData.getFinanceMain(), true);
-		for (ErrorDetails erroDetails : errors) {
-			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(erroDetails.getErrorCode(),
-					erroDetails.getErrorParameters())));
-		}
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {
@@ -823,7 +857,23 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		logger.debug("Leaving");
 	}
-
+	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode)
+			throws IllegalAccessException, InvocationTargetException {
+		FinScheduleData schData = financeDetail.getFinScheduleData();
+		if (schData.getFinFeeDetailList() == null || schData.getFinFeeDetailList().isEmpty()) {
+			if (StringUtils.isBlank(eventCode)) {
+				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
+			}
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null, true);
+		} else {
+			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null);
+		}
+		if (financeDetail.isStp()) {
+			for (FinFeeDetail feeDetail : schData.getFinFeeDetailList()) {
+				feeDetail.setWorkflowId(0);
+			}
+		}
+	}
 	private String getNextTaskId(String taksId,boolean qdp,boolean stp) {
 		if(stp && !qdp){
 			return null;

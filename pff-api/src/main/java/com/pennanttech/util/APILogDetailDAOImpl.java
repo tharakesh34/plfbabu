@@ -36,7 +36,7 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 
 		StringBuilder insertSql = new StringBuilder("Insert Into APILOGDETAILS");
 
-		insertSql.append("( Reference , EndPoint, Method, Type, ServiceName, Authorization, ClientIP, ValueDate,");
+		insertSql.append("( Reference , EndPoint, Method, Type, ServiceName, \"Authorization\", ClientIP, ValueDate,");
 		insertSql.append("PayLoad, ResponseCode, ErrorDesc )");
 		insertSql.append(" Values(:Reference, :EndPoint, :Method, :Type, :ServiceName, :Authorization, :ClientIP,");
 		insertSql.append(" :ValueDate, :PayLoad, :ResponseCode, :ErrorDesc)");

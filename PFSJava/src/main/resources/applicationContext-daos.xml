@@ -10464,5 +10464,9 @@
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
 	</bean>
-	
+	<!--Customize Finance Data Validation Service -->
+	<bean id="customizeFinanceDataValidation"
+		class="com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation">
+		<property name="customerDAO" ref="customerDAO" />
+	</bean>
 </beans>

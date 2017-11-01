@@ -19,6 +19,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -290,13 +291,13 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst) 
+	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst,boolean isOrgination) 
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, false,
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, isOrgination,
 					FinanceConstants.MODULEID_FINTYPE));
 		} else {
 			String promotionType = financeDetail.getFinScheduleData().getFinanceType().getPromotionCode();
@@ -311,6 +312,23 @@ public class FeeDetailService {
 		setFinFeeDetailList(convertToFinanceFees(financeDetail.getFinTypeFeesList(), finReference));
 		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
 		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
+		List<FinFeeDetail> feeDetails= new ArrayList<>();
+		for(VASRecording vasRecording:financeDetail.getFinScheduleData().getVasRecordingList()){
+			FinFeeDetail feeDetail = new FinFeeDetail();
+			feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			feeDetail.setFeeCategory("FC");
+			feeDetail.setOriginationFee(true);
+			feeDetail.setFeeTypeCode(vasRecording.getProductCode());
+			feeDetail.setActualAmount(vasRecording.getFee());
+			feeDetail.setVasReference(vasRecording.getVasReference());
+			feeDetail.setFeeTypeID(0);
+			feeDetail.setNewRecord(true);
+			feeDetail.setCalculatedAmount(vasRecording.getFee());
+			feeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+			feeDetails.add(feeDetail);
+		}
+		//financeDetail.getFinScheduleData().setFinFeeDetailList(feeDetails);
+		actualFinFeeList.addAll(feeDetails);
 		setFinFeeDetailList(actualFinFeeList);
 
 		// Organize Fee detail changes
@@ -320,10 +338,16 @@ public class FeeDetailService {
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
 			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			if (financeDetail.isStp()) {
+				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			} else {
+				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+			}
 			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
-			finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
+			if (!StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
+			}
 			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
 				feeRuleCodes.add(finFeeDetail.getRuleCode());
 			}
@@ -339,7 +363,9 @@ public class FeeDetailService {
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			if (!isOrgination) {
+				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			}
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 					subtract(finFeeDetail.getWaivedAmount()));
 			if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {

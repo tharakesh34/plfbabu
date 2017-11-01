@@ -200,12 +200,9 @@ public class FinanceDataDefaulting {
 			//Validate Repayment Method
 			String repayMethod = finMain.getFinRepayMethod();
 
-			if (StringUtils.isBlank(repayMethod) && StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "repayMethod";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-			} else if (StringUtils.isBlank(repayMethod)) {
+			if (StringUtils.isBlank(repayMethod)) {
 				repayMethod = financeType.getFinRepayMethod();
+				finMain.setFinRepayMethod(repayMethod);
 			}
 
 			if (StringUtils.isNotBlank(repayMethod)) {

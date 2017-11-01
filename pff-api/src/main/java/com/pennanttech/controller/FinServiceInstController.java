@@ -215,7 +215,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 		if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY) 
 				&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
-			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst);
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst,false);
 		} else {
 			for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
 				finFeeDetail.setFinEvent(eventCode);
