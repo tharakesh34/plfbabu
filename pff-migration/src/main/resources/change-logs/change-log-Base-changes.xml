@@ -601,4 +601,252 @@
 
 		</createView> 
 	</changeSet>
+	<changeSet id="44" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_finguarantordtls_pvt_view"
+			replaceIfExists="true">
+			SELECT pvt.finreference,
+				pvt.co_gur1,
+				pvt.co_gur2,
+				pvt.co_gur3
+			   FROM crosstab('Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+					  from FinGuarantorsDetails fj inner join customers c on c.custcif = fj.GUarantorcif '::text) pvt(finreference text, co_gur1 text, co_gur2 text, co_gur3 text)
+	</createView>
+</changeSet>
+
+<changeSet id="45" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_finjointactdtls_pvt_view"
+			replaceIfExists="true">
+			 SELECT pvt.finreference,
+				pvt.co_app1,
+				pvt.co_app2,
+				pvt.co_app3
+			   FROM crosstab('Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+					  from FinJointAccountDetails fj inner join customers c on c.custcif = fj.custcif'::text) pvt(finreference text, co_app1 text, co_app2 text, co_app3 text)
+
+	</createView>
+</changeSet>
+
+<changeSet id="46" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_transactionentry_view"
+			replaceIfExists="true">
+			 SELECT t2.fintype AS product_code,
+    t2.finbranch AS loan_branch,
+    t1.loan_ref,
+    t1.txndate,
+    t1.particlulars,
+    t1.txnamount,
+    t1.event,
+    t1.ordby,
+    c.ccyminorccyunits,
+    c.ccyeditfield
+   FROM ( SELECT t1_1.finreference AS loan_ref,
+            t1_1.finapproveddate AS txndate,
+            'Disbursed Amount'::text AS particlulars,
+            t1_1.finamount AS txnamount,
+            'ADDDISB' AS event,
+            1 AS ordby
+           FROM financemain t1_1
+          WHERE t1_1.finamount <> 0
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Deduct from Disbursement Amount'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'DISB'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Add to Loan Amount '::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'POSP'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to First Installment Amount'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STFI'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to Entire Tenor'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STET'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to N Terms'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STNI'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Paid Amount'::text,
+            t2_1.paidamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.paidamount <> 0 AND t2_1.feeschedulemethod = 'PBCU'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Waived'::text,
+            t2_1.waivedamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.waivedamount <> 0 AND t2_1.feeschedulemethod = 'WVEB'
+        UNION ALL
+         SELECT t1_1.finreference,
+            t1_1.lastmnton,
+            'Payment to customer vide '::text || t1_1.paymenttype::text,
+            t1_1.amttobereleased,
+            'DISBINS' AS event,
+            3 AS ordby
+           FROM finadvancepayments t1_1
+             JOIN financemain t2_1 ON t2_1.finreference = t1_1.finreference
+          WHERE (t1_1.status <> 'CANCELED' OR t1_1.status IS NULL) AND t1_1.amttobereleased <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            t5.feetypedesc::text || ' Paid'::text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+             JOIN finfeedetail t4 ON t4.feeid = t3.allocationto
+             JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'FEE' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Principal Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'PRI' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Interest Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'PFT' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Penalty/Late Pay Charges Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'ODC' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Late Payment Interest Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'LPFT' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            t5.feetypedesc::text || '-Receivable Paid'::text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+             JOIN manualadvise t4 ON t4.adviseid = t3.allocationto
+             JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'MANADV' AND t4.advisetype = 1 AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Bounce Charges Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'BOUNCE' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0) t1
+     JOIN finpftdetails t2 ON t2.finreference = t1.loan_ref
+     JOIN rmtcurrencies c ON c.ccycode = t2.finccy
+  WHERE t1.txnamount <> 0
+
+	</createView>
+</changeSet>
 </databaseChangeLog>
