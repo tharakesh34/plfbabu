@@ -553,5 +553,52 @@
 
 		</sql>
 	</changeSet>
+	<changeSet id="39" author="Ganesh.p">
+		<sql>
+			update SMTParameters set sysparmvalue = 'N' where sysparmcode = 'GCD_FINONE_PROC_REQD';
+		</sql>
+	</changeSet>
 	
+	<changeSet id="40" author="Ganesh.p">
+		<dropView viewName="EXTENDEDFIELDDETAIL_VIEW" />
+		<dropView viewName="EXTENDEDFIELDDETAIL_AVIEW"/>
+	</changeSet>
+	<changeSet id="41" author="Ganesh.p">
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL_TEMP" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
+	</changeSet>
+	<changeSet id="42" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_VIEW" replaceIfExists="true">
+		  SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                      T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail_TEMP  T1 INNER JOIN
+                      ExtendedFieldHeader_TEMP  T2 ON T1.ModuleId = T2.ModuleId
+			UNION ALL
+		SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                     T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId , T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          ExtendedFieldDetail_TEMP
+                            WHERE      ModuleId = T1.ModuleId AND FieldName = T1.FieldName)
+
+		</createView> 
+	</changeSet>
+	<changeSet id="43" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_AVIEW" replaceIfExists="true">
+  			SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, T1.FieldType, 
+                      T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, 
+                      T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+                      T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.MultiLine, T1.ParentTag, T1.InputElement
+			FROM         		  ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+
+
+		</createView> 
+	</changeSet>
 </databaseChangeLog>
