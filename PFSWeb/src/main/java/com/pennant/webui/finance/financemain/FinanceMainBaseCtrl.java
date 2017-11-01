@@ -172,7 +172,6 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -236,10 +235,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
-import com.pennant.constants.InterfaceConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.search.Filter;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -261,6 +258,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -788,8 +786,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient FinanceMainListCtrl					financeMainListCtrl		= null;
 	protected transient FinanceSelectCtrl					financeSelectCtrl		= null;
 	protected JdbcSearchObject<Customer>					custCIFSearchObject;
-
-	protected HashMap<String, ArrayList<ErrorDetails>>		overideMap				= new HashMap<String, ArrayList<ErrorDetails>>();
 
 	private Window											mainWindow				= null;
 	private String											productCode				= null;
@@ -6571,272 +6567,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
-			// Check for service tasks. If one exists perform the task(s)
-			String finishedTasks = "";
-			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
-
 			if (isNotesMandatory(taskId, afinanceMain)) {
 				if (!notesEntered) {
 					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 					return false;
 				}
 			}
-
 			auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
-
-			while (!"".equals(serviceTasks)) {
-
-				String method = serviceTasks.split(";")[0];
-
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {
-
-					processCompleted = doSaveProcess(auditHeader, method);
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckScore)) {
-
-					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					tFinanceDetail.getFinScheduleData().getFinanceMain().setScore(tFinanceDetail.getScore());
-					processCompleted = true;
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckExceptions)) {
-
-					auditHeader = getFinanceDetailService().doCheckExceptions(auditHeader);
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckLPOApproval)) {
-
-					// send Collateral Mark request
-					if (finCollateralHeaderDialogCtrl != null) {
-						processCompleted = doCollateralMark(finCollateralHeaderDialogCtrl.getFinCollateralDetailsList());
-					}
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_checkDDAResponse)) {
-
-					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					FinanceMain financeMain = tFinanceDetail.getFinScheduleData().getFinanceMain();
-
-					if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
-
-						try {
-							boolean ddaStatus = getDdaControllerService().validateDDAStatus(
-									financeMain.getFinReference());
-
-							boolean ddaDpSpStatus = true;
-							boolean isAllowDpSp = aFinanceDetail.getFinScheduleData().getFinanceType()
-									.isAllowDownpayPgm();
-							if (isAllowDpSp) {
-								String linkedRef = financeMain.getFinReference() + "_DP";
-								ddaDpSpStatus = getDdaControllerService().validateDDAStatus(linkedRef);
-							}
-
-							if (ddaStatus && ddaDpSpStatus) {
-								processCompleted = true;
-							}
-						} catch (InterfaceException pfe) {
-							MessageUtil.showError(pfe);
-							processCompleted = false;
-						}
-					} else {
-						processCompleted = true;
-					}
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doClearQueues)) {
-
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doFundsAvailConfirmed)) {
-
-					String nextRoleCode = StringUtils.trimToEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-							.getNextRoleCode());
-					String nextRoleCodes[] = nextRoleCode.split(",");
-
-					if (nextRoleCodes.length > 1) {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-						MessageUtil.showError(Labels.getLabel("message.Conformation_Check"));
-					} else {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
-					}
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)) {
-					//Prospect Customer Checking
-					if (StringUtils.trimToEmpty(aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank())
-							.equals("")) {
-						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
-						return false;
-					}
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDeviations)) {
-					List<FinanceDeviations> list = aFinanceDetail.getFinanceDeviations();
-					if (list != null && !list.isEmpty()) {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setDeviationApproval(true);
-					}
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckSMECustomer)) {
-					if (aFinanceDetail.getCustomerDetails() != null
-							&& aFinanceDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
-						if (StringUtils.equalsIgnoreCase(aFinanceDetail.getCustomerDetails().getCustEmployeeDetail()
-								.getEmpStatus(), PennantConstants.PFF_CUSTCTG_SME)) {
-							aFinanceDetail.getFinScheduleData().getFinanceMain().setSmecustomer(true);
-						}
-					}
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCADRequired)) {
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_sendDDARequest)) {
-
-					//Initiate DDA Registration process
-					try {
-						String finRepayMethod = afinanceMain.getFinRepayMethod();
-						if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_AUTODDA)) {
-							this.repayAcctId.setReadonly(false);
-							this.repayAcctId.setMandatoryStyle(true);
-							getDdaControllerService().doDDARequestProcess(aFinanceDetail, false);
-
-							boolean isAllowDpSp = aFinanceDetail.getFinScheduleData().getFinanceType()
-									.isAllowDownpayPgm();
-
-							if (isAllowDpSp) {
-								boolean ahaDpEnable = true;
-								getDdaControllerService().doDDARequestProcess(aFinanceDetail, ahaDpEnable);
-							}
-						} else {
-							this.repayAcctId.setMandatoryStyle(false);
-							processCompleted = true;
-						}
-					} catch (InterfaceException pfe) {
-						MessageUtil.showError(pfe);
-						processCompleted = false;
-					}
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckShariaRequired)) {
-
-					afinanceMain.setShariaApprovalReq(this.shariaApprovalReq.isChecked()); //Setting this property which is used in workflow condition post sharia
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
-
-				} else {
-					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					setNextTaskDetails(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
-					tFinanceDetail = doProcess_Assets(tFinanceDetail);
-					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
-					processCompleted = doSaveProcess(auditHeader, method);
-
-				}
-
-				if (!processCompleted) {
-					break;
-				}
-
-				finishedTasks += (method + ";");
-				FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain(),
-						finishedTasks);
-
-			}
-
-			FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-
-			// Check whether to proceed further or not
-			String nextTaskId = getNextTaskIds(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
-
-			if (processCompleted && nextTaskId.equals(taskId + ";")) {
-				processCompleted = false;
-			}
-
-			/**
-			 * The below code is used to validate the DDA Registration request and do the following actions<br>
-			 * 1. Checking DDA Request is approved or not<br>
-			 * 2. Restrict the user to Resubmit or Reject the finance until unless receive response from DDA interface
-			 * 
-			 */
-			if (StringUtils.isEmpty(moduleDefiner)
-					&& (StringUtils.equals(afinanceMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA))) {
-				if (StringUtils.equals(userAction.getSelectedItem().getLabel(), "Resubmit")
-						|| StringUtils.equals(userAction.getSelectedItem().getLabel(), "Reject")) {
-					String finReference = afinanceMain.getFinReference();
-					try {
-						getDdaControllerService().validateDDAStatus(finReference);
-						boolean isAllowDpSp = aFinanceDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm();
-
-						if (isAllowDpSp) {
-							String linkedRef = afinanceMain.getFinReference() + "_DP";
-							getDdaControllerService().validateDDAStatus(linkedRef);
-						}
-					} catch (InterfaceException pfe) {
-						logger.error("Exception: ", pfe);
-						if (StringUtils.equals(pfe.getErrorCode(), PennantConstants.DDA_PENDING_CODE)) {
-							MessageUtil.showMessage(
-									Labels.getLabel("DDA_APPROVAL_PENDING", new String[] { finReference }));
-							processCompleted = false;
-						}
-					}
-				}
-			}
-
-			// Proceed further to save the details in WorkFlow
-			if (processCompleted) {
-
-				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
-					setNextTaskDetails(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
-					doProcess_Assets(tFinanceDetail);
-					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
-					processCompleted = doSaveProcess(auditHeader, null);
-				}
-			}
-
+			doProcess_Assets(aFinanceDetail);
+			auditHeader.getAuditDetail().setModelData(aFinanceDetail);
+			processCompleted = doSaveProcess(auditHeader);
 		} else {
-
 			doProcess_Assets(aFinanceDetail);
 			auditHeader = getAuditHeader(aFinanceDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader, null);
-
+			processCompleted = doSaveProcess(auditHeader);
 		}
-		aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-
-		if (processCompleted) {
-			/*
-			 * String sendlpo =
-			 * getWorkFlow().getMonitoring(aFinanceDetail.getFinScheduleData().getFinanceMain().getNextTaskId
-			 * ().split(";")[0]); if (StringUtils.trimToEmpty(sendlpo).equals(PennantConstants.WF_SEND_LPO_REQUETS)) {
-			 * getLpoMailProcess().init(getUserWorkspace()); getLpoMailProcess().processLPORequest(aFinanceDetail,
-			 * getRole()); }
-			 */
-		}
-
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
-		return processCompleted;
-	}
-
-	/**
-	 * Method for send Collateral mark request to interface
-	 * 
-	 * @param list
-	 * @return
-	 * @throws InterfaceException
-	 * @throws InterruptedException
-	 */
-	private boolean doCollateralMark(List<FinCollaterals> list) throws InterfaceException, InterruptedException {
-		logger.debug("Entering");
-
-		boolean processCompleted = true;
-
-		if (list != null && !list.isEmpty()) {
-			CollateralMark collateralMarkRply = getCollateralMarkProcess().markCollateral(list);
-			if (collateralMarkRply != null) {
-				if (!StringUtils.equals(collateralMarkRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					MessageUtil.showError(collateralMarkRply.getReturnText());
-					processCompleted = false;
-				}
-			} else {
-				MessageUtil.showError(Labels.getLabel("COLLATERAL_MARK_FAILED"));
-				processCompleted = false;
-			}
-		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -6849,7 +6599,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader) throws InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -6869,73 +6619,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getFinanceDetailService().delete(auditHeader, false);
-						deleteNotes = true;
-					} else {
-						auditHeader = getFinanceDetailService().saveOrUpdate(auditHeader, false);
-					}
-
-				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getFinanceDetailService().doApprove(auditHeader, false);
-
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doPreApprove)) {
-						auditHeader = getFinanceDetailService().doPreApprove(auditHeader, false);
-
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getFinanceDetailService().doReject(auditHeader, false);
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckLimits)) {
-						if (afinanceDetail.getFinScheduleData().getFinanceType().isLimitRequired()) {
-							getFinanceDetailService().doCheckLimits(auditHeader);
-						} else {
-							afinanceMain.setLimitValid(true);
-						}
-
-					} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckShariaRequired)) {
-
-					} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
-						List<String> finTypeList = getFinanceDetailService().getScheduleEffectModuleList(true);
-						boolean isScheduleModify = false;
-						for (String fintypeList : finTypeList) {
-							if (StringUtils.equals(moduleDefiner, fintypeList)) {
-								isScheduleModify = true;
-								break;
-							}
-						}
-						if (isScheduleModify) {
-							afinanceMain.setScheduleChange(true);
-						} else {
-							afinanceMain.setScheduleChange(false);
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(getMainWindow(), auditHeader);
-						return processCompleted;
-					}
-				}
-
+				String usrAction = this.userAction.getSelectedItem().getLabel();
+				WorkflowEngine engine = getWorkFlow();
+				
+				// Execute service tasks
+				auditHeader = getFinanceDetailService().executeWorkflowServiceTasks(auditHeader, getRole(), usrAction, engine);
+				
 				auditHeader = ErrorControl.showErrorDetails(getMainWindow(), auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
-
 					if (deleteNotes) {
 						deleteNotes(getNotes(this.financeDetail.getFinScheduleData().getFinanceMain()), true);
 					}
@@ -6946,15 +6640,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
 					auditHeader.setOverideMessage(null);
-
-					if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckLimits)) {
-
-						if (overideMap.containsKey("Limit")) {
-							FinanceDetail tfinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-							tfinanceDetail.getFinScheduleData().getFinanceMain().setOverrideLimit(true);
-							auditHeader.getAuditDetail().setModelData(tfinanceDetail);
-						}
-					}
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
@@ -6971,7 +6656,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-
 	// ******************************************************//
 	// ****************OnSelect ComboBox Events**************//
 	// ******************************************************//
@@ -15640,14 +15324,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceSelectCtrl(FinanceSelectCtrl financeSelectCtrl) {
 		this.financeSelectCtrl = financeSelectCtrl;
-	}
-
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
-		this.overideMap = overideMap;
-	}
-
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
-		return overideMap;
 	}
 
 	public void setAdvancePaymentsList(List<FinAdvancePayments> advancePaymentDetails) {

@@ -175,6 +175,7 @@ import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -195,7 +196,9 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -254,6 +257,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 
+	private CustomServiceTask	   			customServiceTask;
+		
 	public FinanceDetailServiceImpl() {
 		super();
 	}
@@ -3836,14 +3841,207 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Save GCDCustomer'/////
 		//processgcdCustomer(financeDetail, "insert");
 		
-		
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 	
+	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,WorkflowEngine workflowEngine) {
+		logger.debug("Entering");
+		// changes regarding parallel work flow 
+		String nextRoleCode = StringUtils.trimToEmpty(financeMain.getNextRoleCode());
+		String nextRoleCodes[] = nextRoleCode.split(",");
+
+		if (nextRoleCodes.length > 1) {
+			return "";
+		}
+
+		String serviceTasks = workflowEngine.getServiceOperationsAsString(taskId, financeMain);
+		//serviceTasks = "doApprove";
+		if (StringUtils.isNotBlank(serviceTasks)) {
+			serviceTasks += ";";
+		}
+		
+		if (!"".equals(finishedTasks)) {
+			String[] list = finishedTasks.split(";");
+
+			for (int i = 0; i < list.length; i++) {
+				serviceTasks = serviceTasks.replace(list[i] + ";", "");
+			}
+		}
+		logger.debug("Leaving");
+		return serviceTasks;
+	}
 	
-	private AuditHeader processFinOneCreation(AuditHeader auditHeader) {
+	/**
+	 * Method for execute workflow service tasks.
+	 * 
+	 */
+	@Override
+	public AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, 
+			WorkflowEngine engine) throws AppException, JaxenException {
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String taskId = engine.getUserTaskId(role);
+
+		String finishedTasks = "";
+		String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+
+		if (StringUtils.isNotBlank(serviceTasks)) {
+			while (!"".equals(serviceTasks)) {
+				String method = serviceTasks.split(";")[0];
+				auditHeader = execute(auditHeader, method, role, usrAction, engine);
+
+				finishedTasks += (method + ";");
+				serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+			}
+			if(!auditHeader.isProcessCompleted()) {
+				auditHeader = execute(auditHeader, "", role, usrAction, engine);
+			}
+		} else {
+			auditHeader = execute(auditHeader, "", role, usrAction, engine);
+		}
+		return auditHeader;
+	}
+	
+	/**
+	 * Method for process and execute workflow service tasks
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @param role
+	 * @param usrAction
+	 * @param engine
+	 * @return
+	 * @throws InterfaceException
+	 * @throws JaxenException
+	 */
+	private AuditHeader execute(AuditHeader auditHeader, String method, String role, String usrAction,
+			WorkflowEngine engine) throws InterfaceException, JaxenException {
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		// Setting workflow details
+		String taskId = engine.getUserTaskId(role);
+		setNextTaskDetails(taskId, afinanceMain, engine, usrAction, role);
+
+		switch (method) {
+		case PennantConstants.method_doApprove:
+			auditHeader = doApprove(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+				auditHeader.setDeleteNotes(true);
+			}
+			break;
+		case PennantConstants.method_doPreApprove:
+			auditHeader = doPreApprove(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+				auditHeader.setDeleteNotes(true);
+			}
+			break;
+		case PennantConstants.method_doReject:
+			auditHeader = doReject(auditHeader, false);
+			auditHeader.setProcessCompleted(true);
+			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				auditHeader.setDeleteNotes(true);
+			}
+			break;
+		default:
+			// Execute any other custom service tasks
+			if(StringUtils.isNotBlank(method)) {
+				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, method);
+				if(taskExecuted) {
+					return auditHeader;
+				}
+			}
+			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+				auditHeader = delete(auditHeader, false);
+				auditHeader.setDeleteNotes(true);
+			} else {
+				auditHeader = saveOrUpdate(auditHeader, false);
+				auditHeader.setProcessCompleted(true);
+			}
+			break;
+		}
+		return auditHeader;
+	}
+	
+	public void setNextTaskDetails(String taskId, FinanceMain financeMain, WorkflowEngine engine, String usrAction, String role) {
+		logger.debug("Entering");
+
+		// Set the next task id
+		String action = usrAction;
+		String nextTaskId = StringUtils.trimToEmpty(financeMain.getNextTaskId());
+
+		if ("".equals(nextTaskId)) {
+			if ("Save".equals(action)) {
+				nextTaskId = taskId + ";";
+			}
+		} else {
+			if ("Resubmit".equals(action)) {
+				nextTaskId = "";
+			} else if (!"Save".equals(action)) {
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+			}
+		}
+
+		if ("".equals(nextTaskId)) {
+			String result = engine.getNextUserTaskIdsAsString(taskId, financeMain);
+			if (StringUtils.isNotBlank(result)) {
+				result += ";";
+			}
+			nextTaskId = result;
+		}
+
+		// Set the role codes for the next tasks
+		String nextRoleCode = "";
+		String nextRole = "";
+		Map<String, String> baseRoleMap = null;
+
+		if ("".equals(nextTaskId)) {
+			nextRoleCode = engine.allFirstTaskOwners(); //getFirstTaskOwner();
+		} else {
+			String[] nextTasks = nextTaskId.split(";");
+
+			if (nextTasks.length > 0) {
+				baseRoleMap = new HashMap<String, String>(nextTasks.length);
+				for (int i = 0; i < nextTasks.length; i++) {
+					if (nextRoleCode.length() > 1) {
+						nextRoleCode = nextRoleCode.concat(",");
+					}
+					nextRole = engine.getUserTask(nextTasks[i]).getActor();
+					nextRoleCode += nextRole;
+					String baseRole = "";
+					if (!"Resubmit".equals(action)) {
+						baseRole = StringUtils.trimToEmpty(engine.getUserTask(nextTasks[i]).getBaseActor());
+					}
+					baseRoleMap.put(nextRole, baseRole);
+				}
+			}
+		}
+
+		financeMain.setTaskId(taskId);
+		financeMain.setNextTaskId(nextTaskId);
+		financeMain.setRoleCode(role);
+		financeMain.setNextRoleCode(nextRoleCode);
+
+		String assignmentMthd = engine.getUserTask(taskId).getAssignmentLevel();
+		financeMain.setLovDescAssignMthd(StringUtils.trimToEmpty(assignmentMthd));
+		financeMain.setLovDescBaseRoleCodeMap(baseRoleMap);
+		baseRoleMap = null;
+
+		if (!nextRoleCode.contains(role)) {
+			financeMain.setPriority(0);
+			if (StringUtils.isBlank(financeMain.getLovDescAssignMthd())) {
+				financeMain.setNextUserId(null);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+private AuditHeader processFinOneCreation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -7277,7 +7475,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeMain.getLovDescNextUsersRolesMap() != null) {
 			saveUserActivityDetails(financeMain);
 			getTaskOwnersDAO().saveOrUpdateList(taskOwnerList);
-
 			if (queueAssignList.size() > 0 && StringUtils.isNotBlank(financeMain.getLovDescAssignMthd())
 					&& (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)|| (financeMain.isQuickDisb()))) {
 				getQueueAssignmentDAO().saveOrUpdate(queueAssignList);
@@ -8186,6 +8383,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeDetail;
 	}
 
+	/**
+	 * Method for execute check score service task
+	 * 
+	 */
+	public AuditHeader doCheckScore(AuditHeader auditHeader) {
+		FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		tFinanceDetail.getFinScheduleData().getFinanceMain().setScore(tFinanceDetail.getScore());
+		return auditHeader;
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -8553,4 +8760,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 	}
 
+	public CustomServiceTask getCustomServiceTask() {
+		return customServiceTask;
+	}
+
+	public void setCustomServiceTask(CustomServiceTask customServiceTask) {
+		this.customServiceTask = customServiceTask;
+	}
 }

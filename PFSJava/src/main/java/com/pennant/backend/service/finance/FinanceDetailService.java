@@ -81,7 +81,9 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 
 public interface FinanceDetailService {
 	
@@ -185,5 +187,7 @@ public interface FinanceDetailService {
 	BigDecimal getOutStandingBalFromFees(String finReference);
 	
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
-	
+	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, WorkflowEngine engine) 
+			throws AppException, JaxenException;
+	AuditHeader doCheckScore(AuditHeader auditHeader);
  }

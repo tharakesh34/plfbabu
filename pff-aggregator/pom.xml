@@ -39,6 +39,7 @@
 
 	<modules>
 		<module>../pff-model</module>
+		<module>../pff-interface</module>
 		<module>../pff-interface-bajaj</module>
 		<module>../pff-core</module>
 		<module>../PLFInterface</module>
