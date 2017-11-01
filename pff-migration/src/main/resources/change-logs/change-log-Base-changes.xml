@@ -209,4 +209,59 @@
 			oldColumnName="MappingRef" tableName="BMTDocumentTypes_Temp" />
 	</changeSet>
   
+  <changeSet id="30" author="Amit" >
+	<createView viewName="BMTDocumentTypes_View" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef 
+     FROM BMTDocumentTypes_Temp 
+   UNION ALL 
+   SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef  
+     FROM BMTDocumentTypes 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM BMTDocumentTypes_Temp 
+                          WHERE DocTypeCode = BMTDocumentTypes.DocTypeCode )
+	</createView>
+</changeSet>
+  
 </databaseChangeLog>
