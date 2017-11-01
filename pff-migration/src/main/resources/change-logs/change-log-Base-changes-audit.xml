@@ -26,4 +26,13 @@
 	</addColumn>
 </changeSet>
 
+<changeSet id="2" author="amit">
+	<renameColumn newColumnName="DocIsPdfExtRequired"
+		oldColumnName="IsPdfExtRequired" tableName="ADTBMTDOCUMENTTYPES" />
+	<renameColumn newColumnName="DocIsPasswordProtected"
+		oldColumnName="IsPasswordProtected" tableName="ADTBMTDOCUMENTTYPES" />
+	<renameColumn newColumnName="PdfMappingRef" oldColumnName="MappingRef"
+		tableName="ADTBMTDOCUMENTTYPES" />
+</changeSet>
+
 </databaseChangeLog>
