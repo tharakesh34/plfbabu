@@ -124,8 +124,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finIsAlwEarlySettle;
 	private int finODRpyTries;
 	private String finDepositRestrictedTo;
-	private String finAEBuyOrInception;
-	private String finAESellOrMaturity;
+	private int finAEBuyOrInception;
+	private int finAESellOrMaturity;
 	private boolean finIsActive;
 	private String finScheduleOn;
 	private String alwEarlyPayMethods;
@@ -958,11 +958,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 		return lovDescFinDepositRestrictedTo;
 	}
 
-	public void setFinAEBuyOrInception(String finAEBuyOrInception) {
+	public void setFinAEBuyOrInception(int finAEBuyOrInception) {
 		this.finAEBuyOrInception = finAEBuyOrInception;
 	}
 
-	public String getFinAEBuyOrInception() {
+	public int getFinAEBuyOrInception() {
 		return finAEBuyOrInception;
 	}
 
@@ -982,11 +982,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 		return lovDescEVFinAEBuyOrInceptionName;
 	}
 
-	public void setFinAESellOrMaturity(String finAESellOrMaturity) {
+	public void setFinAESellOrMaturity(int finAESellOrMaturity) {
 		this.finAESellOrMaturity = finAESellOrMaturity;
 	}
 
-	public String getFinAESellOrMaturity() {
+	public int getFinAESellOrMaturity() {
 		return finAESellOrMaturity;
 	}
 
