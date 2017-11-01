@@ -121,22 +121,21 @@ public class ExtendedFieldsGenerator {
 
 		List<ExtendedFieldDetail> containers=new ArrayList<ExtendedFieldDetail>();
 		List<ExtendedFieldDetail> inputElemets=new ArrayList<ExtendedFieldDetail>();
+		List<ExtendedFieldDetail> inputElemetswithoutParent=new ArrayList<ExtendedFieldDetail>();
 		
 		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
 			if (extendedFieldDetail.isInputElement()) {
-				inputElemets.add(extendedFieldDetail);
+				if (extendedFieldDetail.getParentTag() == null) {
+					inputElemetswithoutParent.add(extendedFieldDetail);
+				} else {
+					inputElemets.add(extendedFieldDetail);
+				}
+
 			} else {
 				containers.add(extendedFieldDetail);
 			}
 		}
 		
-		List<ExtendedFieldDetail> inputElemetswithoutParent=new ArrayList<ExtendedFieldDetail>();
-		for(ExtendedFieldDetail extendedFieldDetail : inputElemets)
-		{
-			if(extendedFieldDetail.getParentTag()==null){
-				inputElemetswithoutParent.add(extendedFieldDetail);
-			}
-		}
 		Collections.sort(inputElemetswithoutParent, new ExtendedFieldsComparetor());
 		
 		if(!inputElemetswithoutParent.isEmpty()){
@@ -684,8 +683,7 @@ public class ExtendedFieldsGenerator {
 				//data Setting
 				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					checkbox.setChecked(
-							Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
+					checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
 				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 
 					if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
@@ -1127,7 +1125,7 @@ public class ExtendedFieldsGenerator {
 					}
 				} else if (component instanceof Checkbox) {
 					Checkbox checkbox = (Checkbox) component;
-					values.put(detail.getFieldName(), checkbox.isChecked() ? 1 : 0);
+					values.put(detail.getFieldName(), checkbox.isChecked() ? true : false);
 				} else if (component instanceof Textbox) {
 
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
