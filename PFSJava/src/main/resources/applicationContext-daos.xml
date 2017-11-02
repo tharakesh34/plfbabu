@@ -4082,6 +4082,7 @@
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="doPreApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="executeWorkflowServiceTasks">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

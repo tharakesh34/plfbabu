@@ -27,6 +27,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 
 public class ExtendedFieldDetailsValidation {
 
@@ -338,8 +340,13 @@ public class ExtendedFieldDetailsValidation {
 			Boolean value;
 			if (StringUtils.isNotBlank(String.valueOf(fieldValue))) {
 				if (StringUtils.equals(String.valueOf(fieldValue), "true") || StringUtils.equals(String.valueOf(fieldValue), "false")) {
-					value = fieldValue.equals("true") ? true : false;
-					exdFieldData.setFieldValue(value);
+					if(App.DATABASE == Database.PSQL) {
+						value = fieldValue.equals("true") ? true : false;
+						exdFieldData.setFieldValue(value);
+					} else {
+						int boolValue = fieldValue.equals("true") ? 1 : 0;
+						exdFieldData.setFieldValue(boolValue);
+					}
 				} else {
 					String[] valueParm = new String[1];
 					valueParm[0] = fieldName;

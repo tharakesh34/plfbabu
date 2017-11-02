@@ -1338,11 +1338,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				getExtendedFieldRenderDAO().update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
 						extendedFieldRender.getMapValues(), tableType, tableName.toString());
 			}
-			String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-			AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extFields[0], extFields[1],
-					extendedFieldRender.getBefImage(), extendedFieldRender);
-			auditDetail.setExtended(true);
-			auditDetails.add(auditDetail);
+			if(StringUtils.isNotBlank(extendedFieldRender.getReference())) {
+				String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
+				AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extFields[0], extFields[1],
+						extendedFieldRender.getBefImage(), extendedFieldRender);
+				auditDetail.setExtended(true);
+				auditDetails.add(auditDetail);
+			}
 		}
 
 		// TODO:remove comments for below lines of code when MDM interface is ready for update customer service
