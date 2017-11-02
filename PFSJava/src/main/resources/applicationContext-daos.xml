@@ -2590,6 +2590,7 @@
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
 		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
