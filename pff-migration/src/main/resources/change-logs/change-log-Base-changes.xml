@@ -629,7 +629,7 @@
 <changeSet id="46" author="Jayant" dbms="postgresql">
 		<createView viewName="rpt_transactionentry_view"
 			replaceIfExists="true">
-			 SELECT t2.fintype AS product_code,
+			<![CDATA[ SELECT t2.fintype AS product_code,
     t2.finbranch AS loan_branch,
     t1.loan_ref,
     t1.txndate,
@@ -845,8 +845,49 @@
           WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'BOUNCE' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0) t1
      JOIN finpftdetails t2 ON t2.finreference = t1.loan_ref
      JOIN rmtcurrencies c ON c.ccycode = t2.finccy
-  WHERE t1.txnamount <> 0
+  WHERE t1.txnamount <> 0]]>
 
+	</createView>
+</changeSet>
+<changeSet id="47" author="Ganesh">
+	<createView viewName="customeraddresses_aview" replaceIfExists="true">
+		SELECT t1.custid,
+    t1.custaddrtype,
+    t2.addrtypedesc AS lovdesccustaddrtypename,
+    t1.custaddrhnbr,
+    t1.custflatnbr,
+    t1.custaddrstreet,
+    t1.custaddrline1,
+    t1.custaddrline2,
+    t1.custpobox,
+    t1.custaddrcity,
+    t1.typeofresidence,
+    t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,
+    t4.cpprovincename AS lovdesccustaddrprovincename,
+    t1.custaddrcountry,
+    t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,
+    t1.custaddrphone,
+    t1.custaddrfrom,
+    t1.custaddrpriority,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+	 LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
 	</createView>
 </changeSet>
 </databaseChangeLog>
