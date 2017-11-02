@@ -68,12 +68,13 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.systemmasters.AddressType;
-import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -115,7 +116,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	protected ExtendedCombobox 	custAddrCountry; 				// autoWired
 	protected ExtendedCombobox 	custAddrProvince; 				// autoWired
 	protected ExtendedCombobox 	custAddrCity; 					// autoWired
-	protected Textbox 	custAddrZIP; 					// autoWired
+	protected ExtendedCombobox 	custAddrZIP; 					// autoWired
 	protected Textbox 	custAddrPhone; 					// autoWired
 	protected Textbox 	custCIF;						// autoWired
 	protected Label 	custShrtName;					// autoWired
@@ -145,8 +146,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private CustomerDialogCtrl customerDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	private String moduleType="";
-    private transient String  mortgAddrCountryTemp;
-    private transient String  mortgAddrProvinceTemp;
     private String userRole="";
     private boolean isFinanceProcess = false;
     
@@ -303,6 +302,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
 		
 		this.custAddrZIP.setMaxlength(50);
+		this.custAddrZIP.setTextBoxWidth(121);
+		this.custAddrZIP.setMandatoryStyle(true);
+		this.custAddrZIP.setModuleName("PinCode");
+		this.custAddrZIP.setValueColumn("PinCode");
+		this.custAddrZIP.setDescColumn("AreaName");
+		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
+		
 		this.custAddrPhone.setMaxlength(50);
 		this.cityName.setMaxlength(50);
 
@@ -452,19 +458,17 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.custAddrType.setDescription("");
 			this.custAddrProvince.setDescription("");
 			this.custAddrCity.setDescription("");
+			this.custAddrZIP.setDescription("");
 			this.custAddrCountry.setDescription(aCustomerAddres.getLovDescCustAddrCountryName());
 		} else {
 			this.custAddrType.setDescription(aCustomerAddres.getLovDescCustAddrTypeName());
 			this.custAddrCountry.setDescription(aCustomerAddres.getLovDescCustAddrCountryName());
 			this.custAddrProvince.setDescription(aCustomerAddres.getLovDescCustAddrProvinceName());
 			this.custAddrCity.setDescription(aCustomerAddres.getLovDescCustAddrCityName());
+			this.custAddrZIP.setDescription(aCustomerAddres.getLovDescCustAddrZip());
 			this.custAddrType.setReadonly(true);
 		}
 		
-		mortgAddrCountryTemp = this.custAddrCountry.getValue();
-		mortgAddrProvinceTemp = this.custAddrProvince.getValue();
-		doSetProvProp();
-		doSetCityProp();
 		fillComboBox(this.custAddrPriority,
 				String.valueOf(aCustomerAddres.getCustAddrPriority()),
 				CustomerPriorityList, "");
@@ -721,7 +725,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		
 		if (!this.custAddrZIP.isReadonly()){
-			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, true));
+			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"),null,true,true));
 		}
 		
 		if (!this.custAddrPriority.isDisabled()) {
@@ -1011,6 +1015,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setValue("");
 		this.custAddrCity.setDescription("");
 		this.custAddrZIP.setValue("");
+		this.custAddrZIP.setDescription("");
 		this.custAddrPhone.setValue("");
 		this.cityName.setValue("");
 		this.custAddrPriority.setText("");
@@ -1382,75 +1387,165 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+	/**
+	 * on fulfill custAddrProvince
+	 * @param event
+	 */
 
-	public void onFulfill$custAddrCountry(Event event){
-		logger.debug("Entering" + event.toString());
-	
-		Object dataObject = custAddrCountry.getObject();
-		if (dataObject instanceof String){
-			this.custAddrCountry.setValue(dataObject.toString());
-			this.custAddrCountry.setDescription("");
-		}else{
-			Country details= (Country) dataObject;
-			if (details != null) {
-				this.custAddrCountry.setValue(details.getCountryCode());
-				this.custAddrCountry.setDescription(details.getCountryDesc());
+	public void onFulfill$custAddrProvince(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = custAddrProvince.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			fillPindetails(null, null);
+		} else {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.custAddrProvince.setErrorMessage("");
+				pcProvince = this.custAddrProvince.getValue();
+				fillPindetails(null, pcProvince);
 			}
 		}
-		doSetProvProp();
-		doSetCityProp();
-		logger.debug("Leaving" + event.toString());
-	}	
+		
+		this.custAddrCity.setObject("");
+		this.custAddrZIP.setObject("");
+		this.custAddrCity.setValue("");
+		this.custAddrCity.setDescription("");
+		this.custAddrZIP.setValue("");
+		this.custAddrZIP.setDescription("");
+		fillCitydetails(pcProvince);
+		
+		logger.debug("Leaving");
+	}
 	
-	private void doSetProvProp(){
-		if (!StringUtils.trimToEmpty(mortgAddrCountryTemp).equals(this.custAddrCountry.getValue())){
-			this.custAddrProvince.setObject("");
-			this.custAddrProvince.setValue("");
-			this.custAddrProvince.setDescription("");
-			this.custAddrCity.setObject("");
+    /**
+     * based on state param ,city will be filtered
+     * @param state
+     */
+	private void fillCitydetails(String state) {
+		logger.debug("Entering");
+
+		this.custAddrCity.setModuleName("City");
+		this.custAddrCity.setValueColumn("PCCity");
+		this.custAddrCity.setDescColumn("PCCityName");
+		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters = new Filter[2];
+		
+		if (state == null) {
+			filters[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		}
+		
+		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		this.custAddrCity.setFilters(filters);
+		
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * onFulfill custAddrCity
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$custAddrCity(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = custAddrCity.getObject();
+
+		String cityValue = null;
+		if (dataObject instanceof String) {
 			this.custAddrCity.setValue("");
 			this.custAddrCity.setDescription("");
-		}
-		mortgAddrCountryTemp = this.custAddrCountry.getValue();
-		Filter[] filtersProvince = new Filter[1] ;
-		filtersProvince[0]= new Filter("CPCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL);
-		this.custAddrProvince.setFilters(filtersProvince);
-	}
-	
-	public void onFulfill$custAddrProvince(Event event){
-		logger.debug("Entering" + event.toString());
-		
-		Object dataObject = custAddrProvince.getObject();
-		if (dataObject instanceof String){
-			this.custAddrProvince.setValue(dataObject.toString());
-			this.custAddrProvince.setDescription("");
-		}else{
-			Province details= (Province) dataObject;
-			if (details != null) {
-				this.custAddrProvince.setValue(details.getCPProvince());
-				this.custAddrProvince.setDescription(details.getCPProvinceName());
+			fillPindetails(null, null);
+		} else {
+			City city = (City) dataObject;
+			if (city != null) {
+				this.custAddrCity.setErrorMessage("");
+				this.custAddrProvince.setErrorMessage("");
+				
+				this.custAddrProvince.setValue(city.getPCProvince());
+				this.custAddrProvince.setDescription(city.getLovDescPCProvinceName());
+				cityValue = this.custAddrCity.getValue();
 			}
 		}
-
-		doSetCityProp();
 		
-		logger.debug("Leaving" + event.toString());
+		fillPindetails(cityValue, this.custAddrProvince.getValue());
+		
+		this.custAddrZIP.setObject("");
+		this.custAddrZIP.setValue("");
+		this.custAddrZIP.setDescription("");
+		
+		logger.debug("Leaving");
 	}
 	
-	private void doSetCityProp(){
-		if (!StringUtils.trimToEmpty(mortgAddrProvinceTemp).equals(this.custAddrProvince.getValue())){
-			this.custAddrCity.setObject("");
-			this.custAddrCity.setValue("");
-			this.custAddrCity.setDescription("");   
-		}
-		mortgAddrProvinceTemp= this.custAddrProvince.getValue();
-		Filter[] filtersCity = new Filter[2] ;
-		filtersCity[0] = new Filter("PCCountry", this.custAddrCountry.getValue(),Filter.OP_EQUAL);
-		filtersCity[1]= new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL);
-		this.custAddrCity.setFilters(filtersCity);
-	}
-	
+	/**
+	 * based on param values,custaddrzip is filtered 
+	 * 
+	 * @param cityValue
+	 * @param provice
+	 */
 
+	private void fillPindetails(String cityValue, String provice) {
+		logger.debug("Entering");
+		
+		this.custAddrZIP.setModuleName("PinCode");
+		this.custAddrZIP.setValueColumn("PinCode");
+		this.custAddrZIP.setDescColumn("AreaName");
+		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
+		Filter[] filters = new Filter[2];
+		
+		if (cityValue != null) {
+			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
+		} else if(provice != null && !provice.isEmpty()) {
+			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+		
+		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.custAddrZIP.setFilters(filters);
+		
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * onFulfill custAddrZip.based on custAddrZip,custAddrCity and custAddrprovince will auto populate
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$custAddrZIP(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = custAddrZIP.getObject();
+		if (dataObject instanceof String) {
+			this.custAddrZIP.setValue("");
+			this.custAddrZIP.setDescription("");
+		} else {
+			PinCode pinCode = (PinCode) dataObject;
+			if (pinCode != null) {
+				this.custAddrCity.setValue(pinCode.getCity());
+				this.custAddrCity.setDescription(pinCode.getPCCityName());
+				this.custAddrProvince.setValue(pinCode.getPCProvince());
+				this.custAddrProvince.setDescription(pinCode.getLovDescPCProvinceName());
+				this.custAddrCountry.setValue(pinCode.getpCCountry());
+				this.custAddrCountry.setDescription(pinCode.getLovDescPCCountryName());
+				
+				this.custAddrCity.setErrorMessage("");
+				this.custAddrProvince.setErrorMessage("");
+				this.custAddrZIP.setErrorMessage("");
+			} 
+		}
+		
+		logger.debug("Leaving");
+	}
+	
 	/**
 	  * Method for Calling list Of existed Customers
 	  * @param event

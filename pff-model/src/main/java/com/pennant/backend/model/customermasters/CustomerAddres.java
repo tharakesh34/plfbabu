@@ -107,6 +107,7 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	private String typeOfResidence ;
 	
 	private String sourceId;
+	private String lovDescCustAddrZip;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -343,6 +344,11 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public void setTypeOfResidence(String typeOfResidence) {
 		this.typeOfResidence = typeOfResidence;
 	}
-	
-	
+	public String getLovDescCustAddrZip() {
+		return lovDescCustAddrZip;
+	}
+
+	public void setLovDescCustAddrZip(String lovDescCustAddrZip) {
+		this.lovDescCustAddrZip = lovDescCustAddrZip;
+	}
 }
