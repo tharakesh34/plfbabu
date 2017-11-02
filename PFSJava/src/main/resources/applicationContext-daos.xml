@@ -10468,6 +10468,7 @@
 	<!--Customize Finance Data Validation Service -->
 	<bean id="customizeFinanceDataValidation"
 		class="com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 </beans>

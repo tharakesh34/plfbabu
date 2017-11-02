@@ -433,6 +433,7 @@ public class FinanceDataDefaulting {
 		
 		//Set Product Category
 		finMain.setProductCategory(financeType.getProductCategory());
+		finMain.setFinCategory(financeType.getFinCategory());
 
 		//Default Finance Currency
 		if (StringUtils.isBlank(finMain.getFinCcy())) {

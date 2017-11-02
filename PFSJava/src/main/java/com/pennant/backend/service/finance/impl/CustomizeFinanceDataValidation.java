@@ -12,10 +12,13 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 
 public class CustomizeFinanceDataValidation {
-	private CustomerDAO						customerDAO;
-	
+	private CustomerDAO					customerDAO;
+	private ExtendedFieldDetailsService	extendedFieldDetailsService;
+
 	public FinScheduleData financeDataValidation(String vldGroup, FinanceDetail financeDetail, boolean apiFlag) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -28,6 +31,7 @@ public class CustomizeFinanceDataValidation {
 				valueParm[0] = finMain.getLovDescCustCIF();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90101", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
 			} else {
 				finScheduleData.getFinanceMain().setCustID(customer.getCustID());
 				financeDetail.getCustomerDetails().setCustomer(customer);
@@ -40,9 +44,23 @@ public class CustomizeFinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 			finScheduleData.setErrorDetails(errorDetails);
 		}
+		
+		//ExtendedFieldDetails Validation
+		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
+		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
+				ExtendedFieldConstants.MODULE_LOAN, subModule);
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}
+		
 		return finScheduleData;
 	}
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+	
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 }

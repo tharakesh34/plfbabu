@@ -1,6 +1,7 @@
 package com.pennant.backend.service.extendedfields;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1084,6 +1085,14 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 		}
+		if(extendedFieldData == null || extendedFieldData.isEmpty()){
+			if(extendedDetailsCount >0){
+				String[] valueParm = new String[1];
+				valueParm[0] = "ExtendedDetails";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return errorDetails;
+			}
+		}
 		//iterates the loop and check the each fieldName and fieldValue, because both are required
 		if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
 			List<String> fieldList=new ArrayList<String>();
@@ -1150,13 +1159,6 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 
-		} else {
-			//it sets error if mandatory fields are not given
-			//{0} is mandatory in the request.::90502
-			String[] valueParm = new String[1];
-			valueParm[0] = "ExtendedDetails";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-			return errorDetails;
 		}
 
 		Map<String, Object> mapValues = new HashMap<String, Object>();
@@ -1187,6 +1189,63 @@ public class ExtendedFieldDetailsService {
 		return errorDetails;
 	}
 
+	/**
+	 * Method Getting the extended field render details
+	 * 
+	 * @param String
+	 *            reference
+	 **/
+	public ExtendedFieldRender getExtendedFieldRender(String module,String subModule,String reference) {
+
+		// Extended Field Details
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(module);
+		tableName.append("_");
+		tableName.append(subModule);
+		tableName.append("_ED");
+
+		Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),
+				"_View");
+		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+		if (extFieldMap != null) {
+			extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+			extFieldMap.remove("Reference");
+			extendedFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldMap.get("SeqNo"))));
+			extFieldMap.remove("SeqNo");
+			extendedFieldRender.setVersion(Integer.valueOf(String.valueOf(extFieldMap.get("Version"))));
+			extFieldMap.remove("Version");
+			extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+			extFieldMap.remove("LastMntOn");
+			extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
+			extFieldMap.remove("LastMntBy");
+			extendedFieldRender
+					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordStatus")));
+			extFieldMap.remove("RecordStatus");
+			extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RoleCode")));
+			extFieldMap.remove("RoleCode");
+			extendedFieldRender
+					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextRoleCode")));
+			extFieldMap.remove("NextRoleCode");
+			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+					: String.valueOf(extFieldMap.get("TaskId")));
+			extFieldMap.remove("TaskId");
+			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
+					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extFieldMap.remove("NextTaskId");
+			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
+					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extFieldMap.remove("RecordType");
+			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
+			extFieldMap.remove("WorkflowId");
+			extendedFieldRender.setMapValues(extFieldMap);
+		}
+		
+		return extendedFieldRender;
+	}
+	
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set

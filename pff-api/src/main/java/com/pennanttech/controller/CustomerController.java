@@ -43,6 +43,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -59,6 +60,7 @@ public class CustomerController {
 	private CustomerDetailsService				customerDetailsService;
 	private ErrorDetailService					errorDetailService;
 	private CustomerEmploymentDetailService		customerEmploymentDetailService;
+	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private DocumentManagerDAO					documentManagerDAO;
 	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
 
@@ -524,7 +526,8 @@ public class CustomerController {
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 				ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
 		customerDetails.setExtendedFieldHeader(extendedFieldHeader);
-		
+		Map<String, Object> prvExtFieldMap = new HashMap<>();
+
 		List<ExtendedField> extendedFields = customerDetails.getExtendedDetails();
 		if (extendedFields != null) {
 			int seqNo = 0;
@@ -534,9 +537,35 @@ public class CustomerController {
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 			exdFieldRender.setSeqNo(++seqNo);
-			exdFieldRender.setNewRecord(true);
-			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			exdFieldRender.setVersion(1);
+			if(StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+			} else {
+				
+				List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
+				ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+						ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+				if(curExtendedFieldHeader != null) {
+					ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
+							ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(),
+							customerDetails.getCustomer().getCustCIF());
+					if(extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+						prvExtFieldMap = extendedFieldRender.getMapValues();
+						for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
+							ExtendedFieldData data = new ExtendedFieldData();
+							data.setFieldName(entry.getKey());
+							data.setFieldValue(entry.getValue());
+							prvExtendedFields.add(data);
+						}
+					}
+					exdFieldRender.setNewRecord(false);
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
+				}
+				
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
 			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
 			for (ExtendedField extendedField : extendedFields) {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
@@ -549,8 +578,14 @@ public class CustomerController {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
 				exdFieldRender.setMapValues(mapValues);
 			}
-			
-			customerDetails.setExtendedFieldRender(exdFieldRender);
+			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+				customerDetails.setExtendedFieldRender(exdFieldRender);
+			} else if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
+				Map<String, Object> curextFieldMap = exdFieldRender.getMapValues();
+				prvExtFieldMap.putAll(curextFieldMap);
+				exdFieldRender.setMapValues(prvExtFieldMap);
+				customerDetails.setExtendedFieldRender(exdFieldRender);
+			}
 		}
 		curCustomer.setCustTotalIncome(custTotIncomeExp);
 		curCustomer.setCustTotalExpense(custTotExpense);
@@ -1127,6 +1162,10 @@ public class CustomerController {
 
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 	
 }
