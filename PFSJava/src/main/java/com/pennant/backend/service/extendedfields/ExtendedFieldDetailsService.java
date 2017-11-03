@@ -1,6 +1,7 @@
 package com.pennant.backend.service.extendedfields;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -578,7 +579,7 @@ public class ExtendedFieldDetailsService {
 		
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		String fieldName = exrFldData.getFieldName();
-		String fieldValue = exrFldData.getFieldValue();
+		String fieldValue = String.valueOf(exrFldData.getFieldValue());
 
 		switch (deatils.getFieldType()) {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
@@ -1067,7 +1068,7 @@ public class ExtendedFieldDetailsService {
 		if (extendedFieldHeader != null) {
 			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(), "");
 			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
-		} else if (!extendedFieldData.isEmpty()) {
+		} else if (extendedFieldData!=null && !extendedFieldData.isEmpty()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Extended fields";
 			valueParm[1] = module;
@@ -1084,83 +1085,82 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 		}
-		if (extendedDetailsCount > 0) {
-			//iterates the loop and check the each fieldName and fieldValue, because both are required
-			if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
-				List<String> fieldList=new ArrayList<String>();
-				for (ExtendedField details : extendedFieldData) {
-					int exdMandConfigCount = 0;
-					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-						//if fieldName is blank then sets FieldName is Mandatory
-						if (StringUtils.isBlank(extFieldData.getFieldName())) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldName";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-							return errorDetails;
-						}
-
-						//if fieldValue is blank then sets fieldValue is Mandatory
-						if (StringUtils.isBlank(extFieldData.getFieldValue())) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldValue";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
-							return errorDetails;
-						}
-
-						boolean isFeild = false;
-						if (extendedFieldDetails != null) {
-							for (ExtendedFieldDetail detail : extendedFieldDetails) {
-
-								//if both fields(in configuraion and json) are equal then it validates the fields and makes isFiels=true
-								if (StringUtils.equals(detail.getFieldName(), extFieldData.getFieldName())) {
-									//if same field given more than one time it raises the Error 
-									if(fieldList.contains(extFieldData.getFieldName())){
-										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
-										return errorDetails;
-									}else{
-										fieldList.add(extFieldData.getFieldName());
-									}
-									if (detail.isFieldMandatory()) {
-										exdMandConfigCount++;
-									}
-									//validate the  field with configuration that is already mentioned
-									List<ErrorDetails> errList = getExtendedFieldDetailsValidation()
-											.validateExtendedFieldData(detail, extFieldData);
-									errorDetails.addAll(errList);
-									isFeild = true;
-									break;
-								}
-							}
-							//if field is no there in configuration then is sets the error like
-							//Extended details should be matched with configured extended details in {0}.
-							if (!isFeild) {
-								String[] valueParm = new String[1];
-								valueParm[0] = module + " setup";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
-								return errorDetails;
-							}
-						}
-					}
-					//extendedDetailsCount :: mandatory fields from configuration
-					//exdMandConfigCount :: mandatory fields from JSON
-					//these are not match then sets the error like
-					//Request should contain configured mandatory extended details.
-					if (extendedDetailsCount != exdMandConfigCount) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
-						return errorDetails;
-					}
-				}
-
-			} else {
-				//it sets error if mandatory fields are not given
-				//{0} is mandatory in the request.::90502
+		if(extendedFieldData == null || extendedFieldData.isEmpty()){
+			if(extendedDetailsCount >0){
 				String[] valueParm = new String[1];
 				valueParm[0] = "ExtendedDetails";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
 				return errorDetails;
 			}
+		}
+		//iterates the loop and check the each fieldName and fieldValue, because both are required
+		if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
+			List<String> fieldList=new ArrayList<String>();
+			for (ExtendedField details : extendedFieldData) {
+				int exdMandConfigCount = 0;
+				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+					//if fieldName is blank then sets FieldName is Mandatory
+					if (StringUtils.isBlank(extFieldData.getFieldName())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+						return errorDetails;
+					}
+
+					//if fieldValue is blank then sets fieldValue is Mandatory
+					if (StringUtils.isBlank(String.valueOf(extFieldData.getFieldValue()))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldValue";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+						return errorDetails;
+					}
+
+					boolean isFeild = false;
+					if (extendedFieldDetails != null) {
+						for (ExtendedFieldDetail detail : extendedFieldDetails) {
+
+							//if both fields(in configuraion and json) are equal then it validates the fields and makes isFiels=true
+							if (StringUtils.equals(detail.getFieldName(), extFieldData.getFieldName())) {
+								//if same field given more than one time it raises the Error 
+								if(fieldList.contains(extFieldData.getFieldName())){
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+									return errorDetails;
+								}else{
+									fieldList.add(extFieldData.getFieldName());
+								}
+								if (detail.isFieldMandatory()) {
+									exdMandConfigCount++;
+								}
+								//validate the  field with configuration that is already mentioned
+								List<ErrorDetails> errList = getExtendedFieldDetailsValidation()
+										.validateExtendedFieldData(detail, extFieldData);
+								errorDetails.addAll(errList);
+								isFeild = true;
+								break;
+							}
+						}
+						//if field is no there in configuration then is sets the error like
+						//Extended details should be matched with configured extended details in {0}.
+						if (!isFeild) {
+							String[] valueParm = new String[1];
+							valueParm[0] = module + " setup";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+				//extendedDetailsCount :: mandatory fields from configuration
+				//exdMandConfigCount :: mandatory fields from JSON
+				//these are not match then sets the error like
+				//Request should contain configured mandatory extended details.
+				if (extendedDetailsCount != exdMandConfigCount) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+					return errorDetails;
+				}
+			}
 
 		}
+
 		Map<String, Object> mapValues = new HashMap<String, Object>();
 		if (extendedFieldData != null) {
 			//get the ExtendedField--List from JSON
@@ -1189,6 +1189,63 @@ public class ExtendedFieldDetailsService {
 		return errorDetails;
 	}
 
+	/**
+	 * Method Getting the extended field render details
+	 * 
+	 * @param String
+	 *            reference
+	 **/
+	public ExtendedFieldRender getExtendedFieldRender(String module,String subModule,String reference) {
+
+		// Extended Field Details
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(module);
+		tableName.append("_");
+		tableName.append(subModule);
+		tableName.append("_ED");
+
+		Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),
+				"_View");
+		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+		if (extFieldMap != null) {
+			extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+			extFieldMap.remove("Reference");
+			extendedFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldMap.get("SeqNo"))));
+			extFieldMap.remove("SeqNo");
+			extendedFieldRender.setVersion(Integer.valueOf(String.valueOf(extFieldMap.get("Version"))));
+			extFieldMap.remove("Version");
+			extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+			extFieldMap.remove("LastMntOn");
+			extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
+			extFieldMap.remove("LastMntBy");
+			extendedFieldRender
+					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordStatus")));
+			extFieldMap.remove("RecordStatus");
+			extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RoleCode")));
+			extFieldMap.remove("RoleCode");
+			extendedFieldRender
+					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextRoleCode")));
+			extFieldMap.remove("NextRoleCode");
+			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+					: String.valueOf(extFieldMap.get("TaskId")));
+			extFieldMap.remove("TaskId");
+			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
+					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extFieldMap.remove("NextTaskId");
+			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
+					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extFieldMap.remove("RecordType");
+			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
+			extFieldMap.remove("WorkflowId");
+			extendedFieldRender.setMapValues(extFieldMap);
+		}
+		
+		return extendedFieldRender;
+	}
+	
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set

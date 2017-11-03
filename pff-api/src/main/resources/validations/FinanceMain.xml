@@ -35,7 +35,7 @@
 				<element name="value">1</element>
 			</constraint>
 		</field>
-		<field name="finStartDate">
+		<!-- <field name="finStartDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>90128</message>
 				<groups>
@@ -43,7 +43,7 @@
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 				</groups>
 			</constraint>
-		</field>
+		</field> -->
 		<field name="validateMain">
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>90242%%downPayBank</message>

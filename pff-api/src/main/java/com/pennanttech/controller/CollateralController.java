@@ -471,7 +471,7 @@ public class CollateralController {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 						
 						if(StringUtils.equalsIgnoreCase(extFieldData.getFieldName(), "SeqNo")) {
-							exdFieldRender.setSeqNo(Integer.valueOf(extFieldData.getFieldValue()));
+							exdFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldData.getFieldValue())));
 							isSeqFound = true;
 						}
 					}

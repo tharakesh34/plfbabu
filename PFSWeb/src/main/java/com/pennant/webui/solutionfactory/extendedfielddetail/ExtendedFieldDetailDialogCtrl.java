@@ -128,6 +128,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Checkbox 		fieldUnique; 						// autowired
 	protected Label			label_ExtendedFieldDetailDialog_FieldListInstrLabel;
 	protected Intbox		fieldMultilinetxt;
+	protected Combobox 		parentTag;
+	protected Label			label_ExtendedFieldDetailDialog_FieldSeqOrder;
+	protected Label 		label_ExtendedFieldDetailDialog_Parent;
 
 	protected Listbox 		listBoxFieldDet;
 	protected Paging 		pagingFieldDetList;
@@ -402,6 +405,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldName.setValue(aExtendedFieldDetail.getFieldName());
 
 		fillComboBox(this.fieldType,aExtendedFieldDetail.getFieldType(),PennantStaticListUtil.getFieldType(),"");
+		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getGroupBoxList(), "");
 
 		if(isTextType()){
 			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint(),PennantStaticListUtil.getRegexType(),"");
@@ -441,6 +445,29 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
+	private List<ValueLabel> getGroupBoxList() {
+		List<ValueLabel> parentList=null;
+		List<ExtendedFieldDetail> extendedFieldDetail=getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		if(extendedFieldDetail!=null){
+			parentList=new ArrayList<ValueLabel>();
+			for(ExtendedFieldDetail detail:extendedFieldDetail){
+				if(!detail.isInputElement()){
+					parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
+				}
+			}
+		}
+		return parentList;
+	}
+
+	private boolean isGroupContainChilds(String groupName) {
+		List<ExtendedFieldDetail> extendedFieldDetail=getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		for(ExtendedFieldDetail detail:extendedFieldDetail){
+			if(StringUtils.equals(groupName,detail.getParentTag())){
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -909,7 +936,27 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			if(!this.parentTag.isDisabled() && this.parentTag.getSelectedIndex()>0){
+				aExtendedFieldDetail.setParentTag(this.parentTag.getSelectedItem().getValue().toString());	
+			}else{
+				aExtendedFieldDetail.setParentTag(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//If the fieldType is groupbox or tabpanel then make inputElement as false otherwise true
+		try{
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, aExtendedFieldDetail.getFieldType())
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,aExtendedFieldDetail.getFieldType())) {
+				aExtendedFieldDetail.setInputElement(false);
+			}else{
+				aExtendedFieldDetail.setInputElement(true);
+			}
+		}catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1094,6 +1141,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "+
 				Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value")+" : "+ aExtendedFieldDetail.getFieldName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if ((!aExtendedFieldDetail.isInputElement() && !isGroupContainChilds(aExtendedFieldDetail.getFieldName())
+					|| aExtendedFieldDetail.isInputElement())) {
 			if (StringUtils.isBlank(aExtendedFieldDetail.getRecordType())) {
 				aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion() + 1);
 				aExtendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1124,6 +1173,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}catch (DataAccessException e){
 				logger.error("Exception: ", e);
 				showMessage(e);
+			}
+			} else {
+				final String errMsg = Labels.getLabel("message.error.unable_to_delete_childs_are_avaliable")
+						+ "\n\n --> " + Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value") + " : "
+						+ aExtendedFieldDetail.getFieldName();
+				MessageUtil.showError(errMsg);
 			}
 
 		}
@@ -1181,6 +1236,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldMaxValue.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldMaxValue"));
 			this.fieldUnique.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldUnique"));
 			this.fieldMultilinetxt.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldMultilinetxt"));
+			this.parentTag.setDisabled((isReadOnly("ExtendedFieldDetailDialog_parentTag")));
 		}
 		
 		boolean isMaintainRcd = false;
@@ -1884,6 +1940,27 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
 				}
 			}
+			//TODO if GROUPBOx display the list of non input elements in parentTAg
+			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, fieldType)){
+				this.rowfieldDefaultValue.setVisible(false);
+				this.rowMandatory.setVisible(false);
+				this.parentTag.setVisible(false);
+				this.label_ExtendedFieldDetailDialog_Parent.setVisible(false);
+			}else{
+				this.parentTag.setVisible(true);
+				this.label_ExtendedFieldDetailDialog_Parent.setVisible(true);
+			}
+			
+			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)){
+				this.rowfieldDefaultValue.setVisible(false);
+				this.rowMandatory.setVisible(false);
+				this.parentTag.setVisible(false);
+				this.label_ExtendedFieldDetailDialog_Parent.setVisible(false);
+			}else{
+				//this.parentTag.setVisible(true);
+				//this.label_ExtendedFieldDetailDialog_Parent.setVisible(true);
+			}
+
 
 			if(this.rowfieldLength.isVisible()){
 				if(isTextType()){

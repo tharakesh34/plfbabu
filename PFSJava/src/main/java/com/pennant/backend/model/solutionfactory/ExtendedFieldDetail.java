@@ -107,6 +107,8 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private boolean fieldUnique;
 	
 	private int		multiLine;
+	private boolean inputElement;
+	private String parentTag;
 	private boolean newRecord;
 	private String lovValue;	
 	private String lovDescErroDesc;
@@ -290,6 +292,22 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	}
 	public void setMultiLine(int multiLine) {
 		this.multiLine = multiLine;
+	}
+
+	public boolean isInputElement() {
+		return inputElement;
+	}
+
+	public void setInputElement(boolean inputElement) {
+		this.inputElement = inputElement;
+	}
+
+	public String getParentTag() {
+		return parentTag;
+	}
+
+	public void setParentTag(String parentTag) {
+		this.parentTag = parentTag;
 	}
 
 }

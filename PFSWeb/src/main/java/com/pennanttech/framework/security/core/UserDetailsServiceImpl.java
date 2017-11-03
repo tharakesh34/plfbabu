@@ -84,7 +84,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		Collection<GrantedAuthority> grantedAuthorities;
 		List<SecurityRole> securityRole;
 				
-		user = getUserByLogin(username);
+		user = getUserByLogin(username.toUpperCase());
 		
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found.");

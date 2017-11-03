@@ -236,6 +236,16 @@
 										width="50px" maxlength="14" />
 								</hbox>
 							</row>
+							<row visible="true">
+								<label
+									id="label_ExtendedFieldDetailDialog_Parent"
+									value="${c:l('label_ExtendedFieldDetailDialog_Parent.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<combobox id="parentTag"
+										readonly="true" width="200px" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

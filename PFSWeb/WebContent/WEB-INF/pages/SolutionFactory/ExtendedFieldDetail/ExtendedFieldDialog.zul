@@ -184,6 +184,10 @@
 									label="${c:l('label_ExtendedFieldDialog_FieldSeqOrder.value')}"
 									sort="false" hflex="min" />
 								<listheader
+									id="listheader_FieldParentTag"
+									label="${c:l('label_ExtendedFieldDialog_FieldParentTag.value')}"
+									sort="false" hflex="min" />	
+								<listheader
 									id="listheader_Unique"
 									label="${c:l('label_ExtendedFieldDialog_FieldUnique.value')}"
 									sort="false" hflex="min" />

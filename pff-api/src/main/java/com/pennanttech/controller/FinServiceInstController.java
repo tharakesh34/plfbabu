@@ -213,19 +213,24 @@ public class FinServiceInstController extends SummaryDetailService {
 	private void executeFeeCharges(FinanceDetail financeDetail, FinServiceInstruction finServiceInst, String eventCode)
 			throws IllegalAccessException, InvocationTargetException {
 		if (finServiceInst.getFinFeeDetails() != null) {
-			for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
-				finFeeDetail.setFinEvent(eventCode);
-				financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
-				finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
-			}
-			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
-
-			if(financeDetail.isStp()) {
-				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-					feeDetail.setWorkflowId(0);
+			if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY) 
+					&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
+				feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst,false);
+			} else {
+				for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
+					finFeeDetail.setFinEvent(eventCode);
+					financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
+					finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
 				}
-			}
-		}	
+				feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
+
+				if(financeDetail.isStp()) {
+					for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+						feeDetail.setWorkflowId(0);
+					}
+				}
+			}	
+		}
 	}
 
 	/**

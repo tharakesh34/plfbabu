@@ -30,6 +30,8 @@ public class ExtendedFieldConstants {
 	public static final String FIELDTYPE_BASERATE 			= "BASERATE";
 	public static final String FIELDTYPE_ADDRESS 			= "ADDRESS";
 	public static final String FIELDTYPE_PHONE 				= "PHONE";
+	public static final String	FIELDTYPE_GROUPBOX			= "GROUPBOX";
+	public static final String	FIELDTYPE_TABPANEL			= "TABPANEL";
 	
 	// Date Default Types
 	public static final String DFTDATETYPE_APPDATE 			= "APPDATE";

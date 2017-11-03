@@ -27,6 +27,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 
 public class ExtendedFieldDetailsValidation {
 
@@ -143,14 +145,14 @@ public class ExtendedFieldDetailsValidation {
 	public List<ErrorDetails> validateExtendedFieldData(ExtendedFieldDetail exdConfigDetail, ExtendedFieldData exdFieldData) {
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		String fieldName = exdFieldData.getFieldName();
-		String fieldValue = exdFieldData.getFieldValue();
+		Object fieldValue = exdFieldData.getFieldValue();
 
 		switch (exdConfigDetail.getFieldType()) {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
 		case ExtendedFieldConstants.FIELDTYPE_TIME:
 			Date dateValue = null;
 			try {
-				dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+				dateValue = DateUtility.parse(String.valueOf(fieldValue), PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -161,12 +163,12 @@ public class ExtendedFieldDetailsValidation {
 			if (!StringUtils.equals(exdConfigDetail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_TIME)) {
 				errors = dateValidation(exdConfigDetail, dateValue, errors);
 			}
-			exdFieldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateValue)));
+			exdFieldData.setFieldValue(dateValue);
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_DATETIME:
 			Date dateTimeVal = null;
 			try {
-				dateTimeVal = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+				dateTimeVal = DateUtility.parse(String.valueOf(fieldValue), PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -174,30 +176,31 @@ public class ExtendedFieldDetailsValidation {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
 				return errors;
 			}
-				errors = dateValidation(exdConfigDetail, dateTimeVal, errors);
-			exdFieldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateTimeVal)));
+			errors = dateValidation(exdConfigDetail, dateTimeVal, errors);
+			exdFieldData.setFieldValue(dateTimeVal);
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+			BigDecimal decimalValue = BigDecimal.ZERO;
 			try {
-				double rateValue = Double.parseDouble(fieldValue);
-				@SuppressWarnings("unused")
-				BigDecimal decimalValue = BigDecimal.valueOf(rateValue);
+				double rateValue = Double.parseDouble(String.valueOf(fieldValue));
+				decimalValue = BigDecimal.valueOf(rateValue);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "number";
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
 			}
-			if(fieldValue.length() > exdConfigDetail.getFieldLength()+2) {
+			if(String.valueOf(fieldValue).length() > exdConfigDetail.getFieldLength()+2) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
+			exdFieldData.setFieldValue(decimalValue);
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_INT:
-		case ExtendedFieldConstants.FIELDTYPE_LONG:
-			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+			int intValue = 0;
+			if(String.valueOf(fieldValue).length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
@@ -205,10 +208,10 @@ public class ExtendedFieldDetailsValidation {
 				return errors;
 			}
 			try {
-				Integer.parseInt(fieldValue);
+				intValue = Integer.parseInt(String.valueOf(fieldValue));
 				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-					if (!(Long.valueOf(fieldValue) >= exdConfigDetail.getFieldMinValue()
-							&& Long.valueOf(fieldValue) <= exdConfigDetail.getFieldMaxValue())) {
+					if (!(Long.valueOf(String.valueOf(fieldValue)) >= exdConfigDetail.getFieldMinValue()
+							&& Long.valueOf(String.valueOf(fieldValue)) <= exdConfigDetail.getFieldMaxValue())) {
 						String valueParm[] = new String[3];
 						valueParm[0] = exdConfigDetail.getFieldName();
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
@@ -222,78 +225,109 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[1] = "number";
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
 			}
+			exdFieldData.setFieldValue(intValue);
 			break;
-		case ExtendedFieldConstants.FIELDTYPE_TEXT:
-		case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-		case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
-		if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+		case ExtendedFieldConstants.FIELDTYPE_LONG:
+			long longValue = 0;
+			if(String.valueOf(fieldValue).length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 				return errors;
 			}
-			
+			try {
+				longValue = Long.parseLong(String.valueOf(fieldValue));
+				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
+					if (!(Long.valueOf(String.valueOf(fieldValue)) >= exdConfigDetail.getFieldMinValue()
+							&& Long.valueOf(String.valueOf(fieldValue)) <= exdConfigDetail.getFieldMaxValue())) {
+						String valueParm[] = new String[3];
+						valueParm[0] = exdConfigDetail.getFieldName();
+						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
+						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+					}
+				}
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+			}
+			exdFieldData.setFieldValue(longValue);
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_TEXT:
+		case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
+		case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+			if(String.valueOf(fieldValue).length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				return errors;
+			}
+
 			if(StringUtils.isNotBlank(exdConfigDetail.getFieldConstraint())) {
 				if(PennantRegularExpressions.getRegexMapper(exdConfigDetail.getFieldConstraint())!=null){
-				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
-						exdConfigDetail.getFieldConstraint()));
-				Matcher matcher = pattern.matcher(fieldValue);
-				if (matcher.matches() == false) {
-					String[] valueParm = new String[1];
-					valueParm[0] = fieldName;
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
-				}
+					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+							exdConfigDetail.getFieldConstraint()));
+					Matcher matcher = pattern.matcher(String.valueOf(fieldValue));
+					if (matcher.matches() == false) {
+						String[] valueParm = new String[1];
+						valueParm[0] = fieldName;
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+					}
 				}
 			}
 			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT, exdConfigDetail.getFieldType())){
-				exdFieldData.setFieldValue(fieldValue.toUpperCase());
+				exdFieldData.setFieldValue(String.valueOf(fieldValue).toUpperCase());
 			}
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
-			if(fieldValue.length() > 100) {
+		case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
+			if(String.valueOf(fieldValue).length() > 100) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(100);
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_PHONE:
-				if(fieldValue.length() > 10) {
-					String[] valueParm = new String[2];
+		case ExtendedFieldConstants.FIELDTYPE_PHONE:
+			if(String.valueOf(fieldValue).length() > 10) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(10);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				return errors;
+			}
+			if (StringUtils.isNotBlank(String.valueOf(fieldValue))) {
+				if (!(String.valueOf(fieldValue).matches("\\d{10}"))) {
+					String[] valueParm = new String[1];
 					valueParm[0] = fieldName;
-					valueParm[1] = String.valueOf(10);
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 					return errors;
 				}
-				if (StringUtils.isNotBlank(fieldValue)) {
-					if (!(fieldValue.matches("\\d{10}"))) {
-						String[] valueParm = new String[1];
-						valueParm[0] = fieldName;
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
-						return errors;
-					}
-				}
-				exdFieldData.setFieldValue(fieldValue.substring(0, 8));
-				break;
-			case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-			if(fieldValue.length() >  exdConfigDetail.getFieldLength()) {
+			}
+			exdFieldData.setFieldValue(String.valueOf(fieldValue).substring(0, 8));
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
+			if(String.valueOf(fieldValue).length() >  exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 				return errors;
 			}
-			if(StringUtils.contains(fieldValue, ".")){
+			if(StringUtils.contains(String.valueOf(fieldValue), ".")){
 				String[] valueParm = new String[1];
 				valueParm[0] = fieldName;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 				return errors;
 			}
-			exdFieldData.setFieldValue(String.valueOf(Math.round((Integer.valueOf(fieldValue)/Math.pow(10, exdConfigDetail.getFieldPrec())))));
+			exdFieldData.setFieldValue(String.valueOf(Math.round(
+					(Integer.valueOf(String.valueOf(fieldValue)) / Math.pow(10, exdConfigDetail.getFieldPrec())))));
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-				if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
-						|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
+				if (Integer.valueOf(String.valueOf(fieldValue)) > exdConfigDetail.getFieldMaxValue()
+						|| Integer.valueOf(String.valueOf(fieldValue)) < exdConfigDetail.getFieldMinValue()) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
@@ -303,12 +337,15 @@ public class ExtendedFieldDetailsValidation {
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
-			if (StringUtils.isNotBlank(fieldValue)) {
-				if (StringUtils.equals(fieldValue, "true") || StringUtils.equals(fieldValue, "false")
-						|| StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1")) {
-					if(!(StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1"))){
-					int i = fieldValue.equals("true") ? 1 : 0;
-					exdFieldData.setFieldValue(String.valueOf(i));
+			Boolean value;
+			if (StringUtils.isNotBlank(String.valueOf(fieldValue))) {
+				if (StringUtils.equals(String.valueOf(fieldValue), "true") || StringUtils.equals(String.valueOf(fieldValue), "false")) {
+					if(App.DATABASE == Database.PSQL) {
+						value = fieldValue.equals("true") ? true : false;
+						exdFieldData.setFieldValue(value);
+					} else {
+						int boolValue = fieldValue.equals("true") ? 1 : 0;
+						exdFieldData.setFieldValue(boolValue);
 					}
 				} else {
 					String[] valueParm = new String[1];
@@ -316,7 +353,7 @@ public class ExtendedFieldDetailsValidation {
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 				}
 			}
-				
+
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
 		case ExtendedFieldConstants.FIELDTYPE_BASERATE:
@@ -334,22 +371,22 @@ public class ExtendedFieldDetailsValidation {
 				String[][] filters = moduleMapping.getLovFilters();
 				int count=0;
 				if(!StringUtils.contains(moduleMapping.getTableName(), "Builder")){
-				if(filters !=null){
-				 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
-				} else {
-					 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],null , fieldValue);
-				}
+					if(filters !=null){
+						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], String.valueOf(fieldValue));
+					} else {
+						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],null , String.valueOf(fieldValue));
+					}
 				} else {
 					if(filters !=null){
-						 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1], filters[0][0], fieldValue);
-						} else {
-							 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],null , fieldValue);
-						}
+						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1], filters[0][0], String.valueOf(fieldValue));
+					} else {
+						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],null , String.valueOf(fieldValue));
+					}
 				}
 				if(count <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = fieldName;
-					valueParm[1] = fieldValue;
+					valueParm[1] = String.valueOf(fieldValue);
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
 				}
 			}
@@ -357,13 +394,13 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
 		case 	ExtendedFieldConstants.FIELDTYPE_RADIO:
 			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, exdConfigDetail.getFieldType())){
-			if (fieldValue.length() > exdConfigDetail.getFieldLength()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
-				return errors;
-			}
+				if (String.valueOf(fieldValue).length() > exdConfigDetail.getFieldLength()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = fieldName;
+					valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+					return errors;
+				}
 			}
 			String[] values = new String[0];
 			boolean isValid = false;
@@ -371,48 +408,51 @@ public class ExtendedFieldDetailsValidation {
 			if(staticList != null && staticList.contains(PennantConstants.DELIMITER_COMMA)) {
 				values = staticList.split(PennantConstants.DELIMITER_COMMA);
 			}
-			
+
 			if (values.length > 0) {
 				for (int i = 0; i <= values.length-1; i++) {
-					if (StringUtils.equals(fieldValue, values[i])) {
+					if (StringUtils.equals(String.valueOf(fieldValue), values[i])) {
 						isValid = true;
 					}
 				}
 			}
-			
+
 			if(!isValid) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
-				valueParm[1] = fieldValue;
+				valueParm[1] = String.valueOf(fieldValue);
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
 			}
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-			if (fieldValue.length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
+		case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
+			if (String.valueOf(fieldValue).length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-			if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
-					|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
-				String[] valueParm = new String[3];
-				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
-				valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
-			}
+				if (Integer.valueOf(String.valueOf(fieldValue)) > exdConfigDetail.getFieldMaxValue()
+						|| Integer.valueOf(String.valueOf(fieldValue)) < exdConfigDetail.getFieldMinValue()) {
+					String[] valueParm = new String[3];
+					valueParm[0] = fieldName;
+					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
+					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+				}
 			}
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-				if (fieldValue.length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = fieldName;
-					valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
-				}
-				if(Integer.valueOf(fieldValue)<0 || Integer.valueOf(fieldValue)>100){
+		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
+			double percentage = 0;
+			if (String.valueOf(fieldValue).length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			try {
+				percentage = Double.valueOf(String.valueOf(fieldValue));
+				if (percentage < 0 || percentage > 100) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = "0";
@@ -420,8 +460,7 @@ public class ExtendedFieldDetailsValidation {
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 				}
 				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-					if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
-							|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
+					if (percentage > exdConfigDetail.getFieldMaxValue() || percentage < exdConfigDetail.getFieldMinValue()) {
 						String[] valueParm = new String[3];
 						valueParm[0] = fieldName;
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
@@ -429,72 +468,81 @@ public class ExtendedFieldDetailsValidation {
 						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 					}
 				}
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+			}
+
+			exdFieldData.setFieldValue(percentage);
+			
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_FRQ:
-				ErrorDetails errorDetail = FrequencyUtil.validateFrequency(fieldValue);
-				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = fieldValue;
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm)));
-					return errors;
-				}
-				
+		case ExtendedFieldConstants.FIELDTYPE_FRQ:
+			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(String.valueOf(fieldValue));
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(fieldValue);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm)));
+				return errors;
+			}
+
 			break;
-				case 	ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
-					if (fieldValue.length() > LengthConstants.LEN_ACCOUNT) {
+		case 	ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
+			if (String.valueOf(fieldValue).length() > LengthConstants.LEN_ACCOUNT) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(LengthConstants.LEN_ACCOUNT);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
+			String key1 = exdConfigDetail.getFieldList();
+			String[] types = String.valueOf(fieldValue).split(PennantConstants.DELIMITER_COMMA);
+			if(key1 != null && key1.contains(PennantConstants.DELIMITER_COMMA)) {
+				String[] values1 = key1.split(PennantConstants.DELIMITER_COMMA);
+				key1 = values1[0];
+			}
+			ModuleMapping moduleMapping1 = PennantJavaUtil.getModuleMap(key1);
+			if(moduleMapping1 != null) {
+				String[] lovFields = moduleMapping1.getLovFields();
+				String[][] filters = moduleMapping1.getLovFilters();
+				for (String type : types) {
+					int count=0;
+					if(!StringUtils.contains(moduleMapping1.getTableName(), "Builder")){
+						if(filters !=null){
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[0], filters[0][0], type);
+						} else {
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[0],null , type);
+						}
+					} else {
+						if(filters !=null){
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[1], filters[0][0], type);
+						} else {
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[1],null , type);
+						}	
+					}
+					if(count <= 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = fieldName;
-						valueParm[1] = String.valueOf(LengthConstants.LEN_ACCOUNT);
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+						valueParm[1] = type;
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
 					}
+				}
+
+			}
 			break;
-			case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
-				String key1 = exdConfigDetail.getFieldList();
-				String[] types = fieldValue.split(PennantConstants.DELIMITER_COMMA);
-				if(key1 != null && key1.contains(PennantConstants.DELIMITER_COMMA)) {
-					String[] values1 = key1.split(PennantConstants.DELIMITER_COMMA);
-					key1 = values1[0];
-				}
-				ModuleMapping moduleMapping1 = PennantJavaUtil.getModuleMap(key1);
-				if(moduleMapping1 != null) {
-					String[] lovFields = moduleMapping1.getLovFields();
-					String[][] filters = moduleMapping1.getLovFilters();
-					for (String type : types) {
-						int count=0;
-						if(!StringUtils.contains(moduleMapping1.getTableName(), "Builder")){
-						if(filters !=null){
-						 count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[0], filters[0][0], type);
-						} else {
-							 count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[0],null , type);
-						}
-						} else {
-							if(filters !=null){
-								 count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[1], filters[0][0], type);
-								} else {
-									 count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[1],null , type);
-								}	
-						}
-						if(count <= 0) {
-							String[] valueParm = new String[2];
-							valueParm[0] = fieldName;
-							valueParm[1] = type;
-							errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
-						}
-					}
-					
-				}
-			break;
-			case  ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
-				String[] values1 = new String[0];
-				String[] fieldvalues = new String[0];
-				String multiStaticList = exdConfigDetail.getFieldList();
-				if(multiStaticList != null && multiStaticList.contains(PennantConstants.DELIMITER_COMMA)) {
-					values1 = multiStaticList.split(PennantConstants.DELIMITER_COMMA);
-				}
-				if(fieldValue != null && fieldValue.contains(PennantConstants.DELIMITER_COMMA)) {
-					fieldvalues = fieldValue.split(PennantConstants.DELIMITER_COMMA);
-				}
-				if (values1.length > 0) {
+		case  ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
+			String[] values1 = new String[0];
+			String[] fieldvalues = new String[0];
+			String multiStaticList = exdConfigDetail.getFieldList();
+			if(multiStaticList != null && multiStaticList.contains(PennantConstants.DELIMITER_COMMA)) {
+				values1 = multiStaticList.split(PennantConstants.DELIMITER_COMMA);
+			}
+			if(fieldValue != null && String.valueOf(fieldValue).contains(PennantConstants.DELIMITER_COMMA)) {
+				fieldvalues = String.valueOf(fieldValue).split(PennantConstants.DELIMITER_COMMA);
+			}
+			if (values1.length > 0) {
 				for (int i = 0; i <= fieldvalues.length - 1; i++) {
 					boolean isValid1 = false;
 					for (int j = 0; j <= values1.length - 1; j++) {
@@ -505,15 +553,13 @@ public class ExtendedFieldDetailsValidation {
 					if (!isValid1) {
 						String[] valueParm = new String[2];
 						valueParm[0] = fieldName;
-						valueParm[1] = fieldValue;
+						valueParm[1] = String.valueOf(fieldValue);
 						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
 					}
 				}
-				}
-				
-				
+			}
 			break;
-			default:
+		default:
 			break;
 		}
 		return errors;

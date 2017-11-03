@@ -137,7 +137,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName," );
+			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,lovDescCustAddrZip," );
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");

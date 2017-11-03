@@ -218,7 +218,7 @@ public class FinanceDataValidation {
 		}
 		
 		// Fee validations
-		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall, "");
+		errorDetails = doValidateFees(finScheduleData, financeDetail.isStp());
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -672,7 +672,7 @@ public class FinanceDataValidation {
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 								return errorDetails;
 							}
-							if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
+							if (StringUtils.isBlank(String.valueOf(extendedFieldData.getFieldValue()))) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "fieldValue";
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
@@ -895,13 +895,13 @@ public class FinanceDataValidation {
 		}
 
 		if(!financeDetail.isStp()){
-			if(StringUtils.isBlank(financeDetail.getProcessStage())){
+			/*if(StringUtils.isBlank(financeDetail.getProcessStage())){
 				String[] valueParm = new String[1];
 				valueParm[0] = "ProcessStage";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
-			}
+			}*/
 			if (financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "QuickDisb";
@@ -1103,7 +1103,7 @@ public class FinanceDataValidation {
 			}
 			
 			//ExtendedFieldDetails Validation
-			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getProductCategory();
+			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
 					ExtendedFieldConstants.MODULE_LOAN, subModule);
 			if (!errorDetails.isEmpty()) {
@@ -4206,7 +4206,21 @@ public class FinanceDataValidation {
 		}
 		return getFinanceDetail();
 	}
-	
+	/**
+	 * Method for process fees
+	 * 
+	 * @param finScheduleData
+	 * @param stp
+	 * @return
+	 */
+	private List<ErrorDetails> doValidateFees(FinScheduleData finScheduleData, boolean stp) {
+		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		if ((finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty())
+				|| stp) {
+			errors = feeValidations(PennantConstants.VLD_CRT_LOAN, finScheduleData, true, "");
+		}
+		return errors;
+	}
 	/*
 	 * ################################################################################################################
 	 * DEFAULT SETTER GETTER METHODS

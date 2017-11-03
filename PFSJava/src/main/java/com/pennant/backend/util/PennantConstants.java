@@ -184,6 +184,10 @@ public class PennantConstants {
 	public static final String method_doCheckOtherPayments = "doCheckOtherPayments";
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
+	
+	public static final String method_externalDedup = "externalDedup";
+	public static final String method_hunter = "executeHunter";
+	public static final String method_Bureau = "executeBureau";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";

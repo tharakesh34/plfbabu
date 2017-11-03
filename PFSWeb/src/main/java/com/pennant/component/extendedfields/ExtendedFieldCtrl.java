@@ -16,11 +16,6 @@ import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Column;
-import org.zkoss.zul.Columns;
-import org.zkoss.zul.Grid;
-import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Rows;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -38,16 +33,16 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtendedFieldCtrl {
 	private static final Logger		logger		= Logger.getLogger(ExtendedFieldCtrl.class);
 
-	private int						ccyFormat;
-	private boolean					isReadOnly	= false;
-	private Rows					rows;
-	private Tab						parentTab;
-	private Tab						tab;
-	private boolean					isNewRecord	= false;
+	private int								ccyFormat;
+	private boolean							isReadOnly	= false;
+	private Tab								parentTab;
+	private Tab								tab;
+	private boolean							isNewRecord	= false;
+	private Tabpanel						tabpanel;
 
-	private ExtendedFieldHeader		extendedFieldHeader;
-	private ExtendedFieldRender		extendedFieldRender;
-	private ExtendedFieldsGenerator	generator;
+	private ExtendedFieldHeader				extendedFieldHeader;
+	private ExtendedFieldRender				extendedFieldRender;
+	private ExtendedFieldsGenerator			generator;
 
 	private static ScriptValidationService	scriptValidationService;
 	private static ExtFieldConfigService	extFieldConfigService;
@@ -62,7 +57,7 @@ public class ExtendedFieldCtrl {
 
 		// Extended Field Details auto population / Rendering into Screen
 		this.generator = new ExtendedFieldsGenerator();
-		this.generator.setRows(this.rows);
+		this.generator.setTabpanel(tabpanel);
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
 		this.tab.setLabel(extendedFieldHeader.getTabHeading());
@@ -160,12 +155,12 @@ public class ExtendedFieldCtrl {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
-
-			if (rows.getFellowIfAny("ad_" + error.getProperty()) != null) {
-				Component component = rows.getFellowIfAny("ad_" + error.getProperty());
-				WrongValueException we = new WrongValueException(component, error.getValue());
-				wve.add(we);
-			}
+//FIXME:Ganesh with the help of Satisk
+//			if (rows.getFellowIfAny("ad_" + error.getProperty()) != null) {
+//				Component component = rows.getFellowIfAny("ad_" + error.getProperty());
+//				WrongValueException we = new WrongValueException(component, error.getValue());
+//				wve.add(we);
+//			}
 		}
 
 		if (wve.size() > 0) {
@@ -306,47 +301,12 @@ public class ExtendedFieldCtrl {
 		tab.setId("Tab" + this.extendedFieldHeader.getTabHeading());
 		tabs.appendChild(tab);
 
-		Tabpanel tabpanel = new Tabpanel();
+		tabpanel = new Tabpanel();
 		tabpanel.setId("TabPanel" + this.extendedFieldHeader.getTabHeading());
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setHeight("100%");
 		tabpanel.setParent(tabPanels);
 
-		Groupbox groupbox = new Groupbox();
-		groupbox.setMold("3d");
-		tabpanel.appendChild(groupbox);
-
-		Grid grid = new Grid();
-		grid.setStyle("border:0px");
-		grid.setSclass("GridLayoutNoBorder");
-		groupbox.appendChild(grid);
-
-		Columns columns = new Columns();
-		grid.appendChild(columns);
-		rows = new Rows();
-		grid.appendChild(rows);
-
-		int columnCount = Integer.parseInt(this.extendedFieldHeader.getNumberOfColumns());
-		if (columnCount == 2) {
-			columns.appendChild(getColumn("220px"));
-			columns.appendChild(getColumn());
-			columns.appendChild(getColumn("220px"));
-			columns.appendChild(getColumn());
-		} else {
-			columns.appendChild(new Column("", null, "250px"));
-			columns.appendChild(new Column("", null));
-		}
-	}
-
-	private Component getColumn(String width) {
-		Column column = new Column();
-		column.setWidth(width);
-		return column;
-	}
-
-	private Component getColumn() {
-		Column column = new Column();
-		return column;
 	}
 
 	/**
@@ -405,14 +365,6 @@ public class ExtendedFieldCtrl {
 	 */
 	public void setReadOnly(boolean isReadOnly) {
 		this.isReadOnly = isReadOnly;
-	}
-
-	/**
-	 * @param rows
-	 *            the rows to set
-	 */
-	public void setRows(Rows rows) {
-		this.rows = rows;
 	}
 
 	/**

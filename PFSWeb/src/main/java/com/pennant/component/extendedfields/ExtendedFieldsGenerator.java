@@ -3,6 +3,8 @@ package com.pennant.component.extendedfields;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -20,11 +22,16 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Column;
+import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -37,6 +44,9 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
@@ -75,13 +85,11 @@ public class ExtendedFieldsGenerator {
 
 	private Window				window;
 	private Tabs				tabs;
-	private Tabpanels			tabPannels;
+	private Tabpanel			tabpanel;
 	private Map<String, Object>	fieldValueMap	= new HashMap<>();
 	private boolean				isReadOnly;
 	private String				tabHeight;
 	private String				labelKey;
-
-	private Rows				rows;
 	private int					ccyFormat;
 
 	public ExtendedFieldsGenerator() {
@@ -107,10 +115,122 @@ public class ExtendedFieldsGenerator {
 		if (extendedFieldDetails == null || extendedFieldDetails.isEmpty()) {
 			return;
 		}
+		
 		int columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
-		renderComponents(extendedFieldDetails, rows, columnCount, isReadOnly, newRecord);
+		
+
+		List<ExtendedFieldDetail> containers=new ArrayList<ExtendedFieldDetail>();
+		List<ExtendedFieldDetail> inputElemets=new ArrayList<ExtendedFieldDetail>();
+		List<ExtendedFieldDetail> inputElemetswithoutParent=new ArrayList<ExtendedFieldDetail>();
+		
+		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
+			if (extendedFieldDetail.isInputElement()) {
+				if (extendedFieldDetail.getParentTag() == null) {
+					inputElemetswithoutParent.add(extendedFieldDetail);
+				} else {
+					inputElemets.add(extendedFieldDetail);
+				}
+
+			} else {
+				containers.add(extendedFieldDetail);
+			}
+		}
+		
+		Collections.sort(inputElemetswithoutParent, new ExtendedFieldsComparetor());
+		
+		if(!inputElemetswithoutParent.isEmpty()){
+			renderComponents(inputElemetswithoutParent, columnCount, tabpanel, isReadOnly, newRecord);
+		}
+
+		
+		Collections.sort(containers, new ExtendedFieldsComparetor());
+		
+		for (ExtendedFieldDetail contextendedFieldDetail : containers) {
+			Component parent = createContainer(contextendedFieldDetail);
+			List<ExtendedFieldDetail> childs = getChilds(inputElemets, contextendedFieldDetail);
+			Collections.sort(childs, new ExtendedFieldsComparetor());
+			renderComponents(childs, columnCount, parent, isReadOnly, newRecord);
+		}
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	public class ExtendedFieldsComparetor implements Comparator<ExtendedFieldDetail> {
+
+		@Override
+		public int compare(ExtendedFieldDetail arg0, ExtendedFieldDetail arg1) {
+			
+			if (arg0.getFieldSeqOrder() < arg1.getFieldSeqOrder()) {
+				return 1;
+			}else{
+				return 0;
+			}
+			
+		}
+
+	}
+
+	
+	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> list, ExtendedFieldDetail parent) {
+
+		List<ExtendedFieldDetail> parentinputElemets = new ArrayList<ExtendedFieldDetail>();
+		for (ExtendedFieldDetail extendedFieldDetail : list) {
+			if (StringUtils.equals(extendedFieldDetail.getParentTag(), parent.getFieldName())) {
+				parentinputElemets.add(extendedFieldDetail);
+			}
+		}
+		return parentinputElemets;
+	}
+
+	private Component createContainer(ExtendedFieldDetail container) {
+		
+		String key = container.getFieldType().trim();
+		switch (key) {
+		case ExtendedFieldConstants.FIELDTYPE_GROUPBOX:
+			Groupbox groupbox = new Groupbox();
+			groupbox.setId(container.getFieldName());
+			Caption caption=new Caption(StringUtils.trimToEmpty(container.getFieldLabel()));
+			caption.setParent(groupbox);
+			tabpanel.appendChild(groupbox);
+			
+			return groupbox; 
+		case ExtendedFieldConstants.FIELDTYPE_TABPANEL:
+
+			Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
+			if (tabbox == null) {
+				tabbox = new Tabbox();
+				tabbox.setId("Tab_ROOT_");
+				this.tabpanel.appendChild(tabbox);
+			}
+			Tabs tabs = tabbox.getTabs();
+			if (tabs==null) {
+				tabs=new Tabs();
+				tabs.setParent(tabbox);
+			}
+			Tab tab=new Tab(StringUtils.trimToEmpty(container.getFieldLabel()));
+			tab.setId(container.getFieldName());
+			tabs.appendChild(tab);
+			
+			
+			Tabpanels tabpanels = tabbox.getTabpanels();
+			if (tabpanels==null) {
+				tabpanels=new Tabpanels();
+				tabpanels.setParent(tabbox);
+			}
+			
+			Tabpanel tabpanel=new Tabpanel();
+			tabpanel.setId("Tab_Panel"+container.getFieldName());
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.setHeight("100%");
+			tabpanels.appendChild(tabpanel);
+			tabpanels.setParent(tabbox);
+			return tabpanel; 
+
+		default:
+		
+			return this.tabpanel;
+
+		}
 	}
 
 	/**
@@ -122,9 +242,31 @@ public class ExtendedFieldsGenerator {
 	 * @param isReadOnly
 	 * @throws ParseException
 	 */
-	private void renderComponents(List<ExtendedFieldDetail> extendedFieldDetails, Rows rows, int columnCount, boolean isReadOnly, boolean newRecord) throws ParseException {
+	private void renderComponents(List<ExtendedFieldDetail> extendedFieldDetails, int columnCount,Component component ,boolean isReadOnly, boolean newRecord) throws ParseException {
 		logger.debug(Literal.ENTERING);
+		
+		
+		Grid grid = new Grid();
+		grid.setStyle("border:0px");
+		grid.setSclass("GridLayoutNoBorder");
+		component.appendChild(grid);
 
+		Columns columns = new Columns();
+		grid.appendChild(columns);
+		Rows rows = new Rows();
+		grid.appendChild(rows);
+		
+		
+		if (columnCount == 2) {
+			columns.appendChild(getColumn("220px"));
+			columns.appendChild(getColumn());
+			columns.appendChild(getColumn("220px"));
+			columns.appendChild(getColumn());
+		} else {
+			columns.appendChild(new Column("", null, "250px"));
+			columns.appendChild(new Column("", null));
+		}
+		
 		Row row = null;
 		Hbox hbox = null;
 		Textbox textbox = null;
@@ -541,8 +683,7 @@ public class ExtendedFieldsGenerator {
 				//data Setting
 				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					checkbox.setChecked(
-							Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
+					checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
 				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 
 					if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
@@ -733,7 +874,18 @@ public class ExtendedFieldsGenerator {
 		}
 		logger.debug(Literal.LEAVING);
 	}
- 
+	
+	private Component getColumn(String width) {
+		Column column = new Column();
+		column.setWidth(width);
+		return column;
+	}
+
+	private Component getColumn() {
+		Column column = new Column();
+		return column;
+	}
+
 	/**
 	 * Method to set validation & Save for Additional Field Details
 	 * 
@@ -760,7 +912,7 @@ public class ExtendedFieldsGenerator {
 				id = "ad_".concat(detail.getFieldName().concat("_CC"));
 			}
 
-			Component component = rows.getFellowIfAny(id);
+			Component component = tabpanel.getFellowIfAny(id);
 			if (component != null) {
 				compList.add(component);
 
@@ -973,14 +1125,14 @@ public class ExtendedFieldsGenerator {
 					}
 				} else if (component instanceof Checkbox) {
 					Checkbox checkbox = (Checkbox) component;
-					values.put(detail.getFieldName(), checkbox.isChecked() ? 1 : 0);
+					values.put(detail.getFieldName(), checkbox.isChecked() ? true : false);
 				} else if (component instanceof Textbox) {
 
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
 
 						Textbox countryCode = (Textbox) component;
-						Textbox areCode = (Textbox) rows.getFellowIfAny(id.replace("_CC", "_AC"));
-						Textbox subCode = (Textbox) rows.getFellowIfAny(id.replace("_CC", "_SC"));
+						Textbox areCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_AC"));
+						Textbox subCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_SC"));
 
 						if (!isReadOnly) {
 							countryCode.setConstraint(new PTPhoneNumberValidator(
@@ -1383,14 +1535,6 @@ public class ExtendedFieldsGenerator {
 		this.tabs = tabs;
 	}
 
-	public Tabpanels getTabPannels() {
-		return tabPannels;
-	}
-
-	public void setTabPannels(Tabpanels tabPannels) {
-		this.tabPannels = tabPannels;
-	}
-
 	public Map<String, Object> getFieldValueMap() {
 		return fieldValueMap;
 	}
@@ -1431,12 +1575,13 @@ public class ExtendedFieldsGenerator {
 		this.ccyFormat = ccyFormat;
 	}
 
-	public Rows getRows() {
-		return rows;
+	public Tabpanel getTabpanel() {
+		return tabpanel;
 	}
 
-	public void setRows(Rows rows) {
-		this.rows = rows;
+	public void setTabpanel(Tabpanel tabpanel) {
+		this.tabpanel = tabpanel;
 	}
+
 
 }

@@ -294,7 +294,10 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("ColumnName", column);
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
-		
+		if(StringUtils.equals("CustGrpID", column)) {//FIXME:DDP
+			source.addValue("Value", Integer.parseInt(fieldValue));
+		}
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
@@ -307,7 +310,7 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
 		} catch(EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;

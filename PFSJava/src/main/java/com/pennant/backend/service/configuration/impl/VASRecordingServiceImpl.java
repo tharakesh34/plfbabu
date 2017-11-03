@@ -2034,7 +2034,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
+						if (StringUtils.isBlank(String.valueOf(extendedFieldData.getFieldValue()))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));

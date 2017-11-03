@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
@@ -45,6 +46,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceMainDAO			financeMainDAO;
 	private FinanceDataDefaulting	financeDataDefaulting;
 	private FinanceDataValidation	financeDataValidation;
+	private CustomizeFinanceDataValidation	customizeFinanceDataValidation;
 	private CollateralSetupService	collateralSetupService;
 
 	/**
@@ -79,16 +81,17 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				financeDataValidation.setFinanceDetail(financeDetail);
+				//financeDataValidation.setFinanceDetail(financeDetail);
 			}
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(), true);
+			//TODO temporary FIX
+			customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
 
 			//validate FinanceDetail Validations
-			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+			//financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
@@ -482,6 +485,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
+	}
+
+	@Autowired
+	public void setCustomizeFinanceDataValidation(CustomizeFinanceDataValidation customizeFinanceDataValidation) {
+		this.customizeFinanceDataValidation = customizeFinanceDataValidation;
 	}
 
 }

@@ -19,6 +19,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
@@ -57,6 +58,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -193,6 +195,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
 	private ExtendedFieldDetailsService			extendedFieldDetailsService;
+	private PinCodeDAO							pinCodeDAO;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -1338,11 +1341,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				getExtendedFieldRenderDAO().update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
 						extendedFieldRender.getMapValues(), tableType, tableName.toString());
 			}
-			String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-			AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extFields[0], extFields[1],
-					extendedFieldRender.getBefImage(), extendedFieldRender);
-			auditDetail.setExtended(true);
-			auditDetails.add(auditDetail);
+			if(StringUtils.isNotBlank(extendedFieldRender.getReference())) {
+				String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
+				AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extFields[0], extFields[1],
+						extendedFieldRender.getBefImage(), extendedFieldRender);
+				auditDetail.setExtended(true);
+				auditDetails.add(auditDetail);
+			}
 		}
 
 		// TODO:remove comments for below lines of code when MDM interface is ready for update customer service
@@ -1740,7 +1745,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("AddressType", adress.getCustAddrType()));
-
+				auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
+				PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
+				if (pincode != null) {
+					adress.setCustAddrProvince(pincode.getpCProvince());
+					adress.setCustAddrCity(pincode.getCity());
+					adress.setCustAddrCountry(pincode.getpCCountry());
+				}
 				Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
 						adress.getCustAddrProvince(), "");
 				if (province == null) {
@@ -1772,6 +1783,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				int addressPriorityCount = 0;
 				int addType = 0;
 				for (CustomerAddres aAdress : custAddress) {
+					
 					if (aAdress.getCustAddrPriority() == adress.getCustAddrPriority()) {
 						addressPriorityCount++;
 						if (addressPriorityCount > 1) {
@@ -1989,13 +2001,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		}
-		if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) {
+/*		if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "PAN document";
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
-		}
+		}*/
 
 		// customer bank info details
 		List<CustomerBankInfo> custBankDetails = customerDetails.getCustomerBankInfoList();
@@ -5387,5 +5399,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public Customer getCustomerShrtName(long id) {
 		return getCustomerDAO().getCustomerByID(id);
 	}
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
 
 }

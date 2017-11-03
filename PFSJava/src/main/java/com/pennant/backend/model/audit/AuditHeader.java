@@ -91,6 +91,8 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	private int processStatus=0;
 	private boolean nextProcess=false;
 	private Object apiHeader;
+	private boolean deleteNotes;
+	private boolean processCompleted;
 	
 	public AuditHeader(){
 		super();	
@@ -537,6 +539,22 @@ public class AuditHeader implements java.io.Serializable,Entity {
 
 	public void setApiHeader(Object apiHeader) {
 		this.apiHeader = apiHeader;
+	}
+	
+	public boolean isDeleteNotes() {
+		return deleteNotes;
+	}
+
+	public void setDeleteNotes(boolean deleteNotes) {
+		this.deleteNotes = deleteNotes;
+	}
+	
+	public boolean isProcessCompleted() {
+		return processCompleted;
+	}
+
+	public void setProcessCompleted(boolean processCompleted) {
+		this.processCompleted = processCompleted;
 	}
 
 }

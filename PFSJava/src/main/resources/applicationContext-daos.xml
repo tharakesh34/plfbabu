@@ -2589,6 +2589,7 @@
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
 		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -4079,6 +4080,7 @@
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="doPreApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="executeWorkflowServiceTasks">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -4190,6 +4192,7 @@
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="customServiceTask" ref="customServiceTask" />
 
 		<!-- GCDCustomers -->
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
@@ -10433,7 +10436,7 @@
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 	</bean>
 
-<!-- extendedFieldDetailsService -->
+	<!-- extendedFieldDetailsService -->
 	<bean id="extendedFieldDetailsService"
 		class="com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService">
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
@@ -10442,4 +10445,28 @@
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 	</bean>
 	
+	<!-- custom service tasks -->
+	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target"> 
+		<ref bean="customServiceTaskTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="customServiceTaskTarget" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
+		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
+		<property name="ddaControllerService" ref="ddaControllerService" />
+	</bean>
+	<!--Customize Finance Data Validation Service -->
+	<bean id="customizeFinanceDataValidation"
+		class="com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="customerDAO" ref="customerDAO" />
+	</bean>
 </beans>
