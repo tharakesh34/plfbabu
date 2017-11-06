@@ -1,6 +1,7 @@
 pff 4.0.0, 2017-10-17
 ---------------------
 - 
+- Enhanced menu builder and tree menu builder for menu generation.
 - Added support for PostgreSQL.
 - Added extended fields for customers and loans along with the APIs.
 - Removed the rights for menu groups and displaying the menu groups only when any of the child menu items are visible within the hierarchy.

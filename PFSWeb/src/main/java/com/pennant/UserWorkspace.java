@@ -48,6 +48,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -86,7 +87,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private static final Logger logger = Logger.getLogger(UserWorkspace.class);
 
 	private User userDetails;
-	private HashMap<String, String> hasMenuRights;
+	private Map<String, String> hasMenuRights;
 	private Set<String> grantedAuthoritySet = null;
 	private LoggedInUser loggedInUser;
 	private Set<String> userRoleSet = new HashSet<String>();
@@ -140,7 +141,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	 * 
 	 * @return String set of GrantedAuthorities (rightNames)
 	 */
-	private Set<String> getGrantedAuthoritySet() {
+	public Set<String> getGrantedAuthoritySet() {
 		if (this.grantedAuthoritySet == null) {
 			Authentication currentUser = SessionUserDetails.getAuthentication();
 
@@ -282,11 +283,11 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public HashMap<String, String> getHasMenuRights() {
+	public Map<String, String> getHasMenuRights() {
 		return hasMenuRights;
 	}
 
-	public void setHasMenuRights(HashMap<String, String> hasMenuRights) {
+	public void setHasMenuRights(Map<String, String> hasMenuRights) {
 		this.hasMenuRights = hasMenuRights;
 	}
 
