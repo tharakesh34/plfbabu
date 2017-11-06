@@ -3,13 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.pennant.pff</groupId>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.16.12</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface-bajaj</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<cxf.version>3.1.8</cxf.version>
@@ -17,12 +20,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -30,12 +33,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.common</groupId>
@@ -55,18 +56,16 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat-dbcp</artifactId>
-		    <version>8.5.12</version>
-		    <scope>test</scope>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-dbcp</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
-			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- CXF Framwork  For dedupe -->
+		<!-- CXF Framwork For dedupe -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>

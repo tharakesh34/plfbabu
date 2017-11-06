@@ -3,24 +3,26 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.pennant.pff</groupId>
+		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.16.12</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
-
+	
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>PFSJava</artifactId>
+	<version>${pff.version}</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- Module Dependencies -->
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -43,22 +45,18 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
-			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
-			<version>${spring.batch.version}</version>
 		</dependency>
 
 		<!-- ZKoss -->
@@ -128,12 +126,10 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.3.1</version>
 		</dependency>
 
 		<!-- Miscellaneous -->
@@ -167,11 +163,9 @@
 			<artifactId>servlet-api</artifactId>
 			<version>3.0.FR</version>
 		</dependency>
-		<!-- Email Validator -->
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
-			<version>1.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -194,11 +188,9 @@
 			<artifactId>pas-dte</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
 		<dependency>
@@ -207,7 +199,7 @@
 			<version>5.2.4.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennant.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-interface-bajaj</artifactId>
 			<version>${project.version}</version>
 		</dependency>
