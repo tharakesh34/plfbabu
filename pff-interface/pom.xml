@@ -9,16 +9,19 @@
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
