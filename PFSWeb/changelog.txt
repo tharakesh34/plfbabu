@@ -1,0 +1,13 @@
+pff 4.0.0, 2017-10-17
+---------------------
+- 
+- Enhanced menu builder and tree menu builder for menu generation.
+- Added support for PostgreSQL.
+- Added extended fields for customers and loans along with the APIs.
+- Removed the rights for menu groups and displaying the menu groups only when any of the child menu items are visible within the hierarchy.
+- Changed the display of menu to easily distinguish the children with different styles (colors).
+- Removed deprecated method SecurityRightDAO.getRoleRights().
+- Upgraded charts with JavaScript charts with re-factoring.
+- Introduced dependency management to consolidate and centralize the management of dependency versions.
+- Changed artifact group identifier to "com.pennanttech.pennapps.pff" and added new properties for the same along with version.
+- Upgraded spring batch to 3.0.8.RELEASE.

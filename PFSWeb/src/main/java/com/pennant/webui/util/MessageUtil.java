@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.util;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import javax.ws.rs.ProcessingException;
@@ -162,6 +163,23 @@ public final class MessageUtil {
 	 *            The detail message.
 	 */
 	public static void showMessage(String message) {
+		logger.info(message);
+
+		Messagebox.setTemplate(TEMPLATE);
+		Messagebox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+	}
+
+	public static void showInfo(String labelKey, Object... args) {
+		String message = Labels.getLabel(labelKey);
+		
+		if (message == null) {
+			message = AppException.getDefaultMessage();
+		}
+
+		if (args.length > 0) {
+			message = MessageFormat.format(message, args);
+		}
+
 		logger.info(message);
 
 		Messagebox.setTemplate(TEMPLATE);

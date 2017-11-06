@@ -1,12 +1,5 @@
 <!DOCTYPE XMLRootMenu>
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
- 
-	<!-- Old HomeMenuTree -->	
-	<menuItem id="menu_Item_Home" zulNavigation="/WEB-INF/pages/welcome.zul" />
-		
-	<!---Change Password For User -->
-	<menuItem id="menu_Item_ChgPwd" zulNavigation="/WEB-INF/pages/PasswordReset/changePwd.zul" />
-	
 	<!---Message Sending Dialog For User -->
 	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
 	
