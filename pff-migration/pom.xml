@@ -145,6 +145,26 @@
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
+		<profile>
+			<id>postgres</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>org.postgresql.Driver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:postgresql://192.168.1.26:5432/plfnfldev</pfs.liquibase.url>
+				<pfs.liquibase.username>postgres</pfs.liquibase.username>
+				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>postgresaudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>org.postgresql.Driver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:postgresql://192.168.1.26:5432/plfnfldevaudit</pfs.liquibase.url>
+				<pfs.liquibase.username>postgres</pfs.liquibase.username>
+				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>

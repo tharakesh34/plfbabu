@@ -292,17 +292,17 @@ public class ExtendedFieldCtrl {
 
 	public void createTab(Tabs tabs, Tabpanels tabPanels) {
 
-		if (tabs.getFellowIfAny("Tab" + this.extendedFieldHeader.getTabHeading()) != null) {
-			Tab tab = (Tab) tabs.getFellow("Tab" + this.extendedFieldHeader.getTabHeading());
+		if (tabs.getFellowIfAny("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName()) != null) {
+			Tab tab = (Tab) tabs.getFellow("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 			tab.close();
 		}
 
-		tab = new Tab(this.extendedFieldHeader.getTabHeading());
-		tab.setId("Tab" + this.extendedFieldHeader.getTabHeading());
+		tab = new Tab(this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
+		tab.setId("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 		tabs.appendChild(tab);
 
 		tabpanel = new Tabpanel();
-		tabpanel.setId("TabPanel" + this.extendedFieldHeader.getTabHeading());
+		tabpanel.setId("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setHeight("100%");
 		tabpanel.setParent(tabPanels);
