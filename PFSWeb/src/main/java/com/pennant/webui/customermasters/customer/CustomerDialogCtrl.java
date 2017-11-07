@@ -1611,7 +1611,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		// Extended Field validations
 		extendedFieldCtrl.setParentTab(custTab);
-		aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save());
+		if(aCustomerDetails.getExtendedFieldHeader() != null) {
+			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save());
+		}
 
 		// Set KYC details
 		Cloner cloner = new Cloner();

@@ -5435,7 +5435,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.doWriteComponentsToBean(aFinScheduleData);
 
 		// Extended Field validations
-		aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+		if(aFinanceDetail.getExtendedFieldHeader() != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());			
+		}
 				
 		//Save Contributor List Details
 		if (isRIAExist) {
