@@ -23,7 +23,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Rows;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -61,7 +61,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	protected Window 						window_AssetTypeAssignmentDialog;
 	
 	protected Groupbox						grid_fdDetails;
-	protected Rows							extendedFieldRows;
+	protected Tabpanel						extendedFieldTabPanel;
 	protected Intbox 						seqNo;
 	protected ExtendedCombobox				assetType;
 
@@ -130,8 +130,9 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_AssetTypeAssignmentDialog);
-		//FIXME:Ganesh With the Help of Satish 		
-		//generator.setRows(extendedFieldRows);
+		generator.setTabpanel(extendedFieldTabPanel);
+		this.generator.setRowWidth(180);
+		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-75)+"px");
 		generator.setReadOnly(isReadOnly);
 		generator.setCcyFormat(ccyFormat);
 
@@ -659,8 +660,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
 			
-			if(extendedFieldRows.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = extendedFieldRows.getFellowIfAny("ad_"+error.getProperty());
+			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
 				WrongValueException we = new WrongValueException(component, error.getValue());
 				wve.add(we);
 			}

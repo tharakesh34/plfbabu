@@ -73,7 +73,7 @@
 								<column width="260px" />
 								<column />
 							</columns>
-							<rows id="extendedFieldRows">
+							<rows>
 								<row>
 									<label
 										value="${c:l('label_ExtendedFieldCaptureDialog_SeqNo.value')}" />
@@ -86,6 +86,17 @@
 								</row>
 							</rows>
 						</grid>
+						<tabbox width="100%" height="100%">
+							<tabs style="width:0px;height:0px;border:none;">
+								<tab style="background:none;padding:0px;height:0px;">
+								</tab>
+							</tabs>
+							<tabpanels>
+								<tabpanel id="extendedFieldTabPanel"
+									style="overflow:auto">
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
 					</groupbox>
 				</center>
 			</borderlayout>

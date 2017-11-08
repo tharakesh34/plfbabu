@@ -24,7 +24,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Rows;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -58,7 +58,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ExtendedFieldCaptureDialog;
-	protected Rows extendedFieldRows;
+	protected Tabpanel extendedFieldTabPanel;
 	protected Intbox seqNo;
 	protected Button btnDelete;
 
@@ -125,8 +125,9 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
-		//FIXME:Ganesh with the help of Satish
-		//generator.setRows(extendedFieldRows);
+		generator.setTabpanel(extendedFieldTabPanel);
+		generator.setRowWidth(260);
+		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-175)+"px");
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 			this.btnSave.setVisible(false);
@@ -184,10 +185,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			
 			// Height Calculation
-			int height = (this.extendedFieldRows.getVisibleItemCount() * 25) + 130;
-			if((borderLayoutHeight*0.95) < height){
-				height = (int) (borderLayoutHeight*0.95);
-			}
+			int height = borderLayoutHeight-100;
 			this.window_ExtendedFieldCaptureDialog.setHeight(height+"px");
 			
 		} catch (Exception e) {
@@ -539,8 +537,8 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
 			
-			if(extendedFieldRows.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = extendedFieldRows.getFellowIfAny("ad_"+error.getProperty());
+			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
 				if (component instanceof CurrencyBox) {
 					CurrencyBox box = (CurrencyBox) component;
 					component = box.getErrorComp();
@@ -692,14 +690,6 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
-	}
-
-	public Rows getExtendedFieldRows() {
-		return extendedFieldRows;
-	}
-
-	public void setExtendedFieldRows(Rows extendedFieldRows) {
-		this.extendedFieldRows = extendedFieldRows;
 	}
 
 	public boolean isNewExtendedField() {

@@ -65,33 +65,48 @@
 				</div>
 			</north>
 			<center border="none">
-				<groupbox id="gb_fdDetails">
-					<grid id="grid_fdDetails" fixedLayout="true"
-						sclass="GridLayoutNoBorder" style="border:0px">
-						<columns>
-							<column width="180px" />
-							<column />
-							<column width="180px" />
-							<column />
-						</columns>
-						<rows id="extendedFieldRows">
-							<row>
-								<label
-									value="${c:l('label_AssetTypeAssignmentDialog_SeqNo.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<intbox id="seqNo" readonly="true"
-										maxlength="8" width="95px" />
-								</hbox>
-								<label
-									id="label_AssetTypeAssignmentDialog_AssetType"
-									value="${c:l('label_AssetTypeAssignmentDialog_AssetType.value')}" />
-								<extendedcombobox id="assetType" />
-							</row>
-						</rows>
-					</grid>
-				</groupbox>
+				<div>
+					<groupbox id="gb_fdDetails">
+						<grid id="grid_fdDetails" fixedLayout="true"
+							sclass="GridLayoutNoBorder" style="border:0px">
+							<columns>
+								<column width="180px" />
+								<column />
+								<column width="180px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										value="${c:l('label_AssetTypeAssignmentDialog_SeqNo.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<intbox id="seqNo"
+											readonly="true" maxlength="8" width="95px" />
+									</hbox>
+									<label
+										id="label_AssetTypeAssignmentDialog_AssetType"
+										value="${c:l('label_AssetTypeAssignmentDialog_AssetType.value')}" />
+									<extendedcombobox id="assetType" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<tabbox width="100%" height="100%">
+						<tabs
+							style="width:0px;height:0px;border:none;">
+							<tab
+								style="background:none;padding:0px;height:0px;">
+							</tab>
+						</tabs>
+						<tabpanels>
+							<tabpanel id="extendedFieldTabPanel"
+								style="overflow:auto">
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
 			</center>
 		</borderlayout>
 	</window>

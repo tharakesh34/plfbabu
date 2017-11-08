@@ -58,6 +58,7 @@ public class ExtendedFieldCtrl {
 		// Extended Field Details auto population / Rendering into Screen
 		this.generator = new ExtendedFieldsGenerator();
 		this.generator.setTabpanel(tabpanel);
+		this.generator.setRowWidth(220);
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
 		this.tab.setLabel(extendedFieldHeader.getTabHeading());
@@ -155,12 +156,11 @@ public class ExtendedFieldCtrl {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
-//FIXME:Ganesh with the help of Satisk
-//			if (rows.getFellowIfAny("ad_" + error.getProperty()) != null) {
-//				Component component = rows.getFellowIfAny("ad_" + error.getProperty());
-//				WrongValueException we = new WrongValueException(component, error.getValue());
-//				wve.add(we);
-//			}
+			if (tabpanel != null && tabpanel.getFellowIfAny("ad_" + error.getProperty()) != null) {
+				Component component = tabpanel.getFellowIfAny("ad_" + error.getProperty());
+				WrongValueException we = new WrongValueException(component, error.getValue());
+				wve.add(we);
+			}
 		}
 
 		if (wve.size() > 0) {
