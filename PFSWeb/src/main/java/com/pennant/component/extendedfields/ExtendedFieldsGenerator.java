@@ -91,6 +91,7 @@ public class ExtendedFieldsGenerator {
 	private String				tabHeight;
 	private String				labelKey;
 	private int					ccyFormat;
+	private int					rowWidth;
 
 	public ExtendedFieldsGenerator() {
 
@@ -245,7 +246,10 @@ public class ExtendedFieldsGenerator {
 	private void renderComponents(List<ExtendedFieldDetail> extendedFieldDetails, int columnCount,Component component ,boolean isReadOnly, boolean newRecord) throws ParseException {
 		logger.debug(Literal.ENTERING);
 		
-		
+		if (rowWidth == 0) {
+			rowWidth = 220;//default
+		}
+
 		Grid grid = new Grid();
 		grid.setStyle("border:0px");
 		grid.setSclass("GridLayoutNoBorder");
@@ -281,6 +285,7 @@ public class ExtendedFieldsGenerator {
 			hbox = new Hbox();
 			row.appendChild(getLabel(detail.getFieldLabel()));
 			row.appendChild(hbox);
+			isReadOnly=detail.isFieldReadOnly();
 
 			String key = detail.getFieldType().trim();
 			switch (key) {
@@ -1583,5 +1588,12 @@ public class ExtendedFieldsGenerator {
 		this.tabpanel = tabpanel;
 	}
 
+	public int getRowWidth() {
+		return rowWidth;
+	}
+
+	public void setRowWidth(int rowWidth) {
+		this.rowWidth = rowWidth;
+	}
 
 }
