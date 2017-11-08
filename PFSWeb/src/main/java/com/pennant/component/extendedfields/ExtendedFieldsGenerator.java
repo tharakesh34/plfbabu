@@ -285,7 +285,6 @@ public class ExtendedFieldsGenerator {
 			hbox = new Hbox();
 			row.appendChild(getLabel(detail.getFieldLabel()));
 			row.appendChild(hbox);
-			isReadOnly=detail.isFieldReadOnly();
 
 			String key = detail.getFieldType().trim();
 			switch (key) {
