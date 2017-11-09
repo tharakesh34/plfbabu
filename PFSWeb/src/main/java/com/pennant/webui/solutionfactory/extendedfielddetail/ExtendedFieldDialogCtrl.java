@@ -465,8 +465,9 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		}
 
 		this.tabHeading.setReadonly(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		//TODO
+		/*this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));*/
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

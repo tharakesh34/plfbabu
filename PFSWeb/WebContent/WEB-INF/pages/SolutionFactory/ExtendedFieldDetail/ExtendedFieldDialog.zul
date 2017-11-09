@@ -134,7 +134,7 @@
 									<hlayout visible="false">
 										<space spacing="2px" />
 										<textbox id="tabHeading"
-											maxlength="20" width="280px" />
+											maxlength="20" width="320px" />
 									</hlayout>
 								</row>
 							</rows>
