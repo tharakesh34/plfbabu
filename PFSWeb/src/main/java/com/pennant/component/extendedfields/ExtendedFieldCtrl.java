@@ -78,7 +78,7 @@ public class ExtendedFieldCtrl {
 		if (!this.isReadOnly) {
 			// get pre-validation script if record is new
 			if (StringUtils.trimToNull(this.extendedFieldHeader.getPreValidation()) != null) {
-				ScriptErrors defaults = scriptValidationService.setPreValidationDefaults(this.extendedFieldHeader.getPostValidation(), fieldValuesMap);
+				ScriptErrors defaults = scriptValidationService.setPreValidationDefaults(this.extendedFieldHeader.getPreValidation(), fieldValuesMap);
 
 				// Overriding Default values
 				List<ScriptError> defaultList = defaults.getAll();
