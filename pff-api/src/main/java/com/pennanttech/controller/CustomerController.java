@@ -199,22 +199,24 @@ public class CustomerController {
 		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
 			curCustomer.setCustCtgCode(customerDetails.getCustCtgCode());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
 			curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getCustCoreBank())) {
 			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
-		
+		if(StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())){
+			curCustomer.setCustCOB(PennantConstants.DEFAULT_COUNTRY);
+		}
 		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
 					curCustomer.getCustMName(), curCustomer.getCustLName()));

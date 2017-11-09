@@ -1846,9 +1846,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
+					} else {
+						if (mobileNumber.length() > 20) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "PhoneNumber lenght";
+							valueParm[1] = "20";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90220", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
 					}
 
-				}
+				} 
 				auditDetail.setErrorDetail(validateMasterCode("PhoneType", custPhoneDetail.getPhoneTypeCode()));
 				if (!(custPhoneDetail.getPhoneTypePriority() >= 1 && custPhoneDetail.getPhoneTypePriority() <= 5)) {
 					String[] valueParm = new String[1];
@@ -2113,7 +2122,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
-				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP;
+				valueParm[1] = customer.getCustCtgCode();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustFName())) {

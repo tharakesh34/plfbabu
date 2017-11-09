@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
@@ -81,17 +82,21 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				//financeDataValidation.setFinanceDetail(financeDetail);
+				financeDataValidation.setFinanceDetail(financeDetail);
 			}
 			//TODO temporary FIX
-			customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
-
+			if (ImplementationConstants.CLIENT_NFL) {
+				customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail,
+						true);
+			} else {
+				financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
+						financeDetail.getFinScheduleData(), true);
+				//validate FinanceDetail Validations
+				financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+			}
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
-
-			//validate FinanceDetail Validations
-			//financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
