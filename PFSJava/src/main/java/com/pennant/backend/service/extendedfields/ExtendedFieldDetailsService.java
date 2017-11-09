@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -579,7 +580,7 @@ public class ExtendedFieldDetailsService {
 		
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		String fieldName = exrFldData.getFieldName();
-		String fieldValue = String.valueOf(exrFldData.getFieldValue());
+		String fieldValue = Objects.toString(exrFldData.getFieldValue(),"");
 
 		switch (deatils.getFieldType()) {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
@@ -1068,7 +1069,10 @@ public class ExtendedFieldDetailsService {
 		if (extendedFieldHeader != null) {
 			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(), "");
 			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
-		} else if (!extendedFieldData.isEmpty()) {
+		} 
+		//if configuration  is not available and end user gives extDetails through API
+		//Extended fields is not applicable for Current Module
+		else if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Extended fields";
 			valueParm[1] = module;
@@ -1098,6 +1102,13 @@ public class ExtendedFieldDetailsService {
 			List<String> fieldList=new ArrayList<String>();
 			for (ExtendedField details : extendedFieldData) {
 				int exdMandConfigCount = 0;
+				if (details.getExtendedFieldDataList() != null) {
+					if (details.getExtendedFieldDataList().isEmpty()) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+						return errorDetails;
+					}
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					//if fieldName is blank then sets FieldName is Mandatory
 					if (StringUtils.isBlank(extFieldData.getFieldName())) {
@@ -1108,7 +1119,7 @@ public class ExtendedFieldDetailsService {
 					}
 
 					//if fieldValue is blank then sets fieldValue is Mandatory
-					if (StringUtils.isBlank(String.valueOf(extFieldData.getFieldValue()))) {
+					if (StringUtils.isBlank(Objects.toString(extFieldData.getFieldValue(),""))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "fieldValue";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
@@ -1149,6 +1160,7 @@ public class ExtendedFieldDetailsService {
 						}
 					}
 				}
+			}
 				//extendedDetailsCount :: mandatory fields from configuration
 				//exdMandConfigCount :: mandatory fields from JSON
 				//these are not match then sets the error like
@@ -1166,6 +1178,7 @@ public class ExtendedFieldDetailsService {
 			//get the ExtendedField--List from JSON
 			for (ExtendedField details : extendedFieldData) {
 				//get the ExtendedFieldData--List from  ExtendedField
+				if (details.getExtendedFieldDataList() != null) {
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					//get the each EXTFD that are given in json
 					//exdFldConfig ::EXTFieldDetailslist from configuration
@@ -1184,6 +1197,7 @@ public class ExtendedFieldDetailsService {
 					}
 				}
 			}
+		}
 		}
 		logger.debug(Literal.LEAVING);
 		return errorDetails;

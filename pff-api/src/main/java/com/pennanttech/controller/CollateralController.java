@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -471,7 +472,7 @@ public class CollateralController {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 						
 						if(StringUtils.equalsIgnoreCase(extFieldData.getFieldName(), "SeqNo")) {
-							exdFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldData.getFieldValue())));
+							exdFieldRender.setSeqNo(Integer.valueOf(Objects.toString(extFieldData.getFieldValue(),"")));
 							isSeqFound = true;
 						}
 					}

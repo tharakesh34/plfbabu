@@ -825,12 +825,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO
-				.getExtendedFieldHeaderByModuleName(ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), "");
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), "");
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
-		
+
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
-		if (extendedFields != null) {
+		if (extendedFieldHeader != null) {
 			int seqNo = 0;
 			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 			exdFieldRender.setReference(financeMain.getFinReference());
@@ -842,18 +842,24 @@ public class CreateFinanceController extends SummaryDetailService {
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			exdFieldRender.setVersion(1);
 			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
-			for (ExtendedField extendedField : extendedFields) {
-				Map<String, Object> mapValues = new HashMap<String, Object>();
-				for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+
+			if (extendedFields != null) {
+				for (ExtendedField extendedField : extendedFields) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						exdFieldRender.setMapValues(mapValues);
+					}
+				}
+				if (extendedFields.isEmpty()) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
 					exdFieldRender.setMapValues(mapValues);
 				}
-			}
-			
-			if (extendedFields.isEmpty()) {
+			} else {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
 				exdFieldRender.setMapValues(mapValues);
 			}
+
 			financeDetail.setExtendedFieldRender(exdFieldRender);
 		}
 		logger.debug("Leaving");

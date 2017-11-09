@@ -531,7 +531,7 @@ public class CustomerController {
 		Map<String, Object> prvExtFieldMap = new HashMap<>();
 
 		List<ExtendedField> extendedFields = customerDetails.getExtendedDetails();
-		if (extendedFields != null) {
+		if (extendedFieldHeader != null) {
 			int seqNo = 0;
 			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 			exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
@@ -539,20 +539,21 @@ public class CustomerController {
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 			exdFieldRender.setSeqNo(++seqNo);
-			if(StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
+			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				exdFieldRender.setVersion(1);
 			} else {
-				
+
 				List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
 				ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 						ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
-				if(curExtendedFieldHeader != null) {
+				if (curExtendedFieldHeader != null) {
 					ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
 							ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(),
 							customerDetails.getCustomer().getCustCIF());
-					if(extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+					if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
 						prvExtFieldMap = extendedFieldRender.getMapValues();
 						for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
 							ExtendedFieldData data = new ExtendedFieldData();
@@ -565,21 +566,31 @@ public class CustomerController {
 					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
 				}
-				
+
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			}
-			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
-			for (ExtendedField extendedField : extendedFields) {
-				Map<String, Object> mapValues = new HashMap<String, Object>();
-				for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+			if (extendedFields != null) {
+				for (ExtendedField extendedField : extendedFields) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					if (extendedField.getExtendedFieldDataList() != null) {
+						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+							exdFieldRender.setMapValues(mapValues);
+						}
+					} else {
+						Map<String, Object> map = new HashMap<String, Object>();
+						exdFieldRender.setMapValues(map);
+					}
+				}
+				if (extendedFields.isEmpty()) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
 					exdFieldRender.setMapValues(mapValues);
 				}
-			}
-			if (extendedFields.isEmpty()) {
+			} else {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
 				exdFieldRender.setMapValues(mapValues);
 			}
+
 			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 				customerDetails.setExtendedFieldRender(exdFieldRender);
 			} else if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {

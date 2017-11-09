@@ -195,7 +195,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				for (Entry<String, Object> entry : mapValues.entrySet()) {
 					ExtendedFieldData detail = new ExtendedFieldData();
 					detail.setFieldName(entry.getKey());
-					detail.setFieldValue(String.valueOf(entry.getValue()));
+					detail.setFieldValue(entry.getValue());
 					extendedFieldDataList.add(detail);
 				}
 				ExtendedField extended = new ExtendedField();
