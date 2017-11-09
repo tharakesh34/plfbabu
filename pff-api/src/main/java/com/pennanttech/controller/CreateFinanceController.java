@@ -337,6 +337,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (StringUtils.isNotBlank(finReference)) {
 				// prepare response object
 				response = getFinanceDetailResponse(auditHeader);
+				response.setStp(false);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 				logger.debug("Leaving");

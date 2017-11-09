@@ -434,8 +434,8 @@
 	<!-- Finance Inquiry Details -->
 	<menu id="menu_Category_Enquiry" >
 		
-		<!--<menuItem id="menu_Item_CollateralEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"  rightName="menuItem_Enquiry_CollateralSetup"/>
-		 <menuItem id="menu_Item_PaymentOrderAuthEnquiry" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul?enqiryModule=Y" rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
+		<menuItem id="menu_Item_CollateralEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"  rightName="menuItem_Enquiry_CollateralSetup"/>
+		 <!--<menuItem id="menu_Item_PaymentOrderAuthEnquiry" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul?enqiryModule=Y" rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
 		<menuItem id="menu_Item_PayOrderIssueEnquiry" zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul?enqiryModule=Y" rightName="menu_Item_PayOrderIssueEnquiry"/>
 		<menuItem id="menu_Item_FinanceApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinApproval"/>
 		<!--<menuItem id="menu_Item_FacilityApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FacilityApprovalStsInquiryList.zul" rightName="menuItem_Enquiry_FacilityApproval"/>-->
@@ -719,25 +719,25 @@
 	</menu>
  -->
 	<!-- LIMIT MODULE START -->
-	<menu id="menu_Category_Limit" >
-		<!-- <menuItem id="menu_Item_LimitDefinitionInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul" rightName="menuItem_RulesFactory_LimitDefRule" /> -->
+<!-- 	<menu id="menu_Category_Limit" >
+		<menuItem id="menu_Item_LimitDefinitionInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul" rightName="menuItem_RulesFactory_LimitDefRule" />
 		<menuItem id="menu_Item_LimitDefinitionRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionList.zul" rightName="menuItem_RulesFactory_LimitDefRule" />
-		<!-- <menuItem id="menu_Item_InstitutionLimitCheckFilter" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleList.zul" rightName="menuItem_RulesFactory_Query" /> -->
+		<menuItem id="menu_Item_InstitutionLimitCheckFilter" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleList.zul" rightName="menuItem_RulesFactory_Query" />
 		<menuItem id="menu_Item_LimitGroup" zulNavigation="/WEB-INF/pages/Limit/LimitGroup/LimitGroupList.zul" rightName="menuItem_Limit_LimitGroup" />
-		<!-- <menuItem id="menu_Item_LimitStructure" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul" rightName="menuItem_Limit_LimitStructure" /> -->
+		<menuItem id="menu_Item_LimitStructure" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul" rightName="menuItem_Limit_LimitStructure" />
 		<menuItem id="menu_Item_LimitStructureCustomer" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul" rightName="menuItem_Limit_LimitStructure" />
-		<!-- <menuItem id="menu_Item_InstituionLimitDetails" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/OtherLimitDetailsList.zul" rightName="menuItem_Limit_LimitHeader" /> -->
+		<menuItem id="menu_Item_InstituionLimitDetails" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/OtherLimitDetailsList.zul" rightName="menuItem_Limit_LimitHeader" />
 		<menuItem id="menu_Item_LimitHeader" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul" rightName="menuItem_Limit_LimitHeader" />
 		<menuItem id="menu_Item_LimitUtilization" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitUtilizationList.zul" rightName="menuItem_Limit_LimitHeader" />
 	</menu>
 	<menu id="menu_Category_LimitEnquiry" >
-		<!-- <menuItem id="menu_Item_InstitutionLimitEnquiryCheckFilter" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitItemEnquiry" /> -->
-		<!-- <menuItem id="menu_Item_LimitEnquiryInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitItemEnquiry" /> -->
+		<menuItem id="menu_Item_InstitutionLimitEnquiryCheckFilter" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitItemEnquiry" />
+		<menuItem id="menu_Item_LimitEnquiryInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitItemEnquiry" />
 		<menuItem id="menu_Item_LimitEnquiryCustomerRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitItemEnquiry" />
 		<menuItem id="menu_Item_LimitGroupInstitutionEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitGroup/LimitGroupList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitGroupEnquiry" />
-		<!-- <menuItem id="menu_Item_LimitStructureInstitutionEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitStructureDetailEnquiry" /> -->
+		<menuItem id="menu_Item_LimitStructureInstitutionEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitStructureDetailEnquiry" />
 		<menuItem id="menu_Item_LimitStructureCustomerEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitStructureDetailEnquiry" />
-	</menu>
+	</menu> -->
 	
 	<!-- <menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
 		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataEngine_DataImport"/>

@@ -46,7 +46,7 @@
 		</field>
 
 
-		<field name="custEMailPriority">
+<!-- 		<field name="custEMailPriority">
 		<constraint annotation="javax.validation.constraints.DecimalMin">
 				<message>custEMailPriority should be Positive</message>
 				<groups>
@@ -63,7 +63,7 @@
 				</groups>
 				<element name="value">999</element>
 			</constraint>
-		</field>
+		</field> -->
 		
 		</bean>
 		</constraint-mappings>
