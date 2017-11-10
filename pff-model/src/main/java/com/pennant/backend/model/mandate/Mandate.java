@@ -149,6 +149,10 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String orgReference;
 	private String sourceId;
 	private String	finReference;
+
+	private String documentName;
+	private long documentRef = Long.MIN_VALUE;
+	private byte[] docImage;
  
 
 	// API validation purpose only
@@ -196,6 +200,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("pccityName");
 		excludeFields.add("finReference");
 		excludeFields.add("requestID");
+		excludeFields.add("docImage");
 		return excludeFields;
 	}
 
@@ -590,4 +595,27 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.requestID = requestID;
 	}
 
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
+
+	public Long getDocumentRef() {
+		return documentRef;
+	}
+
+	public void setDocumentRef(Long documentRef) {
+		this.documentRef = documentRef;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
+	}
 }

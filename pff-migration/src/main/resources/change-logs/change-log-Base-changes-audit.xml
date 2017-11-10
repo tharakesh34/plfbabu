@@ -51,4 +51,11 @@
 		<changeSet id="41" author="Ganesh.p">
 		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
 	</changeSet>
+	
+	<changeSet id="06" author="Prakash">
+		<addColumn tableName="ADTMandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

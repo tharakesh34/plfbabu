@@ -8334,6 +8334,7 @@
 		<property name="mandateStatusUpdateDAO" ref="mandateStatusUpdateDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
 	<!-- Finance Mandate -->
 	<bean id="finMandateService"

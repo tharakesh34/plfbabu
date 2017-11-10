@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.mandate.mandate;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -49,20 +50,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
@@ -157,6 +163,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private boolean									enqModule				= false;
 	private boolean									flag					= false;
+	
+	protected Button 								btnUploadDoc;
+	protected Textbox 								documentName;
+	protected Iframe 								mandatedoc;
+	private byte[] 								   	imagebyte;
 
 	// not auto wired vars
 	private Mandate									mandate;
@@ -193,6 +204,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	Tab												parenttab				= null;
 //	long											mandateID				= 0;
 	protected Row									rowStatus;
+	protected Row									rowReason;
 	protected int									accNoLength;
 	private transient BankDetailService				bankDetailService;
 
@@ -380,6 +392,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.active.setChecked(true);
 		this.reason.setMaxlength(60);
 		this.umrNumber.setReadonly(true);
+		this.documentName.setMaxlength(150);
 		
 		if(StringUtils.isNotBlank(this.mandate.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
@@ -582,6 +595,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.expiryDate);
 			readOnlyComponent(true, this.openMandate);
 			readOnlyComponent(true, this.approvalID);
+			readOnlyComponent(true, this.btnUploadDoc);
 		} else {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
@@ -595,6 +609,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_StartDate"), this.startDate);
 			readOnlyComponent(isReadOnly("MandateDialog_ExpiryDate"), this.expiryDate);
 			readOnlyComponent(isReadOnly("MandateDialog_OpenMandate"), this.openMandate);
+			readOnlyComponent(isReadOnly("MandateDialog_BtnUploadDoc"), this.btnUploadDoc);
 			readOnlyComponent(true, this.approvalID);
 			this.maxLimit.setMandatory(true);
 		}
@@ -622,6 +637,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.space_Expirydate.setSclass("mandatory");
 		//Frequency
 		this.approvalID.setValue("");
+		this.documentName.setValue("");
+		this.mandatedoc.setContent(null);
 	}
 
 	public void onChange$mandateType(Event event) {
@@ -719,6 +736,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				setDialog(DialogType.EMBEDDED);
 			}
 
+			// Setting Height for Iframe 
+			this.mandatedoc.setHeight(borderLayoutHeight - 100 + "px");
+			
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -730,8 +750,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (mandateStatus.equals("") || mandateStatus.equals(PennantConstants.List_Select)) {
 			this.rowStatus.setVisible(false);
+			this.rowReason.setVisible(false);
 		} else {
 			this.rowStatus.setVisible(true);
+			this.rowReason.setVisible(true);
 		}
 
 		if (mandateStatus.equals(MandateConstants.STATUS_REJECTED)) {
@@ -744,6 +766,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, reason);
 			this.reason.setValue("");
 			this.rowStatus.setVisible(false);
+			this.rowReason.setVisible(false);
 		}
 		
 		if (mandateStatus.equals(MandateConstants.STATUS_APPROVED) || mandateStatus.equals(MandateConstants.STATUS_HOLD)
@@ -777,6 +800,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (registration) {
 			this.rowStatus.setVisible(true);
+			this.rowReason.setVisible(true);
 			readOnlyComponent(false, this.status);
 			readOnlyComponent(false, this.reason);
 			this.btnCancel.setVisible(false);
@@ -792,6 +816,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.custID);
 			readOnlyComponent(true, this.mandateType);
 			this.rowStatus.setVisible(false);
+			this.rowReason.setVisible(false);
 
 		}
 
@@ -1022,6 +1047,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
 		this.umrNumber.setValue(aMandate.getMandateRef());
+		
+		this.documentName.setValue(aMandate.getDocumentName());
+		AMedia amedia = null;
+
+		if (aMandate.getDocImage() != null) {
+
+			if (aMandate.getDocumentName().toLowerCase().endsWith(".jpg")) {
+				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aMandate.getDocImage());
+			} else if (aMandate.getDocumentName().toLowerCase().endsWith(".pdf")) {
+				amedia = new AMedia("document.pdf", "pdf", "application/pdf", aMandate.getDocImage());
+			}
+			imagebyte= aMandate.getDocImage();
+		}
+		mandatedoc.setContent(amedia);
 
 		if (!enqModule && !registration) {
 			checkOpenMandate();
@@ -1202,6 +1241,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 
+		// DocumentName
+		try {
+			aMandate.setDocumentName(this.documentName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Document Image
+		try {
+			aMandate.setDocImage(this.imagebyte);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		logger.debug("Leaving");
 		return wve;
 	}
@@ -1356,6 +1409,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.status.setErrorMessage("");
 		this.approvalID.setErrorMessage("");
 		this.reason.setErrorMessage("");
+		this.documentName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1437,6 +1491,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			Mandate details = (Mandate) dataObject;
 			if (details != null) {
 				this.mandateRef.setAttribute("mandateID", details.getMandateID());
+				mandateService.getDocumentImage(details);
 				doWriteData(details);
 			}
 		}
@@ -1525,6 +1580,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.ifsc.setValue("");
 		this.city.setValue("");
 		this.reason.setValue("");
+		this.documentName.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -1841,6 +1897,49 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			return StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		}
 		return "";
+	}
+
+	// Process for Document uploading
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		Media media = event.getMedia();
+		browseDoc(media, this.documentName);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// Browse for Document uploading
+	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			String docType = "";
+			if ("application/pdf".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_PDF;
+			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_IMAGE;
+			} else {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				return;
+			}
+
+			// Process for Correct Format Document uploading
+			String fileName = media.getName();
+			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.mandatedoc.setContent(
+						new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(ddaImageData)));
+
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.mandatedoc.setContent(media);
+			}
+			this.mandatedoc.setVisible(true);
+			textbox.setValue(fileName);
+			imagebyte = media.getByteData();
+
+		} catch (Exception ex) {
+			logger.error("Exception: ", ex);
+		}
+		logger.debug("Leaving");
 	}
 
 	// ******************************************************//

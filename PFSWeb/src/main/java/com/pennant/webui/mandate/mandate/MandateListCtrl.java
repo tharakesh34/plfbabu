@@ -261,6 +261,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			return;
 		}
 
+		mandateService.getDocumentImage(mandate);
+
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND MandateID='" + mandate.getMandateID() + "' AND version=" + mandate.getVersion() + " ";
 
