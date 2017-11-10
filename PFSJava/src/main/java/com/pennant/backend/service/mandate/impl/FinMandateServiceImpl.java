@@ -491,7 +491,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	private void getDocument(Mandate mandate) {
 		DocumentManager documentManager = new DocumentManager();
-		if (mandate.getDocumentRef() != 0) {
+		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
 			DocumentManager olddocumentManager = documentManagerDAO.getById(mandate.getDocumentRef());
 			byte[] arr1 = olddocumentManager.getDocImage();
 			byte[] arr2 = mandate.getDocImage();
