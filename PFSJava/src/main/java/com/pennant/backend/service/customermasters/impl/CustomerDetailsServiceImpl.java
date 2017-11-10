@@ -2283,11 +2283,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
 		if (moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
-			String[][] filters = moduleMapping.getLovFilters();
+			Object[][] filters = moduleMapping.getLovFilters();
 			int count = 0;
 			if (filters != null) {
 				count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-						filters[0][0], fieldValue);
+						(String) filters[0][0], fieldValue);
 			}
 			if (count <= 0) {
 				String[] valueParm = new String[2];
