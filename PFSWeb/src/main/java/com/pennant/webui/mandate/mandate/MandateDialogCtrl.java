@@ -737,7 +737,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			// Setting Height for Iframe 
-			this.mandatedoc.setHeight(borderLayoutHeight - 100 + "px");
+			this.mandatedoc.setHeight((borderLayoutHeight - 50) + "px");
 			
 		} catch (Exception e) {
 			MessageUtil.showError(e);

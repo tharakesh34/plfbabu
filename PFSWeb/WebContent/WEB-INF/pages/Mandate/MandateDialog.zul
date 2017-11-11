@@ -67,7 +67,7 @@
 									<label id="label_CustID"
 										value="${c:l('label_MandateDialog_CustID.value')}" />
 									<extendedcombobox id="custID" />
-									<cell colspan="2" rowspan="22">
+									<cell colspan="2" rowspan="22" valign="top">
 									<iframe id= "mandatedoc" width="100%"></iframe>
 									</cell>
 								</row>
