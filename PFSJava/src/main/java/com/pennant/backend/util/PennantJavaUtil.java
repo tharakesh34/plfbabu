@@ -465,7 +465,7 @@ public class PennantJavaUtil {
 				new String[][] { { "EmailTypeIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("EmployerDetail", new ModuleMapping("EmployerDetail", EmployerDetail.class, new String[] {
-				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmployerId", "EmpName" },
+				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmpName","EmpCity" },
 				new String[][] { { "EmpIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("TakafulProvider", new ModuleMapping("TakafulProvider", TakafulProvider.class,
@@ -1996,7 +1996,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
+				new String[] { "PartnerBankCode", "PartnerBankName" }, null, 450));
 		
 		
 		ModuleUtil.register("Locality",
