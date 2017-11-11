@@ -1153,4 +1153,92 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='PLF_NFL_ORG';
 		
 		</createView>
 	</changeSet>
+	
+	<changeSet id="65" author="Prakash">
+		<addColumn tableName="Mandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+      <changeSet id="66" author="Prakash">
+		<addColumn tableName="Mandates_Temp">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="67" author="Prakash">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName,
+			  T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="68" author="Prakash">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID 	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM    Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="69" author="Prakash">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+		SELECT T1.MandateID, T1.CustID, T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName,T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+            
+			UNION ALL
+
+			SELECT T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM   Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="70" author="Prakash">
+		<sql>
+		 	update Mandates set DocumentRef = 0 where DocumentRef is null;
+		 	update Mandates_Temp set DocumentRef = 0 where DocumentRef is null;
+		</sql>	 
+	</changeSet>
 </databaseChangeLog>

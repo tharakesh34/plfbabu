@@ -64,4 +64,11 @@
 			<column name="ExternalRef" type="varchar(2000)" />
 		</addColumn> 
 	</changeSet>
+	
+	<changeSet id="08" author="Prakash">
+		<addColumn tableName="ADTMandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
