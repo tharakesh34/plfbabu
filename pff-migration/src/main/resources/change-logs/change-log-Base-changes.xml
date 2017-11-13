@@ -1241,4 +1241,325 @@ update workflowdetails set WorkFlowActive='0' where WorkFlowType='PLF_NFL_ORG';
 		 	update Mandates_Temp set DocumentRef = 0 where DocumentRef is null;
 		</sql>	 
 	</changeSet>
+	<changeSet id="53" author="Surekha">
+		<addColumn tableName="CustomerAddresses">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="54" author="Surekha">
+		<addColumn tableName="CustomerAddresses_temp">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="55" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_VIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses_temp t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+UNION ALL
+ SELECT  t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM customeraddresses_temp
+          WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype));
+	</createView>
+	</changeSet>
+	
+	<changeSet id="56" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_AVIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+     </createView>
+     </changeSet>
+     <changeSet id="57" author="Surekha">
+     <sql>
+     		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custCareOfAddr','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custSubDist','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custDistrict','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+	</sql>
+     </changeSet>
+     <changeSet id="58" author="Surekha">
+		<addColumn tableName="PinCodes">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	 <changeSet id="59" author="Surekha">
+		<addColumn tableName="PinCodes_temp">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="60" author="Surekha">
+	<createView viewName="pincodes_view" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes_temp t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+UNION ALL
+ SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pincodes_temp
+          WHERE pincodes_temp.pincodeid = t1.pincodeid));
+	</createView>
+		
+	</changeSet>
+	<changeSet id="61" author="Surekha">
+	<createView viewName="pincodes_Aview" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+     </createView>
+     </changeSet>
+     <changeSet id="62" author="Surekha">
+		<sql>
+			update pincodes set groupId=0;
+			update pincodes_Temp set groupId=0;
+		</sql>
+     </changeSet>
+      <changeSet id="63" author="Surekha">
+     <sql>
+     		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PinCodeDialog_GroupId','PinCodeDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PinCodeDialog_IsServiceable','PinCodeDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PINCODE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PinCodeDialog_GroupId'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PINCODE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PinCodeDialog_IsServiceable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		</sql>
+		</changeSet>
+		<changeSet id="64" author="Surekha">
+		<sql>
+			update SecRoles set roledesc='prequal1' where rolecd='CUSTOMER_MAKER';
+			update SecRoles set roledesc='prequal2' where rolecd='CUSTOMER_APPROVER';
+		</sql>
+		</changeSet>
+		<changeSet id="65" author="Surekha">
+			<createView viewName="customers_lview" replaceIfExists="true">
+			  SELECT c.custid,c.custcif,c.custcorebank,c.custctgcode,c.custtypecode,c.custshrtname,c.custdftbranch,c.recordstatus,c.rolecode,
+			    c.nextrolecode,c.recordtype,ct.custtypedesc AS lovdesccusttypecodename,t1.custctgdesc AS lovdesccustctgcodename,
+			     COALESCE(t2.roledesc::character varying, fn_get_roledesc(c.nextrolecode::character varying)) AS lovdescrequeststage
+			   FROM customers_temp c
+			     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+			     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+			      LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+			UNION ALL
+			 SELECT c.custid,c.custcif,c.custcorebank,c.custctgcode,c.custtypecode,c.custshrtname,c.custdftbranch,
+			    c.recordstatus,c.rolecode,c.nextrolecode,c.recordtype,ct.custtypedesc AS lovdesccusttypecodename,t1.custctgdesc AS lovdesccustctgcodename,
+			     COALESCE(t2.roledesc::character varying, fn_get_roledesc(c.nextrolecode::character varying)) AS lovdescrequeststage
+			   FROM customers c
+			     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+			     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+			      LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+			     
+			  WHERE NOT (c.custid IN ( SELECT customers_temp.custid
+			           FROM customers_temp
+			          WHERE customers_temp.custid = c.custid))
+
+			</createView>
+		</changeSet>
+	 <changeSet id="66" author="Surekha">
+		<sql>
+			update pincodes set serviceable=0;
+			update pincodes_Temp set serviceable=0;
+		</sql>
+     </changeSet>
+     <changeSet id="67" author="Surekha">
+     <sql>
+     	insert into BMTLovFieldCode values('CofCo-app','Care Of Co-applicant','String',1,1,1,1007,current_timestamp,'Approved','','','','','',0);
+     </sql>
+     </changeSet>
+     <changeSet id="68" author="Surekha">
+     <addColumn tableName="RMTLovFieldDetail">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="69" author="Surekha">
+     <addColumn tableName="RMTLovFieldDetail_temp">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="70" author="Surekha">
+     <createView viewName="rmtlovfielddetail_view" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail_temp t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		UNION ALL
+		 SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM rmtlovfielddetail_temp
+		          WHERE rmtlovfielddetail_temp.fieldcodeid = t1.fieldcodeid))
+		          
+   </createView>
+     </changeSet>
+     <changeSet id="71" author="Surekha">
+     <createView viewName="rmtlovfielddetail_Aview" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		
+   </createView>
+     </changeSet>
+     <changeSet id="72" author="Surekha">
+     <addColumn tableName="FinJointAccountDetails">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+      <changeSet id="73" author="Surekha">
+     <addColumn tableName="FinJointAccountDetails_Temp">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+     <changeSet id="74" author="Surekha">
+     <createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		UNION ALL
+		 SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finjointaccountdetails_temp
+		          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid));
+     </createView>
+     </changeSet>
+     <changeSet id="75" author="Surekha">
+     <createView viewName="finjointaccountdetails_Tview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+      <changeSet id="76" author="Surekha">
+     <createView viewName="finjointaccountdetails_Aview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+     <changeSet id="79" author="Surekha">
+     <dropView viewName="pincodes_view"/>
+     <dropView viewName="pincodes_Aview"/>
+     </changeSet>
+     <changeSet id="77" author="Surekha">
+		<modifyDataType tableName="pincodes" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
+      <changeSet id="78" author="Surekha">
+		<modifyDataType tableName="pincodes_temp" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
+     <changeSet id="80" author="Surekha">
+	<createView viewName="pincodes_view" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes_temp t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+UNION ALL
+ SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pincodes_temp
+          WHERE pincodes_temp.pincodeid = t1.pincodeid));
+	</createView>
+		
+	</changeSet>
+	<changeSet id="81" author="Surekha">
+	<createView viewName="pincodes_Aview" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+     </createView>
+     </changeSet>
+     <changeSet id="82" author="Surekha">
+     	<sql>
+     		insert into ErrorDetails values('81005','EN','E','{0} Is Not Serviceable.','test','Approved','','','','','',0,current_timestamp,1000,0);
+     	</sql>
+     </changeSet>
 </databaseChangeLog>
