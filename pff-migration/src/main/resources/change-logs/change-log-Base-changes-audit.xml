@@ -71,4 +71,30 @@
 			<column name="DocumentRef" type="NUMBER(19,0)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="42" author="Surekha">
+		<addColumn tableName="AdtCustomerAddresses">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="43" author="Surekha">
+		<addColumn tableName="AdtPinCodes">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	 <changeSet id="44" author="Surekha">
+     <addColumn tableName="AdtFinJointAccountDetails">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+      <changeSet id="45" author="Surekha">
+     <addColumn tableName="AdtRMTLovFieldDetail">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="46" author="Surekha">
+		<modifyDataType tableName="Adtpincodes" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
 </databaseChangeLog>
