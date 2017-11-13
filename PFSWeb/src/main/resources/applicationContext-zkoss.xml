@@ -4924,5 +4924,14 @@
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 	
+	<!--============ Customer Enquiry Details ============== -->
+			
+	<bean id="customerDialogCtrlr"
+		class="com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="directorDetailService" ref="directorDetailService" />
+	</bean>
+	
 
 </beans>

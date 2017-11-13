@@ -257,7 +257,11 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+			if (enqiryModule) {
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
