@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -107,6 +108,9 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	private String typeOfResidence ;
 	
 	private String sourceId;
+	
+	private String cityRefNo;
+	private String stateRefNo;
 	private String lovDescCustAddrZip;
 	private String custAddrLine3;
 	private String custAddrLine4;
@@ -129,6 +133,8 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 		excludeFields.add("sourceId");
+		excludeFields.add("cityRefNo");
+		excludeFields.add("stateRefNo");
 		return excludeFields;
 	}
 	
@@ -347,6 +353,23 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public void setTypeOfResidence(String typeOfResidence) {
 		this.typeOfResidence = typeOfResidence;
 	}
+
+	public String getCityRefNo() {
+		return cityRefNo;
+	}
+
+	public void setCityRefNo(String cityRefNo) {
+		this.cityRefNo = cityRefNo;
+	}
+
+	public String getStateRefNo() {
+		return stateRefNo;
+	}
+
+	public void setStateRefNo(String stateRefNo) {
+		this.stateRefNo = stateRefNo;
+	}
+
 	public String getLovDescCustAddrZip() {
 		return lovDescCustAddrZip;
 	}

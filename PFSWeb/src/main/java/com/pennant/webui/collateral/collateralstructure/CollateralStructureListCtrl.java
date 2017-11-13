@@ -73,8 +73,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.collateral.CollateralStructure;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;

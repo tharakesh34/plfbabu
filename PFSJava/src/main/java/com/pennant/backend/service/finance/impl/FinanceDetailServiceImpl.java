@@ -45,6 +45,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -92,6 +93,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -108,6 +110,8 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
@@ -165,13 +169,11 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
-import com.pennant.backend.service.customermasters.GCDCustomerService;
+import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -194,6 +196,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.AppException;
@@ -201,6 +204,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
 /**
@@ -251,13 +255,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private FinanceTaxDetailDAO				financeTaxDetailDAO;
 	private FinanceTaxDetailService			financeTaxDetailService;
-	private GCDCustomerService				gCDCustomerService;
 	
 	private ExtendedFieldDetailsService		extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 
 	private CustomServiceTask	   			customServiceTask;
+	private CustomerService 				customerService;
+	
+	@Autowired(required = false)
+	private Crm crm;
 		
 	public FinanceDetailServiceImpl() {
 		super();
@@ -282,7 +289,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Check Have to Creating New Finance Accessibility for User or not
+	 * Method for Check Have to Creating New Finance Accessibility for User or not	
 	 */
 	@Override
 	public boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName) {
@@ -1704,6 +1711,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!isWIF) {
 			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader,true);
 		}
@@ -1711,17 +1719,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			logger.debug("Leaving");
 			return aAuditHeader;
 		}
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		
-		//process to send FIN-one request and create or update the cust data.
-		if (!isWIF) {
-			processFinOneCreation(aAuditHeader);
-		}
-
-		if (!aAuditHeader.isNextProcess()) {
-			logger.debug("Leaving");
-			return aAuditHeader;
-		}
 		/*
 		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		 */
@@ -2865,7 +2863,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		//process to send FIN-one request and create or update the cust data.
 		if (!isWIF) {
-			processFinOneCreation(aAuditHeader);
+			createOrUpdateCrmCustomer(aAuditHeader);
 		}
 
 		if (!aAuditHeader.isNextProcess()) {
@@ -4041,54 +4039,54 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 	}
 	
-private AuditHeader processFinOneCreation(AuditHeader auditHeader) {
-		logger.debug("Entering");
+	private AuditHeader createOrUpdateCrmCustomer(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		if (crm == null) {
+			return auditHeader;
+		}
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
 
 		String[] errorParm = new String[2];
-		errorParm[0] = "Loan";
-		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("GCD_FINONE_PROC_REQD"))) {
-			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-				if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
-					// call the finone procedure to update a customer in Finone 
-					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
-					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-								auditHeader.getUsrLanguage()));
-						auditDetail.setErrorDetails(
-								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-						auditHeader.setAuditDetail(auditDetail);
-						auditHeader.setErrorList(auditDetail.getErrorDetails());
-						auditHeader = nextProcess(auditHeader);
-						return auditHeader;
-					}
+		errorParm[0] = "Customer";
 
-				} else {
-					// call the finone procedure to create a customer in Finone 
-					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
-					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-								auditHeader.getUsrLanguage()));
-						auditDetail.setErrorDetails(
-								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-						auditHeader.setAuditDetail(auditDetail);
-						auditHeader.setErrorList(auditDetail.getErrorDetails());
-						auditHeader = nextProcess(auditHeader);
-						return auditHeader;
-					}
-				}
+		try {
+			customerService.prepareGCDCustomerData(customerDetails);
+			crm.create(customerDetails);
+
+			WSReturnStatus status = customerDetails.getReturnStatus();
+
+			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
+				errorParm[1] = status.getReturnText();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
+						auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				auditHeader.setNextProcess(false);
+
+				return auditHeader;
 			}
+		} catch (InterfaceException e) {
+			errorParm[1] = e.getMessage();
+			auditDetail.setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+							auditHeader.getUsrLanguage()));
+			auditDetail.setErrorDetails(
+					ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+			auditHeader.setAuditDetail(auditDetail);
+			auditHeader.setErrorList(auditDetail.getErrorDetails());
+			auditHeader.setNextProcess(false);
+			return auditHeader;
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
@@ -8730,14 +8728,6 @@ private AuditHeader processFinOneCreation(AuditHeader auditHeader) {
 
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
-
-	public GCDCustomerService getgCDCustomerService() {
-		return gCDCustomerService;
-	}
-
-	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
-		this.gCDCustomerService = gCDCustomerService;
 	}
 
 	public FinanceTaxDetailService getFinanceTaxDetailService() {

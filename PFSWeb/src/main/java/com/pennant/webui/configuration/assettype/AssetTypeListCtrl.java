@@ -70,8 +70,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.configuration.AssetType;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.configuration.AssetTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.configuration.assettype.model.AssetTypeListModelItemRenderer;

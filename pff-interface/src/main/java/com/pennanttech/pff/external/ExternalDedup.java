@@ -1,8 +1,9 @@
 package com.pennanttech.pff.external;
 
+import com.pennant.backend.model.audit.AuditHeader;
+
 public interface ExternalDedup {
 	
-	//TODO: Method parameter and return type should be changes(DDP)
-	public Object checkDedup(Object auditHeader);
+	public AuditHeader checkDedup(AuditHeader auditHeader);
 
 }

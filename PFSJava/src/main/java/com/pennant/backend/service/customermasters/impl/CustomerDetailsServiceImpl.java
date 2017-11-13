@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
@@ -55,6 +56,7 @@ import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -83,12 +85,12 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
@@ -102,7 +104,7 @@ import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
-import com.pennant.backend.service.customermasters.GCDCustomerService;
+import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.validation.CorporateCustomerValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerAddressValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerBalanceSheetValidation;
@@ -125,8 +127,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {
@@ -190,13 +195,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerExtLiabilityValidation		customerExtLiabilityValidation;
 	private LovFieldDetailService				lovFieldDetailService;
 	private LimitRebuild						limitRebuild;
-	private GCDCustomerService					gCDCustomerService;
 	private PhoneTypeDAO						phoneTypeDAO;
 
 	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
 	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private PinCodeDAO							pinCodeDAO;
+	private CustomerService						customerService;
 
+	@Autowired(required = false)
+	private Crm crm;
+	
 	public CustomerDetailsServiceImpl() {
 		super();
 	}
@@ -2390,8 +2398,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 		
-		//process to send finone request and create or update the data.
-		processFinOneCheck(aAuditHeader);
+		// process to send finone request and create or update the data.
+		createOrUpdateCrmCustomer(aAuditHeader);
 		
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -2441,10 +2449,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			customerDetails.setCustID(customer.getCustID());
-
-
-			//process to send finone request and create or update the data.
-			processFinOneCheck(aAuditHeader);
 
 			if (customerDetails.getCustEmployeeDetail() != null) {
 				CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
@@ -2571,52 +2575,54 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditHeader;
 	}
 
-	private AuditHeader processFinOneCheck(AuditHeader auditHeader) {
-		logger.debug("Entering");
+	private AuditHeader createOrUpdateCrmCustomer(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		if (crm == null) {
+			return auditHeader;
+		}
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Customer";
-		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("GCD_FINONE_PROC_REQD"))) {
-			if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
-				// call the finone procedure to update a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					auditHeader = nextProcess(auditHeader);
-					return auditHeader;
-				}
 
-			} else {
-				// call the finone procedure to create a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					auditHeader = nextProcess(auditHeader);
-					return auditHeader;
-				}
+		try {
+			customerService.prepareGCDCustomerData(customerDetails);
+
+			crm.create(customerDetails);
+
+			WSReturnStatus status = customerDetails.getReturnStatus();
+
+			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
+				errorParm[1] = status.getReturnText();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
+						auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				auditHeader = nextProcess(auditHeader);
+
+				return auditHeader;
 			}
+		} catch (InterfaceException e) {
+			errorParm[1] = e.getMessage();
+			auditDetail.setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+							auditHeader.getUsrLanguage()));
+			auditDetail.setErrorDetails(
+					ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+			auditHeader.setAuditDetail(auditDetail);
+			auditHeader.setErrorList(auditDetail.getErrorDetails());
+			auditHeader = nextProcess(auditHeader);
+			return auditHeader;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
@@ -5398,14 +5404,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.limitRebuild = limitRebuild;
 	}
 
-	public GCDCustomerService getgCDCustomerService() {
-		return gCDCustomerService;
-	}
-
-	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
-		this.gCDCustomerService = gCDCustomerService;
-	}
-
 	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
 		this.phoneTypeDAO = phoneTypeDAO;
 	}
@@ -5417,6 +5415,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
 	}
+	
+	public CustomerService getCustomerService() {
+		return customerService;
+	}
 
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
 
 }

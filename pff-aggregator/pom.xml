@@ -49,6 +49,7 @@
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
 		<module>../pff-api</module>
+		<module>../pff-niyogin</module>
 		<module>../pff-test-suite</module>
 	</modules>
 

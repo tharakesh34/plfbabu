@@ -11,10 +11,10 @@ import org.testng.annotations.Test;
 public class AuthKey {
 	private static Logger logger = Logger.getLogger(AuthKey.class);
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void generate() throws UnsupportedEncodingException {
 		// Usage: user:<user name>:<password>
-		String authDetails = "user:maker:test";
+		String authDetails = "user:admin:admin";
 		String authKey = new String(Base64.encode(authDetails.getBytes()), "UTF-8");
 
 		logger.info(authDetails);

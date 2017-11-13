@@ -107,6 +107,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String promotionCode;
 	@XmlElement
 	private String finCcy;
+	private boolean rcu;
 	@XmlElement
 	private String profitDaysBasis;
 	private long custID;
@@ -716,6 +717,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("calGrcTerms");
 		excludeFields.add("calGrcEndDate");
 		excludeFields.add("tDSAmount");
+		excludeFields.add("rcu");
 
 		excludeFields.add("nextRoleCodeDesc");
 		excludeFields.add("secUsrFullName");
@@ -3535,5 +3537,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setReceiptModeStatus(String receiptModeStatus) {
 		this.receiptModeStatus = receiptModeStatus;
+	}
+
+	public boolean isRcu() {
+		return rcu;
+	}
+
+	public void setRcu(boolean rcu) {
+		this.rcu = rcu;
 	}
 }

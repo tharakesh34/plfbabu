@@ -3,7 +3,7 @@ package com.pennant.backend.dao.collateral;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 
 public interface ExtendedFieldRenderDAO {
 

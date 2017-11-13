@@ -1,7 +1,8 @@
 package com.pennanttech.pff.external;
 
+import com.pennant.backend.model.audit.AuditHeader;
+
 public interface BureauScore {
 
-	//TODO: Method parameter and return type should be changes(DDP)
-	public Object executeBureau(Object auditHeader);
+	public AuditHeader executeBureau(AuditHeader auditHeader);
 }

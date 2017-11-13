@@ -71,8 +71,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAssetTypes;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.configuration.AssetTypeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;

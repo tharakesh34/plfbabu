@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>${pff.groupId}</groupId>
-	<artifactId>pff-interface-bajaj</artifactId>
+	<artifactId>pff-niyogin</artifactId>
 	<version>${pff.version}</version>
 	<packaging>jar</packaging>
 
@@ -19,6 +19,11 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<artifactId>pff-interface</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-model</artifactId>

@@ -1,7 +1,8 @@
 package com.pennanttech.pff.external;
 
+import com.pennant.backend.model.audit.AuditHeader;
+
 public interface BlacklistCheck {
 
-	//TODO: Method parameter and return type should be changes(DDP)
-	public Object checkHunterDetails(Object auditHeader);
+	public AuditHeader checkHunterDetails(AuditHeader auditHeader);
 }

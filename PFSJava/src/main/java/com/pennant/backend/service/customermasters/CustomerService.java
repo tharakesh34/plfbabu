@@ -48,6 +48,7 @@ import java.util.Date;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 
 public interface CustomerService {
@@ -69,4 +70,5 @@ public interface CustomerService {
 	String getCustSuspRemarks(long custID);
 	Customer getSuspendCustomer(Long value);
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
+	public void prepareGCDCustomerData(CustomerDetails customerDetails) ;
 }
