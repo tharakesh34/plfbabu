@@ -157,6 +157,16 @@ public class CustomerAddressValidation {
 
 		auditDetail.setErrorDetail(screenValidations(customerAddres));
 		
+		boolean isServiceable=getCustomerAddresDAO()
+				.isServiceable(customerAddres.getCustAddrZIP());
+		if(!isServiceable){
+			valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
+
+	        errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0];
+			auditDetail.setErrorDetail(new ErrorDetails(
+					PennantConstants.KEY_FIELD, "81005", errParm, null));
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerAddres.isWorkflow()) {

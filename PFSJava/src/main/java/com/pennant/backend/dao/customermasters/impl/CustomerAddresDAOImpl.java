@@ -96,7 +96,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,");
+		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName," );
@@ -134,7 +134,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,");
+		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,lovDescCustAddrZip," );
@@ -244,12 +244,12 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince, CustAddrPriority," );
-		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,");
+		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
 		insertSql.append(" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince, :CustAddrPriority,");
-		insertSql.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,");
+		insertSql.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,:CustAddrLine3,:CustAddrLine4,:CustDistrict,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -288,7 +288,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox," );
 		updateSql.append(" CustAddrCountry = :CustAddrCountry, CustAddrProvince = :CustAddrProvince, CustAddrPriority = :CustAddrPriority, " );
 		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrZIP = :CustAddrZIP," );
-		updateSql.append(" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,");
+		updateSql.append(" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,CustAddrLine3=:CustAddrLine3,CustAddrLine4=:CustAddrLine4,CustDistrict=:CustDistrict,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
@@ -398,5 +398,22 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		logger.debug("Leaving");
 		
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+	}
+	
+	@Override
+	public boolean isServiceable(String pinCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("pinCode", pinCode);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT serviceable");
+		selectSql.append(" From PinCodes_View ");
+		selectSql.append(" Where pinCode=:pinCode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
 	}
 }

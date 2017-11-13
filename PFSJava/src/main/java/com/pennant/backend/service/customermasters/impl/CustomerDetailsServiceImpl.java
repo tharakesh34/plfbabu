@@ -2931,20 +2931,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
 		}
+		
+		if (customer.getCustCRCPR()!=null) {
+			if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
+				String[] errorParameters = new String[1];
+				if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
+					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
+							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
+				} else {
+					errorParameters[0] = PennantJavaUtil.getLabel("label_CustTradeLicenseNumber") + ":"
+							+ customer.getCustCRCPR();
+				}
 
-		if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
-			String[] errorParameters = new String[1];
-			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
-				errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
-						+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-			} else {
-				errorParameters[0] = PennantJavaUtil.getLabel("label_CustTradeLicenseNumber") + ":"
-						+ customer.getCustCRCPR();
+				auditDetail
+						.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 			}
-
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 		}
-
 		//customer dedup validation
 		if (customerDetails.getCustomerDedupList() != null && !customerDetails.getCustomerDedupList().isEmpty()) {
 			for (CustomerDedup customerDedup : customerDetails.getCustomerDedupList()) {

@@ -62,6 +62,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String guarantorExposure;
 	private String worstStatus;
 	private String status;
+	private String catOfcoApplicant;
 
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
@@ -264,5 +265,13 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public String getCatOfcoApplicant() {
+		return catOfcoApplicant;
+	}
+
+	public void setCatOfcoApplicant(String catOfcoApplicant) {
+		this.catOfcoApplicant = catOfcoApplicant;
 	}
 }

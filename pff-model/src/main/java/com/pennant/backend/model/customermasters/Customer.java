@@ -308,6 +308,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String custSwiftBrnCode;
 	private Date custAppDate;
 	private String sourceSystem;
+	private String lovDescRequestStage;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -1781,6 +1782,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceSystem(String sourceSystem) {
 		this.sourceSystem = sourceSystem;
+	}
+
+	public String getLovDescRequestStage() {
+		return lovDescRequestStage;
+	}
+
+	public void setLovDescRequestStage(String lovDescRequestStage) {
+		this.lovDescRequestStage = lovDescRequestStage;
 	}
 
 }

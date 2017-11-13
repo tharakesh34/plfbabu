@@ -83,7 +83,7 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" pinCodeId, pinCode, city, areaName, active, ");
+		sql.append(" pinCodeId, pinCode, city, areaName, active, groupId,serviceable,");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -157,10 +157,10 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into PinCodes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (pinCodeId, pinCode, city, areaName, active, ");
+		sql.append(" (pinCodeId, pinCode, city, areaName, active,groupId,serviceable, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :pinCodeId, :pinCode, :city, :areaName, :active, ");
+		sql.append(" :pinCodeId, :pinCode, :city, :areaName, :active, :groupId,:serviceable,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (pinCode.getPinCodeId() <= 0) {
@@ -188,7 +188,7 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		// Prepare the SQL.
 		StringBuilder	sql =new StringBuilder("update PinCodes" );
 		sql.append(tableType.getSuffix());
-		sql.append("  set pinCode = :pinCode, city = :city, areaName= :areaName, active = :active, ");
+		sql.append("  set pinCode = :pinCode, city = :city, areaName= :areaName, active = :active,groupId=:groupId,serviceable=:serviceable, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -272,7 +272,7 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" pinCodeId, pinCode, city, areaName, active, ");
+		sql.append(" pinCodeId, pinCode, city, areaName, active,groupId, serviceable,");
 		
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("pCCountry,pCProvince,");

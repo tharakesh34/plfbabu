@@ -68,6 +68,8 @@ private static final long serialVersionUID = 1L;
 	private String lovDescPCProvinceName;
 	private String gstin;
 	private boolean active;
+	private long groupId;
+	private boolean serviceable;
 	private boolean newRecord=false;
 	private String lovValue;
 	private PinCode befImage;
@@ -238,7 +240,22 @@ private static final long serialVersionUID = 1L;
 		this.gstin = gstin;
 	}
 
-	
+	public long getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		this.groupId = groupId;
+	}
+
+	public boolean isServiceable() {
+		return serviceable;
+	}
+
+	public void setServiceable(boolean serviceable) {
+		this.serviceable = serviceable;
+	}
+
 
 }
 

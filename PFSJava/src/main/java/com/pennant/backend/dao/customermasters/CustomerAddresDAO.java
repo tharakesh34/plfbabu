@@ -60,4 +60,5 @@ public interface CustomerAddresDAO {
 	 int getAddrTypeCount(String addType);
 	 int getVersion(long id, String addrType);
 	 int getcustAddressCount(String addrType);
+	boolean isServiceable(String pinCode);
 }

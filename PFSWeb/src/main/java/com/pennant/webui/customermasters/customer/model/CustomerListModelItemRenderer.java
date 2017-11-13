@@ -81,6 +81,8 @@ public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>
 		lc.setParent(item);
 	  	lc = new Listcell(customer.getLovDescCustTypeCodeName());
 		lc.setParent(item);
+		lc = new Listcell(customer.getLovDescRequestStage());
+		lc.setParent(item);
 	  	lc = new Listcell(customer.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customer.getRecordType()));

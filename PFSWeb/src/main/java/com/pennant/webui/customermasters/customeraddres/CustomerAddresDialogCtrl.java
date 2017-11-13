@@ -121,6 +121,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	protected Textbox 	custCIF;						// autoWired
 	protected Label 	custShrtName;					// autoWired
 	protected Combobox custAddrPriority; // autoWired
+	protected Textbox 	custCareOfAddr;						// autoWired
+	protected Textbox 	custSubDist;						// autoWired
+	protected Textbox 	custDistrict;						// autoWired
 	
 
 
@@ -276,6 +279,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrLine1.setMaxlength(50);
 		this.custAddrLine2.setMaxlength(50);
 		this.custPOBox.setMaxlength(8);
+		this.custCareOfAddr.setMaxlength(50);
+		this.custSubDist.setMaxlength(50);
+		this.custDistrict.setMaxlength(50);
 		
 		this.custAddrCountry.setMaxlength(2);
 		this.custAddrCountry.setTextBoxWidth(121);
@@ -453,6 +459,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			aCustomerAddres.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerAddres.getLovDescCustShrtName()==null?"":
 			aCustomerAddres.getLovDescCustShrtName().trim());
+		this.custCareOfAddr.setValue(aCustomerAddres.getCustAddrLine3());
+		this.custSubDist.setValue(aCustomerAddres.getCustAddrLine4());
+		this.custDistrict.setValue(aCustomerAddres.getCustDistrict());
 
 		if (aCustomerAddres.getCustAddrType() == null) {
 			this.custAddrType.setDescription("");
@@ -587,6 +596,22 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			wve.add(we);
 		}
 
+		try {
+			aCustomerAddres.setCustDistrict(this.custDistrict.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerAddres.setCustAddrLine4(this.custSubDist.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerAddres.setCustAddrLine3(this.custCareOfAddr.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -675,6 +700,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.custAddrPhone.setReadonly(true);
 			this.cityName.setReadonly(true);
 			this.custAddrPriority.setDisabled(true);
+			this.custCareOfAddr.setReadonly(true);
+			this.custSubDist.setReadonly(true);
+			this.custDistrict.setReadonly(true);
 
 		}
 		
@@ -738,6 +766,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CityName.value"),PennantRegularExpressions.REGEX_NAME, false));
 			}
 		}
+		if (!this.custCareOfAddr.isReadonly() && addressConstraint){
+			this.custCareOfAddr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustCareOfAddr.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.custSubDist.isReadonly() && addressConstraint){
+			this.custSubDist.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustSubDist.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.custDistrict.isReadonly() && addressConstraint){
+			this.custDistrict.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustDistrict.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -758,6 +795,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrPhone.setConstraint("");
 		this.cityName.setConstraint("");
 		this.custAddrPriority.setConstraint("");
+		this.custCareOfAddr.setConstraint("");
+		this.custSubDist.setConstraint("");
+		this.custDistrict.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -813,6 +853,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setErrorMessage("");
 		this.cityName.setErrorMessage("");
 		this.custAddrPriority.setErrorMessage("");
+		this.custCareOfAddr.setErrorMessage("");
+		this.custDistrict.setErrorMessage("");
+		this.custSubDist.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -916,6 +959,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setReadonly(isReadOnly("CustomerAddresDialog_custAddrZIP"));
 		this.custAddrPhone.setReadonly(isReadOnly("CustomerAddresDialog_custAddrPhone"));
 		this.custAddrPriority.setDisabled(isReadOnly("CustomerAddresDialog_custAddrPriority"));
+		this.custCareOfAddr.setDisabled(isReadOnly("CustomerAddresDialog_custCareOfAddr"));
+		this.custSubDist.setDisabled(isReadOnly("CustomerAddresDialog_custSubDist"));
+		this.custDistrict.setDisabled(isReadOnly("CustomerAddresDialog_custDistrict"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -979,6 +1025,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrPhone.setReadonly(true);
 		this.cityName.setReadonly(true);
 		this.custAddrPriority.setDisabled(true);
+		this.custCareOfAddr.setReadonly(true);
+		this.custSubDist.setReadonly(true);
+		this.custDistrict.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1019,6 +1068,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrPhone.setValue("");
 		this.cityName.setValue("");
 		this.custAddrPriority.setText("");
+		this.custCareOfAddr.setValue("");
+		this.custSubDist.setValue("");
+		this.custDistrict.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -1029,7 +1081,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
 		final CustomerAddres aCustomerAddres = new CustomerAddres();
 		BeanUtils.copyProperties(getCustomerAddres(), aCustomerAddres);
 		boolean isNew = false;

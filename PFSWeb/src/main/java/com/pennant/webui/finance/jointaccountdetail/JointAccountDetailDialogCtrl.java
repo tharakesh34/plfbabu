@@ -57,6 +57,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -77,6 +78,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -130,6 +132,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Checkbox includeRepay;
 	protected Label label_RepayAccountId;
 	protected AccountSelectionBox repayAccountId;
+	
 
 	protected Row row2;
 	protected Label label_CustCIFStatus;
@@ -140,6 +143,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Hbox hbox_CustCIFWorstStatus;
 	protected Space space_CustCIFWorstStatus;
 	protected Textbox custCIFWorstStatus;
+
+	protected Row row3;
+	protected Label label_CatOfCoApplicant;
+	protected Hbox hbox_CatOfCoApplicant;
+	protected Space space_CatOfCoApplicant;
+	protected Combobox catOfCoApplicant;
+	
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
@@ -184,6 +194,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String cif[]=null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
 	
 	/**
 	 * default constructor.<br>
@@ -814,6 +825,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setValue(aJountAccountDetail.getLovDescCIFName());
 		this.custCIFStatus.setValue(aJountAccountDetail.getStatus());
 		this.custCIFWorstStatus.setValue(aJountAccountDetail.getWorstStatus());
+		fillComboBox(this.catOfCoApplicant,aJountAccountDetail.getCatOfcoApplicant(),this.coapplicantList,"");	
 		this.recordStatus.setValue(aJountAccountDetail.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJountAccountDetail.getRecordType()));
 		logger.debug("Leaving");
@@ -1179,6 +1191,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// catOfCoApplicant
+		try {
+			aJountAccountDetail.setCatOfcoApplicant(this.catOfCoApplicant.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -1213,6 +1231,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		this.custCIF.setConstraint("");
 		this.repayAccountId.setConstraint("");
+		this.catOfCoApplicant.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1232,6 +1251,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doRemoveLOVValidation() {
 		this.custCIFName.setConstraint("");
 		this.custCIF.setConstraint("");
+		this.catOfCoApplicant.setConstraint("");
 	}
 
 	/**
@@ -1243,6 +1263,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setErrorMessage("");
 		this.custCIFName.setErrorMessage("");
 		this.repayAccountId.setErrorMessage("");
+		this.catOfCoApplicant.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1313,6 +1334,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setValue("");
 		this.includeRepay.setChecked(false);
 		this.repayAccountId.setValue("");
+		this.catOfCoApplicant.setValue("");
 		logger.debug("Leaving");
 	}
 

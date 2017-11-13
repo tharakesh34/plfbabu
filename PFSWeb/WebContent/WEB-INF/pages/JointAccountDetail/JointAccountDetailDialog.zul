@@ -132,6 +132,16 @@
 											maxlength="20" width="180px" readonly="true" />
 									</hbox>
 								</row>
+								<row id="row3">
+									<label id="label_CatOfCoApplicant"
+										value="${c:l('label_JountAccountDetailDialog_CatOfCoApplicant.value')}" />
+									<hbox id="hbox_CatOfCoApplicant">
+										<space id="space_CatOfCoApplicant"
+											spacing="2px" />
+										<combobox id="catOfCoApplicant"
+											width="275px" readonly="true" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

@@ -108,6 +108,9 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	
 	private String sourceId;
 	private String lovDescCustAddrZip;
+	private String custAddrLine3;
+	private String custAddrLine4;
+	private String custDistrict;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -350,5 +353,29 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 
 	public void setLovDescCustAddrZip(String lovDescCustAddrZip) {
 		this.lovDescCustAddrZip = lovDescCustAddrZip;
+	}
+
+	public String getCustDistrict() {
+		return custDistrict;
+	}
+
+	public void setCustDistrict(String custDistrict) {
+		this.custDistrict = custDistrict;
+	}
+
+	public String getCustAddrLine3() {
+		return custAddrLine3;
+	}
+
+	public void setCustAddrLine3(String custAddrLine3) {
+		this.custAddrLine3 = custAddrLine3;
+	}
+
+	public String getCustAddrLine4() {
+		return custAddrLine4;
+	}
+
+	public void setCustAddrLine4(String custAddrLine4) {
+		this.custAddrLine4 = custAddrLine4;
 	}
 }

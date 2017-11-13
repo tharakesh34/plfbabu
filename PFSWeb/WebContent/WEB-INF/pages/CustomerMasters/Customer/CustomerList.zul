@@ -188,6 +188,9 @@
 								<listheader id="listheader_CustTypeCode"
 									label="${c:l('listheader_CustTypeCode.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_RequestStage"
+									label="${c:l('listheader_LovDescRequestStage.label')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

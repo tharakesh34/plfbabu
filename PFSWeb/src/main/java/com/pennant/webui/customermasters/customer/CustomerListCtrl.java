@@ -88,6 +88,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listheader listheader_CustDftBranch;
 	protected Listheader listheader_CustCtgCode;
 	protected Listheader listheader_CustTypeCode;
+	protected Listheader listheader_RequestStage;
 
 	protected Button button_CustomerList_NewCustomer;
 	protected Button button_CustomerList_CustomerSearchDialog;
@@ -162,7 +163,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		registerField("lovDescCustCtgCodeName");
 		registerField("lovDescCustTypeCodeName", listheader_CustTypeCode, SortOrder.NONE, custTypeCode,
 				sortOperator_custTypeCode, Operators.STRING);
-
+		registerField("LovDescRequestStage", listheader_RequestStage);
+		
 		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
 	}

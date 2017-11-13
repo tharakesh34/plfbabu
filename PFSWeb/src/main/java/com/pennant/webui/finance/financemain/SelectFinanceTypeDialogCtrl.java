@@ -1248,11 +1248,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_TRADELICENSE, true));
+							PennantRegularExpressions.REGEX_TRADELICENSE, false));
 				} else {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, true));
+							PennantRegularExpressions.REGEX_PANNUMBER, false));
 				}
 			}
 			try {

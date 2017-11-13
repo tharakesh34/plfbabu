@@ -370,6 +370,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Grid								grid_BankDetails;
 
 	private boolean								isRetailCustomer				= false;
+	private boolean								isSMECustomer					= false;
 	private String								empAlocType						= "";
 
 	protected Tab								directorDetails;
@@ -534,6 +535,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					.equals(this.customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				isRetailCustomer = true;
 			}
+			if (StringUtils.isNotEmpty(this.customerDetails.getCustomer().getCustCtgCode()) && StringUtils
+					.equals(this.customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
+				isSMECustomer = true;
+			}
 
 			/* set components visible dependent of the users rights */
 			if (!isNotFinanceProcess) {
@@ -621,6 +626,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custShrtName.setMaxlength(200);
 		} else {
 			this.custShrtName.setMaxlength(50);
+		}
+		if(isSMECustomer){
+			
 		}
 		this.custFirstName.setMaxlength(50);
 		this.custMiddleName.setMaxlength(50);
@@ -1411,6 +1419,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			if (isRetailCustomer) {
 				aCustomer.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()));
+			} else if (this.eidNumber.getValue().isEmpty()) {
+				aCustomer.setCustCRCPR(null);
 			} else {
 				aCustomer.setCustCRCPR(this.eidNumber.getValue());
 			}
@@ -2020,17 +2030,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (isRetailCustomer) {
 					this.eidNumber.setConstraint(
 							new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-									PennantRegularExpressions.REGEX_EIDNUMBER, true));
+									PennantRegularExpressions.REGEX_EIDNUMBER, false));
 
 				} else {
 					this.eidNumber.setConstraint(
 							new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-									PennantRegularExpressions.REGEX_TRADELICENSE, true));
+									PennantRegularExpressions.REGEX_TRADELICENSE, false));
 				}
 			} else {
 				this.eidNumber.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-								PennantRegularExpressions.REGEX_PANNUMBER, true));
+								PennantRegularExpressions.REGEX_PANNUMBER, false));
 
 			}
 

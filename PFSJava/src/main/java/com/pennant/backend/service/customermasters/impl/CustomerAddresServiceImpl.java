@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
@@ -79,6 +80,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	private CustomerAddressValidation customerAddressValidation;
 	private CityDAO cityDAO;
 	private ProvinceDAO provinceDAO;
+	private PinCodeDAO pinCodeDAO;
 
 	public CustomerAddresServiceImpl() {
 		super();
@@ -471,6 +473,14 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
+	}
+
+	public PinCodeDAO getPinCodeDAO() {
+		return pinCodeDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
 	}
 
 	
