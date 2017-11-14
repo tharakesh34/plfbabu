@@ -4209,6 +4209,7 @@
 		
 		<!-- GST -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="customerService" ref="customerService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->

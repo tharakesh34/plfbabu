@@ -24,7 +24,7 @@ public class LoadConfigTest {
 			"../PLFInterface/src/main/resources/applicationContext-core-interface.xml",
 			"../PFSJava/src/main/resources/applicationContext-daos.xml",
 			"../PFSWeb/src/main/resources/applicationContext-db.xml", "/src/test/resources/applicationContext.xml",
-			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml",
+			"../pff-niyogin/src/main/resources/client-interfaces-context.xml",
 			"../PFSBatch/src/main/resources/eod-batch-config-service.xml" };
 	static ApplicationContext	context;
 

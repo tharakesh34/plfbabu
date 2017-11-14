@@ -8757,4 +8757,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setCustomServiceTask(CustomServiceTask customServiceTask) {
 		this.customServiceTask = customServiceTask;
 	}
+	
+	public CustomerService getCustomerService() {
+		return customerService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
 }

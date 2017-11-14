@@ -128,7 +128,7 @@ public class DDARepresentmentService {
 	 * @param scheduleDetail
 	 * @return
 	 */
-	public final  BigDecimal getPaymentDueBySchedule(FinanceScheduleDetail scheduleDetail) {
+	public BigDecimal getPaymentDueBySchedule(FinanceScheduleDetail scheduleDetail) {
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		if (scheduleDetail == null) {
 			return paidAmount;
