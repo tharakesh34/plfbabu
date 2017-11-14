@@ -109,6 +109,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private int		multiLine;
 	private boolean inputElement;
 	private String parentTag;
+	private boolean editable;
 	private boolean newRecord;
 	private String lovValue;	
 	private String lovDescErroDesc;
@@ -308,6 +309,14 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setParentTag(String parentTag) {
 		this.parentTag = parentTag;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 }
