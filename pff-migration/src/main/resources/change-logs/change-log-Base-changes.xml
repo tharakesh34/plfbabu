@@ -291,5 +291,111 @@
      FROM BMTDocumentTypes
 	</createView>
 </changeSet>
-  
+
+<changeSet id="32" author="Amit">
+		<sql>		
+	Update BMTDOCUMENTTYPES set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+	Update BMTDOCUMENTTYPES_Temp set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="Amit">
+	<sql>
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from
+		SeqSecRights),3,'DocumentTypeDialog_mappingRef','DocumentTypeDialog',0,1000,sysdate,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+		Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+		SeqSecGroupRights ), (select GrpID from SecGroups where
+		GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+		RightName='DocumentTypeDialog_mappingRef'),1,0,10000,sysdate,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+		Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+		SecGroupRights);
+	</sql>
+</changeSet>
+
+
+	<changeSet id="34" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPasswordProtected','DocumentTypeDialog',0,1000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPasswordProtected'),1,0,10000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights);
+		</sql>
+	</changeSet>
+
+	<changeSet id="35" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPdfExtRequired','DocumentTypeDialog',0,1000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPdfExtRequired'),1,0,10000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights)
+		</sql>
+	</changeSet>
+	
+	<changeSet id="36" author="Amit" >
+		<createTable tableName="DocumentDataConfig">
+			<column name="Type" type="VARCHAR2(50)"/>
+			<column name="Year" type="VARCHAR2(50)"/>
+			<column name="Label" type="VARCHAR2(50)"/>
+			<column name="LabelText" type="VARCHAR2(250)"/>
+			<column name="LabelValueType" type="VARCHAR2(50)" />
+			<column name="DefaultValue" type="VARCHAR2(50)"/>
+			<column name="FormulaExecutionType" type="VARCHAR2(50)"/>
+			<column name="IndexOf" type="VARCHAR2(50)"/>
+			<column name="ExternalRef" type="VARCHAR2(250)" />
+			<column name="MappingValue" type="NUMBER(19,0)" />
+			<column name="IsActive" type="NUMBER(1,0)"  defaultValue="1"/>
+			<column name="Formula" type="VARCHAR2(500)" />
+		</createTable>
+		
+		<createTable tableName="DocumentDataMapping">
+			<column name="MappingId" type="NUMBER(19,0)">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Type" type="VARCHAR2(50)"/>
+		</createTable>
+   </changeSet>
+
+<changeSet id="37" author="Amit">
+		<sql>		
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','13','Repairs to machinery','int','-1','horizontal','0','repairsToMachinery',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16',' ',' ','Double','-1',' ','0','totalIndirectExpenses',1,1,'rents+powerNFuel+repairsToMachinery');
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','10','Power and fuel','int','-1','horizontal','0','powerNFuel',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','11','Rents','int','-1','horizontal','0','rents',1,1,null);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="38" author="Amit">
+		<sql>		
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (1,'ITR4');
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (2,'ITR5');
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (3,'ST3');	
+	</sql>
+	</changeSet>
+
 </databaseChangeLog>

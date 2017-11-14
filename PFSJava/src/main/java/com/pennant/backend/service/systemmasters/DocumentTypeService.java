@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.systemmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DocumentType;
 
@@ -58,5 +60,6 @@ public interface DocumentTypeService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	List<DocumentType> getApprovedPdfExternalList();
 
 }

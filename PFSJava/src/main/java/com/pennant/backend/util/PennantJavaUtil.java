@@ -272,6 +272,7 @@ import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.model.pdfdocumentdetails.DocumentDataMapping;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
@@ -2021,6 +2022,13 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
+
+		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
+				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "MappingId", "Type" }, null, 350));
+		
+		ModuleUtil.register("PdfDocumentType", new ModuleMapping("PdfDocumentType", DocumentType.class, new String[] {
+				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "PdfMappingRef", "DocTypeDesc"},
+				new String[][] { { "DocTypeIsActive", "0", "1" }}, 350));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

@@ -10469,4 +10469,6 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
+	
+	
 </beans>

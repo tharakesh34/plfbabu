@@ -775,4 +775,9 @@
    </menu>
 
 	<menuItem id="menu_Item_DataExtraction" zulNavigation="/WEB-INF/pages/DataExtraction/DataExtractionList.zul"  rightName="menuItem_gst_GSTDownload"/>
+	
+	<menu id="menu_Category_ExternalUplaods" rightName="menu_Category_SystemMaster">
+		<menuItem id="menu_Item_ExternalUplaods" zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul" rightName="menuItem_SystemMaster_AddressType"/>
+   </menu>
+	
 </ns2:XMLRootMenu>

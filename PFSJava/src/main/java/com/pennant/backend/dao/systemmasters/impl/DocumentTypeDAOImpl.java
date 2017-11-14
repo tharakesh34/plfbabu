@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -99,7 +101,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 
 		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand ");
+		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
 		selectSql.append(" FROM  BMTDocumentTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DocTypeCode =:DocTypeCode") ;
@@ -163,10 +165,10 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		sql.append(tableType.getSuffix());
 		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand)");
+		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef)");
 		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :DocIsCustDoc," );
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand)");
+		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand, :DocIsPdfExtRequired, :DocIsPasswordProtected, :PdfMappingRef)");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -190,11 +192,12 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		StringBuilder sql = new StringBuilder("update BMTDocumentTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc,");
-		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive ,");
+		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
-		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand");
+		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand,");
+		sql.append(" DocIsPdfExtRequired = :DocIsPdfExtRequired, DocIsPasswordProtected = :DocIsPasswordProtected, PdfMappingRef = :PdfMappingRef");
 		sql.append(" where DocTypeCode =:DocTypeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -240,6 +243,24 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public List<DocumentType> getApprovedPdfExternalList(String type) {
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
+		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
+		selectSql.append(" FROM  BMTDocumentTypes"); 
+		selectSql.append(type);
+		selectSql.append(" Where DocIsPdfExtRequired =1") ;
+				
+		logger.debug("selectSql: " + selectSql.toString());
+		DocumentType documentType = new DocumentType();
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
+		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
 	/**
 	 * @param dataSource
 	 *            the dataSource to set
@@ -247,4 +268,5 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
 }

@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -199,6 +201,10 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		return getDocumentTypeDAO().getDocumentTypeById(id, "_AView");
 	}
 
+	/**Getting pdf type list for pdf uploader menuitem*/ 
+	public List<DocumentType> getApprovedPdfExternalList() {
+		return getDocumentTypeDAO().getApprovedPdfExternalList("_AView");
+	}
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or

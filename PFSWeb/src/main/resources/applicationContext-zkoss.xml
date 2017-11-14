@@ -1581,7 +1581,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
 	</bean>
-	
+
 	<bean id="extendedFieldDialogCtrl"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4907,7 +4907,7 @@
 	<bean id="dataExtractionListCtrl"
 		class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl" scope="prototype">
 	</bean>
-
+	
 	<!--  Extended Fields Configuration -->
 	<bean id="extFieldConfigListCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="extFieldConfigService" ref="extFieldConfigService" />
@@ -4924,5 +4924,8 @@
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 	
-
+<!-- External File Upload  -->
+	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
+	
 </beans>
