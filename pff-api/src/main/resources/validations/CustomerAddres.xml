@@ -119,7 +119,7 @@
 		</field>
 
 
-		<field name="custAddrCity">
+<!-- 		<field name="custAddrCity">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>city is Mandatory</message>
 				<groups>
@@ -135,10 +135,10 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-		</field>
+		</field> -->
 
 
-		<field name="custAddrProvince">
+<!-- 		<field name="custAddrProvince">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>state is Mandatory</message>
 				<groups>
@@ -154,10 +154,10 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-		</field>
+		</field> -->
 
 
-		<field name="custAddrCountry">
+<!-- 		<field name="custAddrCountry">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>country is Mandatory</message>
 				<groups>
@@ -173,7 +173,7 @@
 				</groups>
 				<element name="max">2</element>
 			</constraint>
-		</field>
+		</field> -->
 
 
 		<field name="custAddrZIP">
