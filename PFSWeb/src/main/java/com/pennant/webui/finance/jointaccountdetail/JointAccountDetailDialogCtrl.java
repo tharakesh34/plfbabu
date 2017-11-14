@@ -712,6 +712,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.custCIF.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
+		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"),this.catOfCoApplicant);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -743,7 +744,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		logger.debug("Leaving");
 	}
-
+	
+	public boolean isReadOnly(String componentName){
+		return getUserWorkspace().isReadOnly(componentName);
+	}
+	
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
