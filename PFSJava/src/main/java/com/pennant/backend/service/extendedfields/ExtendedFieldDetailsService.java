@@ -162,6 +162,13 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
+			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						tableName + type)) {
+					extendedFieldRender.setNewRecord(true);
+				}
+			}
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -498,6 +505,11 @@ public class ExtendedFieldDetailsService {
 				render.getSeqNo(), tableName, "");
 		ExtendedFieldRender oldExRender = render.getBefImage();
 
+		if (tempRender == null && befExtRender == null) {
+			render.setNewRecord(true);
+			render.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		}
+
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
 		valueParm[0] = render.getReference();
@@ -510,6 +522,10 @@ public class ExtendedFieldDetailsService {
 			errParm[0] = PennantJavaUtil.getLabel("label_AssetType") + ":" + valueParm[0];
 		} else if (StringUtils.startsWith(tableName, VASConsatnts.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":" + valueParm[0];
+		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_CUSTOMER)) {
+			errParm[0] = PennantJavaUtil.getLabel("label_Module_Customer") + ":" + valueParm[0];
+		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_LOAN)) {
+			errParm[0] = PennantJavaUtil.getLabel("label_Module_Loan") + ":" + valueParm[0];
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_SeqNo") + ":" + valueParm[1];
 

@@ -306,9 +306,9 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if(i == 2){
 					syntax.append("Adt");
 				}
-				syntax.append(module);
+				syntax.append(StringUtils.trim(module));
 				syntax.append("_");
-				syntax.append(subModule);
+				syntax.append(StringUtils.trim(subModule));
 				syntax.append("_ED");
 				syntax.append(StringUtils.trimToEmpty(tableType));
 				if(i == 2){
