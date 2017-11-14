@@ -2130,8 +2130,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
-				valueParm[1] = customer.getCustCtgCode();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];
