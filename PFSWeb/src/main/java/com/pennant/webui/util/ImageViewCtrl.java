@@ -111,8 +111,10 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 
 				if (mandate.getDocumentName().toLowerCase().endsWith(".pdf")) {
 					amedia = new AMedia(mandate.getDocumentName(), "pdf", "application/pdf", mandate.getDocImage());
-				} else if (mandate.getDocumentName().toLowerCase().endsWith(".jpg")) {
-					amedia = new AMedia(mandate.getDocumentName(), "jpg", "image/jpeg", mandate.getDocImage());
+				} else if (mandate.getDocumentName().toLowerCase().endsWith(".jpg")
+						|| mandate.getDocumentName().toLowerCase().endsWith(".jpeg")
+						|| mandate.getDocumentName().toLowerCase().endsWith(".png")) {
+					amedia = new AMedia(mandate.getDocumentName(), "jpeg", "image/jpeg", mandate.getDocImage());
 				}
 
 				if (mandate != null) {
