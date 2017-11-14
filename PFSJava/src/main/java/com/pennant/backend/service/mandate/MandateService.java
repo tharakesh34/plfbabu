@@ -68,4 +68,5 @@ public interface MandateService {
 	int getFileCount(String fileName);
 	List<Mandate>getApprovedMandatesByCustomerId(long custID);
 	void getDocumentImage(Mandate mandate);
+	byte[] getDocumentManImage(String mandateRef);
 }
