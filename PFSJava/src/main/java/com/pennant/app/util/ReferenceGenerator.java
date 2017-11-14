@@ -69,10 +69,10 @@ public class ReferenceGenerator implements Serializable {
 		// Product code
 		String branch = financeMain.getSwiftBranchCode();
 
-		if (branch.length() < 3) {
-			branch = StringUtils.leftPad(branch, 3, '0');
+		if (branch.length() < 4) {
+			branch = StringUtils.leftPad(branch, 4, '0');
 		} else {
-			branch = branch.substring(0, 3);
+			branch = branch.substring(0, 4);
 		}
 
 		// Product code.
