@@ -3945,7 +3945,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setMandatoryIDNumber(String eidNumber) {
 		logger.debug("Entering");
-		if (eidNumber.isEmpty()) {
+		if (StringUtils.isBlank(eidNumber)) {
 			this.eidNumber.setValue(null);
 		} else {
 			this.eidNumber.setValue(eidNumber);
