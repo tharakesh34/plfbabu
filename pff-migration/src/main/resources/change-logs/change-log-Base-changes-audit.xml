@@ -101,4 +101,11 @@
 		<dropNotNullConstraint tableName="adtcustomerdocuments"
 			columnName="custdoctype" columnDataType="VARCHAR2(10)" />
 	</changeSet>
+	 <changeSet id="48" author="Ganesh.p">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL">
+			<column name="EDITABLE" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
