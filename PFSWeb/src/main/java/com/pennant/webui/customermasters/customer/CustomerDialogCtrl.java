@@ -3459,9 +3459,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
 					isMandateIDDocExist = true;
-					if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
-						doShowValidationMessage(custTab, 2, custDocument.getLovDescCustDocCategory() + " Number");
-						return false;
+					if (!this.eidNumber.getValue().isEmpty()) {
+						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
+							doShowValidationMessage(custTab, 2, custDocument.getLovDescCustDocCategory() + " Number");
+							return false;
+						}
+					} else {
+						this.eidNumber.setValue(custDocument.getCustDocTitle());
 					}
 				}
 				if (!isRetailCustomer
@@ -3939,7 +3943,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setMandatoryIDNumber(String eidNumber) {
 		logger.debug("Entering");
-		this.eidNumber.setValue(eidNumber);
+		if (eidNumber.isEmpty()) {
+			this.eidNumber.setValue(null);
+		} else {
+			this.eidNumber.setValue(eidNumber);
+		}
 		logger.debug("Leaving");
 	}
 
