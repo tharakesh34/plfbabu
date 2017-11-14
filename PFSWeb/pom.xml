@@ -271,12 +271,6 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>1.7.3</version>
 		</dependency>
-
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-interface-bajaj</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>eu.bitwalker</groupId>
 			<artifactId>UserAgentUtils</artifactId>
