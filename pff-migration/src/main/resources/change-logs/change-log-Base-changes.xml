@@ -1562,4 +1562,14 @@ UNION ALL
      		insert into ErrorDetails values('81005','EN','E','{0} Is Not Serviceable.','test','Approved','','','','','',0,current_timestamp,1000,0);
      	</sql>
      </changeSet>
+     
+     <changeSet id="83" author="Surekha">
+     <sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'JountAccountDetailDialog_catOfCoApplicant','JountAccountDetailDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+     </changeSet>
 </databaseChangeLog>
