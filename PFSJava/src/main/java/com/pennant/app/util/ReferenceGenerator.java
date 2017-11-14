@@ -92,7 +92,7 @@ public class ReferenceGenerator implements Serializable {
 		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("LOAN_REFERENCE_IDENTIFIER"))) {
 			return ReferenceConstants.DIVISION_IDENTIFIER.concat(branch).concat(product).concat(sequence);
 		} else {
-			return branch.concat(product).concat(sequence);
+			return product.concat(branch).concat(sequence);
 		}
 	}
 
