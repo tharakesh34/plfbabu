@@ -1,6 +1,6 @@
 pff 4.0.0, 2017-10-17
 ---------------------
-- 
+- Refactoring changes- Moved model classes and packages from PFSJava project to pff-model project
 - Enhanced menu builder and tree menu builder for menu generation.
 - Added support for PostgreSQL.
 - Added extended fields for customers and loans along with the APIs.
