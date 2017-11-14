@@ -97,4 +97,8 @@
      <changeSet id="46" author="Surekha">
 		<modifyDataType tableName="Adtpincodes" columnName="serviceable" newDataType="smallint"/>
      </changeSet>
+     <changeSet id="47" author="Surekha">
+		<dropNotNullConstraint tableName="adtcustomerdocuments"
+			columnName="custdoctype" columnDataType="VARCHAR2(10)" />
+	</changeSet>
 </databaseChangeLog>
