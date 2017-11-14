@@ -1,6 +1,7 @@
 pff 4.0.0, 2017-10-17
 ---------------------
 - 
+- Added 3 new fields to System Master-> Document Type for pdf extraction.
 - Enhanced JDBC Search Processor to support named parameters for better performance and avoiding SQL Injection.
 - Enhanced support for PostgreSQL.
 - Removed unnecessary classes and empty packages.
