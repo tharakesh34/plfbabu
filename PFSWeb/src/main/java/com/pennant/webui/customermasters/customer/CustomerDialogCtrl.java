@@ -2960,8 +2960,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		// Extended Field details
 		if (aCustomerDetails.getExtendedFieldRender() != null) {
+			int seqNo = 0;
 			ExtendedFieldRender details = aCustomerDetails.getExtendedFieldRender();
 			details.setReference(aCustomerDetails.getCustomer().getCustCIF());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aCustomerDetails.getCustomer().getRecordStatus());

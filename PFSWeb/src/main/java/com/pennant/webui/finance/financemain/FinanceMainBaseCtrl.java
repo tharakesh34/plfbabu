@@ -6549,8 +6549,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Extended Field details
 		if (aFinanceDetail.getExtendedFieldRender() != null) {
+			int seqNo = 0;
 			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
 			details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(afinanceMain.getRecordStatus());
