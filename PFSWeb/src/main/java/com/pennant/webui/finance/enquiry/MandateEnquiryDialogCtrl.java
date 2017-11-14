@@ -438,7 +438,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.umrNumber.setValue(aMandate.getMandateRef());
 		this.documentName.setValue(aMandate.getDocumentName());
-		if (aMandate.getDocumentName() == null) {
+		if (aMandate.getDocumentName() == null || aMandate.getDocumentName().equals("")) {
 			this.btnViewMandateDoc.setVisible(false);
 		}
 	}
