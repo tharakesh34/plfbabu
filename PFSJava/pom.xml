@@ -203,11 +203,11 @@
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
-	   <!--  <dependency>
+	     <dependency>
 			<groupId>com.pennant.pff</groupId>
-			<artifactId>pdf2xml</artifactId>
+			<artifactId>Document-Parser</artifactId>
 			<version>1.0.0</version>
-		</dependency> -->
+		</dependency> 
 	</dependencies>
 
 	<build>

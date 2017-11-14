@@ -61,6 +61,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.service.pdfdocumentdetail.PdfDocumentDetailsService;
+import com.pennant.backend.service.pdfdocumentdetail.impl.PdfDocumentDetailsServiceImpl;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -207,10 +209,10 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		try {
 			if (fileByte != null) {
 				// entry point
-				/*PdfDocumentDetailsService  documentDetailsService = new PdfDocumentDetailsServiceImpl(); //creating 
+				PdfDocumentDetailsService  documentDetailsService = new PdfDocumentDetailsServiceImpl(); //creating 
 				Map<String, Object> outPut = documentDetailsService.getValueByTypeNYear(fileByte, fileName.getText(),
 						pdfPassword.getText(), fileTypeRef, year.getText().trim()); 
-				renderResult(outPut);*/
+				renderResult(outPut);
 				MessageUtil.showMessage("File is processed successfully.");
 			}
 		} catch (Exception e) {
