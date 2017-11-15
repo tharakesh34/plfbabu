@@ -255,6 +255,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label								label_CustomerDialog_CustCOB;
 	protected Label								label_CustomerDialog_Target;
 	protected Label								label_ArabicName;
+	protected Label								label_CustSubSegment;
 	protected Row								row_FirstMiddleName;
 	protected Row								row_LastName;
 	protected Row								row_GenderSalutation;
@@ -1823,8 +1824,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.row_LastName.setVisible(true);
 			this.row_GenderSalutation.setVisible(true);
 			this.row_MartialDependents.setVisible(true);
-			this.row_custSub.setVisible(true);
 			this.row_custDSA.setVisible(true);
+			this.label_CustSubSegment.setVisible(true);
+			this.custSubSegment.setVisible(true);
 			this.row_custStaff.setVisible(true);
 			this.row_custCountry.setVisible(true);
 			this.hbox_SalariedCustomer.setVisible(true);
@@ -1856,9 +1858,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.row_LastName.setVisible(false);
 			this.row_GenderSalutation.setVisible(false);
 			this.row_MartialDependents.setVisible(false);
-			this.row_custSub.setVisible(false);
 			this.row_custDSA.setVisible(false);
 			this.row_custStaff.setVisible(false);
+			this.label_CustSubSegment.setVisible(false);
+			this.custSubSegment.setVisible(false);
 			this.row_custCountry.setVisible(false);
 			this.hbox_SalariedCustomer.setVisible(false);
 			this.space_CustShrtName.setSclass(PennantConstants.mandateSclass);
@@ -3461,13 +3464,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
 					isMandateIDDocExist = true;
-					if (!this.eidNumber.getValue().isEmpty()) {
+					if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
 							doShowValidationMessage(custTab, 2, custDocument.getLovDescCustDocCategory() + " Number");
 							return false;
 						}
 					} else {
-						this.eidNumber.setValue(custDocument.getCustDocTitle());
+						aCustomer.setCustCRCPR(custDocument.getCustDocTitle());
 					}
 				}
 				if (!isRetailCustomer
