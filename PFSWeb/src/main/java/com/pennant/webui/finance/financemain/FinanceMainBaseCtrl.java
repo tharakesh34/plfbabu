@@ -2316,6 +2316,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendFinCollateralTab(boolean onLoad) {
 		logger.debug("Entering");
+		if (!ImplementationConstants.COLLATERAL_INTERNAL) {
+			if (!getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()) {
+				return;
+			}
+		}
+		
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, true);
 		} else {
@@ -2342,6 +2348,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			} else {
+
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			}

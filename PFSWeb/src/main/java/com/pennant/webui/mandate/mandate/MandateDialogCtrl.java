@@ -1047,17 +1047,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
 		this.umrNumber.setValue(aMandate.getMandateRef());
-		
 		this.documentName.setValue(aMandate.getDocumentName());
 		AMedia amedia = null;
-
 		if (aMandate.getDocImage() != null) {
-
-			if (mandate.getDocumentName().toLowerCase().endsWith(".jpg")
-					|| mandate.getDocumentName().toLowerCase().endsWith(".jpeg")
-					|| mandate.getDocumentName().toLowerCase().endsWith(".png")) {
+			String docType =StringUtils.trimToEmpty(aMandate.getDocumentName()).toLowerCase();
+			if (docType.endsWith(".jpg")
+					|| docType.endsWith(".jpeg")
+					|| docType.endsWith(".png")) {
 				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aMandate.getDocImage());
-			} else if (aMandate.getDocumentName().toLowerCase().endsWith(".pdf")) {
+			} else if (docType.endsWith(".pdf")) {
 				amedia = new AMedia("document.pdf", "pdf", "application/pdf", aMandate.getDocImage());
 			}
 			imagebyte = aMandate.getDocImage();
