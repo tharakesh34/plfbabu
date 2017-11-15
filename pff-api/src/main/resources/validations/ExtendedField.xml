@@ -6,7 +6,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<!-- ExtendedFieldHeader -->
-	<bean class="com.pennant.backend.model.staticparms.ExtendedField">
+	<bean class="com.pennant.backend.model.extendedfield.ExtendedField">
 
 		<field name="extendedFieldDataList">
 			<valid />

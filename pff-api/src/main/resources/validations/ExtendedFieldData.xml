@@ -6,7 +6,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<!-- ExtendedFieldDetail Validations -->
-	<bean class="com.pennant.backend.model.staticparms.ExtendedFieldData">
+	<bean class="com.pennant.backend.model.extendedfield.ExtendedFieldData">
 
 		<field name="fieldName">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
