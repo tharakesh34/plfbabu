@@ -68,7 +68,7 @@
 						<tabs id="tabsIndexCenter">
 							<tab label="${c:l('label_CustomerDialog_BasicDetails.value')}" id="basicDetails" />
 							<tab label="${c:l('label_CustomerDialog_KYCDetails.value')}" id="tabkYCDetails" />
-							<tab id="${c:l('label_CustomerDialog_TabFinancial.value')}" label="Financials" visible="false" />
+							<tab label="${c:l('label_CustomerDialog_TabFinancial.value')}" id="tabfinancial"  visible="false" />
 							<tab label="${c:l('label_CustomerDialog_ShareHolderDetails.value')}" id="directorDetails"  visible="false" />
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
 						</tabs>
