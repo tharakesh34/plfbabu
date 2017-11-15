@@ -108,12 +108,12 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				this.label_RefId.setVisible(true);
 
 				Mandate mandate = (Mandate) arguments.get("mandate");
-
-				if (mandate.getDocumentName().toLowerCase().endsWith(".pdf")) {
+				String docType = StringUtils.trimToEmpty(mandate.getDocumentName()).toLowerCase();
+				if (docType.endsWith(".pdf")) {
 					amedia = new AMedia(mandate.getDocumentName(), "pdf", "application/pdf", mandate.getDocImage());
-				} else if (mandate.getDocumentName().toLowerCase().endsWith(".jpg")
-						|| mandate.getDocumentName().toLowerCase().endsWith(".jpeg")
-						|| mandate.getDocumentName().toLowerCase().endsWith(".png")) {
+				} else if (docType.endsWith(".jpg")
+						|| docType.endsWith(".jpeg")
+						|| docType.endsWith(".png")) {
 					amedia = new AMedia(mandate.getDocumentName(), "jpeg", "image/jpeg", mandate.getDocImage());
 				}
 
