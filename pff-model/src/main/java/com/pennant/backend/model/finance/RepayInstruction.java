@@ -52,9 +52,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -120,8 +118,7 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 	}
 
 	public void setRepayDate(Date repayDate) {
-		this.repayDate = DateUtility.getDate(DateUtility.formatUtilDate(
-				repayDate, PennantConstants.dateFormat));
+		this.repayDate = repayDate;
 	}
 
 	public BigDecimal getRepayAmount() {

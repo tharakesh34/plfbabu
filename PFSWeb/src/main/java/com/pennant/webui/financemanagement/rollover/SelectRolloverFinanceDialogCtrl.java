@@ -79,6 +79,7 @@ import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerLimit;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -546,7 +547,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 		FinanceDetail financeDetail = getFinanceDetailService().getNewFinanceDetail(false);
 		financeDetail.setNewRecord(true);
 
-		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
+		FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+		FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
+		financeDetail.getFinScheduleData().setFinanceMain(finMain);
+		financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 		financeDetail.getFinScheduleData().setFinanceType(financeType);
 
 		//Step Policy Details

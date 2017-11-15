@@ -63,6 +63,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -190,4 +191,6 @@ public interface FinanceDetailService {
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, WorkflowEngine engine) 
 			throws AppException, JaxenException;
 	AuditHeader doCheckScore(AuditHeader auditHeader);
+	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
+	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
  }

@@ -5,9 +5,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.PennantConstants;
-
 public class WIFCustomer implements Serializable {
 
     private static final long serialVersionUID = 3847855909869736407L;
@@ -16,7 +13,7 @@ public class WIFCustomer implements Serializable {
     private long existCustID = 0;
     private String custCRCPR = "";
     private String custShrtName = "";
-    private Date custDOB = DateUtility.getUtilDate("01/01/1900", PennantConstants.dateFormat);
+    private Date custDOB;
     private String custGenderCode = "";
     private String custNationality = "";
     private String custBaseCcy = "";
@@ -26,7 +23,7 @@ public class WIFCustomer implements Serializable {
     private String custMaritalSts = "";
     private int noOfDependents = 0;
     private boolean custIsBlackListed = false;
-    private Date custBlackListDate = DateUtility.getUtilDate("01/01/1900", PennantConstants.dateFormat);
+    private Date custBlackListDate;
     private String custSector = "";
     private String custSubSector = "";
     private String custSegment;
@@ -41,7 +38,7 @@ public class WIFCustomer implements Serializable {
     private BigDecimal	 totalIncome;
     private BigDecimal 	totalExpense;
     
-    private String lovDescCustCtgType = PennantConstants.PFF_CUSTCTG_INDIV;
+    private String lovDescCustCtgType = "RETAIL";//FIXME:How to use constants-PennantConstants.PFF_CUSTCTG_INDIV;
     private String lovDescCustGenderCodeName;
     private String lovDescCustNationalityName;
     private String lovDescCustEmpStsName;

@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.util.PennantConstants;
-
 public class FinanceScoreDetail implements Serializable {
 
 	private static final long serialVersionUID = 5107165955623363431L;
@@ -23,7 +21,7 @@ public class FinanceScoreDetail implements Serializable {
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
-	private String recordType =PennantConstants.RECORD_TYPE_NEW;
+	private String recordType = "NEW";//FIXME:How to use constant-PennantConstants.RECORD_TYPE_NEW;
 	private FinanceScoreDetail befImage;
 	
 	public FinanceScoreDetail() {

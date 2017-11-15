@@ -78,6 +78,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.WIFCustomer;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
@@ -657,7 +658,10 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			//set the default barch for wif with out customer selection
 			getSwiftBranchCode(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
-			this.financeDetail.getFinScheduleData().setFinanceMain(financeMain,financeType);
+			FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+			FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
+			this.financeDetail.getFinScheduleData().setFinanceMain(finMain);
+			this.financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 			this.financeDetail.getFinScheduleData().setFinanceType(financeType);
 			this.financeDetail.setNewRecord(true);
 			if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)){

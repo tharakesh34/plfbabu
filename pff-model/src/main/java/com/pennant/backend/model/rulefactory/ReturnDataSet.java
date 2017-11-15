@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.model.Entity;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode",
@@ -88,7 +87,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	 * 1- EOD Postings 
 	 * 2- EOD Postings and Accounts Updates
 	 */
-	private int	postCategory	= AccountConstants.POSTING_CATEGORY_NORMAL;
+	private int	postCategory = 0;//FIXME:How to use constants-AccountConstants.POSTING_CATEGORY_NORMAL;;
 	
 	public ReturnDataSet() {
 		

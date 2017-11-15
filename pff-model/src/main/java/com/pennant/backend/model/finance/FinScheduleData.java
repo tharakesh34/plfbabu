@@ -44,6 +44,7 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -57,13 +58,10 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
@@ -72,9 +70,6 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
-import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
@@ -194,11 +189,11 @@ public class FinScheduleData {
 		return disbursementDetails;
 	}
 	public void setDisbursementDetails(List<FinanceDisbursement> disbursementDetails) {
-		if (disbursementDetails != null && disbursementDetails.size() > 1) {
+		if (disbursementDetails != null && !disbursementDetails.isEmpty()) {
 			Collections.sort(disbursementDetails, new Comparator<FinanceDisbursement>() {
 				@Override
 				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
-					return DateUtility.compare(detail1.getDisbDate(), detail2.getDisbDate());
+					return DateUtils.truncatedCompareTo(detail1.getDisbDate(), detail2.getDisbDate(), Calendar.DATE);
 				}
 			});
 		}
@@ -210,11 +205,11 @@ public class FinScheduleData {
 	}
 	public void setRepayInstructions(List<RepayInstruction> repayInstructions) {
 		
-		if (repayInstructions != null && repayInstructions.size() > 0) {
+		if (repayInstructions != null && !repayInstructions.isEmpty()) {
 			Collections.sort(repayInstructions, new Comparator<RepayInstruction>() {
 				@Override
 				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
-					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+					return DateUtils.truncatedCompareTo(detail1.getRepayDate(), detail2.getRepayDate(), Calendar.DATE);
 				}
 			});
 		}
@@ -256,175 +251,6 @@ public class FinScheduleData {
 		}
 
 		scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
-	}
-
-	public void setFinanceMain(FinanceMain financeMain, FinanceType financeType) {
-
-		if (this.financeMain == null) {
-			WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceMain");
-			this.financeMain = new FinanceMain();
-			if (workFlowDetails != null) {
-				financeMain.setWorkflowId(workFlowDetails.getWorkFlowId());
-			}
-		} else {
-			this.financeMain = financeMain;
-		}
-
-		// Basic Details
-		this.financeMain.setFinType(financeType.getFinType());
-		this.financeMain.setLovDescFinTypeName(financeType.getFinTypeDesc());
-		this.financeMain.setPromotionCode(financeType.getPromotionCode());
-		this.financeMain.setFinCcy(financeType.getFinCcy());
-		this.financeMain.setProfitDaysBasis(financeType.getFinDaysCalType());
-		this.financeMain.setScheduleMethod(financeType.getFinSchdMthd());
-		this.financeMain.setFinStartDate(DateUtility.getAppDate());
-		this.financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
-		this.financeMain.setTDSApplicable(financeType.isTDSApplicable());
-		this.financeMain.setProductCategory(financeType.getProductCategory());
-		this.financeMain.setFinCategory(financeType.getFinCategory());
-		//Step Policy Details 
-		if(financeType.isSteppingMandatory()){
-			this.financeMain.setStepFinance(financeType.isStepFinance());
-			this.financeMain.setStepPolicy(StringUtils.trimToEmpty(financeType.getDftStepPolicy()).equals(PennantConstants.List_Select) ? "" : financeType.getDftStepPolicy());
-			this.financeMain.setLovDescStepPolicyName(StringUtils.trimToEmpty(financeType.getLovDescDftStepPolicyName()));
-			this.financeMain.setStepType(financeType.getDftStepPolicyType());
-		}else{
-			this.financeMain.setStepFinance(false);
-		}
-		this.financeMain.setManualSchedule(financeType.isManualSchedule());
-		//Grace period details
-
-		//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
-		if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)){
-			this.financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
-		}else{
-			this.financeMain.setAllowGrcPeriod(false);
-		}
-		
-		if(this.financeMain.isAllowGrcPeriod()){
-
-			this.financeMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
-			this.financeMain.setGraceSpecialRate(financeType.getFinGrcSplRate());
-			this.financeMain.setGrcPftRate(financeType.getFinGrcIntRate());
-			this.financeMain.setGrcPftFrq(financeType.getFinGrcDftIntFrq());
-			this.financeMain.setGrcProfitDaysBasis(financeType.getFinDaysCalType());
-			if (StringUtils.isNotEmpty(financeType.getFinGrcDftIntFrq()) &&
-					FrequencyUtil.validateFrequency(financeType.getFinGrcDftIntFrq()) == null) {
-				this.financeMain.setNextGrcPftDate(FrequencyUtil.getNextDate(financeType.getFinGrcDftIntFrq(), 1, 
-						this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-			}
-			this.financeMain.setAllowGrcPftRvw(financeType.isFinGrcIsRvwAlw());
-			this.financeMain.setGrcPftRvwFrq(financeType.getFinGrcRvwFrq());
-			if (StringUtils.isNotEmpty(financeType.getFinGrcRvwFrq()) &&
-					FrequencyUtil.validateFrequency(financeType.getFinGrcRvwFrq()) == null) {
-				this.financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeType.getFinGrcRvwFrq(), 1,
-						this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-			}
-			this.financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
-			this.financeMain.setGrcCpzFrq(financeType.getFinGrcCpzFrq());
-			if (StringUtils.isNotEmpty(financeType.getFinGrcCpzFrq()) &&
-					FrequencyUtil.validateFrequency(financeType.getFinGrcCpzFrq()) == null) {
-				this.financeMain.setNextGrcCpzDate(FrequencyUtil.getNextDate(financeType.getFinGrcCpzFrq(), 1,
-						this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-			}
-			this.financeMain.setCpzAtGraceEnd(financeType.isFinIsIntCpzAtGrcEnd());
-			this.financeMain.setGrcRateBasis(financeType.getFinGrcRateType().substring(0, 1));
-			this.financeMain.setAllowGrcRepay(financeType.isFinIsAlwGrcRepay());
-			this.financeMain.setGrcSchdMthd(financeType.getFinGrcSchdMthd());
-			this.financeMain.setGrcMargin(financeType.getFinGrcMargin());
-
-			this.financeMain.setGrcAdvBaseRate(financeType.getGrcAdvBaseRate());
-			this.financeMain.setGrcAdvMargin(financeType.getGrcAdvMargin());
-			this.financeMain.setGrcAdvPftRate(financeType.getGrcAdvPftRate());
-		}
-
-		//RepaymentDetails
-		this.financeMain.setNumberOfTerms(financeType.getFinDftTerms());
-		this.financeMain.setRepayBaseRate(financeType.getFinBaseRate());
-		this.financeMain.setRepaySpecialRate(financeType.getFinSplRate());
-		this.financeMain.setRepayMargin(financeType.getFinMargin());
-		this.financeMain.setRepayProfitRate(financeType.getFinIntRate());
-		this.financeMain.setRepayFrq(financeType.getFinRpyFrq());
-		if (StringUtils.isNotEmpty(financeType.getFinRpyFrq()) &&
-				FrequencyUtil.validateFrequency(financeType.getFinRpyFrq()) == null) {
-			this.financeMain.setNextRepayDate(FrequencyUtil.getNextDate(financeType.getFinRpyFrq(), 1,
-					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-		}
-		this.financeMain.setRepayPftFrq(financeType.getFinDftIntFrq());
-		if (StringUtils.isNotEmpty(financeType.getFinDftIntFrq()) &&
-				FrequencyUtil.validateFrequency(financeType.getFinDftIntFrq()) == null) {
-			this.financeMain.setNextRepayPftDate(FrequencyUtil.getNextDate(financeType.getFinDftIntFrq(), 1,
-					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-		}
-		this.financeMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
-		this.financeMain.setRepayRvwFrq(financeType.getFinRvwFrq());
-		this.financeMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
-		this.financeMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
-		this.financeMain.setPastduePftMargin(financeType.getPastduePftMargin());
-		this.financeMain.setDroppingMethod(financeType.getDroppingMethod());
-		this.financeMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
-		
-		if (StringUtils.isNotEmpty(financeType.getFinRvwFrq()) &&
-				FrequencyUtil.validateFrequency(financeType.getFinRvwFrq()) == null) {
-			this.financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeType.getFinRvwFrq(), 1,
-					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-		}
-		this.financeMain.setAllowRepayCpz(financeType.isFinIsIntCpz());
-		this.financeMain.setRepayCpzFrq(financeType.getFinCpzFrq());
-		if (StringUtils.isNotEmpty(financeType.getFinCpzFrq()) &&
-				FrequencyUtil.validateFrequency(financeType.getFinCpzFrq()) == null) {
-			this.financeMain.setNextRepayCpzDate(FrequencyUtil.getNextDate(financeType.getFinCpzFrq(), 1, 
-					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-		}
-		this.financeMain.setRepayRateBasis(financeType.getFinRateType().substring(0, 1));
-		this.financeMain.setEqualRepay(financeType.isEqualRepayment());
-		this.financeMain.setNewRecord(true);
-		this.financeMain.setRecordType("");
-
-		this.financeMain.setLovDescIsSchdGenerated(false);
-		this.financeMain.setDefferments(financeType.getFinMaxDifferment());
-		this.financeMain.setPlanDeferCount(financeType.getPlanDeferCount());
-		this.financeMain.setRvwRateApplFor(financeType.getFinRvwRateApplFor());
-		this.financeMain.setFinRepayMethod(financeType.getFinRepayMethod());
-		this.financeMain.setRpyAdvBaseRate(financeType.getRpyAdvBaseRate());
-		this.financeMain.setRpyAdvMargin(financeType.getRpyAdvMargin());
-		this.financeMain.setRpyAdvPftRate(financeType.getRpyAdvPftRate());
-		this.financeMain.setRolloverFrq(StringUtils.trimToEmpty(financeType.getRollOverFrq()));
-		if (StringUtils.isNotEmpty(financeType.getRollOverFrq()) &&
-				FrequencyUtil.validateFrequency(financeType.getRollOverFrq()) == null) {
-			this.financeMain.setNextRolloverDate(FrequencyUtil.getNextDate(financeType.getRollOverFrq(), financeMain.getNumberOfTerms(),
-					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-		}
-		
-		this.financeMain.setAlwBPI(financeType.isAlwBPI());
-		this.financeMain.setBpiTreatment(financeType.getBpiTreatment());
-		this.financeMain.setPlanEMIHAlw(financeType.isPlanEMIHAlw());
-		this.financeMain.setPlanEMIHMethod(financeType.getPlanEMIHMethod());
-		this.financeMain.setPlanEMIHLockPeriod(financeType.getPlanEMIHLockPeriod());
-		this.financeMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
-		this.financeMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
-		this.financeMain.setPlanEMICpz(financeType.isPlanEMICpz());
-		this.financeMain.setCalRoundingMode(financeType.getRoundingMode());
-		this.financeMain.setRoundingTarget(financeType.getRoundingTarget());
-		this.financeMain.setAlwMultiDisb(financeType.isFinIsAlwMD());
-		this.financeMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
-		this.financeMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
-		this.financeMain.setMaxReAgeHolidays(financeType.getMaxReAgeHolidays());
-		this.financeMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
-		this.financeMain.setReAgeCpz(financeType.isReAgeCpz());
-
-		//overdue Penalty Details
-		if(this.finODPenaltyRate == null){
-			this.finODPenaltyRate = new FinODPenaltyRate();
-		}
-		this.finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
-		this.finODPenaltyRate.setODIncGrcDays(financeType.isODIncGrcDays());
-		this.finODPenaltyRate.setODChargeCalOn(financeType.getODChargeCalOn());
-		this.finODPenaltyRate.setODGraceDays(financeType.getODGraceDays());
-		this.finODPenaltyRate.setODChargeType(financeType.getODChargeType());
-		this.finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
-		this.finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
-		this.finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 	}
 
 	/**

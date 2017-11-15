@@ -49,7 +49,6 @@ import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.LimitConstants;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -74,7 +73,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	private String deviationType;
 	private String returnType;
 	private String feeToFinance;
-	private String fixedOrVariableLimit = LimitConstants.LIMIT_RULE_FIXED;
+	private String fixedOrVariableLimit = "F";//FIXME: How to use constant-LimitConstants.LIMIT_RULE_FIXED;
 	private String fields;
 	private String lovValue;
 	private Long feeTypeID;

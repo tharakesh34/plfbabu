@@ -5,14 +5,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.pennant.app.util.DateUtility;
-
 public class CustomerEligibilityCheck implements Serializable {
 
     private static final long serialVersionUID = -2098118727197998806L;
     
 	private BigDecimal custAge = BigDecimal.ZERO;
-	private Date custDOB = DateUtility.getSysDate();
+	private Date custDOB;
 	private String custEmpDesg = "";
 	private String custEmpSts = "";
 	private String custEmpSector = "";

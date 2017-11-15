@@ -61,7 +61,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -310,18 +309,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setReviewFrequency(String reviewFrequency) {
 		this.reviewFrequency = reviewFrequency;
-	}
-
-	public String getReviewFrequencyCode() {
-		return FrequencyUtil.getFrequencyCode(reviewFrequency);
-	}
-
-	public String getReviewFrequencyMth() {
-		return FrequencyUtil.getFrequencyMth(reviewFrequency);
-	}
-
-	public String getReviewFrequencyDay() {
-		return FrequencyUtil.getFrequencyDay(reviewFrequency);
 	}
 
 	public Date getNextReviewDate() {

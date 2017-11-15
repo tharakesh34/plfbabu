@@ -894,7 +894,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.productCategory = financeType.getProductCategory();
 				customerDetails = financeDetail.getCustomerDetails();
 			} else {
-				financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
+				FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+				FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
+				financeDetail.getFinScheduleData().setFinanceMain(finMain);
+				financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 			}
 
 			// If promotion Pick, Set user Entered Details from Existing Data

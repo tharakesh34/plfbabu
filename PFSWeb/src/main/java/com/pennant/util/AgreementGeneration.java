@@ -764,7 +764,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
 			agreement.setStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
-			agreement.setRepayFrqDay(main.getRepayFrqDay());
+			agreement.setRepayFrqDay(FrequencyUtil.getFrequencyDay(main.getRepayFrq()));
 			if (main.getFinStartDate() != null) {
 				agreement.setMM(String.valueOf(DateUtility.getMonth(main.getFinStartDate())));
 				agreement.setDD(String.valueOf(DateUtility.getDay(main.getFinStartDate())));

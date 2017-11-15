@@ -34,10 +34,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -203,8 +201,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	public void setSchDate(Date schDate) {
-		this.schDate = DateUtility.getDate(DateUtility.formatUtilDate(schDate,
-				PennantConstants.dateFormat));
+		this.schDate = schDate;
 	}
 
 	public int getSchSeq() {
@@ -466,8 +463,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	 *            the defSchdDate to set
 	 */
 	public void setDefSchdDate(Date defSchdDate) {
-		this.defSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(defSchdDate,
-				PennantConstants.dateFormat));
+		this.defSchdDate = defSchdDate;
 	}
 
 	/**

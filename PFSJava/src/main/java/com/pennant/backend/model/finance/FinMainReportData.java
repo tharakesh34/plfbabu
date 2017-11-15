@@ -934,7 +934,8 @@ public class FinMainReportData implements Serializable{
 			reportData.setGraceBaseRate(StringUtils.trimToEmpty(financeMain.getGraceBaseRate()));
 			reportData.setGraceSpecialRate(StringUtils.trimToEmpty(financeMain.getGraceSpecialRate()));
 			reportData.setGrcMargin(PennantApplicationUtil.formatRate(financeMain.getGrcMargin().doubleValue(), 2));
-			reportData.setGracePftFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGracePftFrqCode()).getFrequencyDescription());
+			reportData.setGracePftFrq(FrequencyUtil.getFrequencyDetail(
+					FrequencyUtil.getFrequencyCode(financeMain.getGrcPftFrq())).getFrequencyDescription());
 			reportData.setNextGrcPftDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftDate()));
 			reportData.setGrcPftRvwFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
 			reportData.setNextGrcPftRvwDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftRvwDate()));

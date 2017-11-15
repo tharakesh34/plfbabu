@@ -59,12 +59,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -573,7 +569,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finLimitRef;
 	private String lovDescLimitRefName;
-	private int numOfMonths = 0;
 	private String productCategory;
 
 	/* Mandate */
@@ -841,18 +836,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.grcCpzFrq = grcCpzFrq;
 	}
 
-	public String getGraceCpzFrqCode() {
-		return FrequencyUtil.getFrequencyCode(grcCpzFrq);
-	}
-
-	public String getGraceCpzFrqMth() {
-		return FrequencyUtil.getFrequencyMth(grcCpzFrq);
-	}
-
-	public String getGraceCpzFrqDay() {
-		return FrequencyUtil.getFrequencyDay(grcCpzFrq);
-	}
-
 	public Date getNextGrcCpzDate() {
 		return nextGrcCpzDate;
 	}
@@ -893,18 +876,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.repayFrq = repayFrq;
 	}
 
-	public String getRepayFrqCode() {
-		return FrequencyUtil.getFrequencyCode(repayFrq);
-	}
-
-	public String getRepayFrqMth() {
-		return FrequencyUtil.getFrequencyMth(repayFrq);
-	}
-
-	public String getRepayFrqDay() {
-		return FrequencyUtil.getFrequencyDay(repayFrq);
-	}
-
 	public Date getNextRepayDate() {
 		return nextRepayDate;
 	}
@@ -919,18 +890,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRepayPftFrq(String repayPftFrq) {
 		this.repayPftFrq = repayPftFrq;
-	}
-
-	public String getRepayPftFrqCode() {
-		return FrequencyUtil.getFrequencyCode(repayPftFrq);
-	}
-
-	public String getRepayPftFrqMth() {
-		return FrequencyUtil.getFrequencyMth(repayPftFrq);
-	}
-
-	public String getRepayPftFrqDay() {
-		return FrequencyUtil.getFrequencyDay(repayPftFrq);
 	}
 
 	public Date getNextRepayPftDate() {
@@ -957,18 +916,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.repayRvwFrq = repayRvwFrq;
 	}
 
-	public String getRepayRvwFrqCode() {
-		return FrequencyUtil.getFrequencyCode(repayRvwFrq);
-	}
-
-	public String getRepayRvwFrqMth() {
-		return FrequencyUtil.getFrequencyMth(repayRvwFrq);
-	}
-
-	public String getRepayRvwFrqDay() {
-		return FrequencyUtil.getFrequencyDay(repayRvwFrq);
-	}
-
 	public Date getNextRepayRvwDate() {
 		return nextRepayRvwDate;
 	}
@@ -993,18 +940,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.repayCpzFrq = repayCpzFrq;
 	}
 
-	public String getRepayCpzFrqCode() {
-		return FrequencyUtil.getFrequencyCode(repayCpzFrq);
-	}
-
-	public String getRepayCpzFrqMth() {
-		return FrequencyUtil.getFrequencyMth(repayCpzFrq);
-	}
-
-	public String getRepayCpzFrqDay() {
-		return FrequencyUtil.getFrequencyDay(repayCpzFrq);
-	}
-
 	public Date getNextRepayCpzDate() {
 		return nextRepayCpzDate;
 	}
@@ -1019,7 +954,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setMaturityDate(Date maturityDate) {
 		this.maturityDate = maturityDate;
-		getNumOfMonths();
 	}
 
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
@@ -1230,7 +1164,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinStartDate(Date finStartDate) {
 		this.finStartDate = finStartDate;
-		getNumOfMonths();
 	}
 
 	public BigDecimal getFinAmount() {
@@ -1393,36 +1326,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.grcPftFrq = grcPftFrq;
 	}
 
-	public String getGracePftFrqCode() {
-		return FrequencyUtil.getFrequencyCode(grcPftFrq);
-	}
-
-	public String getGracePftFrqMth() {
-		return FrequencyUtil.getFrequencyMth(grcPftFrq);
-	}
-
-	public String getGracePftFrqDay() {
-		return FrequencyUtil.getFrequencyDay(grcPftFrq);
-	}
-
 	public String getGrcPftRvwFrq() {
 		return grcPftRvwFrq;
 	}
 
 	public void setGrcPftRvwFrq(String grcPftRvwFrq) {
 		this.grcPftRvwFrq = grcPftRvwFrq;
-	}
-
-	public String getGracePftRvwFrqCode() {
-		return FrequencyUtil.getFrequencyCode(grcPftRvwFrq);
-	}
-
-	public String getGracePftRvwFrqMth() {
-		return FrequencyUtil.getFrequencyMth(grcPftRvwFrq);
-	}
-
-	public String getGracePftRvwFrqDay() {
-		return FrequencyUtil.getFrequencyDay(grcPftRvwFrq);
 	}
 
 	public String getGrcRateBasis() {
@@ -2871,15 +2780,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescMMAReference = lovDescMMAReference;
 	}
 
-	public int getNumOfMonths() {
-		if (finStartDate == null || maturityDate == null) {
-			numOfMonths = 0;
-		} else {
-			numOfMonths = DateUtility.getMonthsBetween(maturityDate, finStartDate);
-		}
-		return numOfMonths;
-	}
-
 	public String getIfscCode() {
 		return ifscCode;
 	}
@@ -3214,10 +3114,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.validateMain = validateMain;
 	}
 
-	public void setNumOfMonths(int numOfMonths) {
-		this.numOfMonths = numOfMonths;
-	}
-
 	public void setErrorDetails(List<ErrorDetails> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
@@ -3300,24 +3196,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setAvailedReAgeH(int availedReAgeH) {
 		this.availedReAgeH = availedReAgeH;
-	}
-	
-	public String getFmtFeeAmount() {
-		return PennantApplicationUtil.amountFormate(this.getFeeChargeAmt(), CurrencyUtil.getFormat(this.getFinCcy()));
-	}
-
-	public String getFmtInsuranceAmount() {
-		return PennantApplicationUtil.amountFormate(this.getInsuranceAmt(), CurrencyUtil.getFormat(this.getFinCcy()));
-	}
-
-	public String getFmtEffectiveRate() {
-		String effectiveRate = "";
-
-		if (this.getEffectiveRateOfReturn() != null) {
-			effectiveRate = PennantApplicationUtil.formatRate(this.getEffectiveRateOfReturn().doubleValue(), 2);
-		}
-
-		return effectiveRate;
 	}
 
 	public String getNextUsrName() {
@@ -3538,7 +3416,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setReceiptModeStatus(String receiptModeStatus) {
 		this.receiptModeStatus = receiptModeStatus;
 	}
-
+	
 	public boolean isRcu() {
 		return rcu;
 	}

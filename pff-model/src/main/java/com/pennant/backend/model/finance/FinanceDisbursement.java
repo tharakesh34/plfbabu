@@ -53,9 +53,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -154,7 +152,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		return disbDate;
 	}
 	public void setDisbDate(Date disbDate) {
-		this.disbDate = DateUtility.getDate(DateUtility.formatUtilDate(disbDate, PennantConstants.dateFormat));
+		this.disbDate = disbDate;
 	}
 	
 	public String getDisbAccountId() {
