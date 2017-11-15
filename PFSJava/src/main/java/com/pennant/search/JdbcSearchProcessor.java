@@ -428,7 +428,7 @@ public class JdbcSearchProcessor implements Serializable {
 		if (offset <= 0) {
 			result.append(" fetch first ").append(pageSize).append(" rows only");
 		} else {
-			result.append(Clause.OFFSET).append(offset).append(" rows fetch next ").append(pageSize)
+			result.append(Clause.OFFSET.key).append(offset).append(" rows fetch next ").append(pageSize)
 					.append(" rows only");
 		}
 
@@ -549,9 +549,9 @@ public class JdbcSearchProcessor implements Serializable {
 		StringBuilder result = new StringBuilder(sql);
 
 		if (offset <= 0) {
-			result.append(Clause.LIMIT).append(pageSize);
+			result.append(Clause.LIMIT.key).append(pageSize);
 		} else {
-			result.append(Clause.LIMIT).append(offset).append(",").append(pageSize);
+			result.append(Clause.LIMIT.key).append(offset).append(",").append(pageSize);
 		}
 
 		return result.toString();
@@ -573,9 +573,9 @@ public class JdbcSearchProcessor implements Serializable {
 		StringBuilder result = new StringBuilder(sql);
 
 		if (offset <= 0) {
-			result.append(Clause.LIMIT).append(pageSize);
+			result.append(Clause.LIMIT.key).append(pageSize);
 		} else {
-			result.append(Clause.LIMIT).append(pageSize).append(Clause.OFFSET).append(offset);
+			result.append(Clause.LIMIT.key).append(pageSize).append(Clause.OFFSET.key).append(offset);
 		}
 
 		return result.toString();
