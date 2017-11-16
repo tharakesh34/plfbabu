@@ -47,6 +47,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
@@ -61,13 +62,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.service.pdfdocumentdetail.PdfDocumentDetailsService;
-import com.pennant.backend.service.pdfdocumentdetail.impl.PdfDocumentDetailsServiceImpl;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.document.DocumentParser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -92,6 +92,11 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 	private byte[] fileByte;
 	private long fileTypeRef = 0;
+	
+	@Autowired
+	private DocumentParser documentParser;
+	
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -209,8 +214,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		try {
 			if (fileByte != null) {
 				// entry point
-				PdfDocumentDetailsService  documentDetailsService = new PdfDocumentDetailsServiceImpl(); //creating 
-				Map<String, Object> outPut = documentDetailsService.getValueByTypeNYear(fileByte, fileName.getText(),
+				Map<String, Object> outPut = documentParser.getValueByTypeNYear(fileByte, fileName.getText(),
 						pdfPassword.getText(), fileTypeRef, year.getText().trim()); 
 				renderResult(outPut);
 				MessageUtil.showMessage("File is processed successfully.");

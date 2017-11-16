@@ -10470,5 +10470,9 @@
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 	
+	<!-- for pdf parser -->
+	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
+		<constructor-arg ref="pfsDatasource" />
+	</bean>
 	
 </beans>
