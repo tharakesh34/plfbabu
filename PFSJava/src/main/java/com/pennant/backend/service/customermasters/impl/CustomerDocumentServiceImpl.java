@@ -450,7 +450,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 				if(customerDocument.getCustDocTitle() !=null){
 					Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
-					if(matcher.find() == false ){
+					if(!matcher.matches()){
 						String[] valueParm = new String[0];
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
