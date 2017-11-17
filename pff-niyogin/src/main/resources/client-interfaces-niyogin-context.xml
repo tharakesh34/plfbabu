@@ -18,8 +18,8 @@
 	</bean>
 	
 	<!-- Dedup Fields -->
-	<bean id="externalDedup" class="com.pennanttech.pff.external.service.ExperianDedupService"  parent="niyoginService"/>
-	<bean id="blacklistCheck" class="com.pennanttech.pff.external.service.BlacklistCheckService"  parent="niyoginService"/>
+	<bean id="externalDedup" class="com.pennanttech.niyogin.dedup.service.ExperianDedupService"  parent="niyoginService"/>
+	<bean id="blacklistCheck" class="com.pennanttech.niyogin.hunter.service.BlacklistCheckService"  parent="niyoginService"/>
 	<!-- <bean id="bureauscore" class="com.pennanttech.pff.external.service.CustomerDedupService"  parent="bajajService"/> -->
 	
 </beans>
