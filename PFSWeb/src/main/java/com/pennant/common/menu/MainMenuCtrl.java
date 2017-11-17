@@ -79,6 +79,7 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
+import org.zkoss.zul.Treecell;
 import org.zkoss.zul.Treechildren;
 import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Window;
@@ -128,6 +129,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	private transient UserWorkspace userWorkspace;
 	private String homePageDisplayed = "NO";
 	private transient UserService userService;
+
+	final Treechildren mainMenu = new Treechildren();
 
 	public MainMenuCtrl() {
 		super();
@@ -183,7 +186,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				expandMenus(event);
+				expandMenuItems();
 			}
 		});
 		image = new Image("/images/icons/close4.png");
@@ -193,13 +196,13 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				collapseMenus(event);
+				collapseMenuItems();
 			}
 		});
 
 		menuName = new Textbox();
 		menuName.setId("menuName1");
-		menuName.setTooltiptext("Please Enter Menu Code");
+		menuName.setTooltiptext("Search Menu Items");
 		menuName.setTabindex(1);
 		menuName.setWidth("100px");
 		hbox.appendChild(menuName);
@@ -209,15 +212,15 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		btnGo.setLabel("Go");
 		btnGo.setTooltiptext("navigate to menu");
 		btnGo.setTabindex(2);
-
-		hbox.appendChild(btnGo);
-
 		btnGo.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				openMenu(event);
+				menuName.setText(StringUtils.trimToEmpty(menuName.getValue()));
+				filterMenuItems(mainMenu);
 			}
 		});
+
+		hbox.appendChild(btnGo);
 
 		Separator separator = createSeparator(false);
 		separator.setWidth("98%");
@@ -231,12 +234,10 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		tree.setSizedByContent(true);
 		tree.setParent(gb);
 		tree.setStyle("border: none");
-
-		final Treechildren treechildren = new Treechildren();
-		tree.appendChild(treechildren);
+		tree.appendChild(mainMenu);
 
 		// Generate the tree menu.
-		TreeMenuBuilder menuBuilder = new TreeMenuBuilder(treechildren, MainMenu.getMenuItems(),
+		TreeMenuBuilder menuBuilder = new TreeMenuBuilder(mainMenu, MainMenu.getMenuItems(),
 				userWorkspace.getGrantedAuthoritySet());
 		menuBuilder.render();
 		userWorkspace.setHasMenuRights(menuBuilder.getMenuRights());
@@ -378,38 +379,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	public void setMainMenuWindow(Window mainMenuWindow) {
 		this.mainMenuWindow = mainMenuWindow;
-	}
-
-	public void expandMenus(Event event) throws Exception {
-		logger.debug("Entering");
-
-		doCollapseExpandAll(mainMenuWindow, true);
-
-		logger.debug("Leaving");
-	}
-
-	public void collapseMenus(Event event) throws Exception {
-		logger.debug("Entering");
-
-		doCollapseExpandAll(mainMenuWindow, false);
-
-		logger.debug("Leaving");
-	}
-
-	private void doCollapseExpandAll(Component component, boolean aufklappen) {
-
-		if (component instanceof Treeitem) {
-			final Treeitem treeitem = (Treeitem) component;
-			treeitem.setOpen(aufklappen);
-		}
-		final Collection<Component> com = component.getChildren();
-		if (com != null) {
-			for (final Iterator<?> iterator = com.iterator(); iterator.hasNext();) {
-				doCollapseExpandAll((Component) iterator.next(), aufklappen);
-
-			}
-		}
-
 	}
 
 	public void openMenu(Event event) throws InterruptedException {
@@ -601,5 +570,55 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		tab.setSelected(true);
 
 		logger.trace(Literal.LEAVING);
+	}
+
+	private void doCollapseExpandAll(Component component, boolean unfold) {
+		if (component instanceof Treeitem) {
+			final Treeitem treeitem = (Treeitem) component;
+			treeitem.setOpen(unfold);
+		}
+		final Collection<Component> com = component.getChildren();
+		if (com != null) {
+			for (final Iterator<?> iterator = com.iterator(); iterator.hasNext();) {
+				doCollapseExpandAll((Component) iterator.next(), unfold);
+
+			}
+		}
+	}
+
+	public void expandMenuItems() {
+		doCollapseExpandAll(mainMenuWindow, true);
+	}
+
+	public void collapseMenuItems() {
+		doCollapseExpandAll(mainMenuWindow, false);
+	}
+
+	public void filterMenuItems(Treechildren menu) {
+		// Get the menu items.
+		List<Component> menuItems = menu.getChildren();
+
+		for (Component menuItem : menuItems) {
+			// Get the main tree cell component that has the menu item.
+			Treecell component = (Treecell) menuItem.getFirstChild().getFirstChild();
+
+			if (menuItem.getChildren().size() == 1) {
+				// The menu item doesn't have any sub menu items.
+				menuItem.setVisible(StringUtils.containsIgnoreCase(component.getLabel(), menuName.getValue()));
+			} else {
+				Treechildren subMenu = (Treechildren) menuItem.getChildren().get(1);
+				filterMenuItems(subMenu);
+
+				// Hide if no sub menu items are visible.
+				menuItem.setVisible(subMenu.getVisibleItemCount() > 0);
+			}
+		}
+
+		// Expand / collapse the menu items.
+		if (StringUtils.isEmpty(menuName.getValue())) {
+			collapseMenuItems();
+		} else {
+			expandMenuItems();
+		}
 	}
 }
