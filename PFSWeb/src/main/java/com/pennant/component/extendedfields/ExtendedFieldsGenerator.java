@@ -1718,7 +1718,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		Tabpanel tabpanel = new Tabpanel();
 		tabpanel.setId(TABPANEL_ID + container.getFieldName());
-		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setStyle("overflow:auto;border:none;");
 		tabpanel.setHeight("100%");
 		tabpanels.appendChild(tabpanel);
 		tabpanels.setParent(tabbox);
