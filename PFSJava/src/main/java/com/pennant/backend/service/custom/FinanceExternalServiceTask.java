@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -28,19 +29,22 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.BlacklistCheck;
+import com.pennanttech.pff.external.BureauScore;
+import com.pennanttech.pff.external.ExternalDedup;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
 	private static final Logger				logger	= Logger.getLogger(FinanceExternalServiceTask.class);
 
 	// Open the below commented code once pff-interface configuration setup completed.
-	/*	@Autowired(required = false)
+	@Autowired(required = false)
 	private ExternalDedup externalDedup;
 
 	@Autowired(required = false)
 	private BlacklistCheck blacklistCheck;
 
 	@Autowired(required = false)
-	private BureauScore bureauscore;*/
+	private BureauScore bureauscore;
 
 	private CollateralMarkProcess							collateralMarkProcess;
 	private DDAControllerService							ddaControllerService;
@@ -109,7 +113,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_externalDedup:
-			// call external dedup interface
+			auditHeader = externalDedup.checkDedup(auditHeader);
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_hunter:
