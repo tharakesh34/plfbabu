@@ -1,4 +1,4 @@
-package com.pennanttech.pff.external.service;
+package com.pennanttech.niyogin.dedup.service;
 
 import java.util.List;
 
@@ -13,12 +13,13 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.clients.JSONClient;
-import com.pennanttech.niyogin.model.dedup.Address;
-import com.pennanttech.niyogin.model.dedup.ExperianDedup;
-import com.pennanttech.niyogin.model.dedup.Phone;
+import com.pennanttech.niyogin.dedup.model.Address;
+import com.pennanttech.niyogin.dedup.model.ExperianDedup;
+import com.pennanttech.niyogin.dedup.model.Phone;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ExternalDedup;
+import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianDedupService extends NiyoginService implements ExternalDedup {
 	private static final Logger logger = Logger.getLogger(ExperianDedupService.class);
@@ -29,7 +30,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 
-		// TODO for loop here for Applicant and CoApplicant
+		// FIXME: for loop here for Applicant and CoApplicant
 		String applicantType = null;
 
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
@@ -42,6 +43,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			logger.debug("ServiceURL : " + serviceURL);
 			experianDedupResponse = (ExperianDedup) client.postProcess(serviceURL, "DedupService", experianDedupRequest,
 					ExperianDedup.class);
+			
 			logger.info("Response : " + experianDedupResponse.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);

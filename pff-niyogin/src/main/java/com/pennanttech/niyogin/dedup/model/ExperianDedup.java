@@ -1,4 +1,4 @@
-package com.pennanttech.niyogin.model.dedup;
+package com.pennanttech.niyogin.dedup.model;
 
 import java.io.Serializable;
 import java.util.Date;

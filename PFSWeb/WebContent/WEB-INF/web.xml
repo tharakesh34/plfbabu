@@ -19,7 +19,8 @@
  			<!-- classpath:applicationContext-mq-interface.xml,  -->
  			<!-- classpath:applicationContext-equation-interface.xml, -->
  			classpath:applicationContext-core-interface.xml,
- 			classpath:client-interfaces-context.xml
+ 			classpath:client-interfaces-context.xml,
+ 			classpath:client-interfaces-niyogin-context.xml
  			<!-- classpath:applicationContext-jobs.xml, -->
 		</param-value>
 	</context-param>
