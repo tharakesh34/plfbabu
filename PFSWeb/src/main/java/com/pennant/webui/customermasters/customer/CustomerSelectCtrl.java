@@ -395,7 +395,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustDftBranch.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustShrtName", "%" + this.custName.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(new Filter("CustShrtName", "%" + this.custName.getValue() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
