@@ -267,7 +267,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerEmpDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustEmpDesg = :CustEmpDesg, CustEmpDept = :CustEmpDept,");
+		updateSql.append(" Set CustEmpDesg = :CustEmpDesg, CustEmpDept = :CustEmpDept, CustEmpName = :CustEmpName,");
 		updateSql.append(" CustEmpType = :CustEmpType,CustEmpFrom = :CustEmpFrom, CurrentEmployer =:CurrentEmployer,");
 		updateSql.append(" CustEmpTo = :CustEmpTo , Version = :Version ,");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");

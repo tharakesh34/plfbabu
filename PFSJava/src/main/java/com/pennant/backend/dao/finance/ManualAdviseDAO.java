@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
@@ -75,5 +76,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	Date getPresentmentBounceDueDate(long receiptId);
 	List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type);
 	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
+	FinanceMain getFinanceDetails(String finReference);
+	
 	
 }

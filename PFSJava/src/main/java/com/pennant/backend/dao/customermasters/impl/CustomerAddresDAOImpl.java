@@ -58,7 +58,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -67,7 +67,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
  * DAO methods implementation for the <b>CustomerAddres model</b> class.<br>
  * 
  */
-public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implements CustomerAddresDAO {
+public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> implements CustomerAddresDAO {
 	private static Logger logger = Logger.getLogger(CustomerAddresDAOImpl.class);
 
 	// Spring Named JDBC Template
@@ -94,7 +94,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		customerAddres.setCustAddrType(addType);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
+		selectSql.append(" SELECT CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
 		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,");
 		if(type.contains("View")){
@@ -132,7 +132,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		customerAddres.setId(custId);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
+		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority," );
 		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,");
 		if(type.contains("View")){
@@ -238,16 +238,20 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 	@Override
 	public long save(CustomerAddres customerAddres, String type) {
 		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder();
+		
+       StringBuilder insertSql = new StringBuilder();
+		if (customerAddres.getCustAddressId() == Long.MIN_VALUE) {
+			customerAddres.setCustAddressId(getNextidviewDAO().getNextId("SeqCustomerAddresses"));
+			logger.debug("get NextID:" + customerAddres.getCustAddressId());
+		}
 		insertSql.append("Insert Into CustomerAddresses");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
+		insertSql.append(" (CustAddressId,CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince, CustAddrPriority," );
 		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
+		insertSql.append(" Values(:CustAddressId,:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
 		insertSql.append(" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince, :CustAddrPriority,");
 		insertSql.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");

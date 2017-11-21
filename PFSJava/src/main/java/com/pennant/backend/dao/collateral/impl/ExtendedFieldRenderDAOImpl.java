@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 
 public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	private static Logger	logger	= Logger.getLogger(ExtendedFieldRenderDAOImpl.class);

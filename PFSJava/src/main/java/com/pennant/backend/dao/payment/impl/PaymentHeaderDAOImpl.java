@@ -313,8 +313,9 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" select adviseID, finReference, balanceAmt, adviseType, adviseAmount, reservedAmt ");
-		sql.append("  from manualAdvise Where FinReference = :FinReference AND AdviseType = :AdviseType");
+		sql.append(" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
+		sql.append("ft.feetypecode,ft.FEETYPEDESC from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
+		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();

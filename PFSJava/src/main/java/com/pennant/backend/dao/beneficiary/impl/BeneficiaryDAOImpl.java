@@ -96,7 +96,7 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		StringBuilder selectSql = new StringBuilder(
 				"Select BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
 		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BranchCode,BranchDesc,BankName,City,BankCode,IFSC");
 		}
@@ -129,18 +129,13 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 	 * @return Beneficiary
 	 */
 	@Override
-	public int getBeneficiaryByAccNo(final String accNumber, long bankBranchId, long id, String type) {
+	public int getBeneficiaryByAccNo(Beneficiary beneficiary, String type) {
 		logger.debug("Entering");
-		Beneficiary beneficiary = new Beneficiary();
-		beneficiary.setAccNumber(accNumber);
-		beneficiary.setBankBranchID(bankBranchId);
-		beneficiary.setBeneficiaryId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From Beneficiary");
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Beneficiary");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  AccNumber =:AccNumber AND BankBranchID =:BankBranchID AND");
-		selectSql.append(" BeneficiaryId != :BeneficiaryId");
+		selectSql.append(" Where  AccNumber = :AccNumber AND CustID = :CustID AND BankBranchID = :BankBranchID" );
+		selectSql.append(" And BeneficiaryId != :BeneficiaryId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
@@ -241,6 +236,7 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 	@Override
 	public long save(Beneficiary beneficiary, String type) {
 		logger.debug("Entering");
+		
 		if (beneficiary.getId() == Long.MIN_VALUE) {
 			beneficiary.setId(getNextidviewDAO().getNextId("SeqBeneficiary"));
 			logger.debug("get NextID:" + beneficiary.getId());
@@ -251,11 +247,11 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		insertSql
 				.append(" (BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
 		insertSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary)");
 		insertSql
 				.append(" Values(:BeneficiaryId, :CustID, :BankBranchID, :AccNumber, :AccHolderName, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Email");
 		insertSql
-				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:BeneficiaryActive,:DefaultBeneficiary)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -286,7 +282,8 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		updateSql
 				.append(" Set CustID = :CustID, BankBranchID = :BankBranchID, AccNumber = :AccNumber, AccHolderName = :AccHolderName, PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneNumber = :PhoneNumber, Email = :Email");
 		updateSql
-				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,BeneficiaryActive=:BeneficiaryActive,DefaultBeneficiary=:DefaultBeneficiary");
 		updateSql.append(" Where BeneficiaryId =:BeneficiaryId");
 
 		if (!type.endsWith("_Temp")) {
@@ -321,7 +318,7 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		StringBuilder selectSql = new StringBuilder(
 				"Select BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
 		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BranchCode,BranchDesc,BankName,City,BankCode,IFSC");
 		}
@@ -360,6 +357,28 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
 
 		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public int getDefaultsBeneficiary(long custID, long id, String type) {
+		logger.debug("Entering");
+
+		Beneficiary beneficiary = new Beneficiary();
+		beneficiary.setCustID(custID);
+		beneficiary.setBeneficiaryId(id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Beneficiary");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID = :CustID AND BeneficiaryActive = 1 AND DefaultBeneficiary = 1" );
+		selectSql.append(" AND BeneficiaryId != :BeneficiaryId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
+
+		logger.debug("Leaving");
+
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 

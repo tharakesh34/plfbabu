@@ -447,14 +447,15 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 	}
 
 	@Override
-	public void updateActive(long mandateID, boolean active) {
+	public void updateActive(long mandateID,String status, boolean active) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("MandateID", mandateID);
 		source.addValue("Active", active);
+		source.addValue("Status", status);
 
 		StringBuilder updateSql = new StringBuilder("Update Mandates");
-		updateSql.append(" Set  Active = :Active");
+		updateSql.append(" Set  Active = :Active, Status= :Status");
 		updateSql.append(" Where MandateID = :MandateID");
 
 		logger.debug("updateSql: " + updateSql.toString());

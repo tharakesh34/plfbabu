@@ -301,4 +301,31 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		return false;
 	}
 	
+	@Override
+	public int getFeeAccountingCount(long feeAccountId, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From VasStructure");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FeeAccounting = :FeeAccounting");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FeeAccounting", feeAccountId);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+	
 }

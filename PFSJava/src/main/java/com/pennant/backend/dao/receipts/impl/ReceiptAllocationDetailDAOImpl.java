@@ -55,6 +55,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennanttech.pff.core.TableType;
@@ -63,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class ReceiptAllocationDetailDAOImpl implements ReceiptAllocationDetailDAO {
+public class ReceiptAllocationDetailDAOImpl extends BasisNextidDaoImpl<ReceiptAllocationDetail> implements ReceiptAllocationDetailDAO {
 	private static Logger	           logger	= Logger.getLogger(ReceiptAllocationDetailDAOImpl.class);
 	
 	// Spring Named JDBC Template
@@ -88,7 +89,7 @@ public class ReceiptAllocationDetailDAOImpl implements ReceiptAllocationDetailDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount ");
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append( " ,TypeDesc ");
 		}
@@ -123,10 +124,19 @@ public class ReceiptAllocationDetailDAOImpl implements ReceiptAllocationDetailDA
 	public void saveAllocations(List<ReceiptAllocationDetail> allocations, TableType tableType) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ReceiptAllocationDetail");
+		StringBuilder insertSql = new StringBuilder();
+
+		for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
+			if (receiptAllocationDetail.getReceiptAllocationid() == Long.MIN_VALUE) {
+				receiptAllocationDetail
+						.setReceiptAllocationid(getNextidviewDAO().getNextId("SeqReceiptAllocationDetail"));
+				logger.debug("get NextID:" + receiptAllocationDetail.getReceiptAllocationid());
+			}
+		}
+        insertSql.append("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount)");
-		insertSql.append(" Values(:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount)");
+		insertSql.append(" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount)");
+		insertSql.append(" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

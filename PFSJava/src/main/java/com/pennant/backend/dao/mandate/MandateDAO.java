@@ -66,7 +66,7 @@ public interface MandateDAO {
 
 	void updateStatus(long mandateID, String mandateStatusAwaitcon, String mandateRef, String approvalId, String type);
 
-	void updateActive(long mandateID, boolean active);
+	void updateActive(long mandateID, String status, boolean active);
 
 	List<FinanceEnquiry> getMandateFinanceDetailById(long id);
 

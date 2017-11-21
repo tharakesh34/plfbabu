@@ -209,7 +209,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			selectSql.append(" lovDescCustGroupStsName, lovDescCustDftBranchName, lovDescCustCtgCodeName,lovDescCustCtgType, lovDescCustSalutationCodeName ,");
 			selectSql.append(" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
 			selectSql.append(" lovDescCustRejectedRsnName, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName" );
-			selectSql.append(" ,lovDescTargetName,");
+			selectSql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
 		}
 			
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
@@ -1896,5 +1896,33 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return recordCount;
 
 	}
-	
+
+	/**
+	 * Method for validating customers in Customer Group
+	 * 
+	 */
+	@Override
+	public boolean customerExistingCustGrp(long custGrpID, String type) {
+		logger.debug("Entering");
+
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("CustGroupID", custGrpID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustGroupID = :CustGroupID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
+					Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
 }	

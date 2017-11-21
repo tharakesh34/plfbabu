@@ -164,10 +164,10 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	 * @return SecurityUsers
 	 */
 	@Override
-	public SecurityUser getSecurityUserByLogin(final long usrId, String type) {
+	public SecurityUser getSecurityUserByLogin(final String usrLogin, String type) {
 		logger.debug("Entering ");
 		SecurityUser securityUser = new SecurityUser();
-		securityUser.setUsrID(usrId);
+		securityUser.setUsrLogin(usrLogin);
 	
 		StringBuilder selectSql= new StringBuilder("Select UsrID, UsrLogin, UsrPwd, " );
 		selectSql.append(" UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail, " );
@@ -184,7 +184,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		}
 		selectSql.append("  From SecUsers");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where UsrID =:UsrID");
+		selectSql.append(" Where UsrLogin =:UsrLogin");
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
