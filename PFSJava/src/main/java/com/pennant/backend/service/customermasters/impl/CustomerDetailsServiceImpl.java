@@ -91,7 +91,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
@@ -1756,27 +1755,45 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
 				PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
 				if (pincode != null) {
-					adress.setCustAddrProvince(pincode.getpCProvince());
-					adress.setCustAddrCity(pincode.getCity());
-					adress.setCustAddrCountry(pincode.getpCCountry());
-				}
-				Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
-						adress.getCustAddrProvince(), "");
-				if (province == null) {
-					String[] valueParm = new String[2];
-					valueParm[0] = adress.getCustAddrProvince();
-					valueParm[1] = adress.getCustAddrCountry();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-				City city = getCityDAO().getCityById(adress.getCustAddrCountry(), adress.getCustAddrProvince(),
-						adress.getCustAddrCity(), "");
-				if (city == null) {
-					String[] valueParm = new String[2];
-					valueParm[0] = adress.getCustAddrCity();
-					valueParm[1] = adress.getCustAddrProvince();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
+					if (StringUtils.isNotBlank(adress.getCustAddrCountry())
+							&& !adress.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+				
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrCountry();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} else {
+						adress.setCustAddrCountry(pincode.getpCCountry());
+					}
+
+					Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
+							pincode.getpCProvince(), "");
+					if (province != null && StringUtils.isNotBlank(adress.getCustAddrProvince())
+							&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvinceName())) {
+
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrProvince();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} else {
+						adress.setCustAddrProvince(pincode.getpCProvince());
+					}
+
+					if (StringUtils.isNotBlank(adress.getCustAddrCity())
+							&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getAreaName())) {
+						
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrCity();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+
+					} else {
+						adress.setCustAddrCity(pincode.getCity());
+					}
+
 				}
 
 				if (!(adress.getCustAddrPriority() >= 1 && adress.getCustAddrPriority() <= 5)) {
@@ -2759,13 +2776,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						getCustomerIncomeValidation().incomeListValidation(customerDetails, method, usrLanguage));
 			}
 
-			// Address Validation
-			if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Address");
-				details = getAddressValidation().addressListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
-			}
-
 			// PRelation Validation
 			if (customerDetails.getCustomerEMailList() != null && customerDetails.getCustomerEMailList().size() > 0) {
 				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EMail");
@@ -2781,6 +2791,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetails.addAll(details);
 			}
 
+		}
+
+		// Address Validation
+		if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Address");
+			details = getAddressValidation().addressListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
 		}
 		// Director Validation
 		if (customerDetails.getCustomerDirectorList() != null && customerDetails.getCustomerDirectorList().size() > 0) {
