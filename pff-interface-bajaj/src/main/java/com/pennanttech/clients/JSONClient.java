@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -27,6 +28,7 @@ public class JSONClient {
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 		mapper.setSerializationInclusion(Inclusion.NON_NULL);
 		Object objResponse = mapper.readValue(json, responseClass);
