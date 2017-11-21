@@ -581,10 +581,10 @@ public class PostingsPreparationUtil implements Serializable {
 		for (JVPostingEntry jvPostingEntry : jvPostingEntryList) {
 			returnDataSet = new ReturnDataSet();
 			//Set Object Data of ReturnDataSet(s)
-			returnDataSet.setFinReference(jVPosting.getBatch());
+			returnDataSet.setFinReference(String.valueOf(jVPosting.getBatchReference()));
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
-			returnDataSet.setAccountType(jvPostingEntry.getAcType());
+			returnDataSet.setAccountType(StringUtils.trim(jvPostingEntry.getAcType()));
 			returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount());
 			returnDataSet.setTranOrderId(String.valueOf(jvPostingEntry.getAcEntryRef()));
 			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
@@ -597,7 +597,7 @@ public class PostingsPreparationUtil implements Serializable {
 					linkedTranId = getPostingsDAO().getLinkedTransId();
 				}
 			}
-
+			
 			returnDataSet.setLinkedTranId(linkedTranId);
 			returnDataSet.setFinEvent("JVPOST");
 			returnDataSet.setTranDesc(jvPostingEntry.getAccountName());
@@ -612,6 +612,12 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setFlagCreateIfNF(true);
 			returnDataSet.setFlagCreateNew(false);
 			returnDataSet.setPostBranch(jVPosting.getBranch());
+			
+			String ref = returnDataSet.getFinReference() + "/" + returnDataSet.getFinEvent()+ "/";
+			returnDataSet.setPostingId(ref);
+
+			returnDataSet.setPostref(jVPosting.getBranch() + "-" + StringUtils.trim(jvPostingEntry.getAcType()) + "-"
+					+ jvPostingEntry.getTxnCCy());
 
 			if (jvPostingEntry.isExternalAccount()) {
 				returnDataSet.setInternalAc(false);
@@ -671,13 +677,13 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public AEEvent getAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public AEEvent getAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
-		if (aeEvent.getLinkedTranId() <= 0) {
+		/*if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
-		
+		*/
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 		
 		logger.debug("Leaving");

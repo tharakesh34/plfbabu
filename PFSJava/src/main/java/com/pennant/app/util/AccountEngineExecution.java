@@ -512,7 +512,8 @@ public class AccountEngineExecution implements Serializable {
 			String feeCodes = transactionEntry.getFeeCode();
 			if (feeCodes != null) {
 				for (String feeCode : feeCodes.split(",")) {
-					if (!dataMap.containsKey(feeCode + "_C")) {
+					if (!(dataMap.containsKey(feeCode + "_C") || 
+							dataMap.containsKey(feeCode + "_P"))) {
 						dataMap.put(feeCode + "_C", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_W", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_P", BigDecimal.ZERO);

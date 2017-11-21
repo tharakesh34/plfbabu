@@ -470,7 +470,7 @@ public class AccrualService extends ServiceHelper {
 
 		// principal
 		pftDetail.setTdSchdPri(pftDetail.getTdSchdPri().add(curSchd.getPrincipalSchd()));
-		pftDetail.setTdSchdPriPaid(pftDetail.getTdSchdPftPaid().add(curSchd.getSchdPriPaid()));
+		pftDetail.setTdSchdPriPaid(pftDetail.getTdSchdPriPaid().add(curSchd.getSchdPriPaid()));
 
 		// advised Profit
 		pftDetail.setTdSchdAdvPft(pftDetail.getTdSchdAdvPft().add(curSchd.getAdvProfit()));

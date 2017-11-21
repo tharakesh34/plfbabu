@@ -554,10 +554,12 @@ public class ScheduleCalculator {
 			finScheduleData = maintainPOSStep(finScheduleData);
 			finScheduleData.getFinanceMain().setScheduleMaintained(true);
 
+		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+			finScheduleData = principalHoliday(finScheduleData, earlyPayAmt);
 		}
 
-		// Insurance recalculation due to changes in Outstandings
-		finScheduleData = insuranceCalculation(finScheduleData);
+		// Recalculation of Details after Schedule calculation
+		finScheduleData = afterChangeRepay(finScheduleData);
 
 		setFinScheduleData(finScheduleData);
 		logger.debug("Leaving");
@@ -2517,7 +2519,9 @@ public class ScheduleCalculator {
 			}
 			// Next instruction amount and schedule method
 			sortRepayInstructions(finScheduleData.getRepayInstructions());
-			instructIndex = fetchRpyInstruction(finScheduleData, nextInstructDate);
+			if(nextInstructDate != null){
+				instructIndex = fetchRpyInstruction(finScheduleData, nextInstructDate);
+			}
 
 			if (instructIndex >= 0) {
 				nextInstructAmount = finScheduleData.getRepayInstructions().get(instructIndex).getRepayAmount();
@@ -3255,8 +3259,11 @@ public class ScheduleCalculator {
 				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 		calint = calint.add(prvSchd.getProfitFraction());
-		BigDecimal calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
-				finMain.getRoundingTarget());
+		BigDecimal calIntRounded = BigDecimal.ZERO;
+		if(calint.compareTo(BigDecimal.ZERO) > 0){
+			calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
+		}
 
 		curSchd.setProfitFraction(calint.subtract(calIntRounded));
 		calint = calIntRounded;
@@ -3385,8 +3392,11 @@ public class ScheduleCalculator {
 						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
-				BigDecimal calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
+				BigDecimal calIntRounded = BigDecimal.ZERO;
+				if(calInt.compareTo(BigDecimal.ZERO) > 0){
+					calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
+				}
 				calIntFraction = calInt.subtract(calIntRounded);
 				calInt = calIntRounded;
 				curSchd.setRepayComplete(false);
@@ -3427,24 +3437,24 @@ public class ScheduleCalculator {
 					finMain.setNewMaturityIndex(i);
 
 					if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
-						if (curSchd.getRepayAmount().compareTo(prvClosingBalance) >= 0) {
+						if (curSchd.getRepayAmount().compareTo(prvClosingBalance.add(curSchd.getDisbAmount())) >= 0) {
 							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 									.add(curSchd.getProfitCalc()));
-							curSchd.setRepayAmount(prvClosingBalance);
+							curSchd.setRepayAmount(prvClosingBalance.add(curSchd.getDisbAmount()));
 							curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 							isRepayComplete = true;
 						}
 					} else {
 						if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
-							if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance) > 0) {
-								curSchd.setPrincipalSchd(prvClosingBalance);
+							if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance.add(curSchd.getDisbAmount())) > 0) {
+								curSchd.setPrincipalSchd(prvClosingBalance.add(curSchd.getDisbAmount()));
 								curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 										.add(curSchd.getProfitCalc()));
 								curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 								isRepayComplete = true;
 							}
-						} else if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance) >= 0) {
-							curSchd.setPrincipalSchd(prvClosingBalance);
+						} else if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance.add(curSchd.getDisbAmount())) >= 0) {
+							curSchd.setPrincipalSchd(prvClosingBalance.add(curSchd.getDisbAmount()));
 							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 									.add(curSchd.getProfitCalc()));
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -3582,10 +3592,11 @@ public class ScheduleCalculator {
 		 * return curSchd; }
 		 */
 
-		if (curSchd.getPresentmentId() > 0) {
+		// Schedule should be recalculated even Schedule Term is in Presentment Process
+		/*if (curSchd.getPresentmentId() > 0) {
 			curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 			return curSchd;
-		}
+		}*/
 
 		// NO PAYMENT: Applicable for Grace Period And REPAYMENT period with PFT
 		// or PRI+PFT)
@@ -6228,6 +6239,7 @@ public class ScheduleCalculator {
 		if (finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFT)
 				&& !finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_NOPAY)) {
 			finScheduleData = repaySchdCal(finScheduleData, false);
+			finScheduleData = setFinanceTotals(finScheduleData);
 			logger.debug("Leaving");
 			return finScheduleData;
 		}
@@ -6292,10 +6304,134 @@ public class ScheduleCalculator {
 
 		}
 
+		finScheduleData = setFinanceTotals(finScheduleData);
 		logger.debug("Leaving");
 		return finScheduleData;
 
 	}
+	
+	/**
+	 * Method for applying Principal Holiday for the Payments
+	 */
+	private FinScheduleData principalHoliday(FinScheduleData finScheduleData, BigDecimal earlyPayAmt) {
+		logger.debug("Entering");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
+
+		int risize = repayInstructions.size();
+
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+
+		String schdMethod = finMain.getRecalSchdMethod();
+		if (StringUtils.equals(schdMethod, PennantConstants.List_Select) || StringUtils.isBlank(schdMethod)) {
+			for (int i = 0; i < risize; i++) {
+				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) <= 0) {
+					schdMethod = repayInstructions.get(i).getRepaySchdMethod();
+				}
+
+				if (StringUtils.isBlank(finMain.getRecalSchdMethod())) {
+					finMain.setRecalSchdMethod(finMain.getScheduleMethod());
+				}
+
+				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) >= 0) {
+					break;
+				}
+			}
+		}
+
+		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		int prvIndex = 0;
+		boolean isRepaymentFoundInSD = false;
+
+		Date schdDate = new Date();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		BigDecimal prvSchdPrincipal = BigDecimal.ZERO;
+		BigDecimal remainingPrincipal = earlyPayAmt;
+
+		for (int i = 0; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(evtFromDate) > 0) {
+				break;
+			}
+
+			if (schdDate.compareTo(evtFromDate) == 0) {
+				//To make sure the flags are TRUE when repayment happens
+				curSchd.setPftOnSchDate(true);
+				curSchd.setRepayOnSchDate(true);
+				isRepaymentFoundInSD = true;
+				prvSchdPrincipal = curSchd.getPrincipalSchd();
+				break;
+			}
+
+			prvIndex = i;
+		}
+
+		if (!isRepaymentFoundInSD) {
+			finScheduleData = addSchdRcd(finScheduleData, evtFromDate, prvIndex);
+			curSchd = finSchdDetails.get(prvIndex + 1);
+			curSchd.setPftOnSchDate(true);
+			curSchd.setRepayOnSchDate(true);
+			curSchd.setRepayAmount(earlyPayAmt);
+			schdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
+		}
+
+		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, earlyPayAmt, schdMethod);
+		remainingPrincipal = remainingPrincipal.subtract(prvSchdPrincipal);
+
+		sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		BigDecimal newSchdPri = BigDecimal.ZERO;
+
+		for (int i = prvIndex; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+
+			if (curSchd.getSchDate().compareTo(evtToDate) <= 0) {
+				continue;
+			}
+
+			//If not repayment schedule no change
+			if (!curSchd.isRepayOnSchDate()) {
+				continue;
+			}
+
+			//Already paid then no change
+			if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				continue;
+			}
+
+			//Already sent for presentment
+			if (curSchd.getPresentmentId() != 0) {
+				continue;
+			}
+
+			schdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
+			if (remainingPrincipal.compareTo(curSchd.getPrincipalSchd()) >= 0) {
+				finScheduleData = setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), curSchd.getSchDate(),
+						newSchdPri, schdMethod);
+				remainingPrincipal = remainingPrincipal.subtract(curSchd.getPrincipalSchd());
+
+				if (remainingPrincipal.compareTo(BigDecimal.ZERO) == 0) {
+					break;
+				}
+			} else {
+				newSchdPri = curSchd.getPrincipalSchd().subtract(remainingPrincipal);
+				finScheduleData = setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), curSchd.getSchDate(),
+						newSchdPri, schdMethod);
+				break;
+			}
+		}
+
+		finScheduleData = calSchdProcess(finScheduleData, false, false);
+		finMain.setScheduleMaintained(true);
+
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
