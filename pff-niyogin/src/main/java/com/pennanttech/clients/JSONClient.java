@@ -35,6 +35,12 @@ public class JSONClient {
 
 		return objResponse;
 	}
+	
+	public String post(String url, String service, Object requestData, Class<?> responseClass) throws Exception {
+		Response response = getClient(url, service, requestData);
+		String json = response.readEntity(String.class);
+		return json;
+	}
 
 	private static Response getClient(String url, String path, Object requestData) {
 		ObjectMapper mapper = new ObjectMapper();

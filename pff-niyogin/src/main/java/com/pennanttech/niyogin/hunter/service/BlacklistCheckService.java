@@ -1,6 +1,7 @@
 package com.pennanttech.niyogin.hunter.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -22,34 +23,33 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class BlacklistCheckService extends NiyoginService implements BlacklistCheck {
 
-	private static final Logger logger = Logger.getLogger(BlacklistCheckService.class);
+	private static final Logger	logger				= Logger.getLogger(BlacklistCheckService.class);
+	private final String		extConfigFileName	= "hunter";
+	private String				serviceUrl;
 
 	@Override
 	public AuditHeader checkHunterDetails(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		long identifier = 0;
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail, identifier);
-		HunterResponse hunterResponse = null;
-
-		// TODO: End point URL and service name to be received
-		//String serviceURL="https://soadev.niyogin.in/gates/1.0/sweeps/doOnlineMatching";
-		String serviceURL = (String) getSMTParameter("EXPERIAN_HUNTER_REQUEST_URL", String.class);
 		JSONClient client = new JSONClient();
 		try {
-			logger.debug("ServiceURL : " + serviceURL);
-			hunterResponse = (HunterResponse) client.postProcess(serviceURL, "HunterService", hunterRequest,
-					HunterResponse.class);
-			logger.info("Response : " + hunterResponse.toString());
+			logger.debug("ServiceURL : " + serviceUrl);
+			String jsonResponse = client.post(serviceUrl, "", hunterRequest, HunterResponse.class);
+			//String jsonResponse = "{\"statusCode\": 200,\"message\": \"Hunter\",\"data\": {\"MatchSummary\": 1,\"TotalMatchScore\": 210,\"Rules\": [ {\"RuleID\": \"NIYO_VEL_ADD\",\"ruleCount\": 4, \"Score\": 30 }, {\"RuleID\": \"NH_NC_PAN\",\"ruleCount\": 1,\"Score\": 90 }],\"MatchSchemes\": [ {\"SchemeID\": 15,\"Score\": 120 }]} } ";
+			Map<String, Object> extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
+			extendedMapObject.put("HUNTERMATCH", true);
+			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+			logger.info("Response : " + jsonResponse);
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
 			throw new InterfaceException("9999", exception.getMessage());
 		}
-		// set the Dat into ExtendedFields
-		AuditHeader resAuditHeader = prepareAuditHeader(hunterResponse, auditHeader);
-
+		
 		logger.debug(Literal.LEAVING);
-		return resAuditHeader;
+		return auditHeader;
 	}
 
 	private HunterRequest prepareRequestObj(FinanceDetail financeDetail, long identifier) {
@@ -143,10 +143,8 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		}
 		return null;
 	}
-
-	private AuditHeader prepareAuditHeader(HunterResponse hunterResponse, AuditHeader auditHeader) {
-		logger.debug(Literal.ENTERING);
-		logger.debug(Literal.LEAVING);
-		return null;
+	
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
 	}
 }

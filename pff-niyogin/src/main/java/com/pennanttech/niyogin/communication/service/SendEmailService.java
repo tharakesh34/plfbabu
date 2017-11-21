@@ -14,6 +14,8 @@ import com.pennanttech.pff.external.service.NiyoginService;
 public class SendEmailService extends NiyoginService implements SendEmail {
 	private static final Logger logger = Logger.getLogger(SendEmailService.class);
 
+	private String				serviceUrl;
+	
 	/**
 	 * Method to send the individual email for the given list of toAddress.
 	 * 
@@ -78,4 +80,7 @@ public class SendEmailService extends NiyoginService implements SendEmail {
 		return email;
 	}
 
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
+	}
 }

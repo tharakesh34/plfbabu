@@ -1,6 +1,7 @@
 package com.pennanttech.niyogin.dedup.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -24,36 +25,45 @@ import com.pennanttech.pff.external.service.NiyoginService;
 public class ExperianDedupService extends NiyoginService implements ExternalDedup {
 	private static final Logger logger = Logger.getLogger(ExperianDedupService.class);
 
+	// Published API service name.
+	private final String serviceName = "DedupService";
+	private final String extConfigFileName = "experianDedup";
+	
 	@Override
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 
-		// FIXME: for loop here for Applicant and CoApplicant
-		String applicantType = null;
-
+		String applicantType = "A";
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
-		ExperianDedup experianDedupResponse = null;
 
-		// TODO: End point URL and service name to be received
-		String serviceURL = (String) getSMTParameter("EXPERIAN_DEDUP_REQUEST_URL", String.class);
+		String serviceURL = "";//(String) getSMTParameter("EXPERIAN_DEDUP_REQUEST_URL", String.class);
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceURL);
-			experianDedupResponse = (ExperianDedup) client.postProcess(serviceURL, "DedupService", experianDedupRequest,
-					ExperianDedup.class);
-			
-			logger.info("Response : " + experianDedupResponse.toString());
+			//String jsonResponse = client.post(serviceURL, serviceName, experianDedupRequest, ExperianDedup.class);
+			//Map<String, Object> extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
+			//financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+			//ServiceTaskDetail;
+			//String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+			//logServiceTaskDetails(prepareTaskDetail(customerDetails, finReference));
+			//logger.info("Response : " + jsonResponse);
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
 			throw new InterfaceException("9999", exception.getMessage());
 		}
-		// set the Dat into ExtendedFields
-		AuditHeader resAuditHeader = prepareAuditHeader(experianDedupResponse, auditHeader);
+		
+		// Method for prepare the extendedField details with dedup response
+		//prepareResponseObject(experianDedupResponse, customerDetails);
 
 		logger.debug(Literal.LEAVING);
-		return resAuditHeader;
+		return auditHeader;
+	}
+
+	private Object prepareTaskDetail() {
+		//logServiceTaskDetails
+		return null;
 	}
 
 	/**
@@ -202,11 +212,20 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return null;
 	}
 
-	// set Data to the Audit Header
-	private AuditHeader prepareAuditHeader(ExperianDedup experianDedupResponse, AuditHeader auditHeader) {
+	/**
+	 * Method to set customer experian dedup response values into extended fields.
+	 * 
+	 * @param expDedupRes
+	 * @param customerDetails
+	 * @return Map<String, Object>
+	 */
+	private Map<String, Object> prepareResponseObject(ExperianDedup expDedupRes, CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
+		
+		Map<String, Object> extendedValues = customerDetails.getExtendedFieldRender().getMapValues();
+		
 		logger.debug(Literal.LEAVING);
 
-		return auditHeader;
+		return extendedValues;
 	}
 }

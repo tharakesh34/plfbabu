@@ -14,6 +14,8 @@ import com.pennanttech.pff.external.service.NiyoginService;
 public class SendSmsService extends NiyoginService implements SendSMS {
 	private static final Logger logger = Logger.getLogger(SendSmsService.class);
 
+	private String				serviceUrl;
+	
 	/**
 	 * Method to send the sms for the given list of mobile numbers.
 	 * 
@@ -68,5 +70,9 @@ public class SendSmsService extends NiyoginService implements SendSMS {
 		sms.setMessageBody(content);
 		logger.debug(Literal.LEAVING);
 		return sms;
+	}
+	
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
 	}
 }

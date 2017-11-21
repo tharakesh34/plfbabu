@@ -1,8 +1,14 @@
 package com.pennanttech.pff.external.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -14,6 +20,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.jayway.jsonpath.JsonPath;
 import com.pennanttech.dataengine.util.DateUtil;
 
 public abstract class NiyoginService {
@@ -142,5 +149,36 @@ public abstract class NiyoginService {
 		return 0;
 	}
 
-	
+	/**
+	 * 
+	 * @param jsonResponse
+	 * @return Map<String, Object>
+	 */
+	protected Map<String, Object> getExtendedMapValues(String jsonResponse, String extConfigFileName) {
+		Map<String, Object> extendedFieldMap = new HashMap<>(1);
+		try {
+			Properties properties = new Properties();
+			InputStream inputStream = this.getClass().getResourceAsStream("/"+extConfigFileName+".properties");
+			properties.load(inputStream);
+			Enumeration<?> e = properties.propertyNames();
+			while (e.hasMoreElements()) {
+				String key = (String) e.nextElement();
+				Object value = JsonPath.read(jsonResponse, properties.getProperty(key));
+				if (value instanceof String) {
+					extendedFieldMap.put(key, (String) JsonPath.read(jsonResponse, properties.getProperty(key)));
+				} else if (value instanceof Integer) {
+					extendedFieldMap.put(key, (Integer) JsonPath.read(jsonResponse, properties.getProperty(key)));
+				} else if (value instanceof Boolean) {
+					extendedFieldMap.put(key, (Boolean) JsonPath.read(jsonResponse, properties.getProperty(key)));
+				} else if (value instanceof BigDecimal) {
+					extendedFieldMap.put(key, BigDecimal.valueOf(JsonPath.read(jsonResponse, properties.getProperty(key))));
+				} else {
+					extendedFieldMap.put(key, JsonPath.read(jsonResponse, properties.getProperty(key)));
+				}
+			}
+		} catch (IOException e) {
+			logger.error("Exception", e);
+		}
+		return extendedFieldMap;
+	}
 }

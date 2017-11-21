@@ -117,7 +117,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_hunter:
-			// call blacklist check interface
+			auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_Bureau:
