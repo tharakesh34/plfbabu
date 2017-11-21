@@ -44,6 +44,7 @@ package com.pennant.webui.financemanagement.presentmentheader.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -77,7 +78,14 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 		
 		lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
 		lc.setParent(item);
-	  	
+
+		if (StringUtils.trimToNull(presentmentHeader.getBankCode()) == null) {
+			lc = new Listcell();
+		} else {
+			lc = new Listcell(presentmentHeader.getBankCode() + "-" + presentmentHeader.getBankName());
+		}
+		lc.setParent(item);
+		
 	  	lc = new Listcell(presentmentHeader.getPartnerBankName());
 		lc.setParent(item);
 		

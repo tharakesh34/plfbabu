@@ -539,7 +539,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 										getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 												getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
 														getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt)
-								.add(getFinanceScheduleDetail().getDownPaymentAmount()),isEditable, isRate,
+								.add(getFinanceScheduleDetail().getDownPaymentAmount()).subtract(getFinanceScheduleDetail().getCpzAmount()),isEditable, isRate,
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217","color_Disbursement",0, null,false, false);
 
 						count = 2;
@@ -1375,8 +1375,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 
 						String mrgRate = PennantApplicationUtil.formatRate(marginRate.doubleValue(), 2);
-						if ((isGrcBaseRate || fillType == 3)  && (data.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE) ||
-								data.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
+						if ((isGrcBaseRate || fillType == 3)  && (StringUtils.equals(data.getSpecifier(), CalculationConstants.SCH_SPECIFIER_GRACE) ||
+								StringUtils.equals(data.getSpecifier(), CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
 
 							if(StringUtils.isBlank(baseRate)){
 								lc = new Listcell(PennantApplicationUtil.formatRate(amountlist[i].doubleValue(), PennantConstants.rateFormate) + "%");
@@ -1389,8 +1389,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 							if(!isEditable) {
 								lc.setStyle("text-align:right;color:"+bgColor+";cursor:default;");
 							}
-						} else if ((isRpyBaseRate || fillType == 3) && (data.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_REPAY) || 
-								data.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
+						} else if ((isRpyBaseRate || fillType == 3) && (StringUtils.equals(data.getSpecifier(), CalculationConstants.SCH_SPECIFIER_REPAY) ||
+								StringUtils.equals(data.getSpecifier(), CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
 
 							if(StringUtils.isBlank(baseRate)){
 								lc = new Listcell(PennantApplicationUtil.formatRate(amountlist[i].doubleValue(), PennantConstants.rateFormate) + "%");
@@ -1948,7 +1948,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						data = new FinanceScheduleReportData();	
 						data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
 						data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
-						data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+						data.setPftAmount("");
 						data.setSchdPft("");
 						data.setTdsAmount("");
 						data.setSchdFee("");

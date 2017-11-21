@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.FinanceConstants;
@@ -137,12 +138,18 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
 		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-			if (count <= 0) {
+			FinanceMain finMain = financeMainDAO.getFinanceMainForPftCalc(finReference);
+			if(finMain == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return finStatementResponse;
+			} else {
+				if (finMain.isFinIsActive() && !(StringUtils.equals(finMain.getClosingStatus(),FinanceConstants.CLOSE_STATUS_MATURED)
+						|| StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_EARLYSETTLE))) {
+					finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90403"));
+					return finStatementResponse;
+				}
 			}
 		}
 

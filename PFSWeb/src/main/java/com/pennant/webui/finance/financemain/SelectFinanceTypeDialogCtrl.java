@@ -1454,14 +1454,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 								"_AView");
 					}
 				}
-				
-				
-				Branch branch = this.branchService.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser()
-						.getUsrBranchCode());
-				if (branch != null) {
-					customerDetails.getCustomer().setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
-				}
-
+			
 			} else if (this.newCust.isChecked()) {
 				customerDetails = getNewCustomerDetail();
 			}

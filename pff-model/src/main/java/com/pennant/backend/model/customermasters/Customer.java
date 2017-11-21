@@ -308,6 +308,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String custSwiftBrnCode;
 	private Date custAppDate;
 	private String sourceSystem;
+	private String branchRefno;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -347,6 +348,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("returnStatus");
 		excludeFields.add("custSwiftBrnCode");
 		excludeFields.add("sourceSystem");
+		excludeFields.add("branchRefno");
 		return excludeFields;
 	}
 
@@ -1781,6 +1783,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceSystem(String sourceSystem) {
 		this.sourceSystem = sourceSystem;
+	}
+
+	public String getBranchRefno() {
+		return branchRefno;
+	}
+
+	public void setBranchRefno(String branchRefno) {
+		this.branchRefno = branchRefno;
 	}
 
 }

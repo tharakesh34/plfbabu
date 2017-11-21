@@ -83,7 +83,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("DRORCR", "D");
 		BigDecimal debitAmount = parameterJdbcTemplate.queryForObject(sql, paramMap, BigDecimal.class);
 
-		if (creditAmount.compareTo(debitAmount) != 0) {
+		if ((creditAmount != null && debitAmount!= null) && creditAmount.compareTo(debitAmount) != 0) {
 			EXTRACT_STATUS.setStatus("F");
 			EXTRACT_STATUS.setRemarks("Credit and Debit amounts not matched for the transactions between "
 					.concat(DateUtil.format(startDate, DateFormat.LONG_DATE)).concat(" and ")
@@ -371,6 +371,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		startDate = DateUtil.getMonthStart(date);
 		endDate = DateUtil.getMonthEnd(date);
+		
+		startDate = DateUtil.getDatePart(startDate);
+		endDate = DateUtil.getDatePart(endDate);
+
 
 		logger.info("Start Date: " + DateUtil.format(startDate, DateUtil.DateFormat.LONG_DATE));
 		logger.info("End Date: " + DateUtil.format(endDate, DateUtil.DateFormat.LONG_DATE));
@@ -407,18 +411,18 @@ public class TrailBalanceEngine extends DataEngineExport {
 		// delete the data between start and end date if already available
 		StringBuilder sql = new StringBuilder();
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID = ");
-		sql.append(" (SELECT HEADERID FROM TRIAL_BALANCE_HEADER");
-		sql.append(" WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
+		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER");
+		sql.append(" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
-		sql.append(" (SELECT HEADERID FROM TRIAL_BALANCE_HEADER");
-		sql.append(" WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
+		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER");
+		sql.append(" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
-		sql = sql.append("DELETE FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
+		sql = sql.append("DELETE FROM TRIAL_BALANCE_HEADER WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE");
 		sql.append(" AND DIMENSION = :DIMENSION");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
@@ -496,6 +500,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private List<TrailBalance> getOpeningBalance() {
 		MapSqlParameterSource paramMap =  new MapSqlParameterSource();;
 		
+		Date previousMonth = DateUtil.addMonths(startDate, -1);
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select AM.HOSTACCOUNT ledgerAccount, LR.PROVINCE stateCode,");
 		sql.append(" LR.CLOSINGBAL openingBalance, LR.CLOSINGBALTYPE openingBalanceType");
@@ -506,8 +512,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" AND TH.STARTDATE =  :STARTDATE_MINUS_1M and TH.ENDDATE = :ENDDATE_MINUS_1M");
 		
 		paramMap.addValue("DIMENSION", dimention.name());
-		paramMap.addValue("STARTDATE_MINUS_1M", DateUtil.addMonths(startDate, -1));
-		paramMap.addValue("ENDDATE_MINUS_1M", DateUtil.addMonths(endDate, -1));
+		paramMap.addValue("STARTDATE_MINUS_1M", DateUtil.getMonthStart(previousMonth));
+		paramMap.addValue("ENDDATE_MINUS_1M", DateUtil.getMonthEnd(previousMonth));
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
 
 		try {
@@ -633,16 +639,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 		parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(list.toArray()));
 	}
 
-	private void logTrialBalace() throws Exception {
+	private void logTrialBalace() throws Exception {		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
 		paramMap.addValue("DIMENSION", dimention.name());
-		paramMap.addValue("STARTDATE_MINUS_12M", DateUtil.addMonths(startDate, -12));
+		paramMap.addValue("STARTDATE_MINUS_12M", DateUtil.addMonths(startDate, -11));
 
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN(");
-			sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE > :STARTDATE_MINUS_12M))");
+			sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE < :STARTDATE_MINUS_12M))");
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
 			
 			sql = new StringBuilder();
@@ -711,7 +717,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		data.append(" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE)");
 		data.append(" select ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION, OPENINGBAL, OPENINGBALTYPE,");
 		data.append(" DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE");
-		data.append(" from TRIAL_BALANCE_REPORT_VIEW where PROVINCE=:PROVINCE");
+		data.append(" from TRIAL_BALANCE_REPORT_VIEW WHERE HEADERID = :HEADERID AND PROVINCE=:PROVINCE");
 		MapSqlParameterSource dataMap = new MapSqlParameterSource();
 
 		String emptyLine = "INSERT INTO TRIAL_BALANCE_REPORT_FILE(CLOSINGBALTYPE) VALUES(:CLOSINGBALTYPE)";
@@ -744,15 +750,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				try {
+					dataMap.addValue("HEADERID", headerId);
 					dataMap.addValue("PROVINCE", rs.getString("PROVINCE"));
+					dataMap.addValue("DESCRIPTION", states.get(rs.getString("PROVINCE")));
 					dataMap.addValue("DESCRIPTION", states.get(rs.getString("PROVINCE")));
 
 					if (groupId > 0) {
 						parameterJdbcTemplate.update(emptyLine, emptyLineMap);
 						parameterJdbcTemplate.update(emptyLine, emptyLineMap);
 					}
-					parameterJdbcTemplate
-							.update("INSERT INTO TRIAL_BALANCE_REPORT_FILE(DESCRIPTION) VALUES(:DESCRIPTION)", dataMap);
+					parameterJdbcTemplate.update("INSERT INTO TRIAL_BALANCE_REPORT_FILE(DESCRIPTION) VALUES(:DESCRIPTION)", dataMap);
 					parameterJdbcTemplate.update(group.toString(), groupMap);
 					parameterJdbcTemplate.update(data.toString(), dataMap);
 					groupId++;

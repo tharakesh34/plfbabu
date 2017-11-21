@@ -963,7 +963,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.batchReference.setValue("");
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
-			getJVPosting().setPostingDate(DateUtility.getSysDate());
+			getJVPosting().setPostingDate(DateUtility.getAppDate());
 			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting
@@ -1025,8 +1025,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		if (StringUtils.isBlank(this.reference.getValue())) {
 			this.reference.setValue("", "");
-			this.postingDivision.setValue("","");
-			this.postingDivision.setButtonDisabled(false);
 		} else {
 			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
 					FinanceConstants.POSTING_AGAINST_LOAN)) {				
@@ -1199,6 +1197,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					.getLabel("label_JVPostingDialog_Reference.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
+		
+		if (!this.postingDivision.isButtonDisabled()){
+			this.postingDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_PostingDivision.value"), null, true, true));
+		}
 
 
 		logger.debug("Leaving");
@@ -1217,6 +1219,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.totCreditsByBatchCcy.setConstraint("");
 		this.batchPurpose.setConstraint("");
 		this.reference.setConstraint("");
+		this.postingDivision.setConstraint("");
 		logger.debug("Leaving");
 	}
 

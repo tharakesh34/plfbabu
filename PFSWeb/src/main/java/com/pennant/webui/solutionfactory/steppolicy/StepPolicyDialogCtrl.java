@@ -126,7 +126,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 	private List<StepPolicyDetail> stepPolicyDetailList = new ArrayList<StepPolicyDetail>();
 	int listRows;
-
+	protected boolean										recSave;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -406,7 +407,15 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		}
 		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()){
 			
-			if(getStepPolicyDetailList().size() < 2) {
+			int stepCount = 0;
+			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
+				if(!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
+						!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+					stepCount = stepCount + 1;
+				}
+			}
+			
+			if(stepCount < 2) {
 				MessageUtil.showError(Labels.getLabel("StepPolicyDetail_Count_IS_EQUAL_OR_GREATER"));
 				return false;
 			}
@@ -719,10 +728,21 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
+		
+		if (this.userAction.getSelectedItem() != null) {
+			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+				recSave = true;
+			}
+		}
+		
 		// fill the StepPolicyHeader object with the components data
 		doWriteComponentsToBean(aStepPolicyHeader);
 
-		if(!validateStepPolicies()){
+		if(!recSave && !validateStepPolicies()){
 			return;
 		}
 

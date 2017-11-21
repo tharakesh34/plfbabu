@@ -205,6 +205,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected Textbox 	addrZIP; 					// autoWired
 	protected Textbox    cityName;                 // autoWired
 	
+	protected Row 		 row7;
+	protected Space      space_GenderCode;
+	protected Combobox	 guarantorGenderCode;
+
 	private boolean enqModule = false;
 	private int index;	
 	// not auto wired vars
@@ -829,6 +833,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.bankCustomer.setChecked(aGuarantorDetail.isBankCustomer());
 		if (!aGuarantorDetail.isBankCustomer()) {
 			fillComboBox(this.guarantorIDType, aGuarantorDetail.getGuarantorIDType(), listGuarantorIDType, "");
+			fillComboBox(this.guarantorGenderCode,aGuarantorDetail.getGuarantorGenderCode(), PennantAppUtil.getGenderCodes(), "");
 		} else {
 			fillComboBox(this.guarantorIDType, PennantConstants.List_Select, listGuarantorIDType, "");
 		}
@@ -1435,6 +1440,20 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				if ("#".equals(getComboboxValue(this.guarantorGenderCode))) {
+					if (!this.guarantorGenderCode.isDisabled()) {
+						throw new WrongValueException(this.guarantorGenderCode, Labels.getLabel("STATIC_INVALID",
+								new String[] { Labels.getLabel("label_GuarantorDetailDialog_GenderCode.value") }));
+					} else {
+						aGuarantorDetail.setGuarantorGenderCode(null);
+					}
+				} else {
+					aGuarantorDetail.setGuarantorGenderCode(getComboboxValue(this.guarantorGenderCode));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		} else {
 			if(customer!=null){
 			aGuarantorDetail.setCustID(this.customer.getCustID());
@@ -1571,6 +1590,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.mobileNo.setConstraint("");
 		this.emailId.setConstraint("");
 		this.guarantorProofName.setConstraint("");
+		this.guarantorGenderCode.setConstraint("");
 		
 		this.addrHNbr.setConstraint("");
 		this.flatNbr.setConstraint("");
@@ -1626,6 +1646,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.mobileNo.setErrorMessage("");
 		this.emailId.setErrorMessage("");
 		this.guarantorProofName.setErrorMessage("");
+		this.guarantorGenderCode.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 		this.addrHNbr.setErrorMessage("");
 		this.flatNbr.setErrorMessage("");
@@ -1643,6 +1664,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	public void onCheck$bankCustomer(Event event) {
 		logger.debug("Entering");
+		
 		doClearMessage();
 		doRemoveValidation();
 		if (this.bankCustomer.isChecked()) {
@@ -1668,6 +1690,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_GuarantorProof.setSclass("");
 			this.guarantorProofName.setValue("");
 			this.guarantorProofContent = null;
+			
+ 			this.row7.setVisible(false);
+ 			this.guarantorGenderCode.setDisabled(true);
+			fillComboBox(this.guarantorGenderCode, PennantConstants.List_Select,PennantAppUtil.getGenderCodes(),"");
 			
 			// Address details
 			this.addrHNbr.setReadonly(true);
@@ -1735,6 +1761,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrCity.setMandatoryStyle(false);
 			this.space_GuarantorCIF.setSclass("");
 			this.space_GuarantorIDNumber.setSclass("");
+			
+ 			this.row7.setVisible(true);
+			this.space_GenderCode.setSclass(PennantConstants.mandateSclass);
+			this.guarantorGenderCode.setDisabled(isReadOnly("GuarantorDetailDialog_GuarantorGenderCode"));
 		}
 		if (!isNewRecord()) {
 			readOnlyExposureFields(true);
@@ -1755,6 +1785,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.mobileNo.setReadonly(true);
 			this.emailId.setReadonly(true);
 			this.guranteePercentage.setReadonly(true);
+			this.guarantorGenderCode.setDisabled(true);
 			this.addrHNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_addrHNbr"));
 			this.flatNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_flatNbr"));
 			this.addrStreet.setReadonly(!isReadOnly("GuarantorDetailDialog_addrStreet"));
@@ -1856,6 +1887,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorCIF.setValue("");
 		this.guarantorCIFName.setValue("");
 		this.guarantorIDType.setSelectedIndex(0);
+		this.guarantorGenderCode.setSelectedIndex(0);
 		this.guarantorIDNumber.setValue("");
 		this.guarantorCIFName.setValue("");
 		this.guranteePercentage.setValue("0");

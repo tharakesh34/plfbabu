@@ -159,12 +159,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	protected Button button_Search;
 	protected Button btnDownload;
-	protected Button btnbranchDetails;
+	protected Button btnFinType;
 	protected int oldVar_sortOperator_finType;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
-	private int futureDays =  0;;
+	private int futureDays =  0;
 
 	@Autowired
 	private DisbursementRequestService disbursementRequestService;
@@ -191,27 +191,32 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
+		setFilters(this.searchObject);
+	}
+
+	private void setFilters(JdbcSearchObject<FinAdvancePayments> searchObject){
 		if (toDate.getValue() == null) {
 			Filter[] filter = new Filter[1];
 			java.util.Date date = DateUtility.getAppDate();
 			date = DateUtil.addDays(date, futureDays);
 			filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat),
 					Filter.OP_LESS_OR_EQUAL);
-			this.searchObject.addFilters(filter);
+			searchObject.addFilters(filter);
 		}
 
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
-			this.searchObject.addFilters(filters);
+			searchObject.addFilters(filters);
 		}
 		if (toDate.getValue() != null) {
 			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
-			this.searchObject.addFilters(filters);
+			searchObject.addFilters(filters);
 		}
+		
 	}
 
 	
@@ -262,21 +267,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 	
 	
-	/*public void onChange$toDate(Event event) {
-		
-		
-		Date date = DateUtility.addDays(DateUtility.getAppDate(),futureDays);
-
-		
-		if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
-			this.toDate.setConstraint(new PTDateValidator("To Date",
-					true, null, date, false));
-		} 
-		//doRemoveValidation();
-		this.toDate.getValue();
-	}*/
-	
-	
 	public void onSelect$sortOperator_FinType(Event event) {
 		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FinType, oldVar_sortOperator_finType,
 				this.finType);
@@ -308,13 +298,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	}
 	
-	public void onClick$btnbranchDetails(Event event) {
+	public void onClick$btnFinType(Event event) {
 		logger.debug("Entering  " + event.toString());
 		setSearchValue(sortOperator_FinType, this.finType, "FinanceType");
 		logger.debug("Leaving" + event.toString());
 		
 	}
-	
 
 	private void doSetFieldProperties() {
 		listItem_Checkbox = new Listitem();
@@ -468,26 +457,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("finReference");
 		searchObject.addTabelName(this.tableName);
 		
-		Filter[] filter = new Filter[1];
-		java.util.Date date = DateUtility.getAppDate();
-		date = DateUtil.addDays(date,futureDays);
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
-		searchObject.addFilters(filter);
-		
-		
-
-		if (fromDate.getValue() != null) {
-			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
-			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("LLDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
-			searchObject.addFilters(filters);
-		}
-		if (toDate.getValue() != null) {
-			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
-			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
-			searchObject.addFilters(filters);
-		}
+		setFilters(searchObject);
 		
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filters = searchControl.getFilter();
@@ -510,6 +480,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		return disbMap;
 	}
+
 
 	/**
 	 * The framework calls this event handler when user clicks the search button.

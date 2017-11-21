@@ -163,6 +163,8 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -200,8 +202,6 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -823,6 +823,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	private boolean											isBranchanged;
+	private String 											branchSwiftCode;
 
 	//Extended fields
 	private ExtendedFieldCtrl								extendedFieldCtrl		= null;
@@ -5807,18 +5808,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(this.custCIF.getValue())) {
 			aFinanceDetail.setStageAccountingList(null);
 		} else {
+			
 			//Finance Accounting Details Tab
-			if (accountingDetailDialogCtrl != null && !isOverdraft) {
+			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !isOverdraft) {
+
 				// check if accounting rules executed or not
-				if (!recSave && !accountingDetailDialogCtrl.isAccountingsExecuted()) {
+				if (accountingDetailDialogCtrl == null || !accountingDetailDialogCtrl.isAccountingsExecuted()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
-				}
-				if (!recSave
-						&& accountingDetailDialogCtrl.getDisbCrSum().compareTo(
-								accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
-					return;
+				} else {
+
+					if (accountingDetailDialogCtrl.getDisbCrSum()
+							.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+						return;
+					}
 				}
 			}
 
@@ -7483,8 +7487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			SecurityUserDivBranch branch = (SecurityUserDivBranch) this.finBranch.getObject();
 			if (branch != null) {
 				this.finBranch.setValue(branch.getUserBranch(),branch.getUserBranchDesc());
-				getFinanceDetail().getCustomerDetails().getCustomer()
-						.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
+				branchSwiftCode=branch.getBranchSwiftBrnCde();
 			}
 		}
 		isBranchanged = true;
@@ -8951,7 +8954,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetLOVValidation();
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
-		aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
+		if(isBranchanged){
+			aFinanceMain.setSwiftBranchCode(branchSwiftCode);			
+		}else{
+			aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
+		}
+		
 		Date financeDate = null;
 
 		try {
@@ -14550,10 +14558,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				//Prepare Finance Schedule Generator Details List
 				getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
-				getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
-				getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
 
 				if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
+					getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
 					getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
 				}
 
@@ -14577,6 +14585,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.changeGraceEnd(getFinanceDetail().getFinScheduleData()));
+						
+						// Plan EMI Holidays Resetting after Change Grace Period End Date
+						if(getFinanceDetail().getFinScheduleData().getFinanceMain().isPlanEMIHAlw()){
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEventFromDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecalFromDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEventToDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalFromDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecalFromDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalToDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod());
+
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEqualRepay(true);
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setCalculateRepay(true);
+
+							if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+								getFinanceDetail().setFinScheduleData(ScheduleCalculator.getFrqEMIHoliday(getFinanceDetail().getFinScheduleData()));
+							}else{
+								getFinanceDetail().setFinScheduleData(ScheduleCalculator.getAdhocEMIHoliday(getFinanceDetail().getFinScheduleData()));
+							}
+						}
+						
 					} else {
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));

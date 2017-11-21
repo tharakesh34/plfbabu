@@ -68,7 +68,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantJavaUtil;

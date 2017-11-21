@@ -57,6 +57,22 @@
 	<bean id="dataMartTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.DataMart">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>
+	<bean id="DM_LOAN_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="pfsDatasource"/>
+		<constructor-arg index="0" ref="pfsDatasource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_DETAILS_MONTHLY" />
+	</bean>
+	<bean id="DM_LOAN_BALANCES_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="pfsDatasource"/>
+		<constructor-arg index="0" ref="pfsDatasource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_BALANCES_MONTHLY" />
+	</bean>
+	<bean id="DM_DISB_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="pfsDatasource"/>
+		<constructor-arg index="0" ref="pfsDatasource" />
+		<constructor-arg index="1" type="String" value="SP_DM_DISB_DETAILS_MONTHLY" />
+	</bean>
+	
 	<bean id="trailBalanceTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.TrailBalance">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>

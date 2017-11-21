@@ -4570,6 +4570,11 @@
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="eventManager" ref="eventManager" />
 	</bean>
+	<bean id="selectManualAdviseFinReferenceDialogCtrl"
+		class="com.pennant.webui.financemanagement.selectmanualadvise.SelectManualAdviseFinReferenceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="manualAdviseService" ref="manualAdviseService" />
+	</bean>
 
 	<!-- FinanceStatusCode -->
 	<bean id="financeStatusCodeListCtrl"
@@ -4800,7 +4805,7 @@
 		<property name="paymentHeaderService" ref="paymentHeaderService"/>
 		<property name="eventManager" ref="eventManager" />
 		<property name="accountingSetService" ref="accountingSetService" />
-		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!-- SelectPaymentHeaderDialogCtrl --> 
@@ -4826,7 +4831,7 @@
 	<bean id="pinCodeDialogCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="pinCodeService" ref="pinCodeService"/>
 	</bean>
-	
+
 	<!-- Data Engine -->
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 		<constructor-arg ref="pfsDatasource" />

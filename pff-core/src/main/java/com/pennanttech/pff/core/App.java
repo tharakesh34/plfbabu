@@ -30,7 +30,7 @@ public final class App {
 	public static final String			CODE		= "PFF";
 	public static final String			NAME		= "pennApps Lending Factory";
 
-	public static final Database	DATABASE	= Database.PSQL;
+	public static final Database	DATABASE	= Database.ORACLE;
 	
 	private App() {
 		super();

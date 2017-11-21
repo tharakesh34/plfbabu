@@ -949,12 +949,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			excludeList.add(MandateConstants.STATUS_AWAITCON);
 			excludeList.add(MandateConstants.STATUS_HOLD);
 			excludeList.add(MandateConstants.STATUS_RELEASE);
+			excludeList.add(MandateConstants.STATUS_CANCEL);
 		} else if (maintain) {
 			excludeList.add(MandateConstants.STATUS_FIN);
 			excludeList.add(MandateConstants.STATUS_NEW);
 			excludeList.add(MandateConstants.STATUS_APPROVED);
 			excludeList.add(MandateConstants.STATUS_AWAITCON);
 			excludeList.add(MandateConstants.STATUS_REJECTED);
+			excludeList.add(MandateConstants.STATUS_CANCEL);
 
 			// get previous mandate status from main
 			Mandate oldMnadate = getMandateService().getApprovedMandateById(aMandate.getMandateID());

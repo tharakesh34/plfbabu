@@ -55,6 +55,9 @@
 									<label id="label_PresentmentHeaderList_Reference" value="${c:l('label_PresentmentHeaderList_Reference.value')}" />
 									<listbox id="sortOperator_Reference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="reference" width="180px" maxlength="20" />
+									<label id="label_PresentmentHeaderList_BankCode" value="${c:l('label_PresentmentHeaderList_BankCode.value')}" />
+									<listbox id="sortOperator_BankCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="bankCode" width="150px" maxlength="20" />
 									<label id="label_PresentmentHeaderList_PresentmentDate" value="${c:l('label_PresentmentHeaderList_PresentmentDate.value')}" visible="false"/>
 									<listbox id="sortOperator_PresentmentDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}"  visible="false"/>
 									<datebox id = "presentmentDate" width="150px" visible="false"/>
@@ -91,6 +94,7 @@
 						<listhead sizable="true">
 							<listheader id="listheader_Reference" label="${c:l('listheader_Reference.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_Schdate" label="${c:l('listheader_Schdate.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_BankCode" label="${c:l('listheader_BankCode.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_PartnerBankId" label="${c:l('listheader_PartnerBankId.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" sort="auto"   hflex="min"  />
 							<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto"   hflex="min"  />

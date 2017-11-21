@@ -75,6 +75,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.accounts.Accounts;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -947,8 +948,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				"");*/
 
 		if(aJVPostingEntry.isNewRecord()){
-			this.postingDate.setValue(DateUtility.getSysDate());		
-			this.valueDate.setValue(DateUtility.getSysDate());
+			this.postingDate.setValue(DateUtility.getAppDate());		
+			this.valueDate.setValue(DateUtility.getAppDate());
 		}else {
 			this.postingDate.setValue(aJVPostingEntry.getPostingDate());		
 			this.valueDate.setValue(aJVPostingEntry.getValueDate());
@@ -1030,7 +1031,6 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		// Account Name
 		try {
 			aJVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.account.getValue()));
-			aJVPostingEntry.setAccountName(this.accountName.getValue());
 			aJVPostingEntry.setAccCCy(this.txnCCy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1472,8 +1472,12 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 					if(entry.isNew()){
 						if(StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)){						
 							entry.setAccount(entry.getDebitAccount());
+							entry.setAcType(entry.getDebitAcType());
+							entry.setAccountName(entry.getDebitAcname());
 						}else{
 							entry.setAccount(entry.getAccount());
+							entry.setAcType(entry.getAcType());
+							entry.setAccountName(entry.getAccountName());
 						}	
 					}
 				}
@@ -1640,6 +1644,38 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		  	otherentry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());
 		}
 		return otherentry;
+	}
+	
+	
+	public void onFulfill$account(Event event) {
+		logger.debug("Entering");
+		
+		if (StringUtils.isBlank(this.account.getValue())) {
+			this.account.setValue("", "");
+		} else {
+			AccountMapping accountMapping = (AccountMapping) this.account.getObject();
+
+			this.account.setValue(accountMapping.getAccount(), accountMapping.getHostAccount());
+			getJVPostingEntry().setAcType(accountMapping.getAccountType());
+			getJVPostingEntry().setAccountName(accountMapping.getAccountTypeDesc());
+		}
+		logger.debug("Leaving");
+
+	}
+
+	public void onFulfill$debitAccount(Event event) {
+		logger.debug("Entering");
+		
+		if (StringUtils.isBlank(this.debitAccount.getValue())) {
+			this.debitAccount.setValue("", "");
+		} else {
+			AccountMapping accountMapping = (AccountMapping) this.debitAccount.getObject();
+			this.debitAccount.setValue(accountMapping.getAccount(), accountMapping.getHostAccount());
+			getJVPostingEntry().setDebitAcType(accountMapping.getAccountType());
+			getJVPostingEntry().setDebitAcname(accountMapping.getAccountTypeDesc());
+		}
+		logger.debug("Leaving");
+
 	}
 	
 	// WorkFlow Components

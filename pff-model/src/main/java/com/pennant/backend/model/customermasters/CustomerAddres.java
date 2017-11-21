@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -61,9 +62,10 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = {"custAddrType", "custAddrHNbr", "custFlatNbr", "custAddrStreet" , "custAddrLine1", "custAddrLine2", "custPOBox",
 		"custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP", "custAddrFrom","typeOfResidence","custAddrPriority"})
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerAddres extends AbstractWorkflowEntity {
+public class CustomerAddres extends AbstractWorkflowEntity implements Entity{
 	private static final long serialVersionUID = -3309604710675073740L;
-
+	
+	private long custAddressId=Long.MIN_VALUE;
 	private long custID =Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	@XmlElement(name="addrType")
@@ -107,7 +109,11 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	private String typeOfResidence ;
 	
 	private String sourceId;
+	
+	private String cityRefNo;
+	private String stateRefNo;
 	private String lovDescCustAddrZip;
+	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -126,6 +132,8 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 		excludeFields.add("sourceId");
+		excludeFields.add("cityRefNo");
+		excludeFields.add("stateRefNo");
 		return excludeFields;
 	}
 	
@@ -344,6 +352,31 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public void setTypeOfResidence(String typeOfResidence) {
 		this.typeOfResidence = typeOfResidence;
 	}
+
+	public String getCityRefNo() {
+		return cityRefNo;
+	}
+
+	public void setCityRefNo(String cityRefNo) {
+		this.cityRefNo = cityRefNo;
+	}
+
+	public String getStateRefNo() {
+		return stateRefNo;
+	}
+
+	public void setStateRefNo(String stateRefNo) {
+		this.stateRefNo = stateRefNo;
+	}
+	
+	public long getCustAddressId() {
+		return custAddressId;
+	}
+
+	public void setCustAddressId(long custAddressId) {
+		this.custAddressId = custAddressId;
+	}
+
 	public String getLovDescCustAddrZip() {
 		return lovDescCustAddrZip;
 	}
@@ -351,4 +384,5 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public void setLovDescCustAddrZip(String lovDescCustAddrZip) {
 		this.lovDescCustAddrZip = lovDescCustAddrZip;
 	}
+
 }

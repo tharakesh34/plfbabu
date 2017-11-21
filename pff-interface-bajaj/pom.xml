@@ -21,15 +21,9 @@
 	<dependencies>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-model</artifactId>
+			<artifactId>pff-interface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

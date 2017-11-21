@@ -48,16 +48,12 @@ public class TrailBalance implements Tasklet {
 
 		try {
 			
-			logger.debug("START: Trial-Balance Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			logger.debug(String.format("START: Trial-Balance Process for the value date: %s", DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
-			Thread.sleep(1000);
-			BatchUtil.setExecutionStatus(context, status);
-			
-			logger.debug("START: Trial-Balance Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
-		
+			BatchUtil.setExecutionStatus(context, status);		
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;

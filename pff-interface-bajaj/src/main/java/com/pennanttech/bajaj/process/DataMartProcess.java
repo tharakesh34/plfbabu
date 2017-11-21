@@ -9,8 +9,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -31,6 +33,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
 
 	private long batchID;
+	private Date lastRunDate;
 	private String summary = null;
 	public AtomicLong completedThreads = null;
 	public long totalThreads;
@@ -39,6 +42,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 	private Date valueDate;
 	public static boolean running = false;
 	public AtomicLong processedRecords;
+	private MapSqlParameterSource paramMap = new MapSqlParameterSource();
+	private String lastMntOnReq = null;
 
 	public DataMartProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
@@ -54,6 +59,13 @@ public class DataMartProcess extends DatabaseDataEngine {
 		transDef.setTimeout(-1);
 
 		batchID = logHeader();
+		lastRunDate = getLatestRunDate();
+
+		if (lastRunDate != null) {
+			paramMap.addValue("LASTMNTON", lastRunDate);
+		}
+
+		lastMntOnReq = loadParameters();
 
 		try {
 			loadCount();
@@ -240,18 +252,38 @@ public class DataMartProcess extends DatabaseDataEngine {
 		}
 	}
 
+	private Date getLatestRunDate() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select Max(COMPLETION_TIMESTAMP) from DATAMART_HEADER");
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), Date.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+
 	private void loadCount() {
+		logger.debug(Literal.ENTERING);
 		List<DataMartView> enumValues = Arrays.asList(DataMartView.values());
-		System.out.println("startTime--> " + java.time.LocalTime.now());
 		for (DataMartView dataMartView : enumValues) {
 			StringBuilder sql = new StringBuilder();
-			sql.append("select count(*) count from " + dataMartView);
-			int count = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				if (StringUtils.equals(dataMartView.name(), "DM_HTS_UNADJUSTED_AMT_VIEW")) {
+					sql.append("select count(*) count from " + dataMartView + " Where Finreference "
+							+ "IN (select Finreference from FinanceMain where LASTMNTON > :LASTMNTON) ");
+				} else {
+					sql.append("select count(*) count from " + dataMartView + " where LASTMNTON > :LASTMNTON ");
+				}
+			} else {
+				sql.append("select count(*) count from " + dataMartView);
+			}
+			int count = parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
 			totalRecords = totalRecords + count;
 		}
-		System.out.println("endTime--> " + java.time.LocalTime.now());
 		executionStatus.setTotalRecords(totalRecords);
-		System.out.println("Total Records--> " + totalRecords);
+		logger.debug(Literal.LEAVING);
 	}
 
 	private long logHeader() {
@@ -307,11 +339,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW ");
 
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW");
+			}
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -320,8 +356,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
@@ -358,11 +394,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_ADDRESS_DETAILS_VIEW ");
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_ADDRESS_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_ADDRESS_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -372,8 +412,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -419,11 +459,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_APPLICATION_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_APPLICATION_DETAILS_VIEW  where LASTMNTON > :LASTMNTON ");
+			} else {
+				sql.append(" SELECT * from DM_APPLICATION_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -433,8 +478,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -479,11 +524,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_BOUNCE_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_BOUNCE_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_BOUNCE_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -491,8 +541,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			}
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -538,11 +588,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_COAPPLICANT_DTLS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_COAPPLICANT_DTLS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_COAPPLICANT_DTLS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -552,8 +607,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -598,11 +653,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -612,8 +672,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -658,11 +718,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from FORECLOSURECHARGES_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from FORECLOSURECHARGES_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from FORECLOSURECHARGES_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -672,8 +737,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -718,11 +783,17 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_HTS_UNADJUSTED_AMT_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(
+						" SELECT * from DM_HTS_UNADJUSTED_AMT_VIEW Where Finreference IN (select Finreference from FinanceMain where LastMntON >:LASTMNTON)");
+			} else {
+				sql.append(" SELECT * from DM_HTS_UNADJUSTED_AMT_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -732,8 +803,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
@@ -778,11 +849,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_INSURANCE_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_INSURANCE_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_INSURANCE_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -792,8 +868,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
@@ -839,11 +915,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_IVR_GATEWAY_FLEXI_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_IVR_GATEWAY_FLEXI_VIEW where LASTMNTON > :LASTMNTON ");
+			} else {
+				sql.append(" SELECT * from DM_IVR_GATEWAY_FLEXI_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -853,8 +934,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 				TransactionStatus txnStatus = null;
 				int inserted = 0;
 
@@ -901,11 +982,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.ENTERING);
 
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_LEA_DOC_DTLE_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_LEA_DOC_DTLE_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_LEA_DOC_DTLE_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -915,8 +1001,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -961,11 +1047,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_LOAN_DETAILS_DAILY_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_LOAN_DETAILS_DAILY_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_LOAN_DETAILS_DAILY_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -975,8 +1066,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1023,11 +1114,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_LOAN_VOUCHER_DETAILS_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_LOAN_VOUCHER_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_LOAN_VOUCHER_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1037,8 +1133,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
@@ -1083,11 +1179,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_LOANWISE_CHARGE_DTLS_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_LOANWISE_CHARGE_DTLS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_LOANWISE_CHARGE_DTLS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1097,8 +1198,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1144,11 +1245,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_LOANWISE_REPAYSCHEDULE_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_LOANWISE_REPAYSCHEDULE_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_LOANWISE_REPAYSCHEDULE_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1158,8 +1264,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
@@ -1204,11 +1310,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_NOC_ELIGIBLE_LOANS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_NOC_ELIGIBLE_LOANS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_NOC_ELIGIBLE_LOANS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1218,8 +1329,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1263,11 +1374,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_OPENECS_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_OPENECS_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_OPENECS_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1277,8 +1393,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					int count = 0;
@@ -1320,11 +1436,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_PREPAYMENT_DETAILS_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PREPAYMENT_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PREPAYMENT_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1334,8 +1455,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1380,11 +1501,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_PRESENTATION_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PRESENTATION_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PRESENTATION_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1394,8 +1520,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1439,11 +1565,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_PROPERTY_DTL_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_PROPERTY_DTL_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_PROPERTY_DTL_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1453,8 +1584,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramap) {
+			return parameterJdbcTemplate.query(sql.toString(), paramap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1498,11 +1629,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_RESCH_DETAILS_DAILY_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_RESCH_DETAILS_DAILY_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_RESCH_DETAILS_DAILY_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1512,8 +1648,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1559,11 +1695,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_SEND_SOA_EMAIL_VIEW");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_SEND_SOA_EMAIL_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_SEND_SOA_EMAIL_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1573,8 +1714,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1617,11 +1758,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_SUBQ_DISB_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_SUBQ_DISB_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_SUBQ_DISB_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1631,8 +1777,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1678,11 +1824,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_WRITEOFF_DETAILS_VIEW ");
+
+			if (StringUtils.equalsIgnoreCase("Y", lastMntOnReq)) {
+				sql.append(" SELECT * from DM_WRITEOFF_DETAILS_VIEW where LASTMNTON > :LASTMNTON");
+			} else {
+				sql.append(" SELECT * from DM_WRITEOFF_DETAILS_VIEW");
+			}
 
 			TransactionStatus txnStatus = null;
 			try {
-				txnStatus = extract(sql);
+				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1692,8 +1843,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			logger.debug(Literal.LEAVING);
 		}
 
-		private TransactionStatus extract(StringBuilder sql) {
-			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
+		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
+			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -1727,12 +1878,6 @@ public class DataMartProcess extends DatabaseDataEngine {
 			});
 		}
 	}
-
-	/*
-	 * private String getKeyId(String tableName, MapSqlParameterSource map, String[] ketFields) { StringBuilder builder
-	 * = new StringBuilder(); if (ketFields != null) { for (String key : ketFields) { if (builder.length() > 0) {
-	 * builder.append(","); } builder.append(map.getValue(key)); } } return tableName + ": " + builder.toString(); }
-	 */
 
 	private String getKeyId(String tableName, ResultSet rs, String[] ketFields) {
 		StringBuilder builder = new StringBuilder();
@@ -1771,6 +1916,24 @@ public class DataMartProcess extends DatabaseDataEngine {
 	private void commit(TransactionStatus txnStatus) {
 		transManager.commit(txnStatus);
 		txnStatus.flush();
+	}
+
+	private String loadParameters() {
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE like :SYSPARMCODE");
+		paramSource.addValue("SYSPARMCODE", "DM_LMN_PROCESSINGREQ");
+
+		try {
+			return parameterJdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		} finally {
+			paramSource = null;
+			sql = null;
+		}
 	}
 
 	@Override

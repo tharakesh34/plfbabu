@@ -15,8 +15,8 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.staticparms.ExtendedField;
-import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.extendedfields.ExtendedField;
+import com.pennant.backend.model.extendedfields.ExtendedFieldData;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.util.VASConsatnts;
@@ -143,6 +143,18 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 						&& !StringUtils.equals(vasRecording.getProductCode(), vasDetails.getProductCode())) {
 					validConfig = false;
 				}
+				if (StringUtils.equals("Loan", vasRecording.getPostingAgainst())) {
+					vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+				}
+				if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
+						|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst())
+						|| StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "postingAgainst";
+					valueParm[1] = vasRecording.getPostingAgainst();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90224", valueParm);
+					return returnStatus;
+				}
 				if (StringUtils.isNotBlank(vasRecording.getPostingAgainst())
 						&& !StringUtils.equals(vasRecording.getPostingAgainst(), vasDetails.getPostingAgainst())) {
 					validConfig = false;
@@ -224,6 +236,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 					return response;
 
 				} else {
+					response = new VASRecording();
 					String[] valueParm = new String[1];
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90267", valueParm));
 					return response;

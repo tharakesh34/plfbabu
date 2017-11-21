@@ -150,6 +150,7 @@ import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -396,7 +397,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinanceDetail									financeDetail;
 	private FinanceType										financeType;
 	private RepayMain										repayMain							= null;
-
+ 
 	private LinkedHashMap<String, RepayScheduleDetail>		refundMap;
 	private MailUtil										mailUtil;
 
@@ -630,12 +631,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.bounceRemarks.setMaxlength(100);
 		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
-		this.fundingAccount.setModuleName("FinTypePartner");
-		this.fundingAccount.setMandatoryStyle(true);
-		this.fundingAccount.setValueColumn("PartnerBankID");
-		this.fundingAccount.setDescColumn("PartnerBankCode");
 		this.fundingAccount.setDisplayStyle(2);
-		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
+		this.fundingAccount.setMandatoryStyle(true);
+		this.fundingAccount.setModuleName("FinTypePartner");
+		this.fundingAccount.setValueColumn("PartnerBankCode");
+		this.fundingAccount.setDescColumn("PartnerBankName");
+		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankCode" });
 
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(false);
@@ -1093,6 +1094,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						if (list.contains(epMthd.getValue().trim())) {
 							if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
 								if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+										StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL) &&
 										DateUtility.compare(valueDate, financeMain.getGrcPeriodEndDate()) <= 0 &&
 										(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 										StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
@@ -1594,6 +1596,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							if (list.contains(epMthd.getValue().trim())) {
 								if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
 									if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+											StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL) &&
 											DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) <= 0 &&
 													(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 															StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
@@ -1997,27 +2000,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if(nextRepaySchDate == null){
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
 					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
-						if(DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) <= 0){
-							if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_PFT) ||
-									StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
-								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
-							}else{
-								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
-							}
-						}else{
+						if(curSchd.isRepayOnSchDate()){
 							finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+							if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PFT)){
+								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+							}
+						}else if(curSchd.isPftOnSchDate()){
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+						}else{
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
 						}
-						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
-								DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
+						
+						if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
 							if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
 								receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(curSchd.getProfitSchd()));
-							}else if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PFT)){
-								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
-							}else if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
-								if(DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) > 0){
-									receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(curSchd.getProfitSchd()));
-									finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_EQUAL);
-								}
 							}
 						}
 					}else{
@@ -2030,6 +2026,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
 				}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+				}
+			}
+			
+			// If Next Repay Date is less than Grace Period End Date then date should be recalculate
+			if (DateUtility.compare(nextRepaySchDate, aFinanceMain.getGrcPeriodEndDate()) <= 0) {
+				for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
+					if (DateUtility.compare(detail.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) > 0) {
+						nextRepaySchDate = detail.getSchDate();
+						break;
+					}
 				}
 			}
 			
@@ -2113,6 +2119,29 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		return financeScheduleDetail;
+	}
+	
+	/**
+	 * Method for Sorting Receipt Details From Receipts
+	 * @param receipts
+	 * @return
+	 */
+	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts){
+
+		if (receipts != null && receipts.size() > 0) {
+			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
+				@Override
+				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
+					if (detail1.getPayOrder() > detail2.getPayOrder()) {
+						return 1;
+					} else if(detail1.getPayOrder() < detail2.getPayOrder()) {
+						return -1;
+					} 
+					return 0;
+				}
+			});
+		}
+		return receipts;
 	}
 
 	/**
@@ -2412,7 +2441,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setPaymentRef(this.paymentRef.getValue());
 			receiptDetail.setTransactionRef(this.transactionRef.getValue());
 			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-			receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+			
+			Object object = this.fundingAccount.getAttribute("fundingAccID");
+			receiptDetail.setFundingAc(Long.valueOf(object.toString()));
+			
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
 			receiptDetail.setDelRecord(false);// Internal Purpose
 			receiptDetail.setPayOrder(payOrder);
@@ -2798,8 +2830,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setPaymentRef(this.paymentRef.getValue());
 						receiptDetail.setTransactionRef(this.transactionRef.getValue());
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 						receiptDetail.setReceivedDate(this.receivedDate.getValue());
+						
+						Object object = this.fundingAccount.getAttribute("fundingAccID");
+						receiptDetail.setFundingAc(Long.valueOf(object.toString()));
 					}
 				}
 			}
@@ -3091,6 +3125,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (list.contains(epMthd.getValue().trim())) {
 						if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
 							if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+									StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL) &&
 									DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) <= 0 &&
 											(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 													StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
@@ -3168,9 +3203,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.paymentRef.setValue(receiptDetail.getPaymentRef());
 					this.transactionRef.setValue(receiptDetail.getTransactionRef());
 					this.chequeAcNo.setValue(receiptDetail.getChequeAcNo());
-					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
-					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
+					
+					this.fundingAccount.setAttribute("fundingAccID", receiptDetail.getFundingAc());
+					this.fundingAccount.setValue(receiptDetail.getFundingAcCode(), StringUtils.trimToEmpty(receiptDetail.getFundingAcDesc()));
 				}
 			}
 		}
@@ -4598,15 +4634,102 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		accrualService.calProfitDetails(finMain, receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), newProfitDetail, dateValueDate);
 		amountCodes.setBpi(finMain.getBpiAmount());
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
-		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		
+		// For Bajaj, It should be always positive
+		BigDecimal pftchg = totalPftSchdNew.subtract(totalPftSchdOld);
+		if(pftchg.compareTo(BigDecimal.ZERO) < 0){
+			pftchg = pftchg.negate();
+		}
+		amountCodes.setPftChg(pftchg);
 
 		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
 		BigDecimal totRpyPri = BigDecimal.ZERO;
 		boolean feesExecuted = false;
 		boolean pftChgExecuted = false;
-		for (FinReceiptDetail receiptDetail : getReceiptHeader().getReceiptDetails()) {
+		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(getReceiptHeader().getReceiptDetails());
+		
+		boolean payableLoopProcess = false;
+		int rcptSize = receiptDetails.size();
+		Map<String, BigDecimal> extDataMap = new HashMap<>();
+		BigDecimal totPayable = BigDecimal.ZERO;
+		for (int rcpt = 0; rcpt < rcptSize; rcpt++) {
+			
+			FinReceiptDetail receiptDetail = receiptDetails.get(rcpt);
+			if(!payableLoopProcess && !StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				extDataMap = new HashMap<>();
+				totPayable = BigDecimal.ZERO;
+			}
+			
+			totPayable = totPayable.add(receiptDetail.getAmount());
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				extDataMap.put("PA_ReceiptAmount", totPayable);
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
+			}else{
+				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
+			}
+			
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
+			}
 
-			for (FinRepayHeader repayHeader : receiptDetail.getRepayHeaders()) {
+			int rcptHSize = receiptDetail.getRepayHeaders().size();
+			for (int rcph = 0; rcph < receiptDetail.getRepayHeaders().size(); rcph++) {
+				
+				FinRepayHeader repayHeader = receiptDetail.getRepayHeaders().get(rcph);
+				
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
+							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
+							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+						
+						if(rcptHSize > rcph+1){
+							
+							FinRepayHeader nxtRcpH = receiptDetail.getRepayHeaders().get(rcph+1);
+							if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
+									StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, nxtRcpH.getFinEvent()) ||
+									StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, nxtRcpH.getFinEvent())){
+								if(StringUtils.equals(nxtRcpH.getFinEvent(), repayHeader.getFinEvent())){
+									payableLoopProcess = true;
+								}else{
+									payableLoopProcess = false;
+								}
+							}else{
+								payableLoopProcess = false;
+							}
+						}else{
+							if(rcptSize > rcpt+1){
+								FinReceiptDetail nxtRcp = receiptDetails.get(rcpt+1);
+								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+									if(nxtRcp.getRepayHeaders() != null && !nxtRcp.getRepayHeaders().isEmpty()){
+										FinRepayHeader nxtRcpH = nxtRcp.getRepayHeaders().get(0);
+										if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
+												StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, nxtRcpH.getFinEvent()) ||
+												StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, nxtRcpH.getFinEvent())){
+											if(StringUtils.equals(nxtRcpH.getFinEvent(), repayHeader.getFinEvent())){
+												payableLoopProcess = true;
+											}else{
+												payableLoopProcess = false;
+											}
+										}else{
+											payableLoopProcess = false;
+										}
+									}else{
+										payableLoopProcess = false;
+									}
+								}else{
+									payableLoopProcess = false;
+								}
+							}else{
+								payableLoopProcess = false;
+							}
+						}
+					}else{
+						payableLoopProcess = false;
+					}
+				}
 
 				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
@@ -4649,24 +4772,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
-				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				for (RepayScheduleDetail rsd : repaySchdList) {
 
 					//Set Repay Amount Codes
-					amountCodes.setRpTot(amountCodes.getRpTot().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
-					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
-					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
+					amountCodes.setRpTot(amountCodes.getRpTot().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow())
+							.subtract(rsd.getPriSchdWaivedNow()).subtract(rsd.getPftSchdWaivedNow()));
+					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()).subtract(rsd.getPftSchdWaivedNow()));
+					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()).subtract(rsd.getPriSchdWaivedNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
-					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
+					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow().subtract(rsd.getPriSchdWaivedNow()));
 
 					// Penalties
 					amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
 					amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt()));
 
 					// Fee Details
-					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
-					amountCodes.setInsPay(amountCodes.getInsPay().add(rsd.getSchdInsPayNow()));
+					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()).subtract(rsd.getSchdFeeWaivedNow()));
+					amountCodes.setInsPay(amountCodes.getInsPay().add(rsd.getSchdInsPayNow()).subtract(rsd.getSchdInsWaivedNow()));
 
 					// Waived Amounts
 					amountCodes.setPriWaived(amountCodes.getPriWaived().add(rsd.getPriSchdWaivedNow()));
@@ -4677,24 +4799,187 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
-				amountCodes.setExcessAmt(BigDecimal.ZERO);
-				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
-				amountCodes.setPayableAdvise(BigDecimal.ZERO);
+				if(!payableLoopProcess){
+					amountCodes.setExcessAmt(BigDecimal.ZERO);
+					amountCodes.setEmiInAdvance(BigDecimal.ZERO);
+					amountCodes.setPayableAdvise(BigDecimal.ZERO);
+				}
+
+				// If Payable Continue for All Advises
+				if(payableLoopProcess){
+					continue;
+				}
+				
+				// Accrual & Future Paid Details
+				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					
+					int schSize = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size();
+					FinanceScheduleDetail lastSchd = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(schSize - 1);
+					FinanceScheduleDetail lastPrvSchd = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(schSize - 2);
+					
+					// Profit Due Paid
+					if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd()) > 0){
+						amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(amountCodes.getPftWaived()));
+					}else{
+						amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(lastSchd.getProfitSchd()).add(amountCodes.getPftWaived()));
+					}
+					
+					// Profit Due Waived
+					if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd()) > 0){
+						amountCodes.setPftDueWaived(amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd()));
+					}else{
+						amountCodes.setPftDueWaived(BigDecimal.ZERO);
+					}
+					
+					// Principal Due Paid
+					if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+						amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(amountCodes.getPriWaived()));
+					}else{
+						amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(lastSchd.getPrincipalSchd()).add(amountCodes.getPriWaived()));
+					}
+					
+					// Principal Due Waived
+					if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+						amountCodes.setPriDueWaived(amountCodes.getPriWaived().subtract(lastSchd.getPrincipalSchd()));
+					}else{
+						amountCodes.setPriDueWaived(BigDecimal.ZERO);
+					}
+					
+					Date prvSchdMonthEnd = DateUtility.getMonthEndDate(lastPrvSchd.getSchDate());
+					if(DateUtility.getMonthsBetween(prvSchdMonthEnd, lastSchd.getSchDate(), true) > 1){
+						prvSchdMonthEnd = DateUtility.addDays(DateUtility.getMonthStartDate(lastSchd.getSchDate()), -1);
+					}
+					
+					int curDays = DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), lastSchd.getSchDate());
+					if(DateUtility.compare(prvSchdMonthEnd, lastSchd.getSchDate()) < 0){
+						int daysTillMonthEnd = DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), prvSchdMonthEnd);
+						BigDecimal acrTillMonthEndFromLastDue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 
+								9, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillMonthEnd));
+						
+						acrTillMonthEndFromLastDue = CalculationUtil.roundAmount(acrTillMonthEndFromLastDue, 
+								finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
+						// Accrual Paid
+						if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue)) > 0){
+							BigDecimal diff = amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue));
+							if(diff.compareTo(acrTillMonthEndFromLastDue) > 0){
+								amountCodes.setAccruedPaid(BigDecimal.ZERO);
+							}else{
+								amountCodes.setAccruedPaid(acrTillMonthEndFromLastDue.subtract(diff));
+							}
+						}else{
+							amountCodes.setAccruedPaid(acrTillMonthEndFromLastDue);
+						}
+
+						// Accrual Waived
+						if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue)) > 0){
+							BigDecimal diff = amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue));
+							if(diff.compareTo(acrTillMonthEndFromLastDue) >= 0){
+								amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue);
+							}else{
+								amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue.subtract(diff));
+							}
+						}else{
+							amountCodes.setAccrueWaived(BigDecimal.ZERO);
+						}
+					}else{
+						amountCodes.setAccruedPaid(BigDecimal.ZERO);
+						amountCodes.setAccrueWaived(BigDecimal.ZERO);
+					}
+					
+					BigDecimal unaccrue = BigDecimal.ZERO;
+					if(DateUtility.compare(prvSchdMonthEnd, lastSchd.getSchDate()) < 0){
+						int daysTillTodayFromME = DateUtility.getDaysBetween(prvSchdMonthEnd, lastSchd.getSchDate());
+						unaccrue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 9, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillTodayFromME));
+						unaccrue = CalculationUtil.roundAmount(unaccrue, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+					}else{
+						unaccrue = lastSchd.getProfitSchd();
+					}
+					
+					// UnAccrue Paid
+					if(amountCodes.getPftWaived().compareTo(unaccrue) > 0){
+						amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
+					}else{
+						amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
+					}
+					
+					// UnAccrue Waived
+					if(amountCodes.getPftWaived().compareTo(unaccrue) >= 0){
+						amountCodes.setUnAccrueWaived(unaccrue);
+					}else{
+						amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
+					}
+					
+					// Future Principal Paid
+					if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+						amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+					}else{
+						amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(amountCodes.getPriWaived()));
+					}
+					
+					// Future Principal Waived
+					if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+						amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd());
+					}else{
+						amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
+					}
+				}
+				
+				boolean resetFieldsReq = false;
 				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
 					amountCodes.setExcessAmt(amountCodes.getRpTot());
+					amountCodes.setExPft(amountCodes.getRpPft());
+					amountCodes.setExPri(amountCodes.getRpPri());
+					amountCodes.setExPftDuePaid(amountCodes.getPftDuePaid());
+					amountCodes.setExPriDuePaid(amountCodes.getPriDuePaid());
+					amountCodes.setExSchFeePay(amountCodes.getSchFeePay());
+					amountCodes.setExSchInsPay(amountCodes.getInsPay());
+					amountCodes.setExAccruedPaid(amountCodes.getAccruedPaid());
+					amountCodes.setExUnAccruedPaid(amountCodes.getUnAccruedPaid());
+					amountCodes.setExFuturePriPaid(amountCodes.getFuturePriPaid());
 					amountCodes.setRpExcessTds(amountCodes.getRpTds());
-					amountCodes.setRpTds(BigDecimal.ZERO);
-					amountCodes.setRpTot(BigDecimal.ZERO);
+					resetFieldsReq = true;
 				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
 					amountCodes.setEmiInAdvance(amountCodes.getRpTot());
+					amountCodes.setEAPft(amountCodes.getRpPft());
+					amountCodes.setEAPri(amountCodes.getRpPri());
+					amountCodes.setEAPftDuePaid(amountCodes.getPftDuePaid());
+					amountCodes.setEAPriDuePaid(amountCodes.getPriDuePaid());
+					amountCodes.setEASchFeePay(amountCodes.getSchFeePay());
+					amountCodes.setEASchInsPay(amountCodes.getInsPay());
+					amountCodes.setEAAccruedPaid(amountCodes.getAccruedPaid());
+					amountCodes.setEAUnAccruedPaid(amountCodes.getUnAccruedPaid());
+					amountCodes.setEAFuturePriPaid(amountCodes.getFuturePriPaid());
 					amountCodes.setRpEmiAdvTds(amountCodes.getRpTds());
-					amountCodes.setRpTds(BigDecimal.ZERO);
-					amountCodes.setRpTot(BigDecimal.ZERO);
+					resetFieldsReq = true;
 				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 					amountCodes.setPayableAdvise(amountCodes.getRpTot());
+					amountCodes.setPAPft(amountCodes.getRpPft());
+					amountCodes.setPAPri(amountCodes.getRpPri());
+					amountCodes.setPAPftDuePaid(amountCodes.getPftDuePaid());
+					amountCodes.setPAPriDuePaid(amountCodes.getPriDuePaid());
+					amountCodes.setPASchFeePay(amountCodes.getSchFeePay());
+					amountCodes.setPASchInsPay(amountCodes.getInsPay());
+					amountCodes.setPAAccruedPaid(amountCodes.getAccruedPaid());
+					amountCodes.setPAUnAccruedPaid(amountCodes.getUnAccruedPaid());
+					amountCodes.setPAFuturePriPaid(amountCodes.getFuturePriPaid());
 					amountCodes.setRpPayableTds(amountCodes.getRpTds());
-					amountCodes.setRpTds(BigDecimal.ZERO);
+					resetFieldsReq = true;
+				}
+				
+				// Fields Resetting if Required
+				if(resetFieldsReq){
 					amountCodes.setRpTot(BigDecimal.ZERO);
+					amountCodes.setRpPft(BigDecimal.ZERO);
+					amountCodes.setRpPri(BigDecimal.ZERO);
+					amountCodes.setPftDuePaid(BigDecimal.ZERO);
+					amountCodes.setPriDuePaid(BigDecimal.ZERO);
+					amountCodes.setSchFeePay(BigDecimal.ZERO);
+					amountCodes.setInsPay(BigDecimal.ZERO);
+					amountCodes.setAccruedPaid(BigDecimal.ZERO);
+					amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
+					amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+					amountCodes.setRpTds(BigDecimal.ZERO);
 				}
 
 				// Accounting Event Code Setting
@@ -4723,6 +5008,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+				
+				// Receipt Detail external usage Fields Insertion into DataMap
+				dataMap.putAll(extDataMap);
+				
 				if(!feesExecuted && (StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) ||
 						(!StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
 								StringUtils.equals(getReceiptHeader().getReceiptPurpose(), repayHeader.getFinEvent())))){
@@ -4738,19 +5027,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
 						amountCodes.setExPenaltyPaid(amountCodes.getPenaltyPaid());
-						amountCodes.setExPenaltyWaived(amountCodes.getPenaltyWaived());
 						amountCodes.setPenaltyPaid(BigDecimal.ZERO);
-						amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
 						amountCodes.setEAPenaltyPaid(amountCodes.getPenaltyPaid());
-						amountCodes.setEAPenaltyWaived(amountCodes.getPenaltyWaived());
 						amountCodes.setPenaltyPaid(BigDecimal.ZERO);
-						amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 						amountCodes.setPAPenaltyPaid(amountCodes.getPenaltyPaid());
-						amountCodes.setPAPenaltyWaived(amountCodes.getPenaltyWaived());
 						amountCodes.setPenaltyPaid(BigDecimal.ZERO);
-						amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					}
 
 					aeEvent.getAcSetIDList().clear();
@@ -4788,11 +5071,41 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setRpEmiAdvTds(BigDecimal.ZERO);
 				amountCodes.setRpPayableTds(BigDecimal.ZERO);
 				amountCodes.setExPenaltyPaid(BigDecimal.ZERO);
-				amountCodes.setExPenaltyWaived(BigDecimal.ZERO);
 				amountCodes.setEAPenaltyPaid(BigDecimal.ZERO);
-				amountCodes.setEAPenaltyWaived(BigDecimal.ZERO);
 				amountCodes.setPAPenaltyPaid(BigDecimal.ZERO);
-				amountCodes.setPAPenaltyWaived(BigDecimal.ZERO);
+				amountCodes.setAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+				
+				amountCodes.setExPft(BigDecimal.ZERO);
+				amountCodes.setExPri(BigDecimal.ZERO);
+				amountCodes.setExSchFeePay(BigDecimal.ZERO);
+				amountCodes.setExSchInsPay(BigDecimal.ZERO);
+				amountCodes.setExAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setExUnAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setExFuturePriPaid(BigDecimal.ZERO);
+				amountCodes.setEAPft(BigDecimal.ZERO);
+				amountCodes.setEAPri(BigDecimal.ZERO);
+				amountCodes.setEASchFeePay(BigDecimal.ZERO);
+				amountCodes.setEASchInsPay(BigDecimal.ZERO);
+				amountCodes.setEAAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setEAUnAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setEAFuturePriPaid(BigDecimal.ZERO);
+				amountCodes.setPAPft(BigDecimal.ZERO);
+				amountCodes.setPAPri(BigDecimal.ZERO);
+				amountCodes.setPASchFeePay(BigDecimal.ZERO);
+				amountCodes.setPASchInsPay(BigDecimal.ZERO);
+				amountCodes.setPAAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setPAUnAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setPAFuturePriPaid(BigDecimal.ZERO);
+				amountCodes.setPftDuePaid(BigDecimal.ZERO);
+				amountCodes.setExPftDuePaid(BigDecimal.ZERO);
+				amountCodes.setEAPftDuePaid(BigDecimal.ZERO);
+				amountCodes.setPAPftDuePaid(BigDecimal.ZERO);
+				amountCodes.setPriDuePaid(BigDecimal.ZERO);
+				amountCodes.setExPriDuePaid(BigDecimal.ZERO);
+				amountCodes.setEAPriDuePaid(BigDecimal.ZERO);
+				amountCodes.setPAPriDuePaid(BigDecimal.ZERO);
 
 			}
 
@@ -6036,6 +6349,33 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * onChanging fundingAccount details
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$fundingAccount(Event event) {
+		logger.debug("Entering");
+
+		this.fundingAccount.clearErrorMessage();
+		Clients.clearWrongValue(this.fundingAccount);
+
+		long partnerBankID = 0;
+		FinTypePartnerBank finTypePartnerBank = null;
+		Object dataObject = this.fundingAccount.getObject();
+
+		if (dataObject != null) {
+			if (dataObject instanceof FinTypePartnerBank) {
+				finTypePartnerBank = (FinTypePartnerBank) dataObject;
+				partnerBankID = finTypePartnerBank.getPartnerBankID();
+			}
+		}
+		this.fundingAccount.setAttribute("fundingAccID", partnerBankID);
+
+		logger.debug("Leaving");
+	}
+	
 
 	/**
 	 * Method which returns FinanceMain object
@@ -6117,7 +6457,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		logger.debug("Leaving");
 	}
-	
+ 
 	private String getTabID(String id) {
 		return "TAB" + StringUtils.trimToEmpty(id);
 	}

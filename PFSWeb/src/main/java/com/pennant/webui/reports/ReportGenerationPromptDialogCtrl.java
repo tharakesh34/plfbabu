@@ -110,6 +110,7 @@ import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
 import com.pennant.backend.service.reports.ReportConfigurationService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -193,6 +194,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private List<String> myLableList = new ArrayList<String>();
 	private Map<Long, List<String>> myOrderedLableMap = new HashMap<>();
 	
+	private String moduleType;
+	
 	public ReportGenerationPromptDialogCtrl() {
 		super();
 	}
@@ -200,6 +203,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "";
+		this.moduleType = getArgument("module");
 	}
 
 	/**
@@ -2473,7 +2477,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (StringUtils.trimToNull(message.toString()) != null) {
 			throw new Exception(message.insert(0, "Please select the below fields:").toString());
 		}
-
+		
+		if (StringUtils.equals(moduleType, PennantConstants.NO_OBJECT_CERT)) {
+			Filter[] nocFilter = new Filter[2];
+			nocFilter[0] = Filter.equalTo("FINISACTIVE", 0);
+			nocFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_MATURED,
+					FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
+			filters = nocFilter;
+		}
 		logger.debug("Leaving");
 		return filters;
 	}

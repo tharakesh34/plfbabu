@@ -24,6 +24,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -300,7 +301,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.favouringName.setMaxlength(100);
 		this.acctHolderName.setMaxlength(100);
 		this.chequeOrDDumber.setMaxlength(6);
-		this.remarks.setMaxlength(500);
+		this.remarks.setMaxlength(100);
 
 		this.paymentAmount.setMandatory(true);
 		this.paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -415,7 +416,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 		
 		try {
-			if (DateUtility.compare(this.postDate.getValue(), DateUtility.getAppDate()) < 0) {
+			if (DateUtility.compare(this.postDate.getValue(), DateUtility.getAppDate()) < 0 && !postDate.isDisabled()) {
 				throw new WrongValueException(this.postDate, "Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
 			}
 			paymentInstruction.setPostDate(this.postDate.getValue());
@@ -783,7 +784,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.partnerBankID.setReadonly(false);
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose", "P", Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
@@ -848,7 +849,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	public void doaddFilter(String payMode) {
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);

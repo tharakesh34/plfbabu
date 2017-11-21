@@ -2628,7 +2628,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		setReadOnlyForCombobox();
 		//onCheckDiffDisbCcy(false);
 		setRepayAccMandatory();
-		setStepCheckDetails();
 		setDownpayPgmDeails(aFinanceMain.isNewRecord());
 
 		logger.debug("Leaving");
@@ -7052,16 +7051,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	protected void setStepCheckDetails() {
-		if (this.stepFinance.isChecked()) {
-			fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C,
-					PennantStaticListUtil.getInterestRateType(true), "");
-			this.repayRateBasis.setDisabled(true);
-			fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL,
-					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
-			this.cbScheduleMethod.setDisabled(true);
-		}
-	}
+
 
 	private void setDownpayPgmDeails(boolean isNewRecord) {
 		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {

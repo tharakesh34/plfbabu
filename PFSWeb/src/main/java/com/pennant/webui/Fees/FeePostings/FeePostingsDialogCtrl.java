@@ -754,8 +754,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		try {
 			if(!enqModule){
-			if (this.valueDate.getValue().before(minReqPostingDate)
-					|| this.valueDate.getValue().after(DateUtility.getAppDate())) {
+			if ((this.valueDate.getValue().before(minReqPostingDate)
+					|| this.valueDate.getValue().after(DateUtility.getAppDate())) && !this.valueDate.isDisabled()) {
 				
 				String minreqPostDate =DateUtility.formatToShortDate(minReqPostingDate);
 				String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
@@ -778,10 +778,19 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		}
 
 		// Basic Details Error Detail
+		doRemoveValidation();
 		showErrorDetails(wve, this.basicDetailsTab);
 
 		logger.debug("Leaving");
 
+	}
+
+	private void doRemoveValidation() {
+		this.postingDivision.setConstraint("");
+		this.feeTypeCode.setConstraint("");
+		this.postingAmount.setConstraint("");
+		this.postDate.setConstraint("");
+		this.valueDate.setConstraint("");
 	}
 
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
@@ -824,6 +833,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		if (!this.postDate.isDisabled()){
 			this.postDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_PostDate.value"), true));
+		}
+		
+		if (!this.postingDivision.isButtonDisabled()){
+			this.postingDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_feePostingsDialog_PostingDivision.value"), null, true, true));
 		}
 
 		if (!this.valueDate.isDisabled()){
@@ -949,8 +962,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (StringUtils.isBlank(this.reference.getValue())) {
 			this.reference.setValue("", "");
-			this.postingDivision.setValue("","");
-			this.postingDivision.setButtonDisabled(false);
+			
 		} else {
 			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
 					FinanceConstants.POSTING_AGAINST_LOAN)) {				

@@ -29,12 +29,6 @@
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	<tx:advice id="finOneServiceTxAdvice" transaction-manager="finOneTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
 	<!-- ====================================================== -->
 	<!--         Define Aspect pointcuts and advisors           -->
 	<!--               for the transaction scopes.              -->
@@ -52,9 +46,7 @@
 		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="guiServiceMethods" />
 		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
 		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />
-		<aop:advisor advice-ref="finOneServiceTxAdvice" pointcut-ref="serviceMethods" />
-	
+		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />	
 	</aop:config> 
 
 	<!-- ====================================================== -->
@@ -72,11 +64,7 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="auditDatasource" />
 	</bean>
-	<bean id="finOneTransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="finOneDatasource" />
-	</bean>
-	
+		
 	<!-- ====================================================== -->
 	<!-- Define the property placeholder configurer -->
 	<!-- ====================================================== -->

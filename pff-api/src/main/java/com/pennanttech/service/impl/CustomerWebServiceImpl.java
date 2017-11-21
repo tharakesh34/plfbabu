@@ -472,9 +472,18 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				.getApprovedCustomerEmploymentDetailByCustEmpId(employmentDetail
 						.getCustomerEmploymentDetail().getCustEmpId());
 		if (customerEmpDetail != null) {
-			// call update customer if there is no errors
-			response = customerController.updateCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
-					employmentDetail.getCif());
+			if(customerEmpDetail.getCustID()==(customer.getCustID())){
+				// call update customer if there is no errors
+				response = customerController.updateCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
+						employmentDetail.getCif());
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
+				valueParm[1] = employmentDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			}
+			
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -524,7 +533,15 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (customerEmpDetail != null) {
 			customerEmploymentDetail.setCustEmpName(customerEmpDetail.getCustEmpName());
 			// call delete customer service
+			if(customerEmpDetail.getCustID()==(customer.getCustID())){
 			response = customerController.deleteCustomerEmployment(customerEmploymentDetail);
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
+				valueParm[1] = employmentDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			}
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -1111,8 +1128,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "customerIncome";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(customerIncomeDetail.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerIncomeDetail.getCif());
+			 customer = customerDetailsService.getCustomerByCIF(customerIncomeDetail.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
@@ -1120,6 +1138,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Customerincome";
+			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+		}
+
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1165,6 +1190,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				valueParm[0] = customerIncomeDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
+		}
+		
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Customerincome";
+			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
 		}
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);

@@ -437,13 +437,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setMaxlength(50);
 		
 		this.accountingSetID.setModuleName("AccountingSet");
-		this.accountingSetID.setValueColumn("AccountSetCode");
-		this.accountingSetID.setDescColumn("AccountSetCodeName");
-		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode" });
+		this.accountingSetID.setValueColumn("EventCode");
+		this.accountingSetID.setDescColumn("lovDescEventCodeName");
+		this.accountingSetID.setValidateColumns(new String[] { "EventCode" });
 		this.accountingSetID.setMandatoryStyle(false);
 		
 		Filter filters[] = new Filter[1];
-		filters[0] = new Filter("AccountSetCode", AccountEventConstants.ACCEVENT_MANFEE,Filter.OP_EQUAL);
+		filters[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_MANFEE,Filter.OP_EQUAL);
 		this.accountingSetID.setFilters(filters);
 		
 		if (isWorkFlowEnabled()) {

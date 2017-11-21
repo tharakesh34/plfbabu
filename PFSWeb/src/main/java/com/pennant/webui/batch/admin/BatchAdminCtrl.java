@@ -98,6 +98,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		sapGL;
 	protected ProcessExecution		cibil;
 	protected ProcessExecution		gstTaxDownload;
+	protected ProcessExecution		dmLoanDetailsMonthly;
+	protected ProcessExecution		dmLoanBalancesMonthly;
+	protected ProcessExecution		dmDisbDetailsMonthly;
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
@@ -120,7 +123,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		trailBalance,
 		sapGL,
 		cibil,
-		gstTaxDownload
+		gstTaxDownload,
+		dmLoanDetailsMonthly,
+		dmLoanBalancesMonthly,
+		dmDisbDetailsMonthly
 	}
 
 	public BatchAdminCtrl() {
@@ -496,6 +502,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				break;
 			case gstTaxDownload:
 				renderDetials(this.gstTaxDownload, status);
+				break;
+			case dmLoanDetailsMonthly:
+				renderDetials(this.dmLoanDetailsMonthly, status);
+				break;
+			case dmLoanBalancesMonthly:
+				renderDetials(this.dmLoanBalancesMonthly, status);
+				break;
+			case dmDisbDetailsMonthly:
+				renderDetials(this.dmDisbDetailsMonthly, status);
 				break;
 			default:
 				break;

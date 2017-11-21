@@ -1574,7 +1574,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						String ruleCodeDesc = "";
 						ruleCode = "PA_" + newRuleCode + "_P";
 						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_PayableAdvise");
-						
+
 						item = new Listitem();
 						lc = new Listcell(ruleCode);
 
@@ -1586,10 +1586,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						lc = new Listcell(ruleCodeDesc);
 						lc.setParent(item);
 						this.feeCodeListbox.appendChild(item);
-						
+
 						ruleCode = "PB_" + newRuleCode + "_P";
 						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_PartnerBank");
-						
+
 						item = new Listitem();
 						lc = new Listcell(ruleCode);
 
@@ -1601,10 +1601,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						lc = new Listcell(ruleCodeDesc);
 						lc.setParent(item);
 						this.feeCodeListbox.appendChild(item);
-						
+
 						ruleCode = "EA_" + newRuleCode + "_P";
 						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_EMIAdvance");
-						
+
 						item = new Listitem();
 						lc = new Listcell(ruleCode);
 
@@ -1616,13 +1616,25 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						lc = new Listcell(ruleCodeDesc);
 						lc.setParent(item);
 						this.feeCodeListbox.appendChild(item);
-						
-						newRuleCode = "EX_" + newRuleCode + "_P";
-						newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_Excess");
-					} else {
-						newRuleCode = newRuleCode + "_P";
-						newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeePaid");
+
+						ruleCode = "EX_" + newRuleCode + "_P";
+						ruleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_Excess");
+
+						item = new Listitem();
+						lc = new Listcell(ruleCode);
+
+						if (!amountcodes.contains(ruleCode)) {
+							amountcodes.add(ruleCode);
+						}
+
+						lc.setParent(item);
+						lc = new Listcell(ruleCodeDesc);
+						lc.setParent(item);
+						this.feeCodeListbox.appendChild(item);
+
 					}
+					newRuleCode = newRuleCode + "_P";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeePaid");
 				} else if (j == 3) {
 					newRuleCode = newRuleCode + "_AF";
 					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeAF");

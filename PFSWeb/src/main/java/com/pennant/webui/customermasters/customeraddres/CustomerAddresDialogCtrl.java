@@ -89,6 +89,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the
@@ -1410,7 +1411,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				fillPindetails(null, pcProvince);
 			}
 		}
-		
+
 		this.custAddrCity.setObject("");
 		this.custAddrZIP.setObject("");
 		this.custAddrCity.setValue("");
@@ -1419,9 +1420,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setDescription("");
 		fillCitydetails(pcProvince);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
-	
+
+
     /**
      * based on state param ,city will be filtered
      * @param state
@@ -1446,7 +1448,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		
 		logger.debug("Leaving");
 	}
-
+	
+	
 	/**
 	 * onFulfill custAddrCity
 	 * 
@@ -1508,10 +1511,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
 		
+
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.custAddrZIP.setFilters(filters);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

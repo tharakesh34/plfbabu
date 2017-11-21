@@ -56,7 +56,7 @@ public class GcdCustomer {
 	private long constId; // Customer Type ID of PLF (Customer Type ID in PLF and Constitution ID in FinnOne are same)
 	private long industryId; // IndustryID in PLF (IndustryID in PLF and IndustryID in FinnOne are same)
 	private Long categoryId = null; // Shall be Blank
-	private String spousename = ""; // Shall be Blank
+	private String spousename; // Shall be Blank
 	private String indvCorpFlag; // Indicator for Corporate and Individual Customer ("I" for Individual and "C" for
 									// Corporate customer)
 	private String fName; // First Name of Individual Customer
@@ -64,7 +64,7 @@ public class GcdCustomer {
 	private String lname; // Last Name of Individual Customer
 	private Date DOB; // Date of Birth of individual Customer
 	private String sex; // Gender of
-	private String incomeSource = ""; // Shall be blank
+	private String incomeSource; // Shall be blank
 	private Date yearsOfCurrJob; // Applicable for Individual Customer - Customer Employment Details - Employee From
 									// (Current Employer)
 	private Date DOI; // Applicable for Corporate Customer - Date of Incorporation
@@ -72,8 +72,8 @@ public class GcdCustomer {
 	private Date makerDate; // Shall be the current business date
 	private String authId = "PENNANT"; // Shall be hard coded value "PENNANT"
 	private Date authDate; // Shall be the current business date
-	private String accType = ""; // Shall be blank
-	private String apCcocatg = ""; // Shall be blank
+	private String accType; // Shall be blank
+	private String apCcocatg; // Shall be blank
 	private Date dateLastUpdate; // Shall be blank
 	private String nationalId = "NA"; // Shall be populated with hard coded value as "NA"
 	private String passportNo; // Shall be Passport No. of Customer
@@ -84,25 +84,25 @@ public class GcdCustomer {
 								// Region is South then the value shall be 2If the Region is East then the value shall
 								// be 3If the Region is West then the value shall be 4
 	private String bankType = "R"; // Shall be populated with hard coded value as "R"
-	private String entityFlag = ""; // Shall be Blank
+	private String entityFlag ; // Shall be Blank
 	private String contactPerson = "NOT AVAILABLE"; // Shall be populated with Contact Person Name of corporate customer
 													// or "NOT AVAILABLE"
 	private String custSearchId; // Shall be populated with PAN No.
 	private long sectorId; // Shall be populated with the Sector ID (Sector ID in PLF and Economic Section ID in FinnOne
 							// are same)
-	private String fraudFlag = ""; // Shall be Blank
+	private String fraudFlag ; // Shall be Blank
 	private long fraudScore; // Shall be Blank
-	private String emiCardElig = ""; // Shall be Blank
+	private String emiCardElig ; // Shall be Blank
 	private String addressDetail; // Address details to be populated address details by seeing structure
 	private String bankDetail; // Mandate details to be populated structure given below
 	private String nomineeName; // Name of Nominee if available
 	private String nomineeAddress; // Address of Nominee if available
-	private String nomineeRelationship = ""; // Nominee Relationship
-	private String field9 = ""; // Tenure of Insurance Policy
-	private String field10 = ""; // Sum assured of Insurance Policy
+	private String nomineeRelationship ; // Nominee Relationship
+	private String field9 ; // Tenure of Insurance Policy
+	private String field10 ; // Sum assured of Insurance Policy
 	private String insertUpdateFlag; // "I" for creating a new customer & "U" for updating the details of the existing
 										// customer
-	private String statusFromFinnOne = ""; // Value to be returned by FinnOne. Possible values are "S"uccess or "R"eject
+	private String statusFromFinnOne ; // Value to be returned by FinnOne. Possible values are "S"uccess or "R"eject
 	private String rejectionReason; // Rejection reason shall be populated if P_Success_Reject is "R"
 	private String finnCustId; // Shall be populated with FinnOne Customer ID where P_INS_UPD_FLAG is "U". For
 								// P_INS_UPD_FLAG "I" value in this field shall be blank. FinnOne shall return the

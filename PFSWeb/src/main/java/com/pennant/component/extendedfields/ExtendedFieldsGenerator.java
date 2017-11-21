@@ -59,8 +59,8 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -77,6 +77,8 @@ import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -683,7 +685,14 @@ public class ExtendedFieldsGenerator {
 				//data Setting
 				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
+					//checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
+					if(App.DATABASE == Database.PSQL){
+						checkbox.setChecked(
+								fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
+					}else{
+						checkbox.setChecked(
+								Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
+					}
 				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 
 					if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
@@ -766,10 +775,10 @@ public class ExtendedFieldsGenerator {
 				accbox.setId(getComponentId(detail.getFieldName()));
 				accbox.setFormatter(getCcyFormat());
 				accbox.setTextBoxWidth(165);
-				accbox.setReadonly(isReadOnly);
 				accbox.setAccountDetails("", "J7", "1010200250001,1010200500001", true);//TODO : Account Types need to define
 				accbox.setMandatoryStyle(detail.isFieldMandatory());
 				accbox.setButtonVisible(false);// !isReadOnly
+				accbox.setReadonly(isReadOnly);
 
 				//Data Setting
 				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null

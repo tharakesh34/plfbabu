@@ -66,7 +66,6 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -351,7 +350,22 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			wve.add(we);
 		}
 		try {
-			aBankDetail.setAccNoLength(this.accNoLength.getValue());
+			this.accNoLength.setConstraint("");
+			this.accNoLength.setErrorMessage("");
+			
+			if (this.accNoLength.getValue() == null) {
+				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(PennantConstants.accNo_maxValue)}));
+			}
+			
+			int accNoLegthValue = this.accNoLength.getValue();
+			
+			if (!this.accNoLength.isReadonly()) {
+				if (accNoLegthValue < 0 || accNoLegthValue > PennantConstants.accNo_maxValue) {
+					throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(PennantConstants.accNo_maxValue)}));
+				}
+			}
+			
+			aBankDetail.setAccNoLength(accNoLegthValue);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -439,14 +453,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		
-		if (!this.accNoLength.isReadonly()){
-			this.accNoLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),true,false,PennantConstants.accNo_maxValue));
-		}
-
 		if (!this.bankShortCode.isReadonly()){
 			this.bankShortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankShortCode.value"), 
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -458,6 +469,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		setValidationOn(false);
 		this.bankCode.setConstraint("");
 		this.bankName.setConstraint("");
+		this.accNoLength.setConstraint("");
+		this.bankShortCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -479,8 +492,12 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
+		
 		this.bankCode.setErrorMessage("");
 		this.bankName.setErrorMessage("");
+		this.accNoLength.setErrorMessage("");
+		this.bankShortCode.setErrorMessage("");
+		
 		logger.debug("Leaving");
 	}
 

@@ -12,6 +12,13 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <import resource="pff-interfaces-context.xml"/>
+    
+    <bean id="finOneDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/FINONE" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
         
     <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -49,6 +56,10 @@
 	<bean id="customerCurdOperationService" class="com.pennanttech.bajaj.services.CustomerCurdOperationService" scope="prototype" parent="bajajService"/>	
 	<bean id="customerCrudOperationJob" class="com.pennanttech.pff.bajaj.schedule.jobs.CustomerCrudOperationJob">
 	<property name="customerCurdOperationService" ref="customerCurdOperationService"/>
+	</bean>
+	
+	<bean id="crm" class="com.pennanttech.pff.external.customer.FinnOneCustomer"  parent="bajajService">
+		<property name="finOneDatasource" ref="finOneDatasource" />
 	</bean>
 	
 </beans>

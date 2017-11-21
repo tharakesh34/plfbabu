@@ -2532,7 +2532,7 @@ union all
           financemain t2 on t1.finreference = t2.finreference
 	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and (t2.closingstatus!='C' or t2.closingstatus is null) and 
 			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') and 	T1.Disbonschdate=0
-       and T1.Finreference+schdate not in ( Select  T1.Finreference||max(T2.schdate)maxschdate
+       and T1.Finreference+schdate not in ( Select  T1.Finreference+max(T2.schdate)maxschdate
                                               from financemain T1 inner join 
                                               Finscheduledetails T2 on T1.Finreference = T2.Finreference
                                               where T1.closingstatus='E'

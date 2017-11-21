@@ -35,10 +35,10 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennant.backend.model.staticparms.ExtendedField;
-import com.pennant.backend.model.staticparms.ExtendedFieldData;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfields.ExtendedField;
+import com.pennant.backend.model.extendedfields.ExtendedFieldData;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -199,16 +199,16 @@ public class CustomerController {
 		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
 			curCustomer.setCustCtgCode(customerDetails.getCustCtgCode());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
 			curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
-		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		} 
+		if (StringUtils.isNotBlank(customerDetails.getCustCoreBank())) {
 			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
+		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
@@ -235,6 +235,9 @@ public class CustomerController {
 			curCustomer.setLastMntBy(userDetails.getLoginUsrID());
 		} else {
 			Customer prvCustomer = prvCustomerDetails.getCustomer();
+			if (StringUtils.isBlank(curCustomer.getCustDftBranch())) {
+				curCustomer.setCustDftBranch(prvCustomer.getCustDftBranch());
+			}
 			customerDetails.setCustID(prvCustomer.getCustID());
 			curCustomer.setCustCIF(customerDetails.getCustCIF());
 			curCustomer.setCustID(prvCustomer.getCustID());
@@ -1028,7 +1031,7 @@ public class CustomerController {
 			customerEmploymentDetail.setUserDetails(userDetails);
 			customerEmploymentDetail.setCustID(prvCustomer.getCustID());
 			customerEmploymentDetail.setLovDescCustCIF(cif);
-			customerEmploymentDetail.setLovDesccustEmpName(String.valueOf(customerEmploymentDetail.getCustEmpName()));
+			customerEmploymentDetail.setCustEmpName(customerEmploymentDetail.getCustEmpName());
 			customerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			customerEmploymentDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerEmploymentDetail.setNewRecord(false);

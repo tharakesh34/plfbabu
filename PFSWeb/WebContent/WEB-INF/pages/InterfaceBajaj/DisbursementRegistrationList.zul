@@ -73,7 +73,7 @@
 												<uppercasebox
 													id="finType" width="132px" />
 												<button
-													id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
+													id="btnFinType" image="/images/icons/LOVSearch.png" />
 											</cell>
 										</hlayout>
 									</hbox>

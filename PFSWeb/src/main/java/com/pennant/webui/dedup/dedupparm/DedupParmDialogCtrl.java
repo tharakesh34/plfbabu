@@ -320,16 +320,14 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		try {
-			doSave();
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving" + event.toString());
+	public void onClick$btnSave(Event event) throws Exception {
+		logger.debug("Entering");
+		
+		doSave();
+		
+		logger.debug("Leaving");
 	}
 
 	/**

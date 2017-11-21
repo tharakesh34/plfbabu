@@ -380,7 +380,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		
 		// Stepping POS Exclude for Recal Type
-		if(!aFinanceMain.isStepFinance() ||
+		if(!aFinanceMain.isStepFinance() || 
+				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
 				!(StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 						StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 			excludeFileds.append("STEPPOS,");
@@ -1322,6 +1323,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		// Stepping POS Exclude for Recal Type
 		if(!getFinScheduleData().getFinanceMain().isStepFinance() ||
+				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
 				!(StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 						StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 			excludeFileds.append("STEPPOS,");
@@ -1358,6 +1360,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 		// Stepping POS Exclude for Recal Type
 		if(!getFinScheduleData().getFinanceMain().isStepFinance() ||
+				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
 				!(StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 						StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 			excludeFileds.append("STEPPOS,");
@@ -1401,6 +1404,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		// Stepping POS Exclude for Recal Type
 		if(!getFinScheduleData().getFinanceMain().isStepFinance() ||
+				!StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL) ||
 				!(StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
 						StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 			excludeFileds.append(",STEPPOS");

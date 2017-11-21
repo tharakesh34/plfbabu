@@ -70,12 +70,14 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.service.finance.ManualAdviseService;
@@ -124,8 +126,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Datebox postDate;
 
 	protected Hbox hbox_Sequence;
-	protected Hbox hbox_WaivedAmount;
-	protected Hbox hbox_PaidAmount;
 	protected Groupbox adviseMovements;
 	protected Label	   label_FeeTypeID;
 
@@ -137,7 +137,16 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
+	//FinanceDetails Fields
+	protected Label										lbl_LoanReference;
+	protected Label										lbl_LoanType;
+	protected Label										lbl_CustCIF;
+	protected Label										lbl_FinAmount;
+	protected Label										lbl_startDate;
+	protected Label										lbl_MaturityDate;
+	protected Groupbox									finBasicdetails;
 
+	private FinanceMain financeMain;
 	/**
 	 * default constructor.<br>
 	 */
@@ -178,7 +187,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (this.manualAdvise == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-
+			this.financeMain = (FinanceMain) arguments.get("financeMain");
+			if (this.financeMain == null) {
+				throw new Exception(Labels.getLabel("error.unhandled"));
+			}
 			// Store the before image.
 			ManualAdvise manualAdvise = new ManualAdvise();
 			BeanUtils.copyProperties(this.manualAdvise, manualAdvise);
@@ -212,11 +224,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.finReference.setModuleName("FinanceMain");
-		this.finReference.setValueColumn("FinReference");
-		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		this.finReference.setMandatoryStyle(true);
-
+		/*
+		 * this.finReference.setModuleName("FinanceMain"); this.finReference.setValueColumn("FinReference");
+		 * this.finReference.setValidateColumns(new String[] { "FinReference" });
+		 * this.finReference.setMandatoryStyle(true);
+		 */
 		this.feeTypeID.setModuleName("FeeType");
 		this.feeTypeID.setValueColumn("FeeTypeCode");
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
@@ -238,9 +250,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		this.sequence.setMaxlength(10);
 		this.remarks.setMaxlength(100);
-
-		this.hbox_PaidAmount.setVisible(false);
-		this.hbox_WaivedAmount.setVisible(false);
 		this.hbox_Sequence.setVisible(false);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -377,18 +386,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfillFinReference(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		if (!this.finReference.getDescription().equals("")) {
-
-		} else {
-
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	public void onFulfillFeeTypeID(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = feeTypeID.getObject();
@@ -446,10 +443,17 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		//FIXME to be changed on adding the payable advises. As of now Advise type is not visible
 	//	this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
 		
+		this.lbl_LoanReference.setValue(financeMain.getFinReference());
+		this.lbl_LoanType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
+		this.lbl_CustCIF.setValue(financeMain.getLovDescCustCIF() + " - " + financeMain.getLovDescCustShrtName());
+		this.lbl_FinAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
+				CurrencyUtil.getFormat(financeMain.getFinCcy())));
+		this.lbl_startDate.setValue(DateUtility.formateDate(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_MaturityDate.setValue(DateUtility.formateDate(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+		 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();
-		
-		this.finReference.setValue(aManualAdvise.getFinReference());
+		//this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 		this.sequence.setValue(aManualAdvise.getSequence());
@@ -462,7 +466,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.remarks.setValue(aManualAdvise.getRemarks());
 
 		if (aManualAdvise.isNewRecord()) {
-			this.finReference.setDescription("");
+			//this.finReference.setDescription("");
 			this.feeTypeID.setDescription("");
 			this.valueDate.setValue(DateUtility.getAppDate());
 			this.postDate.setValue(DateUtility.getAppDate());
@@ -487,6 +491,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else {
 			this.adviseMovements.setVisible(false);
 		}
+		this.recordStatus.setValue(manualAdvise.getRecordStatus());
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -561,8 +567,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		// Loan Reference
 		try {
-			this.finReference.getValidatedValue();
-			aManualAdvise.setFinReference(this.finReference.getValue());
+			//this.finReference.getValidatedValue();
+			aManualAdvise.setFinReference(this.lbl_LoanReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -697,7 +703,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 		
 		
-		this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"), null, true, true));
+		//this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"), null, true, true));
 
 		this.feeTypeID.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
 
@@ -728,7 +734,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 
 		this.adviseType.setConstraint("");
-		this.finReference.setConstraint("");
+		//this.finReference.setConstraint("");
 		this.feeTypeID.setConstraint("");
 		this.sequence.setConstraint("");
 		this.adviseAmount.setConstraint("");
@@ -836,7 +842,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		if (this.manualAdvise.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			readOnlyComponent(isReadOnly("ManualAdviseDialog_FinReference"), this.finReference);
+			//readOnlyComponent(isReadOnly("ManualAdviseDialog_FinReference"), this.finReference);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_FeeTypeID"), this.feeTypeID);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
@@ -846,7 +852,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
 		} else {
 			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.finReference);
+			//readOnlyComponent(true, this.finReference);
 			readOnlyComponent(true, this.feeTypeID);
 			//readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.paidAmount);
@@ -1210,6 +1216,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
 	}
 
 }

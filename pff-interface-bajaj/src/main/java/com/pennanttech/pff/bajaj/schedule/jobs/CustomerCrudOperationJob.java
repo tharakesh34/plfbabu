@@ -8,7 +8,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.bajaj.services.CustomerCurdOperationService;
-import com.pennanttech.bajaj.services.PosidexResponseServiceImpl;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerCrudOperationJob implements Job, Serializable {

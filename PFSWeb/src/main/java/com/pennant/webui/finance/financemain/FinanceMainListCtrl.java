@@ -945,8 +945,38 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// FinReference
-		this.searchObj = setFinReferences(this.searchObj, this.searchObj.getWhereClause());
+		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			this.searchObj = setFinReferences(this.searchObj, this.searchObj.getWhereClause());
+		} else {
 
+			if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+				// get the search operator
+				final Listitem itemFinReference = this.sortOperator_finReference.getSelectedItem();
+
+				if (itemFinReference != null) {
+					final int searchOpId = ((SearchOperators) itemFinReference.getAttribute("data"))
+							.getSearchOperatorId();
+
+					if (searchOpId == -1) {
+						// do nothing
+					} else if (searchOpId == Filter.OP_LIKE) {
+						searchObj.addFilter(new Filter("FinReference",
+								"%" + this.finReference.getValue().trim().toUpperCase() + "%", searchOpId));
+					} else if (searchOpId == Filter.OP_IN) {
+						this.searchObj.addFilter(new Filter("FinReference",
+								this.finReference.getValue().trim().split(","), Filter.OP_IN));
+					} else if (searchOpId == Filter.OP_NOT_IN) {
+						this.searchObj.addFilter(new Filter("FinReference",
+								this.finReference.getValue().trim().split(","), Filter.OP_NOT_IN));
+					} else {
+						searchObj
+								.addFilter(new Filter("FinReference", this.finReference.getValue().trim(), searchOpId));
+					}
+				}
+			}
+		}
+		
+		
 		if (StringUtils.isNotBlank(this.fincustName.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_custName.getSelectedItem(), this.fincustName
 					.getValue().trim(), "lovDescCustShrtName");

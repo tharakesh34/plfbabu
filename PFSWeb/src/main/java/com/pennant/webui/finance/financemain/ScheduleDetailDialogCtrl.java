@@ -1256,7 +1256,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		}
 
-		if(!financeType.isTDSApplicable()){
+		if(!financeMain.isTDSApplicable()){
 			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
 		}else{
 			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);

@@ -120,12 +120,12 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -3014,7 +3014,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// Check Dedup if Prospect Customer
 			// &&
 			// StringUtils.trimToEmpty(aCustomerDetails.getCustomer().getRecordType()).equals("")
-			if (!aCustomerDetails.getCustomer().isSkipDedup()) {
+			if (processCompleted && !aCustomerDetails.getCustomer().isSkipDedup()) {
 				if (StringUtils.isBlank(aCustomerDetails.getCustomer().getCustCoreBank())) {
 					aCustomerDetails = FetchDedupDetails.getCustomerDedup(getRole(), aCustomerDetails,
 							this.window_CustomerDialog);

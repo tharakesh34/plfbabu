@@ -835,7 +835,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		//Branch IFSC Code
-		if (!this.fileName.isReadonly() && this.alwDisburment.isChecked() && !this.reqFileDownload.isChecked()) {
+		if (!this.fileName.isReadonly() && this.alwDisburment.isChecked() || this.alwPayments.isChecked() && !this.reqFileDownload.isChecked()) {
 			this.fileName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_FileName.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, !this.reqFileDownload.isChecked()));
@@ -1630,11 +1630,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		
 		doRemoveValidation();
 
-		if (this.alwDisburment.isChecked() || this.alwReceipts.isChecked()) {
+		if (this.alwDisburment.isChecked() || this.alwPayments.isChecked()) {
 			this.reqFileDownload.setDisabled(false);
 		} else {
 			this.reqFileDownload.setDisabled(true);
 			this.reqFileDownload.setChecked(false);
+			this.space_FileName.setSclass("");
 		}
 
 		if (this.alwDisburment.isChecked()) {
@@ -1652,9 +1653,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		} else {
 			this.btnSearchModeDisbursment.setDisabled(true);
 			this.modeDisbursment.setReadonly(true);
+			
 			this.space_modeDisbursments.setSclass("");
 			this.modeDisbursment.setValue("");
-			this.space_FileName.setSclass("");
+			
 			this.fileName.setErrorMessage("");
 		}
 		
@@ -1671,13 +1673,31 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.btnSearchModePayments.setDisabled(false);
 			this.modePayments.setValue("");
 			this.space_modePayments.setSclass(PennantConstants.mandateSclass);
+			this.reqFileDownload.setDisabled(false);
+			this.space_FileName.setSclass(PennantConstants.mandateSclass);
+			
+			if (this.reqFileDownload.isChecked()) {
+				this.space_FileName.setSclass("");
+				this.fileName.setErrorMessage("");
+			} else {
+				this.space_FileName.setSclass(PennantConstants.mandateSclass);
+			}
 
 		} else {
 			this.modePayments.setReadonly(true);
 			this.btnSearchModePayments.setDisabled(true);
 			this.space_modePayments.setSclass("");
 			this.modePayments.setValue("");
+			if(!this.alwDisburment.isChecked()){
+				this.reqFileDownload.setDisabled(true);
+				this.reqFileDownload.setChecked(false);
+				this.space_FileName.setSclass("");
+			}
+			this.fileName.setErrorMessage("");
+
 		}
+		
+		
 
 		logger.debug("Leaving");
 	}
@@ -1685,7 +1705,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckReceipts() {
 		logger.debug("Entering");
 		doRemoveValidation();
-		if (this.alwReceipts.isChecked() || this.alwDisburment.isChecked() ) {
+		if (this.alwPayments.isChecked() || this.alwDisburment.isChecked() ) {
 			this.reqFileDownload.setDisabled(false);
 		} else {
 			this.reqFileDownload.setDisabled(true);
