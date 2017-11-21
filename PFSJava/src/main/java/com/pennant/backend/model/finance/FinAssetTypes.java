@@ -1,12 +1,14 @@
 package com.pennant.backend.model.finance;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-public class FinAssetTypes extends AbstractWorkflowEntity {
+public class FinAssetTypes extends AbstractWorkflowEntity implements Entity{
 
 	private static final long serialVersionUID = 1L;
-
+    
+	private long        finAssetTypeId         = Long.MIN_VALUE;
 	private String 		assetType;
 	private String		reference;
 	private int			seqNo				= 0;
@@ -52,5 +54,21 @@ public class FinAssetTypes extends AbstractWorkflowEntity {
 	}
 	public void setBefImage(FinAssetTypes befImage) {
 		this.befImage = befImage;
+	}
+
+	public long getFinAssetTypeId() {
+		return finAssetTypeId;
+	}
+
+	public void setFinAssetTypeId(long finAssetTypeId) {
+		this.finAssetTypeId = finAssetTypeId;
+	}
+
+	public long getId() {
+		return finAssetTypeId;
+	}
+
+	public void setId(long finAssetTypeId) {
+		this.finAssetTypeId = finAssetTypeId;
 	}
 }

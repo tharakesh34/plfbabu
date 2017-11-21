@@ -208,7 +208,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		boolean isEmptyRecords = false;
-		Map<Date, Long> map = new HashMap<Date, Long>();
+		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
 		ResultSet rs = null;
 		List<Object> resultList = null;
@@ -268,11 +268,14 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				}
 
 				Date defSchDate = rs.getDate("DEFSCHDDATE");
+				String bankCode = rs.getString("BANKCODE");
 				if (defSchDate != null) {
-					if (!map.containsKey(defSchDate)) {
+					if (!map.containsKey(defSchDate) || !map.containsKey(bankCode)) {
 						header.setSchdate(defSchDate);
+						header.setBankCode(bankCode);
 						presentmentId = savePresentmentHeaderDetails(header);
 						map.put(defSchDate, presentmentId);
+						map.put(bankCode, presentmentId);
 					}
 				}
 				isEmptyRecords = true;

@@ -51,6 +51,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.service.GenericService;
@@ -360,5 +361,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		public List<ManualAdviseMovements> getAdivseMovements(long id) {
 			return getManualAdviseDAO().getAdviseMovements(id);
 		}
+		@Override
+		public FinanceMain getFinanceDetails(String finReference) {
+			return manualAdviseDAO.getFinanceDetails(finReference);
+		}
+
 
 }

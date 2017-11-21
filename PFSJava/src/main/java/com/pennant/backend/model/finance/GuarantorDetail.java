@@ -81,6 +81,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private String guarantorExposure;
 	private String worstStatus;
 	private String status;
+	private String guarantorGenderCode;
 
 	// Address Details
 	@XmlElement
@@ -531,4 +532,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
+
+	public String getGuarantorGenderCode() {
+		return guarantorGenderCode;
+	}
+
+	public void setGuarantorGenderCode(String guarantorGenderCode) {
+		this.guarantorGenderCode = guarantorGenderCode;
+	}
+	
 }

@@ -84,6 +84,10 @@ public class BatchUtil {
 			return;
 		}
 		
+		if ("F".equals(status.getStatus())) {
+			throw new Exception(status.getRemarks());
+		}
+		
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 

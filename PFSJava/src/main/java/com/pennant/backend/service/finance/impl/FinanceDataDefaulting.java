@@ -12,19 +12,19 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -43,6 +43,7 @@ public class FinanceDataDefaulting {
 	private FinanceTypeDAO		financeTypeDAO;
 	private BranchDAO			branchDAO;
 	private PromotionService	promotionService;
+	private CurrencyDAO			currencyDAO;
 
 
 	public FinanceDataDefaulting() {
@@ -170,14 +171,9 @@ public class FinanceDataDefaulting {
 		if (financeType != null) {
 			//Validate Finance Currency
 			finScheduleData.setFinanceType(financeType);
-
-			if (StringUtils.isNotBlank(finMain.getFinCcy())) {
-				Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
-				if (currency == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getFinCcy();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90120", valueParm)));
-				}
+			if (StringUtils.isBlank(finMain.getFinCcy())) {
+				String ccy = SysParamUtil.getAppCurrency();
+				finMain.setFinCcy(ccy);
 			}
 
 			// validate finance branch
@@ -1084,5 +1080,13 @@ public class FinanceDataDefaulting {
 
 	public void setPromotionService(PromotionService promotionService) {
 		this.promotionService = promotionService;
+	}
+
+	public CurrencyDAO getCurrencyDAO() {
+		return currencyDAO;
+	}
+
+	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
+		this.currencyDAO = currencyDAO;
 	}
 }

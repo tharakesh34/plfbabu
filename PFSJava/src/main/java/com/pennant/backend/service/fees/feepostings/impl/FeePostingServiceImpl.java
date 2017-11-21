@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.service.fees.feepostings.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,11 +52,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -81,11 +80,9 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -106,6 +103,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	private PartnerBankDAO			partnerBankDAO;
 	private FeeTypeDAO				feeTypeDAO;
 	private LimitHeaderDAO 			limitHeaderDAO;  
+	private PostingsPreparationUtil			postingsPreparationUtil;
 
 	@Override
 	public FeePostings getFeePostings() {
@@ -363,9 +361,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException {
 		logger.debug("Entering");
 
-		long linkedTranId = Long.MIN_VALUE;
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-
 		FeePostings feePostings = new FeePostings("");
 		BeanUtils.copyProperties((FeePostings) auditHeader.getAuditDetail().getModelData(), feePostings);
 
@@ -409,15 +404,14 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				
 				amountCodes.setPartnerBankAc(feePostings.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(feePostings.getPartnerBankAcType());
-				aeEvent.setFinReference(feePostings.getReference());
-				
+				aeEvent.setFinReference(String.valueOf(feePostings.getPostId()));
+				aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+				aeEvent.setValueDate(feePostings.getValueDate());
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
+				getPostingsPreparationUtil().postAccounting(aeEvent);
 				
-				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
-
 			}
 
 		} catch (Exception e) {
@@ -426,70 +420,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
 					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
-			list = null;
-		}
-
-		if (list != null && !list.isEmpty()) {
-
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE || list.get(0).getLinkedTranId() == 0) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-
-			//Method for Checking for Reverse Calculations Based upon Negative Amounts
-			for (ReturnDataSet returnDataSet : list) {
-
-				returnDataSet.setLinkedTranId(linkedTranId);
-
-				if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-					String tranCode = returnDataSet.getTranCode();
-					String revTranCode = returnDataSet.getRevTranCode();
-					String debitOrCredit = returnDataSet.getDrOrCr();
-
-					returnDataSet.setTranCode(revTranCode);
-					returnDataSet.setRevTranCode(tranCode);
-
-					returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-					if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-					} else {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-					}
-				}
-			}
-
-
-			if (list != null && list.size() > 0) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				for (int i = 0; i < list.size(); i++) {
-					ReturnDataSet set = list.get(i);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
-							|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
-								set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-								new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-					}
-				}
-				auditHeader.setErrorList(errorDetails);
-			}
-		}
-
-		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
-
-			// save Postings
-			if (list != null && !list.isEmpty()) {
-				getPostingsDAO().saveBatch(list);
-			}
 		}
 
 		logger.debug("Leaving");
@@ -801,4 +731,14 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
 		this.limitHeaderDAO = limitHeaderDAO;
 	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+	
+	
 }

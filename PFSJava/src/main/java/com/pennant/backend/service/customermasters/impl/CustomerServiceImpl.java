@@ -55,20 +55,27 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.PennantConstants;
@@ -91,7 +98,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
-
+	private BranchDAO	branchDAO;
+	private ProvinceDAO provinceDAO;
+	private CityDAO		cityDAO;
 
 	public CustomerServiceImpl() {
 		super();
@@ -790,10 +799,55 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Leaving");
 		return errorDetail;
 	}
+	/**
+	 * prepare the GCD Customer related data
+	 */
+	public void prepareGCDCustomerData(CustomerDetails customerDetails) {
+		logger.debug("Entering");
+
+		Branch branch = branchDAO.getBranchById(customerDetails.getCustomer().getCustDftBranch(), "");
+		customerDetails.getCustomer().setBranchRefno(branch.getBankRefNo());
+		if (customerDetails.getAddressList() != null && !customerDetails.getAddressList().isEmpty()) {
+			for (CustomerAddres custAddress : customerDetails.getAddressList()) {
+				Province province = provinceDAO.getProvinceById(custAddress.getCustAddrCountry(),
+						custAddress.getCustAddrProvince(), "");
+				custAddress.setStateRefNo(province.getBankRefNo());
+				City city = cityDAO.getCityById(custAddress.getCustAddrCountry(), custAddress.getCustAddrProvince(),
+						custAddress.getCustAddrCity(), "");
+				custAddress.setCityRefNo(city.getBankRefNo());
+			}
+		}
+		logger.debug("Leaving");
+	}
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
+	public BranchDAO getBranchDAO() {
+		return branchDAO;
+	}
+
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	public ProvinceDAO getProvinceDAO() {
+		return provinceDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+
+	public CityDAO getCityDAO() {
+		return cityDAO;
+	}
+
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
+	}
+
+	
 }

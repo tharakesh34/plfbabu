@@ -54,7 +54,7 @@ public class PennantConstants {
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
-		SeqFinMaintainInstructions
+		SeqFinMaintainInstructions,SeqCustomerAddresses,SeqFinASSETTYPES,SeqReceiptAllocationDetail
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -684,12 +684,9 @@ public class PennantConstants {
 
 	//Customer Dedup source sstem
 	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENNANT";
-	public static final String CUSTOMER_DEDUP_REJECTED= "R";
-	public static final String CUSTOMER_DEDUP_UPDATE= "U";
-	public static final String CUSTOMER_DEDUP_INSERT= "I";
 	
-	//Fin-one customer creation stored procedure
-	public static final String CUSTOMER_DEDUP_PROCNAME= "CREATE_CUSTOMER_IN_FINNONE";
+	// No objection certificate
+	public static final String NO_OBJECT_CERT= "NOC";
 	
 	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
 	public static final String FINANCE_INQUIRY_LOAN = "LOAN";

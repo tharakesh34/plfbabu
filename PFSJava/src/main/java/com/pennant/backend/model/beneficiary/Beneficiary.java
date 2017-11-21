@@ -102,7 +102,10 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
-
+	
+	private boolean beneficiaryActive;
+	private boolean defaultBeneficiary;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -331,5 +334,23 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
+
+	public boolean isBeneficiaryActive() {
+		return beneficiaryActive;
+	}
+
+	public void setBeneficiaryActive(boolean beneficiaryActive) {
+		this.beneficiaryActive = beneficiaryActive;
+	}
+
+	public boolean isDefaultBeneficiary() {
+		return defaultBeneficiary;
+	}
+
+	public void setDefaultBeneficiary(boolean defaultBeneficiary) {
+		this.defaultBeneficiary = defaultBeneficiary;
+	}
+	
+	
 
 }

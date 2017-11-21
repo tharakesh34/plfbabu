@@ -74,9 +74,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
 			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
 
-			finSchData.getFinanceMain().setEqualRepay(true);
-			finSchData.getFinanceMain().setCalculateRepay(true);
-
 			if(StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
 				finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
 			}else{

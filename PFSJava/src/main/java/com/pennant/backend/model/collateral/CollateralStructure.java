@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

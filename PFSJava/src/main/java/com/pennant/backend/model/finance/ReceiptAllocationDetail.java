@@ -2,8 +2,11 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 
-public class ReceiptAllocationDetail {
+import com.pennant.backend.model.Entity;
 
+public class ReceiptAllocationDetail implements Entity{
+    
+	private long receiptAllocationid = Long.MIN_VALUE;
 	private long receiptID = 0;
 	private int allocationID = 0;
 	private String allocationType;
@@ -70,6 +73,26 @@ public class ReceiptAllocationDetail {
 
 	public void setTypeDesc(String typeDesc) {
 		this.typeDesc = typeDesc;
+	}
+
+	public long getReceiptAllocationid() {
+		return receiptAllocationid;
+	}
+
+	public void setReceiptAllocationid(long receiptAllocationid) {
+		this.receiptAllocationid = receiptAllocationid;
+	}
+
+	public boolean isNew() {
+		return false;
+	}
+
+	public long getId() {
+		return receiptID;
+	}
+
+	public void setId(long id) {
+		this.receiptID=id;
 	}
 	
 }

@@ -461,6 +461,16 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			return auditDetail;
 			
 		}
+		if(StringUtils.isNotBlank(customerAddres.getCustAddrZIP())){
+			if(customerAddres.getCustAddrZIP().length()<3 || customerAddres.getCustAddrZIP().length()>6){
+				String[] valueParm = new String[3];
+				valueParm[0] = "pinCode";
+				valueParm[1] = "2 digits";
+				valueParm[2] = "7 digits";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+		}
 		return auditDetail;
 	}
 

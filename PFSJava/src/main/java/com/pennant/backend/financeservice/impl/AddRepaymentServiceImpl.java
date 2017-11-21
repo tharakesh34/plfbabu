@@ -171,11 +171,12 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91114", "", valueParm), lang));
 			}
 			if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-				if(finServiceInstruction.getTerms() <= 0) {
-					String[] valueParm = new String[2];
+				if (finServiceInstruction.getTerms() <= 0 ||finServiceInstruction.getTerms()> 99) {
+					String[] valueParm = new String[3];
 					valueParm[0] = "Number of Terms";
-					valueParm[1] = finServiceInstruction.getRecalType();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91112", "", valueParm), lang));
+					valueParm[1] = "1";
+					valueParm[2] = "99";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65031", valueParm)));
 				}
 			}
 		}

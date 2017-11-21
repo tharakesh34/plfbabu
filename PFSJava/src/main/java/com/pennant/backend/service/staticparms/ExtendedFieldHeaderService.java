@@ -45,7 +45,7 @@ package com.pennant.backend.service.staticparms;
 
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
 
 public interface ExtendedFieldHeaderService {
 	

@@ -45,6 +45,7 @@ package com.pennant.backend.service.finance;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 
@@ -57,4 +58,6 @@ public interface ManualAdviseService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<ManualAdviseMovements> getAdivseMovements(long id);
+	FinanceMain getFinanceDetails(String finReference);
+	
 }

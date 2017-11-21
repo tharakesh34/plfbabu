@@ -49,6 +49,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -71,7 +72,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerGroupDAO customerGroupDAO;
 	private LimitHeaderDAO limitHeaderDAO;
-
+	private CustomerDAO customerDAO;
 	public CustomerGroupServiceImpl() {
 		super();
 	}
@@ -79,6 +80,14 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -353,7 +362,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(customerGroup.getCustGrpCode());
-		errParm[0] = PennantJavaUtil.getLabel("label_CustGrpID") + ":" + valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustGrpID") + " : " + valueParm[0];
 
 		if (customerGroup.isNew()) { // for New record or new record into work
 			// flow
@@ -411,17 +420,31 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 				}
 			}
 		}
+		
+		// Checking Dependency Validation
+		if (!StringUtils.equals(method, PennantConstants.method_doReject)
+				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customerGroup.getRecordType())) {
 
-		if (customerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			// Customer Group Limit SetUp
 			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(),
 					"_View");
 			if (limitHeader != null) {
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+			} else {
+
+				// Customer
+				boolean isCustExists = getCustomerDAO().customerExistingCustGrp(customerGroup.getCustGrpID(), "_View");
+				if (isCustExists) {
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				}
 			}
+
 		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		
 		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !customerGroup.isWorkflow()) {
-			customerGroup.setBefImage(befCustomerGroup);
+			auditDetail.setBefImage(befCustomerGroup);
 		}
 		logger.debug("Leaving");
 		return auditDetail;

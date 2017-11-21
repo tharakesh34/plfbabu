@@ -513,6 +513,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
 		serviceInstruction.setFromDate(finMain.getEventFromDate());
 		serviceInstruction.setRepayFrq(finMain.getRepayFrq());
+		serviceInstruction.setRepayRvwFrq(finMain.getRepayRvwFrq());
 		
 		Date startCalFrom = finMain.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;

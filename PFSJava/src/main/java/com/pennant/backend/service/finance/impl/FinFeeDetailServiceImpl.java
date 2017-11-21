@@ -381,6 +381,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					rcdType = finFeeReceipt.getRecordType();
 					recordStatus = finFeeReceipt.getRecordStatus();
 					finFeeReceipt.setRecordType("");
+					finFeeReceipt.setWorkflowId(0);
 					finFeeReceipt.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
 				
@@ -602,14 +603,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			boolean isRcdType = false;
 
-			if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			if (PennantConstants.RCD_ADD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 				finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 				finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (finFeeDetail.getRecordType().equalsIgnoreCase(
-					PennantConstants.RCD_DEL)) {
+			} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 				finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				isRcdType = true;
 			}
@@ -619,10 +619,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(finFeeDetail.getRecordType())
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;

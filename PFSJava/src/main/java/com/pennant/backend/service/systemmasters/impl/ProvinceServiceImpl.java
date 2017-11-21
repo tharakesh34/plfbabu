@@ -54,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
@@ -78,6 +79,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvinceDAO provinceDAO;
 	private TaxDetailDAO taxDetailDAO;
+	private CityDAO cityDAO;
 	private transient TaxDetailService taxDetailService;
 	public ProvinceServiceImpl() {
 		super();
@@ -697,6 +699,18 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			}
         }
 		
+		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(province.getRecordType()))) {
+			int count = this.cityDAO.getPCProvinceCount(province.getCPProvince(), "_View");
+			if (count > 0) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = province.getCPProvince();
+				errParm[0] = PennantJavaUtil.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + valueParm[0];
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
@@ -738,5 +752,9 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 	public void setTaxDetailService(TaxDetailService taxDetailService) {
 		this.taxDetailService = taxDetailService;
+	}
+	
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
 	}
 }

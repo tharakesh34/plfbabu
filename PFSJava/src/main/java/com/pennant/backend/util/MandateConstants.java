@@ -62,6 +62,7 @@ public class MandateConstants {
 	public static final String	STATUS_REJECTED		= "REJECTED";
 	public static final String	STATUS_HOLD			= "HOLD";
 	public static final String	STATUS_RELEASE		= "RELEASE";
+	public static final String	STATUS_CANCEL		= "CANCEL";
 
 	public static final String	MODULE_REGISTRATION	= "REGISTRATION";
 	public static final String	MODULE_STATUSUPLOAD	= "STATUSUPLOAD";

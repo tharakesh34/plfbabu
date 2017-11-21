@@ -37,6 +37,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -76,6 +77,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
+	private AccountProcessUtil			accountProcessUtil;
 
 	public JVPostingServiceImpl() {
 		super();
@@ -401,10 +403,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			long linkedTranId = Long.MIN_VALUE;
 			try {
 				List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
-				//Post and save
-				/*getPostingsPreparationUtil().postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(),
-						"Y", false, false, linkedTranId, BigDecimal.ZERO, "", false);*/
 				
+				getAccountProcessUtil().procAccountUpdate(list);
 				
 				
 				if (list != null && list.size() > 0) {
@@ -412,23 +412,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					for (int i = 0; i < list.size(); i++) {
 						ReturnDataSet set = list.get(i);
 						if (!("0000".equals(set.getErrorId()) || StringUtils.isEmpty(set.getErrorId()))) {
-							/*
-							 * errorDetails.add(new
-							 * ErrorDetails(set.getAccountType(),
-							 * set.getErrorId(), "E", set.getErrorMsg(), new
-							 * String[] {}, new String[] {}));
-							 */// TODO Uncomment later
 							postingSuccess = true;
 						} else {
 							linkedTranId = set.getLinkedTranId();
 							set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 							set.setTransOrder(i);
+							set.setPostingId(set.getPostingId()+i);
 						}
 					}
-					// save to postings table.
-					for (ReturnDataSet set : list) {
-						set.setFinReference(String.valueOf(jVPosting.getReference()));
-					}
+					
 					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
@@ -1178,6 +1170,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
+	}
+
+	public AccountProcessUtil getAccountProcessUtil() {
+		return accountProcessUtil;
+	}
+
+	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
+		this.accountProcessUtil = accountProcessUtil;
 	}
 
 }

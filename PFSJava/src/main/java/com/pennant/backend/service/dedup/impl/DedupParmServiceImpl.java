@@ -74,7 +74,6 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.GenericService;

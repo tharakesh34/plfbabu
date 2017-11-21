@@ -296,7 +296,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			// For Mandate deletion is not required , so make it as inActive
-			getMandateDAO().updateActive(mandate.getMandateID(), false);
+			getMandateDAO().updateActive(mandate.getMandateID(),MandateConstants.STATUS_CANCEL, false);
+			
+			MandateStatus mandateStatus = new MandateStatus();
+			mandateStatus.setMandateID(mandate.getMandateID());
+			mandateStatus.setStatus(MandateConstants.STATUS_CANCEL);
+			mandateStatus.setReason(mandate.getReason());
+			mandateStatus.setChangeDate(mandate.getInputDate());
+			getMandateStatusDAO().save(mandateStatus, "");
 
 		} else {
 			mandate.setRoleCode("");
@@ -311,13 +318,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_NEW);
 			}
 			
-			MandateStatus mandateStatus = new MandateStatus();
-			mandateStatus.setMandateID(mandate.getMandateID());
-			mandateStatus.setStatus(mandate.getStatus());
-			mandateStatus.setReason(mandate.getReason());
-			mandateStatus.setChangeDate(mandate.getInputDate());
-			getMandateStatusDAO().save(mandateStatus, "");
-
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				mandate.setRecordType("");
@@ -327,6 +327,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setRecordType("");
 				getMandateDAO().update(mandate, "");
 			}
+
+			MandateStatus mandateStatus = new MandateStatus();
+			mandateStatus.setMandateID(mandate.getMandateID());
+			mandateStatus.setStatus(mandate.getStatus());
+			mandateStatus.setReason(mandate.getReason());
+			mandateStatus.setChangeDate(mandate.getInputDate());
+			
+			getMandateStatusDAO().save(mandateStatus, "");
+
 		}
 
 		if(!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {

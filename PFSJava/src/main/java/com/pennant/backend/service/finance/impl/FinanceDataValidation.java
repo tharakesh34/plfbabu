@@ -22,7 +22,6 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -31,6 +30,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -45,7 +45,6 @@ import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -61,6 +60,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfields.ExtendedField;
+import com.pennant.backend.model.extendedfields.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -80,8 +81,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.model.staticparms.ExtendedField;
-import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.Province;
@@ -140,6 +139,7 @@ public class FinanceDataValidation {
 	private CustomerDocumentService			customerDocumentService;
 	private PartnerBankDAO				partnerBankDAO;
 	private ExtendedFieldDetailsService	extendedFieldDetailsService;
+	private CurrencyDAO						currencyDAO;
 
 	public FinanceDataValidation() {
 		super();
@@ -1022,14 +1022,6 @@ public class FinanceDataValidation {
 			}
 		}
 
-		// Validate Finance Currency
-		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
-		if (currency == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinCcy();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90120", valueParm)));
-		}
-
 		// validate finance branch
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
 			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
@@ -1039,7 +1031,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90129", valueParm)));
 			}
 		}
-
+ 
 		//Validate Repayment Method
 		if (isCreateLoan) {
 			String repayMethod = finMain.getFinRepayMethod();
@@ -1994,12 +1986,13 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//Validate Finance Currency
-		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
-		if (currency == null) {
+		// Validate Finance Currency
+		boolean currencyExists = currencyDAO.isExistsCurrencyCode(finMain.getFinCcy());
+		if (!currencyExists) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinCcy();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90120", valueParm)));
+			return errorDetails;
 		}
 
 		// validate finance branch
@@ -4332,6 +4325,14 @@ public class FinanceDataValidation {
 	 */
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public CurrencyDAO getCurrencyDAO() {
+		return currencyDAO;
+	}
+
+	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
+		this.currencyDAO = currencyDAO;
 	}
 
 }

@@ -23,11 +23,11 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.extendedfields.ExtendedField;
+import com.pennant.backend.model.extendedfields.ExtendedFieldData;
+import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.staticparms.ExtendedField;
-import com.pennant.backend.model.staticparms.ExtendedFieldData;
-import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.util.AssetConstants;
@@ -497,6 +497,11 @@ public class ExtendedFieldDetailsService {
 				render.getSeqNo(), tableName, "");
 		ExtendedFieldRender oldExRender = render.getBefImage();
 
+		if (tempRender == null && befExtRender == null) {
+			render.setNewRecord(true);
+			render.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		}
+
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
 		valueParm[0] = render.getReference();
@@ -509,6 +514,10 @@ public class ExtendedFieldDetailsService {
 			errParm[0] = PennantJavaUtil.getLabel("label_AssetType") + ":" + valueParm[0];
 		} else if (StringUtils.startsWith(tableName, VASConsatnts.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":" + valueParm[0];
+		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_CUSTOMER)) {
+			errParm[0] = PennantJavaUtil.getLabel("label_Module_Customer") + ":" + valueParm[0];
+		} else if (StringUtils.startsWith(tableName, ExtendedFieldConstants.MODULE_LOAN)) {
+			errParm[0] = PennantJavaUtil.getLabel("label_Module_Loan") + ":" + valueParm[0];
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_SeqNo") + ":" + valueParm[1];
 

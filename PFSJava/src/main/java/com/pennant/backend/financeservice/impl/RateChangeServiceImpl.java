@@ -53,10 +53,11 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		
 		// Step POS Case , setting Step Details to Object
 		boolean isCalSchedule = true;
-		if(StringUtils.isNotEmpty(moduleDefiner) && 
-				StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+		if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+			if(StringUtils.isNotEmpty(moduleDefiner)){
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finScheduleData.getFinReference(),
 					"", false));
+			}
 			isCalSchedule = false;
 		}
 

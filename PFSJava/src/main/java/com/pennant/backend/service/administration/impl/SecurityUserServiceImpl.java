@@ -368,7 +368,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 		SecurityUser securityUser= (SecurityUser) auditDetail.getModelData();
-		SecurityUser befSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrID(), "");
+		SecurityUser befSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		
 		if ("changePassword".equals(StringUtils.trimToEmpty(method))) {
 			auditDetail.setBefImage(befSecurityUser);	
@@ -378,7 +378,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		
 		SecurityUser tempSecurityUser= null;
 		if (securityUser.isWorkflow()){
-			tempSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrID(), "_Temp");
+			tempSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "_Temp");
 		}
 		//SecurityUser aBefSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		SecurityUser oldSecurityUser= securityUser.getBefImage();

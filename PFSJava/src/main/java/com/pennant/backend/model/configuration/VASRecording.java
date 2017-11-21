@@ -64,12 +64,12 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfields.ExtendedField;
+import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.model.staticparms.ExtendedField;
-import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

@@ -39,6 +39,7 @@ public class FinReceiptDetail implements Entity {
 	private String						chequeAcNo;
 	@XmlElement(name="fundingAccount")
 	private long						fundingAc		= 0;
+	private String						fundingAcCode;
 	private String						fundingAcDesc;
 	@XmlElement
 	private Date						receivedDate;
@@ -51,6 +52,7 @@ public class FinReceiptDetail implements Entity {
 	private String						partnerBankAc;
 	private String						partnerBankAcType;
 	private String						reference;					// only for Fees
+	private String						feeTypeCode;
 	private String						feeTypeDesc;
 	private boolean 					noReserve;
 
@@ -360,6 +362,22 @@ public class FinReceiptDetail implements Entity {
 
 	public void setNoReserve(boolean noReserve) {
 		this.noReserve = noReserve;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getFundingAcCode() {
+		return fundingAcCode;
+	}
+
+	public void setFundingAcCode(String fundingAcCode) {
+		this.fundingAcCode = fundingAcCode;
 	}
 
 }

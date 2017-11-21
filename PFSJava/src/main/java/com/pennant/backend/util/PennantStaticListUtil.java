@@ -1,5 +1,15 @@
 package com.pennant.backend.util;
 
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
+
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -11,14 +21,6 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
 
 public class PennantStaticListUtil {
 	
@@ -209,16 +211,13 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
-
 	private static ArrayList<ValueLabel> monthEndList;
-
 	private static ArrayList<ValueLabel> configTypes;
 	private static ArrayList<ValueLabel> paymentTypeList;
 	private static ArrayList<ValueLabel> disbursmentParty;
 	private static ArrayList<ValueLabel> disbursmentStatus;
 	private static ArrayList<ValueLabel> disbStatusList;
 	
-
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {
@@ -808,14 +807,15 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getEarlyPayEffectOn() {
 
 		if(schCalOnList == null){
-			schCalOnList = new ArrayList<ValueLabel>(5);
-			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
+			schCalOnList = new ArrayList<ValueLabel>(6);
+			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("label_No_Effect")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("label_Adjust_To_Maturity")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("label_Recalculate_Schedule")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_PRIHLD, Labels.getLabel("label_Principal_Holiday")));
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("lable_Profit_Intact")));
-				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("lable_Recalculate_Intact")));
+				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("label_Profit_Intact")));
+				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("label_Recalculate_Intact")));
 			}
 		}
 		return schCalOnList;
@@ -2174,6 +2174,8 @@ public class PennantStaticListUtil {
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD,Labels.getLabel("label_Mandate_HOLD")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE,Labels.getLabel("label_Mandate_RELEASE")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN,Labels.getLabel("label_Mandate_FINANCE")));
+			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL,Labels.getLabel("label_Mandate_CANCEL")));
+
 		}
 		return statusTypeList;
 	}
@@ -2724,8 +2726,8 @@ public class PennantStaticListUtil {
 
 		if (authTypes == null) {
 			authTypes = new ArrayList<ValueLabel>(3);
-			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeExteranal.value")));
-			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeInternal.value")));
+			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), "External "));
+			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), "Internal"));
 		}
 		return authTypes;
 	}
@@ -2814,15 +2816,7 @@ public class PennantStaticListUtil {
 		}
 		return accountMapping;
 	}
-	
-	public static ArrayList<ValueLabel> getConfigNames() {
-		
-		if(gstMapping == null){
-			gstMapping = new ArrayList<ValueLabel>(1);
-			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS", Labels.getLabel("label_DataExtraction_GSTDnld")));
-		}
-		return gstMapping;
-	}
+
 	
 	public static ArrayList<ValueLabel> getMonthList() {
 		
@@ -2845,10 +2839,7 @@ public class PennantStaticListUtil {
 	}
 	
 	public static List<ValueLabel> getMontEnds() {
-
-		if (monthEndList == null) {
-			monthEndList = new ArrayList<ValueLabel>();
-		}
+		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
 
 		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
 		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
@@ -2872,7 +2863,7 @@ public class PennantStaticListUtil {
 		}
 		return monthEndList;
 	}
-	
+
 	public static ArrayList<ValueLabel> getDisbursmentParty() {
 
 		if(disbursmentParty == null){
@@ -2934,5 +2925,16 @@ public class PennantStaticListUtil {
 		}
 		return configTypes;
 	}
+
+	public static ArrayList<ValueLabel> getConfigNames() {
+		
+		if(gstMapping == null){
+			gstMapping = new ArrayList<ValueLabel>(1);
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS_TRANASCTION", Labels.getLabel("label_DataExtraction_GSTDownLoad_Transaction")));
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS_SUMMARY", Labels.getLabel("label_DataExtraction_GSTDownLoad_Summary")));
+		}
+		return gstMapping;
+	}
+
 }
 

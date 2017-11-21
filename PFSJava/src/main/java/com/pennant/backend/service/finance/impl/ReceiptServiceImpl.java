@@ -965,27 +965,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(schdList == null){
 			schdList = scheduleData.getFinanceScheduleDetails();
 		}
-
-		tranType = PennantConstants.TRAN_UPD;
-		financeMain.setRecordType("");
-
-		// Update Status Details and Profit Details
-		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, receiptHeader.getReceiptPurpose());
-
-		//Finance Main Updation
-		//=======================================
-		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
-
-		// ScheduleDetails delete and save
-		//=======================================
-		listDeletion(finReference, "");
-		scheduleData.setFinanceScheduleDetails(schdList);
-		listSave(scheduleData, "", 0);
 		
 		// Overdue Details updation , if Value Date is Back dated.
+		scheduleData.setFinanceScheduleDetails(schdList);
 		List<FinODDetails> overdueList = null;
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
-			overdueList = calCurDatePenalties(scheduleData, rceiptData, valueDate);
+			Date reqMaxODDate = DateUtility.addDays(valueDate, -1);
+			overdueList = calCurDatePenalties(scheduleData, rceiptData, reqMaxODDate);
 			if (overdueList != null && !overdueList.isEmpty()) {
 				getFinODDetailsDAO().updateList(overdueList);
 			}
@@ -1011,8 +997,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			// update current overdue list
 			getFinODDetailsDAO().updateODDetails(curODList);
-			
 		}
+
+		tranType = PennantConstants.TRAN_UPD;
+		financeMain.setRecordType("");
+
+		// Update Status Details and Profit Details
+		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, receiptHeader.getReceiptPurpose());
+
+		//Finance Main Updation
+		//=======================================
+		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
+
+		// ScheduleDetails delete and save
+		//=======================================
+		listDeletion(finReference, "");
+		listSave(scheduleData, "", 0);
 		
 		// Save Receipt Header
 		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY) || 
@@ -1986,6 +1986,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 
+			// If Next Repay Date is less than Grace Period End Date then date should be recalculate
+			if (DateUtility.compare(nextRepaySchDate, aFinanceMain.getGrcPeriodEndDate()) <= 0) {
+				for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
+					if (DateUtility.compare(detail.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) > 0) {
+						nextRepaySchDate = detail.getSchDate();
+						break;
+					}
+				}
+			}
+			
+			// Step POS Case, setting Step Details to Object
+			if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
+					&& StringUtils.equals(method, CalculationConstants.RPYCHG_STEPPOS)) {
+				finScheduleData.setStepPolicyDetails(getFinanceDetailService()
+						.getFinStepPolicyDetails(finScheduleData.getFinReference(), "", false));
+			}
+			
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, receiptData.getRepayMain()
 					.getEarlyPayOnSchDate(), nextRepaySchDate, receiptData.getRepayMain().getEarlyPayAmount(), method);
