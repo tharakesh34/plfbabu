@@ -156,6 +156,15 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 
 	</bean>
+	
+	<bean id="smsUtil" class="com.pennant.app.util.SMSUtil" scope="prototype">
+		<property name="freemarkerSMSConfiguration" ref="freemarkerMailConfiguration" />
+		<property name="smsTemplateService" ref="mailTemplateService" />
+		<property name="notificationsService" ref="notificationsService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+
+	</bean>
 
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData"
 		scope="prototype">

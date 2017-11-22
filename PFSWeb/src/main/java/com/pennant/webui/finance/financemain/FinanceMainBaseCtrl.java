@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -141,6 +142,7 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SMSUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -162,6 +164,7 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -192,6 +195,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -262,6 +266,8 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
+
+import freemarker.template.TemplateException;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -747,7 +753,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private AccountEngineExecution							engineExecution;
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
-	private MailUtil										mailUtil;
+	private MailUtil										mailUtil;	
+	private SMSUtil											smsUtil;
+	private boolean 										extMailService;
+	private boolean 										extSMSService;	
 	private StepPolicyService								stepPolicyService;
 	private FinanceReferenceDetailService					financeReferenceDetailService;
 	private RuleExecutionUtil								ruleExecutionUtil;
@@ -6037,14 +6046,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 						// Mail ID details preparation
 						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
+						List<String> custMailIdList = new ArrayList<String>();
 						// Customer Email Preparation
 						if (isCustomerNotificationExists
 								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
 								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
 
 							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
+							
 							for (CustomerEMail customerEMail : emailList) {
 								custMailIdList.add(customerEMail.getCustEMail());
 							}
@@ -6052,15 +6061,59 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
 							}
 						}
-
-						try {
-							HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
-									.getFinScheduleData().getFinanceMain());
-							getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
-									aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
-						} catch (Exception e) {
-							logger.warn("Exception: ", e);
+						
+						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
+								.getFinScheduleData().getFinanceMain());
+						
+						//Customer mobile numbers logic start
+						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
+						List<String> custPhoneNoList = new ArrayList<String>();
+						if (isCustomerNotificationExists
+								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
+								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
+							
+							List<CustomerPhoneNumber> phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
+							
+							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
+								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
+							}
+							if (!custPhoneNoList.isEmpty()) {
+								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
+							}
+							
+							
 						}
+						//Customer mobile numbers logic	end						
+						
+						if(isExtSMSService()){
+							
+							String smsContent=getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues, mobileNoMap);
+							//TODO: Need to pass custPhoneNoList and smsContent params to sms service
+						}
+						
+						if(isExtMailService()){
+							try {
+								MailTemplate mailTemplate = getMailUtil().getMailDetails(notificationIdlist,
+										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
+								String subject=mailTemplate.getEmailSubject();
+								String mailContent=mailTemplate.getLovDescFormattedContent();
+								//TODO: Need to pass custMailIdList subject and mailContent params to mail service
+										
+							} catch (IOException e) {
+								logger.error("Unable to read or process freemarker configuration or template :" + e);
+							} catch (TemplateException e) {
+								logger.error("Problem initializing freemarker or rendering template :" + e);
+							}
+						}else{
+							
+							try {				
+								getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
+										aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
+							} catch (Exception e) {
+								logger.warn("Exception: ", e);
+							}
+							
+						}					
 					}
 
 				}
@@ -15364,6 +15417,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public MailUtil getMailUtil() {
 		return mailUtil;
 	}
+	
+	public SMSUtil getSmsUtil() {
+		return smsUtil;
+	}
+
+	public void setSmsUtil(SMSUtil smsUtil) {
+		this.smsUtil = smsUtil;
+	}
+	
+	public boolean isExtMailService() {
+		return extMailService;
+	}
+
+	public void setExtMailService(boolean extMailService) {
+		this.extMailService = extMailService;
+	}
+
+	public boolean isExtSMSService() {
+		return extSMSService;
+	}
+
+	public void setExtSMSService(boolean extSMSService) {
+		this.extSMSService = extSMSService;
+	}
+
 
 	public Window getMainWindow() {
 		return mainWindow;
