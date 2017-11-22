@@ -220,9 +220,11 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.service.sms.ShortMessageService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -766,6 +768,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupValidation									dedupValidation;
 	private DisbursementPostings 							disbursementPostings;
 	private InstallmentDueService							installmentDueService;
+	private ShortMessageService							 	shortMessageService;
+	private MailTemplateService							 	mailTemplateService;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -6080,25 +6084,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (!custPhoneNoList.isEmpty()) {
 								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
 							}
-							
-							
 						}
 						//Customer mobile numbers logic	end						
-						
-						if(isExtSMSService()){
+						if (isExtSMSService()) {
+							String smsContent = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
 							
-							String smsContent=getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues, mobileNoMap);
-							//TODO: Need to pass custPhoneNoList and smsContent params to sms service
+							// send SMS to external service
+							getShortMessageService().sendMessage(custPhoneNoList, smsContent);
 						}
 						
-						if(isExtMailService()){
+						if (isExtMailService()) {
 							try {
 								MailTemplate mailTemplate = getMailUtil().getMailDetails(notificationIdlist,
 										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
-								String subject=mailTemplate.getEmailSubject();
-								String mailContent=mailTemplate.getLovDescFormattedContent();
-								//TODO: Need to pass custMailIdList subject and mailContent params to mail service
-										
+								String subject = mailTemplate.getEmailSubject();
+								String mailContent = mailTemplate.getLovDescFormattedContent();
+
+								// send mail to external service
+								getMailTemplateService().sendMail(custMailIdList, subject, mailContent);
 							} catch (IOException e) {
 								logger.error("Unable to read or process freemarker configuration or template :" + e);
 							} catch (TemplateException e) {
@@ -15897,6 +15900,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
+	}
+
+	public ShortMessageService getShortMessageService() {
+		return shortMessageService;
+	}
+
+	public void setShortMessageService(ShortMessageService shortMessageService) {
+		this.shortMessageService = shortMessageService;
+	}
+
+	public MailTemplateService getMailTemplateService() {
+		return mailTemplateService;
+	}
+
+	public void setMailTemplateService(MailTemplateService mailTemplateService) {
+		this.mailTemplateService = mailTemplateService;
 	}
 
 }

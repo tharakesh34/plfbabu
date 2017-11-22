@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "identifier", "productCode", "appDate", "org" })
+@XmlType(propOrder = { "identifier", "productCode", "appDate", "customerBasicDetail" })
 @XmlRootElement(name = "hunter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HunterRequest implements Serializable {
@@ -20,7 +20,7 @@ public class HunterRequest implements Serializable {
 	private String productCode;
 	@XmlElement(name = "app_dte")
 	private Date appDate;
-	private Org org;
+	private CustomerBasicDetail customerBasicDetail;
 
 	public String getIdentifier() {
 		return identifier;
@@ -46,18 +46,18 @@ public class HunterRequest implements Serializable {
 		this.appDate = appDate;
 	}
 
-	public Org getOrg() {
-		return org;
+	public CustomerBasicDetail getOrg() {
+		return customerBasicDetail;
 	}
 
-	public void setOrg(Org org) {
-		this.org = org;
+	public void setOrg(CustomerBasicDetail customerBasicDetail) {
+		this.customerBasicDetail = customerBasicDetail;
 	}
 
 	@Override
 	public String toString() {
 		return "HunterRequest [identifier=" + identifier + ", productCode=" + productCode + ", appDate=" + appDate
-				+ ", org=" + org + "]";
+				+ ", customerBasicDetail=" + customerBasicDetail + "]";
 	}
 
 }

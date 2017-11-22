@@ -16,11 +16,11 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennanttech.clients.JSONClient;
+import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
 import com.pennanttech.niyogin.hunter.model.HunterResponse;
-import com.pennanttech.niyogin.hunter.model.Org;
+import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
@@ -70,7 +70,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		hunterRequest.setIdentifier(customer.getCustCIF());
 		hunterRequest.setProductCode(financeMain.getFinCategory());
 		hunterRequest.setAppDate(getAppDate());
-		Org org = new Org();
+		CustomerBasicDetail customerBasicDetail = new CustomerBasicDetail();
 		StringBuilder builder = new StringBuilder();
 
 		if (StringUtils.isNotBlank(customer.getCustFName())) {
@@ -89,14 +89,14 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			builder.append(customer.getCustShrtName());
 		}
 
-		org.setName(builder.toString());
-		org.setLoanAmount(financeMain.getFinAmount());
-		org.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+		customerBasicDetail.setName(builder.toString());
+		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
+		customerBasicDetail.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
 		long phoneNo=Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
-		org.setPhone(phoneNo);
+		customerBasicDetail.setPhone(phoneNo);
 		Address address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
-		org.setAddress(address);
-		hunterRequest.setOrg(org);
+		customerBasicDetail.setAddress(address);
+		hunterRequest.setOrg(customerBasicDetail);
 		logger.debug(Literal.LEAVING);
 		return hunterRequest;
 	}

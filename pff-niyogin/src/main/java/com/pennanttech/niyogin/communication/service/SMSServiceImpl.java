@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.clients.JSONClient;
+import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Sms;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.SendSMS;
+import com.pennanttech.pff.external.SMSService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
-public class SendSmsService extends NiyoginService implements SendSMS {
-	private static final Logger	logger	= Logger.getLogger(SendSmsService.class);
+public class SMSServiceImpl extends NiyoginService implements SMSService {
+	private static final Logger	logger	= Logger.getLogger(SMSServiceImpl.class);
 
 	private String				serviceUrl;
 
@@ -45,7 +45,7 @@ public class SendSmsService extends NiyoginService implements SendSMS {
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			smsResponse = (Sms) client.postProcess(serviceUrl, "", smsRequest, Sms.class);
+			smsResponse = (Sms) client.postProcess(serviceUrl, "sendSMS", smsRequest, Sms.class);
 			logger.info("Response : " + smsResponse.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);

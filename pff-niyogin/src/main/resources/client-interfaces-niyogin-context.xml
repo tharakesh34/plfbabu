@@ -25,12 +25,12 @@
 		class="com.pennanttech.niyogin.hunter.service.BlacklistCheckService" parent="niyoginService">
 		<property name="serviceUrl" value="${experian.hunter.url}" />
 	</bean>
- 	<bean id="sendEmail"
-		class="com.pennanttech.niyogin.communication.service.SendEmailService" parent="niyoginService">
+ 	<bean id="mailService"
+		class="com.pennanttech.niyogin.communication.service.MailServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.email.url}" />
 	</bean>
- 	<bean id="sendSms"
-		class="com.pennanttech.niyogin.communication.service.SendSmsService" parent="niyoginService">
+ 	<bean id="sMSService"
+		class="com.pennanttech.niyogin.communication.service.SMSServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.sms.url}" />
 	</bean> 
 	<!-- <bean id="bureauscore" class="com.pennanttech.pff.external.service.CustomerDedupService" 

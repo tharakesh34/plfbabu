@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.clients.JSONClient;
+import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.SendEmail;
+import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
-public class SendEmailService extends NiyoginService implements SendEmail {
-	private static final Logger	logger	= Logger.getLogger(SendEmailService.class);
+public class MailServiceImpl extends NiyoginService implements MailService {
+	private static final Logger	logger	= Logger.getLogger(MailServiceImpl.class);
 
 	private String				serviceUrl;
 

@@ -1839,6 +1839,8 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="shortMessageService" ref="shortMessageService" />
+		<property name="mailTemplateService" ref="mailTemplateService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

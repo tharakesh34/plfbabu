@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "name", "address", "loanAmount", "phone", "emailId" })
 @XmlRootElement(name = "org")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Org implements Serializable {
+public class CustomerBasicDetail implements Serializable {
 
 	private static final long	serialVersionUID	= 1407465347792589188L;
 	
@@ -66,7 +66,7 @@ public class Org implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Org [name=" + name + ", loanAmount=" + loanAmount + ", phone=" + phone + ", emailId=" + emailId
+		return "CustomerBasicDetail [name=" + name + ", loanAmount=" + loanAmount + ", phone=" + phone + ", emailId=" + emailId
 				+ ", address=" + address + "]";
 	}
 

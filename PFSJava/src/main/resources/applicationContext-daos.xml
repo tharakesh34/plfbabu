@@ -10447,4 +10447,22 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
+
+	<!-- custom service tasks -->
+	<bean id="shortMessageService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="shortMessageServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="shortMessageServiceTarget"
+		class="com.pennant.backend.service.sms.impl.ShortMessageServiceImpl" />
 </beans>
