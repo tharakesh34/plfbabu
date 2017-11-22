@@ -19,6 +19,10 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>	</changeSet>
 
 	<!-- <changeSet id="1" author="Prakash">
 		<sql>
@@ -2257,5 +2261,72 @@ UNION ALL
            FROM customeraddresses_temp
           WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype))
 	</createView>
+	</changeSet>
+
+<changeSet id="101" author="somasekhar">
+      <addColumn tableName="RECEIPTALLOCATIONDETAIL">
+			<column name="receiptAllocationid" type="bigint"/>
+		</addColumn>
+</changeSet>
+<changeSet id="102" author="somasekhar" dbms="oracle"> 
+  	<sql>
+        update RECEIPTALLOCATIONDETAIL set receiptAllocationid = Rownum;
+  	</sql>
+  </changeSet>
+  <changeSet id="102" author="somasekhar" dbms="postgresql"> 
+  	<sql>
+       update RECEIPTALLOCATIONDETAIL set receiptAllocationid = 
+ (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
+  	</sql>
+  </changeSet>
+ 
+  
+  <changeSet id="103" author="somasekhar">
+ <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="receiptAllocationid"/>
+  </changeSet>
+<changeSet id="104" author="somasekhar">
+       <addColumn tableName="RECEIPTALLOCATIONDETAIL_TEMP">
+			<column name="receiptAllocationid" type="bigint"/>
+		</addColumn>
+</changeSet>
+<changeSet id="105" author="somasekhar" dbms="oracle"> 
+  	<sql>
+        update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = Rownum;
+  	</sql>
+  </changeSet>
+   <changeSet id="105" author="somasekhar" dbms="postgresql"> 
+  	<sql>
+       update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = 
+ (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
+  	</sql>
+  </changeSet>
+<changeSet id="106" author="somasekhar">
+ <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="receiptAllocationid"/>
+  </changeSet>
+  
+	<!-- <changeSet id="107" author="Durga Prasad D">
+		<createSequence sequenceName="SeqServiceTaskDetails"
+			startValue="select max(receiptAllocationid)+1  addrseq from RECEIPTALLOCATIONDETAIL"
+			 maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet> -->
+	
+	<changeSet id="108" author="Durga Prasad D">
+		<createTable tableName="ServiceTaskDetails">
+			<column name="taskExecutionId" type="bigint">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="Module" type="nvarchar(10)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reference" type="nvarchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ServiceTaskId" type="bigint"/>
+			<column name="serviceTaskName" type="nvarchar(20)"/>
+			<column name="UserId" type="bigint" />
+			<column name="ExecutedTime" type="datetime"/>
+			<column name="Status" type="nvarchar(20)"/>
+			<column name="Remarks" type="nvarchar(200)"/>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
