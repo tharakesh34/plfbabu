@@ -1813,8 +1813,8 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="smsUtil" ref="smsUtil" />
-		<property name="extMailService" value="${commn.mail.isExtService}"  />
-		<property name="extSMSService" value="${commn.sms.isExtService}"  />
+		<property name="extMailService" value="${commn.mail.isExtService:false}"  />
+		<property name="extSMSService" value="${commn.sms.isExtService:false}"  />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="finDelegationDeviationCtrl" ref="finDelegationDeviationCtrl" />
