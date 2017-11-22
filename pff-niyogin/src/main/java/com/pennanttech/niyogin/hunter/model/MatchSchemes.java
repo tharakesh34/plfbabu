@@ -4,16 +4,16 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "schemeID", "score" })
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "MatchSchemes")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MatchSchemes implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = -2584179719768711687L;
+	
 	private int schemeID;
 	private int score;
 
@@ -31,6 +31,11 @@ public class MatchSchemes implements Serializable {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	@Override
+	public String toString() {
+		return "MatchSchemes [schemeID=" + schemeID + ", score=" + score + "]";
 	}
 
 }

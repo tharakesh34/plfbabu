@@ -12,10 +12,10 @@ import com.pennanttech.pff.external.SendEmail;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class SendEmailService extends NiyoginService implements SendEmail {
-	private static final Logger logger = Logger.getLogger(SendEmailService.class);
+	private static final Logger	logger	= Logger.getLogger(SendEmailService.class);
 
 	private String				serviceUrl;
-	
+
 	/**
 	 * Method to send the individual email for the given list of toAddress.
 	 * 
@@ -48,11 +48,10 @@ public class SendEmailService extends NiyoginService implements SendEmail {
 		logger.debug(Literal.ENTERING);
 		Email emailRequest = prepareRequest(emailId, subject, body);
 		Email emailResponse = null;
-		String serviceURL = "https://soadev.niyogin.in/gates/1.0/sweeps";
 		JSONClient client = new JSONClient();
 		try {
-			logger.debug("ServiceURL : " + serviceURL);
-			emailResponse = (Email) client.postProcess(serviceURL, "sendEmail", emailRequest, Email.class);
+			logger.debug("ServiceURL : " + serviceUrl);
+			emailResponse = (Email) client.postProcess(serviceUrl, "", emailRequest, Email.class);
 			logger.info("Response : " + emailResponse.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
@@ -76,6 +75,8 @@ public class SendEmailService extends NiyoginService implements SendEmail {
 		email.setTo(toAddress);
 		email.setSubject(subject);
 		email.setBody(body);
+		email.setReturnCode(null);
+		email.setReturnText(null);
 		logger.debug(Literal.LEAVING);
 		return email;
 	}

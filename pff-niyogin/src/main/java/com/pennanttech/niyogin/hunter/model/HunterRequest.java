@@ -6,27 +6,27 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "identifier", "productCode", "appDate", "org" })
+@XmlRootElement(name = "hunter")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HunterRequest implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	private long identifier;
+	private static final long	serialVersionUID	= -6496891130309488812L;
+	private String identifier;
 	@XmlElement(name = "product_code")
 	private String productCode;
 	@XmlElement(name = "app_dte")
 	private Date appDate;
 	private Org org;
 
-	public long getIdentifier() {
+	public String getIdentifier() {
 		return identifier;
 	}
 
-	public void setIdentifier(long identifier) {
+	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
 

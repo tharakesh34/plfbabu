@@ -8,18 +8,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "ruleID", "ruleCount", "score" })
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Rule implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = -1891177452978625780L;
+
 	@XmlElement(name = "RuleID")
-	private String				ruleID;
-	private int					ruleCount;
+	private String ruleID;
+	private int ruleCount;
 	@XmlElement(name = "Score")
-	private int					score;
+	private int	score;
 
 	public String getRuleID() {
 		return ruleID;
@@ -43,6 +41,11 @@ public class Rule implements Serializable {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	@Override
+	public String toString() {
+		return "Rule [ruleID=" + ruleID + ", ruleCount=" + ruleCount + ", score=" + score + "]";
 	}
 
 }

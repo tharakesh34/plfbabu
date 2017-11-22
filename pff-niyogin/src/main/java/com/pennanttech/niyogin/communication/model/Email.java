@@ -5,9 +5,13 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-public class Email implements Serializable{
+@XmlType(propOrder = { "from", "to", "subject", "body", "returnCode", "returnText" })
+@XmlRootElement(name = "email")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Email implements Serializable {
 
 	private static final long serialVersionUID = 3734972682696376918L;
 	private String from;

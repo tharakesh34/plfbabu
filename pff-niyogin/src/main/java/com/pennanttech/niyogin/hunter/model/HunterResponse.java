@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "statusCode", "message", "matchSummary", "totalMatchScore", "rules", "matchSchemes" })
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HunterResponse implements Serializable {
 
 	/**

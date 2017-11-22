@@ -1,16 +1,21 @@
 package com.pennanttech.niyogin.hunter.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
@@ -30,59 +35,108 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	@Override
 	public AuditHeader checkHunterDetails(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		long identifier = 0;
-		HunterRequest hunterRequest = prepareRequestObj(financeDetail, identifier);
+		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
 		JSONClient client = new JSONClient();
+		Map<String, Object> extendedMapObject = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			String jsonResponse = client.post(serviceUrl, "", hunterRequest, HunterResponse.class);
-			//String jsonResponse = "{\"statusCode\": 200,\"message\": \"Hunter\",\"data\": {\"MatchSummary\": 1,\"TotalMatchScore\": 210,\"Rules\": [ {\"RuleID\": \"NIYO_VEL_ADD\",\"ruleCount\": 4, \"Score\": 30 }, {\"RuleID\": \"NH_NC_PAN\",\"ruleCount\": 1,\"Score\": 90 }],\"MatchSchemes\": [ {\"SchemeID\": 15,\"Score\": 120 }]} } ";
-			Map<String, Object> extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
-			extendedMapObject.put("HUNTERMATCH", true);
-			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+			extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
 			throw new InterfaceException("9999", exception.getMessage());
 		}
-		
+		prepareResponseObj(extendedMapObject, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	private HunterRequest prepareRequestObj(FinanceDetail financeDetail, long identifier) {
+	/**
+	 * method for prepare the Hunter request object.
+	 * 
+	 * @param financeDetail
+	 * @return hunterRequest
+	 */
+	private HunterRequest prepareRequestObj(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		HunterRequest hunterRequest = new HunterRequest();
-		hunterRequest.setIdentifier(identifier);
-		hunterRequest.setProductCode(financeDetail.getFinScheduleData().getFinanceMain().getFinCategory());
-		Org org = new Org();
-		// TODO:ADD These Fields
-		// hunterRequest.setAppDate(appDate);
-		// org.setName(name);
-		// org.setLoanAmount(loanAmount);
 
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		Customer customer = customerDetails.getCustomer();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		HunterRequest hunterRequest = new HunterRequest();
+		hunterRequest.setIdentifier(customer.getCustCIF());
+		hunterRequest.setProductCode(financeMain.getFinCategory());
+		hunterRequest.setAppDate(getAppDate());
+		Org org = new Org();
+		StringBuilder builder = new StringBuilder();
+
+		if (StringUtils.isNotBlank(customer.getCustFName())) {
+			builder.append(customer.getCustFName());
+		}
+		if (StringUtils.isNotBlank(customer.getCustMName())) {
+			builder.append(" ");
+			builder.append(customer.getCustMName());
+		}
+
+		if (StringUtils.isNotBlank(customer.getCustLName())) {
+			builder.append(" ");
+			builder.append(customer.getCustLName());
+		}
+		if (builder.length() == 0 && StringUtils.isNotBlank(customer.getCustShrtName())) {
+			builder.append(customer.getCustShrtName());
+		}
+
+		org.setName(builder.toString());
+		org.setLoanAmount(financeMain.getFinAmount());
 		org.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
-		long phoneNo = Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
+		long phoneNo=Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
 		org.setPhone(phoneNo);
 		Address address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
-		if (address != null) {
-			org.setAddress(address);
-		}
+		org.setAddress(address);
+		hunterRequest.setOrg(org);
 		logger.debug(Literal.LEAVING);
 		return hunterRequest;
 	}
 
+	/**
+	 * Method for prepare the Address request object.
+	 * 
+	 * @param customerAddres
+	 * @return address
+	 */
 	private Address prepareAddress(CustomerAddres customerAddres) {
+		logger.debug(Literal.ENTERING);
 		Address address = new Address();
-		// TODO: ADD CUSTOMER ADDRESS
-		// address.setAddress(address);
+
+		StringBuilder stringBuilder = new StringBuilder();
+		if (customerAddres.getCustAddrType() != null) {
+			stringBuilder.append(customerAddres.getCustAddrType());
+		}
+		if (customerAddres.getCustAddrHNbr() != null) {
+			stringBuilder.append(",");
+			stringBuilder.append(customerAddres.getCustAddrHNbr());
+		}
+		if (customerAddres.getCustFlatNbr() != null) {
+			stringBuilder.append(",");
+			stringBuilder.append(customerAddres.getCustFlatNbr());
+		}
+		if (customerAddres.getCustAddrStreet() != null) {
+			stringBuilder.append(",");
+			stringBuilder.append(customerAddres.getCustAddrStreet());
+		}
+		if (customerAddres.getTypeOfResidence() != null) {
+			stringBuilder.append(",");
+			stringBuilder.append(customerAddres.getTypeOfResidence());
+		}
+		address.setAddress(stringBuilder.toString());
 		address.setCity(customerAddres.getCustAddrCity());
 		address.setState(customerAddres.getCustAddrProvince());
 		address.setCountry(customerAddres.getCustAddrCountry());
 		address.setPin(customerAddres.getCustAddrZIP());
+		logger.debug(Literal.LEAVING);
 		return address;
 	}
 
@@ -143,8 +197,34 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Method for prepare the Extended Field details map according to the given response.
+	 * 
+	 * @param extendedResMapObject
+	 * @param financeDetail
+	 */
+	private void prepareResponseObj(Map<String, Object> extendedResMapObject, FinanceDetail financeDetail) {
+		if (extendedResMapObject != null) {
+			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			if (extendedMapObject == null) {
+				extendedMapObject = new HashMap<String, Object>();
+			}
+			for (Entry<String, Object> entry : extendedResMapObject.entrySet()) {
+				extendedMapObject.put(entry.getKey(), entry.getValue());
+			}
+			//TEMPORARY FIX
+			if (Integer.parseInt(extendedResMapObject.get("HUNTERMATCH").toString()) == 0) {
+				extendedMapObject.put("HUNTERMATCH", false);
+			} else {
+				extendedMapObject.put("HUNTERMATCH", true);
+			}
+			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+		}
+	}
+
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
+
 }

@@ -5,8 +5,13 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-@XmlAccessorType(XmlAccessType.NONE)
-public class Sms implements Serializable{
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(propOrder = { "mobileNumber", "messageBody", "returnCode", "returnText" })
+@XmlRootElement(name = "sms")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Sms implements Serializable {
 
 	private static final long serialVersionUID = -7898538635970927544L;
 	@XmlElement(name = "mobile")

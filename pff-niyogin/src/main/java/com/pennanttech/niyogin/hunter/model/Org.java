@@ -1,25 +1,28 @@
 package com.pennanttech.niyogin.hunter.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "name", "address", "loanAmount", "phone", "emailId" })
+@XmlRootElement(name = "org")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Org implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1407465347792589188L;
+	
 	private String name;
+	private Address address;
 	@XmlElement(name = "loan_amount")
-	private long loanAmount;
+	private BigDecimal loanAmount;
 	private long phone;
 	@XmlElement(name = "email_id")
 	private String emailId;
-	private Address address;
 
 	public String getName() {
 		return name;
@@ -29,11 +32,11 @@ public class Org implements Serializable {
 		this.name = name;
 	}
 
-	public long getLoanAmount() {
+	public BigDecimal getLoanAmount() {
 		return loanAmount;
 	}
 
-	public void setLoanAmount(long loanAmount) {
+	public void setLoanAmount(BigDecimal loanAmount) {
 		this.loanAmount = loanAmount;
 	}
 

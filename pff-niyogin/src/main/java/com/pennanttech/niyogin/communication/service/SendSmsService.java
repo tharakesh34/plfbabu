@@ -12,10 +12,10 @@ import com.pennanttech.pff.external.SendSMS;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class SendSmsService extends NiyoginService implements SendSMS {
-	private static final Logger logger = Logger.getLogger(SendSmsService.class);
+	private static final Logger	logger	= Logger.getLogger(SendSmsService.class);
 
 	private String				serviceUrl;
-	
+
 	/**
 	 * Method to send the sms for the given list of mobile numbers.
 	 * 
@@ -42,12 +42,10 @@ public class SendSmsService extends NiyoginService implements SendSMS {
 		logger.debug(Literal.ENTERING);
 		Sms smsRequest = prepareRequest(mobileNo, content);
 		Sms smsResponse = null;
-		String serviceURL = "https://soadev.niyogin.in/gates/1.0/sweeps";
 		JSONClient client = new JSONClient();
 		try {
-			logger.debug("ServiceURL : " + serviceURL);
-			smsResponse = (Sms) client.postProcess(serviceURL, "sendSMS", smsRequest, Sms.class);
-
+			logger.debug("ServiceURL : " + serviceUrl);
+			smsResponse = (Sms) client.postProcess(serviceUrl, "sendSMS", smsRequest, Sms.class);
 			logger.info("Response : " + smsResponse.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
@@ -68,10 +66,12 @@ public class SendSmsService extends NiyoginService implements SendSMS {
 		Sms sms = new Sms();
 		sms.setMobileNumber(mobileNo);
 		sms.setMessageBody(content);
+		sms.setReturnCode(null);
+		sms.setReturnText(null);
 		logger.debug(Literal.LEAVING);
 		return sms;
 	}
-	
+
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
