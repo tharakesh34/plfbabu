@@ -349,9 +349,11 @@ public class DisbursementInstCtrl {
 
 		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
 			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
-				if (details.getDocImage() == null) {
-					details.setDocImage(getFinanceDetailService()
-							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
+				if (details.getDoctype() != null) {
+					if (details.getDocImage() == null) {
+						details.setDocImage(getFinanceDetailService()
+								.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
+					}
 				}
 				map.put("documentDetails", details);
 				break;
