@@ -89,6 +89,7 @@ import com.pennanttech.bajaj.process.SAPGLProcess;
 import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -96,6 +97,7 @@ import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.service.AmazonS3Bucket;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -185,7 +187,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		public int compare(Object o1, Object o2) {
 			FileDownlaod data = (FileDownlaod) o1;
 			FileDownlaod data2 = (FileDownlaod) o2;
-			return String.valueOf(data.getValueDate()).compareTo(String.valueOf(data2.getValueDate()));
+			return data2.getValueDate().compareTo(data.getValueDate());
 		}
 	}
 
@@ -258,11 +260,14 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 					return;
 				}
 			}
-
+			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
+			status.setStatus("I");
 			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+				if ("S".equals(status.getStatus())) {
+					new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+				}
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			}
@@ -382,7 +387,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 			
 			if (item instanceof Listgroup) {	
-				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getValueDate(),PennantConstants.dateFormat)))); 
+				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern())))); 
 			} else if (item instanceof Listgroupfoot) { 
 				Listcell cell = new Listcell("");
 				cell.setSpan(4);
