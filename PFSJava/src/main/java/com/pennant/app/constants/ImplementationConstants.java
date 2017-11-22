@@ -26,7 +26,7 @@ public class ImplementationConstants {
 
 	//AHB Implementation for Core Customer creation which includes reserve CIF and  Create CIF
 	public static final boolean	VALIDATE_CORE_CUST_UPDATE		= false;
-	public static final boolean	ALLOW_COVENANT_TYPES			= false;		// Covenants Allowed or not
+	public static final boolean	ALLOW_COVENANT_TYPES			= true;		// Covenants Allowed or not
 	public static final boolean	COLLATERAL_INTERNAL				= false;	// Which Collateral We are using Internal or Third Party Collaterals
 	public static final boolean	ALLOW_VAS						= false;	// VAS required or not
 	// F = Administration/Insurance/Other Fees
