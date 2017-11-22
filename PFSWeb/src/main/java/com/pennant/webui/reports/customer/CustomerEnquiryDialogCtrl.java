@@ -33,7 +33,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.UserWorkspace;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -224,9 +223,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");
-						@SuppressWarnings("deprecation")
-						UserWorkspace workspace = UserWorkspace.getInstance();
-						workspace.deAllocateAuthorities(pageName);
+
+						getUserWorkspace().deAllocateAuthorities(pageName);
 					}
 				});
 
@@ -328,8 +326,6 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	}
 	
 	private void addListItem(FinanceEnquiry aFinanceEnq){
-		logger.debug("Entering");
-		
 		Listitem item  = new Listitem();
 		Listcell lc;
 		lc = new Listcell(aFinanceEnq.getFinReference());
@@ -359,8 +355,6 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		item.setAttribute("data", aFinanceEnq);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLoanItemDoubleClicked");
 		this.listBoxEnquiryResult.appendChild(item);
-
-		logger.debug("Leaving");
 	}
 
 	/**

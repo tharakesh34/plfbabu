@@ -57,7 +57,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
@@ -115,16 +114,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 		// speed up the ModalDialogs while disabling the animation
 		Window.setDefaultActionOnShow("");
-	}
-
-	/**
-	 * Get a logged-in users WorkSpace which holds all necessary vars. <br>
-	 * 
-	 * @return the users WorkSpace
-	 */
-	@Deprecated
-	public static UserWorkspace getInstance() {
-		return (UserWorkspace) SpringUtil.getBean("userWorkspace");
 	}
 
 	/**

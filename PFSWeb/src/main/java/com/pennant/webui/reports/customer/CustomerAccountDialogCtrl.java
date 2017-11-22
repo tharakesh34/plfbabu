@@ -27,7 +27,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.UserWorkspace;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.customermasters.Customer;
@@ -216,9 +215,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");
-						@SuppressWarnings("deprecation")
-						UserWorkspace workspace = UserWorkspace.getInstance();
-						workspace.deAllocateAuthorities(pageName);
+
+						getUserWorkspace().deAllocateAuthorities(pageName);
 					}
 				});
 

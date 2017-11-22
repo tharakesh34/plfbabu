@@ -1,6 +1,6 @@
 pff 4.1.0, 2017-11-22
 ---------------------
-- 
+- Removed deprecated method UserWorkspace.getInstance().
 - Filter the menu items and display along with parents.
 - Existing functionality to open a menu item with code removed.
 
