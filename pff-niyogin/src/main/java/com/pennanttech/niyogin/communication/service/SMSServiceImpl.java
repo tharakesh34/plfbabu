@@ -45,7 +45,7 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			smsResponse = (Sms) client.postProcess(serviceUrl, "sendSMS", smsRequest, Sms.class);
+			smsResponse = (Sms) client.postProcess(serviceUrl, "", smsRequest, Sms.class);
 			logger.info("Response : " + smsResponse.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
