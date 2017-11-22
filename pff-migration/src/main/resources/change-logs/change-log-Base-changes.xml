@@ -19,7 +19,7 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true">
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql" >
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>	</changeSet>
@@ -2200,7 +2200,7 @@ UNION ALL
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
-     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispaoracledevtchmodecode
      LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
 		</createView>
@@ -2213,10 +2213,16 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
-	<changeSet id="97" author="Prakash">
+	<changeSet id="97" author="Prakash" dbms="postgresql">
 	<sql>
 	INSERT INTO plf.BMTDocumentTypes
 	VALUES('PDC',0,0,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Post Dated Check');
+	</sql>
+	</changeSet>
+	<changeSet id="97" author="Prakash" dbms="oracle">
+	<sql>
+	INSERT INTO plf.BMTDocumentTypes
+	VALUES('PDC','Post Dated Check',0,0,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0);
 	</sql>
 	</changeSet>
 	
@@ -2263,53 +2269,6 @@ UNION ALL
 	</createView>
 	</changeSet>
 
-<changeSet id="101" author="somasekhar">
-      <addColumn tableName="RECEIPTALLOCATIONDETAIL">
-			<column name="receiptAllocationid" type="bigint"/>
-		</addColumn>
-</changeSet>
-<changeSet id="102" author="somasekhar" dbms="oracle"> 
-  	<sql>
-        update RECEIPTALLOCATIONDETAIL set receiptAllocationid = Rownum;
-  	</sql>
-  </changeSet>
-  <changeSet id="102" author="somasekhar" dbms="postgresql"> 
-  	<sql>
-       update RECEIPTALLOCATIONDETAIL set receiptAllocationid = 
- (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
-  	</sql>
-  </changeSet>
- 
-  
-  <changeSet id="103" author="somasekhar">
- <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="receiptAllocationid"/>
-  </changeSet>
-<changeSet id="104" author="somasekhar">
-       <addColumn tableName="RECEIPTALLOCATIONDETAIL_TEMP">
-			<column name="receiptAllocationid" type="bigint"/>
-		</addColumn>
-</changeSet>
-<changeSet id="105" author="somasekhar" dbms="oracle"> 
-  	<sql>
-        update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = Rownum;
-  	</sql>
-  </changeSet>
-   <changeSet id="105" author="somasekhar" dbms="postgresql"> 
-  	<sql>
-       update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = 
- (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
-  	</sql>
-  </changeSet>
-<changeSet id="106" author="somasekhar">
- <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="receiptAllocationid"/>
-  </changeSet>
-  
-	<!-- <changeSet id="107" author="Durga Prasad D">
-		<createSequence sequenceName="SeqServiceTaskDetails"
-			startValue="select max(receiptAllocationid)+1  addrseq from RECEIPTALLOCATIONDETAIL"
-			 maxValue="9223372036854775807" incrementBy="1" />
-	</changeSet> -->
-	
 	<changeSet id="108" author="Durga Prasad D">
 		<createTable tableName="ServiceTaskDetails">
 			<column name="taskExecutionId" type="bigint">
@@ -2328,5 +2287,11 @@ UNION ALL
 			<column name="Status" type="nvarchar(20)"/>
 			<column name="Remarks" type="nvarchar(200)"/>
 		</createTable>
+	</changeSet>
+	 <changeSet id="109" author="Satyanarayana.G" dbms="oracle">
+	<dropTable tableName="PTMENUDETAILS"/>
+	</changeSet>
+	<changeSet id="110" author="Satyanarayana.G" dbms="oracle">
+	<dropTable tableName="SEQPTMENUDETAILS"/>
 	</changeSet>
 </databaseChangeLog>
