@@ -1,3 +1,9 @@
+pff 4.1.0, 2017-11-22
+---------------------
+- 
+- Filter the menu items and display along with parents.
+- Existing functionality to open a menu item with code removed.
+
 pff 4.0.0, 2017-10-17
 ---------------------
 - Refactoring changes- Moved model classes and packages from PFSJava project to pff-model project

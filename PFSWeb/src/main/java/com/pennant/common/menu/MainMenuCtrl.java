@@ -43,11 +43,8 @@
 package com.pennant.common.menu;
 
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,31 +52,22 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.ComponentNotFoundException;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zul.Borderlayout;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Center;
-import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
-import org.zkoss.zul.Separator;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
-import org.zkoss.zul.Treecell;
 import org.zkoss.zul.Treechildren;
 import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Window;
@@ -88,8 +76,6 @@ import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.model.MenuDetails;
-import com.pennant.backend.service.MenuDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
@@ -98,385 +84,144 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * 
- * Main menu controller. <br>
- * <br>
- * Added the buttons for expanding/closing the menu tree. Calls the menu factory.
+ * Controller for the main menu.
  */
 public class MainMenuCtrl extends WindowBaseCtrl {
 	private static final long serialVersionUID = -909795057747345551L;
 	private static final Logger logger = Logger.getLogger(MainMenuCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting autowired by our 'extends BaseCtrl' class wich extends Window and implements AfterCompose.
-	 */
-	private Window mainMenuWindow; // autowire
-	protected Textbox menuName; // autowired
+	protected Window mainMenuWindow;
+	protected Image expandAll;
+	protected Image collapseAll;
+	protected Textbox menuSearch;
+	protected Button search;
+	protected Tree mainMenu;
 
-	private static String bgColor = "#FF6600";
-	private static String bgColorInner = "white";
-
-	private transient MenuDetailsService menuDetailsService;
-	private HashMap<String, MenuDetails> hasMenuDetails;
-	private LoggedInUser loggedInUser;
+	private TreeMenuBuilder menuBuilder;
 	private transient UserWorkspace userWorkspace;
-	private String homePageDisplayed = "NO";
 	private transient UserService userService;
 
-	final Treechildren mainMenu = new Treechildren();
-
+	/**
+	 * Creates a new main menu controller.
+	 */
 	public MainMenuCtrl() {
 		super();
 	}
 
-	// Component Events
-
 	/**
-	 * Before binding the data and calling the Menu window we check, if the ZUL-file is called with a parameter for a
-	 * selected User object in a Map.
+	 * Event listener that will be notified when the window created.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 *            The event being received.
+	 * @throws URISyntaxException
+	 *             If the default navigate URL is not a valid URI.
 	 */
-	public void onCreate$mainMenuWindow(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
-		loggedInUser = userWorkspace.getLoggedInUser();
-		CreateEvent ce = (CreateEvent) ((ForwardEvent) event).getOrigin();
-		@SuppressWarnings("unchecked")
-		final Map<String, Object> args = (Map<String, Object>) ce.getArg();
+	public void onCreate$mainMenuWindow(ForwardEvent event) throws URISyntaxException {
+		logger.debug(Literal.ENTERING);
+
+		// Get the event arguments.
+		Map<?, ?> args = ((CreateEvent) event.getOrigin()).getArg();
+		boolean navigateToDefaultPage = false;
 
 		if (args.containsKey("HomePageDisplayed")) {
-			homePageDisplayed = (String) args.get("HomePageDisplayed");
+			navigateToDefaultPage = (String) args.get("HomePageDisplayed") == "NO" ? true : false;
 		}
-		//doOnCreateCommon(getMainMenuWindow(), event); // wire vars
-		createMenu();
-		logger.debug("Leaving " + event.toString());
+
+		// Create the menu.
+		createMenu(navigateToDefaultPage);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Creates the mainMenu. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Event listener that will be notified when the expand all clicked.
 	 */
-	private void createMenu() throws InterruptedException {
+	public void onClick$expandAll() {
+		menuBuilder.toggleAll(true);
+		Clients.scrollIntoView(menuSearch);
+	}
+
+	/**
+	 * Event listener that will be notified when the collapse all clicked.
+	 */
+	public void onClick$collapseAll() {
+		menuBuilder.toggleAll(false);
+	}
+
+	/**
+	 * Event listener that will be notified when the search button clicked.
+	 */
+	public void onClick$search() {
+		menuSearch.setText(StringUtils.trimToEmpty(menuSearch.getValue()));
+		menuBuilder.filter(menuSearch.getValue());
+	}
+
+	/**
+	 * Creates the main menu and navigate to the default page.
+	 * 
+	 * @param navigateToDefaultPage
+	 *            <code>true</code> to navigate to the default page.
+	 * @throws URISyntaxException
+	 *             If the default navigate URL is not a valid URI.
+	 */
+	private void createMenu(boolean navigateToDefaultPage) throws URISyntaxException {
 		logger.trace(Literal.ENTERING);
 
-		Image image;
-		final Groupbox gb = (Groupbox) mainMenuWindow.getFellowIfAny("groupbox_menu");
-
-		// Hbox for the expand/collapse buttons
-		final Hbox hbox = new Hbox();
-		hbox.setStyle("backgound-color: " + bgColorInner + ";" + "margin:4px;");
-		hbox.setParent(gb);
-
-		image = new Image("/images/icons/open4.png");
-		hbox.appendChild(image);
-		Space space = new Space();
-		space.setWidth("0px");
-		hbox.appendChild(space);
-		image.setId("btnMainMenuExpandAll");
-		image.setTooltiptext(Labels.getLabel("btnFolderExpand.tooltiptext"));
-		image.addEventListener("onClick", new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				expandMenuItems();
-			}
-		});
-		image = new Image("/images/icons/close4.png");
-		hbox.appendChild(image);
-		image.setId("btnMainMenuCollapseAll");
-		image.setTooltiptext(Labels.getLabel("btnFolderCollapse.tooltiptext"));
-		image.addEventListener("onClick", new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				collapseMenuItems();
-			}
-		});
-
-		menuName = new Textbox();
-		menuName.setId("menuName1");
-		menuName.setTooltiptext("Search Menu Items");
-		menuName.setTabindex(1);
-		menuName.setWidth("100px");
-		hbox.appendChild(menuName);
-
-		Button btnGo = new Button();
-		btnGo.setId("btnGo");
-		btnGo.setLabel("Go");
-		btnGo.setTooltiptext("navigate to menu");
-		btnGo.setTabindex(2);
-		btnGo.addEventListener("onClick", new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				menuName.setText(StringUtils.trimToEmpty(menuName.getValue()));
-				filterMenuItems(mainMenu);
-			}
-		});
-
-		hbox.appendChild(btnGo);
-
-		Separator separator = createSeparator(false);
-		separator.setWidth("98%");
-		separator.setStyle(
-				"background-color:" + bgColor + ";background-image:none; height:1px;margin:10px 0px; margin:4px");
-		separator.setBar(true);
-		separator.setParent(gb);
-
-		// the menuTree
-		final Tree tree = new Tree();
-		tree.setSizedByContent(true);
-		tree.setParent(gb);
-		tree.setStyle("border: none");
-		tree.appendChild(mainMenu);
-
 		// Generate the tree menu.
-		TreeMenuBuilder menuBuilder = new TreeMenuBuilder(mainMenu, MainMenu.getMenuItems(),
+		Treechildren treechildren = new Treechildren();
+		mainMenu.appendChild(treechildren);
+
+		menuBuilder = new TreeMenuBuilder(treechildren, MainMenu.getMenuItems(),
 				userWorkspace.getGrantedAuthoritySet());
 		menuBuilder.render();
+
+		// Collapse all the menu items.
+		menuBuilder.toggleAll(false);
+
+		// Store the menu rights in the user workspace.
 		userWorkspace.setHasMenuRights(menuBuilder.getMenuRights());
 
-		final Separator sep1 = new Separator();
-		sep1.setWidth("97%");
-		sep1.setBar(false);
-		sep1.setParent(gb);
-		doCollapseExpandAll(mainMenuWindow, false);
-
-		/* as standard, call the welcome page */
-		if (!"NO".equals(homePageDisplayed)) {
+		// Navigate to the default page.
+		if (!navigateToDefaultPage) {
 			return;
 		}
 
 		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
-		Date expiredDate = loggedInUser.getAccountExpiredOn();
+		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
 
-		if (AuthenticationType.SSO.name().equals(authType)) {
-			if (userService.getUserByLogin(loggedInUser.getUserName()) == null) {
-				Window win = (Window) Executions.createComponents("/logout.zul", null, null);
-				win.setWidth("100%");
-				win.setHeight("100%");
-				win.doModal();
-				return;
-			}
+		if (AuthenticationType.SSO.name().equals(authType)
+				&& userService.getUserByLogin(userWorkspace.getLoggedInUser().getUserName()) == null) {
+			Window win = (Window) Executions.createComponents("/logout.zul", null, null);
+			win.setWidth("100%");
+			win.setHeight("100%");
+			win.doModal();
+			return;
 		}
 
 		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
-			showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
+			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);
 		} else if (expiredDate.before(DateUtil.getSysDate())) {
 			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
 			win.setWidth("98%");
 			win.setHeight("98%");
 			win.doModal();
 		} else {
-			showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
+			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);
 		}
 
 		logger.trace(Literal.LEAVING);
 	}
 
 	/**
-	 * Creates a seperator. <br>
-	 * 
-	 * @param withBar
-	 *            <br>
-	 *            true=with Bar <br>
-	 *            false = without Bar <br>
-	 * @return
-	 */
-	private static Separator createSeparator(boolean withBar) {
-		logger.debug("Entering ");
-
-		final Separator sep = new Separator();
-		sep.setBar(withBar);
-		logger.debug("Leaving ");
-		return sep;
-	}
-
-	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout. Checks if the tab is opened
-	 * before. If yes than it selects this tab.
-	 * 
-	 * @param zulFilePathName
-	 *            The ZulFile Name with path.
-	 * @param tabName
-	 *            The tab name.
-	 * @throws InterruptedException
-	 */
-	private void showPage(String zulFilePathName, String tabName) throws InterruptedException {
-		logger.debug("Entering ");
-
-		try {
-
-			/* get an instance of the borderlayout defined in the zul-file */
-			final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-			/* get an instance of the searched CENTER layout area */
-			final Center center = bl.getCenter();
-			// get the tabs component
-			final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
-					.getFellow("tabsIndexCenter");
-
-			/**
-			 * Check if the tab is already opened than select them and<br>
-			 * go out of here. If not than create them.<br>
-			 */
-
-			Tab checkTab = null;
-			try {
-				// checkTab = (Tab) tabs.getFellow(tabName);
-				if (tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_")) != null) {
-					checkTab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
-					checkTab.setSelected(true);
-				}
-			} catch (final ComponentNotFoundException ex) {
-				logger.warn("Exception: ", ex);
-			}
-
-			if (checkTab == null) {
-
-				final Tab tab = new Tab();
-				tab.setId(tabName.trim().replace("menu_Item_", "tab_"));
-				tab.setLabel(Labels.getLabel(tabName));
-				tab.setClosable(true);
-				if ("tab_Home".equals(tab.getId())) {
-					tab.setClosable(false);
-				}
-
-				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
-					public void onEvent(Event event) throws UiException {
-						String pageName = event.getTarget().getId().replace("tab_", "");
-						@SuppressWarnings("deprecation")
-						UserWorkspace workspace = UserWorkspace.getInstance();
-						workspace.deAllocateAuthorities(pageName);
-					}
-				});
-
-				tab.setParent(tabs);
-
-				final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
-						.getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
-				final Tabpanel tabpanel = new Tabpanel();
-				tabpanel.setHeight("100%");
-				tabpanel.setStyle("padding: 0px;");
-				tabpanel.setParent(tabpanels);
-
-				/*
-				 * create the page and put it in the tabs area
-				 */
-				Executions.createComponents(zulFilePathName, tabpanel, null);
-				tab.setSelected(true);
-			}
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving ");
-	}
-
-	public void setMainMenuWindow(Window mainMenuWindow) {
-		this.mainMenuWindow = mainMenuWindow;
-	}
-
-	public void openMenu(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-		try {
-			if (StringUtils.isBlank(menuName.getValue())) {
-				MessageUtil.showError(Labels.getLabel("Invalid_Menu_Blank"));
-			} else {
-
-				MenuDetails menuDetails = getMenuDetails(StringUtils.trimToEmpty(menuName.getValue().toUpperCase()));
-
-				if (menuDetails == null) {
-					MessageUtil.showError(Labels.getLabel("Invalid_Menu_Code"));
-				} else {
-
-					if (isAllowed(menuDetails.getMenuRef())) {
-						showPage(menuDetails.getMenuZulPath(), menuDetails.getMenuRef());
-						menuName.setValue("");
-					} else {
-						MessageUtil.showError(Labels.getLabel("Not_Authorised"));
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private boolean isAllowed(String menuId) {
-		logger.debug("Entering ");
-
-		// No rights required to change his/her own password.
-		if ("menu_Item_ChgPwd".equals(menuId)) {
-			return true;
-		}
-
-		@SuppressWarnings("deprecation")
-		UserWorkspace workspace = UserWorkspace.getInstance();
-		if (workspace.getHasMenuRights().get(menuId) == null) {
-			return false;
-		} else if (StringUtils.isEmpty(workspace.getHasMenuRights().get(menuId))) {
-			return true;
-		}
-		logger.debug("Leaving ");
-		return workspace.isAllowed(workspace.getHasMenuRights().get(menuId));
-	}
-
-	/**
-	 * @param menuDetailsService
-	 *            the menuDetailsService to set
-	 */
-	public void setMenuDetailsService(MenuDetailsService menuDetailsService) {
-		this.menuDetailsService = menuDetailsService;
-	}
-
-	public MenuDetails getMenuDetails(String menuCode) {
-		logger.debug("Entering ");
-		MenuDetails menuDetails = null;
-		if (this.hasMenuDetails == null) {
-			menuDetaiils();
-		}
-
-		if (hasMenuDetails != null) {
-			menuDetails = this.hasMenuDetails.get(menuCode.toUpperCase());
-		}
-		logger.debug("Leaving ");
-		return menuDetails;
-	}
-
-	private void menuDetaiils() {
-		logger.debug("Entering ");
-
-		List<MenuDetails> menuList = menuDetailsService.getMenuDetailsByApp(App.CODE);
-		if (menuList.size() > 0) {
-			this.hasMenuDetails = new HashMap<String, MenuDetails>();
-		}
-		for (int i = 0; i < menuList.size(); i++) {
-			MenuDetails menuDetails = menuList.get(i);
-			this.hasMenuDetails.put(menuDetails.getMenuCode().toUpperCase(), menuDetails);
-		}
-		logger.debug("Leaving ");
-	}
-
-	public void setUserWorkspace(UserWorkspace userWorkspace) {
-		this.userWorkspace = userWorkspace;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
-	 * Event handler that listens when a menu has been clicked.
+	 * Event listener that will be notified when the menu clicked.
 	 * 
 	 * @param event
-	 *            Event that triggered the event handler.
+	 *            The event being received.
 	 */
 	public void onMenuClick(ForwardEvent event) {
 		logger.trace(Literal.ENTERING);
@@ -488,11 +233,12 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	}
 
 	/**
-	 * Event handler that listens when a menu item has been clicked.
+	 * Event listener that will be notified when the menu item clicked.
 	 * 
 	 * @param event
-	 *            Event that triggered the event handler.
+	 *            The event being received.
 	 * @throws URISyntaxException
+	 *             If the navigate URL is not a valid URI.
 	 */
 	public void onMenuItemClick(ForwardEvent event) throws URISyntaxException {
 		logger.trace(Literal.ENTERING);
@@ -523,13 +269,34 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return;
 		}
 
+		openPage(menuItem.getId(), menuItem.getNavigateUrl(), true);
+
+		logger.trace(Literal.LEAVING);
+	}
+
+	/**
+	 * Opens the menu item.
+	 * 
+	 * @param menuId
+	 *            The ID of the menu.
+	 * @param navigateUrl
+	 *            The URL of the page.
+	 * @param closable
+	 *            <code>true</code> if the page is closable.
+	 * @throws URISyntaxException
+	 *             If the navigate URL is not a valid URI.
+	 */
+	private void openPage(String menuId, String navigateUrl, boolean closable) throws URISyntaxException {
+		logger.info("Openening page " + navigateUrl);
+
+		// Get the tab id.
+		String tabId = menuId.replace("menu_Item_", "tab_");
+
 		// Get the container components for the page.
 		Tabs tabs = (Tabs) Path.getComponent("/outerIndexWindow/tabsIndexCenter");
 		Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
 
 		// Open the tab if one already exists.
-		String tabId = menuItem.getId().replace("menu_Item_", "tab_");
-
 		if (tabs.hasFellow(tabId)) {
 			((Tab) tabs.getFellow(tabId)).setSelected(true);
 			return;
@@ -539,8 +306,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		Tab tab = new Tab();
 		tab.setParent(tabs);
 		tab.setId(tabId);
-		tab.setLabel(StringUtils.trimToEmpty(Labels.getLabel(menuItem.getId())));
-		tab.setClosable(true);
+		tab.setLabel(StringUtils.trimToEmpty(Labels.getLabel(menuId)));
+		tab.setClosable(closable);
 		tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
@@ -555,70 +322,35 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		tabpanel.setHeight("100%");
 		tabpanel.setStyle("padding: 0px;");
 
-		// Open the page.
-		URIBuilder uriBuilder = new URIBuilder(menuItem.getNavigateUrl());
-
+		// Prepare the URI and parameters of the page.
+		URIBuilder uriBuilder = new URIBuilder(navigateUrl);
 		String uri = uriBuilder.getPath();
 
-		Map<String, String> args = new HashMap<>();
+		Map<String, String> parametrs = new HashMap<>();
 		for (NameValuePair param : uriBuilder.getQueryParams()) {
-			args.put(param.getName(), param.getValue());
+			parametrs.put(param.getName(), param.getValue());
 		}
 
-		logger.info("Openening page " + menuItem.getNavigateUrl());
-		Executions.createComponents(uri, tabpanel, args);
+		// Create components from a page file in the respective tab panel and select the tab.
+		Executions.createComponents(uri, tabpanel, parametrs);
 		tab.setSelected(true);
-
-		logger.trace(Literal.LEAVING);
 	}
 
-	private void doCollapseExpandAll(Component component, boolean unfold) {
-		if (component instanceof Treeitem) {
-			final Treeitem treeitem = (Treeitem) component;
-			treeitem.setOpen(unfold);
-		}
-		final Collection<Component> com = component.getChildren();
-		if (com != null) {
-			for (final Iterator<?> iterator = com.iterator(); iterator.hasNext();) {
-				doCollapseExpandAll((Component) iterator.next(), unfold);
-
-			}
-		}
+	public void setUserWorkspace(UserWorkspace userWorkspace) {
+		this.userWorkspace = userWorkspace;
 	}
 
-	public void expandMenuItems() {
-		doCollapseExpandAll(mainMenuWindow, true);
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 
-	public void collapseMenuItems() {
-		doCollapseExpandAll(mainMenuWindow, false);
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
-	public void filterMenuItems(Treechildren menu) {
-		// Get the menu items.
-		List<Component> menuItems = menu.getChildren();
-
-		for (Component menuItem : menuItems) {
-			// Get the main tree cell component that has the menu item.
-			Treecell component = (Treecell) menuItem.getFirstChild().getFirstChild();
-
-			if (menuItem.getChildren().size() == 1) {
-				// The menu item doesn't have any sub menu items.
-				menuItem.setVisible(StringUtils.containsIgnoreCase(component.getLabel(), menuName.getValue()));
-			} else {
-				Treechildren subMenu = (Treechildren) menuItem.getChildren().get(1);
-				filterMenuItems(subMenu);
-
-				// Hide if no sub menu items are visible.
-				menuItem.setVisible(subMenu.getVisibleItemCount() > 0);
-			}
-		}
-
-		// Expand / collapse the menu items.
-		if (StringUtils.isEmpty(menuName.getValue())) {
-			collapseMenuItems();
-		} else {
-			expandMenuItems();
-		}
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 }

@@ -99,7 +99,6 @@
 
 	<bean id="mainMenuCtrl" abstract="true"
 		class="com.pennant.common.menu.MainMenuCtrl" scope="session">
-		<property name="menuDetailsService" ref="menuDetailsService" />
 	</bean>
 
 	<!-- MessageBarController -->
@@ -117,10 +116,8 @@
 
 	<!-- UserBarController -->
 
-	<bean id="userBarCtrl" class="com.pennant.webui.util.UserBarCtrl"
-		scope="prototype">
-		<property name="menuDetailsService" ref="menuDetailsService" />
-	</bean>
+	<bean id="userBarCtrl" class="com.pennant.webui.util.UserBarCtrl" 
+		scope="prototype" />
 
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->

@@ -41,20 +41,6 @@
 		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 
 	<!-- ====================================================== -->
-	<!-- Menu Details Configuration -->
-	<!-- ====================================================== -->
-
-	<bean id="menuDetailsDAO" class="com.pennant.backend.dao.impl.MenuDetailsDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
-	</bean>
-
-	<bean name="menuDetailsService"
-		class="com.pennant.backend.service.impl.MenuDetailsServiceImpl">
-		<property name="menuDetailsDAO" ref="menuDetailsDAO" />
-	</bean>
-
-	<!-- ====================================================== -->
 	<!-- Error Details Configuration -->
 	<!-- ====================================================== -->
 

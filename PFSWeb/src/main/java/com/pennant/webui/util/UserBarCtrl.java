@@ -42,13 +42,8 @@
 */
 package com.pennant.webui.util;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.service.MenuDetailsService;
-import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -66,6 +61,12 @@ import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
+
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.LoggedInUser;
+import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;
@@ -96,7 +97,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
     protected Menuitem menuitem_logout;
     protected Menuitem menuitem_changePasssword;
     LoggedInUser user =null;
-	private transient MenuDetailsService menuDetailsService;
 
 	/**
 	 * Default constructor.
@@ -290,19 +290,4 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	public String get_DepartmentCodeText() {
 		return this._DepartmentCodeText;
 	}
-
-	/**
-	 * @return the menuDetailsService
-	 */
-	public MenuDetailsService getMenuDetailsService() {
-		return menuDetailsService;
-	}
-
-	/**
-	 * @param menuDetailsService the menuDetailsService to set
-	 */
-	public void setMenuDetailsService(MenuDetailsService menuDetailsService) {
-		this.menuDetailsService = menuDetailsService;
-	}
-
 }

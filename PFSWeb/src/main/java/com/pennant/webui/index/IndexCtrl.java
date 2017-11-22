@@ -176,7 +176,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 
 		// create the components from the mainmenu.zul-file and put
 		// it in the west layout area
-		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west, map);
+		Executions.createComponents("/WEB-INF/pages/mainMenu.zul", west, map);
 	}
 
 	/**

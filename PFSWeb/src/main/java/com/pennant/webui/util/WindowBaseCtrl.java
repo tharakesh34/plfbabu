@@ -42,7 +42,6 @@
 */
 package com.pennant.webui.util;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -54,8 +53,8 @@ import org.zkoss.zul.Window;
 /**
  * Base controller for creating the controllers of the zul files with the <b>use</b> tag.
  */
-public abstract class WindowBaseCtrl extends Window implements AfterCompose, Serializable {
-	private static final long				serialVersionUID	= -2179229704315045689L;
+public abstract class WindowBaseCtrl extends Window implements AfterCompose {
+	private static final long serialVersionUID = -2179229704315045689L;
 
 	protected transient Map<String, Object>	args;
 
@@ -85,5 +84,14 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose, Ser
 				processRecursive(main, (Window) window);
 			}
 		}
+	}
+
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 }
