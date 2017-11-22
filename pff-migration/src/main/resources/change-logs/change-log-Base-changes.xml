@@ -2201,4 +2201,31 @@ UNION ALL
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
 		</createView>
 	</changeSet>
+	
+	<changeSet id="96" author="Prakash">
+	<sql>
+		INSERT INTO plf.SMTParameters VALUES('REPAY_PDC','Repay Post Dated Check','String',1,
+		'PDC',8,0,'','','Repay Post Dated Check',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="97" author="Prakash">
+	<sql>
+	INSERT INTO plf.BMTDocumentTypes
+	VALUES('PDC',0,0,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Post Dated Check');
+	</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="Prakash">
+	<sql>
+		Update plf.SMTParameters set SYSPARMDESC = 'Repay Post Dated Cheque',SYSPARMDESCRIPTION = 'Repay Post Dated Cheque'
+		where SYSPARMCODE = 'REPAY_PDC';
+	</sql>
+	</changeSet>
+	
+	<changeSet id="99" author="Prakash">
+	<sql>
+	   Update plf.BMTDocumentTypes set DOCTYPEDESC = 'Post Dated Cheque' where DOCTYPECODE = 'PDC';
+	</sql>
+	</changeSet>
 </databaseChangeLog>

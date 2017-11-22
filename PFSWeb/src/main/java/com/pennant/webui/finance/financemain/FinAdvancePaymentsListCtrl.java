@@ -413,13 +413,12 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan,
-				getFinAdvancePaymentsList());
+		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan, getFinAdvancePaymentsList());
 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws InterruptedException {
+	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.btnNew_NewFinAdvancePayments);
 		FinanceDetail findetails = getFinancedetailsFromBase();

@@ -919,7 +919,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws InterruptedException {
+	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule);
 		logger.debug("Leaving" + event.toString());
