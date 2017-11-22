@@ -79,7 +79,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -214,7 +213,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected int								accNoLength;
 	private transient BankDetailService			bankDetailService;
 	private FinanceMain							financeMain;
-	private List<DocumentDetails>				documentDetails;
+	private DocumentDetails						documentDetails;
 
 	/**
 	 * default constructor.<br>
@@ -264,7 +263,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 			if (arguments.containsKey("documentDetails")) {
-				documentDetails = (List<DocumentDetails>) arguments.get("documentDetails");
+				documentDetails = (DocumentDetails) arguments.get("documentDetails");
 			} else {
 				documentDetails = null;
 			}
@@ -800,22 +799,18 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 
 		AMedia amedia = null;
-		String document = SysParamUtil.getValueAsString("REPAY_PDC");
-		for (DocumentDetails details : documentDetails) {
+		if (documentDetails != null) {
+			if (documentDetails.getDocImage() != null) {
+				InputStream data = new ByteArrayInputStream(documentDetails.getDocImage());
 
-			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
-				if (details.getDocImage() != null) {
-					InputStream data = new ByteArrayInputStream(details.getDocImage());
-					if (StringUtils.equals(details.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
-						amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
-					} else if (details.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
-						amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
-					}
+				if (StringUtils.equals(documentDetails.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+					amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+				} else if (StringUtils.equals(documentDetails.getDoctype(), PennantConstants.DOC_TYPE_PDF)) {
+					amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
 				}
 				this.docName.setContent(amedia);
 			}
 		}
-
 		logger.debug("Leaving");
 	}
 

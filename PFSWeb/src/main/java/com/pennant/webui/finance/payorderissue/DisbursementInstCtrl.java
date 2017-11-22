@@ -346,16 +346,18 @@ public class DisbursementInstCtrl {
 		DocumentDetailDialogCtrl DocumentDetailDialogCtrl = (DocumentDetailDialogCtrl) dialogCtrl.getClass()
 				.getMethod("getDocumentDetailDialogCtrl").invoke(dialogCtrl);
 		String document = SysParamUtil.getValueAsString("REPAY_PDC");
+
 		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
 			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
 				if (details.getDocImage() == null) {
 					details.setDocImage(getFinanceDetailService()
 							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
 				}
+				map.put("documentDetails", details);
+				break;
 			}
 		}
-		map.put("documentDetails", DocumentDetailDialogCtrl.getDocumentDetailsList());
-		
+
 		logger.debug("Leaving");
 	}
 
