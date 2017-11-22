@@ -113,11 +113,11 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_externalDedup:
-			auditHeader = externalDedup.checkDedup(auditHeader);
+			//auditHeader = externalDedup.checkDedup(auditHeader);
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_hunter:
-			auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
+			//auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 			taskExecuted = true;
 			break;
 		case PennantConstants.method_Bureau:
