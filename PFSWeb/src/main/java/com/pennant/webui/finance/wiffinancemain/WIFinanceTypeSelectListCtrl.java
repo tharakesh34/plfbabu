@@ -657,7 +657,6 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			//financeType.setFinRepayPftOnFrq(false);
 			//set the default barch for wif with out customer selection
 			getSwiftBranchCode(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
 			FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
 			FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
 			this.financeDetail.getFinScheduleData().setFinanceMain(finMain);
