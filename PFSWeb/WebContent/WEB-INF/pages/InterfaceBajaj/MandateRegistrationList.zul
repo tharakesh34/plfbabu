@@ -47,7 +47,13 @@
 									<combobox id="mandateType" width="171px" />
 									<label id="label_MandateList_CustCIF" value="${c:l('label_MandateList_CustCIF.value')}" />
 									<listbox id="sortOperator_CustCIF" width="43px" mold="select" rows="1" />
-									<textbox id="custCIF" width="171px" />
+									<hbox>
+										<textbox id="custCIF"
+											width="171px" />
+										<button id="btnSearchCustCIF"
+											tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+											image="/images/icons/more.png" />
+									</hbox>
 								</row>
 								<row>
 									<label id="label_MandateList_BankName" value="${c:l('label_MandateList_BankName.value')}" />

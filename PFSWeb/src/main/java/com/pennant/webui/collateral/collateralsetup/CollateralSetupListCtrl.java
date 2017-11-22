@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
@@ -65,12 +66,14 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -130,6 +133,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	private transient FinanceDetailService 		financeDetailService;
 	private transient FinanceWorkFlowService 	financeWorkFlowService;
 	private transient WorkFlowDetails workFlowDetails  =  null;
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 	
 	private String module = null;
 	
@@ -413,6 +417,51 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
+	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.depositorCif.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.depositorCif.setValue(customer.getCustCIF());
+		} else {
+			this.depositorCif.setValue("");
+		}
+		logger.debug("Leaving ");
 	}
 
 	public CollateralSetupService getCollateralSetupService() {
