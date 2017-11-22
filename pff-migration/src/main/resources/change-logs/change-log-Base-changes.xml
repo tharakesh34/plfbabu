@@ -2228,4 +2228,34 @@ UNION ALL
 	   Update plf.BMTDocumentTypes set DOCTYPEDESC = 'Post Dated Cheque' where DOCTYPECODE = 'PDC';
 	</sql>
 	</changeSet>
+	<changeSet id="100" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_VIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses_temp t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+UNION ALL
+ SELECT  t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM customeraddresses_temp
+          WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype))
+	</createView>
+	</changeSet>
 </databaseChangeLog>
