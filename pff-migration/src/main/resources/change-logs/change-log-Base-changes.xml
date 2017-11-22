@@ -890,7 +890,7 @@
 	 LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
 	</createView>
 </changeSet>
-<changeSet id="48" author="Jayant">
+<changeSet id="48" author="Jayant" dbms="postgresql">
 	<modifyDataType tableName="workflowdetails" columnName="workflowxml" newDataType="text" />
 </changeSet>
  <changeSet id="49" author="pruthvi">

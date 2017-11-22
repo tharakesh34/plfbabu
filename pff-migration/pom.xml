@@ -69,20 +69,20 @@
 			<id>dev</id>
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
-				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:sqlserver://192.168.1.19:1433;database=PFFBFS</pfs.liquibase.url>
-				<pfs.liquibase.username>PFFBFSAdmin</pfs.liquibase.username>
-				<pfs.liquibase.password>pff@bajaj</pfs.liquibase.password>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLF_CORE_DEV</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
 		<profile>
 			<id>devAudit</id>
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
-				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:sqlserver://192.168.1.19:1433;database=PFFBFSAudit</pfs.liquibase.url>
-				<pfs.liquibase.username>PFFBFSAdmin</pfs.liquibase.username>
-				<pfs.liquibase.password>pff@bajaj</pfs.liquibase.password>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLF_CORE_DEV_AUDIT</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
 		<profile>
