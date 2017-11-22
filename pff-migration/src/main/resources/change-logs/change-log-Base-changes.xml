@@ -2206,7 +2206,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="96" author="Prakash">
+	<changeSet id="96" author="Prakash" dbms="postgresql">
 	<sql>
 		INSERT INTO plf.SMTParameters VALUES('REPAY_PDC','Repay Post Dated Check','String',1,
 		'PDC',8,0,'','','Repay Post Dated Check',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
@@ -2226,14 +2226,14 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
-	<changeSet id="98" author="Prakash">
+	<changeSet id="98" author="Prakash" dbms="postgresql">
 	<sql>
 		Update plf.SMTParameters set SYSPARMDESC = 'Repay Post Dated Cheque',SYSPARMDESCRIPTION = 'Repay Post Dated Cheque'
 		where SYSPARMCODE = 'REPAY_PDC';
 	</sql>
 	</changeSet>
 	
-	<changeSet id="99" author="Prakash">
+	<changeSet id="99" author="Prakash" dbms="postgresql">
 	<sql>
 	   Update plf.BMTDocumentTypes set DOCTYPEDESC = 'Post Dated Cheque' where DOCTYPECODE = 'PDC';
 	</sql>
@@ -2294,4 +2294,19 @@ UNION ALL
 	<changeSet id="110" author="Satyanarayana.G" dbms="oracle">
 	<dropTable tableName="SEQPTMENUDETAILS"/>
 	</changeSet>
+	
+	<changeSet id="109" author="Prakash" dbms="postgresql">
+	<sql>
+		INSERT INTO SMTParameters VALUES('REPAY_PDC','Repay Post Dated Cheque','String',1,
+		'PDC',8,0,'','','Repay Post Dated Cheque',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="110" author="Prakash" dbms="postgresql">
+	<sql>
+	   INSERT INTO BMTDocumentTypes
+	   VALUES('PDC',0,1,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Post Dated Cheque');
+	</sql>
+	</changeSet>
+
 </databaseChangeLog>
