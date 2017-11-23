@@ -2350,5 +2350,86 @@ UNION ALL
 	 <changeSet id="111" author="Durga Prasad D">
 		<createSequence sequenceName="SeqServiceTaskDetails" startValue="1"
 			 maxValue="9223372036854775807" incrementBy="1" />
-	</changeSet> 
+	</changeSet>
+	<changeSet id="112" author="Jayant">
+		<createView viewName="LIMITHEADER_VIEW" replaceIfExists="true">
+			 SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue,T8.QueryDesc , T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId, T4.CustCIF,
+T4.CustShrtName, 
+                      T4.CustFName CustFName, T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,
+T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName,T6.ShowLimitsIn, T1.LimitSetupRemarks,T1.Rebuild,T1.Active, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.
+LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader_Temp T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID  LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode 
+
+UNION ALL 
+SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup, T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName,T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName,  T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName, T6.ShowLimitsIn,T1.LimitSetupRemarks,T1.Rebuild,T1.Active,T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.
+LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          LimitHeader_Temp
+                            WHERE      HeaderId = T1.HeaderId)
+		</createView>
+	</changeSet>
+	<changeSet id="113" author="Jayant">
+		<createView viewName="LIMITHEADER_AVIEW" replaceIfExists="true">
+			 SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, 
+T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName,T4.CustMName CustMName, T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName,T6.ShowLimitsIn, T1.LimitSetupRemarks, T1.Rebuild,T1.Active, T1.Version, 
+T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+		</createView>
+	</changeSet>
+	<changeSet id="114" author="Jayant">
+		<createView viewName="LIMITHEADER_TVIEW" replaceIfExists="true">
+			SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName, T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName, T6.ShowLimitsIn,T1.LimitSetupRemarks,T1.Rebuild,T1.Active,  T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1
+.LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader_Temp T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+		</createView>
+	</changeSet>
 </databaseChangeLog>
