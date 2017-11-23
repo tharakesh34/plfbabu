@@ -73,7 +73,7 @@
 											width="150px" />
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
-											image="/images/icons/LOVSearch.png" />
+											image="/images/icons/more.png" />
 									</hbox>
 									<label
 										id="label_FinanceEnquiryList_Branch"

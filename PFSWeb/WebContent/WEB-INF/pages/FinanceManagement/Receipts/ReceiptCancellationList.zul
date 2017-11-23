@@ -86,7 +86,7 @@
 											width="150px" />
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_ReceiptCancellationSearch_btnSearchCustCIF.tooltiptext')}"
-											image="/images/icons/LOVSearch.png" />
+											image="/images/icons/more.png" />
 									</hbox>
 								</row>
 								<row>
