@@ -404,4 +404,10 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 		mailService.sendEmail(toAddress, subject, mailContent);
 	}
 
+	@Override
+	public void sendMail(List<String> custMailIdList, List<MailTemplate> templates) {
+		logger.debug("Entering");
+		
+	}
+
 }

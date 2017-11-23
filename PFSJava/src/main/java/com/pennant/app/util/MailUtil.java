@@ -963,10 +963,11 @@ public class MailUtil extends MailUtility {
 		return data;
 	}
 	
-	public MailTemplate getMailDetails(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
+	public List<MailTemplate> getMailDetails(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
 			List<DocumentDetails> docList, Map<String, List<String>> mailIdMap) throws IOException, TemplateException {
 		logger.debug("Entering");
-		MailTemplate mailTemplate = null;
+		
+		List<MailTemplate> templates=new ArrayList<MailTemplate>();		
 		// Fetching List of Notification using Notification ID list
 		List<Notifications> notificationsList = getNotificationsService()
 				.getApprovedNotificationsByRuleIdList(notificationIdList);
@@ -977,6 +978,7 @@ public class MailUtil extends MailUtility {
 		List<DocumentDetails> documentslist = null;
 		documentslist = docList;
 		for (Notifications notifications : notificationsList) {
+			MailTemplate mailTemplate = null;
 			// Getting Mail Template
 			Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
 					fieldsAndValues, null, RuleReturnType.INTEGER);
@@ -1065,10 +1067,13 @@ public class MailUtil extends MailUtility {
 
 				}
 			}
-
+			if(mailTemplate!=null){
+				templates.add(mailTemplate);
+			}
+			
 		}
 		logger.debug("Leaving");
-		return mailTemplate;
+		return templates;
 	}
 
 	private String getMailTemplateData(String templateName, MailTemplate mailTemplate, String templateSource,

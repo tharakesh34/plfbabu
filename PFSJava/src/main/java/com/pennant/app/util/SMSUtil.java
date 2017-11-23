@@ -72,11 +72,12 @@ public class SMSUtil {
 		this.securityUserOperationsService = securityUserOperationsService;
 	}
 
-	public String getSMSContent(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
+	public List<String> getSMSContent(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
 			Map<String, List<String>> mobileNoMap) throws IOException, TemplateException {
 		logger.debug("Entering");
 		MailTemplate smsTemplate = null;
-		String smsContent = "";
+		List<String> smsContentList=new ArrayList<String>();
+		
 		// Fetching List of Notification using Notification ID list
 		List<Notifications> notificationsList = getNotificationsService()
 				.getApprovedNotificationsByRuleIdList(notificationIdList);
@@ -87,6 +88,7 @@ public class SMSUtil {
 		List<DocumentDetails> documentslist = null;
 
 		for (Notifications notifications : notificationsList) {
+			String smsContent = null;
 			// Getting Mail Template
 			Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
 					fieldsAndValues, null, RuleReturnType.INTEGER);
@@ -122,10 +124,13 @@ public class SMSUtil {
 					}
 				}
 			}
-
+			if(smsContent!=null && smsContent.trim().length()>0){
+				smsContentList.add(smsContent);
+			}
+			
 		}
 		logger.debug("Leaving");
-		return smsContent;
+		return smsContentList;
 	}
 
 	private String getSMSTemplateData(String templateName, MailTemplate smsTemplate, String templateSource,

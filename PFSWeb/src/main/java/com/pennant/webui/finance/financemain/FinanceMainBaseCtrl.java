@@ -6067,41 +6067,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 						
 						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
-								.getFinScheduleData().getFinanceMain());
-						
-						//Customer mobile numbers logic start
-						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
-						List<String> custPhoneNoList = new ArrayList<String>();
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
-							
-							List<CustomerPhoneNumber> phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
-							
-							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
-								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
-							}
-							if (!custPhoneNoList.isEmpty()) {
-								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
-							}
-						}
-						//Customer mobile numbers logic	end						
-						if (isExtSMSService()) {
-							String smsContent = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
-							
-							// send SMS to external service
-							getShortMessageService().sendMessage(custPhoneNoList, smsContent);
-						}
+								.getFinScheduleData().getFinanceMain());						
 						
 						if (isExtMailService()) {
 							try {
-								MailTemplate mailTemplate = getMailUtil().getMailDetails(notificationIdlist,
-										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
-								String subject = mailTemplate.getEmailSubject();
-								String mailContent = mailTemplate.getLovDescFormattedContent();
-
+								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
+										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);								
 								// send mail to external service
-								getMailTemplateService().sendMail(custMailIdList, subject, mailContent);
+								getMailTemplateService().sendMail(custMailIdList, templates);
 							} catch (IOException e) {
 								logger.error("Unable to read or process freemarker configuration or template :" + e);
 							} catch (TemplateException e) {
@@ -6116,7 +6089,33 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								logger.warn("Exception: ", e);
 							}
 							
-						}					
+						}
+						
+						//Customer mobile numbers logic start
+						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
+						List<String> custPhoneNoList = new ArrayList<String>();
+						List<CustomerPhoneNumber> phoneNoList=new ArrayList<CustomerPhoneNumber>();
+						if (isCustomerNotificationExists
+								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
+								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
+							
+							phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
+							
+							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
+								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
+							}
+							if (!custPhoneNoList.isEmpty()) {
+								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
+							}
+						}
+						//Customer mobile numbers logic	end						
+						if (isExtSMSService()) {
+							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
+							
+							// send SMS to external service
+							getShortMessageService().sendMessage(phoneNoList, smsList);
+						}
+						
 					}
 
 				}
