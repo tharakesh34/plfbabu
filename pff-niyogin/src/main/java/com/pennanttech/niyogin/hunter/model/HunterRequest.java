@@ -20,6 +20,7 @@ public class HunterRequest implements Serializable {
 	private String productCode;
 	@XmlElement(name = "app_dte")
 	private Date appDate;
+	@XmlElement(name = "org")
 	private CustomerBasicDetail customerBasicDetail;
 
 	public String getIdentifier() {

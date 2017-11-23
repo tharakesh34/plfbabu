@@ -32,6 +32,13 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private final String		extConfigFileName	= "hunter";
 	private String				serviceUrl;
 
+	/**
+	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
+	 * 
+	 * @param auditHeader
+	 * @return auditHeader
+	 */
+
 	@Override
 	public AuditHeader checkHunterDetails(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -214,7 +221,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 				extendedMapObject.put(entry.getKey(), entry.getValue());
 			}
 			//TEMPORARY FIX
-			if (Integer.parseInt(extendedResMapObject.get("HUNTERMATCH").toString()) == 0) {
+			if (extendedResMapObject.get("HUNTERMATCH")!=null&&Integer.parseInt(extendedResMapObject.get("HUNTERMATCH").toString()) == 0) {
 				extendedMapObject.put("HUNTERMATCH", false);
 			} else {
 				extendedMapObject.put("HUNTERMATCH", true);
