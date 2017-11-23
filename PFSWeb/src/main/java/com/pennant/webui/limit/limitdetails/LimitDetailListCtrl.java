@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -69,6 +70,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -166,6 +168,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	private   Textbox		limitType;
 
 	private transient boolean approvedList = false;
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -770,6 +773,52 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.id.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.id.setValue(customer.getCustCIF());
+		} else {
+			this.id.setValue("");
+		}
+		logger.debug("Leaving ");
+	}
+
 
 
 
