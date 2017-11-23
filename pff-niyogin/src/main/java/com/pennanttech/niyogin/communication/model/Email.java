@@ -18,7 +18,7 @@ public class Email implements Serializable {
 	private String to;
 	private String subject;
 	private String body;
-	@XmlElement(name = "status")
+	@XmlElement(name = "statusCode")
 	private String returnCode;
 	@XmlElement(name = "message")
 	private String returnText;

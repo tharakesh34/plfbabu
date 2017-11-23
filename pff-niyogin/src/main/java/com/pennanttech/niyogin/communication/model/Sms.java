@@ -18,7 +18,7 @@ public class Sms implements Serializable {
 	private String mobileNumber;
 	@XmlElement(name = "text")
 	private String messageBody;
-	@XmlElement(name = "status")
+	@XmlElement(name = "statusCode")
 	private String returnCode;
 	@XmlElement(name = "message")
 	private String returnText;
