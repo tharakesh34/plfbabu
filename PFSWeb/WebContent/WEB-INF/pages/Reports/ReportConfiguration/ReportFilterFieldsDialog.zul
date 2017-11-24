@@ -323,7 +323,7 @@
 					</groupbox>
 					<groupbox id="gb_instrictions" mold="3d"
 						height="25%"
-						contentStyle="border: 2px green dashed;border-top:1px">
+						contentStyle="border: 2px green dashed;border-top:1px;overflow:auto">
 						<caption label="Instructions"></caption>
 						<html id="instructions" sclass="z-label" style="color:#555"/>
 					</groupbox>
