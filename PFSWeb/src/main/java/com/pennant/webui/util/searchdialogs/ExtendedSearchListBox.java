@@ -725,11 +725,11 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		}
 
 		if (getModuleMapping().getLovFilters()!=null){
-			String[][] condArray = getModuleMapping().getLovFilters();
+			Object[][] condArray = getModuleMapping().getLovFilters();
 			Filter filter1;
 
 			for (int i = 0; i < condArray.length; i++) {
-				filter1 = new Filter(condArray[i][0], condArray[i][2], Integer.parseInt(condArray[i][1]));
+				filter1 = new Filter((String)condArray[i][0], (String)condArray[i][2], Integer.parseInt((String)condArray[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}

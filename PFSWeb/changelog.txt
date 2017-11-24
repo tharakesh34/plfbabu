@@ -1,3 +1,9 @@
+pff 4.1.0, 2017-11-24
+---------------------
+- upgraded pennapps-core version from 0.2.0.3 to 0.4
+- changed service task execution(Added Re-runnable property)
+- Added Service task status details logging
+
 pff 4.1.0, 2017-11-22
 ---------------------
 - Removed deprecated method UserWorkspace.getInstance().

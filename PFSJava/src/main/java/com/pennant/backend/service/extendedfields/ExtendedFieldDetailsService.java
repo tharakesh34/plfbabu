@@ -785,12 +785,12 @@ public class ExtendedFieldDetailsService {
 			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(key);
 			if (moduleMapping != null) {
 				String[] lovFields = moduleMapping.getLovFields();
-				String[][] filters = moduleMapping.getLovFilters();
+				Object[][] filters = moduleMapping.getLovFilters();
 				int count = 0;
 				if (!StringUtils.contains(moduleMapping.getTableName(), "Builder")) {
 					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-								filters[0][0], fieldValue);
+								(String)filters[0][0], fieldValue);
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
 								null, fieldValue);
@@ -798,7 +798,7 @@ public class ExtendedFieldDetailsService {
 				} else {
 					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],
-								filters[0][0], fieldValue);
+								(String)filters[0][0], fieldValue);
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],
 								null, fieldValue);
@@ -917,13 +917,13 @@ public class ExtendedFieldDetailsService {
 			ModuleMapping moduleMapping1 = PennantJavaUtil.getModuleMap(key1);
 			if (moduleMapping1 != null) {
 				String[] lovFields = moduleMapping1.getLovFields();
-				String[][] filters = moduleMapping1.getLovFilters();
+				Object[][] filters = moduleMapping1.getLovFilters();
 				for (String type : types) {
 					int count = 0;
 					if (!StringUtils.contains(moduleMapping1.getTableName(), "Builder")) {
 						if (filters != null) {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
-									lovFields[0], filters[0][0], type);
+									lovFields[0], (String)filters[0][0], type);
 						} else {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
 									lovFields[0], null, type);
@@ -931,7 +931,7 @@ public class ExtendedFieldDetailsService {
 					} else {
 						if (filters != null) {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
-									lovFields[1], filters[0][0], type);
+									lovFields[1], (String)filters[0][0], type);
 						} else {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
 									lovFields[1], null, type);

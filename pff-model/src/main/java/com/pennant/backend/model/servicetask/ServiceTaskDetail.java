@@ -3,13 +3,16 @@ package com.pennant.backend.model.servicetask;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ServiceTaskDetail implements Serializable {
+import com.pennant.backend.model.Entity;
+
+public class ServiceTaskDetail implements Serializable, Entity {
 
 	private static final long	serialVersionUID	= 5808007043258253326L;
 
-	private String				module;
+	private long 				taskExecutionId = Long.MIN_VALUE;
+	private String				serviceModule;
 	private String				reference;
-	private int					serviceTaskId;
+	private String				serviceTaskId;
 	private String				serviceTaskName;
 	private long				userId;
 	private Timestamp			executedTime;
@@ -20,12 +23,12 @@ public class ServiceTaskDetail implements Serializable {
 		super();
 	}
 
-	public String getModule() {
-		return module;
+	public String getServiceModule() {
+		return serviceModule;
 	}
 
-	public void setModule(String module) {
-		this.module = module;
+	public void setServiceModule(String serviceModule) {
+		this.serviceModule = serviceModule;
 	}
 
 	public String getReference() {
@@ -36,11 +39,11 @@ public class ServiceTaskDetail implements Serializable {
 		this.reference = reference;
 	}
 
-	public int getServiceTaskId() {
+	public String getServiceTaskId() {
 		return serviceTaskId;
 	}
 
-	public void setServiceTaskId(int serviceTaskId) {
+	public void setServiceTaskId(String serviceTaskId) {
 		this.serviceTaskId = serviceTaskId;
 	}
 
@@ -82,5 +85,28 @@ public class ServiceTaskDetail implements Serializable {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return taskExecutionId;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.taskExecutionId = id;
+	}
+	
+	public long getTaskExecutionId() {
+		return taskExecutionId;
+	}
+
+	public void setTaskExecutionId(long taskExecutionId) {
+		this.taskExecutionId = taskExecutionId;
 	}
 }

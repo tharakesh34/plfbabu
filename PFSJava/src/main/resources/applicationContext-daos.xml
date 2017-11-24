@@ -10424,7 +10424,7 @@
 	</bean>
 	
 	<!-- custom service tasks -->
-	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+<!-- 	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
@@ -10436,10 +10436,11 @@
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
-	</bean>
-	<bean id="customServiceTaskTarget" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
+	</bean> -->
+	<bean id="customServiceTask" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
+		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
 	<!--Customize Finance Data Validation Service -->
 	<bean id="customizeFinanceDataValidation"
@@ -10465,4 +10466,11 @@
 	</bean>
 	<bean id="shortMessageServiceTarget"
 		class="com.pennant.backend.service.sms.impl.ShortMessageServiceImpl" />
+
+	<bean id="serviceTaskDAO"
+		class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="transactionManager" ref="pfsTransactionManager" />
+	</bean>
 </beans>
