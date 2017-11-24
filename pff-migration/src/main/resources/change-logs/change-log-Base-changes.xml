@@ -2436,4 +2436,8 @@ FROM          LimitHeader_Temp T1 INNER JOIN
 	<changeSet id="115" author="Durga Prasad D">
 		<renameColumn tableName="ServiceTaskDetails" oldColumnName="Module" newColumnName="ServiceModule"/>
 	</changeSet>
+	
+	<changeSet id="116" author="Durga Prasad D">
+		<modifyDataType tableName="ServiceTaskDetails" columnName="ServiceTaskId" newDataType="varchar(100)" />
+	</changeSet>
 </databaseChangeLog>
