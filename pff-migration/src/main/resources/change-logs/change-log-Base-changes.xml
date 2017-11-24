@@ -2001,7 +2001,7 @@ UNION ALL
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
   WHERE NOT (EXISTS ( SELECT 1 AS expr1
            FROM customers_temp
-          WHERE customers_temp.custid = t1.custid));
+          WHERE customers_temp.custid = t1.custid))
 		</createView>
 	</changeSet>
 	<changeSet id="95" author="Surekha">
@@ -2200,7 +2200,7 @@ UNION ALL
      LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
      LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
      LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
-     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispaoracledevtchmodecode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
      LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
 		</createView>
