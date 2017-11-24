@@ -90,7 +90,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		HunterRequest hunterRequest = new HunterRequest();
 		hunterRequest.setIdentifier(customer.getCustCIF());
-		hunterRequest.setProductCode(financeMain.getFinCategory());
+		hunterRequest.setProductCode(financeMain.getFinType());
 		hunterRequest.setAppDate(getAppDate());
 		CustomerBasicDetail customerBasicDetail = new CustomerBasicDetail();
 		StringBuilder builder = new StringBuilder();
