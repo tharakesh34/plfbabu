@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Sms;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -17,17 +18,22 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	private String				serviceUrl;
 
 	/**
-	 * Method to send the sms for the given list of mobile numbers.
+	 * Method to send the sms for the given mobile numbers.
 	 * 
-	 * @param mobiles
-	 * @param content
+	 * @param custPhoneNos
+	 * @param smsContent
 	 * 
 	 */
 	@Override
-	public void sendSms(List<String> mobiles, String content) throws InterfaceException {
+	public void sendSms(List<CustomerPhoneNumber> custPhoneNos, List<String> smsContent) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		for (String mobileNo : mobiles) {
-			send(mobileNo, content);
+		
+		if(custPhoneNos != null && !custPhoneNos.isEmpty() && smsContent != null && !smsContent.isEmpty()) {
+			for (CustomerPhoneNumber custPhone : custPhoneNos) {
+				for(String sms:smsContent) {
+					send(custPhone.getPhoneNumber(), sms);
+				}
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}

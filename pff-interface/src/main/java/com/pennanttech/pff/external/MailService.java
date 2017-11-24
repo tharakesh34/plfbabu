@@ -2,10 +2,10 @@ package com.pennanttech.pff.external;
 
 import java.util.List;
 
-import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennant.backend.model.mail.MailTemplate;
 
 public interface MailService {
 	
-	public void sendEmail(List<String> toAddress, String subject, String body) throws InterfaceException;
+	public void sendEmail(List<String> custMailIdList, List<MailTemplate> templates);
 }
 	

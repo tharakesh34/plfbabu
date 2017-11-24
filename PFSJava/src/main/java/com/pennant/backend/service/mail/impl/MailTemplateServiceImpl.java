@@ -63,6 +63,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MailService;
 
 /**
@@ -396,18 +397,18 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see com.pennant.backend.service.mail.MailTemplateService#sendMail(java.util.List, java.lang.String, java.lang.String)
+	/**
+	 * Method for call the ExternalServiceTask to send Mail.
+	 * 
+	 * @param custMailIdList
+	 * @param templates
+	 * @return
 	 */
 	@Override
-	public void sendMail(List<String> toAddress, String subject, String mailContent) {
-		mailService.sendEmail(toAddress, subject, mailContent);
-	}
-
-	@Override
 	public void sendMail(List<String> custMailIdList, List<MailTemplate> templates) {
-		logger.debug("Entering");
-		
+		logger.debug(Literal.ENTERING);
+		mailService.sendEmail(custMailIdList, templates);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

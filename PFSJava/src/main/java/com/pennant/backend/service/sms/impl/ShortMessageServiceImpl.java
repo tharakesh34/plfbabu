@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.service.sms.ShortMessageService;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.SMSService;
 
 public class ShortMessageServiceImpl implements ShortMessageService {
@@ -17,17 +18,17 @@ public class ShortMessageServiceImpl implements ShortMessageService {
 	private SMSService sMSService; 
 
 	/**
+	 * Method for call the ExternalServiceTask to send SMS.
 	 * 
-	 * 
+	 * @param custPhoneNoList
+	 * @param smsContent
+	 * @return 
 	 */
-	@Override
-	public void sendMessage(List<String> mobiles, String content) {
-		sMSService.sendSms(mobiles, content);
-	}
 
 	@Override
-	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsList) {
-		logger.debug("Entering");
-		
+	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent) {
+		logger.debug(Literal.ENTERING);
+		sMSService.sendSms(custPhoneNoList, smsContent);
+		logger.debug(Literal.LEAVING);
 	}
 }

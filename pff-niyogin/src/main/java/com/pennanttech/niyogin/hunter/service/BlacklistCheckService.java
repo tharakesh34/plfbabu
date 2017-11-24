@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -18,9 +19,9 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
+import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
 import com.pennanttech.niyogin.hunter.model.HunterResponse;
-import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
@@ -46,17 +47,31 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
 		JSONClient client = new JSONClient();
-		Map<String, Object> extendedMapObject = null;
+		Map<String, Object> validatedMap = null;
+		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			String jsonResponse = client.post(serviceUrl, "", hunterRequest, HunterResponse.class);
-			extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
+			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
+
+			// validate Response status
+			int errorCount = Integer.parseInt(extendedFieldMap.get("ERRORCOUNT").toString());
+			if (errorCount > 0) {
+				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
+						Objects.toString(extendedFieldMap.get("ERRORDESC")));
+			} else {
+				extendedFieldMap.remove("ERRORCOUNT");
+				extendedFieldMap.remove("ERRORCODE");
+				extendedFieldMap.remove("ERRORDESC");
+				validatedMap = validateExtendedMapValues(extendedFieldMap);
+			}
+
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
 			throw new InterfaceException("9999", exception.getMessage());
 		}
-		prepareResponseObj(extendedMapObject, financeDetail);
+		prepareResponseObj(validatedMap, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -219,12 +234,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			}
 			for (Entry<String, Object> entry : extendedResMapObject.entrySet()) {
 				extendedMapObject.put(entry.getKey(), entry.getValue());
-			}
-			//TEMPORARY FIX
-			if (extendedResMapObject.get("HUNTERMATCH")!=null&&Integer.parseInt(extendedResMapObject.get("HUNTERMATCH").toString()) == 0) {
-				extendedMapObject.put("HUNTERMATCH", false);
-			} else {
-				extendedMapObject.put("HUNTERMATCH", true);
 			}
 			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
 		}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -17,20 +18,21 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	private String				serviceUrl;
 
 	/**
-	 * Method to send the individual email for the given list of toAddress.
+	 * Method to send the email for the given list of toAddress.
 	 * 
 	 * @param toAddress
-	 * @param subject
-	 * @param body
+	 * @param templates
 	 * @return
 	 */
 	@Override
-	public void sendEmail(List<String> toAddress, String subject, String body) throws InterfaceException {
+	public void sendEmail(List<String> toAddress, List<MailTemplate> templates) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-
-		if (toAddress != null && !toAddress.isEmpty()) {
+		
+		if (toAddress != null && !toAddress.isEmpty() && templates != null && !templates.isEmpty()) {
 			for (String emailId : toAddress) {
-				send(emailId, subject, body);
+				for(MailTemplate template:templates) {
+					send(emailId, template.getEmailSubject(), template.getLovDescFormattedContent());
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
