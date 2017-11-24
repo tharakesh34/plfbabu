@@ -2432,4 +2432,8 @@ FROM          LimitHeader_Temp T1 INNER JOIN
 					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
 		</createView>
 	</changeSet>
+	
+	<changeSet id="115" author="Durga Prasad D">
+		<renameColumn tableName="ServiceTaskDetails" oldColumnName="Module" newColumnName="ServiceModule"/>
+	</changeSet>
 </databaseChangeLog>
