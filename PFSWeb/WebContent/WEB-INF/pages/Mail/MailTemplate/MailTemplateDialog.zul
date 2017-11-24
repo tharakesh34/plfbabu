@@ -158,7 +158,7 @@
 															id="templateRepeat" checked="false" />
 													</hbox>
 												</row>
-												<row visible="false">
+												<row visible="true">
 													<label
 														id="label_MailTemplateDialog_TemplateForSMS"
 														value="${c:l('label_MailTemplateDialog_TemplateForSMS.value')}"/>
@@ -169,7 +169,7 @@
 													</hbox>
 												</row>
 												<row id="row_SMSContent"
-													visible="false">
+													visible="true">
 													<label
 														id="label_MailTemplateDialog_SMSContent"
 														value="${c:l('label_MailTemplateDialog_SMSContent.value')}"/>
@@ -179,7 +179,7 @@
 															id="smsContent" width="300px" multiline="true" rows="3" />
 													</hbox>
 												</row>
-												<row visible="false">
+												<row visible="true">
 													<label
 														id="label_MailTemplateDialog_TemplateForEmail"
 														value="${c:l('label_MailTemplateDialog_TemplateForEmail.value')}"/>
