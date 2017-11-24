@@ -325,10 +325,7 @@
 						height="25%"
 						contentStyle="border: 2px green dashed;border-top:1px">
 						<caption label="Instructions"></caption>
-						<textbox id="txt_PasswordInstructions" rows="8"
-							multiline="true" width="99.5%" height="98%" readonly="true"
-							style="font-family: verdana; border: none; background-color: white;">
-						</textbox>
+						<html id="instructions" sclass="z-label" style="color:#555"/>
 					</groupbox>
 					<groupbox id="gb_basicFilter" mold="3d" height="35%">	
 						<grid id="searchGrid"

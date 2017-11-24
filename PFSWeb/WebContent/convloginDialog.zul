@@ -31,7 +31,11 @@
 										<cell colspan="2"></cell>
 									</row>
 									<row spans="2" align="right" if="${not empty param.login_error}">
-										<label id="msg_Error" value="${c:l('label_LoginDialog_Error.value')}" style="color:red" />
+										<html sclass="z-label" style="color:red">
+				                 <![CDATA[Login Failed, Due to invalid credentials/User ID Locked/Expired.<br/>
+				                     Please try again or contact system administrator.
+				                           ]]>
+				                         </html>
 									</row>
 									<row>
 										<textbox id="txtbox_Username1" width="180px" height="24px" style="display:none;" />
