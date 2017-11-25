@@ -112,13 +112,23 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		customerBasicDetail.setName(builder.toString());
 		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
-		customerBasicDetail.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
-		long phoneNo=Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
-		customerBasicDetail.setPhone(phoneNo);
-		Address address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
-		if (address != null) {
-			customerBasicDetail.setAddress(address);
+
+		if (customerDetails.getCustomerEMailList() != null) {
+			customerBasicDetail.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
 		}
+
+		if (customerDetails.getCustomerPhoneNumList() != null) {
+			long phoneNo = Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
+			customerBasicDetail.setPhone(phoneNo);
+		}
+
+		Address address = null;
+		if (customerDetails.getAddressList() != null) {
+			address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
+		} else {
+			address = new Address();
+		}
+		customerBasicDetail.setAddress(address);
 		hunterRequest.setOrg(customerBasicDetail);
 		logger.debug(Literal.LEAVING);
 		return hunterRequest;
