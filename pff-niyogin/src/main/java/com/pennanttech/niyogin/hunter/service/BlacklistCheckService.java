@@ -21,7 +21,6 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
-import com.pennanttech.niyogin.hunter.model.HunterResponse;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
@@ -51,7 +50,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String jsonResponse = client.post(serviceUrl, "", hunterRequest, HunterResponse.class);
+			String jsonResponse = client.post(serviceUrl, "", hunterRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
 			// validate Response status

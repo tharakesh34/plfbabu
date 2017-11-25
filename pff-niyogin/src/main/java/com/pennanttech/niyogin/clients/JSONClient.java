@@ -40,7 +40,7 @@ public class JSONClient {
 		return objResponse;
 	}
 
-	public String post(String url, String service, Object requestData, Class<?> responseClass) throws Exception {
+	public String post(String url, String service, Object requestData) throws Exception {
 		Response response = getClient(url, service, requestData);
 		String json = (String) response.readEntity(String.class);
 		return json;
