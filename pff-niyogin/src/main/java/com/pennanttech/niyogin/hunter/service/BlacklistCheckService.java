@@ -116,7 +116,9 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		long phoneNo=Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
 		customerBasicDetail.setPhone(phoneNo);
 		Address address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
-		customerBasicDetail.setAddress(address);
+		if (address != null) {
+			customerBasicDetail.setAddress(address);
+		}
 		hunterRequest.setOrg(customerBasicDetail);
 		logger.debug(Literal.LEAVING);
 		return hunterRequest;
