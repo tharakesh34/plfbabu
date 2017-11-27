@@ -111,4 +111,5 @@ public class ImplementationConstants {
 	public static final boolean FRQ_DATE_VALIDATION				= true;   //Constant to check Frequency and Date Match/Not
 
 	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// Excess upfront fees paid by customer to be created as Payable Advise/Excess.
+	public static final boolean	CO_APP_ENQ_SAME_AS_CUST_ENQ	    = false;		// Inquiry menu in the co-applicant should show screen as customer details
 }

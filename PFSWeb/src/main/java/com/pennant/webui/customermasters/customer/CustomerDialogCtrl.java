@@ -609,6 +609,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (arguments.containsKey("ProspectCustomerEnq")) {
 				this.window_CustomerDialog.doModal();
 			}
+			if (arguments.containsKey("CustomerEnq")) {
+				this.north.setVisible(true);
+				this.window_CustomerDialog.setWidth("100%");
+				this.window_CustomerDialog.setHeight("90%");
+				this.window_CustomerDialog.doModal();
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			closeDialog();

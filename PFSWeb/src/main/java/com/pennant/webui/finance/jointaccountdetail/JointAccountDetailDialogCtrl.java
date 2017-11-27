@@ -49,6 +49,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -73,6 +74,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -82,11 +84,13 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -195,6 +199,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
+	@Autowired
+	CustomerDetailsService customerDetailsService;
 	
 	/**
 	 * default constructor.<br>
@@ -561,21 +567,30 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("custCIF", this.custCIF.getValue());
 			
-			customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-			map.put("custid",customer.getCustID());
-			map.put("jointcustid", this.custCIF.getValue());
-			
-			if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
-				map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
-				map.put("finReference", getFinanceMain().getFinReference());
-			}
-			map.put("finance", true);
-			if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_JountAccountDetailDialog, map);
+			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
+				CustomerDetails customerDetails = customerDetailsService.getApprovedCustomerById(this.custID.longValue());
+				map.put("customerDetails", customerDetails);
+				map.put("newRecord", false);
+				map.put("isEnqProcess", true);
+				map.put("CustomerEnq", true);
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
 			}else{
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_JountAccountDetailDialog, map);
+				map.put("custCIF", this.custCIF.getValue());
+				customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
+				map.put("custid",customer.getCustID());
+				map.put("jointcustid", this.custCIF.getValue());
+				
+				if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+					map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
+					map.put("finReference", getFinanceMain().getFinReference());
+				}
+				map.put("finance", true);
+				if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_JountAccountDetailDialog, map);
+				}else{
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_JountAccountDetailDialog, map);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
