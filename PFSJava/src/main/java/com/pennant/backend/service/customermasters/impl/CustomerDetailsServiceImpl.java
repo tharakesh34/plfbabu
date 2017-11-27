@@ -1770,7 +1770,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
 							pincode.getpCProvince(), "");
 					if (province != null && StringUtils.isNotBlank(adress.getCustAddrProvince())
-							&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvinceName())) {
+							&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
 
 						String[] valueParm = new String[2];
 						valueParm[0] = adress.getCustAddrProvince();
@@ -1782,7 +1782,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					}
 
 					if (StringUtils.isNotBlank(adress.getCustAddrCity())
-							&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getAreaName())) {
+							&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
 						
 						String[] valueParm = new String[2];
 						valueParm[0] = adress.getCustAddrCity();
