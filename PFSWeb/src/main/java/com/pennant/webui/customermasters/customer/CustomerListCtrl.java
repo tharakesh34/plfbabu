@@ -48,7 +48,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -64,7 +63,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -108,7 +106,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox sortOperator_custCtgCode;
 	protected Listbox sortOperator_custTypeCode;
 	protected Listbox sortOperator_custShrtName;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 
 	private transient CustomerDetailsService customerDetailsService;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
@@ -339,51 +336,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
-	}
-	
-	/**
-	 * When user clicks on button "customerId Search" button
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
-		doSearchCustomerCIF();
-		logger.debug("Leaving " + event.toString());
-	}
-	
-	/**
-	 * Method for Showing Customer Search Window
-	 */
-	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
-		Map<String, Object> map = getDefaultArguments();
-		map.put("DialogCtrl", this);
-		map.put("filtertype", "Extended");
-		map.put("searchObject", this.custCIFSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * Method for setting Customer Details on Search Filters
-	 * 
-	 * @param nCustomer
-	 * @param newSearchObject
-	 * @throws InterruptedException
-	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
-		logger.debug("Entering");
-		this.custCIF.clearErrorMessage();
-		this.custCIFSearchObject = newSearchObject;
-
-		Customer customer = (Customer) nCustomer;
-		if (customer != null) {
-			this.custCIF.setValue(customer.getCustCIF());
-		} else {
-			this.custCIF.setValue("");
-		}
-		logger.debug("Leaving ");
 	}
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
