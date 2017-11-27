@@ -2268,46 +2268,6 @@ UNION ALL
           WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype))
 	</createView>
 	</changeSet>
-<changeSet id="101" author="somasekhar">
-      <addColumn tableName="RECEIPTALLOCATIONDETAIL">
-			<column name="receiptAllocationid" type="bigint"/>
-		</addColumn>
-</changeSet>
-<changeSet id="102" author="somasekhar" dbms="oracle"> 
-  	<sql>
-        update RECEIPTALLOCATIONDETAIL set receiptAllocationid = Rownum;
-  	</sql>
-  </changeSet>
-  <changeSet id="102" author="somasekhar" dbms="postgresql"> 
-  	<sql>
-       update RECEIPTALLOCATIONDETAIL set receiptAllocationid = 
- (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
-  	</sql>
-  </changeSet>
- 
-  
-  <changeSet id="103" author="somasekhar">
- <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="receiptAllocationid"/>
-  </changeSet>
-<changeSet id="104" author="somasekhar">
-       <addColumn tableName="RECEIPTALLOCATIONDETAIL_TEMP">
-			<column name="receiptAllocationid" type="bigint"/>
-		</addColumn>
-</changeSet>
-<changeSet id="105" author="somasekhar" dbms="oracle"> 
-  	<sql>
-        update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = Rownum;
-  	</sql>
-  </changeSet>
-   <changeSet id="105" author="somasekhar" dbms="postgresql"> 
-  	<sql>
-       update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = 
- (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
-  	</sql>
-  </changeSet>
-<changeSet id="106" author="somasekhar">
- <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="receiptAllocationid"/>
-  </changeSet>
 	<changeSet id="108" author="Durga Prasad D">
 		<createTable tableName="ServiceTaskDetails">
 			<column name="taskExecutionId" type="bigint">
