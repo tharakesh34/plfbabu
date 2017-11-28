@@ -37,13 +37,13 @@ public class ReportUtil implements Serializable {
 	 * @throws InterruptedException
 	 * @throws SQLException
 	 */
-	public boolean generateExcelReport(String reportsPath, String folderPath, String reportName, String reportDesc, boolean bulkReportProc, 
+	public boolean generateExcelReport(String folderPath, String reportName, String reportDesc, boolean bulkReportProc, 
 			String zipFolderPath, Connection con,Date appDate) throws InterruptedException, SQLException{
 		logger.debug("Entering");
 		String tempfile = reportName.substring(0, reportName.length() - 4);
-		String reportSrc = reportsPath + folderPath + tempfile+".jasper";
+		String reportSrc =  folderPath + tempfile+".jasper";
 		
-		String destinationFile = reportsPath + folderPath + reportName;
+		String destinationFile =  folderPath + reportName;
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		reportArgumentsMap.put("whereCondition","");

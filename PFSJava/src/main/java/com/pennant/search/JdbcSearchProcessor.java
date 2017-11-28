@@ -28,10 +28,10 @@ import com.healthmarketscience.sqlbuilder.CustomCondition;
 import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 /**
  * A singleton instance of this class is maintained for each SessionFactory.
@@ -175,9 +175,9 @@ public class JdbcSearchProcessor implements Serializable {
 			return getMSSQLLimitString(query.toString(), offset, pageSize);
 		case DB2:
 			return getDB2LimitString(query.toString(), offset, pageSize);
-		case MYSQL:
+		case MY_SQL:
 			return getMYSQLLimitString(query.toString(), offset, pageSize);
-		case PSQL:
+		case POSTGRES:
 			return getPSQLLimitString(query.toString(), offset, pageSize);
 		default:
 			return query.toString();

@@ -1,4 +1,4 @@
-package com.pennanttech.framework.factory;
+package com.pennanttech.pennapps.core.factory;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -11,7 +11,7 @@ import javax.naming.StringRefAddr;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory;
 
-import com.pennanttech.pff.core.util.EncryptionUtil;
+import com.pennanttech.pennapps.core.util.EncryptionUtil;
 
 public class DataSourceFactory extends BasicDataSourceFactory {
 

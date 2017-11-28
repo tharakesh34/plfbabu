@@ -35,12 +35,6 @@
 			<version>5.4.0.4</version>
 		</dependency>
 
-		<!-- Apache Commons -->
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-
 		<!-- Axiom -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>

@@ -61,7 +61,7 @@ import com.pennant.backend.dao.ErrorDetailsDAO;
 import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants.SeqTables;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 	private static Logger logger = Logger.getLogger(NextIdViewSQLServerDaoImpl.class);
@@ -100,7 +100,7 @@ public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 			} else {
 				return getSeq(seqName);
 			}
-		case PSQL:
+		case POSTGRES:
 			if (identity) {
 				return getPsqlSeq(seqName);
 			} else {

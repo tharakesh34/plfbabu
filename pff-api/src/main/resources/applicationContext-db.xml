@@ -76,8 +76,8 @@
 		<property name="searchSystemEnvironment" value="true" />
 		<property name="locations">
 			<list>
-				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/pff.properties</value>
-				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
+				<value>file:${PFF_HOME}/config/pff.properties</value>
+				<value>file:${PFF_HOME}/config/mail.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -86,8 +86,8 @@
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
 		<property name="locations">
 			<list>
-				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQConfig.config</value>
-				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQMessageFormat.config
+				<value>file:${PFF_HOME}/config/MQConfig.config</value>
+				<value>file:${PFF_HOME}/config/MQMessageFormat.config
 				</value>
 			</list>
 		</property>
@@ -96,7 +96,7 @@
 	<bean id="environmentVariablesConfiguration"
 		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
 		<property name="algorithm" value="PBEWithMD5AndDES" />
-		<property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+		<property name="passwordEnvName" value="PFF_PASSWORD" />
 	</bean>
 
 	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">

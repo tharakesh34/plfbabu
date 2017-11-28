@@ -25,8 +25,8 @@ import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennanttech.bajaj.model.alm.ALM;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 
 public class ALMProcess extends DatabaseDataEngine {

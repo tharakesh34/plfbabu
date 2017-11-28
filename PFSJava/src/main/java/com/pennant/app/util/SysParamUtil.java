@@ -53,8 +53,8 @@ import org.apache.log4j.Logger;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * A suite of utilities surrounding the use of the system parameters that contain information about the environment for
@@ -271,7 +271,7 @@ public class SysParamUtil {
 	}
 	
 	private static void dbQueryConstants() {
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 			dbQueryConcat = "||";
 		} else {
 			dbQueryConcat = "+";

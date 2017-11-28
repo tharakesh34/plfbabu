@@ -26,7 +26,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 public class PostPastDueSMS implements Tasklet {
 

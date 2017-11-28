@@ -17,7 +17,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.model.finance.ExtTable;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 public class PostBenchmarkInfo implements Tasklet {
 

@@ -22,6 +22,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.pennanttech.pennapps</groupId>
+			<artifactId>pennapps-web</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
@@ -156,20 +160,9 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.4.Final</version>
 		</dependency>
-
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

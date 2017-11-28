@@ -25,7 +25,6 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-core</artifactId>
-			<version>0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
@@ -35,16 +34,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-		</dependency>
-
-		<!-- Apache Commons -->
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
 		</dependency>
 
 		<!-- Jax-RS Provider for JSON Content Type -->

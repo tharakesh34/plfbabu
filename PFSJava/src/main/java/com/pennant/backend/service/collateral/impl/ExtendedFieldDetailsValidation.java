@@ -27,9 +27,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 public class ExtendedFieldDetailsValidation {
 
@@ -341,7 +341,7 @@ public class ExtendedFieldDetailsValidation {
 			Boolean value;
 			if (StringUtils.isNotBlank(Objects.toString(fieldValue,""))) {
 				if (StringUtils.equals(Objects.toString(fieldValue,""), "true") || StringUtils.equals(Objects.toString(fieldValue,""), "false")) {
-					if(App.DATABASE == Database.PSQL) {
+					if(App.DATABASE == Database.POSTGRES) {
 						value = fieldValue.equals("true") ? true : false;
 						exdFieldData.setFieldValue(value);
 					} else {

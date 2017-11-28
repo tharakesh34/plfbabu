@@ -26,7 +26,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.eod.BatchFileUtil;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 public class PostGLPLPostings implements Tasklet {
 	private Logger		logger	= Logger.getLogger(PostGLPLPostings.class);

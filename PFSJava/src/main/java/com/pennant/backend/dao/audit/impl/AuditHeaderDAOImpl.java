@@ -62,9 +62,9 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implements AuditHeaderDAO{
 	private static Logger logger = Logger.getLogger(AuditHeaderDAOImpl.class);
