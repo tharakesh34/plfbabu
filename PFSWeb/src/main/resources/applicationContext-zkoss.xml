@@ -4936,5 +4936,6 @@
 		<property name="directorDetailService" ref="directorDetailService" />
 	</bean>
 	
-
+<!-- External File Upload -->
+	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype"/>
 </beans>
