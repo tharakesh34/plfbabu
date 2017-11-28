@@ -1,3 +1,21 @@
+pff 4.1.0, 2017-11-27
+---------------------
+- Upgraded pennapps-core version from 0.4 to 0.5
+- Upgraded pennapps-web version from 0.1.1 to 0.2
+- Changed environment variables to avoid conflicts when two apps of pennApps suite deployed to a single server. 
+	- APP_ROOT_PATH to PFF_HOME; APP_ENCRYPTION_PASSWORD to PFF_PASSWORD
+- Externalized database configuration to property file, pff.properties.
+- Moved i3-labels.properties and regex.properties to Java layer to allow accessing properties across modules. The below convenience methods added to access the resources.
+	- App.getProperty(String key)
+	- App.getLabel(String key)
+	- App.getRegex(String key)
+- Loading scheduled jobs and resources on application start up moved to framework.
+	- log4j configuration: for Web (log4j.xml) & API (log4j-api.xml) based on application type specified in web.xml.
+	- Application properties: pff.properties.
+	- Resource files: i3-labels.properties, regex.properties (along with custom files placed in configuration location with the same names)
+	- Scheduler jobs: Required jobs should implemented by extending AbstractJobScheduler and configure with the bean id jobScheduler.
+	- Images in /WebContent/images folder: the required images to be placed in <PFF_HOME>/images folder with the same name and size.
+
 pff 4.1.0, 2017-11-24
 ---------------------
 - Removed multiline(Html text) labels from the i3-labels properties and the same move to corresponding controller(or) zul.

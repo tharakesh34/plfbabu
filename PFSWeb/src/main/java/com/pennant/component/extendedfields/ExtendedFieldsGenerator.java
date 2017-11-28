@@ -76,10 +76,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.web.AbstractController;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1450,7 +1450,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 			//checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
-		if(App.DATABASE == Database.PSQL){
+		if(App.DATABASE == Database.POSTGRES){
 			checkbox.setChecked(
 					fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
 		}else{

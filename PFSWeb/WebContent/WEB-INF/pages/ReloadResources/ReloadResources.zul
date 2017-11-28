@@ -30,9 +30,8 @@
 					<listbox id="listBoxReloadConfig" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-							<listheader label="${c:l('listheader_resourceName.label')}" hflex="min"/>
-							<listheader label="${c:l('listheader_FileLocation.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_FileLocation1.label')}" hflex="min" />
+							<listheader label="Resource Type" hflex="min"/>
+							<listheader hflex="min" />
 						</listhead>
 					</listbox>
 				</div>

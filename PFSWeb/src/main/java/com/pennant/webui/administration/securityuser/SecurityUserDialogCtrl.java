@@ -114,8 +114,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

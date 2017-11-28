@@ -12,11 +12,11 @@
 		use="com.pennant.webui.login.LoginDialogCtrl">
 		<borderlayout>
 			<west size="67%" border="0px"  >
-				<image src="/images/Pennant/LoginImage.jpg" height="100%" width = "100%"/>
+				<image src="/images/LoginImage.jpg" height="100%" width = "100%"/>
 			</west>
 			<east border="0" size="37%" >
 				<vlayout>
-					<image src="/images/Pennant/plf_logo.png"  height="53px" align="right" style="margin-right:6px; margin-top:4px" />
+					<image src="/images/plf_logo.png"  height="53px" align="right" style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;margin-left:50px;">
 						<h:form action="j_spring_security_check?${_csrf.parameterName}=${_csrf.token}" method="post">
 							<grid style="border:none;background:white;">

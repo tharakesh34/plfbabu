@@ -73,8 +73,8 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul file.
@@ -131,13 +131,13 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 				}
 
 				whereClause.append("(',' ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
 				}
 				whereClause.append(" nextRoleCode ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");

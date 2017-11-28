@@ -80,11 +80,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
-import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -194,14 +194,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
 
-		if (AuthenticationType.SSO.name().equals(authType)
-				&& userService.getUserByLogin(userWorkspace.getLoggedInUser().getUserName()) == null) {
-			Window win = (Window) Executions.createComponents("/logout.zul", null, null);
-			win.setWidth("100%");
-			win.setHeight("100%");
-			win.doModal();
-			return;
-		}
 
 		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
 			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);

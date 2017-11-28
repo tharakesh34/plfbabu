@@ -45,11 +45,6 @@
 	<!-- ThreadLocal values. -->
 	<!-- ====================================================== -->
 	<listener>
-		<description>ResourceLoader</description>
-		<listener-class>com.pennanttech.framework.web.util.ResourceLoader
-		</listener-class>
-	</listener>
-	<listener>
 		<description>ThreadLocal Synchronization Listener
 		</description>
 		<listener-class>org.zkoss.zkplus.util.ThreadLocalListener

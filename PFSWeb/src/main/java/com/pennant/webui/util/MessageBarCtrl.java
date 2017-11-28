@@ -42,16 +42,12 @@
  */
 package com.pennant.webui.util;
 
-import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.model.administration.SecurityRole;
-import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
-import com.pennant.backend.service.messages.MessagesService;
-import com.pennant.core.EventManager;
-import com.pennanttech.pff.core.App;
 import java.util.List;
 import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -68,6 +64,13 @@ import org.zkoss.zul.Style;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
+
+import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
+import com.pennant.backend.service.messages.MessagesService;
+import com.pennant.core.EventManager;
+import com.pennanttech.pennapps.core.App;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;

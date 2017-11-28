@@ -16,7 +16,7 @@
 <div id="div1">
 					<hbox pack="stretch" width="100%" widths="200px,*,200px" style="horizental-align:middle;">
 						<div id="divNo" align="left" style="padding: 1px; ">
-							<image src="/images/Pennant/pennant_logo.gif" width="150px" height="53px" align="left" style="margin-left:0px; margin-top:0px margin-bottom:0px"/>
+							<image src="/images/pennant_logo.gif" width="150px" height="53px" align="left" style="margin-left:0px; margin-top:0px margin-bottom:0px"/>
 						</div>
 						<div align="left" style="margin-top:8px;">
 							<label id="label_AppName" value="${c:l('PLF')}" style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;"/>

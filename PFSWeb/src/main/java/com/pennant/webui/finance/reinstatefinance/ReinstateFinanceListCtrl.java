@@ -71,8 +71,8 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * This is the controller class for the
@@ -159,7 +159,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";
@@ -480,7 +480,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";

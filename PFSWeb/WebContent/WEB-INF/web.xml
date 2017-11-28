@@ -4,9 +4,8 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 
-	<display-name>PLF</display-name>
-	<description>pennApps Lending Factory</description>
-
+	<display-name>pennApps Lending Factory</display-name>
+	
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -24,20 +23,24 @@
  			<!-- classpath:applicationContext-jobs.xml, -->
 		</param-value>
 	</context-param>
+	<context-param>
+		<param-name>APP_ID</param-name>
+		<param-value>1</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_CODE</param-name>
+		<param-value>PFF</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_TYPE</param-name>
+		<param-value>WEB</param-value>
+	</context-param>
 	<listener>
 		<listener-class>com.pennant.core.EventManager</listener-class>
 	</listener>
 	<listener>
-		<listener-class>com.pennant.web.listeners.LoadConfiguration</listener-class>
-	</listener>
-	<listener>
 		<display-name>Application startup</display-name>
-		<listener-class>com.pennanttech.pff.core.startup.ApplicationStartup</listener-class>
-	</listener>
-
-	<listener>
-		<display-name>Spring Context Loader</display-name>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
 	</listener>
 	<listener>
 		<display-name>Spring Request Context Listener</display-name>

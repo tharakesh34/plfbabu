@@ -70,7 +70,7 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennanttech.framework.security.core.AuthenticationManager;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 /**
  * Workspace for the user. One workspace per userSession. <br>
