@@ -2454,4 +2454,16 @@ FROM          LimitHeader_Temp T1 INNER JOIN
 	   VALUES('CAN_CHEQUE',0,1,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Cancel Cheque');
 	</sql>
 	</changeSet>
+	
+	<changeSet id="119" author="Prakash" dbms="postgresql">
+	<sql>
+		delete from SMTParameters where sysparmcode = 'REPAY_PDC';
+	</sql>
+	</changeSet>
+	
+	<changeSet id="120" author="Prakash" dbms="postgresql">
+	<sql>
+	   delete from BMTDocumentTypes where doctypecode = 'PDC';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
