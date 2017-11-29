@@ -79,7 +79,6 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
-import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.menu.MainMenu;
@@ -104,7 +103,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	private TreeMenuBuilder menuBuilder;
 	private transient UserWorkspace userWorkspace;
-	private transient UserService userService;
 
 	/**
 	 * Creates a new main menu controller.
@@ -193,7 +191,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
-
 
 		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
 			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);
@@ -330,10 +327,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	public void setUserWorkspace(UserWorkspace userWorkspace) {
 		this.userWorkspace = userWorkspace;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
 	}
 
 	@Override
