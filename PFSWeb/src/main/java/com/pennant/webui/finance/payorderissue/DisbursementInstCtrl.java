@@ -345,15 +345,13 @@ public class DisbursementInstCtrl {
 		
 		DocumentDetailDialogCtrl DocumentDetailDialogCtrl = (DocumentDetailDialogCtrl) dialogCtrl.getClass()
 				.getMethod("getDocumentDetailDialogCtrl").invoke(dialogCtrl);
-		String document = SysParamUtil.getValueAsString("REPAY_PDC");
+		String document = SysParamUtil.getValueAsString("DISB_DOC");
 
 		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
 			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
-				if (details.getDoctype() != null) {
-					if (details.getDocImage() == null) {
-						details.setDocImage(getFinanceDetailService()
-								.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
-					}
+				if (details.getDocImage() == null && details.getDoctype() != null) {
+					details.setDocImage(getFinanceDetailService()
+							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
 				}
 				map.put("documentDetails", details);
 				break;

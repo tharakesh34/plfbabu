@@ -501,7 +501,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			this.window_FinAdvancePaymentsDialog.setHeight("70%");
 			this.window_FinAdvancePaymentsDialog.setWidth("85%");
-			this.docName.setHeight((borderLayoutHeight - 295) + "px");
+			this.docName.setHeight((borderLayoutHeight - 275) + "px");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 

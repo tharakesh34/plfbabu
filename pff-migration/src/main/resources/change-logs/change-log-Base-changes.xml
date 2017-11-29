@@ -2440,4 +2440,18 @@ FROM          LimitHeader_Temp T1 INNER JOIN
 	<changeSet id="116" author="Durga Prasad D">
 		<modifyDataType tableName="ServiceTaskDetails" columnName="ServiceTaskId" newDataType="varchar(100)" />
 	</changeSet>
+	
+	<changeSet id="117" author="Prakash" dbms="postgresql">
+	<sql>
+		INSERT INTO SMTParameters VALUES('DISB_DOC','Disbursement Document','String',1,
+		'CAN_CHEQUE',8,0,'','','Disbursement Document',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="118" author="Prakash" dbms="postgresql">
+	<sql>
+	   INSERT INTO BMTDocumentTypes
+	   VALUES('CAN_CHEQUE',0,1,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Cancel Cheque');
+	</sql>
+	</changeSet>
 </databaseChangeLog>
