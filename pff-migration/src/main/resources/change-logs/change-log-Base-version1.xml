@@ -20,4 +20,69 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql" >
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="1" author="Prakash">
+     <addColumn tableName="FinJointAccountDetails">
+     	<column name="AuthoritySignatory" type="Boolean"/>
+     	<column name="Sequence" type="Number(10,0)"/>
+     </addColumn>
+    </changeSet>
+     
+     <changeSet id="2" author="Prakash">
+     <addColumn tableName="FinJointAccountDetails_Temp">
+     	<column name="AuthoritySignatory" type="Boolean"/>
+     	<column name="Sequence" type="Number(10,0)"/>
+     </addColumn>
+     </changeSet>
+     
+     <changeSet id="3" author="Prakash">
+     <createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,t1.AuthoritySignatory,t1.Sequence,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		UNION ALL
+		 SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,t1.AuthoritySignatory,t1.Sequence,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finjointaccountdetails_temp
+		          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid));
+     </createView>
+     </changeSet>
+    
+     <changeSet id="4" author="Prakash">
+     <createView viewName="finjointaccountdetails_Tview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,t1.AuthoritySignatory,t1.Sequence,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+     
+     <changeSet id="5" author="Prakash">
+     <createView viewName="finjointaccountdetails_Aview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,t1.AuthoritySignatory,t1.Sequence,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+	
 	</databaseChangeLog>

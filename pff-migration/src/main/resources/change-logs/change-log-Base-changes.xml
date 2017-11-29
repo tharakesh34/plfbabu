@@ -2466,4 +2466,11 @@ FROM          LimitHeader_Temp T1 INNER JOIN
 	   delete from BMTDocumentTypes where doctypecode = 'PDC';
 	</sql>
 	</changeSet>
+	
+	 <changeSet id="121" author="Prakash">
+     <sql>
+     	insert into BMTLovFieldCode values('CAT_COAPP','Categeory Of Co-applicant','String',1,1,1,1007,current_timestamp,'Approved','','','','','',0);
+     </sql>
+     </changeSet>
+     
 </databaseChangeLog>
