@@ -75,5 +75,6 @@
 	<include file="change-logs/change-log-3.16.12.xml" />
 	<include file="change-logs/change-log-extendedDetailInquiry.xml" />
 	<include file="change-logs/change-log-Base-changes.xml" />
+	<include file="change-logs/change-log-Base-version1.xml" />
 	
 </databaseChangeLog>
