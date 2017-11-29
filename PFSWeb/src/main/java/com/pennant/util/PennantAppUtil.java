@@ -135,7 +135,7 @@ public class PennantAppUtil {
 		searchObject.addField("ProductDesc");	
 		
 		if(filters != null && filters.length > 0){
-			searchObject.addFilterAnd(filters);
+			searchObject.addFilters(filters);
 		}
 		
 		List<Product> appList = pagedListService.getBySearchObject(searchObject);
