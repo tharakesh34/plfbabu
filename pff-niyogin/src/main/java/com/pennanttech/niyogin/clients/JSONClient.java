@@ -2,6 +2,7 @@ package com.pennanttech.niyogin.clients;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -18,8 +19,11 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.map.type.CollectionType;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
+import com.pennanttech.niyogin.bureau.consumer.model.CAISAccountHistory;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class JSONClient {
@@ -128,4 +132,29 @@ public class JSONClient {
 		return client;
 	}
 
+	
+	public Object getResponseObject(String jsonResponse,String datePattern, Class<?> responseClass,boolean isList) throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		//TODO:
+		//mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		DateFormat dateFormat = new SimpleDateFormat(datePattern);
+		dateFormat.setLenient(false);
+		mapper.setDateFormat(dateFormat);
+		Object objResponse=null;
+		if (isList) {
+			CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
+					responseClass);
+			objResponse = mapper.readValue(jsonResponse, typeReference);
+		} else {
+			objResponse = mapper.readValue(jsonResponse, responseClass);
+		}
+
+		return objResponse;
+	}
+	
 }
