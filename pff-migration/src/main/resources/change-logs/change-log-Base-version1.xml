@@ -102,4 +102,25 @@
 		insert into RMTLovFieldDetail values(326,'CAT_COAPP','Self','Self',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
      	</sql>
 	</changeSet>
+	
+	<changeSet id="8" author="Durga Prasad D">
+		<sql>
+		delete from bmtlovfieldcode where fieldCode = 'PUR_LOAN';
+		insert into bmtlovfieldcode values('PUR_LOAN', 'Purpose Of Loan', 'String', 1, 1, 1, 1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+
+		delete from rmtlovfielddetail where fieldCode = 'PUR_LOAN';
+		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'BT', 'Balance Transfer',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'LC', 'Loan Consolidation',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'CPP', 'Office/Commercial Property Purchase',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'BSEXON', 'Business Expansion - Online',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'), 'WC', 'Working Capital',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'BREX', 'Branch Expansion',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'BSEXOF', 'Business Expansion - Offline',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'INVP', 'Inventory Purchase',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);											  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'MACPUR', 'Machinery purchase',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);		  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='PUR_LOAN'),'OTHERS', 'Others',1,1,1007, CURRENT_TIMESTAMP, 'Approved','','','','','',0, 0);	
+		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
