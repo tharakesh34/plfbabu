@@ -11,6 +11,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -19,12 +20,14 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
+import com.pennanttech.pennapps.core.resource.Literal;
+
 public class JSONClient {
 
-	private static final Logger logger = Logger.getLogger(JSONClient.class);
+	private static final Logger	logger			= Logger.getLogger(JSONClient.class);
 
-	private final static String  AUTHORIZATION = "Authorization";
-	
+	private final static String	AUTHORIZATION	= "Authorization";
+
 	public Object postProcess(String url, String service, Object requestData, Class<?> responseClass) throws Exception {
 		String json = "";
 		Response response = getClient(url, service, requestData);
@@ -45,7 +48,7 @@ public class JSONClient {
 		String json = (String) response.readEntity(String.class);
 		return json;
 	}
-	
+
 	private static Response getClient(String url, String path, Object requestData) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
@@ -64,14 +67,15 @@ public class JSONClient {
 
 		Client client = ClientBuilder.newClient().register(JacksonJaxbJsonProvider.class);
 		WebTarget target = client.target(url).path(path);
-		Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON_TYPE).header(AUTHORIZATION, getAuthkey() );
+		Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON_TYPE).header(AUTHORIZATION,
+				getAuthkey());
 		Response response = builder.post(Entity.entity(jsonInString, MediaType.APPLICATION_JSON_TYPE));
 		logger.info(response.readEntity(String.class));
 		return response;
 	}
 
 	/**
-	 * Generate Authorization key for client specific by loading use name and password  from config file
+	 * Generate Authorization key for client specific by loading use name and password from config file
 	 * 
 	 * @return
 	 */
@@ -80,9 +84,48 @@ public class JSONClient {
 		String username = "qUmCM";
 		String password = "rye28f16Z";
 		String key = username + ":" + password;
-		String authKey = "Basic "+java.util.Base64.getEncoder().encodeToString(key.getBytes());
-		
+		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(key.getBytes());
+
 		return authKey;
+	}
+
+	public String post(String url, Object requestData) {
+		logger.debug(Literal.ENTERING);
+
+		WebClient client = getClient(url);
+		Response response = client.post(requestData);
+
+		logger.debug(Literal.LEAVING);
+		return response.readEntity(String.class);
+	}
+
+	/**
+	 * Method for prepare WebClient object and return.
+	 * 
+	 * @param serviceUrl
+	 * @param authorization
+	 * @return WebClient
+	 */
+	public static WebClient getClient(String serviceUrl) {
+		logger.debug(Literal.ENTERING);
+		WebClient client = WebClient.create(serviceUrl);
+		client.accept(MediaType.APPLICATION_JSON);
+		client.type(MediaType.APPLICATION_JSON);
+		client = prepareHeader(client);
+
+		logger.debug(Literal.LEAVING);
+		return client;
+	}
+
+	/**
+	 * Method for prepare web service header with specified fields
+	 * 
+	 * @param client
+	 * @return
+	 */
+	private static WebClient prepareHeader(WebClient client) {
+		client.header(AUTHORIZATION, getAuthkey());
+		return client;
 	}
 
 }
