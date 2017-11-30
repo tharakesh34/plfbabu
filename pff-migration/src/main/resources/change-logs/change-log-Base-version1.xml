@@ -476,4 +476,12 @@ UNION ALL
           WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory));
 		  </createView>
 </changeSet>
+
+<changeSet id="19" author="Amit">
+		<sql>
+Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ST-3','2016-2017',' ','Actual date of filing','String',null,'horizontal','0','Actual date of filing',3,1,null);
+Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ST-3','2016-2017',' ','No of days beyond due date','int','-1','horizontal','0','No of days beyond due date',3,1,null);
+Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ST-3','2016-2017',' ','Due date for filing of this return','String',null,'horizontal','0','Due date for filing of this return',3,1,null);
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
