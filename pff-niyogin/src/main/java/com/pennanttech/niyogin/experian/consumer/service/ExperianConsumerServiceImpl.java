@@ -21,7 +21,7 @@ import com.pennanttech.niyogin.bureau.consumer.model.BureauConsumer;
 import com.pennanttech.niyogin.bureau.consumer.model.CAISAccountHistory;
 import com.pennanttech.niyogin.bureau.consumer.model.PersonalDetails;
 import com.pennanttech.niyogin.clients.JSONClient;
-import com.pennanttech.niyogin.utility.APIUtility;
+import com.pennanttech.niyogin.utility.ExperianUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ExperianConsumerService;
@@ -94,7 +94,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		bureauConsumer.setStgUnqRefId(financeDetail.getFinReference());
 		bureauConsumer.setApplicationId(appNo);
 		if (customerDetails.getAddressList() != null) {
-			CustomerAddres customerAddres = APIUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
+			CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
 			bureauConsumer.setAddress(prepareAddress(customerAddres));
 		} else {
 			bureauConsumer.setAddress(new Address());
@@ -106,7 +106,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		personalDetails.setGender(customer.getCustGenderCode());
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			String mobileNo = APIUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			String mobileNo = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
 			personalDetails.setMobile(mobileNo);
 		}
 		String pan = "";

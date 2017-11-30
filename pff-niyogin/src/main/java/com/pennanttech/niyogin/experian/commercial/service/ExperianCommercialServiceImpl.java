@@ -22,7 +22,7 @@ import com.pennanttech.niyogin.experian.commercial.model.Applicant;
 import com.pennanttech.niyogin.experian.commercial.model.BpayGridResponse;
 import com.pennanttech.niyogin.experian.commercial.model.BureauCommercial;
 import com.pennanttech.niyogin.experian.commercial.model.CompanyAddress;
-import com.pennanttech.niyogin.utility.APIUtility;
+import com.pennanttech.niyogin.utility.ExperianUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ExperianCommercialService;
@@ -111,13 +111,13 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		}
 		applicant.setPan(pan);
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			applicant.setMobile(APIUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
+			applicant.setMobile(ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
 		}
 
 		applicant.setMaritalStatus(customer.getCustMaritalSts());
 
 		if (customerDetails.getAddressList() != null) {
-			CustomerAddres customerAddres = APIUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
+			CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
 			applicant.setAddress(prepareAddress(customerAddres));
 		} else {
 			applicant.setAddress(new Address());
