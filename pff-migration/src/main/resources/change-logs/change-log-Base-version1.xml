@@ -341,4 +341,139 @@
 	Insert into DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (3,'ST3');	
 	</sql>
 	</changeSet>
+
+	<changeSet id="17" author="Amit">
+		<createView viewName="CustomerDocuments_AView"
+			replaceIfExists="true">
+ SELECT t1.custid,
+    t1.custdoctype,
+    t2.doctypedesc  lovdesccustdoccategory,
+    t1.custdoctitle,
+    t1.custdocsysname,
+    t1.custdocrcvdon,
+    t1.custdocexpdate,
+    t1.custdocissuedon,
+    t1.custdocissuedcountry,
+    t3.countrydesc  lovdesccustdocissuedcountry,
+    t1.custdocisverified,
+    t1.custdocverifiedby,
+    t1.custdocisacrive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.custdocname,
+    t1.custdoccategory,
+    t1.custdocimage,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.docexpdateismand,
+    t2.docissuedatemand,
+    t2.docidnummand,
+    t2.docissuedauthoritymand,
+    t2.docismandatory,
+    t1.docrefid,
+    t1.docpurpose,
+    t1.docuri,
+	t2.docispdfextrequired,
+	t2.docispasswordprotected,
+	t2.pdfmappingref
+   FROM plf.customerdocuments t1
+     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode;
+	 	</createView>
+	</changeSet>
+	
+	 <changeSet id="18" author="Amit" >
+	<createView viewName="CustomerDocuments_View" replaceIfExists="true">
+ SELECT t1.custid,
+    t1.custdoctype,
+    t2.doctypedesc  lovdesccustdoccategory,
+    t1.custdoctitle,
+    t1.custdocsysname,
+    t1.custdocrcvdon,
+    t1.custdocexpdate,
+    t1.custdocissuedon,
+    t1.custdocissuedcountry,
+    t3.countrydesc  lovdesccustdocissuedcountry,
+    t1.custdocisverified,
+    t1.custdocverifiedby,
+    t1.custdocisacrive,
+    t1.docpurpose,
+    t1.docuri,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.custdocname,
+    t1.custdoccategory,
+    t1.custdocimage,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.docexpdateismand,
+    t2.docissuedatemand,
+    t2.docidnummand,
+    t2.docissuedauthoritymand,
+    t2.docismandatory,
+    t1.docrefid,
+	t2.docispdfextrequired,
+	t2.docispasswordprotected,
+	t2.pdfmappingref
+   FROM plf.customerdocuments_temp t1
+     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+UNION ALL
+ SELECT t1.custid,
+    t1.custdoctype,
+    t2.doctypedesc  lovdesccustdoccategory,
+    t1.custdoctitle,
+    t1.custdocsysname,
+    t1.custdocrcvdon,
+    t1.custdocexpdate,
+    t1.custdocissuedon,
+    t1.custdocissuedcountry,
+    t3.countrydesc  lovdesccustdocissuedcountry,
+    t1.custdocisverified,
+    t1.custdocverifiedby,
+    t1.custdocisacrive,
+    t1.docpurpose,
+    t1.docuri,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.custdocname,
+    t1.custdoccategory,
+    t1.custdocimage,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.docexpdateismand,
+    t2.docissuedatemand,
+    t2.docidnummand,
+    t2.docissuedauthoritymand,
+    t2.docismandatory,
+    t1.docrefid,
+	t2.docispdfextrequired,
+	t2.docispasswordprotected,
+	t2.pdfmappingref
+   FROM plf.customerdocuments t1
+     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM plf.customerdocuments_temp
+          WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory));
+		  </createView>
+</changeSet>
 	</databaseChangeLog>
