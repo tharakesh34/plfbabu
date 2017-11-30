@@ -123,4 +123,19 @@
 		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="9" author="Prakash">
+		<sql>
+		delete from rmtlovfielddetail where fieldCode = 'CAT_COAPP';
+		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Husband','Husband',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Wife','Wife',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Mother','Mother',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Father','Father',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Son','Son',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Daughter','Daughter',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');										  
+		insert into rmtlovfielddetail values((Select Max(fieldcodeid)+1 from rmtlovfielddetail),(Select fieldcode from bmtlovfieldcode where fieldcode='CAT_COAPP'),'Self','Self',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');										  
+		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
