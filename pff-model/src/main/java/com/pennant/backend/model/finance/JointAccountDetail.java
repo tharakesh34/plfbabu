@@ -63,6 +63,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String worstStatus;
 	private String status;
 	private String catOfcoApplicant;
+	private boolean					authoritySignatory;
+	private int						sequence;
 
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
@@ -274,4 +276,21 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	public void setCatOfcoApplicant(String catOfcoApplicant) {
 		this.catOfcoApplicant = catOfcoApplicant;
 	}
+
+	public boolean isAuthoritySignatory() {
+		return authoritySignatory;
+	}
+
+	public void setAuthoritySignatory(boolean authoritySignatory) {
+		this.authoritySignatory = authoritySignatory;
+	}
+
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
 }

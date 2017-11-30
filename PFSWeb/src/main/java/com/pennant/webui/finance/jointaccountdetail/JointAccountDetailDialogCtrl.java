@@ -61,6 +61,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -98,6 +99,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -154,6 +156,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Space space_CatOfCoApplicant;
 	protected Combobox catOfCoApplicant;
 	
+	protected Checkbox															authoritySignatory;
+	protected Intbox															sequence;
+	protected Hbox																hbox_Sequence;
+	protected Label																label_Sequence;
+
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
@@ -636,6 +643,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doEdit();
 			// setFocus
 			this.custCIF.focus();
+			this.hbox_Sequence.setVisible(false);
+			this.label_Sequence.setVisible(false);
+
 		} else {
 			if (isNewContributor()) {
 				doEdit();
@@ -646,6 +656,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
+			}
+			if (aJountAccountDetail.getSequence() == 0) {
+				this.hbox_Sequence.setVisible(false);
+				this.label_Sequence.setVisible(false);
 			}
 		}
 		try {
@@ -848,6 +862,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		fillComboBox(this.catOfCoApplicant,aJountAccountDetail.getCatOfcoApplicant(),this.coapplicantList,"");	
 		this.recordStatus.setValue(aJountAccountDetail.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJountAccountDetail.getRecordType()));
+		this.authoritySignatory.setChecked(aJountAccountDetail.isAuthoritySignatory());
+		this.sequence.setValue(aJountAccountDetail.getSequence());
 		logger.debug("Leaving");
 	}
 
@@ -1217,6 +1233,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			aJountAccountDetail.setAuthoritySignatory(this.authoritySignatory.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aJountAccountDetail.setSequence(this.sequence.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -1239,6 +1267,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		if (this.repayAccountId.isVisible() && this.repayAccountId.getValue().isEmpty()) {
 			this.repayAccountId.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_RepayAccountId.value"),null,true));
+		}
+
+		if (!this.sequence.isReadonly() && this.authoritySignatory.isChecked()) {
+			this.sequence.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_JountAccountDetailDialog_Sequence.value"), true, false, 1, 9));
 		}
 
 		logger.debug("Leaving");
@@ -1497,6 +1530,40 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					} else {
 						jointAccountDetailList.add(jountAccountDetail);
 					}
+				} else if (jountAccountDetail.getSequence() == aJountAccountDetail.getSequence()) {
+					String[] valueParam = new String[1];
+					String[] errParam = new String[1];
+					valueParam[0] = String.valueOf(aJountAccountDetail.getSequence());
+					errParam[0] = PennantJavaUtil.getLabel("label_JointSequence") + ":" + valueParam[0];
+					if (isNewRecord()) {
+
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParam, valueParam),
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					} else if (index != i) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParam, valueParam),
+								getUserWorkspace().getUserLanguage()));
+					}
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+							aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded = true;
+							jointAccountDetailList.add(aJountAccountDetail);
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded = true;
+							jointAccountDetailList.add(aJountAccountDetail);
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
+						}
+					} else {
+						jointAccountDetailList.add(jountAccountDetail);
+					}
+
 				} else {
 					jointAccountDetailList.add(jountAccountDetail);
 				}
@@ -1523,6 +1590,22 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private AuditHeader getAuditHeader(JointAccountDetail aJountAccountDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJountAccountDetail.getBefImage(), aJountAccountDetail);
 		return new AuditHeader(String.valueOf(aJountAccountDetail.getJointAccountId()), null, null, null, auditDetail, aJountAccountDetail.getUserDetails(), getOverideMap());
+	}
+
+	public void onCheck$authoritySignatory(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckAuthoritySignatory();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doCheckAuthoritySignatory() {
+		if (authoritySignatory.isChecked()) {
+			this.hbox_Sequence.setVisible(true);
+			this.label_Sequence.setVisible(true);
+		} else {
+			this.hbox_Sequence.setVisible(false);
+			this.label_Sequence.setVisible(false);
+		}
 	}
 
 	// ******************************************************//

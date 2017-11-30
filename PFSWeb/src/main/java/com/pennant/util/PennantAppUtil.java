@@ -2120,7 +2120,7 @@ public class PennantAppUtil {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<LovFieldDetail> searchObject = new JdbcSearchObject<LovFieldDetail>(LovFieldDetail.class);
 		searchObject.addTabelName("RMTLovFieldDetail");
-		searchObject.addFilterEqual("fieldCode", "CofCo-app");
+		searchObject.addFilterEqual("fieldCode", "CAT_COAPP");
 		searchObject.addField("fieldCodevalue");
 		searchObject.addField("valuedesc");	
 		

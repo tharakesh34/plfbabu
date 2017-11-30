@@ -131,7 +131,8 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		
 		jountAccountDetail.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant");
+		StringBuilder selectSql = new StringBuilder(
+				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant, AuthoritySignatory, Sequence");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(",LovDescCIFName, custID ");
@@ -221,9 +222,11 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into FinJointAccountDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant");
+		insertSql.append(
+				" (JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant,AuthoritySignatory, Sequence");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:JointAccountId, :FinReference, :CustCIF, :IncludeRepay, :RepayAccountId, :CatOfcoApplicant");
+		insertSql.append(
+				" Values(:JointAccountId, :FinReference, :CustCIF, :IncludeRepay, :RepayAccountId, :CatOfcoApplicant, :AuthoritySignatory, :Sequence");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
@@ -254,6 +257,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		StringBuilder	updateSql =new StringBuilder("Update FinJointAccountDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId, CatOfcoApplicant = :CatOfcoApplicant");
+		updateSql.append(",AuthoritySignatory = :AuthoritySignatory, Sequence = :Sequence");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where JointAccountId =:JointAccountId");
 		
@@ -280,7 +284,8 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		jountAccountDetail.setFinReference(finReference);
 		jountAccountDetail.setJointAccountId(jointAccountId);
 		
-		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant");
+		StringBuilder selectSql = new StringBuilder(
+				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(",LovDescCIFName, custID ");
@@ -358,7 +363,8 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		jountAccountDetail.setFinReference(finReference);
 		
 		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant,");
+		selectSql.append(
+				" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence,");
 		selectSql.append(" Version , ");
 		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -539,7 +545,8 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 			jountAccountDetail.setFinReference(finReference);
 			jountAccountDetail.setCustCIF(custCIF);
 			
-			StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant");
+		StringBuilder selectSql = new StringBuilder(
+				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant,AuthoritySignatory, Sequence");
 			selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 			if(StringUtils.trimToEmpty(type).contains("View")){
 				selectSql.append(",LovDescCIFName, custID ");
