@@ -19,18 +19,27 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql" >
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
-		</sql>	
+		</sql>
 	</changeSet>
-	
-	 <changeSet id="1" author="Prakash">
-     <addColumn tableName="ADTFinJointAccountDetails">
-     	<column name="AuthoritySignatory" type="Boolean"/>
-     	<column name="Sequence" type="Number(10,0)"/>
-     </addColumn>
-     </changeSet>
+
+	<changeSet id="1" author="Prakash">
+		<addColumn tableName="ADTFinJointAccountDetails">
+			<column name="AuthoritySignatory" type="Boolean" />
+			<column name="Sequence" type="Number(10,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="2" author="Amit">
+		<addColumn tableName="ADTBMTDOCUMENTTYPES">
+			<column name="DocIsPdfExtRequired" type="boolean" />
+			<column name="DocIsPasswordProtected" type="boolean" />
+			<column name="PdfMappingRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
