@@ -138,4 +138,207 @@
 		update seqrmtlovfielddetail set seqno = (Select Max(fieldcodeid) from rmtlovfielddetail);
 		</sql>
 	</changeSet>
+	 
+     
+<changeSet id="6" author="Amit">
+	<addColumn tableName="BMTDocumentTypes">
+		<column name="DocIsPdfExtRequired" type="boolean" />
+		<column name="DocIsPasswordProtected" type="boolean" />
+		<column name="PdfMappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+	<addColumn tableName="BMTDocumentTypes_temp">
+		<column name="DocIsPdfExtRequired" type="boolean" />
+		<column name="DocIsPasswordProtected" type="boolean" />
+		<column name="PdfMappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+</changeSet>	
+  <changeSet id="7" author="Amit" >
+	<createView viewName="BMTDocumentTypes_View" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef 
+     FROM BMTDocumentTypes_Temp 
+   UNION ALL 
+   SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef  
+     FROM BMTDocumentTypes 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM BMTDocumentTypes_Temp 
+                          WHERE DocTypeCode = BMTDocumentTypes.DocTypeCode )
+	</createView>
+</changeSet>
+  
+  <changeSet id="8" author="Amit" >
+	<createView viewName="BMTDOCUMENTTYPES_AVIEW" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+          DocTypeDesc ,
+          DocIsMandatory ,
+          DocTypeIsActive ,
+          DocIsCustDoc ,
+          Version ,
+          LastMntBy ,
+          LastMntOn ,
+          RecordStatus ,
+          RoleCode ,
+          NextRoleCode ,
+          TaskId ,
+          NextTaskId ,
+          RecordType ,
+          WorkflowId ,
+          DocExpDateIsMand ,
+          DocIssueDateMand ,
+          DocIdNumMand ,
+          DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef   
+     FROM BMTDocumentTypes
+	</createView>
+</changeSet>
+
+<changeSet id="9" author="Amit">
+		<sql>		
+	Update BMTDOCUMENTTYPES set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+	Update BMTDOCUMENTTYPES_Temp set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10" author="Amit">
+	<sql>
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from
+		SeqSecRights),3,'DocumentTypeDialog_mappingRef','DocumentTypeDialog',0,1000,current_timestamp,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+		Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+		SeqSecGroupRights ), (select GrpID from SecGroups where
+		GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+		RightName='DocumentTypeDialog_mappingRef'),1,0,10000,current_timestamp,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+		Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+		SecGroupRights);
+	</sql>
+</changeSet>
+
+	<changeSet id="11" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPasswordProtected','DocumentTypeDialog',0,1000,current_timestamp,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPasswordProtected'),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights);
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPdfExtRequired','DocumentTypeDialog',0,1000,current_timestamp,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPdfExtRequired'),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights)
+		</sql>
+	</changeSet>
+	
+	<changeSet id="13" author="Amit" >
+		<createTable tableName="DocumentDataConfig">
+			<column name="Type" type="VARCHAR2(50)"/>
+			<column name="Year" type="VARCHAR2(50)"/>
+			<column name="Label" type="VARCHAR2(50)"/>
+			<column name="LabelText" type="VARCHAR2(250)"/>
+			<column name="LabelValueType" type="VARCHAR2(50)" />
+			<column name="DefaultValue" type="VARCHAR2(50)"/>
+			<column name="FormulaExecutionType" type="VARCHAR2(50)"/>
+			<column name="IndexOf" type="VARCHAR2(50)"/>
+			<column name="ExternalRef" type="VARCHAR2(250)" />
+			<column name="MappingValue" type="NUMBER(19,0)" />
+			<column name="IsActive" type="NUMBER(1,0)"  defaultValue="1"/>
+			<column name="Formula" type="VARCHAR2(500)" />
+		</createTable>
+   </changeSet>
+	
+<changeSet id="14" author="Amit">
+		<sql>		
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','13','Repairs to machinery','int','-1','horizontal','0','repairsToMachinery',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16',' ',' ','Double','-1',' ','0','totalIndirectExpenses',1,1,'rents+powerNFuel+repairsToMachinery');
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','10','Power and fuel','int','-1','horizontal','0','powerNFuel',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','11','Rents','int','-1','horizontal','0','rents',1,1,null);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="15" author="Amit">
+		<createTable tableName="DocumentDataMapping">
+			<column name="MappingId" type="NUMBER(19,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Type" type="VARCHAR2(50)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="16" author="Amit">
+		<sql>		
+	Insert into DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (1,'ITR4');
+	Insert into DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (2,'ITR5');
+	Insert into DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (3,'ST3');	
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
