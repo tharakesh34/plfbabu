@@ -1285,6 +1285,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setConstraint("");
 		this.repayAccountId.setConstraint("");
 		this.catOfCoApplicant.setConstraint("");
+		this.sequence.setConstraint("");
 		logger.debug("Leaving");
 	}
 
