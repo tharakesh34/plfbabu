@@ -50,18 +50,16 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String jsonResponse = client.post(serviceUrl, "", hunterRequest);
+			String jsonResponse = client.post(serviceUrl, hunterRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
 			// validate Response status
-			int errorCount = Integer.parseInt(extendedFieldMap.get("ERRORCOUNT").toString());
-			if (errorCount > 0) {
+			if (extendedFieldMap.get("ERRORCODE")!=null) {
 				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORDESC")));
+						Objects.toString(extendedFieldMap.get("ERRORMESSAGE")));
 			} else {
-				extendedFieldMap.remove("ERRORCOUNT");
 				extendedFieldMap.remove("ERRORCODE");
-				extendedFieldMap.remove("ERRORDESC");
+				extendedFieldMap.remove("ERRORMESSAGE");
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
 
