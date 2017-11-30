@@ -153,6 +153,12 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		return address;
 	}
 
+	/**
+	 * Method for set the ExtendedFieldValues by performing calculations.
+	 * 
+	 * @param extendedFieldMap
+	 * @throws Exception
+	 */
 	private void prepareExtendedFieldMap(Map<String, Object> extendedFieldMap) throws Exception {
 		JSONClient jsonClient = new JSONClient();
 		List<CAISAccountHistory> caisAccountHistories = null;
@@ -240,7 +246,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 
 	/**
 	 * 
-	 * This Comparator class is used to sort the CAISAccountHistory based on their month
+	 * This Comparator class is used to sort the CAISAccountHistory based on their Month and Year
 	 */
 	//TODO:  month is sufficient or year H to L
 	public class CAISAccountHistoryComparator implements Comparator<CAISAccountHistory> {
