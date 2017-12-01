@@ -41,5 +41,8 @@
 			<column name="PdfMappingRef" type="NUMBER(19,0)" />
 		</addColumn>
 	</changeSet>
+	 <changeSet id="3" author="Surekha">
+     	<dropColumn tableName="AdtRMTLovFieldDetail" columnName="CatOfcoApplicant"/>
+     </changeSet>
 
 </databaseChangeLog>

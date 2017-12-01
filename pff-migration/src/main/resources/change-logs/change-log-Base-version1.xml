@@ -484,4 +484,41 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ST-3','2016-2017',' ','Due date for filing of this return','String',null,'horizontal','0','Due date for filing of this return',3,1,null);
 	</sql>
 	</changeSet>
+	 <changeSet id="20" author="Surekha">
+     <createView viewName="rmtlovfielddetail_view" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail_temp t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		UNION ALL
+		 SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM rmtlovfielddetail_temp
+		          WHERE rmtlovfielddetail_temp.fieldcodeid = t1.fieldcodeid))
+		          
+   </createView>
+     </changeSet>
+     <changeSet id="21" author="Surekha">
+     <createView viewName="rmtlovfielddetail_Aview" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		
+   </createView>
+     </changeSet>
+     <changeSet id="22" author="Surekha">
+     	<dropColumn tableName="RMTLovFieldDetail" columnName="CatOfcoApplicant"/>
+     </changeSet>
+      <changeSet id="23" author="Surekha">
+     	<dropColumn tableName="RMTLovFieldDetail_Temp" columnName="CatOfcoApplicant"/>
+     </changeSet>
 	</databaseChangeLog>
