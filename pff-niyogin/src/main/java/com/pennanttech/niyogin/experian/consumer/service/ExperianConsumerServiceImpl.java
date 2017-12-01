@@ -34,6 +34,12 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	private final String		extConfigFileName	= "experianBureauConsumer";
 	private String				serviceUrl;
 
+	private final String		NO_EMI_BOUNCES_IN_3_MONTHS = "EMI3MONTHS";
+	private final String		RESTRUCTURED_LOAN_AND_AMOUNT = "RESTRUCTUREDLOAN";
+	private final String		SUIT_FILED = "SUITFILED";
+	private final String		WILLFUL_DEFAULTER = "WILLFULDEFAULTER";
+	private final String 		NO_EMI_BOUNCES_IN_SIX_MONTHS = "EMI6MNTHS";
+
 	/**
 	 * Method for get the ExperianBureauConsumer details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
@@ -167,36 +173,36 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	private void prepareExtendedFieldMap(Map<String, Object> extendedFieldMap) throws Exception {
 		JSONClient jsonClient = new JSONClient();
 		List<CAISAccountHistory> caisAccountHistories = null;
-		if (extendedFieldMap.get("EMI3MONTHS") != null) {
-			String jsonResponse = extendedFieldMap.get("EMI3MONTHS").toString();
+		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
+			String jsonResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
 			Object responseObj = jsonClient.getResponseObject(jsonResponse, "", CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
 			//TODO:change is required set the CurrentBalance if 01
-			if (entry.getKey().equals("RESTRUCTUREDLOAN")) {
+			if (entry.getKey().equals(RESTRUCTURED_LOAN_AND_AMOUNT)) {
 				extendedFieldMap.put(entry.getKey(), "");
-			} else if (entry.getKey().equals("SUITFILED")) {
+			} else if (entry.getKey().equals(SUIT_FILED)) {
 				if (entry.getValue()!=null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
 				}
-			} else if (entry.getKey().equals("WILLFULDEFAULTER")) {
+			} else if (entry.getKey().equals(WILLFUL_DEFAULTER)) {
 				if (entry.getValue()!=null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
 				}
-			} else if (entry.getKey().equals("EMI3MONTHS")) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_3_MONTHS)) {
 				if (caisAccountHistories != null && caisAccountHistories.size() >= 2) {
 					boolean isEmiBounce = isEMIBouncesInLastMonths(caisAccountHistories, 3);
-					extendedFieldMap.put("EMI3MONTHS", isEmiBounce);
+					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
-			} else if (entry.getKey().equals("EMI6MNTHS")) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_SIX_MONTHS)) {
 				if (caisAccountHistories != null && caisAccountHistories.size() >= 5) {
 					boolean isEmiBounce = isEMIBouncesInLastMonths(caisAccountHistories, 6);
-					extendedFieldMap.put("EMI6MNTHS", isEmiBounce);
+					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 			} else {
 				extendedFieldMap.put(entry.getKey(), entry.getValue());

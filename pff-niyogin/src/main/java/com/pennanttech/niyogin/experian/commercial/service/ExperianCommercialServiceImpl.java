@@ -41,6 +41,12 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	private final String		extConfigFileName	= "experianBureauCommercial";
 	private String				serviceUrl;
 
+	private final String		NO_EMI_BOUNCES_IN_3_MONTHS		= "EMI3MONTHS";
+	private final String		RESTRUCTURED_LOAN_AND_AMOUNT	= "RESTRUCTUREDLOAN";
+	private final String		SUIT_FILED						= "SUITFILED";
+	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
+	private final String		NO_EMI_BOUNCES_IN_SIX_MONTHS	= "EMI6MNTHS";
+
 	@Override
 	public AuditHeader getBureauCommercial(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
@@ -184,17 +190,17 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	private void prepareExtendedFieldMap(Map<String, Object> extendedFieldMap) throws Exception {
 		JSONClient jsonClient = new JSONClient();
 		List<BpayGridResponse> bpayGridResponses = null;
-		if (extendedFieldMap.get("EMI3MONTHS") != null) {
-			String jsonResponse = extendedFieldMap.get("EMI3MONTHS").toString();
+		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
+			String jsonResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
 			Object responseObj = jsonClient.getResponseObject(jsonResponse, "", BpayGridResponse.class, true);
 			bpayGridResponses = (List<BpayGridResponse>) responseObj;
 		}
 
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
 			//TODO:change is required
-			if (entry.getKey().equals("RESTRUCTUREDLOAN")) {
+			if (entry.getKey().equals(RESTRUCTURED_LOAN_AND_AMOUNT)) {
 				extendedFieldMap.put(entry.getKey(), "");
-			} else if (entry.getKey().equals("SUITFILED")) {
+			} else if (entry.getKey().equals(SUIT_FILED)) {
 				if (entry.getValue() != null) {
 					try {
 						int value = Integer.parseInt(entry.getValue().toString());
@@ -208,7 +214,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 					}
 
 				}
-			} else if (entry.getKey().equals("WILLFULDEFAULTER")) {
+			} else if (entry.getKey().equals(WILLFUL_DEFAULTER)) {
 				if (entry.getValue() != null) {
 					try {
 						int value = Integer.parseInt(entry.getValue().toString());
@@ -222,13 +228,13 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 					}
 
 				}
-			} else if (entry.getKey().equals("EMI3MONTHS")) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_3_MONTHS)) {
 				if (bpayGridResponses != null && bpayGridResponses.size() >= 2) {
 					boolean isEmiBounce = isEMIBouncesInLastMonths(bpayGridResponses, 3);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals("EMI6MNTHS")) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_SIX_MONTHS)) {
 				if (bpayGridResponses != null && bpayGridResponses.size() >= 5) {
 					boolean isEmiBounce = isEMIBouncesInLastMonths(bpayGridResponses, 6);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
