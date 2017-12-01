@@ -63,12 +63,10 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			prepareExtendedFieldMap(extendedFieldMap);
 
 			// TODO: Error Response validate  
-			int errorCount = Integer.parseInt(extendedFieldMap.get("ERRORCOUNT").toString());
-			if (errorCount > 0) {
+			if(extendedFieldMap.get("ERRORCODE")!=null){
 				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
 						Objects.toString(extendedFieldMap.get("ERRORDESC")));
 			} else {
-				extendedFieldMap.remove("ERRORCOUNT");
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORDESC");
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
