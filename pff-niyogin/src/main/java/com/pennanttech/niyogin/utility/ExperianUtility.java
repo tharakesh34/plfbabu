@@ -34,10 +34,10 @@ public class ExperianUtility {
 	 * @param priority
 	 * @return String CustomerPhoneNumber
 	 */
-	public static String getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList, int priority) {
+	public static CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList, int priority) {
 		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
 			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
-				return customerPhoneNumber.getPhoneNumber();
+				return customerPhoneNumber;
 			}
 		}
 		if (priority > 1) {

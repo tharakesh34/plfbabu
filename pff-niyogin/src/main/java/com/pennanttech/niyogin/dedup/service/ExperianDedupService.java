@@ -1,7 +1,11 @@
 package com.pennanttech.niyogin.dedup.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -10,60 +14,87 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
 import com.pennanttech.niyogin.dedup.model.ExperianDedup;
 import com.pennanttech.niyogin.dedup.model.Phone;
+import com.pennanttech.niyogin.utility.ExperianUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.ExternalDedup;
+import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianDedupService extends NiyoginService implements ExternalDedup {
-	private static final Logger logger = Logger.getLogger(ExperianDedupService.class);
+	private static final Logger	logger				= Logger.getLogger(ExperianDedupService.class);
 
-	// Published API service name.
-	private final String serviceName = "DedupService";
-	private final String extConfigFileName = "experianDedup";
-	
+	private final String		extConfigFileName	= "experianDedup";
+	private String				serviceUrl;
+	private NiyoginDAOImpl		niyoginDAOImpl;
+
 	@Override
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		String applicantType;
 
-		String applicantType = "A";
+		//for Applicant
+		applicantType = "A";
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
+		Map<String, Object> validatedMap = checkDedup(experianDedupRequest);
+		prepareResponseObj(validatedMap, financeDetail);
 
-		String serviceURL = "";//(String) getSMTParameter("EXPERIAN_DEDUP_REQUEST_URL", String.class);
-		JSONClient client = new JSONClient();
-		try {
-			logger.debug("ServiceURL : " + serviceURL);
-			//String jsonResponse = client.post(serviceURL, serviceName, experianDedupRequest, ExperianDedup.class);
-			//Map<String, Object> extendedMapObject = getExtendedMapValues(jsonResponse, extConfigFileName);
-			//financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
-			//ServiceTaskDetail;
-			//String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			//logServiceTaskDetails(prepareTaskDetail(customerDetails, finReference));
-			//logger.info("Response : " + jsonResponse);
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+		//for CoApplicant
+		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
+		if (coapplicants != null && !coapplicants.isEmpty()) {
+			applicantType = "C";
+			List<Long> coApplicantIDs = new ArrayList<Long>(1);
+			for (JointAccountDetail coApplicant : coapplicants) {
+				coApplicantIDs.add(coApplicant.getCustID());
+			}
+			//TODO
+			List<CustomerDetails> coApplicantCustomers = niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
+			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
+				ExperianDedup experianDedupCoAppRequest = prepareRequestObj(coAppCustomerDetails, applicantType);
+				Map<String, Object> coAppValidatedMap = checkDedup(experianDedupCoAppRequest);
+				//prepareResponseObj(coAppValidatedMap, financeDetail);
+			}
 		}
-		
-		// Method for prepare the extendedField details with dedup response
-		//prepareResponseObject(experianDedupResponse, customerDetails);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	private Object prepareTaskDetail() {
-		//logServiceTaskDetails
-		return null;
+	public Map<String, Object> checkDedup(ExperianDedup experianDedupRequest) {
+		logger.debug(Literal.ENTERING);
+		JSONClient client = new JSONClient();
+		Map<String, Object> validatedMap = null;
+		Map<String, Object> extendedFieldMap = null;
+		try {
+			logger.debug("ServiceURL : " + serviceUrl);
+			String jsonResponse = client.post(serviceUrl, experianDedupRequest);
+			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
+
+			if (extendedFieldMap.get("ERRORCODE") != null) {
+				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
+						Objects.toString(extendedFieldMap.get("ERRORMESSAGE")));
+			} else {
+				extendedFieldMap.remove("ERRORCODE");
+				extendedFieldMap.remove("ERRORMESSAGE");
+				validatedMap = validateExtendedMapValues(extendedFieldMap);
+			}
+
+			logger.info("Response : " + jsonResponse);
+		} catch (Exception exception) {
+			logger.error("Exception: ", exception);
+			throw new InterfaceException("9999", exception.getMessage());
+		}
+		logger.debug(Literal.LEAVING);
+		return validatedMap;
 	}
 
 	/**
@@ -99,14 +130,19 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		experianDedup.setAadhaar(aadhar);
 		experianDedup.setPassport(passport);
 
-		experianDedup.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
-		CustomerAddres customerAddres = getHighPriorityAddress(customerDetails.getAddressList(), 5);
+		experianDedup.setEmailId(ExperianUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+		CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
 		if (customerAddres != null) {
 			experianDedup.setAddress(prepareAddress(customerAddres));
+		} else {
+			experianDedup.setAddress(new Address());
 		}
-		CustomerPhoneNumber customerPhoneNumber = getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+		CustomerPhoneNumber customerPhoneNumber = ExperianUtility
+				.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
 		if (customerPhoneNumber != null) {
 			experianDedup.setPhone(preparePhone(customerPhoneNumber));
+		} else {
+			experianDedup.setPhone(new Phone());
 		}
 
 		experianDedup.setLinkedin("");
@@ -122,19 +158,19 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	 * @param customerAddres
 	 * @return address
 	 */
-	// TODO: AddressLine1 to 3 &landMark
+	// TODO: AddressLine1 to , landMark & CITY PRO COUNTRY
 	private Address prepareAddress(CustomerAddres customerAddres) {
 		logger.debug(Literal.ENTERING);
 		Address address = new Address();
-		address.setAddressLine1(customerAddres.getCustAddrLine1());
+		address.setAddressLine1(customerAddres.getCustAddrHNbr());
 		address.setAddressLine2(customerAddres.getCustAddrLine2());
 		address.setAddressLine3(customerAddres.getCustAddrLine3());
-		address.setLandmark("");
+		address.setLandmark(customerAddres.getCustAddrStreet());
 
-		address.setCity(customerAddres.getCustAddrCity());
+		address.setCity(customerAddres.getLovDescCustAddrCityName());
 		address.setPin(customerAddres.getCustAddrZIP());
-		address.setState(customerAddres.getCustAddrProvince());
-		address.setCountry(customerAddres.getCustAddrCountry());
+		address.setState(customerAddres.getLovDescCustAddrProvinceName());
+		address.setCountry(customerAddres.getLovDescCustAddrCountryName());
 		address.setAddressType(customerAddres.getCustAddrType());
 		logger.debug(Literal.LEAVING);
 		return address;
@@ -156,76 +192,30 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	}
 
 	/**
-	 * Method to get the High priority email.
+	 * Method for prepare the Extended Field details map according to the given response.
 	 * 
-	 * @param customerEMailList
-	 * @param priority
-	 * @return String EmailId
+	 * @param extendedResMapObject
+	 * @param financeDetail
 	 */
-	private String getHignPriorityEmail(List<CustomerEMail> customerEMailList, int priority) {
-		for (CustomerEMail customerEMail : customerEMailList) {
-			if (customerEMail.getCustEMailPriority() == priority) {
-				return customerEMail.getCustEMail();
+	private void prepareResponseObj(Map<String, Object> extendedResMapObject, FinanceDetail financeDetail) {
+		if (extendedResMapObject != null) {
+			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			if (extendedMapObject == null) {
+				extendedMapObject = new HashMap<String, Object>();
 			}
-		}
-		if (priority > 1) {
-			getHignPriorityEmail(customerEMailList, priority - 1);
-		}
-		return null;
-	}
-
-	/**
-	 * Method to get the High priority PhoneNumeber
-	 * 
-	 * @param customerPhoneNumList
-	 * @param priority
-	 * @return CustomerPhoneNumber
-	 */
-	private CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList, int priority) {
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
-				return customerPhoneNumber;
+			for (Entry<String, Object> entry : extendedResMapObject.entrySet()) {
+				extendedMapObject.put(entry.getKey(), entry.getValue());
 			}
+			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
 		}
-		if (priority > 1) {
-			getHighPriorityPhone(customerPhoneNumList, priority - 1);
-		}
-		return null;
 	}
 
-	/**
-	 * Method to get the High Priority Address.
-	 * 
-	 * @param addressList
-	 * @param priority
-	 * @return
-	 */
-	private CustomerAddres getHighPriorityAddress(List<CustomerAddres> addressList, int priority) {
-		for (CustomerAddres customerAddres : addressList) {
-			if (customerAddres.getCustAddrPriority() == priority) {
-				return customerAddres;
-			}
-		}
-		if (priority > 1) {
-			getHighPriorityAddress(addressList, priority - 1);
-		}
-		return null;
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
 	}
 
-	/**
-	 * Method to set customer experian dedup response values into extended fields.
-	 * 
-	 * @param expDedupRes
-	 * @param customerDetails
-	 * @return Map<String, Object>
-	 */
-	private Map<String, Object> prepareResponseObject(ExperianDedup expDedupRes, CustomerDetails customerDetails) {
-		logger.debug(Literal.ENTERING);
-		
-		Map<String, Object> extendedValues = customerDetails.getExtendedFieldRender().getMapValues();
-		
-		logger.debug(Literal.LEAVING);
-
-		return extendedValues;
+	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
+		this.niyoginDAOImpl = niyoginDAOImpl;
 	}
+
 }
