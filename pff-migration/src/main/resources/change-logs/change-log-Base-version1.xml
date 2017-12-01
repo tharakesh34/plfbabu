@@ -611,4 +611,8 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_SOPT_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	</sql>
 	</changeSet>
+	
+	<changeSet id="26" author="Prakash" dbms="postgresql">
+		<createSequence sequenceName="seqmailtemplate" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
 	</databaseChangeLog>
