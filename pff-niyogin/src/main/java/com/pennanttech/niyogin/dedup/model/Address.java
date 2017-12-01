@@ -5,8 +5,11 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "addressLine1", "addressLine2", "addressLine3", "city", "pin", "state", "country",
+		"addressType" })
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Address implements Serializable {
 	private static final long	serialVersionUID	= 8647313455611629682L;
 

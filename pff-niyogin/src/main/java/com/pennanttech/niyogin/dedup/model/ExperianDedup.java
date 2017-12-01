@@ -9,9 +9,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "statusCode", "message", "applicantType", "firstName", "lastName", "emailId", "pan", "aadhaar",
-		"exactMatch", "matchedFields" })
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "statusCode", "message", "applicantType", "firstName", "lastName", "gender", "dob", "address",
+		"phone", "emailId", "pan", "aadhaar", "passport", "linkedin", "facebook", "twitter", "exactMatch",
+		"matchedFields" })
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ExperianDedup implements Serializable {
 	private static final long	serialVersionUID	= -1568085405736640269L;
 

@@ -14,6 +14,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -49,7 +50,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		prepareResponseObj(validatedMap, financeDetail);
 
 		//for CoApplicant
-		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
+		/*List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {
 			applicantType = "C";
 			List<Long> coApplicantIDs = new ArrayList<Long>(1);
@@ -61,9 +62,9 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
 				ExperianDedup experianDedupCoAppRequest = prepareRequestObj(coAppCustomerDetails, applicantType);
 				Map<String, Object> coAppValidatedMap = checkDedup(experianDedupCoAppRequest);
-				//prepareResponseObj(coAppValidatedMap, financeDetail);
+				prepareResponseObj(coAppValidatedMap, financeDetail);
 			}
-		}
+		}*/
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -111,36 +112,42 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		experianDedup.setApplicantType(applicantType);
 		experianDedup.setFirstName(customer.getCustFName());
 		experianDedup.setLastName(customer.getCustLName());
-		experianDedup.setGender(customer.getCustGenderCode());
+		experianDedup.setGender(customer.getLovDescCustGenderCodeName());
 		experianDedup.setDob(customer.getCustDOB());
 		String pan = "";
 		String aadhar = "";
 		String passport = "";
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		for (CustomerDocument document : documentList) {
-			if (document.getCustDocCategory().equals("01")) {
-				aadhar = document.getCustDocTitle();
-			} else if (document.getCustDocCategory().equals("02")) {
-				passport = document.getCustDocTitle();
-			} else if (document.getCustDocCategory().equals("03")) {
-				pan = document.getCustDocTitle();
+		if (documentList != null) {
+			for (CustomerDocument document : documentList) {
+				if (document.getCustDocCategory().equals("01")) {
+					aadhar = document.getCustDocTitle();
+				} else if (document.getCustDocCategory().equals("02")) {
+					passport = document.getCustDocTitle();
+				} else if (document.getCustDocCategory().equals("03")) {
+					pan = document.getCustDocTitle();
+				}
 			}
 		}
 		experianDedup.setPan(pan);
 		experianDedup.setAadhaar(aadhar);
 		experianDedup.setPassport(passport);
-
-		experianDedup.setEmailId(ExperianUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
-		CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
-		if (customerAddres != null) {
+		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+		if (emailList != null && !emailList.isEmpty()) {
+			experianDedup.setEmailId(ExperianUtility.getHignPriorityEmail(emailList, 5));
+		}
+		List<CustomerAddres> addressList = customerDetails.getAddressList();
+		if (addressList != null && !addressList.isEmpty()) {
+			CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(addressList, 5);
 			experianDedup.setAddress(prepareAddress(customerAddres));
 		} else {
 			experianDedup.setAddress(new Address());
 		}
-		CustomerPhoneNumber customerPhoneNumber = ExperianUtility
-				.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
-		if (customerPhoneNumber != null) {
-			experianDedup.setPhone(preparePhone(customerPhoneNumber));
+
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			CustomerPhoneNumber custPhoneNumber = ExperianUtility.getHighPriorityPhone(phoneNumberList, 5);
+			experianDedup.setPhone(preparePhone(custPhoneNumber));
 		} else {
 			experianDedup.setPhone(new Phone());
 		}
