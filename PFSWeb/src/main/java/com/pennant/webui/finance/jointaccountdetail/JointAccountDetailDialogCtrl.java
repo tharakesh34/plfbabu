@@ -1531,7 +1531,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					} else {
 						jointAccountDetailList.add(jountAccountDetail);
 					}
-				} else if (jountAccountDetail.getSequence() == aJountAccountDetail.getSequence()) {
+				} else if (jountAccountDetail.getSequence() == aJountAccountDetail.getSequence()
+						&& aJountAccountDetail.getSequence() != 0) {
 					String[] valueParam = new String[1];
 					String[] errParam = new String[1];
 					valueParam[0] = String.valueOf(aJountAccountDetail.getSequence());
