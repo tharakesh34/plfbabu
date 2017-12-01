@@ -4,17 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -23,7 +17,6 @@ import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
-import com.pennanttech.niyogin.bureau.consumer.model.CAISAccountHistory;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class JSONClient {
@@ -32,30 +25,15 @@ public class JSONClient {
 
 	private final static String	AUTHORIZATION	= "Authorization";
 
-	public Object postProcess(String url, String service, Object requestData, Class<?> responseClass) throws Exception {
-		String json = "";
-		Response response = getClient(url, service, requestData);
-		json = response.readEntity(String.class);
+	public String post(String url, Object requestData) throws Exception {
+		logger.debug(Literal.ENTERING);
 
+		WebClient client = getClient(url);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 		mapper.setSerializationInclusion(Inclusion.NON_NULL);
-		Object objResponse = mapper.readValue(json, responseClass);
-
-		return objResponse;
-	}
-
-	public String post(String url, String service, Object requestData) throws Exception {
-		Response response = getClient(url, service, requestData);
-		String json = (String) response.readEntity(String.class);
-		return json;
-	}
-
-	private static Response getClient(String url, String path, Object requestData) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setLenient(false);
@@ -67,40 +45,63 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
-		logger.debug("Jason Request String " + jsonInString);
 
-		Client client = ClientBuilder.newClient().register(JacksonJaxbJsonProvider.class);
-		WebTarget target = client.target(url).path(path);
-		Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON_TYPE).header(AUTHORIZATION,
-				getAuthkey());
-		Response response = builder.post(Entity.entity(jsonInString, MediaType.APPLICATION_JSON_TYPE));
-		logger.info(response.readEntity(String.class));
-		return response;
-	}
-
-	/**
-	 * Generate Authorization key for client specific by loading use name and password from config file
-	 * 
-	 * @return
-	 */
-	private static String getAuthkey() {
-		//TODO:DDP-Use encypted password
-		String username = "qUmCM";
-		String password = "rye28f16Z";
-		String key = username + ":" + password;
-		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(key.getBytes());
-
-		return authKey;
-	}
-
-	public String post(String url, Object requestData) {
-		logger.debug(Literal.ENTERING);
-
-		WebClient client = getClient(url);
-		Response response = client.post(requestData);
+		Response response = client.post(jsonInString);
 
 		logger.debug(Literal.LEAVING);
 		return response.readEntity(String.class);
+	}
+
+	public Object post(String url, Object requestData, Class<?> responseClass) throws Exception {
+		String jsonInString = null;
+		WebClient client = getClient(url);
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setLenient(false);
+		mapper.setDateFormat(dateFormat);
+
+		try {
+			jsonInString = mapper.writeValueAsString(requestData);
+		} catch (Exception e) {
+			logger.error("Exception in jason request string" + e);
+		}
+
+		Response response = client.post(jsonInString);
+
+		jsonInString = response.readEntity(String.class);
+		Object objResponse = mapper.readValue(jsonInString, responseClass);
+
+		return objResponse;
+	}
+
+	public Object getResponseObject(String jsonResponse, String datePattern, Class<?> responseClass, boolean isList)
+			throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		DateFormat dateFormat = new SimpleDateFormat(datePattern);
+		dateFormat.setLenient(false);
+		mapper.setDateFormat(dateFormat);
+		Object objResponse = null;
+		if (isList) {
+			CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
+					responseClass);
+			objResponse = mapper.readValue(jsonResponse, typeReference);
+		} else {
+			objResponse = mapper.readValue(jsonResponse, responseClass);
+		}
+
+		return objResponse;
 	}
 
 	/**
@@ -132,29 +133,19 @@ public class JSONClient {
 		return client;
 	}
 
-	
-	public Object getResponseObject(String jsonResponse,String datePattern, Class<?> responseClass,boolean isList) throws Exception {
+	/**
+	 * Generate Authorization key for client specific by loading use name and password from config file
+	 * 
+	 * @return
+	 */
+	private static String getAuthkey() {
+		//TODO:DDP-Use encypted password
+		String username = "qUmCM";
+		String password = "rye28f16Z";
+		String key = username + ":" + password;
+		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(key.getBytes());
 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
-		mapper.setSerializationInclusion(Inclusion.NON_NULL);
-		//TODO:
-		//mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
-		DateFormat dateFormat = new SimpleDateFormat(datePattern);
-		dateFormat.setLenient(false);
-		mapper.setDateFormat(dateFormat);
-		Object objResponse=null;
-		if (isList) {
-			CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
-					responseClass);
-			objResponse = mapper.readValue(jsonResponse, typeReference);
-		} else {
-			objResponse = mapper.readValue(jsonResponse, responseClass);
-		}
-
-		return objResponse;
+		return authKey;
 	}
-	
+
 }
