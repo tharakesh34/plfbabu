@@ -1606,6 +1606,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} else {
 			this.hbox_Sequence.setVisible(false);
 			this.label_Sequence.setVisible(false);
+			this.sequence.setValue(0);
 		}
 	}
 
