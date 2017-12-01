@@ -611,8 +611,17 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_SOPT_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	</sql>
 	</changeSet>
-	
+
 	<changeSet id="26" author="Prakash" dbms="postgresql">
-		<createSequence sequenceName="seqmailtemplate" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+		<createSequence sequenceName="seqmailtemplate"
+			startValue="1" maxValue="9999999999" cycle="false" incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="27" author="Durga Prasad D">
+		<sql>
+			insert into ErrorDetails values('90403','EN','E','Update loan service is not applicable for Approved loans.','test','Approved','','','','','',0,current_timestamp,1000,0);
+			insert into ErrorDetails values('90404','EN','E','Update loan failed, Disbursement instructions already exists.','test','Approved','','','','','',0,current_timestamp,1000,0);
+			insert into ErrorDetails values('90405','EN','E','Update loan failed, Mandate details already exists.','test','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
 	</changeSet>
 	</databaseChangeLog>
