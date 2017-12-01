@@ -15,6 +15,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.niyogin.bureau.consumer.model.Address;
 import com.pennanttech.niyogin.bureau.consumer.model.BureauConsumer;
@@ -106,8 +107,12 @@ public class ExpBureauConsumerServiceImpl extends NiyoginService implements Expe
 		personalDetails.setGender(customer.getCustGenderCode());
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			String mobileNo = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
-			personalDetails.setMobile(mobileNo);
+			CustomerPhoneNumber customerPhone  = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			if(customerPhone!=null){
+				personalDetails.setMobile(customerPhone.getPhoneNumber());
+			}else{
+				personalDetails.setMobile("");	
+			}
 		}
 		String pan = "";
 		String aadhar = "";
