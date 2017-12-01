@@ -310,8 +310,8 @@
 										</vlayout>
 									</hlayout>
 									<space />
-									<box width="100%" align="center"
-										style="border-style : none;">
+									<box id="Retails" width="100%"
+										align="center" style="border-style : none;">
 
 										<hbox pack="stretch" id=""
 											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
@@ -339,6 +339,7 @@
 												<column width="16%" />
 												<column width="16%" />
 												<column width="16%" />
+												<column width="8%" />
 											</columns>
 											<rows>
 												<row>
@@ -349,24 +350,26 @@
 														value="${c:l('label_CustomerDialog_CustCIF.value')}"
 														sclass="labelfont" />
 													<label
+														value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
+														sclass="labelfont" />
+													<label
 														value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
 														sclass="labelfont" />
 													<label
 														value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
 														sclass="labelfont" />
 													<label
-														value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
-														sclass="labelfont" />
-													<label
 														value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
 														sclass="labelfont" />
 												</row>
 												<row>
 													<label id="custCIF2"
 														sclass="labelweight" />
+													<label
+														id="custCoreBank" sclass="labelweight" />
 													<label
 														id="custCtgCode" sclass="labelweight" />
 													<hlayout
@@ -386,21 +389,6 @@
 														sclass="removewhitestrips">
 														<vlayout>
 															<label
-																id="custTypeCode" sclass="labelweight"
-																style="padding-left:25px" />
-														</vlayout>
-														<vlayout>
-															<label
-																id="custTypeCodeDesc" sclass="labelweightsimple"
-																style="padding-left: 5px; font-size: 13px; color: orange;" />
-														</vlayout>
-													</hlayout>
-													<label
-														id="custCoreBank" sclass="labelweight" />
-													<hlayout
-														sclass="removewhitestrips">
-														<vlayout>
-															<label
 																id="custBaseCcy" sclass="labelweight"
 																style="padding-left:25px" />
 														</vlayout>
@@ -410,33 +398,92 @@
 																style="padding-left: 5px; font-size: 13px; color: orange;" />
 														</vlayout>
 													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custTypeCode" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custTypeCodeDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
 												</row>
 												<row>
 													<space />
 												</row>
 												<row>
 													<label
+														value="${c:l('label_CustomerDialog_CustFirstName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustMiddleName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustLastName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSts.value')}"
+														sclass="labelfont" />
+													<label
 														value="${c:l('label_CustomerDialog_CustArabicName.value')}"
 														sclass="labelfont" />
 													<label
-														value="${c:l('label_CustomerDialog_CustRO1.value')}"
+														value="${c:l('label_CustomerDialog_CustNationality.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custFirstName" sclass="labelweight" />
+													<label
+														id="custMiddleName" sclass="labelweight" />
+													<label
+														id="custLastName" sclass="labelweight" />
+													<label id="custSts"
+														sclass="labelweight" />
+													<label
+														id="custArabicName" sclass="labelweight" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custNationality" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custNationalitydesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustRSP.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}"
 														sclass="labelfont" />
 													<label
 														value="${c:l('label_CustomerDialog_noOfDependents.value')}"
 														sclass="labelfont" />
 													<label
+														value="${c:l('label_CustomerDialog_CustMaritalSts.value')}"
+														sclass="labelfont" />
+													<label
 														value="${c:l('label_CustomerDialog_Target.value')}"
 														sclass="labelfont" />
 													<label
-														value="${c:l('label_CustomerDialog_EIDNumber.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustSector.value')}"
+														value="${c:l('label_CustomerDialog_SalaryTransfered.value')}"
 														sclass="labelfont" />
 												</row>
 												<row>
-													<label
-														id="custArabicName" sclass="labelweight" />
 													<hlayout
 														sclass="removewhitestrips">
 														<vlayout>
@@ -451,11 +498,52 @@
 														</vlayout>
 													</hlayout>
 													<label
+														id="custSalutationCode" sclass="labelweight" />
+													<label
 														id="noOfDependents" sclass="labelweight" />
+													<label
+														id="custMaritalStsDesc" sclass="labelweight" />
 													<label id="target"
 														sclass="labelweight" />
+													<image
+														id="salariedCustomer" style="padding-left: 25px;" />
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
 													<label
-														id="custCRCPR2" sclass="labelweight" />
+														value="${c:l('label_CustomerDialog_CustCOB.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSector.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustIndustry.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_RelatedParty.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSegment.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustGroupID.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custCOB" sclass="labelweight" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custCOBDesc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
 													<hlayout
 														sclass="removewhitestrips">
 														<vlayout>
@@ -469,35 +557,12 @@
 																style="padding-left: 5px; font-size: 13px; color: orange;" />
 														</vlayout>
 													</hlayout>
-												</row>
-												<row>
-													<space />
-												</row>
-												<row>
 													<label
-														value="${c:l('label_CustomerDialog_CustSts.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_RelatedParty.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustGroupID.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_IsStaff.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}"
-														sclass="labelfont" />
-												</row>
-												<row>
-													<label id="custSts"
-														sclass="labelweight" />
+														id="custIndustryDesc" sclass="labelweight" />
 													<label
 														id="custRelatedParty" sclass="labelweight" />
+													<label
+														id="custSegment" sclass="labelweight" />
 													<hlayout
 														sclass="removewhitestrips">
 														<vlayout>
@@ -511,10 +576,39 @@
 																style="padding-left: 5px; color: orange;" />
 														</vlayout>
 													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_IsStaff.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSaffID.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDSACode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustParentCountry.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
 													<image
 														id="custIsStaff" style="padding-left: 25px;" />
 													<label
-														id="custDSACode" sclass="labelweight" />
+														id="custStaffID" sclass="labelweight" />
+													<label id="custDSA"
+														sclass="labelweight" />
+													<label
+														id="custDSADept" sclass="labelweight" />
 													<hlayout
 														sclass="removewhitestrips">
 														<vlayout>
@@ -528,76 +622,6 @@
 																style="padding-left: 5px; font-size: 13px; color: orange;" />
 														</vlayout>
 													</hlayout>
-												</row>
-												<row>
-													<space />
-												</row>
-												<row>
-													<label
-														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustMaritalSts.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_SalaryTransfered.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustCOB.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustIndustry.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustSegment.value')}"
-														sclass="labelfont" />
-												</row>
-												<row>
-													<label
-														id="custSalutationCode" sclass="labelweight" />
-													<label
-														id="custMaritalStsDesc" sclass="labelweight" />
-													<image
-														id="salariedCustomer" style="padding-left: 25px;" />
-													<hlayout
-														sclass="removewhitestrips">
-														<vlayout>
-															<label
-																id="custCOB" sclass="labelweight" />
-														</vlayout>
-														<vlayout>
-															<label
-																id="custCOBDesc" sclass="labelweightsimple"
-																style="padding-left: 5px; font-size: 13px; color: orange;" />
-														</vlayout>
-													</hlayout>
-													<label
-														id="custIndustryDesc" sclass="labelweight" />
-													<label
-														id="custSegment" sclass="labelweight" />
-												</row>
-												<row>
-													<space />
-												</row>
-												<row>
-													<label
-														value="${c:l('label_CustomerDialog_CustSaffID.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustParentCountry.value')}"
-														sclass="labelfont" />
-													<label
-														value="${c:l('label_CustomerDialog_CustSubSegment.value')}"
-														sclass="labelfont" />
-												</row>
-												<row>
-													<label
-														id="custStaffID" sclass="labelweight" />
-													<label
-														id="custDSADept" sclass="labelweight" />
 													<hlayout
 														sclass="removewhitestrips">
 														<vlayout>
@@ -610,8 +634,244 @@
 																style="padding-left: 5px; font-size: 13px; color: orange;" />
 														</vlayout>
 													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSegment.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_EIDNumber.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custSubSector" sclass="labelweight" />
 													<label
 														id="custSubSegment" sclass="labelweight" />
+													<label
+														id="custCRCPR2" sclass="labelweight" />
+												</row>
+												<row>
+													<space />
+												</row>
+											</rows>
+										</grid>
+									</box>
+									<box id="Corporates" width="100%"
+										align="center" style="border-style : none;">
+
+										<hbox pack="stretch" id=""
+											style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%,0%">
+											<toolbar height="100%"
+												align="start"
+												style="padding-top: 15px; background: #f3f3f3; border: none;">
+												<label
+													value="${c:l('label_CustomerDialog_CustomerDetails.value')}"
+													style="font-family : Roboto; font-size:16px; font-weight :normal; color: #f39a36" />
+											</toolbar>
+											<toolbar height="100%"
+												align="end" sclass="toolbar-end"
+												style="padding-right: 18px; padding-top: 15px; background: #f3f3f3;">
+											</toolbar>
+										</hbox>
+										<grid width="100%"
+											style="border :none; overflow: visible ; background: white; border-radius: 7px;
+										       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;">
+
+											<columns>
+												<column width="16%" />
+												<column width="18%" />
+												<column width="16%" />
+												<column width="16%" />
+												<column width="16%" />
+												<column width="16%" />
+												<column width="8%" />
+											</columns>
+											<rows>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustCIF.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustDftBranch.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custCIFF2" sclass="labelweight" />
+													<label
+														id="custCoreBankk" sclass="labelweight" />
+													<label
+														id="custCtgCodee" sclass="labelweight" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custDftBranchh" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custDftBranchDescc2" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custBaseCcyy" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custBaseCcyDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custTypeCodee" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custTypeCodeDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustArabicName.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustNationality.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustRSP.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustCOB.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSector.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustIndustry.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<label
+														id="custArabicNamee" sclass="labelweight" />
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custNationalityy" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custNationalitydescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custROO1" sclass="labelweight"
+																style="padding-left:25px;" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custRO1Descc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 15px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custCOOB" sclass="labelweight" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custCOBDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custSectorr" sclass="labelweight"
+																style="padding-left:25px" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custSectorDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; font-size: 13px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custIndustryDescc" sclass="labelweight" />
+												</row>
+												<row>
+													<space />
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CustomerDialog_CustGroupID.value')}"
+														sclass="labelfont" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}"
+														sclass="labelfont" />
+												</row>
+												<row>
+													<hlayout
+														sclass="removewhitestrips">
+														<vlayout>
+															<label
+																id="custGroupIdd" sclass="labelweight"
+																style="padding-left:25x" />
+														</vlayout>
+														<vlayout>
+															<label
+																id="custGroupIdDescc" sclass="labelweightsimple"
+																style="padding-left: 5px; color: orange;" />
+														</vlayout>
+													</hlayout>
+													<label
+														id="custSubSectorr" sclass="labelweight" />
 												</row>
 												<row>
 													<space />
@@ -702,7 +962,8 @@
 											sizedByContent="true" fixedLayout="true"
 											style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											 width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -777,7 +1038,8 @@
 											sizedByContent="true" fixedLayout="true"
 											style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											 width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -856,8 +1118,9 @@
 										<listbox
 											id="listBoxCustomerAddress" span="true" sizedByContent="true"
 											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
-														box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
-											multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														box-shadow: 1px 1px 1px 1px #e6e6e6;"
+											width="100%" multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -913,7 +1176,8 @@
 											sclass="kyclistbox" sizedByContent="true"
 											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											 multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+											multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -949,7 +1213,8 @@
 											<toolbar height="100%"
 												align="start"
 												style="padding-top: 15px; background: #f3f3f3; border: none;">
-												<image align="left" style="padding-top: 5px;"
+												<image align="left"
+													style="padding-top: 5px;"
 													src="images/icons/customerenquiry/EmailDetails.png" />
 												<space></space>
 												<label
@@ -968,7 +1233,8 @@
 											id="listBoxCustomerEmails" span="true" sizedByContent="true"
 											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
 												border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											 width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -1336,8 +1602,8 @@
 										</hbox>
 										<listbox
 											id="listBoxCustomerBankInformation" span="true"
-											sizedByContent="true" width="100%"
-											multiple="false" sclass="kycgrid"
+											sizedByContent="true" width="100%" multiple="false"
+											sclass="kycgrid"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1393,7 +1659,8 @@
 										<listbox
 											id="listBoxCustomerChequeInformation" span="true"
 											sizedByContent="true" style="text-align:auto"
-											multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+											multiple="false" sclass="kycgrid"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -1452,7 +1719,8 @@
 										<listbox
 											id="listBoxCustomerFinExposure" span="true"
 											sizedByContent="true" fixedLayout="true" multiple="false"
-											sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+											sclass="kycgrid"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader
@@ -1518,8 +1786,8 @@
 
 										<listbox
 											id="listBoxCustomerExternalLiability" span="true"
-											sizedByContent="true" multiple="false"
-											sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+											sizedByContent="true" multiple="false" sclass="kycgrid"
+											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
 												<listheader

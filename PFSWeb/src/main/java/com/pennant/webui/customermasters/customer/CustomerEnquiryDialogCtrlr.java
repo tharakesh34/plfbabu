@@ -14,6 +14,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Box;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
@@ -79,98 +80,124 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	 * component with the same 'id' in the ZUL-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerDialog; // autowired
-
-	protected North north; // autowired
-	protected South south; // autowired
-	protected Label custCIF; // autowired
-	protected Label custCIF2; // autowired
-	protected Label custMiddleName; // autowired
-	protected Label custLastName; // autowired
-	protected Label custFirstName; // autowired
+	protected Window window_CustomerDialog;
+	protected North north;
+	protected South south;
+	protected Label custCIF;
+	protected Label custCIF2;
+	protected Label custMiddleName;
+	protected Label custLastName;
+	protected Label custFirstName;
 	private Progressmeter basicProgress;
 	private Progressmeter kYCProgress;
 	private Progressmeter financialProgress;
 	private Progressmeter shareHolderProgress;
 	private Progressmeter bankingProgress;
-	protected Label custDOB; // autowired
-	protected Label custDOBDOI; // autowired
-	protected Label custSegment; // autowired
-	protected Label custDftBranch; // autowired
-	protected Label custDftBranchDesc; // autowired
-	protected Label custDftBranchDesc2; // autowired
-	protected Label custGroupId; // autowired
-	protected Label custGroupIdDesc; // autowired
+	protected Label custDOB;
+	protected Label custDOBDOI;
+	protected Label custSegment;
+	protected Label custDftBranch;
+	protected Label custDftBranchDesc;
+	protected Label custDftBranchDesc2;
+	protected Label custGroupId;
+	protected Label custGroupIdDesc;
 	protected Label custCRCPR;
 	protected Label custCRCPR2;
 	protected Label address1;
 	protected Label custSectorDesc;
 
-	protected Label custSubSegment; // autowired
-	protected Label motherMaidenName; // autowired
-	protected Label custSts; // autowired
-	protected Label custMaritalStsDesc; // autowired
-	protected Label target; // autowired
-	protected Label custCoreBank; // autowired
-	protected Label custSalutationCode; // autowired
-	protected Label custShrtName; // autowired
-	protected Label custShrtName1; // autowired
-	protected Label custShrtName2; // autowired
-	protected Label custShrtName3; // autowired
-	protected Label custShrtName4; // autowired
-	protected Label custShrtName5; // autowired
-	protected Label custPhoneNumber; // autowired
-	protected Label recordStatus1; // autowired
-	protected Label recordStatus2; // autowired
-	protected Label recordStatus3; // autowired
-	protected Label recordStatus4; // autowired
-	protected Label recordStatus5; // autowired
-	protected Label recordType1; // autowired
-	protected Hbox hbox_empDetails; // autowired
-	protected Groupbox gb_information; // autowired
+	protected Label custSubSegment;
+	protected Label motherMaidenName;
+	protected Label custSts;
+	protected Label custMaritalStsDesc;
+	protected Label target;
+	protected Label custCoreBank;
+	protected Label custSalutationCode;
+	protected Label custShrtName;
+	protected Label custShrtName1;
+	protected Label custShrtName2;
+	protected Label custShrtName3;
+	protected Label custShrtName4;
+	protected Label custShrtName5;
+	protected Label custPhoneNumber;
+	protected Label recordStatus1;
+	protected Label recordStatus2;
+	protected Label recordStatus3;
+	protected Label recordStatus4;
+	protected Label recordStatus5;
+	protected Label recordType1;
+	protected Hbox hbox_empDetails;
+	protected Groupbox gb_information;
 
-	protected Label custArabicName; // autowired
-	protected Space space_CustArabicName; // autowired
-	protected Label custLng; // autowired
-	protected Label custSector; // autowired
-	protected Label custIndustryDesc; // autowired
-	protected Label custCOB; // autowired
-	protected Label custCOBDesc; // autowired
-	protected ExtendedCombobox custNationality; // autowired
-	protected Label custGenderCodeDesc; // autowired
-	protected Label noOfDependents; // autowired
-	protected Label custCtgCode; // autowired
-	protected Checkbox salaryTransferred; // autowiredOdoed
-	protected Label custTypeCode; // autowired
-	protected Label custTypeCodeDesc; // autowired
-	protected Label custBaseCcy; // autowired
-	protected Label custBaseCcyDesc; // autowired
-	protected Image salariedCustomer; // autowired
-	protected Image customerPic; // autowired
-	protected Image customerPic1; // autowired
-	protected Image customerPic2; // autowired
-	protected Image customerPic3; // autowired
-	protected Image customerPic4; // autowired
-	protected Image customerPic5; // autowired
-	protected Label custRO1; // autowired
-	protected Label custRO1Desc; // autowired
-	protected Uppercasebox eidNumber; // autowired
-	protected Label label_CustomerDialog_EIDNumber; // autowired
-	protected Textbox custTradeLicenceNum; // autowired
-	protected Label custRelatedParty; // autowired
-	protected Image custIsStaff; // autowired
-	protected Label custStaffID; // autowired
-	protected Label custDSACode; // autowired
-	protected Label custDSADept; // autowired
-	protected Label custRiskCountry; // autowired
-	protected Label custRiskCountryDesc; // autowired
-	protected Label custParentCountry; // autowired
-	protected Label custParentCountryDesc; // autowired
+	protected Label custArabicName;
+	protected Space space_CustArabicName;
+	protected Label custLng;
+	protected Label custSector;
+	protected Label custIndustryDesc;
+	protected Label custCOB;
+	protected Label custCOBDesc;
+	protected Label custGenderCodeDesc;
+	protected Label noOfDependents;
+	protected Label custCtgCode;
+	protected Checkbox salaryTransferred;
+	protected Label custTypeCode;
+	protected Label custTypeCodeDesc;
+	protected Label custBaseCcy;
+	protected Label custBaseCcyDesc;
+	protected Image salariedCustomer;
+	protected Image customerPic;
+	protected Image customerPic1;
+	protected Image customerPic2;
+	protected Image customerPic3;
+	protected Image customerPic4;
+	protected Image customerPic5;
+	protected Label custRO1;
+	protected Label custRO1Desc;
+	protected Uppercasebox eidNumber;
+	protected Label label_CustomerDialog_EIDNumber;
+	protected Textbox custTradeLicenceNum;
+	protected Label custRelatedParty;
+	protected Image custIsStaff;
+	protected Label custStaffID;
+	protected Label custDSACode;
+	protected Label custDSADept;
+	protected Label custRiskCountry;
+	protected Label custRiskCountryDesc;
+	protected Label custParentCountry;
+	protected Label custParentCountryDesc;
+	protected Label custDSA;
+	protected Label custSubSector;
+	protected Label custNationality;
+	protected Label custNationalitydesc;
+	protected Box Retails;
+	protected Box Corporates;
+	protected Label custCIFF2;
+	protected Label custCoreBankk;
+	protected Label custCtgCodee;
+	protected Label custDftBranchh;
+	protected Label custDftBranchDescc2;
+	protected Label custBaseCcyy;
+	protected Label custBaseCcyDescc;
+	protected Label custTypeCodee;
+	protected Label custTypeCodeDescc;
+	protected Label custArabicNamee;
+	protected Label custNationalityy;
+	protected Label custNationalitydescc;
+	protected Label custROO1;
+	protected Label custRO1Descc;
+	protected Label custCOOB;
+	protected Label custCOBDescc;
+	protected Label custSectorr;
+	protected Label custSectorDescc;
+	protected Label custIndustryDescc;
+	protected Label custGroupIdd;
+	protected Label custGroupIdDescc;
+	protected Label custSubSectorr;
 
 	/** Customer Employer Fields **/
-	protected ExtendedCombobox empName; // autowired
-	protected Label age; // autowired
-	protected Label exp; // autowired
+	protected ExtendedCombobox empName;
+	protected Label age;
+	protected Label exp;
 
 	protected Tab tabBasicDetails;
 	protected Tab tabKYCDetails;
@@ -225,8 +252,8 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_CustInc_RecordType;
 	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
 
-	private CustomerDetails customerDetails; // overhanded per param
-	private transient CustomerListCtrl customerListCtrl; // overhanded per param
+	private CustomerDetails customerDetails;
+	private transient CustomerListCtrl customerListCtrl;
 
 	// Declaration of Service(s) & DAO(s)
 	private transient CustomerDetailsService customerDetailsService;
@@ -365,18 +392,12 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		// set Readonly mode accordingly if the object is new or not.
 		if (aCustomerDetails.isNewRecord()) {
 			btnCtrl.setInitNew();
-			// doEdit();
 		} else {
 			if (isWorkFlowEnabled()) {
-				// btnNotes.setVisible(true);
 			} else {
 				btnCtrl.setInitNew();
-				// btnDelete.setVisible(true);
 			}
-			// doEdit();
 		}
-		// custCIF.focus();
-
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
 
@@ -401,263 +422,482 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		custCIF.setValue(aCustomer.getCustCIF());
-		custCIF2.setValue(aCustomer.getCustCIF());
-		custShrtName.setValue(aCustomer.getCustShrtName());
-		if (aCustomer.getCustShrtName() != null) {
-			i++;
-		}
-		custShrtName1.setValue(aCustomer.getCustShrtName());
-		custShrtName2.setValue(aCustomer.getCustShrtName());
-		custShrtName3.setValue(aCustomer.getCustShrtName());
-		custShrtName4.setValue(aCustomer.getCustShrtName());
-		custShrtName5.setValue(aCustomer.getCustShrtName());
-		if (isRetailCustomer) {
+		if (aCustomer.getCustCtgCode().equals("RETAIL")) {
+			Retails.setVisible(true);
+			Corporates.setVisible(false);
+			custCIF.setValue(aCustomer.getCustCIF());
+			custCIF2.setValue(aCustomer.getCustCIF());
+			custShrtName.setValue(aCustomer.getCustShrtName());
+			custFirstName.setValue(StringUtils.trimToEmpty(aCustomer.getCustFName()));
+			custCoreBank.setValue(aCustomer.getCustCoreBank());
+			if (aCustomer.getCustCoreBank() == null) {
+				custCoreBank.setStyle("color:orange; font:12px");
+				custCoreBank.setValue("- - - - - - - - -");
+			}
+			custCtgCode.setValue(aCustomer.getCustCtgCode());
+			if (aCustomer.getCustSegment() != null) {
+				i++;
+			}
+			custDftBranch.setValue(aCustomer.getCustDftBranch());
+			if (aCustomer.getCustDftBranch() != null) {
+				i++;
+			}
+			custDftBranch.setValue(aCustomer.getCustDftBranch() + ", ");
+			custDftBranchDesc.setValue(aCustomer.getLovDescCustDftBranchName());
+			custDftBranchDesc2.setValue(aCustomer.getLovDescCustDftBranchName());
+			custBaseCcy.setValue(aCustomer.getCustBaseCcy() + ", ");
+			custBaseCcyDesc.setValue(CurrencyUtil.getCcyDesc(aCustomer.getCustBaseCcy()));
+			if (aCustomer.getCustBaseCcy() != null) {
+				i++;
+			}
+			custTypeCode.setValue(aCustomer.getCustTypeCode() + ", ");
+			if (aCustomer.getCustSegment() != null) {
+				i++;
+			}
+			custTypeCodeDesc.setValue(aCustomer.getLovDescCustTypeCodeName());
+			custMiddleName.setValue(StringUtils.trimToEmpty(aCustomer.getCustMName()));
+			if (aCustomer.getCustMName() == null) {
+				custMiddleName.setStyle("color:orange;");
+				custMiddleName.setValue("- - - - - - - - -");
+			}
+			custLastName.setValue(StringUtils.trimToEmpty(aCustomer.getCustLName()));
+			if (aCustomer.getCustShrtName() != null) {
+				i++;
+			}
+			custShrtName1.setValue(aCustomer.getCustShrtName());
+			custShrtName2.setValue(aCustomer.getCustShrtName());
+			custShrtName3.setValue(aCustomer.getCustShrtName());
+			custShrtName4.setValue(aCustomer.getCustShrtName());
+			custShrtName5.setValue(aCustomer.getCustShrtName());
+			custSts.setValue(aCustomer.getCustSts());
+			custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
+
+			if (aCustomer.getCustShrtNameLclLng() == null) {
+				custArabicName.setStyle("color:orange; font:12px");
+				custArabicName.setValue("- - - - - - - - -");
+			}
+			custNationality.setValue(aCustomer.getCustNationality() + ", ");
+			custNationalitydesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
+			custRO1.setValue(aCustomer.getCustRO1() + ", ");
+			if (aCustomer.getCustRO1() != null) {
+				i++;
+			}
+			custRO1Desc.setValue(aCustomer.getLovDescCustRO1Name());
+			custSalutationCode.setValue(aCustomer.getCustSalutationCode());
+			if (aCustomer.getCustSalutationCode() != null) {
+				i++;
+			}
+			if (aCustomer.getCustSalutationCode() == null) {
+				custSalutationCode.setStyle("color:orange; font:12px");
+				custSalutationCode.setValue("- - - - - - - - -");
+			}
+			noOfDependents.setValue(String.valueOf(aCustomer.getNoOfDependents()));
+			custMaritalStsDesc.setValue(aCustomer.getLovDescCustMaritalStsName());
+			if (aCustomer.getLovDescCustMaritalStsName() != null) {
+				i++;
+			}
+			if (aCustomer.getLovDescCustMaritalStsName() == null) {
+				custMaritalStsDesc.setStyle("color:orange; font:12px");
+				custMaritalStsDesc.setValue("- - - - - - - - -");
+			}
+			target.setValue(aCustomer.getLovDescTargetName());
+			if (aCustomer.getLovDescTargetName() == null) {
+				target.setStyle("color:orange; font:12px");
+				target.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.isSalariedCustomer() == true) {
+				salariedCustomer.setSrc("images/icons/customerenquiry/activecheck.png");
+			} else {
+				salariedCustomer.setSrc("images/icons/customerenquiry/inactivecheck.png");
+			}
+			custCOB.setValue(aCustomer.getCustCOB() + ", ");
+			custCOBDesc.setValue(aCustomer.getLovDescCustCOBName());
+			custSector.setValue(aCustomer.getCustSector() + ", ");
+			if (aCustomer.getCustSector() != null) {
+				i++;
+			}
+			custSectorDesc.setValue(aCustomer.getLovDescCustSectorName());
+			custIndustryDesc.setValue(aCustomer.getLovDescCustIndustryName());
+			custSegment.setValue(StringUtils.trimToEmpty(aCustomer.getCustSegment()));
+			if (aCustomer.getCustSegment() == null) {
+				custSegment.setStyle("color:orange;");
+				custSegment.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.getLovDescCustIndustryName() != null) {
+				i++;
+			}
+			custRelatedParty.setValue(aCustomer.getCustAddlVar83());
+			if (aCustomer.getCustAddlVar83() == null) {
+				custRelatedParty.setStyle("color:orange; font:12px");
+				custRelatedParty.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.getCustGroupID() != 0) {
+				custGroupId.setValue(String.valueOf(aCustomer.getCustGroupID()) + ", ");
+				custGroupIdDesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
+			} else {
+				custGroupId.setStyle("color:orange; font:12px");
+				custGroupId.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.isCustIsStaff() == true) {
+				custIsStaff.setSrc("images/icons/customerenquiry/activecheck.png");
+			} else {
+				custIsStaff.setSrc("images/icons/customerenquiry/inactivecheck.png");
+			}
+			custStaffID.setValue(aCustomer.getCustStaffID());
+			if (aCustomer.getCustStaffID() == null) {
+				custStaffID.setStyle("color:orange; font:12px");
+				custStaffID.setValue("- - - - - - - - -");
+			}
+			custDSA.setValue(aCustomer.getCustDSA());
+			if (aCustomer.getCustDSA() == null) {
+				custDSA.setStyle("color:orange; font:12px");
+				custDSA.setValue("- - - - - - - - -");
+			}
+			custRiskCountry.setValue(aCustomer.getCustRiskCountry() + ", ");
+			custRiskCountryDesc.setValue(aCustomer.getLovDescCustRiskCountryName());
+			custDSADept.setValue(aCustomer.getLovDescCustDSADeptName());
+			if (aCustomer.getLovDescCustDSADeptName() == null) {
+				custDSADept.setStyle("color:orange; font:12px");
+				custDSADept.setValue("- - - - - - - - -");
+			}
+			custParentCountry.setValue(aCustomer.getCustParentCountry() + ", ");
+			custParentCountryDesc.setValue(aCustomer.getLovDescCustParentCountryName());
+			custSubSector.setValue(aCustomer.getCustSubSector());
+			custSubSegment.setValue(aCustomer.getCustSubSegment());
+			if (aCustomer.getCustSubSegment() == null) {
+				custSubSegment.setStyle("color:orange; font:12px");
+				custSubSegment.setValue("RETAIL");
+			}
+			if (isRetailCustomer) {
+				custDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDOB.value"));
+			} else {
+				custDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
+			}
+			custDOB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			if (aCustomer.getCustDOB() != null) {
+				i++;
+			}
+			motherMaidenName.setValue(aCustomer.getCustMotherMaiden());
+			if (aCustomer.getCustSubSegment() == null) {
+				motherMaidenName.setStyle("font:12px");
+			}
+			if (aCustomer.getCustCtgCode().equals("CORP")) {
+				motherMaidenName.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.getCustMotherMaiden() != null) {
+				i++;
+			}
+			for (CustomerPhoneNumber customerPhoneNumber : aCustomerDetails.getCustomerPhoneNumList()) {
+				custPhoneNumber.setValue(
+						customerPhoneNumber.getPhoneNumber() == null ? "" : customerPhoneNumber.getPhoneNumber());
+			}
+			custCRCPR.setValue(aCustomer.getCustCRCPR());
+			if (aCustomer.getCustCRCPR() != null) {
+				i++;
+			}
+			custCRCPR2.setValue(aCustomer.getCustCRCPR());
+
+			custLng.setValue(aCustomer.getLovDescCustLngName());
+			if (aCustomer.getLovDescCustLngName() != null) {
+				i++;
+			}
+			custGenderCodeDesc.setValue(aCustomer.getLovDescCustGenderCodeName());
+			if (aCustomer.getLovDescCustGenderCodeName() != null) {
+				i++;
+			}
+			getAddressDetails(aCustomerDetails.getAddressList());
+			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
+
+			String s = StringUtils.isNotBlank(aCustomer.getRecordType()) ? " for " + aCustomer.getRecordType() : "";
+			recordStatus1.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus2.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus3.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus4.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus5.setValue(aCustomer.getRecordStatus() + s);
+
+			basicProgress.setValue((i * 100) / 15);
+			basicProgress.setStyle("image-height: 5px;");
+			kYCProgress.setValue((i * 100) / 15);
+			kYCProgress.setStyle("image-height: 5px;");
+			financialProgress.setValue((i * 100) / 15);
+			financialProgress.setStyle("image-height: 5px;");
+			shareHolderProgress.setValue((i * 100) / 15);
+			shareHolderProgress.setStyle("image-height: 5px;");
+			bankingProgress.setValue((i * 100) / 15);
+			bankingProgress.setStyle("image-height: 5px;");
+
+			if (aCustomer.getLovDescCustGenderCodeName() != null
+					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
+					customerPic.setSrc("images/icons/customerenquiry/male.png");
+					customerPic1.setSrc("images/icons/customerenquiry/male.png");
+					customerPic2.setSrc("images/icons/customerenquiry/male.png");
+					customerPic3.setSrc("images/icons/customerenquiry/male.png");
+					customerPic4.setSrc("images/icons/customerenquiry/male.png");
+					customerPic5.setSrc("images/icons/customerenquiry/male.png");
+				}
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+					customerPic.setSrc("images/icons/customerenquiry/female.png");
+					customerPic1.setSrc("images/icons/customerenquiry/female.png");
+					customerPic2.setSrc("images/icons/customerenquiry/female.png");
+					customerPic3.setSrc("images/icons/customerenquiry/female.png");
+					customerPic4.setSrc("images/icons/customerenquiry/female.png");
+					customerPic5.setSrc("images/icons/customerenquiry/female.png");
+				}
+			}
+			if (isRetailCustomer) {
+				tabShareHoleder.setVisible(false);
+				tabFinancial.setVisible(true);
+				hbox_empDetails.setVisible(true);
+				listBoxCustomerEmploymentDetail.setVisible(true);
+			} else {
+				tabShareHoleder.setVisible(true);
+				tabFinancial.setVisible(false);
+				hbox_empDetails.setVisible(false);
+				listBoxCustomerEmploymentDetail.setVisible(false);
+			}
+
+			doFillDocumentDetails(aCustomerDetails.getCustomerDocumentsList());
+			doFillCustomerAddressDetails(aCustomerDetails.getAddressList());
+			doFillCustomerEmploymentDetail(aCustomerDetails.getEmploymentDetailsList());
+			doFillCustomerEmailDetails(aCustomerDetails.getCustomerEMailList());
+			doFillCustomerIncome(aCustomerDetails.getCustomerIncomeList());
+			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
+
+			doFillCustomerBankInfoDetails(aCustomerDetails.getCustomerBankInfoList());
+			doFillCustomerChequeInfoDetails(aCustomerDetails.getCustomerChequeInfoList());
+			doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
+			doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
+			doFillCustomerDirectory(aCustomerDetails.getCustomerDirectorList());
+			doSetShareHoldersDesignationCode(aCustomerDetails.getCustomerDirectorList());
+
+			if (listBoxCustomerIncome.getItemCount() == 0) {
+
+				Listitem listitem = new Listitem();
+				listitem.setHeight("50px");
+				Listcell lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("-------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36; text-align: right;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36; text-align: center;");
+				listitem.appendChild(lc);
+
+				listBoxCustomerIncome.appendChild(listitem);
+			}
+
+		} else if (aCustomer.getCustCtgCode().equals("CORP")) {
+			Corporates.setVisible(true);
+			Retails.setVisible(false);
+			custCIF.setValue(aCustomer.getCustCIF());
+			custCIFF2.setValue(aCustomer.getCustCIF());
+			custShrtName.setValue(aCustomer.getCustShrtName());
+			custCoreBankk.setValue(aCustomer.getCustCoreBank());
+			if (aCustomer.getCustCoreBank() == null) {
+				custCoreBankk.setStyle("color:orange; font:12px");
+				custCoreBankk.setValue("- - - - - - - - -");
+			}
+			custCtgCodee.setValue(aCustomer.getCustCtgCode());
+			if (aCustomer.getCustSegment() != null) {
+				i++;
+			}
+			custDftBranchh.setValue(aCustomer.getCustDftBranch());
+			if (aCustomer.getCustDftBranch() != null) {
+				i++;
+			}
+			custDftBranchh.setValue(aCustomer.getCustDftBranch() + ", ");
+			custDftBranchDesc.setValue(aCustomer.getLovDescCustDftBranchName());
+			custDftBranchDescc2.setValue(aCustomer.getLovDescCustDftBranchName());
+			custBaseCcyy.setValue(aCustomer.getCustBaseCcy() + ", ");
+			custBaseCcyDescc.setValue(CurrencyUtil.getCcyDesc(aCustomer.getCustBaseCcy()));
+			if (aCustomer.getCustBaseCcy() != null) {
+				i++;
+			}
+			custTypeCodee.setValue(aCustomer.getCustTypeCode() + ", ");
+			if (aCustomer.getCustSegment() != null) {
+				i++;
+			}
+			custTypeCodeDescc.setValue(aCustomer.getLovDescCustTypeCodeName());
+			if (aCustomer.getCustShrtName() != null) {
+				i++;
+			}
+			custShrtName1.setValue(aCustomer.getCustShrtName());
+			custShrtName2.setValue(aCustomer.getCustShrtName());
+			custShrtName3.setValue(aCustomer.getCustShrtName());
+			custShrtName4.setValue(aCustomer.getCustShrtName());
+			custShrtName5.setValue(aCustomer.getCustShrtName());
+			custArabicNamee.setValue(aCustomer.getCustShrtNameLclLng());
+
+			if (aCustomer.getCustShrtNameLclLng() == null) {
+				custArabicNamee.setStyle("color:orange; font:12px");
+				custArabicNamee.setValue("- - - - - - - - -");
+			}
+			custNationalityy.setValue(aCustomer.getCustNationality() + ", ");
+			custNationalitydescc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
+			custROO1.setValue(aCustomer.getCustRO1() + ", ");
+			if (aCustomer.getCustRO1() != null) {
+				i++;
+			}
+			custRO1Descc.setValue(aCustomer.getLovDescCustRO1Name());
+			custCOOB.setValue(aCustomer.getCustCOB() + ", ");
+			custCOBDescc.setValue(aCustomer.getLovDescCustCOBName());
+			custSectorr.setValue(aCustomer.getCustSector() + ", ");
+			if (aCustomer.getCustSector() != null) {
+				i++;
+			}
+			custSectorDescc.setValue(aCustomer.getLovDescCustSectorName());
+			custIndustryDescc.setValue(aCustomer.getLovDescCustIndustryName());
+			if (aCustomer.getLovDescCustIndustryName() != null) {
+				i++;
+			}
+			if (aCustomer.getCustGroupID() != 0) {
+				custGroupIdd.setValue(String.valueOf(aCustomer.getCustGroupID()) + ", ");
+				custGroupIdDescc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
+			} else {
+				custGroupIdd.setStyle("color:orange; font:12px");
+				custGroupIdd.setValue("- - - - - - - - -");
+			}
+			custSubSectorr.setValue(aCustomer.getCustCoreBank());
+			if (aCustomer.getCustCoreBank() == null) {
+				custSubSectorr.setStyle("color:orange;");
+				custSubSectorr.setValue("- - - - - - - - -");
+			}
 			custDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDOB.value"));
-		} else {
-			custDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
-		}
-		custDOB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
-		if (aCustomer.getCustDOB() != null) {
-			i++;
-		}
-		custCtgCode.setValue(aCustomer.getCustCtgCode());
-		if (aCustomer.getCustSegment() != null) {
-			i++;
-		}
-		custTypeCode.setValue(aCustomer.getCustTypeCode() + ", ");
-		if (aCustomer.getCustSegment() != null) {
-			i++;
-		}
-		custTypeCodeDesc.setValue(aCustomer.getLovDescCustTypeCodeName());
-		custDftBranch.setValue(aCustomer.getCustDftBranch());
-		if (aCustomer.getCustDftBranch() != null) {
-			i++;
-		}
-		custDftBranch.setValue(aCustomer.getCustDftBranch() + ", ");
-		custDftBranchDesc.setValue(aCustomer.getLovDescCustDftBranchName());
-		custDftBranchDesc2.setValue(aCustomer.getLovDescCustDftBranchName());
-		custSts.setValue(aCustomer.getCustSts());
-		custSector.setValue(aCustomer.getCustSector() + ", ");
-		if (aCustomer.getCustSector() != null) {
-			i++;
-		}
-		custSectorDesc.setValue(aCustomer.getLovDescCustSectorName());
-		custIndustryDesc.setValue(aCustomer.getLovDescCustIndustryName());
-		if (aCustomer.getLovDescCustIndustryName() != null) {
-			i++;
-		}
-		motherMaidenName.setValue(aCustomer.getCustMotherMaiden());
-		if (aCustomer.getCustSubSegment() == null) {
-			motherMaidenName.setStyle("color:orange; font:12px");
-			motherMaidenName.setValue("- - - - - - - - -");
-		}
-		if (aCustomer.getCustMotherMaiden() != null) {
-			i++;
-		}
-		custSegment.setValue(aCustomer.getCustSegment());
-		if (aCustomer.getCustSegment() == null) {
-			custSegment.setStyle("color:orange; font:12px");
-			custSegment.setValue("- - - - - - - - -");
-		}
-		custSubSegment.setValue(aCustomer.getCustSubSegment());
-		if (aCustomer.getCustSubSegment() == null) {
-			custSubSegment.setStyle("color:orange; font:12px");
-			custSubSegment.setValue("- - - - - - - - -");
-		}
-		custStaffID.setValue(aCustomer.getCustStaffID());
-		if (aCustomer.getCustStaffID() == null) {
-			custStaffID.setStyle("color:orange; font:12px");
-			custStaffID.setValue("- - - - - - - - -");
-		}
-		if (aCustomer.isCustIsStaff() == true) {
-			custIsStaff.setSrc("images/icons/customerenquiry/activecheck.png");
-		} else {
-			custIsStaff.setSrc("images/icons/customerenquiry/inactivecheck.png");
-		}
-		custDSACode.setValue(aCustomer.getCustDSA());
-		if (aCustomer.getCustDSA() == null) {
-			custDSACode.setStyle("color:orange; font:12px");
-			custDSACode.setValue("- - - - - - - - -");
-		}
-		custDSADept.setValue(aCustomer.getLovDescCustDSADeptName());
-		if (aCustomer.getLovDescCustDSADeptName() == null) {
-			custDSADept.setStyle("color:orange; font:12px");
-			custDSADept.setValue("- - - - - - - - -");
-		}
-		custPhoneNumber.setValue(aCustomer.getPhoneNumber());
-		if (aCustomer.getPhoneNumber() == null) {
-			custPhoneNumber.setStyle("color:orange; font:12px");
-			custPhoneNumber.setValue("- - - - - - - - -");
-		}
-		custRelatedParty.setValue(aCustomer.getCustAddlVar83());
-		if (aCustomer.getCustAddlVar83() == null) {
-			custRelatedParty.setStyle("color:orange; font:12px");
-			custRelatedParty.setValue("- - - - - - - - -");
-		}
-		custMaritalStsDesc.setValue(aCustomer.getLovDescCustMaritalStsName());
-		if (aCustomer.getLovDescCustMaritalStsName() != null) {
-			i++;
-		}
-		if (aCustomer.getLovDescCustMaritalStsName() == null) {
-			custMaritalStsDesc.setStyle("color:orange; font:12px");
-			custMaritalStsDesc.setValue("- - - - - - - - -");
-		}
-		custSalutationCode.setValue(aCustomer.getCustSalutationCode());
-		if (aCustomer.getCustSalutationCode() != null) {
-			i++;
-		}
-		if (aCustomer.getCustSalutationCode() == null) {
-			custSalutationCode.setStyle("color:orange; font:12px");
-			custSalutationCode.setValue("- - - - - - - - -");
-		}
-		if (aCustomer.isSalariedCustomer() == true) {
-			salariedCustomer.setSrc("images/icons/customerenquiry/activecheck.png");
-		} else {
-			salariedCustomer.setSrc("images/icons/customerenquiry/inactivecheck.png");
-		}
-		custRiskCountry.setValue(aCustomer.getCustRiskCountry() + ", ");
-		custRiskCountryDesc.setValue(aCustomer.getLovDescCustRiskCountryName());
-		custCRCPR.setValue(aCustomer.getCustCRCPR());
-		if (aCustomer.getCustCRCPR() != null) {
-			i++;
-		}
-		custCRCPR2.setValue(aCustomer.getCustCRCPR());
-		custBaseCcy.setValue(aCustomer.getCustBaseCcy() + ", ");
-		custBaseCcyDesc.setValue(CurrencyUtil.getCcyDesc(aCustomer.getCustBaseCcy()));
-		if (aCustomer.getCustBaseCcy() != null) {
-			i++;
-		}
-		custRO1.setValue(aCustomer.getCustRO1() + ", ");
-		if (aCustomer.getCustRO1() != null) {
-			i++;
-		}
-		custRO1Desc.setValue(aCustomer.getLovDescCustRO1Name());
-		custParentCountry.setValue(aCustomer.getCustParentCountry() + ", ");
-		custParentCountryDesc.setValue(aCustomer.getLovDescCustParentCountryName());
-		if (aCustomer.getCustGroupID() != 0) {
-			custGroupId.setValue(String.valueOf(aCustomer.getCustGroupID()) + ", ");
-			custGroupIdDesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
-		} else {
-			custGroupId.setStyle("color:orange; font:12px");
-			custGroupId.setValue("- - - - - - - - -");
-		}
-		custLng.setValue(aCustomer.getLovDescCustLngName());
-		if (aCustomer.getLovDescCustLngName() != null) {
-			i++;
-		}
-		custGenderCodeDesc.setValue(aCustomer.getLovDescCustGenderCodeName());
-		if (aCustomer.getLovDescCustGenderCodeName() != null) {
-			i++;
-		}
-		custCoreBank.setValue(aCustomer.getCustCoreBank());
-		if (aCustomer.getCustCoreBank() == null) {
-			custCoreBank.setStyle("color:orange; font:12px");
-			custCoreBank.setValue("- - - - - - - - -");
-		}
-		noOfDependents.setValue(String.valueOf(aCustomer.getNoOfDependents()));
-		custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
-		if (aCustomer.getCustShrtNameLclLng() == null) {
-			custArabicName.setStyle("color:orange; font:12px");
-			custArabicName.setValue("- - - - - - - - -");
-		}
-		target.setValue(aCustomer.getLovDescTargetName());
-		if (aCustomer.getLovDescTargetName() == null) {
-			target.setStyle("color:orange; font:12px");
-			target.setValue("- - - - - - - - -");
-		}
-		custCOB.setValue(aCustomer.getCustCOB() + ", ");
-		custCOBDesc.setValue(aCustomer.getLovDescCustCOBName());
-		getAddressDetails(aCustomerDetails.getAddressList());
-		doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
-
-		String s = StringUtils.isNotBlank(aCustomer.getRecordType()) ? " for " + aCustomer.getRecordType() : "";
-		recordStatus1.setValue(aCustomer.getRecordStatus() + s);
-		recordStatus2.setValue(aCustomer.getRecordStatus() + s);
-		recordStatus3.setValue(aCustomer.getRecordStatus() + s);
-		recordStatus4.setValue(aCustomer.getRecordStatus() + s);
-		recordStatus5.setValue(aCustomer.getRecordStatus() + s);
-
-		basicProgress.setValue((i * 100) / 15);
-		basicProgress.setStyle("image-height: 5px;");
-		kYCProgress.setValue((i * 100) / 15);
-		kYCProgress.setStyle("image-height: 5px;");
-		financialProgress.setValue((i * 100) / 15);
-		financialProgress.setStyle("image-height: 5px;");
-		shareHolderProgress.setValue((i * 100) / 15);
-		shareHolderProgress.setStyle("image-height: 5px;");
-		bankingProgress.setValue((i * 100) / 15);
-		bankingProgress.setStyle("image-height: 5px;");
-
-		if (aCustomer.getLovDescCustGenderCodeName() != null && !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
-			if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-				customerPic.setSrc("images/icons/customerenquiry/male.png");
-				customerPic1.setSrc("images/icons/customerenquiry/male.png");
-				customerPic2.setSrc("images/icons/customerenquiry/male.png");
-				customerPic3.setSrc("images/icons/customerenquiry/male.png");
-				customerPic4.setSrc("images/icons/customerenquiry/male.png");
-				customerPic5.setSrc("images/icons/customerenquiry/male.png");
+			custDOB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			if (aCustomer.getCustDOB() != null) {
+				i++;
 			}
-			if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-				customerPic.setSrc("images/icons/customerenquiry/female.png");
-				customerPic1.setSrc("images/icons/customerenquiry/female.png");
-				customerPic2.setSrc("images/icons/customerenquiry/female.png");
-				customerPic3.setSrc("images/icons/customerenquiry/female.png");
-				customerPic4.setSrc("images/icons/customerenquiry/female.png");
-				customerPic5.setSrc("images/icons/customerenquiry/female.png");
+			motherMaidenName.setValue(aCustomer.getCustMotherMaiden());
+			if (aCustomer.getCustSubSegment() == null) {
+				motherMaidenName.setStyle("color:orange; font:12px");
+			}
+			if (aCustomer.getCustCtgCode().equals("CORP")) {
+				motherMaidenName.setValue("- - - - - - - - -");
+			}
+			if (aCustomer.getCustMotherMaiden() != null) {
+				i++;
+			}
+
+			for (CustomerPhoneNumber customerPhoneNumber : aCustomerDetails.getCustomerPhoneNumList()) {
+				custPhoneNumber.setValue(
+						customerPhoneNumber.getPhoneNumber() == null ? "" : customerPhoneNumber.getPhoneNumber());
+			}
+			custCRCPR.setValue(aCustomer.getCustCRCPR());
+			if (aCustomer.getCustCRCPR() != null) {
+				i++;
+			}
+			custCRCPR2.setValue(aCustomer.getCustCRCPR());
+			custLng.setValue(aCustomer.getLovDescCustLngName());
+			if (aCustomer.getLovDescCustLngName() != null) {
+				i++;
+			}
+			custGenderCodeDesc.setValue(aCustomer.getLovDescCustGenderCodeName());
+			if (aCustomer.getLovDescCustGenderCodeName() != null) {
+				i++;
+			}
+			getAddressDetails(aCustomerDetails.getAddressList());
+			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
+
+			String s = StringUtils.isNotBlank(aCustomer.getRecordType()) ? " for " + aCustomer.getRecordType() : "";
+			recordStatus1.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus2.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus3.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus4.setValue(aCustomer.getRecordStatus() + s);
+			recordStatus5.setValue(aCustomer.getRecordStatus() + s);
+
+			basicProgress.setValue((i * 100) / 15);
+			basicProgress.setStyle("image-height: 5px;");
+			kYCProgress.setValue((i * 100) / 15);
+			kYCProgress.setStyle("image-height: 5px;");
+			financialProgress.setValue((i * 100) / 15);
+			financialProgress.setStyle("image-height: 5px;");
+			shareHolderProgress.setValue((i * 100) / 15);
+			shareHolderProgress.setStyle("image-height: 5px;");
+			bankingProgress.setValue((i * 100) / 15);
+			bankingProgress.setStyle("image-height: 5px;");
+
+			if (aCustomer.getLovDescCustGenderCodeName() != null
+					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
+					customerPic.setSrc("images/icons/customerenquiry/male.png");
+					customerPic1.setSrc("images/icons/customerenquiry/male.png");
+					customerPic2.setSrc("images/icons/customerenquiry/male.png");
+					customerPic3.setSrc("images/icons/customerenquiry/male.png");
+					customerPic4.setSrc("images/icons/customerenquiry/male.png");
+					customerPic5.setSrc("images/icons/customerenquiry/male.png");
+				}
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+					customerPic.setSrc("images/icons/customerenquiry/female.png");
+					customerPic1.setSrc("images/icons/customerenquiry/female.png");
+					customerPic2.setSrc("images/icons/customerenquiry/female.png");
+					customerPic3.setSrc("images/icons/customerenquiry/female.png");
+					customerPic4.setSrc("images/icons/customerenquiry/female.png");
+					customerPic5.setSrc("images/icons/customerenquiry/female.png");
+				}
+			}
+			if (isRetailCustomer) {
+				tabShareHoleder.setVisible(false);
+				tabFinancial.setVisible(true);
+				hbox_empDetails.setVisible(true);
+				listBoxCustomerEmploymentDetail.setVisible(true);
+			} else {
+				tabShareHoleder.setVisible(true);
+				tabFinancial.setVisible(false);
+				hbox_empDetails.setVisible(false);
+				listBoxCustomerEmploymentDetail.setVisible(false);
+			}
+
+			doFillDocumentDetails(aCustomerDetails.getCustomerDocumentsList());
+			doFillCustomerAddressDetails(aCustomerDetails.getAddressList());
+			doFillCustomerEmploymentDetail(aCustomerDetails.getEmploymentDetailsList());
+			doFillCustomerEmailDetails(aCustomerDetails.getCustomerEMailList());
+			doFillCustomerIncome(aCustomerDetails.getCustomerIncomeList());
+			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
+
+			doFillCustomerBankInfoDetails(aCustomerDetails.getCustomerBankInfoList());
+			doFillCustomerChequeInfoDetails(aCustomerDetails.getCustomerChequeInfoList());
+			doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
+			doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
+			doFillCustomerDirectory(aCustomerDetails.getCustomerDirectorList());
+			doSetShareHoldersDesignationCode(aCustomerDetails.getCustomerDirectorList());
+
+			if (listBoxCustomerIncome.getItemCount() == 0) {
+
+				Listitem listitem = new Listitem();
+				listitem.setHeight("50px");
+				Listcell lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("-------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36; text-align: right;");
+				listitem.appendChild(lc);
+				lc = new Listcell("--------");
+				lc.setStyle("color: #f39a36; text-align: center;");
+				listitem.appendChild(lc);
+
+				listBoxCustomerIncome.appendChild(listitem);
 			}
 		}
-		if (isRetailCustomer) {
-			tabShareHoleder.setVisible(false);
-			tabFinancial.setVisible(true);
-			hbox_empDetails.setVisible(true);
-			listBoxCustomerEmploymentDetail.setVisible(true);
-		} else {
-			tabShareHoleder.setVisible(true);
-			tabFinancial.setVisible(false);
-			hbox_empDetails.setVisible(false);
-			listBoxCustomerEmploymentDetail.setVisible(false);
-		}
-
-		doFillDocumentDetails(aCustomerDetails.getCustomerDocumentsList());
-		doFillCustomerAddressDetails(aCustomerDetails.getAddressList());
-		doFillCustomerEmploymentDetail(aCustomerDetails.getEmploymentDetailsList());
-		doFillCustomerEmailDetails(aCustomerDetails.getCustomerEMailList());
-		doFillCustomerIncome(aCustomerDetails.getCustomerIncomeList());
-
-		doFillCustomerBankInfoDetails(aCustomerDetails.getCustomerBankInfoList());
-		doFillCustomerChequeInfoDetails(aCustomerDetails.getCustomerChequeInfoList());
-		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
-		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
-		doFillCustomerDirectory(aCustomerDetails.getCustomerDirectorList());
-		doSetShareHoldersDesignationCode(aCustomerDetails.getCustomerDirectorList());
-
-		if (listBoxCustomerIncome.getItemCount() == 0) {
-
-			Listitem listitem = new Listitem();
-			listitem.setHeight("50px");
-			Listcell lc = new Listcell("--------");
-			lc.setStyle("color: #f39a36;");
-			listitem.appendChild(lc);
-			lc = new Listcell("--------");
-			lc.setStyle("color: #f39a36;");
-			listitem.appendChild(lc);
-			lc = new Listcell("-------");
-			lc.setStyle("color: #f39a36;");
-			listitem.appendChild(lc);
-			lc = new Listcell("--------");
-			lc.setStyle("color: #f39a36;");
-			listitem.appendChild(lc);
-			lc = new Listcell("--------");
-			lc.setStyle("color: #f39a36; text-align: right;");
-			listitem.appendChild(lc);
-			lc = new Listcell("--------");
-			lc.setStyle("color: #f39a36; text-align: center;");
-			listitem.appendChild(lc);
-
-			listBoxCustomerIncome.appendChild(listitem);
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -1534,11 +1774,14 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 						lc.setStyle("font-size: 15px");
 						lc.setParent(item);
 					}
-					if (StringUtils.trimToEmpty(directorDetail.getIdType())
-							.equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustDocCategoryName()))) {
-						String desc = PennantAppUtil.getlabelDesc(directorDetail.getIdType(), docTypeList);
-						directorDetail.setLovDescCustDocCategoryName(desc);
-					}
+					/*
+					 * if (StringUtils.trimToEmpty(directorDetail.getIdType())
+					 * .equals(StringUtils.trimToEmpty(directorDetail.
+					 * getLovDescCustDocCategoryName()))) { String desc =
+					 * PennantAppUtil.getlabelDesc(directorDetail.getIdType(),
+					 * docTypeList);
+					 * directorDetail.setLovDescCustDocCategoryName(desc); }
+					 */
 					if (StringUtils.isNotBlank(directorDetail.getLovDescCustDocCategoryName())) {
 						lc = new Listcell(
 								directorDetail.getIdType() + " - " + directorDetail.getLovDescCustDocCategoryName());
