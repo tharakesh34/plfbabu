@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -590,6 +591,16 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 	//TODO:
 	private void prepareResponseObj(Map<String, Object> validatedMap, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		if (validatedMap != null) {
+			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			if (extendedMapObject == null) {
+				extendedMapObject = new HashMap<String, Object>();
+			}
+			for (Entry<String, Object> entry : validatedMap.entrySet()) {
+				extendedMapObject.put(entry.getKey(), entry.getValue());
+			}
+			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
