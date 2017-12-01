@@ -16,10 +16,16 @@
 		abstract="true">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<bean id="niyoginDAOImpl" class="com.pennanttech.pff.external.dao.NiyoginDAOImpl">
+	<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<!-- Dedup Fields -->
 	<bean id="externalDedup"
 		class="com.pennanttech.niyogin.dedup.service.ExperianDedupService" parent="niyoginService">
+		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
+		<property name="serviceUrl" value="${exp.internal.dedup.url}" />
 	</bean>
 	<bean id="blacklistCheck"
 		class="com.pennanttech.niyogin.hunter.service.BlacklistCheckService" parent="niyoginService">
@@ -33,6 +39,15 @@
 		class="com.pennanttech.niyogin.communication.service.SMSServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.sms.url}" />
 	</bean> 
-	<!-- <bean id="bureauscore" class="com.pennanttech.pff.external.service.CustomerDedupService" 
-		parent="bajajService"/> -->
+	<!-- ExperianBureauConsumerService -->
+	<bean id="experianconsumerService"
+		class="com.pennanttech.niyogin.experian.consumer.service.ExperianConsumerServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="${exp.bureau.consumer.url}" />
+	</bean> 
+	<!-- ExperianBureauCommercialService -->
+	<bean id="experianCommercialService"
+		class="com.pennanttech.niyogin.experian.commercial.service.ExperianCommercialServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="${exp.bureau.commercial.url}" />
+	</bean>
+	
 </beans>
