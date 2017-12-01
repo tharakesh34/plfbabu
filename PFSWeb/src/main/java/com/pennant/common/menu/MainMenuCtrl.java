@@ -44,28 +44,18 @@ package com.pennant.common.menu;
 
 import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Image;
-import org.zkoss.zul.Tab;
-import org.zkoss.zul.Tabpanel;
-import org.zkoss.zul.Tabpanels;
-import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treechildren;
@@ -84,6 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
+import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -193,14 +184,16 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		Date expiredDate = userWorkspace.getLoggedInUser().getAccountExpiredOn();
 
 		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
-			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		} else if (expiredDate.before(DateUtil.getSysDate())) {
 			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
 			win.setWidth("98%");
 			win.setHeight("98%");
 			win.doModal();
 		} else {
-			openPage("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false);
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		}
 
 		logger.trace(Literal.LEAVING);
@@ -258,71 +251,18 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return;
 		}
 
-		openPage(menuItem.getId(), menuItem.getNavigateUrl(), true);
+		ComponentUtil.openMenuItem(menuItem.getId(), menuItem.getNavigateUrl(), true, new MenuItemOnCloseListener());
 
 		logger.trace(Literal.LEAVING);
 	}
 
-	/**
-	 * Opens the menu item.
-	 * 
-	 * @param menuId
-	 *            The ID of the menu.
-	 * @param navigateUrl
-	 *            The URL of the page.
-	 * @param closable
-	 *            <code>true</code> if the page is closable.
-	 * @throws URISyntaxException
-	 *             If the navigate URL is not a valid URI.
-	 */
-	private void openPage(String menuId, String navigateUrl, boolean closable) throws URISyntaxException {
-		logger.info("Openening page " + navigateUrl);
+	public class MenuItemOnCloseListener implements EventListener<Event> {
+		@Override
+		public void onEvent(Event event) {
+			String page = event.getTarget().getId().replace("tab_", "");
 
-		// Get the tab id.
-		String tabId = menuId.replace("menu_Item_", "tab_");
-
-		// Get the container components for the page.
-		Tabs tabs = (Tabs) Path.getComponent("/outerIndexWindow/tabsIndexCenter");
-		Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
-
-		// Open the tab if one already exists.
-		if (tabs.hasFellow(tabId)) {
-			((Tab) tabs.getFellow(tabId)).setSelected(true);
-			return;
+			userWorkspace.deAllocateAuthorities(page);
 		}
-
-		// Create the tab and panel.
-		Tab tab = new Tab();
-		tab.setParent(tabs);
-		tab.setId(tabId);
-		tab.setLabel(StringUtils.trimToEmpty(Labels.getLabel(menuId)));
-		tab.setClosable(closable);
-		tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				String page = event.getTarget().getId().replace("tab_", "");
-
-				userWorkspace.deAllocateAuthorities(page);
-			}
-		});
-
-		Tabpanel tabpanel = new Tabpanel();
-		tabpanel.setParent(tabpanels);
-		tabpanel.setHeight("100%");
-		tabpanel.setStyle("padding: 0px;");
-
-		// Prepare the URI and parameters of the page.
-		URIBuilder uriBuilder = new URIBuilder(navigateUrl);
-		String uri = uriBuilder.getPath();
-
-		Map<String, String> parametrs = new HashMap<>();
-		for (NameValuePair param : uriBuilder.getQueryParams()) {
-			parametrs.put(param.getName(), param.getValue());
-		}
-
-		// Create components from a page file in the respective tab panel and select the tab.
-		Executions.createComponents(uri, tabpanel, parametrs);
-		tab.setSelected(true);
 	}
 
 	public void setUserWorkspace(UserWorkspace userWorkspace) {

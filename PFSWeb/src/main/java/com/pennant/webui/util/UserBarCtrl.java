@@ -43,28 +43,24 @@
 package com.pennant.webui.util;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
-import org.zkoss.zul.Textbox;
-import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
@@ -187,15 +183,8 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
  		getUserWorkspace().doLogout(); // logout.
 	}
 	
-	public void onClick$menuitem_changePasssword(Event event) throws IOException {
-		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-		/* get an instance of the searched CENTER layout area */
-		final West west = bl.getWest();
-		
-		Button button = (Button) west.getChildren().get(0).getChildren().get(0).getFellowIfAny("btnGo");
-		Textbox textbox = (Textbox) west.getChildren().get(0).getChildren().get(0).getFellowIfAny("menuName1");
-		textbox.setValue("changePassword");
-		Events.postEvent("onClick", button, event);
+	public void onClick$menuitem_changePasssword() throws URISyntaxException {
+		ComponentUtil.openMenuItem("menu_Item_ChgPwd", "/WEB-INF/pages/PasswordReset/changePwd.zul", true, null);
 	}
 	
 	private String getLastLoginInfo() {
