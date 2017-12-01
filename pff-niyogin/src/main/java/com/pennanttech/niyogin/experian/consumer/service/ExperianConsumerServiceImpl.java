@@ -172,13 +172,13 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			if (entry.getKey().equals("RESTRUCTUREDLOAN")) {
 				extendedFieldMap.put(entry.getKey(), "");
 			} else if (entry.getKey().equals("SUITFILED")) {
-				if (entry.getValue().equals("01")) {
+				if (entry.getValue()!=null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
 				}
 			} else if (entry.getKey().equals("WILLFULDEFAULTER")) {
-				if (entry.getValue().equals("02")) {
+				if (entry.getValue()!=null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
