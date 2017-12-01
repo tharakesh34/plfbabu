@@ -35,6 +35,9 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.BureauScore;
+import com.pennanttech.pff.external.CrifConsumerService;
+import com.pennanttech.pff.external.ExperianCommercialService;
+import com.pennanttech.pff.external.ExperianConsumerService;
 import com.pennanttech.pff.external.ExternalDedup;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
@@ -46,6 +49,15 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	@Autowired(required = false)
 	private BlacklistCheck blacklistCheck;
+
+	@Autowired(required = false)
+	private ExperianConsumerService experianconsumerService;
+
+	@Autowired(required = false)
+	private ExperianCommercialService experianCommercialService;
+
+	@Autowired(required = false)
+	private CrifConsumerService crifConsumerService;
 
 	@Autowired(required = false)
 	private BureauScore bureauscore;
@@ -132,7 +144,14 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Bureau:
-				// call Bureau check interface
+				//TODO:condition required
+				//auditHeader=experianconsumerService.getExperianConsumer(auditHeader);
+				//auditHeader=experianCommercialService.getBureauCommercial(auditHeader);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_Crif:
+				//TODO:condition required
+				//auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
 				taskExecuted = true;
 				break;
 			default:

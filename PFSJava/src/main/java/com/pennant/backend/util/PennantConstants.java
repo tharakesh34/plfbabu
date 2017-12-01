@@ -188,7 +188,7 @@ public class PennantConstants {
 	public static final String method_externalDedup = "executeExperianDedup";
 	public static final String method_hunter = "executeHunter";
 	public static final String method_Bureau = "executeBureau";
-
+	public static final String method_Crif = "executeCrif";
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";
