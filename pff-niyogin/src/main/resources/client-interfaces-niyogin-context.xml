@@ -49,5 +49,11 @@
 		class="com.pennanttech.niyogin.experian.commercial.service.ExperianCommercialServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${exp.bureau.commercial.url}" />
 	</bean>
+	<!-- CRIFBureauCommercialService -->
+	<bean id="crifConsumerService"
+		class="com.pennanttech.niyogin.crif.cosumer.service.CrifConsumerServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="${crif.bureau.consumer.url}" />
+		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
+	</bean>	
 	
 </beans>
