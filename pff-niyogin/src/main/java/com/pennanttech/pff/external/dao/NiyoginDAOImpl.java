@@ -214,4 +214,18 @@ public class NiyoginDAOImpl {
 		logger.debug("Leaving");
 		return customerEMails;
 	}
+	
+	public long getPincodeGroupId(String pincode) {
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT GROUPID FROM PINCODES WHERE PINCODE =:PINCODE");
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("PINCODE", pincode);
+		long grpid = 0;
+		try {
+			grpid = namedJdbcTemplate.queryForObject(selectSql.toString(), paramSource, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		return grpid;
+	}
 }
