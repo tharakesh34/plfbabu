@@ -15,6 +15,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.experian.commercial.model.Address;
@@ -111,7 +112,12 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		}
 		applicant.setPan(pan);
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			applicant.setMobile(ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
+			CustomerPhoneNumber customerPhone = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			if(customerPhone!=null){
+				applicant.setMobile(customerPhone.getPhoneNumber());	
+			}else{
+				applicant.setMobile("");	
+			}
 		}
 
 		applicant.setMaritalStatus(customer.getCustMaritalSts());
