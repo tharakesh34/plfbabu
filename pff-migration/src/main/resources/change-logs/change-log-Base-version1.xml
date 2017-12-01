@@ -624,4 +624,7 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 			insert into ErrorDetails values('90405','EN','E','Update loan failed, Mandate details already exists.','test','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="28" author="Surekha">
+		<dropForeignKeyConstraint baseTableName="CUSTOMERS" constraintName="FK_CUSTS_RELATIONSHIPOFFICERS"/>
+	</changeSet>
 	</databaseChangeLog>
