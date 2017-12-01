@@ -44,5 +44,9 @@
 	 <changeSet id="3" author="Surekha">
      	<dropColumn tableName="AdtRMTLovFieldDetail" columnName="CatOfcoApplicant"/>
      </changeSet>
-
+<changeSet id="3" author="Amit">
+     <addColumn tableName="adtCustomerDocuments">
+     	<column name="PdfPassWord" type="nvarchar(200)"/>
+     </addColumn>
+    </changeSet>
 </databaseChangeLog>
