@@ -53,8 +53,8 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			emailResponse = (Email) client.postProcess(serviceUrl, "", emailRequest, Email.class);
-			logger.info("Response : " + emailResponse.toString());
+			String response=client.post(serviceUrl, emailRequest);
+			logger.info("Response : " + response.toString());
 		} catch (Exception exception) {
 			logger.error("Exception: ", exception);
 			throw new InterfaceException("9999", exception.getMessage());
