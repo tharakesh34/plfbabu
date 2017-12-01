@@ -521,4 +521,49 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
       <changeSet id="23" author="Surekha">
      	<dropColumn tableName="RMTLovFieldDetail_Temp" columnName="CatOfcoApplicant"/>
      </changeSet>
+      <changeSet id="24" author="Surekha">
+     <sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_AccountNumber','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerName','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerFax','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerAddress1','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerAddress2','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerAddress3','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerAddress4','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerCountry','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerProvince','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_PaymentMode','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_Emirates','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_Email','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_AccountingTreatment','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_CommisionPaidAt','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_CalculationRule','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_PoBox','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_SellerType','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_dealerCity','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_ZipCode','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_VASM_Active','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_AccountNumber','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerName','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialo_SOPTg_dealerFax','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerAddress1','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerAddress2','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerAddress3','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerAddress4','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerCountry','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerProvince','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_PaymentMode','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_Emirates','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_Email','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_AccountingTreatment','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_CommisionPaidAt','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_CalculationRule','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_PoBox','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_SellerType','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_dealerCity','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_ZipCode','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_SOPT_Active','VehicleDealerDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	</sql>
+	</changeSet>	
 	</databaseChangeLog>
