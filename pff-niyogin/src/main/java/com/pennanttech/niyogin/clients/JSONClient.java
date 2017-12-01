@@ -45,14 +45,17 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
+		logger.debug("Jason Request String " + jsonInString);
 
 		Response response = client.post(jsonInString);
-
+		jsonInString=response.readEntity(String.class);
+		logger.debug("Jason Response String " + jsonInString);
 		logger.debug(Literal.LEAVING);
-		return response.readEntity(String.class);
+		return jsonInString;
 	}
 
 	public Object post(String url, Object requestData, Class<?> responseClass) throws Exception {
+		logger.debug(Literal.ENTERING);
 		String jsonInString = null;
 		WebClient client = getClient(url);
 
@@ -71,17 +74,19 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
-
+		logger.debug("Jason Request String " + jsonInString);
 		Response response = client.post(jsonInString);
 
 		jsonInString = response.readEntity(String.class);
 		Object objResponse = mapper.readValue(jsonInString, responseClass);
-
+		logger.debug("Jason Response String " + jsonInString);
+		logger.debug(Literal.LEAVING);
 		return objResponse;
 	}
 
 	public Object getResponseObject(String jsonResponse, String datePattern, Class<?> responseClass, boolean isList)
 			throws Exception {
+		logger.debug(Literal.ENTERING);
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
@@ -100,7 +105,7 @@ public class JSONClient {
 		} else {
 			objResponse = mapper.readValue(jsonResponse, responseClass);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return objResponse;
 	}
 
@@ -129,7 +134,9 @@ public class JSONClient {
 	 * @return
 	 */
 	private static WebClient prepareHeader(WebClient client) {
+		logger.debug(Literal.ENTERING);
 		client.header(AUTHORIZATION, getAuthkey());
+		logger.debug(Literal.LEAVING);
 		return client;
 	}
 
@@ -139,12 +146,13 @@ public class JSONClient {
 	 * @return
 	 */
 	private static String getAuthkey() {
+		logger.debug(Literal.ENTERING);
 		//TODO:DDP-Use encypted password
 		String username = "qUmCM";
 		String password = "rye28f16Z";
 		String key = username + ":" + password;
 		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(key.getBytes());
-
+		logger.debug(Literal.LEAVING);
 		return authKey;
 	}
 
