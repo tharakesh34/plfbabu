@@ -104,19 +104,22 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 
 		String pan = "";
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		for (CustomerDocument document : documentList) {
-			if (document.getCustDocCategory().equals("03")) {
-				pan = document.getCustDocTitle();
-				break;
+		if (documentList != null) {
+			for (CustomerDocument document : documentList) {
+				if (document.getCustDocCategory().equals("03")) {
+					pan = document.getCustDocTitle();
+					break;
+				}
 			}
 		}
 		applicant.setPan(pan);
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			CustomerPhoneNumber customerPhone = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
-			if(customerPhone!=null){
-				applicant.setMobile(customerPhone.getPhoneNumber());	
-			}else{
-				applicant.setMobile("");	
+			CustomerPhoneNumber customerPhone = ExperianUtility
+					.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			if (customerPhone != null) {
+				applicant.setMobile(customerPhone.getPhoneNumber());
+			} else {
+				applicant.setMobile("");
 			}
 		}
 
