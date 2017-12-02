@@ -85,6 +85,11 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 			//for Straight forwardFields It works
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
+			
+			if (extendedFieldMap.get("ERRORCODE") != null) {
+				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
+						Objects.toString(extendedFieldMap.get("ERRORMESSAGE")));
+			}
 
 			//For caliculation Fields
 			prepareExtendedFieldMap(consumerResponse, extendedFieldMap);
