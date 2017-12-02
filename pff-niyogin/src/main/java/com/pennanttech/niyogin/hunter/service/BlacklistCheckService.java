@@ -60,6 +60,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
+				extendedFieldMap.put("HUNTREQSEND", true);
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
 
