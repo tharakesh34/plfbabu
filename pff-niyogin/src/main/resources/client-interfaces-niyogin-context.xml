@@ -39,10 +39,12 @@
  	<bean id="mailService"
 		class="com.pennanttech.niyogin.communication.service.MailServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.email.url}" />
+		<property name="client" ref="jsonClient" />
 	</bean>
  	<bean id="sMSService"
 		class="com.pennanttech.niyogin.communication.service.SMSServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${soa.sms.url}" />
+		<property name="client" ref="jsonClient" />
 	</bean> 
 	<!-- ExperianBureauConsumerService -->
 	<bean id="experianconsumerService"

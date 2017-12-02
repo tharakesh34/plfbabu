@@ -1,10 +1,14 @@
 package com.pennanttech.niyogin.communication.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.mail.MailTemplate;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -13,9 +17,16 @@ import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class MailServiceImpl extends NiyoginService implements MailService {
-	private static final Logger	logger	= Logger.getLogger(MailServiceImpl.class);
+	private static final Logger	logger			= Logger.getLogger(MailServiceImpl.class);
 
+	private JSONClient			client;
 	private String				serviceUrl;
+
+	private String				status			= "SUCCESS";
+	private String				errorCode		= null;
+	private String				errorDesc		= null;
+	private String				jsonResponse	= null;
+	private Timestamp			reqSentOn		= null;
 
 	/**
 	 * Method to send the email for the given list of toAddress.
@@ -27,10 +38,10 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	@Override
 	public void sendEmail(List<String> toAddress, List<MailTemplate> templates) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (toAddress != null && !toAddress.isEmpty() && templates != null && !templates.isEmpty()) {
 			for (String emailId : toAddress) {
-				for(MailTemplate template:templates) {
+				for (MailTemplate template : templates) {
 					send(emailId, template.getEmailSubject(), template.getLovDescFormattedContent());
 				}
 			}
@@ -49,15 +60,21 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	private void send(String emailId, String subject, String body) {
 		logger.debug(Literal.ENTERING);
 		Email emailRequest = prepareRequest(emailId, subject, body);
-		Email emailResponse = null;
-		JSONClient client = new JSONClient();
+		// logging fields Data
+		reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String response=client.post(serviceUrl, emailRequest);
-			logger.info("Response : " + response.toString());
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+			jsonResponse = client.post(serviceUrl, emailRequest);
+			logger.info("Response : " + jsonResponse.toString());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			status = "FAILED";
+			errorCode = "9999";
+			StringWriter writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));
+			errorDesc = writer.toString();
+			doInterfaceLogging(emailRequest, "MailId: "+emailId+":"+"Subject :"+subject);
+			throw new InterfaceException("9999", e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -85,5 +102,21 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+
+	public void setClient(JSONClient client) {
+		this.client = client;
+	}
+
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param emailRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(Email emailRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, emailRequest, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
 	}
 }
