@@ -2022,6 +2022,10 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
+		/* RMT Lov Filed Details */
+		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class,
+				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
+				new String[][] { { "FieldCode", "0", "LOANPURPOSE" } }, 300));
 		
 		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
 				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "MappingId", "Type" }, null, 350));

@@ -739,6 +739,7 @@ public class PennantAppUtil {
 		moduleList.add("BuilderCompany");
 		moduleList.add("BuilderProjcet");
 		moduleList.add("Locality");
+		moduleList.add("LoanPurpose");
 		
 		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
 
