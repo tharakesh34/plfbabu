@@ -1,6 +1,5 @@
 package com.pennanttech.niyogin.dedup.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
 import com.pennanttech.niyogin.dedup.model.ExperianDedup;
