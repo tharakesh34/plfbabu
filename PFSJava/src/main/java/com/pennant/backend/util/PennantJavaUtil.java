@@ -2028,7 +2028,7 @@ public class PennantJavaUtil {
 				new String[][] { { "FieldCode", "0", "LOANPURPOSE" } }, 300));
 		
 		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
-				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "MappingId", "Type" }, null, 350));
+				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "Type", "Type" }, null, 350));
 		
 		ModuleUtil.register("PdfDocumentType", new ModuleMapping("PdfDocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "PdfMappingRef", "DocTypeDesc"},
