@@ -39,12 +39,12 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	private NiyoginDAOImpl		niyoginDAOImpl;
 	private JSONClient			client;
 
-	String						status				= "SUCCESS";
-	String						errorCode			= null;
-	String						errorDesc			= null;
-	String						jsonResponse		= null;
-	Timestamp					reqSentOn			= null;	
-	
+	private String				status				= "SUCCESS";
+	private String				errorCode			= null;
+	private String				errorDesc			= null;
+	private String				jsonResponse		= null;
+	private Timestamp			reqSentOn			= null;
+
 	@Override
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
@@ -83,7 +83,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 	public Map<String, Object> checkDedup(ExperianDedup experianDedupRequest, String finReference) {
 		logger.debug(Literal.ENTERING);
-		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
 
@@ -95,10 +94,11 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			jsonResponse = client.post(serviceUrl, experianDedupRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
+			// error validation on Response status
 			if (extendedFieldMap.get("ERRORCODE") != null) {
 				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
 				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
-				throw new InterfaceException(errorCode, errorDesc);
+				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");

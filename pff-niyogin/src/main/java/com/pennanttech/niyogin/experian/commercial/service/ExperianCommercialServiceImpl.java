@@ -1,5 +1,8 @@
 package com.pennanttech.niyogin.experian.commercial.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.experian.commercial.model.Address;
 import com.pennanttech.niyogin.experian.commercial.model.Applicant;
@@ -36,11 +40,11 @@ import com.pennanttech.pff.external.service.NiyoginService;
  * @return auditHeader
  */
 public class ExperianCommercialServiceImpl extends NiyoginService implements ExperianCommercialService {
-	private static final Logger	logger				= Logger.getLogger(ExperianCommercialServiceImpl.class);
+	private static final Logger	logger							= Logger.getLogger(ExperianCommercialServiceImpl.class);
 
-	private final String		extConfigFileName	= "experianBureauCommercial";
+	private final String		extConfigFileName				= "experianBureauCommercial";
 	private String				serviceUrl;
-	private JSONClient 			client;
+	private JSONClient			client;
 
 	private final String		NO_EMI_BOUNCES_IN_3_MONTHS		= "EMI3MONTHS";
 	private final String		RESTRUCTURED_LOAN_AND_AMOUNT	= "RESTRUCTUREDLOAN";
@@ -48,27 +52,37 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
 	private final String		NO_EMI_BOUNCES_IN_SIX_MONTHS	= "EMI6MNTHS";
 
+	private String				status							= "SUCCESS";
+	private String				errorCode						= null;
+	private String				errorDesc						= null;
+	private String				jsonResponse					= null;
+	private Timestamp			reqSentOn						= null;
+
 	@Override
 	public AuditHeader getBureauCommercial(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		BureauCommercial commercialRequest = prepareRequestObj(financeDetail);
-		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
+
+		// logging fields Data
+		reqSentOn = new Timestamp(System.currentTimeMillis());
+
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			String jsonResponse = client.post(serviceUrl, commercialRequest);
+			jsonResponse = client.post(serviceUrl, commercialRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
 			//For caliculation Fields
 			prepareExtendedFieldMap(extendedFieldMap);
 
-			// TODO: Error Response validate  
+			// error validation on Response status
 			if (extendedFieldMap.get("ERRORCODE") != null) {
-				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORDESC")));
+				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
+				errorDesc = Objects.toString(extendedFieldMap.get("ERRORDESC"));
+				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORDESC");
@@ -76,9 +90,15 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 			}
 
 			logger.info("Response : " + jsonResponse);
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			status = "FAILED";
+			errorCode = "9999";
+			StringWriter writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));
+			errorDesc = writer.toString();
+			doInterfaceLogging(commercialRequest, finReference);
+			throw new InterfaceException("9999", e.getMessage());
 		}
 		prepareResponseObj(validatedMap, financeDetail);
 
@@ -188,11 +208,10 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	 * @throws Exception
 	 */
 	private void prepareExtendedFieldMap(Map<String, Object> extendedFieldMap) throws Exception {
-		JSONClient jsonClient = new JSONClient();
 		List<BpayGridResponse> bpayGridResponses = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
-			String jsonResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = jsonClient.getResponseObject(jsonResponse, "", BpayGridResponse.class, true);
+			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
+			Object responseObj = client.getResponseObject(jsonEmoBounceResponse, "", BpayGridResponse.class, true);
 			bpayGridResponses = (List<BpayGridResponse>) responseObj;
 		}
 
@@ -300,6 +319,18 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 
 			return (arg0.getMonthvalue() + arg0.getYear()) - (arg1.getMonthvalue() + arg1.getYear());
 		}
+	}
+	
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param commercialRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(BureauCommercial commercialRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, commercialRequest, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
 	}
 
 	public void setServiceUrl(String serviceUrl) {

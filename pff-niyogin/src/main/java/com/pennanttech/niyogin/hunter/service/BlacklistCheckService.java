@@ -1,5 +1,8 @@
 package com.pennanttech.niyogin.hunter.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
@@ -31,7 +35,13 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private static final Logger	logger				= Logger.getLogger(BlacklistCheckService.class);
 	private final String		extConfigFileName	= "hunter";
 	private String				serviceUrl;
-	private JSONClient 			client;
+	private JSONClient			client;
+
+	private String				status				= "SUCCESS";
+	private String				errorCode			= null;
+	private String				errorDesc			= null;
+	private String				jsonResponse		= null;
+	private Timestamp			reqSentOn			= null;
 
 	/**
 	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
@@ -45,20 +55,24 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
-		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
+
+		// logging fields Data
+		reqSentOn = new Timestamp(System.currentTimeMillis());
+
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			String jsonResponse = client.post(serviceUrl, hunterRequest);
+			jsonResponse = client.post(serviceUrl, hunterRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
-			// validate Response status
-			if (extendedFieldMap.get("ERRORCODE")!=null) {
-				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORMESSAGE")));
+			// error validation on Response status
+			if (extendedFieldMap.get("ERRORCODE") != null) {
+				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
+				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
+				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
@@ -67,9 +81,15 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			}
 
 			logger.info("Response : " + jsonResponse);
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			status = "FAILED";
+			errorCode = "9999";
+			StringWriter writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));
+			errorDesc = writer.toString();
+			doInterfaceLogging(hunterRequest, finReference);
+			throw new InterfaceException("9999", e.getMessage());
 		}
 		prepareResponseObj(validatedMap, financeDetail);
 		logger.debug(Literal.LEAVING);
@@ -251,10 +271,22 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		}
 	}
 
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param hunterRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(HunterRequest hunterRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, hunterRequest, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
+	}
+
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
-	
+
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}

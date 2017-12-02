@@ -1,5 +1,8 @@
 package com.pennanttech.niyogin.crif.cosumer.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,8 +15,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +27,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.bureau.consumer.model.Address;
 import com.pennanttech.niyogin.bureau.consumer.model.BureauConsumer;
 import com.pennanttech.niyogin.bureau.consumer.model.PersonalDetails;
@@ -45,6 +49,7 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 	//TODO:
 	private final String		extConfigFileName	= "crifBureauConsumer";
 	private String				serviceUrl;
+	private JSONClient			client;
 	private NiyoginDAOImpl		niyoginDAOImpl;
 
 	private String				OLDEST_LOANDISBURSED_DATE="OLDESTLOANDISBUR";
@@ -68,48 +73,60 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 
 	private Date				appDate				= getAppDate();
 	private String				pincode				= null;
+	
+	private String				status				= "SUCCESS";
+	private String				errorCode			= null;
+	private String				errorDesc			= null;
+	private String				jsonResponse		= null;
+	private Timestamp			reqSentOn			= null;
 
 	@Override
 	public AuditHeader getCrifBureauConsumer(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		BureauConsumer consumerRequest = prepareRequestObj(financeDetail);
-		JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
+
+		// logging fields Data
+		reqSentOn = new Timestamp(System.currentTimeMillis());
+
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String jsonResponse = client.post(serviceUrl, consumerRequest);
+			jsonResponse = client.post(serviceUrl, consumerRequest);
 			Object responseObj = client.getResponseObject(jsonResponse, "dd-MM-YYYY", CRIFConsumerResponse.class,
 					false);
 			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 			//for Straight forwardFields It works
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-			
+
+			// error validation on Response status
 			if (extendedFieldMap.get("ERRORCODE") != null) {
-				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORMESSAGE")));
+				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
+				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
+				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
+			} else {
+				extendedFieldMap.remove("ERRORCODE");
+				extendedFieldMap.remove("ERRORMESSAGE");
 			}
 
 			//For caliculation Fields
 			prepareExtendedFieldMap(consumerResponse, extendedFieldMap);
 
-			// TODO:validate Response status
-			int errorCount = Integer.parseInt(extendedFieldMap.get("ERRORCOUNT").toString());
-			if (errorCount > 0) {
-				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORDESC")));
-			} else {
-				extendedFieldMap.remove("ERRORCOUNT");
-				extendedFieldMap.remove("ERRORCODE");
-				extendedFieldMap.remove("ERRORDESC");
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
-			}
+			//validate the map with configuration
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
 
 			logger.info("Response : " + jsonResponse);
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			status = "FAILED";
+			errorCode = "9999";
+			StringWriter writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));
+			errorDesc = writer.toString();
+			doInterfaceLogging(consumerRequest, finReference);
+			throw new InterfaceException("9999", e.getMessage());
 		}
 		prepareResponseObj(validatedMap, financeDetail);
 
@@ -658,6 +675,18 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 			return arg1.getPaymentDate().compareTo(arg0.getPaymentDate());
 		}
 	}
+	
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param consumerRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(BureauConsumer consumerRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, consumerRequest, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
+	}
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
@@ -665,6 +694,10 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 
 	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
 		this.niyoginDAOImpl = niyoginDAOImpl;
+	}
+
+	public void setClient(JSONClient client) {
+		this.client = client;
 	}
 
 }

@@ -1,5 +1,8 @@
 package com.pennanttech.niyogin.experian.consumer.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.bureau.consumer.model.Address;
 import com.pennanttech.niyogin.bureau.consumer.model.BureauConsumer;
 import com.pennanttech.niyogin.bureau.consumer.model.CAISAccountHistory;
@@ -30,16 +34,22 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianConsumerServiceImpl extends NiyoginService implements ExperianConsumerService {
 
-	private static final Logger	logger				= Logger.getLogger(ExperianConsumerServiceImpl.class);
-	private final String		extConfigFileName	= "experianBureauConsumer";
+	private static final Logger	logger							= Logger.getLogger(ExperianConsumerServiceImpl.class);
+	private final String		extConfigFileName				= "experianBureauConsumer";
 	private String				serviceUrl;
-	private JSONClient 			client;
+	private JSONClient			client;
 
-	private final String		NO_EMI_BOUNCES_IN_3_MONTHS = "EMI3MONTHS";
-	private final String		RESTRUCTURED_LOAN_AND_AMOUNT = "RESTRUCTUREDLOAN";
-	private final String		SUIT_FILED = "SUITFILED";
-	private final String		WILLFUL_DEFAULTER = "WILLFULDEFAULTER";
-	private final String 		NO_EMI_BOUNCES_IN_SIX_MONTHS = "EMI6MNTHS";
+	private final String		NO_EMI_BOUNCES_IN_3_MONTHS		= "EMI3MONTHS";
+	private final String		RESTRUCTURED_LOAN_AND_AMOUNT	= "RESTRUCTUREDLOAN";
+	private final String		SUIT_FILED						= "SUITFILED";
+	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
+	private final String		NO_EMI_BOUNCES_IN_SIX_MONTHS	= "EMI6MNTHS";
+
+	private String				status							= "SUCCESS";
+	private String				errorCode						= null;
+	private String				errorDesc						= null;
+	private String				jsonResponse					= null;
+	private Timestamp			reqSentOn						= null;
 
 	/**
 	 * Method for get the ExperianBureauConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -51,23 +61,29 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	public AuditHeader getExperianConsumer(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		BureauConsumer consumerRequest = prepareRequestObj(financeDetail);
-		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
+
+		// logging fields Data
+		reqSentOn = new Timestamp(System.currentTimeMillis());
+
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			String jsonResponse = client.post(serviceUrl, consumerRequest);
+
+			jsonResponse = client.post(serviceUrl, consumerRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
 			//For caliculation Fields
 			prepareExtendedFieldMap(extendedFieldMap);
 
-			// TODO: Error Response validate  
-			if(extendedFieldMap.get("ERRORCODE")!=null){
-				throw new InterfaceException(Objects.toString(extendedFieldMap.get("ERRORCODE")),
-						Objects.toString(extendedFieldMap.get("ERRORDESC")));
+			// error validation on Response status
+			if (extendedFieldMap.get("ERRORCODE") != null) {
+				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
+				errorDesc = Objects.toString(extendedFieldMap.get("ERRORDESC"));
+				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
+
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORDESC");
@@ -75,9 +91,15 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			}
 
 			logger.info("Response : " + jsonResponse);
-		} catch (Exception exception) {
-			logger.error("Exception: ", exception);
-			throw new InterfaceException("9999", exception.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			status = "FAILED";
+			errorCode = "9999";
+			StringWriter writer = new StringWriter();
+			e.printStackTrace(new PrintWriter(writer));
+			errorDesc = writer.toString();
+			doInterfaceLogging(consumerRequest, finReference);
+			throw new InterfaceException("9999", e.getMessage());
 		}
 		prepareResponseObj(validatedMap, financeDetail);
 
@@ -113,11 +135,12 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		personalDetails.setGender(customer.getCustGenderCode());
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			CustomerPhoneNumber customerPhone = ExperianUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
-			if(customerPhone!=null){
+			CustomerPhoneNumber customerPhone = ExperianUtility
+					.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			if (customerPhone != null) {
 				personalDetails.setMobile(customerPhone.getPhoneNumber());
-			}else{
-				personalDetails.setMobile("");	
+			} else {
+				personalDetails.setMobile("");
 			}
 		}
 		String pan = "";
@@ -171,11 +194,10 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	 * @throws Exception
 	 */
 	private void prepareExtendedFieldMap(Map<String, Object> extendedFieldMap) throws Exception {
-		JSONClient jsonClient = new JSONClient();
 		List<CAISAccountHistory> caisAccountHistories = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
-			String jsonResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = jsonClient.getResponseObject(jsonResponse, "", CAISAccountHistory.class, true);
+			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
+			Object responseObj = client.getResponseObject(jsonEmiBounceResponse, "", CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
@@ -183,13 +205,13 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			if (entry.getKey().equals(RESTRUCTURED_LOAN_AND_AMOUNT)) {
 				extendedFieldMap.put(entry.getKey(), "");
 			} else if (entry.getKey().equals(SUIT_FILED)) {
-				if (entry.getValue()!=null) {
+				if (entry.getValue() != null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
 				}
 			} else if (entry.getKey().equals(WILLFUL_DEFAULTER)) {
-				if (entry.getValue()!=null) {
+				if (entry.getValue() != null) {
 					extendedFieldMap.put(entry.getKey(), true);
 				} else {
 					extendedFieldMap.put(entry.getKey(), false);
@@ -266,6 +288,18 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 
 			return (arg0.getMonth() + arg0.getYear() - arg1.getMonth() + arg1.getYear());
 		}
+	}
+
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param consumerRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(BureauConsumer consumerRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, consumerRequest, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
 	}
 
 	public void setServiceUrl(String serviceUrl) {
