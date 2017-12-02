@@ -824,4 +824,23 @@ UNION ALL
 			<column name="ErrorDesc" type="nvarchar(200)"/>
 		</createTable>
 	</changeSet>
+<changeSet id="34" author="Amit">
+	<sql>
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from
+		SeqSecRights),3,'CustomerDocumentDialog_pdfPassword','CustomerDocumentDialog',0,1000,current_timestamp,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+		Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+		SeqSecGroupRights), (select GrpID from SecGroups where
+		GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+		RightName='CustomerDocumentDialog_pdfPassword'),1,0,10000,current_timestamp,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+		Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+		SecGroupRights);
+	</sql>
+	</changeSet>
+	
 	</databaseChangeLog>
