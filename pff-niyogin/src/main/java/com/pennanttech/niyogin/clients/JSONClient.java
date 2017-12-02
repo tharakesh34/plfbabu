@@ -40,6 +40,11 @@ public class JSONClient {
 		mapper.setDateFormat(dateFormat);
 		String jsonInString = null;
 		
+		try {
+			jsonInString = mapper.writeValueAsString(requestData);
+		} catch (Exception e) {
+			logger.error("Exception in jason request string" + e);
+		}
 		logger.debug("Jason Request String " + jsonInString);
 		Response response = client.post(jsonInString);
 		jsonInString=response.readEntity(String.class);
