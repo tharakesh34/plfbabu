@@ -65,6 +65,9 @@ public class DocumentType extends AbstractWorkflowEntity {
 	private boolean docTypeIsActive;
 	private boolean docIsCustDoc;
 	private boolean docIssuedAuthorityMand;
+	private boolean docIsPdfExtRequired;
+	private boolean docIsPasswordProtected;
+	private long pdfMappingRef;
 
 	private boolean newRecord;
 	private String lovValue;
@@ -201,5 +204,27 @@ public class DocumentType extends AbstractWorkflowEntity {
 	}
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+	public boolean isDocIsPdfExtRequired() {
+		return docIsPdfExtRequired;
+	}
+	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
+		this.docIsPdfExtRequired = docIsPdfExtRequired;
+	}
+
+	public boolean isDocIsPasswordProtected() {
+		return docIsPasswordProtected;
+	}
+
+	public void setDocIsPasswordProtected(boolean docIsPasswordProtected) {
+		this.docIsPasswordProtected = docIsPasswordProtected;
+	}
+
+	public long getPdfMappingRef() {
+		return pdfMappingRef;
+	}
+
+	public void setPdfMappingRef(long pdfMappingRef) {
+		this.pdfMappingRef = pdfMappingRef;
 	}
 }

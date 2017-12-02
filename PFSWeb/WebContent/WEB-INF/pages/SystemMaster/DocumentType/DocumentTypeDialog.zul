@@ -150,13 +150,42 @@
 										checked="false" />
 								</hbox>
 							</row>
+							
+							<row>
+								<label
+									id="label_IsPdf_Ext_Required"
+									value="${c:l('label_DocumentTypeDialog_PdfExtRequired.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="docIsPdfExtRequired"
+										checked="false" />
+								</hbox>
+							</row>
+							
+							<row>
+								<label
+									id="label_Is_Pass_Protected"
+									value="${c:l('label_DocumentTypeDialog_PdfPassProtected.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="docIsPasswordProtected"
+										checked="false" />
+								</hbox>
+							</row>
+							
+							<row id="rowMappingRef" visible="true">
+								<label id="label_MappingRef"
+									value="${c:l('label_DocumentTypeDialog_MappingRef.value')}" />
+								<extendedcombobox id="mappingRef"  />
+							</row>
+							
 							<row>
 								<label
 									id="label_DocumentTypeDialog_DocTypeIsActive"
 									value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="docTypeIsActive"
+									<checkbox id="docTypeIsActive" disabled="true"
 										checked="false" />
 								</hbox>
 							</row>

@@ -198,7 +198,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 	public DocumentType getApprovedDocumentTypeById(String id) {
 		return getDocumentTypeDAO().getDocumentTypeById(id, "_AView");
 	}
-
+	
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or

@@ -54,9 +54,11 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -93,6 +95,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	protected Checkbox 	docTypeIsActive; 			// autoWired
 	protected Checkbox 	docIsCustDoc; 				// autoWired
 	protected Checkbox 	docIssuedAuthorityMand; 	// autoWired
+	protected Checkbox 	docIsPdfExtRequired; 	// autoWired
+	protected Checkbox 	docIsPasswordProtected; 	// autoWired
+	protected ExtendedCombobox mappingRef;
+	protected Row rowMappingRef;
 	
 
 	// not autoWired variables
@@ -195,6 +201,13 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
+		
+		this.mappingRef.setMaxlength(8);
+		this.mappingRef.setModuleName("DocumentDataMapping");
+		this.mappingRef.setValueColumn("MappingId");
+		this.mappingRef.setDescColumn("Type");
+		this.mappingRef.setValidateColumns(new String[]{"MappingId"});
+		
 		logger.debug("Leaving");
 	}
 
@@ -318,6 +331,14 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docTypeIsActive.setChecked(aDocumentType.isDocTypeIsActive());
 		this.docIsCustDoc.setChecked(aDocumentType.isDocIsCustDoc());
 		this.recordStatus.setValue(aDocumentType.getRecordStatus());
+		this.docIsPdfExtRequired.setChecked(aDocumentType.isDocIsPdfExtRequired());
+		this.docIsPasswordProtected.setChecked(aDocumentType.isDocIsPasswordProtected());
+		this.mappingRef.setValue(String.valueOf(getDocumentType().getPdfMappingRef()).equals("0")?"":String.valueOf(getDocumentType().getPdfMappingRef()));
+		if(aDocumentType.isDocIsPdfExtRequired()){
+			this.mappingRef.setMandatoryStyle(true);
+		}else{
+			this.mappingRef.setMandatoryStyle(false);
+		}
 		if(aDocumentType.isNew() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.docTypeIsActive.setChecked(true);
 			this.docTypeIsActive.setDisabled(true);
@@ -387,7 +408,26 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			aDocumentType.setDocIsPdfExtRequired(this.docIsPdfExtRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setDocIsPasswordProtected(this.docIsPasswordProtected.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			if(rowMappingRef.isVisible()){
+			aDocumentType.setPdfMappingRef(StringUtils.isBlank(this.mappingRef.getValidatedValue())? 0 :Long.parseLong(this.mappingRef.getValidatedValue()));
+			}else{
+				aDocumentType.setPdfMappingRef(0);
+			}
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -461,6 +501,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		if (!this.docTypeDesc.isReadonly()){
 			this.docTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeDesc.value"), 
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+		if (!this.mappingRef.isButtonVisible()){
+			this.mappingRef.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_MappingRef.value"), 
+					null, true, true));
 		}
 
 		logger.debug("Leaving");
@@ -559,10 +603,18 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIsMandatory.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		this.docTypeIsActive.setDisabled(isReadOnly("DocumentTypeDialog_docTypeIsActive"));
 		this.docIsCustDoc.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
+		this.docIsPdfExtRequired.setDisabled(isReadOnly("DocumentTypeDialog_docIsPdfExtRequired"));
 		this.docExpDateIsMand.setDisabled(true);
 		this.docIssueDateMand.setDisabled(true);
 		this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
+		this.docIsPasswordProtected.setDisabled(true);
+		this.mappingRef.setButtonDisabled(true);
+		if(getDocumentType().isDocIsPdfExtRequired()){
+			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
+			}
+		
 		if(getDocumentType().isDocIsCustDoc()){
 			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 			this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
@@ -896,6 +948,30 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		doCheckCustomerDoc();
 	}
 	
+	
+	public void onCheck$docIsPdfExtRequired(Event event){
+		doCheckPdfExt();
+	}
+	
+	private void doCheckPdfExt(){
+		if(this.docIsPdfExtRequired.isChecked()){
+			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
+			this.docIsPasswordProtected.setChecked(true);
+			this.mappingRef.setMandatoryStyle(true);
+		}else{
+			this.mappingRef.setMandatoryStyle(false);
+			this.docIsPasswordProtected.setChecked(false);
+			this.docIsPasswordProtected.setDisabled(true);
+		}
+		//this.docIsPasswordProtected.setChecked(getDocumentType().isDocIsPasswordProtected());
+//		/this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
+		this.mappingRef.setButtonDisabled(!docIsPdfExtRequired.isChecked());
+		this.mappingRef.setConstraint("");
+		this.mappingRef.setErrorMessage("");
+		this.mappingRef.setValue("");
+		//this.rowMappingRef.setVisible(docIsPdfExtRequired.isChecked());
+	}
 	
 	/**
 	 * Method to check document type checked or not
