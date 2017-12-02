@@ -616,8 +616,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// Service task specific implemented fields
 	//FIXME: DDP: how to pass the below values from extended fields to workflow.
 	private boolean rcu;
-	private boolean dedupNoMatch;
-	private boolean hunterNoGo;
+	private boolean dedupMatch;
+	private boolean hunterGo;
 	private boolean bureau;
 
 	public Set<String> getExcludeFields() {
@@ -733,8 +733,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalTerms");
 		excludeFields.add("NOInst");
 		excludeFields.add("rcu");
-		excludeFields.add("dedupNoMatch");
-		excludeFields.add("hunterNoGo");
+		excludeFields.add("dedupMatch");
+		excludeFields.add("hunterGo");
 		excludeFields.add("bureau");
 
 		return excludeFields;
@@ -3433,20 +3433,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setRcu(boolean rcu) {
 		this.rcu = rcu;
 	}
-	public boolean isDedupNoMatch() {
-		return dedupNoMatch;
+
+	public boolean isDedupMatch() {
+		return dedupMatch;
 	}
 
-	public void setDedupNoMatch(boolean dedupNoMatch) {
-		this.dedupNoMatch = dedupNoMatch;
+	public void setDedupMatch(boolean dedupMatch) {
+		this.dedupMatch = dedupMatch;
 	}
 
-	public boolean isHunterNoGo() {
-		return hunterNoGo;
+	public boolean isHunterGo() {
+		return hunterGo;
 	}
 
-	public void setHunterNoGo(boolean hunterNoGo) {
-		this.hunterNoGo = hunterNoGo;
+	public void setHunterGo(boolean hunterGo) {
+		this.hunterGo = hunterGo;
 	}
 
 	public boolean isBureau() {
