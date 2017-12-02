@@ -747,7 +747,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 				if (advancePayments != null) {
 					for (FinAdvancePayments advPayment : advancePayments) {
-						int paymentSeq = finAdvancePaymentsService.getCountByFinReference(financeMain.getFinReference());
+						int paymentSeq = 0;
+						paymentSeq = finAdvancePaymentsService.getMaxPaymentSeq(financeMain.getFinReference());
 						advPayment.setFinReference(financeMain.getFinReference());
 						advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						advPayment.setNewRecord(true);

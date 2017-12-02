@@ -31,6 +31,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private static final Logger	logger				= Logger.getLogger(BlacklistCheckService.class);
 	private final String		extConfigFileName	= "hunter";
 	private String				serviceUrl;
+	private JSONClient 			client;
 
 	/**
 	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
@@ -45,11 +46,12 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
-		JSONClient client = new JSONClient();
+		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
+			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 			String jsonResponse = client.post(serviceUrl, hunterRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
@@ -251,6 +253,10 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+	
+	public void setClient(JSONClient client) {
+		this.client = client;
 	}
 
 }

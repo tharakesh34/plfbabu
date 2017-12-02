@@ -106,9 +106,24 @@
 	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController"
 		autowire="byName" scope="prototype">
 	</bean>
+	
+	<bean id="createFinanceController"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="createFinanceControllerTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="updateFinance">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
 
 	<!-- CreateFinance/Loan controller -->
-	<bean id="createFinanceController" class="com.pennanttech.controller.CreateFinanceController"
+	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController"
 		autowire="byName" scope="prototype">
 	</bean>
 

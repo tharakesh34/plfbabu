@@ -463,8 +463,9 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
 	@Override
-	public int getCountByFinReference(String finReference) {
+	public int getMaxPaymentSeq(String finReference) {
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finReference);
 
@@ -473,10 +474,41 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
+		int recordCount = 0;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		try {
+			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		}catch (Exception dae) {
+			recordCount = 0;
+		}
+		
+		return recordCount;
+	}
+	
+	@Override
+	public int getFinAdvCountByRef(String finReference, String type) {
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("select COUNT(*)");
+		selectSql.append(" From FinAdvancePayments");
+		selectSql.append(type);
+		selectSql.append(" Where FinReference = :FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		int recordCount = 0;
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		
+		logger.debug("Leaving");
+		try {
+			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		}catch (Exception dae) {
+			recordCount = 0;
+		}
+		
+		return recordCount;
 	}
 
 	/**

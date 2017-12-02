@@ -493,11 +493,13 @@ public class FinMandateServiceImpl implements FinMandateService {
 		DocumentManager documentManager = new DocumentManager();
 		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
 			DocumentManager olddocumentManager = documentManagerDAO.getById(mandate.getDocumentRef());
-			byte[] arr1 = olddocumentManager.getDocImage();
-			byte[] arr2 = mandate.getDocImage();
-			if (!Arrays.equals(arr1, arr2)) {
-				documentManager.setDocImage(arr2);
-				mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+			if(olddocumentManager != null) {
+				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr2 = mandate.getDocImage();
+				if (!Arrays.equals(arr1, arr2)) {
+					documentManager.setDocImage(arr2);
+					mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+				}
 			}
 		} else {
 			documentManager.setDocImage(mandate.getDocImage());

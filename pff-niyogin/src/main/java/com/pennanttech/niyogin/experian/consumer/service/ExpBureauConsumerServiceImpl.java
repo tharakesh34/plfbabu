@@ -33,6 +33,7 @@ public class ExpBureauConsumerServiceImpl extends NiyoginService implements Expe
 	private static final Logger	logger				= Logger.getLogger(ExpBureauConsumerServiceImpl.class);
 	private final String		extConfigFileName	= "experianBureauConsumer";
 	private String				serviceUrl;
+	private JSONClient 			client;
 
 	/**
 	 * Method for get the ExperianBureauConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -45,11 +46,12 @@ public class ExpBureauConsumerServiceImpl extends NiyoginService implements Expe
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		BureauConsumer consumerRequest = prepareRequestObj(financeDetail);
-		JSONClient client = new JSONClient();
+		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
+			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 			String jsonResponse = client.post(serviceUrl, consumerRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
@@ -258,6 +260,9 @@ public class ExpBureauConsumerServiceImpl extends NiyoginService implements Expe
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+	public void setClient(JSONClient client) {
+		this.client = client;
 	}
 
 }

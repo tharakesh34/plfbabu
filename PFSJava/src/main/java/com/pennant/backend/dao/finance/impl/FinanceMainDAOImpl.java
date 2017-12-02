@@ -2909,5 +2909,27 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return financeMain;
 	}
-	
+
+	/**
+	 * 
+	 * 
+	 */
+	@Override
+	public void updateFinMandateId(long mandateId, String finReference, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("MandateId", mandateId);
+		
+		StringBuilder sql = new StringBuilder("Update FinanceMain");
+		sql.append(type);
+		sql.append(" set MandateId =:MandateId");
+		sql.append(" where FinReference =:FinReference");
+		logger.debug("updateSql: " + sql.toString());
+
+		this.namedParameterJdbcTemplate.update(sql.toString(), source);
+
+		logger.debug("Leaving");
+	}
 }

@@ -270,4 +270,6 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF);
 
 	int getFinCountByCustId(long custID);
+
+	void updateFinMandateId(long mandateId, String finReference, String type);
 }

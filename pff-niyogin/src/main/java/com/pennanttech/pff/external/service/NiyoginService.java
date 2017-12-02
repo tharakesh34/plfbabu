@@ -3,6 +3,9 @@ package com.pennanttech.pff.external.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -17,6 +20,11 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,8 +38,10 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class NiyoginService {
 	private static final Logger				logger				= Logger.getLogger(NiyoginService.class);
@@ -39,9 +49,12 @@ public abstract class NiyoginService {
 	protected DataSource					dataSource;
 	protected JdbcTemplate					jdbcTemplate;
 	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
-
+	
+	private InterfaceLoggingDAO	interfaceLoggingDAO;
+	
 	protected DataSourceTransactionManager	transManager;
 	protected DefaultTransactionDefinition	transDef;
+	
 	public static final int					LENGTH_ACCOUNT		= 50;
 	public static final int					LENGTH_FREQUENCY	= 5;
 	public static final String APIDateFormatter = "yyyy-MM-dd'T'HH:mm:ss";
@@ -538,5 +551,58 @@ public abstract class NiyoginService {
 		}
 		logger.debug(Literal.ENTERING);
 		return validatedMap;
+	}
+	
+	protected void logInterfaceDetails(InterfaceLogDetail interfaceLogDetail) {
+		interfaceLoggingDAO.save(interfaceLogDetail);
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @param request
+	 * @param response
+	 * @param reqSentOn
+	 * @param status
+	 * @param errorCode
+	 * @param errorDesc
+	 * @param reference
+	 * @return
+	 */
+	protected InterfaceLogDetail prepareLoggingData(String url, Object request, String response, Timestamp reqSentOn, 
+			String status, String errorCode, String errorDesc, String reference) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setLenient(false);
+		mapper.setDateFormat(dateFormat);
+		
+		InterfaceLogDetail detail = new InterfaceLogDetail();
+		detail.setReference(reference);
+		String[] values = url.split("/");
+		detail.setServiceName(values[values.length-1]);
+		detail.setEndPoint(url);
+		try {
+			detail.setRequest(mapper.writeValueAsString(request));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		detail.setReqSentOn(reqSentOn);
+		detail.setResponse(response);
+		detail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		detail.setStatus(status);
+		detail.setErrorCode(errorCode);
+		if(errorDesc != null && errorDesc.length() > 200) {
+		detail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+		return detail;
+	}
+	
+	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
+		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
 }

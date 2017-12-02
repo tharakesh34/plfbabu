@@ -76,7 +76,9 @@ public interface FinAdvancePaymentsDAO {
 
 	int getBankCode(String bankCode, String type);
 
-	int getCountByFinReference(String finReference);
+	int getMaxPaymentSeq(String finReference);
+	
+	int getFinAdvCountByRef(String finReference, String type);
 	
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 }

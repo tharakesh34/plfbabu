@@ -136,11 +136,11 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_externalDedup:
-				//auditHeader = externalDedup.checkDedup(auditHeader);
+				auditHeader = externalDedup.checkDedup(auditHeader);
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_hunter:
-				//auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
+				auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Bureau:
@@ -157,11 +157,11 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			default:
 				return taskExecuted;
 			}
-		} catch (InterfaceException e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			ServiceTaskDetail serviceTaskDetail = new ServiceTaskDetail();
 			serviceTaskDetail.setStatus("Failed");
-			serviceTaskDetail.setRemarks(e.getErrorMessage());
+			serviceTaskDetail.setRemarks(e.getMessage());
 			logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 			throw e;
 		}

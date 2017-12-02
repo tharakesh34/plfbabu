@@ -40,6 +40,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 
 	private final String		extConfigFileName	= "experianBureauCommercial";
 	private String				serviceUrl;
+	private JSONClient 			client;
 
 	private final String		NO_EMI_BOUNCES_IN_3_MONTHS		= "EMI3MONTHS";
 	private final String		RESTRUCTURED_LOAN_AND_AMOUNT	= "RESTRUCTUREDLOAN";
@@ -52,11 +53,12 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		BureauCommercial commercialRequest = prepareRequestObj(financeDetail);
-		JSONClient client = new JSONClient();
+		//JSONClient client = new JSONClient();
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
+			String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 			String jsonResponse = client.post(serviceUrl, commercialRequest);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
@@ -302,6 +304,10 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+	
+	public void setClient(JSONClient client) {
+		this.client = client;
 	}
 
 }

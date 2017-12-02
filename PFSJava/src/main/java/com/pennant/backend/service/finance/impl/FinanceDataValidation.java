@@ -894,6 +894,15 @@ public class FinanceDataValidation {
 		if (StringUtils.equals(vldGroup, PennantConstants.VLD_CRT_LOAN)) {
 			isCreateLoan = true;
 		}
+		
+		if (StringUtils.equals(vldGroup, PennantConstants.VLD_UPD_LOAN)) {
+			errorDetails = validateUpdateFinance(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+			return new FinScheduleData();
+		}
 
 		if(!financeDetail.isStp()){
 			/*if(StringUtils.isBlank(financeDetail.getProcessStage())){
@@ -1128,6 +1137,56 @@ public class FinanceDataValidation {
 	 * VALIDATE NON FINANCE DATA
 	 * ================================================================================================================
 	 */
+
+	/**
+	 * Method for validate Update Finance details
+	 * @param financeDetail 
+	 * 
+	 * @return
+	 */
+	private List<ErrorDetails> validateUpdateFinance(FinanceDetail financeDetail) {
+		List<ErrorDetails> errorDetails = new ArrayList<>();
+
+		FinanceMain finMain = financeMainDAO.getFinanceMainById(financeDetail.getFinReference(), "_Temp", false);
+		if(finMain == null) {
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90403", null)));
+			return errorDetails;
+		}
+		// fetch FinanceDetails
+		FinanceDetail extFinDetail = financeDetailService.getOriginationFinance(finMain.getFinReference(), 
+				finMain.getNextRoleCode(), FinanceConstants.FINSER_EVENT_ORG, finMain.getRoleCode());
+		financeDetail.setFinScheduleData(extFinDetail.getFinScheduleData());
+		
+		if(!extFinDetail.getAdvancePaymentsList().isEmpty() && !financeDetail.getAdvancePaymentsList().isEmpty()) {
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90404", null)));
+			return errorDetails;
+		} else {
+			// validate disbursement details
+			errorDetails = disbursementValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				return errorDetails;
+			}
+		}
+		if(extFinDetail.getMandate() != null && financeDetail.getMandate() != null) {
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90405", null)));
+			return errorDetails;
+		} else {
+			// validate mandate details
+			errorDetails = mandateValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				return errorDetails;
+			}
+		}
+
+		//Extended Field Details Validation
+		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getProductCategory();
+		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
+				ExtendedFieldConstants.MODULE_LOAN, subModule);
+		if (!errorDetails.isEmpty()) {
+			return errorDetails;
+		}
+		return errorDetails;
+	}
 
 	private List<ErrorDetails> finCollateralValidation(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
@@ -1806,7 +1865,7 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90216", valueParm)));
 					}
 				}
-				String finType = financeDetail.getFinScheduleData().getFinanceType().getFinType();
+				String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
 				int count = finTypePartnerBankService.getPartnerBankCount(finType, advPayment.getPaymentType(), 
 						AccountConstants.PARTNERSBANK_DISB, advPayment.getPartnerBankID());
 				if (count <= 0) {

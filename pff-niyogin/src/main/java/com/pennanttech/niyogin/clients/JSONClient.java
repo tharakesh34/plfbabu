@@ -24,7 +24,7 @@ public class JSONClient {
 	private static final Logger	logger			= Logger.getLogger(JSONClient.class);
 
 	private final static String	AUTHORIZATION	= "Authorization";
-
+	
 	public String post(String url, Object requestData) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -39,20 +39,15 @@ public class JSONClient {
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
 		String jsonInString = null;
-
-		try {
-			jsonInString = mapper.writeValueAsString(requestData);
-		} catch (Exception e) {
-			logger.error("Exception in jason request string" + e);
-		}
+		
 		logger.debug("Jason Request String " + jsonInString);
-
 		Response response = client.post(jsonInString);
 		jsonInString=response.readEntity(String.class);
 		logger.debug("Jason Response String " + jsonInString);
 		logger.debug(Literal.LEAVING);
 		return jsonInString;
 	}
+
 
 	public Object post(String url, Object requestData, Class<?> responseClass) throws Exception {
 		logger.debug(Literal.ENTERING);

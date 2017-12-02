@@ -12,5 +12,11 @@
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:component-scan base-package="com.pennanttech.pff.external" />
+	<context:component-scan base-package="com.pennanttech.pff" />
+	
+	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="transactionManager" ref="pfsTransactionManager" />
+	</bean>
+	
 </beans>

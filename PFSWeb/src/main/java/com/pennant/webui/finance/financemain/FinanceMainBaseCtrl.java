@@ -12197,6 +12197,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FIXME: AlloW QUick Disbursement to be added in RMTFinanceTypes also. Explained to Chaitanya and Siva
 		if (ImplementationConstants.ALLOW_QUICK_DISB) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_quickDisb"), this.quickDisb);
+			this.quickDisb.setVisible(false);
 		} else {
 			this.quickDisb.setDisabled(true);
 		}
