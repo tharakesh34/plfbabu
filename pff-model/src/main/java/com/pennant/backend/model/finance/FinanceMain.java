@@ -103,7 +103,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String promotionCode;
 	@XmlElement
 	private String finCcy;
-	private boolean rcu;
 	@XmlElement
 	private String profitDaysBasis;
 	private long custID;
@@ -613,6 +612,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	//For Fee Reca Calculation
 	private BigDecimal recalFee = BigDecimal.ZERO;
 	private int recalTerms = 0;
+	
+	// Service task specific implemented fields
+	//FIXME: DDP: how to pass the below values from extended fields to workflow.
+	private boolean rcu;
+	private boolean dedupNoMatch;
+	private boolean hunterNoGo;
+	private boolean bureau;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -712,7 +718,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("calGrcTerms");
 		excludeFields.add("calGrcEndDate");
 		excludeFields.add("tDSAmount");
-		excludeFields.add("rcu");
 
 		excludeFields.add("nextRoleCodeDesc");
 		excludeFields.add("secUsrFullName");
@@ -727,6 +732,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalFee");
 		excludeFields.add("recalTerms");
 		excludeFields.add("NOInst");
+		excludeFields.add("rcu");
+		excludeFields.add("dedupNoMatch");
+		excludeFields.add("hunterNoGo");
+		excludeFields.add("bureau");
 
 		return excludeFields;
 	}
@@ -3424,4 +3433,28 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setRcu(boolean rcu) {
 		this.rcu = rcu;
 	}
+	public boolean isDedupNoMatch() {
+		return dedupNoMatch;
+	}
+
+	public void setDedupNoMatch(boolean dedupNoMatch) {
+		this.dedupNoMatch = dedupNoMatch;
+	}
+
+	public boolean isHunterNoGo() {
+		return hunterNoGo;
+	}
+
+	public void setHunterNoGo(boolean hunterNoGo) {
+		this.hunterNoGo = hunterNoGo;
+	}
+
+	public boolean isBureau() {
+		return bureau;
+	}
+
+	public void setBureau(boolean bureau) {
+		this.bureau = bureau;
+	}
+
 }
