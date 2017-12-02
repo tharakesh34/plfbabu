@@ -617,7 +617,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	//FIXME: DDP: how to pass the below values from extended fields to workflow.
 	private boolean rcu;
 	private boolean dedupMatch;
-	private boolean hunterGo;
+	private boolean hunterGo = true;
 	private boolean bureau;
 
 	public Set<String> getExcludeFields() {
