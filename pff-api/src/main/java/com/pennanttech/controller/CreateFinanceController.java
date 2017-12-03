@@ -310,10 +310,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			if(stp && !financeMain.isQuickDisb()){
 				auditHeader = financeDetailService.doApprove(auditHeader, false);
 			} else if(financeMain.isQuickDisb() || !stp) {
-				String usrAction = "Submit";
+				String usrAction = "Approve";
+				financeMain.setRecordStatus("Approve");
 				String role = workFlow.firstTaskOwner();
-				//auditHeader = financeDetailService.executeWorkflowServiceTasks(auditHeader, role, usrAction, workFlow);
-				auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
+				auditHeader = financeDetailService.executeWorkflowServiceTasks(auditHeader, role, usrAction, workFlow);
+				//auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
 			}
 
 			FinanceDetail response = null;
@@ -417,7 +418,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		if(stp && !quickDisb) {
 			return PennantConstants.RCD_STATUS_APPROVED;
 		} else {
-			return PennantConstants.RCD_STATUS_SAVED;
+			return PennantConstants.RCD_STATUS_SUBMITTED;
 		} 
 	}
 

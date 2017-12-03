@@ -224,7 +224,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		serviceTaskDetail.setServiceTaskName(serviceTask.getOperation());
 		serviceTaskDetail.setUserId(financeDetail.getUserDetails().getLoginUsrID());
 		serviceTaskDetail.setExecutedTime(new Timestamp(System.currentTimeMillis()));
-		if(serviceTaskDetail.getRemarks().length() > 200) {
+		if(serviceTaskDetail.getRemarks() != null && serviceTaskDetail.getRemarks().length() > 200) {
 			serviceTaskDetail.setRemarks(serviceTaskDetail.getRemarks().substring(0, 190));
 		}
 
