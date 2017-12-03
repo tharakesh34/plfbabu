@@ -73,10 +73,8 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			logger.debug("ServiceURL : " + serviceUrl);
 
 			jsonResponse = client.post(serviceUrl, consumerRequest);
+			//for direct mapping fields
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-			//For caliculation Fields
-			prepareExtendedFieldMap(extendedFieldMap);
 
 			// error validation on Response status
 			if (extendedFieldMap.get("ERRORCODE") != null) {
@@ -87,8 +85,12 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORDESC");
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
+			//For caliculation Fields
+			prepareExtendedFieldMap(extendedFieldMap);
+
+			//validate the map with Configuration
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
 
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception e) {
@@ -305,6 +307,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
+
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}

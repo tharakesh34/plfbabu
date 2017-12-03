@@ -73,10 +73,9 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, commercialRequest);
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
-			//For caliculation Fields
-			prepareExtendedFieldMap(extendedFieldMap);
+			//for direct mapping fields
+			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
 			// error validation on Response status
 			if (extendedFieldMap.get("ERRORCODE") != null) {
@@ -86,8 +85,13 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORDESC");
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
+
+			//For caliculation Fields
+			prepareExtendedFieldMap(extendedFieldMap);
+			
+			//validate the map with Configuration
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
 
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception e) {
@@ -320,7 +324,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 			return (arg0.getMonthvalue() + arg0.getYear()) - (arg1.getMonthvalue() + arg1.getYear());
 		}
 	}
-	
+
 	/**
 	 * Method for prepare data and logging
 	 * 
@@ -328,15 +332,15 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	 * @param reference
 	 */
 	private void doInterfaceLogging(BureauCommercial commercialRequest, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, commercialRequest, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, commercialRequest, jsonResponse,
+				reqSentOn, status, errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);
 	}
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
-	
+
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}
