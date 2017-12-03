@@ -82,7 +82,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			if (extendedFieldMap.get("ERRORCODE") != null) {
 				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
 				errorDesc = Objects.toString(extendedFieldMap.get("ERRORDESC"));
-				throw new InterfaceException(errorCode, errorCode + ":" + errorDesc);
+				throw new InterfaceException(errorCode, errorDesc);
 
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
