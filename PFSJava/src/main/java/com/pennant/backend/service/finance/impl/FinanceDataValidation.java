@@ -1179,7 +1179,7 @@ public class FinanceDataValidation {
 		}
 
 		//Extended Field Details Validation
-		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getProductCategory();
+		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
 				ExtendedFieldConstants.MODULE_LOAN, subModule);
 		if (!errorDetails.isEmpty()) {

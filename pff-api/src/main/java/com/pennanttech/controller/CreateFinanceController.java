@@ -1263,7 +1263,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			updateFinMandateDetails(financeDetail, tableType.getSuffix());
 			
 			// update Extended field details
-			//updateFinExtendedDetails(financeDetail, tableType.getSuffix());
+			updateFinExtendedDetails(financeDetail, tableType.getSuffix());
 			
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -1294,8 +1294,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			exdFieldRender.setLastMntBy(finMain.getUserDetails().getLoginUsrID());
 			exdFieldRender.setSeqNo(++seqNo);
-			exdFieldRender.setNewRecord(true);
-			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			exdFieldRender.setNewRecord(false);
+			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			exdFieldRender.setVersion(1);
 			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
 
@@ -1333,7 +1333,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(), 
 				PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails); 
-		auditHeaderDAO.addAudit(auditHeader);
+		//auditHeaderDAO.addAudit(auditHeader);
 	}
 
 	private void updateFinMandateDetails(FinanceDetail financeDetail, String type) {
