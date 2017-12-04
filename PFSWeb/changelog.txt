@@ -1,3 +1,8 @@
+pff 4.1.0, 2017-12-04
+---------------------
+- DataSourceFactory class moved to framework.
+- Delete the dependency tomcat-dbcp from pom.xml 
+
 pff 4.1.0, 2017-11-27
 ---------------------
 - Fixed change password issue due to refactiong in the main menu controller.

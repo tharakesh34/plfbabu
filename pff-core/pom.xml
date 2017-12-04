@@ -99,10 +99,6 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat-dbcp</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
 		</dependency>

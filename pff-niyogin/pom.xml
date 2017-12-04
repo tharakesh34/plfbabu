@@ -56,11 +56,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-dbcp</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
 			<scope>test</scope>

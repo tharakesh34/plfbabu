@@ -101,14 +101,7 @@
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
 				<version>1.4.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-dbcp</artifactId>
-				<version>8.5.12</version>
-			</dependency>
-			
+			</dependency>			
 			<!-- Spring Framework -->
 			<dependency>
 				<groupId>org.springframework</groupId>
