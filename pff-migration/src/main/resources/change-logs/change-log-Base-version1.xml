@@ -830,4 +830,11 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
+	<changeSet id="35" author="Amit">
+	<sql>
+	delete from SecGroupRights where rightid = (select RightID from SecRights WHERE RightName='CustomerDocumentDialog_pdfPassword');
+	delete from SecRights where  rightname = 'CustomerDocumentDialog_pdfPassword';		
+	</sql>
+	</changeSet>
+	
 	</databaseChangeLog>
