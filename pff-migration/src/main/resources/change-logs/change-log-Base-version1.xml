@@ -843,4 +843,12 @@ UNION ALL
      </addColumn>
     </changeSet>
 	
+	<changeSet id="37" author="Amit">
+	<sql>
+	Update DocumentDataMapping set typedescription = 'Form for Return of Service Tax' where type = 'ST3';	
+	Update DocumentDataMapping set typedescription = 'ITR-4 Form Description' where type = 'ITR4';
+	Update DocumentDataMapping set typedescription = 'ITR-5 Form Description' where type = 'ITR5';	
+	</sql>
+	</changeSet>
+	
 	</databaseChangeLog>
