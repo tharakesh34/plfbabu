@@ -93,6 +93,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -357,7 +358,17 @@ public class CreateFinanceController extends SummaryDetailService {
 				return response;
 			}
 
-		} catch (Exception e) {
+		} catch (InterfaceException intfcexp) {
+			logger.error("Exception: ", intfcexp);
+			APIErrorHandlerService.logUnhandledException(intfcexp);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(
+					APIErrorHandlerService.getFailedStatus(intfcexp.getErrorCode(), intfcexp.getErrorMessage()));
+			return response;
+		}
+
+		catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			FinanceDetail response = new FinanceDetail();
