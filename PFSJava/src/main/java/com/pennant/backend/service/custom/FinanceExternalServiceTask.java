@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.BureauScore;
+import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CrifConsumerService;
 import com.pennanttech.pff.external.ExperianCommercialService;
 import com.pennanttech.pff.external.ExperianConsumerService;
@@ -61,6 +62,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	@Autowired(required = false)
 	private BureauScore bureauscore;
+	
+	@Autowired(required = false)
+	private CibilConsumerService cibilConsumerService;
 
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
