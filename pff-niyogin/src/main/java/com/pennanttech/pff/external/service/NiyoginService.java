@@ -352,7 +352,9 @@ public abstract class NiyoginService {
 						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
 					}
 					try {
-						intValue = Integer.parseInt(jsonResponseValue);
+						if(!StringUtils.isEmpty(jsonResponseValue)){
+							intValue = Integer.parseInt(jsonResponseValue);	
+						}
 					} catch (Exception e) {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 					}
