@@ -90,19 +90,6 @@
      	delete from plf.BMTLovFIELDCODE where fieldcode = 'cofco-app' ;
      </sql>
 	</changeSet>
-
-	<changeSet id="7" author="Prakash">
-     	<sql>
-    	insert into RMTLovFieldDetail values(320,'CAT_COAPP','Husband','Husband',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(321,'CAT_COAPP','Wife','Wife',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(322,'CAT_COAPP','Mother','Mother',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(323,'CAT_COAPP','Father','Father',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(324,'CAT_COAPP','Son','Son',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(325,'CAT_COAPP','Daughter','Daughter',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-		insert into RMTLovFieldDetail values(326,'CAT_COAPP','Self','Self',1,1,1000,current_timestamp,'Approved','','','','','',0,0,'');
-     	</sql>
-	</changeSet>
-	
 	<changeSet id="8" author="Durga Prasad D">
 		<sql>
 		delete from bmtlovfieldcode where fieldCode = 'PUR_LOAN';
