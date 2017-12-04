@@ -837,4 +837,10 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
+	<changeSet id="36" author="Amit">
+     <addColumn tableName="DocumentDataMapping">
+     	<column name="TypeDescription" type="nvarchar(200)"/>
+     </addColumn>
+    </changeSet>
+	
 	</databaseChangeLog>
