@@ -45,10 +45,10 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
-		logger.debug("Jason Request String " + jsonInString);
+		logger.debug("Json Request String " + jsonInString);
 		Response response = client.post(jsonInString);
 		jsonInString=response.readEntity(String.class);
-		logger.debug("Jason Response String " + jsonInString);
+		logger.debug("Json Response String " + jsonInString);
 		logger.debug(Literal.LEAVING);
 		return jsonInString;
 	}
@@ -74,12 +74,12 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
-		logger.debug("Jason Request String " + jsonInString);
+		logger.debug("Json Request String " + jsonInString);
 		Response response = client.post(jsonInString);
 
 		jsonInString = response.readEntity(String.class);
 		Object objResponse = mapper.readValue(jsonInString, responseClass);
-		logger.debug("Jason Response String " + jsonInString);
+		logger.debug("Json Response String " + jsonInString);
 		logger.debug(Literal.LEAVING);
 		return objResponse;
 	}
