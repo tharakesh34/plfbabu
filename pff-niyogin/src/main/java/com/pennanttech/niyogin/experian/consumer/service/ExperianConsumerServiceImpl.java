@@ -148,11 +148,13 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		String pan = "";
 		String aadhar = "";
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		for (CustomerDocument document : documentList) {
-			if (document.getCustDocCategory().equals("01")) {
-				aadhar = document.getCustDocTitle();
-			} else if (document.getCustDocCategory().equals("03")) {
-				pan = document.getCustDocTitle();
+		if (documentList != null) {
+			for (CustomerDocument document : documentList) {
+				if (document.getCustDocCategory().equals("01")) {
+					aadhar = document.getCustDocTitle();
+				} else if (document.getCustDocCategory().equals("03")) {
+					pan = document.getCustDocTitle();
+				}
 			}
 		}
 		personalDetails.setPan(pan);
