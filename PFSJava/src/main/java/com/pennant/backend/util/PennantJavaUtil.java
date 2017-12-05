@@ -2025,7 +2025,7 @@ public class PennantJavaUtil {
 		/* RMT Lov Filed Details */
 		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
-				new String[][] { { "FieldCode", "0", "LOANPURPOSE" } }, 300));
+				new String[][] { { "FieldCode", "0", "PUR_LOAN" } }, 300));
 		
 		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
 				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "Type", "Type" }, null, 350));

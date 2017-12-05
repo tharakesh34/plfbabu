@@ -2675,21 +2675,22 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	@Override
 	public BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference) {
 		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
-		sql.append(" where FinReference in (select FinReference from FinanceMain_View ");
-		sql.append(" where MandateId = :MandateId and FinIsActive = 1 and FinReference != :FinReference)");
-		sql.append(" group by FinReference");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("MandateId", mandateId);
-		paramSource.addValue("FinReference", finReference);
-
-		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+//FIXME Need to convert this sum of, max of logic to java .since it is not supported by Postgresql 
+//		// Prepare the SQL.
+//		StringBuilder sql = new StringBuilder("select coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
+//		sql.append(" where FinReference in (select FinReference from FinanceMain_View ");
+//		sql.append(" where MandateId = :MandateId and FinIsActive = 1 and FinReference != :FinReference)");
+//		sql.append(" group by FinReference");
+//
+//		// Execute the SQL, binding the arguments.
+//		logger.trace(Literal.SQL + sql);
+//		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+//		paramSource.addValue("MandateId", mandateId);
+//		paramSource.addValue("FinReference", finReference);
+//
+//		logger.debug(Literal.LEAVING);
+//		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+		return BigDecimal.ZERO;
 	}
 	
 	@Override
