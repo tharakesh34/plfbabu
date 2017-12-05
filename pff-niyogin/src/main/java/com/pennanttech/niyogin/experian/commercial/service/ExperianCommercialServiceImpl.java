@@ -233,7 +233,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 							extendedFieldMap.put(entry.getKey(), false);
 						}
 					} catch (NumberFormatException e) {
-						throw new InterfaceException("9999", "");
+						throw new InterfaceException("9999", "Unsupported data received from interface");
 					}
 
 				}
@@ -247,7 +247,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 							extendedFieldMap.put(entry.getKey(), false);
 						}
 					} catch (NumberFormatException e) {
-						throw new InterfaceException("9999", "");
+						throw new InterfaceException("9999", "Unsupported data received from interface");
 					}
 
 				}

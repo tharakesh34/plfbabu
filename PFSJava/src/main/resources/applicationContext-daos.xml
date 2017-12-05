@@ -10473,4 +10473,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
 	</bean>
+
+	<bean id="externalDocumentManager"
+		class="com.pennanttech.pff.document.external.ExternalDocumentManager"/>
 </beans>

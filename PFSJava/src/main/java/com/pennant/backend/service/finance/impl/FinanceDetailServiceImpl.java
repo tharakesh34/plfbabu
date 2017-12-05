@@ -8340,6 +8340,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public DocumentDetails getFinDocDetailByDocId(long docId, String type, boolean readAttachment) {
 		return getDocumentDetailsDAO().getDocumentDetailsById(docId, type, readAttachment);
 	}
+	
+	@Override
+	public DocumentDetails getDocumentDetails(long docId, String type) {
+		return getDocumentDetailsDAO().getDocumentDetails(docId, type);
+	}
 
 	@Override
 	public List<DocumentDetails> getDocumentDetails(String finReference, String finProcEvent) {

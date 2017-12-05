@@ -1207,6 +1207,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl"
@@ -1968,6 +1969,7 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 	<!--============ Deviation Detail ============== -->

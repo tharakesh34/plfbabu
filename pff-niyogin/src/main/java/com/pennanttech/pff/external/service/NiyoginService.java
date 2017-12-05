@@ -589,7 +589,12 @@ public abstract class NiyoginService {
 		detail.setServiceName(values[values.length-1]);
 		detail.setEndPoint(url);
 		try {
-			detail.setRequest(mapper.writeValueAsString(request));
+			if(request != null) {
+				if(request != null && request instanceof String) {
+					detail.setRequest(request.toString());
+				}
+				detail.setRequest(mapper.writeValueAsString(request));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

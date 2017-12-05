@@ -120,6 +120,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -165,6 +166,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.rits.cloning.Cloner;
 
 /**
@@ -412,6 +414,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	
 	//Extended fields
 	private ExtendedFieldCtrl					extendedFieldCtrl				= null;
+	private ExternalDocumentManager				externalDocumentManager			= null;
 
 	/**
 	 * default constructor.<br>
@@ -4560,6 +4563,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
 					customerDocument.setCustDocImage(PennantAppUtil.getDocumentImage(customerDocument.getDocRefId()));
+					if(customerDocument.getCustDocImage() == null && StringUtils.isNotBlank(customerDocument.getDocUri())) {
+						
+						try {
+							// Fetch document from interface
+							DocumentDetails detail = externalDocumentManager.getExternalDocument(customerDocument.getDocUri());
+							customerDocument.setCustDocImage(detail.getDocImage());
+						} catch (InterfaceException e) {
+							MessageUtil.showError(e);
+						}
+					}
 				}
 				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
 				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
@@ -5965,4 +5978,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCustomerBankInfoList(List<CustomerBankInfo> customerBankInfoList) {
 		CustomerBankInfoList = customerBankInfoList;
 	}
+
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
+	}
+
 }

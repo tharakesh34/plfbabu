@@ -193,4 +193,5 @@ public interface FinanceDetailService {
 	AuditHeader doCheckScore(AuditHeader auditHeader);
 	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
 	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
+	DocumentDetails getDocumentDetails(long id, String type);
  }
