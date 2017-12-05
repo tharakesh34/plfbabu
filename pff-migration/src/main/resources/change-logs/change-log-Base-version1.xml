@@ -864,4 +864,25 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
+	 <changeSet id="40" author="Amit">
+	<sql>
+	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'ACTUALDATEOFFILNG';
+	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'DUEDATEFORFILINRET';		
+	</sql>
+	</changeSet>
+	
+	<changeSet id="41" author="Amit">
+     	<dropColumn tableName="DOCUMENTDATACONFIG" columnName="type"/>
+     </changeSet>
+     
+     	<changeSet id="42" author="Amit">
+		<addNotNullConstraint tableName="DocumentDataMapping"
+			columnName="Type" columnDataType="VARCHAR2" />
+	</changeSet>
+	
+	<changeSet id="43" author="Amit">
+		<addUniqueConstraint columnNames="Type"
+			constraintName="UK_Type_DocumentDataMapping" tableName="DocumentDataMapping" />
+	</changeSet>
+	
 	</databaseChangeLog>
