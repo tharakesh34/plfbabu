@@ -111,12 +111,15 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		Customer customer = customerDetails.getCustomer();
 		CibilConsumerRequest cibilConsumerRequest = new CibilConsumerRequest();
 
-		String appId = financeDetail.getFinScheduleData().getFinanceMain().getApplicationNo();
-		cibilConsumerRequest.setApplicationId(appId);
-		cibilConsumerRequest.setStgUniqueRefId(financeDetail.getFinReference());
+		cibilConsumerRequest.setApplicationId(financeDetail.getFinReference());
+		cibilConsumerRequest.setStgUniqueRefId(customer.getCustCIF());
 
 		CibilPersonalDetails personalDetails = new CibilPersonalDetails();
-		personalDetails.setFirstName(customer.getCustFName());
+		if (customer.getCustFName() != null) {
+			personalDetails.setFirstName(customer.getCustFName());
+		} else {
+			personalDetails.setFirstName(customer.getCustShrtName());
+		}
 		personalDetails.setMiddleName(customer.getCustMName());
 		personalDetails.setLastName(customer.getCustLName());
 		personalDetails.setDob(customer.getCustDOB());
