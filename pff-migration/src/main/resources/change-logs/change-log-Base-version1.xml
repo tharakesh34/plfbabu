@@ -851,4 +851,17 @@ UNION ALL
 	</sql>
 	</changeSet>
 	
+	<changeSet id="38" author="Amit">
+     <addColumn tableName="DOCUMENTDATACONFIG">
+     	<column name="DateFormat" type="nvarchar(100)"/>
+     </addColumn>
+    </changeSet>
+    
+    <changeSet id="39" author="Amit">
+	<sql>
+	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'ACTUALDATEOFFILNG';
+	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'DUEDATEFORFILINRET';		
+	</sql>
+	</changeSet>
+	
 	</databaseChangeLog>
