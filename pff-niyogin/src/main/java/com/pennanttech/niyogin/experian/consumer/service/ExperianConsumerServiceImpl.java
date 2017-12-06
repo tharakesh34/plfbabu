@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -44,6 +45,10 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 	private final String		SUIT_FILED						= "SUITFILED";
 	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
 	private final String		NO_EMI_BOUNCES_IN_SIX_MONTHS	= "EMI6MNTHS";
+	
+	private final String		STATUS							= "STATUS";
+	private final String		WRITEOFF						= "25";
+	private final String		SETTLE							= "23";
 
 	private String				status							= "SUCCESS";
 	private String				errorCode						= null;
@@ -229,6 +234,13 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 				if (caisAccountHistories != null && caisAccountHistories.size() >= 5) {
 					boolean isEmiBounce = isEMIBouncesInLastMonths(caisAccountHistories, 6);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
+				}
+			} else if(entry.getKey().equals(STATUS)) {
+				String acc_Status = String.valueOf(extendedFieldMap.get(STATUS));
+				if(StringUtils.equals(acc_Status, WRITEOFF)) {
+					extendedFieldMap.put("EXPBWRUTEOFF", true);
+				} else if(StringUtils.equals(acc_Status, SETTLE)) {
+					extendedFieldMap.put("EXPBSETTLED", true);
 				}
 			} else {
 				extendedFieldMap.put(entry.getKey(), entry.getValue());
