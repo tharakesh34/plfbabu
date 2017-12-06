@@ -104,28 +104,28 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_documentDetailDialog; // autoWired
-	protected Borderlayout borderlayoutDocumentDetail; // autoWired
+	protected Window							window_documentDetailDialog;								// autoWired
+	protected Borderlayout						borderlayoutDocumentDetail;									// autoWired
 
-	protected Button btnNew_DocumentDetails; // autoWired
-	protected Listbox listBoxDocumentDetails; // autoWired
-	protected Map<String, DocumentDetails> docDetailMap = null;
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-	private transient FinanceDetailService financeDetailService = null;
-	private transient CustomerDocumentService customerDocumentService = null;
-	private ExternalDocumentManager				externalDocumentManager			= null;
+	protected Button							btnNew_DocumentDetails;										// autoWired
+	protected Listbox							listBoxDocumentDetails;										// autoWired
+	protected Map<String, DocumentDetails>		docDetailMap			= null;
+	private List<DocumentDetails>				documentDetailsList		= new ArrayList<DocumentDetails>();
+	private transient FinanceDetailService		financeDetailService	= null;
+	private transient CustomerDocumentService	customerDocumentService	= null;
+	private ExternalDocumentManager				externalDocumentManager	= null;
 
-	private Object financeMainDialogCtrl = null;
-	private FinanceDetail financeDetail = null;
-	
-	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl  collateralBasicDetailsCtrl;
-	protected Groupbox finBasicdetails;
-	
-	private boolean headerNotrequired = false;
-	private String moduleDefiner = "";
-	private boolean isNotFinanceProcess = false;
-	private String moduleName;
+	private Object								financeMainDialogCtrl	= null;
+	private FinanceDetail						financeDetail			= null;
+
+	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
+	protected Groupbox							finBasicdetails;
+
+	private boolean								headerNotrequired		= false;
+	private String								moduleDefiner			= "";
+	private boolean								isNotFinanceProcess		= false;
+	private String								moduleName;
 
 	/**
 	 * default constructor.<br>
@@ -604,7 +604,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				// Fetch document from interface
 				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri());
 				if (detail != null && detail.getDocImage() != null) {
-					finDocumentDetail.setDocImage(detail.getDocImage());
+					finDocumentDetail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 				}
 
 			}

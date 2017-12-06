@@ -4568,7 +4568,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						try {
 							// Fetch document from interface
 							DocumentDetails detail = externalDocumentManager.getExternalDocument(customerDocument.getDocUri());
-							customerDocument.setCustDocImage(detail.getDocImage());
+							customerDocument.setCustDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 						} catch (InterfaceException e) {
 							MessageUtil.showError(e);
 						}
