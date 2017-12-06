@@ -74,6 +74,9 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 			doInterfaceLogging(smsRequest, "Mobile: "+mobileNo+":"+"Content :"+content);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		// success case logging
+		doInterfaceLogging(smsRequest,  "Mobile: "+mobileNo+":"+"Content :"+content);
+				
 		logger.debug(Literal.LEAVING);
 	}
 

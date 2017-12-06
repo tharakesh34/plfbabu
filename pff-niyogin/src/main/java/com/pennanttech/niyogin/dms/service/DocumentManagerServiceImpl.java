@@ -68,6 +68,9 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			doInterfaceLogging(dmsRequest, "FETCH-DOCUMENT");
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		
+		// success case logging
+		doInterfaceLogging(dmsRequest, "FETCH-DOCUMENT");
 		logger.debug(Literal.LEAVING);
 		return detail;
 	}

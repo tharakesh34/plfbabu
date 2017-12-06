@@ -108,6 +108,10 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 			doInterfaceLogging(consumerRequest, finReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		
+		// success case logging
+		doInterfaceLogging(consumerRequest, finReference);
+		
 		prepareResponseObj(validatedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);

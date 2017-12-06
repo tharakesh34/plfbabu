@@ -104,6 +104,10 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 			doInterfaceLogging(commercialRequest, finReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		
+		// success case logging
+		doInterfaceLogging(commercialRequest, finReference);
+		
 		prepareResponseObj(validatedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);

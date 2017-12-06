@@ -91,6 +91,9 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			doInterfaceLogging(hunterRequest, finReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		// success case logging
+		doInterfaceLogging(hunterRequest, finReference);
+				
 		prepareResponseObj(validatedMap, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;

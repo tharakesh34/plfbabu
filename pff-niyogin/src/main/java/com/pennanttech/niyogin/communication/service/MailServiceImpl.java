@@ -76,6 +76,9 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 			doInterfaceLogging(emailRequest, "MailId: "+emailId+":"+"Subject :"+subject);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		// success case logging
+		doInterfaceLogging(emailRequest, "MailId: "+emailId+":"+"Subject :"+subject);
+				
 		logger.debug(Literal.LEAVING);
 	}
 

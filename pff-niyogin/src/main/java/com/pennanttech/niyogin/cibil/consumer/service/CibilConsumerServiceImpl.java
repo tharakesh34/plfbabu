@@ -92,6 +92,10 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			doInterfaceLogging(cibilConsumerRequest, finReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		
+		// success case logging
+		doInterfaceLogging(cibilConsumerRequest, finReference);
+				
 		prepareResponseObj(validatedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);
