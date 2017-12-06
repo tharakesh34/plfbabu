@@ -44,6 +44,7 @@ public class AgreementDetail {
 	private String  custTotIncome="";													// Customer Total Income
 	private String  custTotExpense="";													// Customer Total Expense
 	
+	private String panNumber ="";
 	private String  custEmpStsCode="";													// Customer Employee Status Code
 	private String  custEmpStsDesc="";													// Customer Employee Status Description
 	private String  custEmpName="";													// Customer Employer Name
@@ -244,6 +245,7 @@ public class AgreementDetail {
 	private String 	finCcy ="";															// Currency Code
 	private String 	pftDaysBasis ="";													// Profit Days Basis
 	private String 	finBranch ="";														// Finance Branch
+	private String repayRateBasis;
 	private String 	startDate ="";														// Finance Start Date
 	private String 	contractDate ="";													// Contract Date
 	private String 	finAmount ="";														// Finance Amount
@@ -2819,6 +2821,14 @@ private String custAccount ="";
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
+	
+	public String getRepayRateBasis() {
+		return repayRateBasis;
+	}
+
+	public void setRepayRateBasis(String repayRateBasis) {
+		this.repayRateBasis = repayRateBasis;
+	}
 
 	public String getFeeChargeAmt() {
 		return feeChargeAmt;
@@ -4094,6 +4104,188 @@ private String custAccount ="";
 	public void setInsuranceAmt(String insuranceAmt) {
 		this.insuranceAmt = insuranceAmt;
 	}
+	
+	List<CoApplicant> coApplicants;
+	
+	public List<CoApplicant> getCoApplicants() {
+		return coApplicants;
+	}
+
+	public void setCoApplicants(List<CoApplicant> coApplicants) {
+		this.coApplicants = coApplicants;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public class CoApplicant {
+		
+		private String custName ="";
+		private String panNumber ="";
+		private String Address ="";
+		private String custAddrHNbr="";
+		private String custFlatNbr="";
+		private String custAddrStreet="";
+		private String custAddrLine1="";
+		private String custAddrLine2="";
+		private String custPOBox="";
+		private String custAddrCountry="";
+		private String lovDescCustAddrCountryName="";
+		private String custAddrProvince="";
+		private String lovDescCustAddrProvinceName="";
+		private String custAddrCity ="";
+		private String lovDescCustAddrCityName ="";
+		private String custAddrZIP ="";
+		private String custAddrPhone ="";
+
+		public CoApplicant() {
+			
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getPanNumber() {
+			return panNumber;
+		}
+
+		public void setPanNumber(String panNumber) {
+			this.panNumber = panNumber;
+		}
+
+		public String getAddress() {
+			return Address;
+		}
+
+		public void setAddress(String address) {
+			Address = address;
+		}
+
+		public String getCustAddrHNbr() {
+			return custAddrHNbr;
+		}
+
+		public void setCustAddrHNbr(String custAddrHNbr) {
+			this.custAddrHNbr = custAddrHNbr;
+		}
+
+		public String getCustFlatNbr() {
+			return custFlatNbr;
+		}
+
+		public void setCustFlatNbr(String custFlatNbr) {
+			this.custFlatNbr = custFlatNbr;
+		}
+
+		public String getCustAddrStreet() {
+			return custAddrStreet;
+		}
+
+		public void setCustAddrStreet(String custAddrStreet) {
+			this.custAddrStreet = custAddrStreet;
+		}
+
+		public String getCustAddrLine1() {
+			return custAddrLine1;
+		}
+
+		public void setCustAddrLine1(String custAddrLine1) {
+			this.custAddrLine1 = custAddrLine1;
+		}
+
+		public String getCustAddrLine2() {
+			return custAddrLine2;
+		}
+
+		public void setCustAddrLine2(String custAddrLine2) {
+			this.custAddrLine2 = custAddrLine2;
+		}
+
+		public String getCustPOBox() {
+			return custPOBox;
+		}
+
+		public void setCustPOBox(String custPOBox) {
+			this.custPOBox = custPOBox;
+		}
+
+		public String getCustAddrCountry() {
+			return custAddrCountry;
+		}
+
+		public void setCustAddrCountry(String custAddrCountry) {
+			this.custAddrCountry = custAddrCountry;
+		}
+
+		public String getLovDescCustAddrCountryName() {
+			return lovDescCustAddrCountryName;
+		}
+
+		public void setLovDescCustAddrCountryName(String lovDescCustAddrCountryName) {
+			this.lovDescCustAddrCountryName = lovDescCustAddrCountryName;
+		}
+
+		public String getCustAddrProvince() {
+			return custAddrProvince;
+		}
+
+		public void setCustAddrProvince(String custAddrProvince) {
+			this.custAddrProvince = custAddrProvince;
+		}
+
+		public String getLovDescCustAddrProvinceName() {
+			return lovDescCustAddrProvinceName;
+		}
+
+		public void setLovDescCustAddrProvinceName(String lovDescCustAddrProvinceName) {
+			this.lovDescCustAddrProvinceName = lovDescCustAddrProvinceName;
+		}
+
+		public String getCustAddrCity() {
+			return custAddrCity;
+		}
+
+		public void setCustAddrCity(String custAddrCity) {
+			this.custAddrCity = custAddrCity;
+		}
+
+		public String getLovDescCustAddrCityName() {
+			return lovDescCustAddrCityName;
+		}
+
+		public void setLovDescCustAddrCityName(String lovDescCustAddrCityName) {
+			this.lovDescCustAddrCityName = lovDescCustAddrCityName;
+		}
+
+		public String getCustAddrZIP() {
+			return custAddrZIP;
+		}
+
+		public void setCustAddrZIP(String custAddrZIP) {
+			this.custAddrZIP = custAddrZIP;
+		}
+
+		public String getCustAddrPhone() {
+			return custAddrPhone;
+		}
+
+		public void setCustAddrPhone(String custAddrPhone) {
+			this.custAddrPhone = custAddrPhone;
+		}
+		
+	}
+
+
 
 
 
