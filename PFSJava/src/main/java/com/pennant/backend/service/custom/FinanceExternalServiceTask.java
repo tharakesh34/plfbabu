@@ -18,6 +18,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -148,14 +149,17 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Bureau:
-				//TODO:condition required
-				//auditHeader=experianconsumerService.getExperianConsumer(auditHeader);
-				//auditHeader=experianCommercialService.getBureauCommercial(auditHeader);
+				Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
+				if (StringUtils.equals(customer.getCustTypeCode(), "3")
+						&& StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
+					auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
+				} else if (!StringUtils.equals(customer.getCustTypeCode(), "3")) {
+					auditHeader = experianCommercialService.getBureauCommercial(auditHeader);
+				}
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Crif:
-				//TODO:condition required
-				//auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
+				auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Cibil_Consumer:
