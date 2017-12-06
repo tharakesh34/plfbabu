@@ -158,6 +158,10 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				//auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
 				taskExecuted = true;
 				break;
+			case PennantConstants.method_Cibil_Consumer:
+				auditHeader=cibilConsumerService.getCibilConsumer(auditHeader);
+				taskExecuted = true;
+				break;
 			default:
 				return taskExecuted;
 			}
