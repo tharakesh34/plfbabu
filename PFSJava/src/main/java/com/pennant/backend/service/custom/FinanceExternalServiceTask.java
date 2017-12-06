@@ -149,22 +149,37 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_Bureau:
-				Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
-				if (StringUtils.equals(customer.getCustTypeCode(), "3")
-						&& StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
-					auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
-				} else if (!StringUtils.equals(customer.getCustTypeCode(), "3")) {
-					auditHeader = experianCommercialService.getBureauCommercial(auditHeader);
+				try {
+					Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
+					if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+						auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
+					} else if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
+						auditHeader = experianCommercialService.getBureauCommercial(auditHeader);
+					}
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in Experian Bureau:", e);
+					taskExecuted = true;
 				}
-				taskExecuted = true;
 				break;
 			case PennantConstants.method_Crif:
-				auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
-				taskExecuted = true;
+				try {
+					auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
+					auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in CRIFF Bureau:", e);
+					taskExecuted = true;
+				}
 				break;
 			case PennantConstants.method_Cibil_Consumer:
-				auditHeader=cibilConsumerService.getCibilConsumer(auditHeader);
-				taskExecuted = true;
+				try {
+					auditHeader=cibilConsumerService.getCibilConsumer(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in CIBIL Bureau:", e);
+					taskExecuted = true;
+				}
 				break;
 			default:
 				return taskExecuted;
