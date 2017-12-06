@@ -95,9 +95,7 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, consumerRequest);
-			Object responseObj = client.getResponseObject(jsonResponse, "dd-MM-YYYY", CRIFConsumerResponse.class,
-					false);
-			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
+			
 			//for Straight forwardFields It works
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 
@@ -110,6 +108,10 @@ public class CrifConsumerServiceImpl extends NiyoginService implements CrifConsu
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
 			}
+			
+			Object responseObj = client.getResponseObject(jsonResponse, "dd-MM-YYYY", CRIFConsumerResponse.class,
+					false);
+			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 
 			//For caliculation Fields
 			prepareExtendedFieldMap(consumerResponse, extendedFieldMap);
