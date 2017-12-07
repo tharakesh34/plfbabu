@@ -281,9 +281,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerDocument.setRecordType("");
-				DocumentManager documentManager = new DocumentManager();
-				documentManager.setDocImage(customerDocument.getCustDocImage());
-				customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				if (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(customerDocument.getCustDocImage());
+					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				}
 				getCustomerDocumentDAO().save(customerDocument, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -433,6 +435,16 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 
+			if ((StringUtils.isNotBlank(customerDocument.getDocUri())) || (customerDocument.getCustDocImage() != null
+					|| customerDocument.getCustDocImage().length > 0)) {
+				if (StringUtils.isBlank(customerDocument.getCustDocType())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "docFormat";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
 			
 			
 			// validate custDocIssuedCountry
