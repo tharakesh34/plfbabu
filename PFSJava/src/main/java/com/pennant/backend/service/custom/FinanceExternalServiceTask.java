@@ -164,7 +164,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_Crif:
 				try {
-					auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
+					//auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
 					auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
