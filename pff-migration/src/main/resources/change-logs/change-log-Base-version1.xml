@@ -57,7 +57,7 @@
 		     JOIN customers t3 ON t1.custcif = t3.custcif
 		  WHERE NOT (EXISTS ( SELECT 1
 		           FROM finjointaccountdetails_temp
-		          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid));
+		          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
      </createView>
      </changeSet>
     
@@ -370,8 +370,8 @@
 	t2.docispasswordprotected,
 	t2.pdfmappingref
    FROM plf.customerdocuments t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode;
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
 	 	</createView>
 	</changeSet>
 	
@@ -415,8 +415,8 @@
 	t2.docispasswordprotected,
 	t2.pdfmappingref
    FROM plf.customerdocuments_temp t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
 UNION ALL
  SELECT t1.custid,
     t1.custdoctype,
@@ -455,12 +455,12 @@ UNION ALL
 	t2.docispdfextrequired,
 	t2.docispasswordprotected,
 	t2.pdfmappingref
-   FROM plf.customerdocuments t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+   FROM customerdocuments t1
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
   WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.customerdocuments_temp
-          WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory));
+           FROM customerdocuments_temp
+          WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory))
 		  </createView>
 </changeSet>
 
@@ -614,8 +614,7 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 	<changeSet id="28" author="Surekha">
 		<dropForeignKeyConstraint baseTableName="CUSTOMERS" constraintName="FK_CUSTS_RELATIONSHIPOFFICERS"/>
 	</changeSet>
-	
-	<changeSet id="28" author="Durga Prasad D">
+	<changeSet id="28" author="Durga Prasad D" dbms="postgresql">
 		<createTable tableName="InterfaceLogDetails">
 			<column name="InterfaceSeqId" type="bigint" >
 				<constraints primaryKey="true" nullable="false"/>
@@ -629,6 +628,27 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
 			<column name="EndPoint" type="nvarchar(200)"/>
 			<column name="Request" type="nvarchar(65535)"/>
 			<column name="Response" type="nvarchar(65535)" />
+			<column name="ReqSentOn" type="datetime"/>
+			<column name="RespReceivedOn" type="datetime"/>
+			<column name="Status" type="nvarchar(200)"/>
+			<column name="ErrorCode" type="nvarchar(10)"/>
+			<column name="ErrorDesc" type="nvarchar(200)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="28" author="Durga Prasad D" dbms="oracle">
+		<createTable tableName="InterfaceLogDetails">
+			<column name="InterfaceSeqId" type="bigint" >
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="ServiceName" type="nvarchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reference" type="nvarchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EndPoint" type="nvarchar(200)"/>
+			<column name="Request" type="nvarchar(1000)"/>
+			<column name="Response" type="nvarchar(1000)" />
 			<column name="ReqSentOn" type="datetime"/>
 			<column name="RespReceivedOn" type="datetime"/>
 			<column name="Status" type="nvarchar(200)"/>
@@ -690,9 +710,9 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
     t2.docispasswordprotected,
     t2.pdfmappingref,
     t1.pdfpassword
-   FROM plf.customerdocuments t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode;
+   FROM customerdocuments t1
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
 			</createView>
 			</changeSet>
 	
@@ -737,9 +757,9 @@ Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULT
     t2.docispasswordprotected,
     t2.pdfmappingref,
     t1.pdfpassword
-   FROM plf.customerdocuments_temp t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+   FROM customerdocuments_temp t1
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
 UNION ALL
  SELECT t1.custid,
     t1.custdoctype,
@@ -779,15 +799,15 @@ UNION ALL
     t2.docispasswordprotected,
     t2.pdfmappingref,
     t1.pdfpassword
-   FROM plf.customerdocuments t1
-     JOIN plf.bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
-     JOIN plf.bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
+   FROM customerdocuments t1
+     JOIN bmtdocumenttypes t2 ON t1.custdoccategory = t2.doctypecode
+     JOIN bmtcountries t3 ON t1.custdocissuedcountry = t3.countrycode
   WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.customerdocuments_temp
-          WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory));
+           FROM customerdocuments_temp
+          WHERE customerdocuments_temp.custid = t1.custid AND customerdocuments_temp.custdoccategory = t1.custdoccategory))
 			</createView>
 			</changeSet>
-	<changeSet id="33" author="Durga Prasad D">
+	<changeSet id="33" author="Durga Prasad D" dbms="postgresql">
 		<sql>
 			drop table InterfaceLogDetails cascade;
 		</sql>
@@ -804,6 +824,30 @@ UNION ALL
 			<column name="EndPoint" type="nvarchar(200)"/>
 			<column name="Request" type="nvarchar(65535)"/>
 			<column name="Response" type="nvarchar(65535)" />
+			<column name="ReqSentOn" type="datetime"/>
+			<column name="RespReceivedOn" type="datetime"/>
+			<column name="Status" type="nvarchar(200)"/>
+			<column name="ErrorCode" type="nvarchar(10)"/>
+			<column name="ErrorDesc" type="nvarchar(200)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="33" author="Durga Prasad D" dbms="oracle">
+		<sql>
+			drop table InterfaceLogDetails;
+		</sql>
+		<createTable tableName="InterfaceLogDetails">
+			<column name="SeqId" type="bigint" autoIncrement="true" startWith="1">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="ServiceName" type="nvarchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reference" type="nvarchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EndPoint" type="nvarchar(200)"/>
+			<column name="Request" type="nvarchar(1000)"/>
+			<column name="Response" type="nvarchar(1000)" />
 			<column name="ReqSentOn" type="datetime"/>
 			<column name="RespReceivedOn" type="datetime"/>
 			<column name="Status" type="nvarchar(200)"/>
@@ -828,61 +872,6 @@ UNION ALL
 		Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
 		SecGroupRights);
 	</sql>
-	</changeSet>
-	
-	<changeSet id="35" author="Amit">
-	<sql>
-	delete from SecGroupRights where rightid = (select RightID from SecRights WHERE RightName='CustomerDocumentDialog_pdfPassword');
-	delete from SecRights where  rightname = 'CustomerDocumentDialog_pdfPassword';		
-	</sql>
-	</changeSet>
-	
-	<changeSet id="36" author="Amit">
-     <addColumn tableName="DocumentDataMapping">
-     	<column name="TypeDescription" type="nvarchar(200)"/>
-     </addColumn>
-    </changeSet>
-	
-	<changeSet id="37" author="Amit">
-	<sql>
-	Update DocumentDataMapping set typedescription = 'Form for Return of Service Tax' where type = 'ST3';	
-	Update DocumentDataMapping set typedescription = 'ITR-4 Form Description' where type = 'ITR4';
-	Update DocumentDataMapping set typedescription = 'ITR-5 Form Description' where type = 'ITR5';	
-	</sql>
-	</changeSet>
-	
-	<changeSet id="38" author="Amit">
-     <addColumn tableName="DOCUMENTDATACONFIG">
-     	<column name="DateFormat" type="nvarchar(100)"/>
-     </addColumn>
-    </changeSet>
-    
-    <changeSet id="39" author="Amit">
-	<sql>
-	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'ACTUALDATEOFFILNG';
-	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'DUEDATEFORFILINRET';		
-	</sql>
-	</changeSet>
-	
-	 <changeSet id="40" author="Amit">
-	<sql>
-	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'ACTUALDATEOFFILNG';
-	Update DOCUMENTDATACONFIG set DateFormat = 'dd/MM/yyyy' where EXTERNALREF = 'DUEDATEFORFILINRET';		
-	</sql>
-	</changeSet>
-	
-	<changeSet id="41" author="Amit">
-     	<dropColumn tableName="DOCUMENTDATACONFIG" columnName="type"/>
-     </changeSet>
-     
-     	<changeSet id="42" author="Amit">
-		<addNotNullConstraint tableName="DocumentDataMapping"
-			columnName="Type" columnDataType="VARCHAR2" />
-	</changeSet>
-	
-	<changeSet id="43" author="Amit">
-		<addUniqueConstraint columnNames="Type"
-			constraintName="UK_Type_DocumentDataMapping" tableName="DocumentDataMapping" />
 	</changeSet>
 	
 	</databaseChangeLog>
