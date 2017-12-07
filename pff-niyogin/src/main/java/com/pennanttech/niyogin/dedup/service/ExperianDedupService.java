@@ -102,6 +102,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
+				extendedFieldMap.put("EXDREQUESTSEND", true);
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
 			logger.info("Response : " + jsonResponse);

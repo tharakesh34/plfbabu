@@ -74,9 +74,9 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
 				throw new InterfaceException(errorCode, errorDesc);
 			} else {
+				extendedFieldMap.put("HUNTREQSEND", true);
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
-				extendedFieldMap.put("HUNTREQSEND", true);
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			}
 
