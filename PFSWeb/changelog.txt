@@ -1,3 +1,8 @@
+pff 4.1.0, 2017-12-07
+---------------------
+- Remove the i3-labels.properties from WebContent/WEB-INF.
+- Upgrade the atlantic theme to correct combobox layout issue.
+
 pff 4.1.0, 2017-12-04
 ---------------------
 - DataSourceFactory class moved to framework.
