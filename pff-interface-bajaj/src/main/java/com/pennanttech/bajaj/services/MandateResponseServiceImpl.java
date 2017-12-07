@@ -178,19 +178,13 @@ public class MandateResponseServiceImpl extends BajajService implements MandateR
 			remarks.append("Customer Code");
 		}
 
-		if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
-			}
-			remarks.append("Fin Reference");
-		}
-
-		if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
-			}
-			remarks.append("MICR Code");
-		}
+		/*
+		 * if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) { if (remarks.length() >
+		 * 0) { remarks.append(", "); } remarks.append("Fin Reference"); }
+		 * 
+		 * if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) { if (remarks.length() > 0) {
+		 * remarks.append(", "); } remarks.append("MICR Code"); }
+		 */
 
 		if (!StringUtils.equals(mandate.getAccNumber(), respMandate.getAccNumber())) {
 			if (remarks.length() > 0) {
@@ -199,19 +193,15 @@ public class MandateResponseServiceImpl extends BajajService implements MandateR
 			remarks.append("Account No.");
 		}
 
-		if (!StringUtils.equals(mandate.getMandateType(), respMandate.getMandateType())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
-			}
-			remarks.append("Mandate Type");
-		}
+		/*
+		 * if (!StringUtils.equals(mandate.getMandateType(), respMandate.getMandateType())) { if (remarks.length() > 0)
+		 * { remarks.append(", "); } remarks.append("Mandate Type"); }
+		 */
 
-		if (!StringUtils.equals(mandate.getLovValue(), respMandate.getLovValue())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
-			}
-			remarks.append("Open Mandate");
-		}
+		/*
+		 * if (!StringUtils.equals(mandate.getLovValue(), respMandate.getLovValue())) { if (remarks.length() > 0) {
+		 * remarks.append(", "); } remarks.append("Open Mandate"); }
+		 */
 
 	}
 

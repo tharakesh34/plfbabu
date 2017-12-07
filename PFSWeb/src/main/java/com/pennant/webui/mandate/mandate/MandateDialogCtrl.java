@@ -977,7 +977,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else if (maintain) {
 			excludeList.add(MandateConstants.STATUS_FIN);
 			excludeList.add(MandateConstants.STATUS_NEW);
-			excludeList.add(MandateConstants.STATUS_APPROVED);
+			//excludeList.add(MandateConstants.STATUS_APPROVED);
 			excludeList.add(MandateConstants.STATUS_AWAITCON);
 			excludeList.add(MandateConstants.STATUS_REJECTED);
 
