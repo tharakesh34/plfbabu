@@ -82,7 +82,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param reference
 	 */
 	private void doInterfaceLogging(DocumentRequest request, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, request, jsonResponse, reqSentOn,
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, request, "Document", reqSentOn,
 				status, errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);
 	}
