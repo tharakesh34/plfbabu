@@ -10479,7 +10479,7 @@
 		
 	<!-- Licence File Upload -->
 	<bean id="licenceFileDAO"
-		class="com.pennant.backend.service.licencefileupload.dao.impl.LicenceFileDAOImpl"
+		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"
 		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -10501,7 +10501,7 @@
 			</props>
 		</property>
 	</bean>
-	<bean name="licenceFileServiceTarget" class="com.pennant.backend.service.licencefileupload.impl.LicenceFileServiceImpl">
+	<bean name="licenceFileServiceTarget" class="com.pennant.backend.service.licencefile.impl.LicenceFileServiceImpl">
 		<property name="licenceFileDAO" ref="licenceFileDAO" />
 	</bean>
 </beans>
