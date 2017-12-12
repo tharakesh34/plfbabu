@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
@@ -239,6 +240,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			return groupbox;
 		case ExtendedFieldConstants.FIELDTYPE_TABPANEL:
 			return getTabpanel(container);
+		case ExtendedFieldConstants.FIELDTYPE_BUTTON:
+			Button button = getButton(container);
+			rootElement.appendChild(button);
+			return button;
 		default:
 			return this.tabpanel;
 
@@ -1489,6 +1494,22 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			intbox.setValue(Integer.parseInt(detail.getFieldDefaultValue().toString()));
 		}
 		return intbox;
+	}
+
+	/**
+	 * Method for get the Button based on the Extended Field Detail, it sets the onClick event on Button with the name
+	 * onClickExtbtn followed by fieldName.
+	 * 
+	 * @param detail
+	 * @return button
+	 */
+	private Button getButton(ExtendedFieldDetail detail) {
+		Button button = new Button();
+		button.setLabel(detail.getFieldLabel());
+		button.setId(detail.getFieldName());
+		readOnlyComponent(!detail.isEditable(), button);
+		ComponentsCtrl.applyForward(button, "onClick=onClickExtbtn" + detail.getFieldName());
+		return button;
 	}
 
 	/**

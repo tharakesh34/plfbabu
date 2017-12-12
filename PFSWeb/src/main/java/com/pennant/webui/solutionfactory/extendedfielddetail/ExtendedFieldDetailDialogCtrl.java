@@ -452,13 +452,19 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for get the list of parent components in the ExtendedFields except the same parent element and button.
+	 * 
+	 * @return parentList
+	 */
 	private List<ValueLabel> getGroupBoxList() {
-		List<ValueLabel> parentList=null;
-		List<ExtendedFieldDetail> extendedFieldDetail=getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
-		if(extendedFieldDetail!=null){
-			parentList=new ArrayList<ValueLabel>();
-			for(ExtendedFieldDetail detail:extendedFieldDetail){
-				if(!detail.isInputElement()&&!detail.getFieldName().equals(this.fieldName.getValue())){
+		List<ValueLabel> parentList = null;
+		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		if (extendedFieldDetail != null) {
+			parentList = new ArrayList<ValueLabel>();
+			for (ExtendedFieldDetail detail : extendedFieldDetail) {
+				if (!detail.isInputElement() && !detail.getFieldName().equals(this.fieldName.getValue())
+						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, detail.getFieldType())) {
 					parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
 				}
 			}
@@ -952,10 +958,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//If the fieldType is groupbox or tabpanel then make inputElement as false otherwise true
+		//If the fieldType is groupbox ,tabpanel or button then make inputElement as false otherwise true
 		try{
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, aExtendedFieldDetail.getFieldType())
-					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,aExtendedFieldDetail.getFieldType())) {
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,aExtendedFieldDetail.getFieldType())
+					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON,aExtendedFieldDetail.getFieldType())) {
 				aExtendedFieldDetail.setInputElement(false);
 			}else{
 				aExtendedFieldDetail.setInputElement(true);
@@ -1968,6 +1975,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowfieldparentTag.setVisible(false);
 			} else {
 				this.rowfieldparentTag.setVisible(true);
+			}
+			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, fieldType)){
+				this.rowMandatory.setVisible(false);
 			}
 			
 			if(this.rowfieldLength.isVisible()){
