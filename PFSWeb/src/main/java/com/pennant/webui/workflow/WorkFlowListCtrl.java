@@ -61,7 +61,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.workflow.model.WorkFlowListModelItemRenderer;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;

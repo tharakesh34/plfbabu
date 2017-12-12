@@ -62,7 +62,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.service.applicationmaster.SplRateCodeService;
 import com.pennant.webui.applicationmaster.splratecode.model.SplRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

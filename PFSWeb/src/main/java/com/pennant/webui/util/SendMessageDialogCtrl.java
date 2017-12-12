@@ -68,6 +68,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

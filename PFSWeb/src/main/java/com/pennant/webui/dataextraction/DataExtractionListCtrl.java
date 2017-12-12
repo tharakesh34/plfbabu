@@ -36,7 +36,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.TaxDownload;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.bajaj.process.TaxDownlaodProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;

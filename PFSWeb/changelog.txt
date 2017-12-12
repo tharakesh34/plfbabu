@@ -1,3 +1,7 @@
+pff 4.1.0, 2017-12-12
+---------------------
+- Refactoring moved MessageUtil class from the package com.pennant.webui.util to com.pennanttech.pennapps.web.util
+
 pff 4.1.0, 2017-12-07
 ---------------------
 - Remove the i3-labels.properties from WebContent/WEB-INF.

@@ -24,7 +24,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> {
 	private static final long serialVersionUID = 6004939933729664895L;

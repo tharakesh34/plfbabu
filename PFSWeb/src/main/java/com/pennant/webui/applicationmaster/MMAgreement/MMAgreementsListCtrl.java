@@ -19,7 +19,7 @@ import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.webui.applicationmaster.MMAgreement.model.MMAgreementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

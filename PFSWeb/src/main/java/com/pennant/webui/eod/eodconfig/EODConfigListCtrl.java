@@ -64,7 +64,7 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.webui.eod.eodconfig.model.EODConfigListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;

@@ -56,7 +56,7 @@ import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

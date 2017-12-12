@@ -63,7 +63,7 @@ import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;

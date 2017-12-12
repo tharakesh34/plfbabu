@@ -67,7 +67,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -75,6 +74,7 @@ import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 

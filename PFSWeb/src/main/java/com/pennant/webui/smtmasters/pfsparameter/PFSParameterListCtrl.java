@@ -61,7 +61,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.webui.smtmasters.pfsparameter.model.PFSParameterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

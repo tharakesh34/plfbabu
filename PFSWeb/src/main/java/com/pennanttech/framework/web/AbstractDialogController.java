@@ -16,7 +16,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.ButtonStatusCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public abstract class AbstractDialogController<T> extends AbstractController<T> {

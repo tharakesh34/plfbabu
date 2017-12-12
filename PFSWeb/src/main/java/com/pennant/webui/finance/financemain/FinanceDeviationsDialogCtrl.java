@@ -77,7 +77,7 @@ import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {

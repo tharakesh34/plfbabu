@@ -25,7 +25,7 @@ import com.pennant.search.SearchResult;
 import com.pennant.webui.finance.financemain.model.QueueAssignmentListComparator;
 import com.pennant.webui.finance.financemain.model.QueueAssignmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHeader> {
 	private static final long serialVersionUID = -727353070679277569L;

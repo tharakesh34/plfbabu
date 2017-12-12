@@ -85,6 +85,7 @@ import com.pennant.component.PTCKeditor;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennanttech.framework.web.AbstractDialogController;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private static final long					serialVersionUID	= -1351367303946249042L;

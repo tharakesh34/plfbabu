@@ -64,7 +64,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;

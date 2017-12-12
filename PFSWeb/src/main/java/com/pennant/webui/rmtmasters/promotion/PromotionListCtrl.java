@@ -64,7 +64,7 @@ import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.rmtmasters.promotion.model.PromotionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

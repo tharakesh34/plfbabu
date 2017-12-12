@@ -21,7 +21,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

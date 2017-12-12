@@ -61,7 +61,7 @@ import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.service.finance.commodity.CommodityDetailService;
 import com.pennant.webui.finance.commodity.commoditydetail.model.CommodityDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

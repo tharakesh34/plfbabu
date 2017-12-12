@@ -13,7 +13,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailEnquiryListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 2338460659547934642L;

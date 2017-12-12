@@ -36,7 +36,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	private static final long serialVersionUID = 6004939933729664895L;

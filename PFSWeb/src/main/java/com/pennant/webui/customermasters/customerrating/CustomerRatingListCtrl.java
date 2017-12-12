@@ -61,7 +61,7 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.service.customermasters.CustomerRatingService;
 import com.pennant.webui.customermasters.customerrating.model.CustomerRatingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

@@ -82,7 +82,7 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 /**

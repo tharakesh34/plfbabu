@@ -63,7 +63,7 @@ import com.pennant.backend.service.customermasters.CustomerBalanceSheetService;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetComparator;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

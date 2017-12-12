@@ -51,7 +51,7 @@ import org.zkoss.zk.ui.Component;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ErrorControl {
 	private int	returnCode	= PennantConstants.porcessCONTINUE;

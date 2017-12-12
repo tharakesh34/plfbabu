@@ -62,7 +62,7 @@ import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.service.applicationmaster.OtherBankFinanceTypeService;
 import com.pennant.webui.applicationmaster.otherbankfinancetype.model.OtherBankFinanceTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

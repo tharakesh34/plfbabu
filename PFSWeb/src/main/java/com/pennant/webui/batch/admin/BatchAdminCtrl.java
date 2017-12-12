@@ -10,7 +10,7 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.ArrayList;

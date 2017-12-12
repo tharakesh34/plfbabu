@@ -64,7 +64,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.bmtmasters.product.model.ProductListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

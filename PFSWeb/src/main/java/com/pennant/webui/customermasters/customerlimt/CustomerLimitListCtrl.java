@@ -63,7 +63,7 @@ import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.webui.customermasters.customerlimt.model.CustomerLimitListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

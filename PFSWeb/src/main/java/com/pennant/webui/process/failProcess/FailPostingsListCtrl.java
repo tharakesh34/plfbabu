@@ -65,7 +65,7 @@ import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.process.failProcess.model.FailPostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.InterfaceException;

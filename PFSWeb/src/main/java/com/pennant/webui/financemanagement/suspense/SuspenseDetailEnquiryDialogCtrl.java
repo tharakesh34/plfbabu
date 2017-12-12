@@ -75,7 +75,7 @@ import com.pennant.webui.financemanagement.suspense.model.SuspenseDetailListMode
 import com.pennant.webui.reports.model.LoanEnquiryPostingsComparator;
 import com.pennant.webui.reports.model.LoanEnquiryPostingsListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

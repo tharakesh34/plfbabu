@@ -67,7 +67,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	private static final long serialVersionUID = -4578996988245614938L;

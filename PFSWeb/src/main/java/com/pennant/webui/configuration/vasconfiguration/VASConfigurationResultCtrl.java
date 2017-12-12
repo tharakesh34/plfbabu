@@ -21,7 +21,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long				serialVersionUID	= -546886879998950467L;

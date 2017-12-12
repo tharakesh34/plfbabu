@@ -63,7 +63,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.webui.customermasters.customerincome.model.CustomerIncomeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

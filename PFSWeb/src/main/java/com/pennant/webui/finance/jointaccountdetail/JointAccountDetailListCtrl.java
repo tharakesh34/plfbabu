@@ -60,7 +60,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.webui.finance.jountaccountdetail.model.JountAccountDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/JointAccountDetail/JointAccountDetailList.zul file.

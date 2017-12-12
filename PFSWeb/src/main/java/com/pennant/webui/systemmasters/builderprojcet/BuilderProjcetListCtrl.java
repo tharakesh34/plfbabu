@@ -65,7 +65,7 @@ import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.systemmasters.builderprojcet.model.BuilderProjcetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;

@@ -66,7 +66,7 @@ import com.pennant.backend.service.applicationmaster.QueryService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.applicationmaster.query.model.QueryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

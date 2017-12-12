@@ -36,7 +36,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final long serialVersionUID = -6646226859133636932L;

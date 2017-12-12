@@ -68,7 +68,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.provisionmovement.model.ProvisionPostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

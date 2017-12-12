@@ -65,7 +65,7 @@ import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financetaxdetail.model.FinanceTaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
