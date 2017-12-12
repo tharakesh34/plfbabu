@@ -137,52 +137,32 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		}
 
 		if (!stp_IMPS.isEmpty()) {
-			List<String> idList = null;
+			List<Long> idList = null;
 			try {
-				idList = prepareRequest(getPaymentIds(stp_IMPS).split(","), type.name());
+				idList = prepareRequest(getPaymentIds(stp_IMPS), type.name());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 			
-			if (idList != null && !idList.isEmpty()) {
-				List<String> ids = new ArrayList<>();
-				for (String id : idList) {
-					if (StringUtils.trimToNull(id) != null) {
-						ids.add(id);
-					}
-				}
-				if (ids != null && !ids.isEmpty()) {
-					sendIMPSRequest("DISB_IMPS_EXPORT", ids, userId);
-				}
-			}
+			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
 		}
 
 		if (!other_IMPS.isEmpty()) {
-			List<String> idList = null;
+			List<Long> idList = null;
 			try {
-				idList = prepareRequest(getPaymentIds(other_IMPS).split(","), type.name());
+				idList = prepareRequest(getPaymentIds(other_IMPS), type.name());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 			
-			if (idList != null && !idList.isEmpty()) {
-				List<String> ids = new ArrayList<>();
-				for (String id : idList) {
-					if (StringUtils.trimToNull(id) != null) {
-						ids.add(id);
-					}
-				}
-				if (ids != null && !ids.isEmpty()) {
-					sendIMPSRequest("DISB_IMPS_EXPORT", ids, userId);
-				}
-			}
+			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
 		}
 
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
+		generateFile("DISB_CITY_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
+		generateFile("DISB_CITY_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
+		generateFile("DISB_CITY_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
+		generateFile("DISB_CITY_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
+		generateFile("DISB_CITY_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
 
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
@@ -201,9 +181,9 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			List<String> parnerBanks = new ArrayList<String>(map.keySet());
 
 			for (String bank : parnerBanks) {
-				List<String> idList = null;
+				List<Long> idList = null;
 				try {
-					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","), paymentType);
+					idList = prepareRequest(getPaymentIds(map.get(bank)), paymentType);
 					
 					if (idList == null || idList.isEmpty() || (idList.size() !=disbusments.size() )) {
 						throw new ConcurrencyException();
@@ -231,20 +211,16 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		return map;
 	}
 
-	private String getPaymentIds(List<FinAdvancePayments> finAdvancePayments) {
-		StringBuilder builder = new StringBuilder();
+	private Long[] getPaymentIds(List<FinAdvancePayments> finAdvancePayments) {
+		Long[] builder = new Long[finAdvancePayments.size()];
 
-		for (FinAdvancePayments disbursement : finAdvancePayments) {
-
-			if (builder.length() > 0) {
-				builder.append(",");
-			}
-			builder.append(disbursement.getPaymentId());
+		for (int i = 0; i < builder.length; i++) {
+			builder[i] = finAdvancePayments.get(i).getPaymentId();
 		}
-		return builder.toString();
+		return builder;
 	}
 
-	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
+	private void generateFile(String configName, List<Long> idList, String paymentType, String partnerbankCode,
 			String finType, long userId, String fileNamePrefix) throws Exception {
 		DataEngineStatus status = null;
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
@@ -259,7 +235,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 		
 		try {
-			if ("DISB_HDFC_EXPORT".equals(configName)) {
+			if ("DISB_CITY_EXPORT".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
 				parameterMap.put("SEQ_LPAD_SIZE", 3);
 				parameterMap.put("SEQ_LPAD_VALUE", "0");
@@ -285,7 +261,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		}
 	}
 		
-	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
+	private void sendIMPSRequest(String configName, List<Long> dibursements, long userId) {
 		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,getValueDate(),getAppDate());
 
 		impsRequest.setDisbursments(dibursements);
@@ -297,7 +273,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 
 	}
 
-	private synchronized List<String> prepareRequest(String[] disbursments, final String type) throws Exception {
+	private synchronized List<Long> prepareRequest(Long[] disbursments, final String type) throws Exception {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap;
 
@@ -357,10 +333,9 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
-			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<String>() {
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
 				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					String id = null;
+				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
@@ -379,7 +354,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 							return null;
 						}
 					}
-					id = String.valueOf(insertData(rowMap));
+					long id = insertData(rowMap);
 					rowMap = null;
 					return id;
 				}
@@ -399,14 +374,14 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "DISBURSEMENT_REQUESTS");
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		try {
-			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "ID" });
+			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "id" });
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		return keyHolder.getKey().longValue();
 	}
 	
-	private void conclude(DataEngineStatus status, List<String> idList) {
+	private void conclude(DataEngineStatus status, List<Long> idList) {
 		
 		if (idList == null || idList.isEmpty()) {
 			return;

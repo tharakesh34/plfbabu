@@ -1,14 +1,17 @@
 package com.pennanttech.service.test;
 
-import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 
 public class TestImps {
 
@@ -32,7 +35,7 @@ public class TestImps {
 					new Date(), new Date());
 			List<String> list = new ArrayList<>();
 			list.add("175");
-			impsRequest.setDisbursments(list);
+			//impsRequest.setDisbursments(list);
 			impsRequest.process("DISB_IMPS_EXPORT");
 		} catch (Exception e) {
 			e.printStackTrace();
