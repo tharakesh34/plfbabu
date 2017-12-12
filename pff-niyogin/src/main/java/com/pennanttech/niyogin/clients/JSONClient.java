@@ -86,7 +86,7 @@ public class JSONClient {
 		return objResponse;
 	}
 
-	public Object getResponseObject(String jsonResponse, String datePattern, Class<?> responseClass, boolean isList) {
+	public Object getResponseObject(String jsonResponse, Class<?> responseClass, boolean isList) {
 		logger.debug(Literal.ENTERING);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -95,7 +95,7 @@ public class JSONClient {
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 		mapper.setSerializationInclusion(Inclusion.NON_NULL);
 		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
-		DateFormat dateFormat = new SimpleDateFormat(datePattern);
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
 		Object objResponse = null;

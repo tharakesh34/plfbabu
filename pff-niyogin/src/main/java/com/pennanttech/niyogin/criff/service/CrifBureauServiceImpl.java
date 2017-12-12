@@ -184,12 +184,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		}
 
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			Object responseObj = client.getResponseObject(jsonResponse, "dd-MM-YYYY", CriffCommercialResponse.class, false);
+			Object responseObj = client.getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 			CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
 			extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
 		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
 				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			Object responseObj = client.getResponseObject(jsonResponse, "dd-MM-YYYY", CRIFConsumerResponse.class, false);
+			Object responseObj = client.getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
 			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 			extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
 		}

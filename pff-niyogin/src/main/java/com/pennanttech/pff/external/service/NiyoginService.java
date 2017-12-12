@@ -42,6 +42,7 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class NiyoginService {
@@ -302,7 +303,8 @@ public abstract class NiyoginService {
 				case ExtendedFieldConstants.FIELDTYPE_TIME:
 					Date dateValue = null;
 					try {
-						dateValue = DateUtil.parse(jsonResponseValue, APIDateFormatter);
+						DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
+						dateValue = formatter.parse(jsonResponseValue);
 					} catch (Exception e) {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 					}
@@ -312,7 +314,8 @@ public abstract class NiyoginService {
 				case ExtendedFieldConstants.FIELDTYPE_DATETIME:
 					Date dateTimeVal = null;
 					try {
-						dateTimeVal = DateUtil.parse(jsonResponseValue, APIDateFormatter);
+						DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
+						dateTimeVal = formatter.parse(jsonResponseValue);
 					} catch (Exception e) {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 					}
