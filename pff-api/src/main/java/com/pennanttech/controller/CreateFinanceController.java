@@ -1274,7 +1274,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			updateFinMandateDetails(financeDetail, tableType.getSuffix());
 			
 			// update Extended field details
-			updateFinExtendedDetails(financeDetail, tableType.getSuffix());
+			extendedFieldDetailsService.updateFinExtendedDetails(financeDetail, tableType.getSuffix());
 			
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -1282,69 +1282,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
-	}
-
-	private void updateFinExtendedDetails(FinanceDetail financeDetail, String suffix) {
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-		String auditTranType = PennantConstants.TRAN_WF;
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
-		// process Extended field details
-		// Get the ExtendedFieldHeader for given module and subModule
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(), "");
-		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
-
-		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
-		if (extendedFieldHeader != null) {
-			int seqNo = 0;
-			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
-			exdFieldRender.setReference(finMain.getFinReference());
-			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			exdFieldRender.setLastMntBy(finMain.getUserDetails().getLoginUsrID());
-			exdFieldRender.setSeqNo(++seqNo);
-			exdFieldRender.setNewRecord(false);
-			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			exdFieldRender.setVersion(1);
-			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
-
-			if (extendedFields != null) {
-				for (ExtendedField extendedField : extendedFields) {
-					Map<String, Object> mapValues = new HashMap<String, Object>();
-					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
-						exdFieldRender.setMapValues(mapValues);
-					}
-				}
-				if (extendedFields.isEmpty()) {
-					Map<String, Object> mapValues = new HashMap<String, Object>();
-					exdFieldRender.setMapValues(mapValues);
-				}
-			} else {
-				Map<String, Object> mapValues = new HashMap<String, Object>();
-				exdFieldRender.setMapValues(mapValues);
-			}
-			financeDetail.setExtendedFieldRender(exdFieldRender);
-		}
-
-		if (financeDetail.getExtendedFieldRender() != null) {
-			auditDetailMap.put("LoanExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, "saveOrUpdate"));
-			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
-		}
-
-		if (financeDetail.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = auditDetailMap.get("LoanExtendedFieldDetails");
-			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					ExtendedFieldConstants.MODULE_LOAN, suffix);
-			auditDetails.addAll(details);
-		}
-		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(), 
-				PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(auditDetails); 
-		//auditHeaderDAO.addAudit(auditHeader);
 	}
 
 	private void updateFinMandateDetails(FinanceDetail financeDetail, String type) {
