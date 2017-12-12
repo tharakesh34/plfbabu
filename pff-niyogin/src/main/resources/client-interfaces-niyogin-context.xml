@@ -59,9 +59,10 @@
 		<property name="client" ref="jsonClient" />
 	</bean>
 	<!-- CRIFBureauCommercialService -->
-	<bean id="crifConsumerService"
-		class="com.pennanttech.niyogin.crif.cosumer.service.CrifConsumerServiceImpl" parent="niyoginService">
-		<property name="serviceUrl" value="${crif.bureau.consumer.url}" />
+	<bean id="criffBureauService"
+		class="com.pennanttech.niyogin.criff.service.CrifBureauServiceImpl" parent="niyoginService">
+		<property name="consumerUrl" value="${crif.bureau.consumer.url}" />
+		<property name="commercialUrl" value="${crif.bureau.commercial.url}" />
 		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="client" ref="jsonClient" />
 	</bean>	

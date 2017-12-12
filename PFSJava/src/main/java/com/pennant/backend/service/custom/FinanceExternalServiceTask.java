@@ -37,7 +37,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.BureauScore;
 import com.pennanttech.pff.external.CibilConsumerService;
-import com.pennanttech.pff.external.CrifConsumerService;
+import com.pennanttech.pff.external.CriffBureauService;
 import com.pennanttech.pff.external.ExperianCommercialService;
 import com.pennanttech.pff.external.ExperianConsumerService;
 import com.pennanttech.pff.external.ExternalDedup;
@@ -59,7 +59,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private ExperianCommercialService experianCommercialService;
 
 	@Autowired(required = false)
-	private CrifConsumerService crifConsumerService;
+	private CriffBureauService criffBureauService;
 
 	@Autowired(required = false)
 	private BureauScore bureauscore;
@@ -78,7 +78,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		List<ErrorDetails> errors = new ArrayList<>();
-		boolean taskExecuted = false;
+		boolean taskExecuted = true;
 		boolean executed = getServiceTaskStatus(serviceTask, afinanceMain.getFinReference());
 		if(executed) {
 			taskExecuted = true;
@@ -150,6 +150,14 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_Bureau:
 				try {
+					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in CRIFF Bureau:", e);
+					taskExecuted = false;
+					throw new InterfaceException("9999", e.getMessage());
+				}
+				try {
 					Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
 					if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 						auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
@@ -165,7 +173,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			case PennantConstants.method_Crif:
 				try {
 					//auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
-					auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CRIFF Bureau:", e);

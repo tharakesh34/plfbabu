@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -322,10 +323,10 @@ public abstract class NiyoginService {
 					Boolean  booleanValue;
 					if (StringUtils.equals(jsonResponseValue, "true")
 							|| StringUtils.equals(jsonResponseValue, "false")) {
-						 booleanValue = fieldValue.equals("true") ? true : false;
+						 booleanValue = jsonResponseValue.equals("true") ? true : false;
 					} else if (StringUtils.equals(jsonResponseValue, "1")
 							|| StringUtils.equals(jsonResponseValue, "0")) {
-						 booleanValue = fieldValue.equals("1") ? true : false;
+						 booleanValue = jsonResponseValue.equals("1") ? true : false;
 					} else {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 					}
@@ -607,6 +608,43 @@ public abstract class NiyoginService {
 		detail.setErrorDesc(errorDesc.substring(0, 190));
 		}
 		return detail;
+	}
+	
+	public String formatDate(Date inputDate, String pattern) {
+		String formattedDate = null;
+		if(inputDate == null) {
+			return null;
+		}
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
+		formattedDate = dateFormatter.format(inputDate);
+		return formattedDate;
+	}
+	
+	/**
+	 * Take String Date and return UTIL Date in DB Format
+	 * 
+	 * @param date
+	 *            (Date)
+	 * 
+	 * @return Date
+	 */
+	public static Date getFormattedDate(String date, String pattern) {
+		if (date == null) {
+			return null;
+		}
+		return parseDate(date, pattern);
+	}
+	
+	private static Date parseDate(String date, String format) {
+		SimpleDateFormat df = new SimpleDateFormat(format);
+		java.util.Date uDate = null;
+		try {
+			uDate = df.parse(date);
+		} catch (ParseException e) {
+			logger.error("Exception: ", e);
+		}
+		
+		return new Date(uDate.getTime());
 	}
 	
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {

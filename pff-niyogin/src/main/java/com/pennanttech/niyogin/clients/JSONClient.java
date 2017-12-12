@@ -17,7 +17,9 @@ import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 
 public class JSONClient {
 
@@ -84,8 +86,7 @@ public class JSONClient {
 		return objResponse;
 	}
 
-	public Object getResponseObject(String jsonResponse, String datePattern, Class<?> responseClass, boolean isList)
-			throws Exception {
+	public Object getResponseObject(String jsonResponse, String datePattern, Class<?> responseClass, boolean isList) {
 		logger.debug(Literal.ENTERING);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -98,12 +99,17 @@ public class JSONClient {
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
 		Object objResponse = null;
-		if (isList) {
-			CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
-					responseClass);
-			objResponse = mapper.readValue(jsonResponse, typeReference);
-		} else {
-			objResponse = mapper.readValue(jsonResponse, responseClass);
+		try {
+			if (isList) {
+				CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
+						responseClass);
+				objResponse = mapper.readValue(jsonResponse, typeReference);
+			} else {
+				objResponse = mapper.readValue(jsonResponse, responseClass);
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			throw new InterfaceException(InterfaceConstants.INTFACE_ERROR_CD, e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);
 		return objResponse;

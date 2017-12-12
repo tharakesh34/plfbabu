@@ -23,6 +23,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -227,5 +228,45 @@ public class NiyoginDAOImpl {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 		return grpid;
+	}
+	
+	/**
+	 * Fetch the Record  City details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return City
+	 */
+	public City getCityById(final String pCCountry,String pCProvince,String pCCity, String type) {
+		logger.debug(Literal.ENTERING);
+		City city = new City();
+		city.setPCCountry(pCCountry);
+		city.setPCProvince(pCProvince);
+		city.setPCCity(pCCity);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
+		if(type.contains("View")){
+			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName," );
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From RMTProvinceVsCity");
+		selectSql.append(StringUtils.trimToEmpty(type)); 
+		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity " );
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
+		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(City.class);
+		
+		try{
+			city = this.namedJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			city = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return city;
 	}
 }
