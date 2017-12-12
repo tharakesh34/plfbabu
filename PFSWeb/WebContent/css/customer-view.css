@@ -133,7 +133,7 @@
 }
 
 .labelweight {
-	font-size: 15px;
+	font-size: 17px;
 	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	padding-left: 25px;
@@ -141,4 +141,27 @@
 
 .z-vbox-separator {
 	height: 0em;
+}
+.z-listitem {
+    background: #fff;
+    pointer-events: none;
+}
+.labelweightt {
+	font-size: 15px;
+	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	padding-left: 25px;
+}
+.profile-div {
+	padding-top: 5px; 
+	padding-left :4px;
+}
+
+.z-listitem:nth-child(odd) .z-listcell-content, .z-listitem:nth-child(odd) .z-listgroup-content {
+    padding-top: 4px;
+    margin-left: -5.6px;
+}
+.z-listitem:nth-child(even) .z-listcell-content, .z-listitem:nth-child(even) .z-listgroup-content {
+    padding-top: 4px;
+    margin-left: -5.6px;
 }

@@ -565,7 +565,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			custSubSector.setValue(aCustomer.getCustSubSector());
 			custSubSegment.setValue(aCustomer.getCustSubSegment());
 			if (aCustomer.getCustSubSegment() == null) {
-				custSubSegment.setStyle("color:orange; font:12px");
+				custSubSegment.setStyle("font:12px;");
 				custSubSegment.setValue("RETAIL");
 			}
 			if (isRetailCustomer) {
