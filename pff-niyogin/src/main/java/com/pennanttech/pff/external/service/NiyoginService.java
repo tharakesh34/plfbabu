@@ -266,7 +266,7 @@ public abstract class NiyoginService {
 					}
 				}
 				if (configuration == null) {
-					break;
+					continue;
 				}
 				String jsonResponseValue = Objects.toString(fieldValue, "");
 				switch (configuration.getFieldType()) {
