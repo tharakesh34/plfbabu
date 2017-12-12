@@ -633,7 +633,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aPRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPRelationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPRelationCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

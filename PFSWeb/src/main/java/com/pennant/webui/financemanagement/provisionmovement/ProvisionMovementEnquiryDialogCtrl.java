@@ -309,7 +309,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 							+ "' AND version=" + provisionMovement.getVersion() + " ";
 
 					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), "ProvisionMovement", 
+							getUserWorkspace().getLoggedInUser().getUserId(), "ProvisionMovement", 
 							whereCond, provisionMovement.getTaskId(), provisionMovement.getNextTaskId());
 					if (userAcces){
 						showDetailView(provisionMovement);

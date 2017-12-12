@@ -813,7 +813,7 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
-		aInsurancePolicy.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aInsurancePolicy.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aInsurancePolicy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aInsurancePolicy.setUserDetails(getUserWorkspace().getLoggedInUser());
 

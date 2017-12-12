@@ -150,8 +150,8 @@ public class LimitRuleManagement {
 		limitTransactionDetail.setLimitCurrency(limitDetails.getCurrency());
 		limitTransactionDetail.setLimitAmount(transactionAmount);
 		if(financeMain.getUserDetails()!=null){
-			limitTransactionDetail.setCreatedBy(financeMain.getUserDetails().getLoginUsrID());
-			limitTransactionDetail.setLastMntBy(financeMain.getUserDetails().getLoginUsrID());
+			limitTransactionDetail.setCreatedBy(financeMain.getUserDetails().getUserId());
+			limitTransactionDetail.setLastMntBy(financeMain.getUserDetails().getUserId());
 		}
 		limitTransactionDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		limitTransactionDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));

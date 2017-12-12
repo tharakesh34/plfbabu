@@ -1656,7 +1656,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
-		aFacility.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFacility.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFacility.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFacility.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {

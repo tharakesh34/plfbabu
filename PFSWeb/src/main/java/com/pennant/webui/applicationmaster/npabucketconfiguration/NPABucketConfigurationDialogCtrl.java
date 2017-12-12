@@ -699,7 +699,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aNPABucketConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aNPABucketConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aNPABucketConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aNPABucketConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

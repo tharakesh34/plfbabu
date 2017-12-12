@@ -749,7 +749,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCity.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCity.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCity.setUserDetails(getUserWorkspace().getLoggedInUser());
 

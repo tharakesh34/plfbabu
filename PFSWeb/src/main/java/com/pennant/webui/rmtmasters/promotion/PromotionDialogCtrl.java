@@ -1421,7 +1421,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private boolean doProcess(Promotion aPromotion, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPromotion.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPromotion.setUserDetails(getUserWorkspace().getLoggedInUser());
 

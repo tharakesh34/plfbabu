@@ -981,7 +981,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aFinSuspHold.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinSuspHold.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinSuspHold.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinSuspHold.setUserDetails(getUserWorkspace().getLoggedInUser());
 

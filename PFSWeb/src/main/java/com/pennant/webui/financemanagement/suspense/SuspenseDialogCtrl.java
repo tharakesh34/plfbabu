@@ -1072,7 +1072,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aFinanceSuspHead.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceSuspHead.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceSuspHead.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceSuspHead.setUserDetails(getUserWorkspace().getLoggedInUser());
 

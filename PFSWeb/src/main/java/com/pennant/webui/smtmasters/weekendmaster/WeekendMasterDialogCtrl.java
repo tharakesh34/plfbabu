@@ -679,7 +679,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aWeekendMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aWeekendMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aWeekendMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aWeekendMaster.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -686,7 +686,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAccountTypeGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountTypeGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccountTypeGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountTypeGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 

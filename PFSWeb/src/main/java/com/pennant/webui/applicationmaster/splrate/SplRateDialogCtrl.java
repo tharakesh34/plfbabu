@@ -700,7 +700,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		String nextRoleCode="";
 
 		aSplRate.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSplRate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSplRate.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -677,7 +677,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEMailType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEMailType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEMailType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEMailType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

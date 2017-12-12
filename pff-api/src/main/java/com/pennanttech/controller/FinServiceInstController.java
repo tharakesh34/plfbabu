@@ -752,7 +752,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						advPayment.setFinReference(financeMain.getFinReference());
 						advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						advPayment.setNewRecord(true);
-						advPayment.setLastMntBy(userDetails.getLoginUsrID());
+						advPayment.setLastMntBy(userDetails.getUserId());
 						advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						advPayment.setUserDetails(financeMain.getUserDetails());
@@ -1256,7 +1256,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		receiptHeader.setNewRecord(true);
-		receiptHeader.setLastMntBy(userDetails.getLoginUsrID());
+		receiptHeader.setLastMntBy(userDetails.getUserId());
 		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		receiptHeader.setUserDetails(userDetails);

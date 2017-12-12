@@ -156,7 +156,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		int dashboardColIndex = 0 ;
 		if(isRefresh){
 			// Initialize widgets collection list
-			DashBoard dashBoard = getDashboardConfigurationService().getDashBoardData(getUserWorkspace().getLoggedInUser().getLoginUsrID(), "");
+			DashBoard dashBoard = getDashboardConfigurationService().getDashBoardData(getUserWorkspace().getLoggedInUser().getUserId(), "");
 			setDashBoard(dashBoard);
 			doFillDashboardList(getDashBoard());
 			List<ValueLabel> dashboardlist = getDashboardslist();
@@ -211,7 +211,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 */
 	public void onClick$savebtn(Event event) {
 		logger.debug("Entering " + event.toString());
-		getDashboardConfigurationService().savePositions(new ArrayList<DashboardPosition>(getCurrentDashBordPositions().values()), getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		getDashboardConfigurationService().savePositions(new ArrayList<DashboardPosition>(getCurrentDashBordPositions().values()), getUserWorkspace().getLoggedInUser().getUserId());
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -234,7 +234,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 			for (int j = 0; j < ptc.getChildren().size(); j++) {
 				p_children = (Panel) ptc.getChildren().get(j);
 				dashboardPosition = new DashboardPosition();
-				dashboardPosition.setUsrId(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				dashboardPosition.setUsrId(getUserWorkspace().getLoggedInUser().getUserId());
 				dashboardPosition.setDashboardRef(p_children.getId());
 				dashboardPosition.setDashboardCol(i);
 				dashboardPosition.setDashboardRow(j);

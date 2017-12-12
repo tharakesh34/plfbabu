@@ -651,7 +651,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aLocality.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLocality.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLocality.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLocality.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -1405,7 +1405,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDirectorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDirectorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDirectorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDirectorDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

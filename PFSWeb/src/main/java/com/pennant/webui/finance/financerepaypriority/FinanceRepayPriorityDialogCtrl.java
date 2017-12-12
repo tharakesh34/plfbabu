@@ -610,7 +610,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aFinanceRepayPriority.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceRepayPriority.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceRepayPriority.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceRepayPriority.setUserDetails(getUserWorkspace().getLoggedInUser());
 

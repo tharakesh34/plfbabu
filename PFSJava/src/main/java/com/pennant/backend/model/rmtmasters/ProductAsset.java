@@ -151,7 +151,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails=userDetails;
 
 	}

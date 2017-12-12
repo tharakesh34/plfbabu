@@ -1229,7 +1229,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aInvFinHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aInvFinHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aInvFinHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aInvFinHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

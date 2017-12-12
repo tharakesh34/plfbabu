@@ -1536,7 +1536,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 							if(isDocNewRecord){
 								aCustomerDocument.setRecordType("");
 							}
-							aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+							aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							aCustomerDocument.setUserDetails(getUserWorkspace().getLoggedInUser());
 							
 							if(isNewRecord()){
@@ -1762,7 +1762,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerDocument.setUserDetails(getUserWorkspace().getLoggedInUser());
 

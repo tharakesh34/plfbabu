@@ -272,7 +272,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 					String whereCond =  " AND AccountId='"+ acounts.getAccountId()+"' AND version=" + acounts.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(acounts.getWorkflowId()
-							,getUserWorkspace().getLoggedInUser().getLoginUsrID(), "Accounts"
+							,getUserWorkspace().getLoggedInUser().getUserId(), "Accounts"
 							, whereCond, acounts.getTaskId(), acounts.getNextTaskId());
 					if (userAcces){
 						doShowDialogPage(acounts);

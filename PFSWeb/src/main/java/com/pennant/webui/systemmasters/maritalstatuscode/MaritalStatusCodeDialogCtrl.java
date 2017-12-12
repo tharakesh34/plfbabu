@@ -650,7 +650,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aMaritalStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aMaritalStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMaritalStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMaritalStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

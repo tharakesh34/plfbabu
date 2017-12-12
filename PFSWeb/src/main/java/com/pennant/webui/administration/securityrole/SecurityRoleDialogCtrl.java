@@ -670,7 +670,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aSecurityRole.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSecurityRole.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityRole.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityRole.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -859,7 +859,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aVASRecording.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASRecording.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASRecording.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASRecording.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -913,7 +913,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if(aVASRecording.getExtendedFieldRender() !=null){
 				ExtendedFieldRender details = aVASRecording.getExtendedFieldRender();
 				details.setReference(aVASRecording.getVasReference());
-				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				details.setRecordStatus(aVASRecording.getRecordStatus());
 				details.setRecordType(aVASRecording.getRecordType());
@@ -940,7 +940,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					}
 					details.setReferenceId(aVASRecording.getVasReference());
 					details.setDocModule(VASConsatnts.MODULE_NAME);
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aVASRecording.getRecordStatus());
 					details.setWorkflowId(aVASRecording.getWorkflowId());
@@ -961,7 +961,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (aVASRecording.getVasCheckLists() != null && !aVASRecording.getVasCheckLists().isEmpty()) {
 				for (FinanceCheckListReference details : aVASRecording.getVasCheckLists()) {
 					details.setFinReference(aVASRecording.getVasReference());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aVASRecording.getRecordStatus());
 					details.setWorkflowId(aVASRecording.getWorkflowId());
@@ -1144,7 +1144,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			details.setReference(aVASRecording.getVasReference());
 			details.setTypeCode(aVASRecording.getProductCode());
 			details.setTypeCodeDesc(aVASRecording.getProductDesc());
-			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aVASRecording.getRecordStatus());
 			details.setRecordType(aVASRecording.getRecordType());

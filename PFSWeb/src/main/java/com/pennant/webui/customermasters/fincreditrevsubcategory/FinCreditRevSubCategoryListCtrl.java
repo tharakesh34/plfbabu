@@ -208,7 +208,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND SubCategoryCode='"+ finCreditRevSubCategory.getSubCategoryCode()+"' AND version=" + finCreditRevSubCategory.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(finCreditRevSubCategory.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "FinCreditRevSubCategory", whereCond, finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
+					boolean userAcces =  validateUserAccess(finCreditRevSubCategory.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "FinCreditRevSubCategory", whereCond, finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
 					if (userAcces){
 						showDetailView(finCreditRevSubCategory);
 					}else{

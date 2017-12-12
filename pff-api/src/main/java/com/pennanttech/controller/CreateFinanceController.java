@@ -420,7 +420,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	private long getLastMntBy(boolean quickDisb, LoggedInUser userDetails) {
 		if (!quickDisb) {
-			return userDetails.getLoginUsrID();
+			return userDetails.getUserId();
 		} else {
 			return 0;
 		}
@@ -508,7 +508,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
-				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setLastMntBy(userDetails.getUserId());
 				exdFieldRender.setSeqNo(++seqNo);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -538,7 +538,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
-				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setLastMntBy(userDetails.getUserId());
 				exdFieldRender.setSeqNo(0);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -557,7 +557,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				flagDetail.setModuleName(FinanceConstants.MODULE_NAME);
 				flagDetail.setNewRecord(true);
 				flagDetail.setVersion(1);
-				flagDetail.setLastMntBy(userDetails.getLoginUsrID());
+				flagDetail.setLastMntBy(userDetails.getUserId());
 				flagDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				flagDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 				flagDetail.setUserDetails(financeMain.getUserDetails());
@@ -578,7 +578,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setFinReference(financeMain.getFinReference());
 			jointAccDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			jointAccDetail.setNewRecord(true);
-			jointAccDetail.setLastMntBy(userDetails.getLoginUsrID());
+			jointAccDetail.setLastMntBy(userDetails.getUserId());
 			jointAccDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			jointAccDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			jointAccDetail.setUserDetails(financeMain.getUserDetails());
@@ -612,7 +612,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			guarantorDetail.setFinReference(financeMain.getFinReference());
 			guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			guarantorDetail.setNewRecord(true);
-			guarantorDetail.setLastMntBy(userDetails.getLoginUsrID());
+			guarantorDetail.setLastMntBy(userDetails.getUserId());
 			guarantorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			guarantorDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			guarantorDetail.setUserDetails(financeMain.getUserDetails());
@@ -657,7 +657,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			detail.setModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
-			detail.setLastMntBy(userDetails.getLoginUsrID());
+			detail.setLastMntBy(userDetails.getUserId());
 			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			detail.setVersion(1);
@@ -772,7 +772,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			exdFieldRender.setReference(financeMain.getFinReference());
 			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+			exdFieldRender.setLastMntBy(userDetails.getUserId());
 			exdFieldRender.setSeqNo(++seqNo);
 			exdFieldRender.setNewRecord(true);
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -823,7 +823,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeDetail.getMandate().setVersion(1);
 
-			financeDetail.getMandate().setLastMntBy(userDetails.getLoginUsrID());
+			financeDetail.getMandate().setLastMntBy(userDetails.getUserId());
 			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			financeDetail.getMandate().setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), financeDetail.isStp()));
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
@@ -890,7 +890,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				advPayment.setNewRecord(true);
 				advPayment.setVersion(1);
-				advPayment.setLastMntBy(userDetails.getLoginUsrID());
+				advPayment.setLastMntBy(userDetails.getUserId());
 				advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				if (financeDetail.isStp()) {
 					advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

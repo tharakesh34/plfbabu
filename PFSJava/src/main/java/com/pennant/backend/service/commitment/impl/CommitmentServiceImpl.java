@@ -715,7 +715,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		Commitment commitment = (Commitment) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = commitment.getUserDetails().getUsrLanguage();
+		String usrLanguage = commitment.getUserDetails().getLanguage();
 
 		// Flag details Validation
 		if (commitment.getCmtFlagDetailList() != null && !commitment.getCmtFlagDetailList().isEmpty()) {

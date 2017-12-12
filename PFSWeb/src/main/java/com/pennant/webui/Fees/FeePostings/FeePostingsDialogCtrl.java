@@ -1127,7 +1127,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFeePostings.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFeePostings.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFeePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFeePostings.setUserDetails(getUserWorkspace().getLoggedInUser());
 

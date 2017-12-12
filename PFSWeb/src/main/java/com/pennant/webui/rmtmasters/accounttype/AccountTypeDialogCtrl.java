@@ -1134,7 +1134,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		String nextRoleCode = "";
 
 		aAccountType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aAccountType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

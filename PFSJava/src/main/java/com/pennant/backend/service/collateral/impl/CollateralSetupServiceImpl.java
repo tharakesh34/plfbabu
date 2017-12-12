@@ -837,7 +837,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		CollateralSetup collateralSetup = (CollateralSetup) auditDetail.getModelData();
-		String usrLanguage = collateralSetup.getUserDetails().getUsrLanguage();
+		String usrLanguage = collateralSetup.getUserDetails().getLanguage();
 
 		//CoOwnerDetails Validation
 		List<CoOwnerDetail> coOwnerDetailList = collateralSetup.getCoOwnerDetailList();

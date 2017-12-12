@@ -754,7 +754,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		String nextRoleCode = "";
 
 		aProduct.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aProduct.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProduct.setUserDetails(getUserWorkspace().getLoggedInUser());
 

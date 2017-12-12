@@ -1061,7 +1061,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aAccounts.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccounts.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccounts.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccounts.setUserDetails(getUserWorkspace().getLoggedInUser());
 

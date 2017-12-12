@@ -231,7 +231,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 				+ "' AND version=" + accountEngineEvent.getVersion() + " ";
 
 				if (isWorkFlowEnabled()) {
-					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(), getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(), getUserWorkspace().getLoggedInUser().getUserId(),
 							"AccountEngineEvent", whereCond, accountEngineEvent.getTaskId(), accountEngineEvent.getNextTaskId());
 					if (userAcces) {
 						showDetailView(accountEngineEvent);

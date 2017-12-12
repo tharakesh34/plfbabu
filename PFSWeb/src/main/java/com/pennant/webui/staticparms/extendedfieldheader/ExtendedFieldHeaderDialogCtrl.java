@@ -657,7 +657,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aExtendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aExtendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aExtendedFieldHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aExtendedFieldHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

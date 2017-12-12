@@ -617,7 +617,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCourse.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCourse.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCourse.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCourse.setUserDetails(getUserWorkspace().getLoggedInUser());
 

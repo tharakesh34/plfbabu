@@ -696,7 +696,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBankDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBankDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBankDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBankDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

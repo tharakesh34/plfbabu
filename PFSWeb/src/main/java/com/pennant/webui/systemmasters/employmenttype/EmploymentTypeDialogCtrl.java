@@ -653,7 +653,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		String nextRoleCode = "";
 
 		aEmploymentType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aEmploymentType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEmploymentType
 				.setUserDetails(getUserWorkspace().getLoggedInUser());

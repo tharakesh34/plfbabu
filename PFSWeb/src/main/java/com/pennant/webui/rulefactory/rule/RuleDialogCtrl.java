@@ -1246,7 +1246,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRule.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRule.setUserDetails(getUserWorkspace().getLoggedInUser());
 

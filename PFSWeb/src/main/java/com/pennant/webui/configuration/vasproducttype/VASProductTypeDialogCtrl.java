@@ -807,7 +807,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	private boolean doProcess(VASProductType aVASProductType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASProductType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASProductType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

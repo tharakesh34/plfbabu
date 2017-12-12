@@ -948,7 +948,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerBalanceSheet.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerBalanceSheet.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerBalanceSheet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerBalanceSheet.setUserDetails(getUserWorkspace().getLoggedInUser());
 

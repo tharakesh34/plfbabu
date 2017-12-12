@@ -672,7 +672,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAddressType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAddressType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAddressType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAddressType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

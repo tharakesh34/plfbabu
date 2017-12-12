@@ -692,7 +692,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 	private boolean doProcess(SukukBroker aSukukBroker,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aSukukBroker.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSukukBroker.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSukukBroker.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSukukBroker.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

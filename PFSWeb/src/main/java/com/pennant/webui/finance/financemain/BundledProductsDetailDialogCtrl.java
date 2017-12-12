@@ -408,7 +408,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			bundledProductsDetail.setNewRecord(true);
 		}
 		bundledProductsDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-		bundledProductsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		bundledProductsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		bundledProductsDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		bundledProductsDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setBundledProductsDetail(bundledProductsDetail);
@@ -1391,7 +1391,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBundledProductsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBundledProductsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBundledProductsDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBundledProductsDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

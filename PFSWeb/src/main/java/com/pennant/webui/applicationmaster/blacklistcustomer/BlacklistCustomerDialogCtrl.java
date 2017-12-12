@@ -793,7 +793,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinBlacklistCust.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinBlacklistCust.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinBlacklistCust.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinBlacklistCust.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -978,7 +978,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerPhoneNumber.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerPhoneNumber.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerPhoneNumber.setUserDetails(getUserWorkspace().getLoggedInUser());
 

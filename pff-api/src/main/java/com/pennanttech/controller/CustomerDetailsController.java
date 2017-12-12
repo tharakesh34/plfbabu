@@ -133,7 +133,7 @@ public class CustomerDetailsController {
 		customerPhoneNumber.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerPhoneNumber.setNewRecord(true);
 		customerPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerPhoneNumber.setLastMntBy(userDetails.getLoginUsrID());
+		customerPhoneNumber.setLastMntBy(userDetails.getUserId());
 		customerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerPhoneNumber.setVersion(1);
 		//get the header details from the request
@@ -181,7 +181,7 @@ public class CustomerDetailsController {
 		customerPhoneNumber.setNewRecord(false);
 		customerPhoneNumber.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerPhoneNumber.setLastMntBy(userDetails.getLoginUsrID());
+		customerPhoneNumber.setLastMntBy(userDetails.getUserId());
 		customerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerPhoneNumber.setVersion((customerPhoneNumberService.getVersion(customerPhoneNumber.getPhoneCustID(),
 				customerPhoneNumber.getPhoneTypeCode())) + 1);
@@ -315,7 +315,7 @@ public class CustomerDetailsController {
 		customerAddress.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerAddress.setNewRecord(true);
 		customerAddress.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerAddress.setLastMntBy(userDetails.getLoginUsrID());
+		customerAddress.setLastMntBy(userDetails.getUserId());
 		customerAddress.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerAddress.setVersion(1);
 		//get the header details from the request
@@ -363,7 +363,7 @@ public class CustomerDetailsController {
 		customerAddres.setNewRecord(false);
 		customerAddres.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerAddres.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerAddres.setLastMntBy(userDetails.getLoginUsrID());
+		customerAddres.setLastMntBy(userDetails.getUserId());
 		customerAddres.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerAddres.setVersion((customerAddresService.getVersion(customerAddres.getCustID(),
 				customerAddres.getCustAddrType())) + 1);
@@ -493,7 +493,7 @@ public class CustomerDetailsController {
 		customerEMail.setLovDescCustCIF(cif);
 		customerEMail.setNewRecord(true);
 		customerEMail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerEMail.setLastMntBy(userDetails.getLoginUsrID());
+		customerEMail.setLastMntBy(userDetails.getUserId());
 		customerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerEMail.setVersion(1);
 		//get the header details from the request
@@ -539,7 +539,7 @@ public class CustomerDetailsController {
 		customerEMail.setNewRecord(false);
 		customerEMail.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerEMail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerEMail.setLastMntBy(userDetails.getLoginUsrID());
+		customerEMail.setLastMntBy(userDetails.getUserId());
 		customerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerEMail.setVersion((customerEMailService.getVersion(customerEMail.getCustID(),
 				customerEMail.getCustEMailTypeCode())) + 1);
@@ -669,7 +669,7 @@ public class CustomerDetailsController {
 		customerIncome.setLovDescCustCIF(cif);
 		customerIncome.setNewRecord(true);
 		customerIncome.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerIncome.setLastMntBy(userDetails.getLoginUsrID());
+		customerIncome.setLastMntBy(userDetails.getUserId());
 		customerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerIncome.setVersion(1);
 		//get the header details from the request
@@ -713,7 +713,7 @@ public class CustomerDetailsController {
 		customerIncome.setNewRecord(false);
 		customerIncome.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerIncome.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerIncome.setLastMntBy(userDetails.getLoginUsrID());
+		customerIncome.setLastMntBy(userDetails.getUserId());
 		customerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerIncome.setVersion(customerIncomeService.getVersion(customerIncome) + 1);
 		//get the header details from the request
@@ -839,7 +839,7 @@ public class CustomerDetailsController {
 		customerBankInfo.setVersion(1);
 		customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		customerBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerBankInfo.setLastMntBy(userDetails.getLoginUsrID());
+		customerBankInfo.setLastMntBy(userDetails.getUserId());
 		customerBankInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		CustomerBankInfoValidation validation = new CustomerBankInfoValidation(customerBankInfoDAO);
@@ -896,7 +896,7 @@ public class CustomerDetailsController {
 		customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		customerBankInfo.setNewRecord(false);
 		customerBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerBankInfo.setLastMntBy(userDetails.getLoginUsrID());
+		customerBankInfo.setLastMntBy(userDetails.getUserId());
 		customerBankInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerBankInfo.setVersion((customerBankInfoService.getVersion(customerBankInfo.getBankId())) + 1);
@@ -1029,7 +1029,7 @@ public class CustomerDetailsController {
 		customerChequeInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerChequeInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		customerChequeInfo.setLastMntBy(userDetails.getLoginUsrID());
+		customerChequeInfo.setLastMntBy(userDetails.getUserId());
 		customerChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		CustomerChequeInfoValidation validation = new CustomerChequeInfoValidation(customerChequeInfoDAO);
 		AuditHeader auditHeader = validation.chequeInfoValidation(
@@ -1081,7 +1081,7 @@ public class CustomerDetailsController {
 		customerChequeInfo.setNewRecord(false);
 		customerChequeInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerChequeInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerChequeInfo.setLastMntBy(userDetails.getLoginUsrID());
+		customerChequeInfo.setLastMntBy(userDetails.getUserId());
 		customerChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerChequeInfo.setVersion((customerChequeInfoService.getVersion(customerChequeInfo.getCustID(),
 				customerChequeInfo.getChequeSeq())) + 1);
@@ -1174,7 +1174,7 @@ public class CustomerDetailsController {
 		customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerExtLiability.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerExtLiability.setLastMntBy(userDetails.getLoginUsrID());
+		customerExtLiability.setLastMntBy(userDetails.getUserId());
 		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 		AuditHeader auditHeader = validation.extLiabilityValidation(
@@ -1229,7 +1229,7 @@ public class CustomerDetailsController {
 		customerExtLiability.setNewRecord(false);
 		customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerExtLiability.setSourceId(APIConstants.FINSOURCE_ID_API);
-		customerExtLiability.setLastMntBy(userDetails.getLoginUsrID());
+		customerExtLiability.setLastMntBy(userDetails.getUserId());
 		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerExtLiability.setVersion((customerExtLiabilityService.getVersion(customerExtLiability.getCustID(),
 				customerExtLiability.getLiabilitySeq())) + 1);
@@ -1408,7 +1408,7 @@ public class CustomerDetailsController {
 		customerDocument.setLovDescCustCIF(cif);
 		customerDocument.setNewRecord(true);
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerDocument.setLastMntBy(userDetails.getLoginUsrID());
+		customerDocument.setLastMntBy(userDetails.getUserId());
 		customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerDocument.setVersion(1);
 		//get the header details from the request
@@ -1453,7 +1453,7 @@ public class CustomerDetailsController {
 		customerDocument.setNewRecord(false);
 		customerDocument.setSourceId(APIConstants.FINSOURCE_ID_API);
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerDocument.setLastMntBy(userDetails.getLoginUsrID());
+		customerDocument.setLastMntBy(userDetails.getUserId());
 		customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerDocument.setVersion((customerDocumentService.getVersion(customerDocument.getCustID(),
 				customerDocument.getCustDocCategory())) + 1);

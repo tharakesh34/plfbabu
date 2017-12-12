@@ -622,7 +622,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aIdentityDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aIdentityDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aIdentityDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aIdentityDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 

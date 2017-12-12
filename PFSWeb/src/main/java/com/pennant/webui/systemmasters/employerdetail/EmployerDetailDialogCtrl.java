@@ -1278,7 +1278,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private boolean doProcess(EmployerDetail aEmployerDetail,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aEmployerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEmployerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEmployerDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEmployerDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

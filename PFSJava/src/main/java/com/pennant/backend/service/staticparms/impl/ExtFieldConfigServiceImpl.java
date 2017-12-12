@@ -436,7 +436,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = extendedFieldHeader.getUserDetails().getUsrLanguage();
+		String usrLanguage = extendedFieldHeader.getUserDetails().getLanguage();
 
 		//Extended field details
 		if (extendedFieldHeader != null) {

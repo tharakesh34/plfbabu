@@ -521,7 +521,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		AuditHeader auditHeader = null;
 		Customer aCustomer = aCustomerDetails.getCustomer();
 
-		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

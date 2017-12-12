@@ -731,7 +731,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		String nextRoleCode = "";
 
 		aSalesOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSalesOfficer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSalesOfficer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

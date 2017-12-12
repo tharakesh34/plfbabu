@@ -341,7 +341,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		String nextRoleCode = "";
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 

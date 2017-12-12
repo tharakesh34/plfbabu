@@ -890,7 +890,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	private boolean doProcess(Query aQuery, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aQuery.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aQuery.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQuery.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQuery.setUserDetails(getUserWorkspace().getLoggedInUser());
 

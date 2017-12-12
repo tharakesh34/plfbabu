@@ -226,7 +226,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 					String whereCond =  " AND ScoType='"+ scoringType.getScoType()+"' AND version=" + scoringType.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(scoringType.getWorkflowId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), "ScoringType", 
+							getUserWorkspace().getLoggedInUser().getUserId(), "ScoringType", 
 							whereCond, scoringType.getTaskId(), scoringType.getNextTaskId());
 					if (userAcces){
 						showDetailView(scoringType);

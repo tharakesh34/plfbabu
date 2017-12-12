@@ -987,7 +987,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDashboardConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDashboardConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDashboardConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDashboardConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

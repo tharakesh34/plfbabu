@@ -196,7 +196,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getLoginUsrID(), Filter.OP_NOT_EQUAL);		
+		filter[0] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getUserId(), Filter.OP_NOT_EQUAL);		
 		
 		dataMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
 				this.window_UserDialog, "SecurityUsers", dataMap,filter);

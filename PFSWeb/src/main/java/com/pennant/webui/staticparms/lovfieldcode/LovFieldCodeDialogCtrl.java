@@ -683,7 +683,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aLovFieldCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLovFieldCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLovFieldCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLovFieldCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

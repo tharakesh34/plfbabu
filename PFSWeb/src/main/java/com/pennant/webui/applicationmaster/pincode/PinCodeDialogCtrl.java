@@ -698,7 +698,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPinCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPinCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPinCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPinCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

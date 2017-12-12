@@ -900,7 +900,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aInsuranceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aInsuranceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aInsuranceType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aInsuranceType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

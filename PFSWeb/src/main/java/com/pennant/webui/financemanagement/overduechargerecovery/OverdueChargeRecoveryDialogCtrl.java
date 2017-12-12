@@ -1063,7 +1063,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aOverdueChargeRecovery.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aOverdueChargeRecovery.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aOverdueChargeRecovery.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aOverdueChargeRecovery.setUserDetails(getUserWorkspace().getLoggedInUser());
 

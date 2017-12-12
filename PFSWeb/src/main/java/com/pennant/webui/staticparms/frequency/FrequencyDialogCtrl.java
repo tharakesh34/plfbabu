@@ -626,7 +626,7 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFrequency.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFrequency.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFrequency.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFrequency.setUserDetails(getUserWorkspace().getLoggedInUser());
 

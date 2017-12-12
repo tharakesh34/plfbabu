@@ -1322,7 +1322,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

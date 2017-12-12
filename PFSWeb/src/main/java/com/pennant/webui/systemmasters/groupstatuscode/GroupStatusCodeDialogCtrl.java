@@ -635,7 +635,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aGroupStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aGroupStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aGroupStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGroupStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

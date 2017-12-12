@@ -788,7 +788,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			extendedFieldHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			extendedFieldHeader.setNewRecord(true);
 		}
-		extendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		extendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		extendedFieldHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		extendedFieldHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		logger.debug("Leaving");

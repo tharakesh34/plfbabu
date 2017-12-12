@@ -917,7 +917,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		VASRecording vasRecording = (VASRecording) auditDetail.getModelData();
-		String usrLanguage = vasRecording.getUserDetails().getUsrLanguage();
+		String usrLanguage = vasRecording.getUserDetails().getLanguage();
 
 		//VAS Check List Details
 		List<FinanceCheckListReference> vasCheckList = vasRecording.getVasCheckLists();

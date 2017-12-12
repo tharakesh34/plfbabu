@@ -935,7 +935,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerIncome.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerIncome.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerIncome.setUserDetails(getUserWorkspace().getLoggedInUser());
 

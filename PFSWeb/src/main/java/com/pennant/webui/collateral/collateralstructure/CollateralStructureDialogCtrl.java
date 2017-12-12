@@ -1400,7 +1400,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCollateralStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCollateralStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCollateralStructure.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCollateralStructure.setUserDetails(getUserWorkspace().getLoggedInUser());
 

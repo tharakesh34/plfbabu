@@ -694,7 +694,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 

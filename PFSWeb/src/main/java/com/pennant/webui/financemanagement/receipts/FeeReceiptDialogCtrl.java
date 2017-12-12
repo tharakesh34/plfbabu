@@ -758,7 +758,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Receipt Header Details workflow fields
 		FinReceiptHeader receiptHeader = getReceiptHeader();
 		receiptHeader.setReference(this.finReference.getValue());
-		receiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		receiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1379,7 +1379,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

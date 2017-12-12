@@ -2133,7 +2133,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (FinFlagsDetail flagsDetail : finFlagsDetailList) {
 				if (StringUtils.isNotBlank(flagsDetail.getRecordType())) {
 					flagsDetail.setReference(aFinanceDetail.getFinReference());
-					flagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					flagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					flagsDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					flagsDetail.setTaskId(taskId);
 					flagsDetail.setNextTaskId(nextTaskId);
@@ -2539,7 +2539,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -2552,7 +2552,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < flagList.size(); i++) {
 				FinFlagsDetail finFlagsDetail = flagList.get(i);
 				finFlagsDetail.setReference(afinanceMain.getFinReference());
-				finFlagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				finFlagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				finFlagsDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finFlagsDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 				finFlagsDetail.setRecordStatus(afinanceMain.getRecordStatus());

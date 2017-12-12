@@ -699,7 +699,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aCustomerGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

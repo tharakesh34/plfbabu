@@ -599,7 +599,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityOperation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityOperation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

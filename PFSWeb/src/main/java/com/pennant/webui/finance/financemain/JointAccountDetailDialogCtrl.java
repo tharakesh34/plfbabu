@@ -287,7 +287,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (guarantorDetailList != null && !this.guarantorDetailList.isEmpty()) {
 			for (GuarantorDetail details : guarantorDetailList) {
 				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
-				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());
@@ -308,7 +308,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (jountAccountDetailList != null && !this.jountAccountDetailList.isEmpty()) {
 			for (JointAccountDetail details : jountAccountDetailList) {
 				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
-				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());

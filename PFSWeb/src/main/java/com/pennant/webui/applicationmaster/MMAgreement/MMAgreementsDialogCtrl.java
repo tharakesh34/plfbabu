@@ -964,7 +964,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		String nextRoleCode = "";
 
 		aMMAgreement.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aMMAgreement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMMAgreement.setUserDetails(getUserWorkspace().getLoggedInUser());
 

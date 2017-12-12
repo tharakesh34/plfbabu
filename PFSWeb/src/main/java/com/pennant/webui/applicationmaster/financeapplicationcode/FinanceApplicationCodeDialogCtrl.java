@@ -650,7 +650,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceApplicationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceApplicationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceApplicationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceApplicationCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

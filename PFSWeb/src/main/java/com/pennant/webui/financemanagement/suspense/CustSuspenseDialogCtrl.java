@@ -703,7 +703,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

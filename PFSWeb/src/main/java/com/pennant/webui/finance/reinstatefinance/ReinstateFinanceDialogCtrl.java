@@ -859,7 +859,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aReinstateFinance.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReinstateFinance.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReinstateFinance.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReinstateFinance.setUserDetails(getUserWorkspace().getLoggedInUser());
 

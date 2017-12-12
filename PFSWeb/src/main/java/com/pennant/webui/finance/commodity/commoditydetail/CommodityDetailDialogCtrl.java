@@ -701,7 +701,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl<CommodityDetail> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCommodityDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCommodityDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommodityDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommodityDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

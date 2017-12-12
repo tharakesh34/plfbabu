@@ -655,7 +655,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSector.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSector.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSector.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSector.setUserDetails(getUserWorkspace().getLoggedInUser());
 

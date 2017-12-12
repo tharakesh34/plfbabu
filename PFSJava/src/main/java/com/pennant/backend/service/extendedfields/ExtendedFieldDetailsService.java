@@ -1304,7 +1304,7 @@ public class ExtendedFieldDetailsService {
 			exdFieldRender.setReference(finMain.getFinReference());
 			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			exdFieldRender.setLastMntBy(finMain.getUserDetails().getLoginUsrID());
+			exdFieldRender.setLastMntBy(finMain.getUserDetails().getUserId());
 			exdFieldRender.setSeqNo(++seqNo);
 			exdFieldRender.setNewRecord(false);
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);

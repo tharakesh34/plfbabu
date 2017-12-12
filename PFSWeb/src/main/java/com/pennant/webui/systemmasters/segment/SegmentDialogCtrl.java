@@ -633,7 +633,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSegment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSegment.setUserDetails(getUserWorkspace().getLoggedInUser());
 

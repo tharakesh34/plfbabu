@@ -396,7 +396,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 			List<AuditDetail> auditDetails= setFinFlagsDetailsAuditData(financeFlag,  method);				
 			
-			auditDetails = validateList(auditDetails, method, financeFlag.getUserDetails().getUsrLanguage());
+			auditDetails = validateList(auditDetails, method, financeFlag.getUserDetails().getLanguage());
 			auditDetailMap.put("FinFlagsDetail", auditDetails);
 			auditHeader.setAuditDetails(auditDetails);				
 			financeFlag.setAuditDetailMap(auditDetailMap);

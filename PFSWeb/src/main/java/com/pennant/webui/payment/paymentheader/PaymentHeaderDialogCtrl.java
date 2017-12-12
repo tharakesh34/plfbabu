@@ -901,7 +901,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPaymentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPaymentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPaymentHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPaymentHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

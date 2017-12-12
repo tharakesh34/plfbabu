@@ -2039,7 +2039,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aLimitRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLimitRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitRule.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitRule.setUserDetails(getUserWorkspace().getLoggedInUser());
 

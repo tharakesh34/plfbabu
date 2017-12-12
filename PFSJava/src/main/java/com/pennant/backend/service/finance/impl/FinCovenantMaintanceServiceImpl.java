@@ -388,7 +388,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
 				.getModelData();
-		String usrLanguage = finMaintainInstruction.getUserDetails().getUsrLanguage();
+		String usrLanguage = finMaintainInstruction.getUserDetails().getLanguage();
 
 		// FinCovenants
 		if (finMaintainInstruction.getFinCovenantTypeList() != null

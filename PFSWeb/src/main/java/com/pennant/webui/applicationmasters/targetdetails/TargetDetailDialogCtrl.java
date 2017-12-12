@@ -493,7 +493,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aTargetDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTargetDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTargetDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTargetDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -2841,7 +2841,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		custEmployeeDetail.setNewRecord(aCustomer.isNewRecord());
 		custEmployeeDetail.setRecordType(aCustomer.getRecordType());
-		custEmployeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		custEmployeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		custEmployeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		custEmployeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -2963,7 +2963,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomer.setUserDetails(getUserWorkspace().getLoggedInUser());
 		aCustomerDetails.setCustID(aCustomer.getCustID());
@@ -2976,7 +2976,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ExtendedFieldRender details = aCustomerDetails.getExtendedFieldRender();
 			details.setReference(aCustomerDetails.getCustomer().getCustCIF());
 			details.setSeqNo(++seqNo);
-			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aCustomerDetails.getCustomer().getRecordStatus());
 			details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
@@ -3167,7 +3167,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			boolean isNew = false;
 			Customer aCustomer = aCustomerDetails.getCustomer();
 			aCustomer.setWorkflowId(0);
-			aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aCustomer.setUserDetails(getUserWorkspace().getLoggedInUser());
 			// Write the additional validations as per below example
@@ -3186,7 +3186,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 			custEmployeeDetail.setNewRecord(aCustomer.isNewRecord());
 			custEmployeeDetail.setRecordType(aCustomer.getRecordType());
-			custEmployeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			custEmployeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			custEmployeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			custEmployeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

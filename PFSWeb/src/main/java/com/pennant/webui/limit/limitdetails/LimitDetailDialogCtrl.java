@@ -724,7 +724,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		if (aLimitHeader.isNewRecord()) {
 			aLimitHeader.setNewRecord(true);
-			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitHeader.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (custDftBranchCode.getValue() != null)
@@ -1231,11 +1231,11 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	private boolean doProcess(LimitHeader aLimitHeader, String tranType) throws DatatypeConfigurationException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aLimitHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLimitHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (aLimitHeader.isNew()) {
-			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitHeader.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (isWorkFlowEnabled()) {

@@ -791,7 +791,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aBounceReason.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aBounceReason.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aBounceReason.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aBounceReason.setUserDetails(getUserWorkspace().getLoggedInUser());
 

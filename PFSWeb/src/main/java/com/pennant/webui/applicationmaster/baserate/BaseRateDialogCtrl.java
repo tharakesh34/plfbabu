@@ -765,7 +765,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		String nextRoleCode = "";
 
 		aBaseRate.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aBaseRate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBaseRate.setUserDetails(getUserWorkspace().getLoggedInUser());
 

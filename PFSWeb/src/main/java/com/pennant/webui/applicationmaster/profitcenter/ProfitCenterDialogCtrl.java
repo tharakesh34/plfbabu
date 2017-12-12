@@ -665,7 +665,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aProfitCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aProfitCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
 

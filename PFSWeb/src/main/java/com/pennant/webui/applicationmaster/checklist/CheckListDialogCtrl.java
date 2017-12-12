@@ -839,7 +839,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCheckList.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCheckList.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCheckList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCheckList.setUserDetails(getUserWorkspace().getLoggedInUser());
 

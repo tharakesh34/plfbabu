@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 public class LoggedInUser implements Serializable {
 	private static final long serialVersionUID = -4283625577333258727L;
 
-	private long loginUsrID; // userId
+	private long userId; 
 	private String userName;
 	private String staffId;
 	private String firstName;
@@ -59,7 +59,7 @@ public class LoggedInUser implements Serializable {
 	private String lastName;
 	private String mobileNo;
 	private String emailId;
-	private String usrLanguage; // language
+	private String language; 
 	private String branchCode;
 	private String departmentCode;
 	private Date logonFromTime;
@@ -79,12 +79,12 @@ public class LoggedInUser implements Serializable {
 		super();
 	}
 
-	public long getLoginUsrID() {
-		return loginUsrID;
+	public long getUserId() {
+		return userId;
 	}
 
-	public void setLoginUsrID(long loginUsrID) {
-		this.loginUsrID = loginUsrID;
+	public void setLoginUsrID(long userId) {
+		this.userId = userId;
 	}
 
 	public String getUserName() {
@@ -160,12 +160,12 @@ public class LoggedInUser implements Serializable {
 		this.emailId = emailId;
 	}
 
-	public String getUsrLanguage() {
-		return usrLanguage;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setUsrLanguage(String usrLanguage) {
-		this.usrLanguage = usrLanguage;
+	public void setUsrLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getBranchCode() {

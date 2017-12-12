@@ -108,8 +108,8 @@ public class ExtFinanceUploadService {
 	 */
 	public String procExternalFinance(InputStream finInput, LoggedInUser usrDetails) {
 		logger.debug("Entering");
-		userID = usrDetails.getLoginUsrID();
-		userLangauge = usrDetails.getUsrLanguage();
+		userID = usrDetails.getUserId();
+		userLangauge = usrDetails.getLanguage();
 		String status = "";
 		int rcdCount = 0;
 		int successRcdCount = 0;

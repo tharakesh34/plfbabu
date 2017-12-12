@@ -697,7 +697,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDPDBucketConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDPDBucketConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDPDBucketConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDPDBucketConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

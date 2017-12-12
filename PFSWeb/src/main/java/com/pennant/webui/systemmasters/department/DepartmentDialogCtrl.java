@@ -635,7 +635,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDepartment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDepartment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDepartment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDepartment.setUserDetails(getUserWorkspace().getLoggedInUser());
 

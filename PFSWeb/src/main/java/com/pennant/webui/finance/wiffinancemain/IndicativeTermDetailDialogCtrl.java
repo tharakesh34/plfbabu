@@ -1399,7 +1399,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
-		aIndicativeTermDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aIndicativeTermDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aIndicativeTermDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aIndicativeTermDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {

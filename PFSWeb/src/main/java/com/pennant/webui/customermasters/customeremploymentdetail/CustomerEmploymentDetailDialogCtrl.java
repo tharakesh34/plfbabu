@@ -1099,7 +1099,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aCustomerEmploymentDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerEmploymentDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerEmploymentDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -5138,7 +5138,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String auditTranType = auditHeader.getAuditTranType();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String usrLanguage = financeMain.getUserDetails().getUsrLanguage();
+		String usrLanguage = financeMain.getUserDetails().getLanguage();
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -6748,7 +6748,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 					new ErrorDetails("Limit", "41002", errParm, valueParm), finDetails.getUserDetails()
-							.getUsrLanguage()));
+							.getLanguage()));
 			logger.debug("Leaving");
 			return auditHeader;
 
@@ -6764,7 +6764,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
 
 					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", "41002", errParm,
-							valueParm), finDetails.getUserDetails().getUsrLanguage()));
+							valueParm), finDetails.getUserDetails().getLanguage()));
 
 					return auditHeader;
 
@@ -6799,7 +6799,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", errorCode,
-								errParm, valueParm), finDetails.getUserDetails().getUsrLanguage()));
+								errParm, valueParm), finDetails.getUserDetails().getLanguage()));
 						logger.debug("Leaving");
 						return auditHeader;
 					}

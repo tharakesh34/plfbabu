@@ -266,7 +266,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		
 		detailHeader.setLoanType(this.loanType.getValue());
 		detailHeader.setFinBranch(this.branches.getValue());
-		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		logger.debug(Literal.LEAVING);

@@ -682,7 +682,7 @@ public class VehicleVersionDialogCtrl extends GFCBaseCtrl<VehicleVersion> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aVehicleVersion.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVehicleVersion.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVehicleVersion.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleVersion.setUserDetails(getUserWorkspace().getLoggedInUser());
 

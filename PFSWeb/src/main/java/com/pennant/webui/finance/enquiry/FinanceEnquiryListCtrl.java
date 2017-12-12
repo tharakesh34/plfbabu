@@ -1036,7 +1036,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			sql.append(" (Reference ").append(operatorSign).append(" '").append(reference.replace("'", "''"))
 					.append("') and");
 		}
-		sql.append(" (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getLoginUsrID()).append(')');
+		sql.append(" (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getUserId()).append(')');
 		sql.append("))");
 
 		// Get the result set

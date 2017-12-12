@@ -656,7 +656,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aLanguage.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLanguage.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLanguage.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLanguage.setUserDetails(getUserWorkspace().getLoggedInUser());
 

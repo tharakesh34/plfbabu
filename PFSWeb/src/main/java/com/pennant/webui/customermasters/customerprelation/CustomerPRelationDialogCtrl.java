@@ -1243,7 +1243,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerPRelation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerPRelation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerPRelation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerPRelation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

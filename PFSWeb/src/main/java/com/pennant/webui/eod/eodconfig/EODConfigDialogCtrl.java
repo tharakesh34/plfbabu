@@ -654,7 +654,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEODConfig.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEODConfig.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEODConfig.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEODConfig.setUserDetails(getUserWorkspace().getLoggedInUser());
 

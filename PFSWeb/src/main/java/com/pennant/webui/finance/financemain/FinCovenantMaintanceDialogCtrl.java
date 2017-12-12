@@ -512,7 +512,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aFinMaintainInstruction.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinMaintainInstruction.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinMaintainInstruction.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinMaintainInstruction.setUserDetails(getUserWorkspace().getLoggedInUser());
 

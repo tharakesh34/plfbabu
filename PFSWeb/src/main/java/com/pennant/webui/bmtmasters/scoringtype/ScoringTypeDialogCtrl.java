@@ -610,7 +610,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aScoringType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aScoringType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aScoringType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aScoringType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

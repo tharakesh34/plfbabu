@@ -488,7 +488,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditDetails.add(auditDetail);
 		CollateralStructure collateralStructure = (CollateralStructure) auditDetail.getModelData();
-		String usrLanguage = collateralStructure.getUserDetails().getUsrLanguage();
+		String usrLanguage = collateralStructure.getUserDetails().getLanguage();
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());

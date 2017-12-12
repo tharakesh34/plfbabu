@@ -1352,12 +1352,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		
 		if(aReceiptHeader.getManualAdvise() != null){
-			aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aReceiptHeader.getManualAdvise().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aReceiptHeader.getManualAdvise().setUserDetails(getUserWorkspace().getLoggedInUser());
 		}

@@ -1776,7 +1776,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			try {
 				boolean isRcdDeleted = getReportConfigurationService().deleteSearchTemplate(
-						reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+						reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getUserId(),
 						this.cbSelectTemplate.getSelectedItem().getLabel());
 
 				if (isRcdDeleted) {
@@ -2598,7 +2598,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		this.cbSelectTemplate.getChildren().clear();
 
 		templateLibraryMap = getReportConfigurationService().getTemplatesByReportID(reportConfiguration.getReportID(),
-				getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				getUserWorkspace().getLoggedInUser().getUserId());
 
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);

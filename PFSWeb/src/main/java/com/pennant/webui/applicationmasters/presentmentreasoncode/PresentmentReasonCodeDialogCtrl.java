@@ -493,7 +493,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPresentmentReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPresentmentReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPresentmentReasonCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPresentmentReasonCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

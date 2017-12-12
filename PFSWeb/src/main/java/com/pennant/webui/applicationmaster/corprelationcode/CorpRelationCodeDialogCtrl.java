@@ -645,7 +645,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCorpRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCorpRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCorpRelationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCorpRelationCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

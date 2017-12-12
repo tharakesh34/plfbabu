@@ -785,7 +785,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aStepPolicyHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aStepPolicyHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aStepPolicyHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aStepPolicyHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

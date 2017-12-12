@@ -213,7 +213,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FieldName='"+ dedupFields.getFieldName()+"' AND version=" + dedupFields.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(dedupFields.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "DedupFields", whereCond, dedupFields.getTaskId(), dedupFields.getNextTaskId());
+					boolean userAcces =  validateUserAccess(dedupFields.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "DedupFields", whereCond, dedupFields.getTaskId(), dedupFields.getNextTaskId());
 					if (userAcces){
 						showDetailView(dedupFields);
 					}else{

@@ -678,7 +678,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPhoneType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPhoneType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPhoneType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPhoneType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

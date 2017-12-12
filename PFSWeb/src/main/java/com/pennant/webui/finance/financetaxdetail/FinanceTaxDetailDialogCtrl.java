@@ -1422,7 +1422,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			this.financeTaxDetail.setNewRecord(true);
 		}
 		
-		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setTaxDetail(this.financeTaxDetail);
@@ -1449,7 +1449,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

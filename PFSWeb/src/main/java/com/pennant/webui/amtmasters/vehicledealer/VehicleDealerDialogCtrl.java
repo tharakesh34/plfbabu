@@ -1343,7 +1343,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		String nextRoleCode = "";
 
 		aVehicleDealer.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aVehicleDealer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleDealer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

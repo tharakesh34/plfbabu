@@ -665,7 +665,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aCostCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aCostCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aCostCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aCostCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
 

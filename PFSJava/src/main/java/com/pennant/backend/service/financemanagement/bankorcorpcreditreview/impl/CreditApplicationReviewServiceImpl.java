@@ -358,7 +358,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		FinCreditReviewDetails creditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = creditReviewDetails.getUserDetails().getUsrLanguage();
+		String usrLanguage = creditReviewDetails.getUserDetails().getLanguage();
 
 		// FeeTier Validation        
 		if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null && creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {

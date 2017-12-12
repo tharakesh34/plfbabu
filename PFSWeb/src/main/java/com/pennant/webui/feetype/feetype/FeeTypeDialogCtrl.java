@@ -888,7 +888,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private boolean doProcess(FeeType aFeeType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aFeeType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFeeType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFeeType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFeeType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

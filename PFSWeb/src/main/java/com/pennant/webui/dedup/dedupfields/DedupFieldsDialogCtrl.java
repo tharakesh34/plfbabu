@@ -625,7 +625,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aDedupFields.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDedupFields.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDedupFields.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDedupFields.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

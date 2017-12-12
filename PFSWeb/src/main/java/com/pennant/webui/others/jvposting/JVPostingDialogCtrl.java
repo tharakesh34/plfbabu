@@ -1463,7 +1463,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		AuditHeader auditHeader = null;
 		
 		aJVPosting.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aJVPosting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aJVPosting.setUserDetails(getUserWorkspace().getLoggedInUser());
 

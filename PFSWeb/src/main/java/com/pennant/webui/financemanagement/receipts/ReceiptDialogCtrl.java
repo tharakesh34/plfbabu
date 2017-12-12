@@ -2857,7 +2857,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Receipt Header Details workflow fields
 		FinReceiptHeader receiptHeader = data.getReceiptHeader();
 		receiptHeader.setReference(aFinanceMain.getFinReference());
-		receiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		receiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		receiptHeader.setRecordStatus(aFinanceMain.getRecordStatus());
@@ -5092,7 +5092,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 		afinanceMain.setWorkflowId(getWorkFlowId());

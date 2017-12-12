@@ -976,7 +976,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aProvince.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProvince.setUserDetails(getUserWorkspace().getLoggedInUser());
 

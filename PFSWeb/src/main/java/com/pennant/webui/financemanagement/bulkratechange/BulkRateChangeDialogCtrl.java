@@ -939,7 +939,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBulkRateChangeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBulkRateChangeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBulkRateChangeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBulkRateChangeHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

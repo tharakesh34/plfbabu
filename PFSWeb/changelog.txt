@@ -1,6 +1,7 @@
 pff 4.1.0, 2017-12-12
 ---------------------
 - Refactoring moved MessageUtil class from the package com.pennant.webui.util to com.pennanttech.pennapps.web.util
+- Refactoring getLoginUsrID method in LoggedInUser class changed to getUserId
 
 pff 4.1.0, 2017-12-07
 ---------------------

@@ -1670,7 +1670,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private boolean doProcess(Mandate aMandate, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aMandate.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aMandate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMandate.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1885,7 +1885,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			getMandate().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			getMandate().setNewRecord(true);
 		}
-		getMandate().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		getMandate().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		getMandate().setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setMandate(getMandate());

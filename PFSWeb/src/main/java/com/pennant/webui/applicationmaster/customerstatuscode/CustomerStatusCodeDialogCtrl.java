@@ -679,7 +679,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

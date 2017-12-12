@@ -1268,7 +1268,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aPartnerBank.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPartnerBank.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPartnerBank.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPartnerBank.setUserDetails(getUserWorkspace().getLoggedInUser());
 

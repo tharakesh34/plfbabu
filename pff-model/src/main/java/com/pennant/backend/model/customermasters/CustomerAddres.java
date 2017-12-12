@@ -51,7 +51,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -326,7 +325,7 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails){
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails=userDetails;
 
 	}

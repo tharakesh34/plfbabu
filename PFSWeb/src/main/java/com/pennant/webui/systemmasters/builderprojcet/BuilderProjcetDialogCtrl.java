@@ -676,7 +676,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aBuilderProjcet.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aBuilderProjcet.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aBuilderProjcet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aBuilderProjcet.setUserDetails(getUserWorkspace().getLoggedInUser());
 

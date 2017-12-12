@@ -590,7 +590,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 
 		InvestmentFinHeader finHeader = (InvestmentFinHeader) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = finHeader.getUserDetails().getUsrLanguage();
+		String usrLanguage = finHeader.getUserDetails().getLanguage();
 
 
 		List<FinanceDetail> dealList =  finHeader.getFinanceDetailsList();

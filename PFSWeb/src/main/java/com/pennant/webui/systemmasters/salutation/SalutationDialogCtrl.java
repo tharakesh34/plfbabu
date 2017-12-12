@@ -678,7 +678,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSalutation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSalutation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSalutation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSalutation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

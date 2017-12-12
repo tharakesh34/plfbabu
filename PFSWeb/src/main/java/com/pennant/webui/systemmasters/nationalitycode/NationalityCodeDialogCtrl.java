@@ -641,7 +641,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aNationalityCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aNationalityCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aNationalityCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aNationalityCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

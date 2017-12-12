@@ -350,7 +350,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 							+ creditReviewDetails.getVersion() + " ";
 
 					boolean userAcces = validateUserAccess(creditReviewDetails.getWorkflowId(), getUserWorkspace()
-							.getLoggedInUser().getLoginUsrID(), "FinCreditReviewDetails", whereCond,
+							.getLoggedInUser().getUserId(), "FinCreditReviewDetails", whereCond,
 							creditReviewDetails.getTaskId(), creditReviewDetails.getNextTaskId());
 					if (userAcces) {
 						doShowDialogPage(creditReviewDetails);

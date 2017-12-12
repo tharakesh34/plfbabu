@@ -666,7 +666,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRatingType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRatingType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRatingType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRatingType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

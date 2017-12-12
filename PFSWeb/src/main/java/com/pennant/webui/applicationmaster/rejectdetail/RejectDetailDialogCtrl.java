@@ -657,7 +657,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRejectDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRejectDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRejectDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRejectDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

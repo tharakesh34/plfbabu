@@ -2734,7 +2734,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = customerDetails.getCustomer().getUserDetails().getUsrLanguage();
+		String usrLanguage = customerDetails.getCustomer().getUserDetails().getLanguage();
 		String custctg = customerDetails.getCustomer().getCustCtgCode();
 
 		// Rating Validation

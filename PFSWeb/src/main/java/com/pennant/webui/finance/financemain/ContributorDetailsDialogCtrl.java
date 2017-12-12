@@ -698,7 +698,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 			header.setVersion(header.getVersion() + 1);
 		}
 
-		header.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		header.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		header.setUserDetails(getUserWorkspace().getLoggedInUser());
 

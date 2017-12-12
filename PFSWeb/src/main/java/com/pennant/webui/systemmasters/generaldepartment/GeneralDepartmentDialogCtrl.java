@@ -647,7 +647,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		String nextRoleCode="";
 		
 		aGeneralDepartment.setLastMntBy(getUserWorkspace()
-				.getLoggedInUser().getLoginUsrID());
+				.getLoggedInUser().getUserId());
 		aGeneralDepartment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGeneralDepartment.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -680,7 +680,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBuilderGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBuilderGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBuilderGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBuilderGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 

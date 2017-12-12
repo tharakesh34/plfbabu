@@ -740,7 +740,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	private boolean doProcess(VASProductCategory aVASProductCategory, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aVASProductCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASProductCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASProductCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASProductCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 

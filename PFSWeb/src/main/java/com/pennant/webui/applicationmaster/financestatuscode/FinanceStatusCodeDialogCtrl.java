@@ -612,7 +612,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

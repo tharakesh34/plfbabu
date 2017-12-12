@@ -296,10 +296,10 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 			logger.debug("Entering ");
 			/*			setSecurityUser(getSecurityUserService().getSecurityUserById(this.securityUser.getUsrID()));*/
 			getSecurityUser().setUsrPwd(this.newPassword.getValue().trim());
-			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			getSecurityUser().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			getSecurityUser().setVersion(this.securityUser.getVersion()+1);
-			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());		
+			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());		
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			/* Encrypt the password and get token   */
 			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");

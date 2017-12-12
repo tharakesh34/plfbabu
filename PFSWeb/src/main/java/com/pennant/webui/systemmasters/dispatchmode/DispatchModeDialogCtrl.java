@@ -637,7 +637,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDispatchMode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDispatchMode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDispatchMode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDispatchMode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

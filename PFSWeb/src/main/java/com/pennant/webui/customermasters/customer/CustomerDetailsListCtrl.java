@@ -243,7 +243,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 
 				if (isWorkFlowEnabled()) {
 					boolean userAcces = validateUserAccess(aCustomer.getWorkflowId(), getUserWorkspace().getLoggedInUser()
-							.getLoginUsrID(),"Customer", whereCond, aCustomer.getTaskId(),aCustomer.getNextTaskId());
+							.getUserId(),"Customer", whereCond, aCustomer.getTaskId(),aCustomer.getNextTaskId());
 					if (userAcces) {
 						showDetailView(aCustomer);
 					} else {

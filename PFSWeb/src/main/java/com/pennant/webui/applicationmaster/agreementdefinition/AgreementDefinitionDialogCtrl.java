@@ -1060,7 +1060,7 @@ public class AgreementDefinitionDialogCtrl extends
 		String nextRoleCode = "";
 
 		aAgreementDefinition.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aAgreementDefinition.setLastMntOn(new Timestamp(System
 				.currentTimeMillis()));
 		aAgreementDefinition.setUserDetails(getUserWorkspace()

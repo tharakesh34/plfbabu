@@ -724,7 +724,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aVesselDetail.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aVesselDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVesselDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

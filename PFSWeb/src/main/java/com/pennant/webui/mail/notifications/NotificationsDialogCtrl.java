@@ -957,7 +957,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aNotifications.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aNotifications.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aNotifications.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aNotifications.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -669,7 +669,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRelationshipOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRelationshipOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRelationshipOfficer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRelationshipOfficer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

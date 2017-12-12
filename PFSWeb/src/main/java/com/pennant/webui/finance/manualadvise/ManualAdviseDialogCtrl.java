@@ -1036,7 +1036,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aManualAdvise.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aManualAdvise.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aManualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aManualAdvise.setUserDetails(getUserWorkspace().getLoggedInUser());
 

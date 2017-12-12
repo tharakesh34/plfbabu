@@ -1393,7 +1393,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aScoringGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aScoringGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aScoringGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aScoringGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 

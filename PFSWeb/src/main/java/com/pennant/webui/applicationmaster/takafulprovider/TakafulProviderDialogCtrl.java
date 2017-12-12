@@ -1236,7 +1236,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 	private boolean doProcess(TakafulProvider aTakafulProvider, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aTakafulProvider.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTakafulProvider.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTakafulProvider.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTakafulProvider.setUserDetails(getUserWorkspace().getLoggedInUser());
 

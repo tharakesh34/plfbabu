@@ -115,7 +115,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.ENTERING);
 
 		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId());
 		}
 
 		logger.debug(Literal.LEAVING);

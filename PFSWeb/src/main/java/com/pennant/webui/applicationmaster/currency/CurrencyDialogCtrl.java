@@ -955,7 +955,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aCurrency.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCurrency.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCurrency.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCurrency.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

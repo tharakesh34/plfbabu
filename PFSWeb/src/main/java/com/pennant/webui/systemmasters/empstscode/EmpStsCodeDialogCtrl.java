@@ -639,7 +639,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEmpStsCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEmpStsCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEmpStsCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEmpStsCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

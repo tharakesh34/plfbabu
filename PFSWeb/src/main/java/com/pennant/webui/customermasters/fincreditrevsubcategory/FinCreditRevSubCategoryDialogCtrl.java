@@ -1084,7 +1084,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aFinCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinCreditRevSubCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinCreditRevSubCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

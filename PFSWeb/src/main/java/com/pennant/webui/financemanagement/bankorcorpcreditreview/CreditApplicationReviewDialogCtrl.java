@@ -1111,7 +1111,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCreditReviewDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCreditReviewDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCreditReviewDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCreditReviewDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1435,11 +1435,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 						} else {
 							finCreditRevSubCategory.setVersion(finCreditRevSubCategory.getVersion() + 1);
 						}
-						finCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+						finCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 						finCreditRevSubCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					}  
 
-					creditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					creditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					creditReviewSummary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					creditReviewSummary.setRecordStatus(finCreditReviewDetails.getRecordStatus());
 					creditReviewSummary.setWorkflowId(finCreditReviewDetails.getWorkflowId());

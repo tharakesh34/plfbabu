@@ -611,7 +611,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aVehicleModel.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVehicleModel.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVehicleModel.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleModel.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

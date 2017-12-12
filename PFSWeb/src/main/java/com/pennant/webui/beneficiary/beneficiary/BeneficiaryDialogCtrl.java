@@ -754,7 +754,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBeneficiary.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBeneficiary.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBeneficiary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBeneficiary.setUserDetails(getUserWorkspace().getLoggedInUser());
 

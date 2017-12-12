@@ -811,7 +811,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aAuthorization.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aAuthorization.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAuthorization.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {

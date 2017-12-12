@@ -925,7 +925,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPFSParameter.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPFSParameter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPFSParameter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPFSParameter.setUserDetails(getUserWorkspace().getLoggedInUser());
 

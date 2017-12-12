@@ -2433,7 +2433,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private boolean doProcess(ManagerCheque aManagerCheque, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aManagerCheque.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aManagerCheque.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aManagerCheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aManagerCheque.setUserDetails(getUserWorkspace().getLoggedInUser());
 

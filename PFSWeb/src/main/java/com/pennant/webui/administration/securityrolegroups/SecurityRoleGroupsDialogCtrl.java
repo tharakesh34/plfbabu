@@ -585,7 +585,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				aSecRoleGroups.setLastMntOn(new Timestamp(System
 						.currentTimeMillis()));
 				aSecRoleGroups.setLastMntBy(getUserWorkspace()
-						.getLoggedInUser().getLoginUsrID());
+						.getLoggedInUser().getUserId());
 				aSecRoleGroups.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				aSecRoleGroups.setNextRoleCode("");
 				aSecRoleGroups.setNextTaskId("");
@@ -617,7 +617,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				aSecRoleGroups.setRoleCode("");
 				aSecRoleGroups.setRecordStatus("");
 				aSecRoleGroups.setLastMntBy(getUserWorkspace()
-						.getLoggedInUser().getLoginUsrID());
+						.getLoggedInUser().getUserId());
 				deletedMap
 						.put(Long.valueOf(getOldAssignedMap().get(grpId)
 								.getGrpID()), aSecRoleGroups);

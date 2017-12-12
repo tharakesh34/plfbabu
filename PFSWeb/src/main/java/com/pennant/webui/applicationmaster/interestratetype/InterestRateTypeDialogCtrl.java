@@ -668,7 +668,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aInterestRateType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aInterestRateType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aInterestRateType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aInterestRateType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

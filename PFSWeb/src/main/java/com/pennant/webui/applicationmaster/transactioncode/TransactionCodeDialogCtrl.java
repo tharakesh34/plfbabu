@@ -677,7 +677,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aTransactionCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTransactionCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTransactionCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTransactionCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -327,7 +327,7 @@ public class AgreementFieldsDetailDialogCtrl extends GFCBaseCtrl<AgreementFieldD
 			agreementFieldDetails.setNewRecord(true);
 		}
 		agreementFieldDetails.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-		agreementFieldDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		agreementFieldDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		agreementFieldDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		agreementFieldDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setAgreementFieldDetails(agreementFieldDetails);
@@ -1017,7 +1017,7 @@ public class AgreementFieldsDetailDialogCtrl extends GFCBaseCtrl<AgreementFieldD
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAgreementFieldDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAgreementFieldDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAgreementFieldDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAgreementFieldDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 

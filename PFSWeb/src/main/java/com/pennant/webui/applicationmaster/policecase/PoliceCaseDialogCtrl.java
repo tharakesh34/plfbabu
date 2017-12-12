@@ -653,7 +653,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPoliceCaseDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPoliceCaseDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPoliceCaseDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPoliceCaseDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

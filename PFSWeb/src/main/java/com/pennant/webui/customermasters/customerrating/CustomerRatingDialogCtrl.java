@@ -929,7 +929,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerRating.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerRating.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerRating.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerRating.setUserDetails(getUserWorkspace().getLoggedInUser());
 

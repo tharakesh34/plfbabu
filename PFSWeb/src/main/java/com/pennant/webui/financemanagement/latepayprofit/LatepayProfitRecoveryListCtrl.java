@@ -373,7 +373,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ overdueChargeRecovery.getFinReference()+"' AND version=" + overdueChargeRecovery.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(overdueChargeRecovery.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "OverdueChargeRecovery", whereCond, overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
+					boolean userAcces =  validateUserAccess(overdueChargeRecovery.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "OverdueChargeRecovery", whereCond, overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
 					if (userAcces){
 						showDetailView(overdueChargeRecovery);
 					}else{

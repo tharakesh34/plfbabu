@@ -987,7 +987,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finPurpose.setProperties("PurposeDetail", "PurposeCode", "PurposeDesc", true, 8);
 		this.finBranch.setProperties("UserDivBranch", "UsrID", "UserBranchDesc", true, LengthConstants.LEN_BRANCH);
 		whereClause.append("usrID = ");
-		whereClause.append(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		whereClause.append(getUserWorkspace().getLoggedInUser().getUserId());
 		whereClause.append(" AND ");
 		whereClause.append("UserDivision = '");
 		whereClause.append(this.finDivision);
@@ -5684,7 +5684,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							&& !aFinanceDetail.getAdvancePaymentsList().isEmpty()) {
 						for (FinAdvancePayments finPayDetail : aFinanceDetail.getAdvancePaymentsList()) {
 							finPayDetail.setFinReference(this.finReference.getValue());
-							finPayDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+							finPayDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							finPayDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 							finPayDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 						}
@@ -5752,7 +5752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						return;
 					}
 					finCovenantType.setFinReference(this.finReference.getValue());
-					finCovenantType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					finCovenantType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					finCovenantType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finCovenantType.setUserDetails(getUserWorkspace().getLoggedInUser());
 				}
@@ -6547,7 +6547,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 		aFinanceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -6558,7 +6558,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (int i = 0; i < flagList.size(); i++) {
 				FinFlagsDetail finFlagsDetail = flagList.get(i);
 				finFlagsDetail.setReference(afinanceMain.getFinReference());
-				finFlagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				finFlagsDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				finFlagsDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finFlagsDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 				finFlagsDetail.setRecordStatus(afinanceMain.getRecordStatus());
@@ -6570,7 +6570,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (aFinanceDetail.getFinAssetTypesList() != null && !aFinanceDetail.getFinAssetTypesList().isEmpty()) {
 			for (FinAssetTypes finAssetTypes : aFinanceDetail.getFinAssetTypesList()) {
 				finAssetTypes.setReference(afinanceMain.getFinReference());
-				finAssetTypes.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				finAssetTypes.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				finAssetTypes.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finAssetTypes.setUserDetails(getUserWorkspace().getLoggedInUser());
 				finAssetTypes.setRecordStatus(afinanceMain.getRecordStatus());
@@ -6592,7 +6592,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& !aFinanceDetail.getExtendedFieldRenderList().isEmpty()) {
 			for (ExtendedFieldRender extendedFieldDetail : aFinanceDetail.getExtendedFieldRenderList()) {
 				extendedFieldDetail.setReference(afinanceMain.getFinReference());
-				extendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				extendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				extendedFieldDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				extendedFieldDetail.setRecordStatus(afinanceMain.getRecordStatus());
 				extendedFieldDetail.setWorkflowId(afinanceMain.getWorkflowId());
@@ -6615,7 +6615,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
 			details.setReference(afinanceMain.getFinReference());
 			details.setSeqNo(++seqNo);
-			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(afinanceMain.getRecordStatus());
 			details.setRecordType(afinanceMain.getRecordType());
@@ -10888,11 +10888,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (intiateUser == 0) {
 			if (isFirstTask() && getUserWorkspace().getUserRoles().contains(getWorkFlow().firstTaskOwner())) {
-				aFinanceMain.setInitiateUser(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				aFinanceMain.setInitiateUser(getUserWorkspace().getLoggedInUser().getUserId());
 			}
 		}
 
-		if (aFinanceMain.getInitiateDate() == null && getUserWorkspace().getLoggedInUser().getLoginUsrID() != 0) {
+		if (aFinanceMain.getInitiateDate() == null && getUserWorkspace().getLoggedInUser().getUserId() != 0) {
 			if (!recSave) {
 				aFinanceMain.setInitiateDate(DateUtility.getAppDate());
 			}
@@ -11449,7 +11449,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<CollateralAssignment> collateralAssignmentList = aFinanceDetail.getCollateralAssignmentList();
 		if (collateralAssignmentList != null && !collateralAssignmentList.isEmpty()) {
 			for (CollateralAssignment collAssignment : collateralAssignmentList) {
-				collAssignment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				collAssignment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				collAssignment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				collAssignment.setUserDetails(getUserWorkspace().getLoggedInUser());
 				collAssignment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -11459,7 +11459,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<FinAssetTypes> finAssetTypesList = aFinanceDetail.getFinAssetTypesList();
 		if (finAssetTypesList != null && !finAssetTypesList.isEmpty()) {
 			for (FinAssetTypes finAssetTypes : finAssetTypesList) {
-				finAssetTypes.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				finAssetTypes.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				finAssetTypes.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finAssetTypes.setUserDetails(getUserWorkspace().getLoggedInUser());
 				finAssetTypes.setRecordStatus(userAction.getSelectedItem().getValue().toString());

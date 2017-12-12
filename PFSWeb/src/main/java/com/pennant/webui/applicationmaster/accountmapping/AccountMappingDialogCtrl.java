@@ -919,7 +919,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccountMapping.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountMapping.setUserDetails(getUserWorkspace().getLoggedInUser());
 

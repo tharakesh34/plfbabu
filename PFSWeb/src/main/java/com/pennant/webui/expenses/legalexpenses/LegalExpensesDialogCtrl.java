@@ -999,7 +999,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	private boolean doProcess(LegalExpenses aLegalExpenses,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aLegalExpenses.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLegalExpenses.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLegalExpenses.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLegalExpenses.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

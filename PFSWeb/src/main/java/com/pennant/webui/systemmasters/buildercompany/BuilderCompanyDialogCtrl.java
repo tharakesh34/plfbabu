@@ -692,7 +692,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aBuilderCompany.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aBuilderCompany.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aBuilderCompany.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aBuilderCompany.setUserDetails(getUserWorkspace().getLoggedInUser());
 

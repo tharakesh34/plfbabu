@@ -256,7 +256,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 						stepPolicy.setRecordType(PennantConstants.RCD_ADD);
 						stepPolicy.setNewRecord(true);
 					}
-					stepPolicy.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					stepPolicy.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					stepPolicy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					stepPolicy.setUserDetails(getUserWorkspace().getLoggedInUser());
 				}

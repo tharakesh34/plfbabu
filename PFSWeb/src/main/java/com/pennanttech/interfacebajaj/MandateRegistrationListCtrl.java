@@ -704,7 +704,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
 			dataEngine.exportData("MANDATES_EXPORT");*/
 				
-			MandateProcess process = new MandateProcess(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getLoginUsrID() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue());
+			MandateProcess process = new MandateProcess(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getUserId() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue());
 			Thread thread = new Thread(process);
 			thread.start();
 			
@@ -797,7 +797,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		public void run() {
 			try {
 				mandateRequestService.sendReqest(mandateIdList, this.fromDate, this.toDate, getUserWorkspace()
-						.getLoggedInUser().getLoginUsrID(), getUserWorkspace().getLoggedInUser().getUserName(),
+						.getLoggedInUser().getUserId(), getUserWorkspace().getLoggedInUser().getUserName(),
 						this.branchDetails);
 			} catch (Exception e) {
 

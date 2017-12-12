@@ -758,7 +758,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDocumentType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDocumentType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDocumentType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDocumentType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

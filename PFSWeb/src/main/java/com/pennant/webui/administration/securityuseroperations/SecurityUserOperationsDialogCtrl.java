@@ -634,7 +634,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		String nextRoleCode = "";
 
 		aSecurityUser.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSecurityUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityUser.setUserDetails(getUserWorkspace().getLoggedInUser());
 	

@@ -727,7 +727,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aQuestion.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aQuestion.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQuestion.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQuestion.setUserDetails(getUserWorkspace().getLoggedInUser());
 

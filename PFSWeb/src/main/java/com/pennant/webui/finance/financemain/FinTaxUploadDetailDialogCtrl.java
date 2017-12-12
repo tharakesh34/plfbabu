@@ -592,7 +592,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinTaxUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinTaxUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinTaxUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		if (isWorkFlowEnabled()) {

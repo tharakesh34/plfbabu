@@ -1070,7 +1070,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aProvision.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aProvision.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aProvision.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProvision.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -722,7 +722,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCountry.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCountry.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCountry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCountry.setUserDetails(getUserWorkspace().getLoggedInUser());
 

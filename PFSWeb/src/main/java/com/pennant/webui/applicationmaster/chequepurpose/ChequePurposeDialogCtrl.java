@@ -669,7 +669,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 	private boolean doProcess(ChequePurpose aChequePurpose,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aChequePurpose.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aChequePurpose.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aChequePurpose.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aChequePurpose.setUserDetails(getUserWorkspace().getLoggedInUser());
 

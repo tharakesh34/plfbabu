@@ -623,7 +623,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		String nextRoleCode = "";
 
 		aExpenseType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aExpenseType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aExpenseType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

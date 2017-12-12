@@ -497,7 +497,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 								&& usrfinRolesList.contains(baseRole)
 								&& aFinanceMain.getNextUserId() != null
 								&& aFinanceMain.getNextUserId().contains(
-										String.valueOf(getUserWorkspace().getLoggedInUser().getLoginUsrID()))) {
+										String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()))) {
 							userAcces = true;
 							break;
 						}
@@ -614,7 +614,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		filters[0] = new Filter("RoleCd", financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode(),
 				Filter.OP_EQUAL);
 		filters[1] = new Filter("RightName", "create_FinanceMainList_CustomerCIF", Filter.OP_EQUAL);
-		filters[2] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getLoginUsrID(), Filter.OP_EQUAL);
+		filters[2] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getUserId(), Filter.OP_EQUAL);
 		searchObject.addFilterOr(filters);
 
 		searchObject.addFilterAnd(filters);
@@ -1232,7 +1232,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					.append("') and");
 		}
 		sql.append(" (Processed = 0)");
-		sql.append(" and (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getLoginUsrID())
+		sql.append(" and (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getUserId())
 				.append(" or CurrentOwner = 0)");
 		if (!usrfinRolesList.isEmpty()) {
 			sql.append(" and (RoleCode in ('");

@@ -649,7 +649,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBlackListReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBlackListReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBlackListReasonCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBlackListReasonCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

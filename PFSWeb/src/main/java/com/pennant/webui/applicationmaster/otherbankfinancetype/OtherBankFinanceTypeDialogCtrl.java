@@ -648,7 +648,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		String nextRoleCode = "";
 
 		aOtherBankFinanceType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aOtherBankFinanceType.setLastMntOn(new Timestamp(System
 				.currentTimeMillis()));
 		aOtherBankFinanceType.setUserDetails(getUserWorkspace()

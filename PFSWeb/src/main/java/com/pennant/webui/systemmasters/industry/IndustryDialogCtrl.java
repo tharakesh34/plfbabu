@@ -668,7 +668,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aIndustry.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aIndustry.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aIndustry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aIndustry.setUserDetails(getUserWorkspace().getLoggedInUser());
 

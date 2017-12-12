@@ -1473,7 +1473,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aExtendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aExtendedFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aExtendedFieldDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aExtendedFieldDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

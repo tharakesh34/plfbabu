@@ -747,7 +747,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFacilityReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFacilityReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFacilityReferenceDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFacilityReferenceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

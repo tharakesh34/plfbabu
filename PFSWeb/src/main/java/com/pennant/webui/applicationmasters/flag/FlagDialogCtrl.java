@@ -694,7 +694,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	private boolean doProcess(Flag aFlag,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aFlag.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFlag.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFlag.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

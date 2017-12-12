@@ -946,7 +946,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 					finFeeDetail.setFinReference(aFinScheduleData.getFinanceMain().getFinReference());
 					finFeeDetail.setRecordStatus(aFinScheduleData.getFinanceMain().getRecordStatus());
-					finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 				}
@@ -1011,7 +1011,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
 				for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
 					finFeeReceipt.setRecordStatus(aFinScheduleData.getFinanceMain().getRecordStatus());
-					finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					finFeeReceipt.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finFeeReceipt.setUserDetails(getUserWorkspace().getLoggedInUser());
 				}

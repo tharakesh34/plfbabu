@@ -634,7 +634,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aScheduleMethod.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aScheduleMethod.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aScheduleMethod.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aScheduleMethod.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -377,7 +377,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		Product product = (Product) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = product.getUserDetails().getUsrLanguage();
+		String usrLanguage = product.getUserDetails().getLanguage();
 
 		// ProductAsset Validation
 		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){

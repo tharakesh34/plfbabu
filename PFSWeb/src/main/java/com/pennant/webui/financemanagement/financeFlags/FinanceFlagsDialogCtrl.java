@@ -557,7 +557,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 		
-		aFinanceFlags.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceFlags.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceFlags.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceFlags.setUserDetails(getUserWorkspace().getLoggedInUser());
 

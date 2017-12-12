@@ -420,7 +420,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 							"' AND version=" + provision.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(provision.getWorkflowId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), "Provision", 
+							getUserWorkspace().getLoggedInUser().getUserId(), "Provision", 
 							whereCond, provision.getTaskId(), provision.getNextTaskId());
 					if (userAcces){
 						showDetailView(provision);

@@ -43,7 +43,7 @@ public class FinanceRejectDetailDAOImpl  extends BasisNextidDaoImpl<FinanceRejec
 		financeRejectDetail.setRejectStatus(financeMain.getRejectStatus());
 		financeRejectDetail.setRejectReason(financeMain.getRejectReason());
 		financeRejectDetail.setRoleCode(financeMain.getRoleCode());
-		financeRejectDetail.setRejectedUser(financeMain.getUserDetails().getLoginUsrID());
+		financeRejectDetail.setRejectedUser(financeMain.getUserDetails().getUserId());
 		financeRejectDetail.setRejectedDate(financeMain.getLastMntOn());
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into  FinanceRejectDetail ");

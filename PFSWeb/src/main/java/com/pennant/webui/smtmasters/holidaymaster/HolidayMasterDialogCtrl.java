@@ -697,7 +697,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aHolidayMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aHolidayMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aHolidayMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aHolidayMaster.setUserDetails(getUserWorkspace().getLoggedInUser());
 

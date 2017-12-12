@@ -339,7 +339,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 			etihadCreditBureauDetail.setNewRecord(true);
 		}
 		etihadCreditBureauDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-		etihadCreditBureauDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		etihadCreditBureauDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		etihadCreditBureauDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		etihadCreditBureauDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setEtihadCreditBureauDetail(etihadCreditBureauDetail);
@@ -1060,7 +1060,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEtihadCreditBureauDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEtihadCreditBureauDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEtihadCreditBureauDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEtihadCreditBureauDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

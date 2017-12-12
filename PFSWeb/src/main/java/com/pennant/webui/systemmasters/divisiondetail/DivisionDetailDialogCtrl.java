@@ -841,7 +841,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	private boolean doProcess(DivisionDetail aDivisionDetail,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aDivisionDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDivisionDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDivisionDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDivisionDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

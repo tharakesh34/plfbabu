@@ -1152,7 +1152,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAssetType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAssetType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAssetType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAssetType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

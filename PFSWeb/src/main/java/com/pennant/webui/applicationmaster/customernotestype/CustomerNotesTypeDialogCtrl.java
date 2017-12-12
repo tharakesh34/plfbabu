@@ -683,7 +683,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerNotesType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerNotesType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerNotesType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerNotesType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -1093,7 +1093,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 			wherQuery.append(" FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision =");
 			wherQuery.append(divisionField);
 			wherQuery.append(" and usrid =");
-			wherQuery.append(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			wherQuery.append(getUserWorkspace().getLoggedInUser().getUserId());
 			wherQuery.append(")");
 		
 			return wherQuery.toString();	

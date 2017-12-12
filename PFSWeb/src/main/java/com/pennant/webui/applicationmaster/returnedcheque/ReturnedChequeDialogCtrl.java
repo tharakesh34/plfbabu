@@ -749,7 +749,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		String nextRoleCode = "";
 
 		aReturnedCheque.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aReturnedCheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReturnedCheque
 		.setUserDetails(getUserWorkspace().getLoggedInUser());

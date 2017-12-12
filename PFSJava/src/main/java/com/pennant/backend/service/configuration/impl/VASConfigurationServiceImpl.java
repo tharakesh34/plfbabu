@@ -513,7 +513,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
 			auditDetails.add(auditDetail);
 			VASConfiguration  vasConfiguration = (VASConfiguration) auditDetail.getModelData();
-			String usrLanguage =  vasConfiguration.getUserDetails().getUsrLanguage();
+			String usrLanguage =  vasConfiguration.getUserDetails().getLanguage();
 			
 			//Extended field details
 			auditHeader = getAuditDetails(auditHeader, method);

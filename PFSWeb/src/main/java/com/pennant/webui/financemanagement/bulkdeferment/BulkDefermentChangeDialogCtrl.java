@@ -891,7 +891,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBulkProcessHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBulkProcessHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBulkProcessHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBulkProcessHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

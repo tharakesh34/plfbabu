@@ -1038,7 +1038,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		boolean processCompleted = false;
 		String nextRoleCode = "";
 
-		aMailTemplate.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aMailTemplate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMailTemplate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMailTemplate.setUserDetails(getUserWorkspace().getLoggedInUser());
 

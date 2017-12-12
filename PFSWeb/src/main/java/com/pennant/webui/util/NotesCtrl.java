@@ -369,7 +369,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		aNotes.setModuleName(this.notes.getModuleName());
 		aNotes.setReference(this.notes.getReference());
 		aNotes.setVersion(this.notes.getVersion());
-		aNotes.setInputBy(workspace.getLoggedInUser().getLoginUsrID());
+		aNotes.setInputBy(workspace.getLoggedInUser().getUserId());
 		aNotes.setInputDate(new Timestamp(System.currentTimeMillis()));
 		aNotes.setRoleCode(getNotes().getRoleCode());
 		this.newNotes = aNotes;

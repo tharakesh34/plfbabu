@@ -2812,11 +2812,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
-		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommitment.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-		aCommitment.getCommitmentMovement().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCommitment.getCommitmentMovement().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.getCommitmentMovement().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommitment.getCommitmentMovement().setUserDetails(getUserWorkspace().getLoggedInUser());
 

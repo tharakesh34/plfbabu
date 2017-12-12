@@ -1656,7 +1656,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDedupParm.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDedupParm.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDedupParm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDedupParm.setUserDetails(getUserWorkspace().getLoggedInUser());
 

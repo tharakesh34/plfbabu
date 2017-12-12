@@ -1244,7 +1244,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSecurityUser.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSecurityUser.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityUser.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1756,7 +1756,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						aSecurityUserDivBranch.setUserDivision(div);
 						aSecurityUserDivBranch.setUserBranch(divBranch);
 						aSecurityUserDivBranch.setRecordStatus("");
-						aSecurityUserDivBranch.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+						aSecurityUserDivBranch.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 						aSecurityUserDivBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						aSecurityUserDivBranch.setUserDetails(getUserWorkspace().getLoggedInUser());
 

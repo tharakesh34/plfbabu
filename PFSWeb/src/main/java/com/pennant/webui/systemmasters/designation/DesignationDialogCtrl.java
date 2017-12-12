@@ -648,7 +648,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDesignation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDesignation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDesignation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDesignation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

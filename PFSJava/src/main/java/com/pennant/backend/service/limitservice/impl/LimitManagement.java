@@ -71,7 +71,7 @@ public class LimitManagement {
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
 		String finCcy = finMain.getFinCcy();
-		String usrlang = finMain.getUserDetails().getUsrLanguage();
+		String usrlang = finMain.getUserDetails().getLanguage();
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		long custId = customer.getCustID();
 		long groupId = customer.getCustGroupID();
@@ -321,7 +321,7 @@ public class LimitManagement {
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
 		String finCcy = finMain.getFinCcy();
-		String usrlang = finMain.getUserDetails().getUsrLanguage();
+		String usrlang = finMain.getUserDetails().getLanguage();
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		long custId = customer.getCustID();
 		long groupId = customer.getCustGroupID();
@@ -660,7 +660,7 @@ public class LimitManagement {
 		LimitHeader custHeader = null;
 		LimitHeader groupHeader = null;
 		boolean allowOverride = finType.isOverrideLimit();
-		String usrlang = finMain.getUserDetails().getUsrLanguage();
+		String usrlang = finMain.getUserDetails().getLanguage();
 
 		if (custId != 0) {
 			custHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "_AView");
@@ -1075,8 +1075,8 @@ public class LimitManagement {
 		limittrans.setHeaderId(header.getHeaderId());
 		LoggedInUser userDetails = finMain.getUserDetails();
 		if (userDetails != null) {
-			limittrans.setCreatedBy(userDetails.getLoginUsrID());
-			limittrans.setLastMntBy(userDetails.getLoginUsrID());
+			limittrans.setCreatedBy(userDetails.getUserId());
+			limittrans.setLastMntBy(userDetails.getUserId());
 		}
 		limittrans.setTransactionDate(new Timestamp(DateUtility.getAppDate().getTime()));
 		limittrans.setCreatedOn(new Timestamp(System.currentTimeMillis()));
@@ -1294,8 +1294,8 @@ public class LimitManagement {
 		transDet.setReferenceNumber(refernce);
 		transDet.setHeaderId(header.getHeaderId());
 		if (userDetails != null) {
-			transDet.setCreatedBy(userDetails.getLoginUsrID());
-			transDet.setLastMntBy(userDetails.getLoginUsrID());
+			transDet.setCreatedBy(userDetails.getUserId());
+			transDet.setLastMntBy(userDetails.getUserId());
 		}
 
 		transDet.setTransactionDate(new Timestamp(System.currentTimeMillis()));

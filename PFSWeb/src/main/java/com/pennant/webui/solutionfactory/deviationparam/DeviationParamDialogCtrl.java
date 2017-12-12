@@ -720,7 +720,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 	private boolean doProcess(DeviationParam aDeviationParam, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aDeviationParam.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDeviationParam.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDeviationParam.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDeviationParam.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -69,7 +69,7 @@ public class FinanceFlagsController {
 
 		List<FinFlagsDetail> flagseList = financeFlag.getFinFlagDetailList();
 		for(FinFlagsDetail detail: flagseList){
-			detail.setLastMntBy(userDetails.getLoginUsrID());
+			detail.setLastMntBy(userDetails.getUserId());
 			detail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
 
@@ -79,7 +79,7 @@ public class FinanceFlagsController {
 		financeFlag.setNewRecord(true);
 		financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		financeFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		financeFlag.setLastMntBy(userDetails.getLoginUsrID());
+		financeFlag.setLastMntBy(userDetails.getUserId());
 
 		WSReturnStatus response = null;
 		try {
@@ -122,10 +122,10 @@ public class FinanceFlagsController {
 		financeFlag.setNewRecord(false);
 		financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		financeFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		financeFlag.setLastMntBy(userDetails.getLoginUsrID());
+		financeFlag.setLastMntBy(userDetails.getUserId());
 
 		for (FinFlagsDetail flagDetail : financeFlag.getFinFlagDetailList()) {
-			flagDetail.setLastMntBy(userDetails.getLoginUsrID());
+			flagDetail.setLastMntBy(userDetails.getUserId());
 			flagDetail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
 

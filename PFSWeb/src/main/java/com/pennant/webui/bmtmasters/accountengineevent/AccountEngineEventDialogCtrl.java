@@ -623,7 +623,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAccountEngineEvent.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountEngineEvent.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccountEngineEvent.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountEngineEvent.setUserDetails(getUserWorkspace().getLoggedInUser());
 

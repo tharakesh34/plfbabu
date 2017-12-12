@@ -258,7 +258,7 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
 	}
 

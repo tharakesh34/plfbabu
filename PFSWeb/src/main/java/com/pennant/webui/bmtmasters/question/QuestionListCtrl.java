@@ -226,7 +226,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND QuestionId="+ question.getQuestionId()+" AND version=" + question.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(question.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "Question", whereCond, question.getTaskId(), question.getNextTaskId());
+					boolean userAcces =  validateUserAccess(question.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "Question", whereCond, question.getTaskId(), question.getNextTaskId());
 					if (userAcces){
 						showDetailView(question);
 					}else{

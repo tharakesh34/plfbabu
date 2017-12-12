@@ -601,7 +601,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aQueueAssignmentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aQueueAssignmentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQueueAssignmentHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQueueAssignmentHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

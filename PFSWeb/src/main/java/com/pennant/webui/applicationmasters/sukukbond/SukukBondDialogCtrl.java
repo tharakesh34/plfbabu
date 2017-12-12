@@ -640,7 +640,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	private boolean doProcess(SukukBond aSukukBond,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aSukukBond.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSukukBond.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSukukBond.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSukukBond.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -278,7 +278,7 @@ public class BeneficiaryController {
 		beneficiary.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		beneficiary.setiFSC(bankBranch.getIFSC());
 		beneficiary.setBankBranchID(bankBranch.getBankBranchID());
-		beneficiary.setLastMntBy(userDetails.getLoginUsrID());
+		beneficiary.setLastMntBy(userDetails.getUserId());
 		beneficiary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		beneficiary.setSourceId(APIConstants.FINSOURCE_ID_API);
 		logger.debug("Leaving");

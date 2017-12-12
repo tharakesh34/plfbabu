@@ -1122,7 +1122,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEntity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEntity.setUserDetails(getUserWorkspace().getLoggedInUser());
 

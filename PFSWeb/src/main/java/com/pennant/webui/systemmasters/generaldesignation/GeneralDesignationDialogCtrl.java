@@ -650,7 +650,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		String nextRoleCode="";
 		
 		aGeneralDesignation.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aGeneralDesignation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGeneralDesignation.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

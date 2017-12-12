@@ -651,7 +651,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aProfession.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aProfession.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aProfession.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProfession.setUserDetails(getUserWorkspace().getLoggedInUser());
 

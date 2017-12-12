@@ -1015,7 +1015,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		String nextRoleCode = "";
 
 		aCustomerEMail.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aCustomerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerEMail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -724,7 +724,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPayOrderIssueHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPayOrderIssueHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPayOrderIssueHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPayOrderIssueHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

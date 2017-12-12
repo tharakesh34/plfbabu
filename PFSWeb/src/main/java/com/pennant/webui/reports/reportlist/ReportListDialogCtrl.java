@@ -753,7 +753,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aReportList.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReportList.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReportList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReportList.setUserDetails(getUserWorkspace().getLoggedInUser());
 
