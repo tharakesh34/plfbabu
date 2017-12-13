@@ -268,7 +268,12 @@ public abstract class NiyoginService {
 				if (configuration == null) {
 					continue;
 				}
-				String jsonResponseValue = Objects.toString(fieldValue, "");
+			
+				String jsonResponseValue = Objects.toString(fieldValue, null);
+				if(jsonResponseValue==null){
+					continue;
+				}
+				
 				switch (configuration.getFieldType()) {
 
 				case ExtendedFieldConstants.FIELDTYPE_TEXT:
