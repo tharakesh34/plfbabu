@@ -96,6 +96,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -159,6 +160,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private boolean								newRecord			= false;
 	private boolean								newCustomer			= false;
 	private CustomerDialogCtrl					customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer>		newSearchObject;
 	protected Button							btnSearchPRCustid;
 
@@ -226,6 +228,18 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		if (arguments.containsKey("customerDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
+			setNewCustomer(true);
+
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord(true);
+			} else {
+				setNewRecord(false);
+			}
+			this.directorDetail.setWorkflowId(0);
+		}
+		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+
+			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
 			setNewCustomer(true);
 
 			if (arguments.containsKey("newRecord")) {
@@ -1886,6 +1900,14 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 
 }

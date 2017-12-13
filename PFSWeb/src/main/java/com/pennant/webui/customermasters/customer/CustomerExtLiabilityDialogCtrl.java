@@ -126,6 +126,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private boolean newCustomer=false;
 	private List<CustomerExtLiability> CustomerExtLiabilityList;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
@@ -202,6 +203,21 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					userRole = arguments.get("roleCode").toString();
 					getUserWorkspace().allocateRoleAuthorities(userRole,
 							"CustomerExtLiabilityDialog");
+				}
+			}
+			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+				setNewCustomer(true);
+
+				if (arguments.containsKey("newRecord")) {
+					setNewRecord(true);
+				} else {
+					setNewRecord(false);
+				}
+				this.customerExtLiability.setWorkflowId(0);
+				if (arguments.containsKey("roleCode")) {
+					userRole = arguments.get("roleCode").toString();
+					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerExtLiabilityDialog");
 				}
 			}
 			if (arguments.containsKey("isFinanceProcess")) {
@@ -1123,6 +1139,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	}
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 	
 }

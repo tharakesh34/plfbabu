@@ -144,8 +144,12 @@
 }
 .z-listitem {
     background: #fff;
-    pointer-events: none;
 }
+.z-listitem:seld { background:#fff;}  
+.z-listitem:hover {
+	background:#fff;
+}
+
 .labelweightt {
 	font-size: 15px;
 	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -56,6 +57,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -66,7 +68,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * This is the controller class for the /customer.zul file.
@@ -285,6 +289,8 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	private boolean isEnqProcess = false;
 
 	private List<CustomerBankInfo> CustomerBankInfoList;
+	private ExternalDocumentManager externalDocumentManager = null;
+	private Object financeMainDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -977,6 +983,365 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 
 			this.listBoxCustomerEmploymentDetail.appendChild(listitem);
 		}
+	}
+
+	private boolean isDeleteRecord(String rcdType) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean getCurrentEmployerExist(CustomerEmploymentDetail custEmpDetail) {
+		boolean isCurrentEmp = false;
+		for (CustomerEmploymentDetail customerEmploymentDetail : customerEmploymentDetailList) {
+			if (customerEmploymentDetail.getCustEmpName() != custEmpDetail.getCustEmpName()
+					&& customerEmploymentDetail.isCurrentEmployer()) {
+				isCurrentEmp = true;
+				return isCurrentEmp;
+			}
+		}
+		return isCurrentEmp;
+	}
+
+	public void onCustomerEmploymentDetailItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerEmploymentDetail.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerEmploymentDetail customerEmploymentDetail = (CustomerEmploymentDetail) item
+					.getAttribute("data");
+			if (isDeleteRecord(customerEmploymentDetail.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("customerEmploymentDetail", customerEmploymentDetail);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("roleCode", getRole());
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("moduleType", this.moduleType);
+				map.put("currentEmployer", getCurrentEmployerExist(customerEmploymentDetail));
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailDialog.zul",
+							window_CustomerDialog, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerDocumentItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("data");
+			if (isDeleteRecord(customerDocument.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				if (customerDocument.getCustDocImage() == null) {
+					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
+						customerDocument
+								.setCustDocImage(PennantAppUtil.getDocumentImage(customerDocument.getDocRefId()));
+					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {
+						try {
+							// Fetch document from interface
+							DocumentDetails detail = externalDocumentManager
+									.getExternalDocument(customerDocument.getDocUri());
+							customerDocument.setCustDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
+						} catch (InterfaceException e) {
+							MessageUtil.showError(e);
+						}
+					}
+				}
+				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
+				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerDocument", customerDocument);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("roleCode", getRole());
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("moduleType", this.moduleType);
+				map.put("isRetailCustomer", isRetailCustomer);
+				if (getFinanceMainDialogCtrl() != null) {
+					map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
+				}
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerAddressItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerAddress.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerAddres customerAddress = (CustomerAddres) item.getAttribute("data");
+			if (isDeleteRecord(customerAddress.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerAddress.setLovDescCustCIF(this.custCIF.getValue());
+				customerAddress.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerAddres", customerAddress);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerPhoneNumberItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerPhoneNumbers.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) item.getAttribute("data");
+			if (isDeleteRecord(customerPhoneNumber.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerPhoneNumber.setLovDescCustCIF(this.custCIF.getValue());
+				customerPhoneNumber.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerPhoneNumber", customerPhoneNumber);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null,
+							map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerEmailAddressItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerEmails.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerEMail customerEmail = (CustomerEMail) item.getAttribute("data");
+			if (isDeleteRecord(customerEmail.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerEmail.setLovDescCustCIF(this.custCIF.getValue());
+				customerEmail.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerEMail", customerEmail);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerBankInfoItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerBankInformation.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerBankInfo custBankInfo = (CustomerBankInfo) item.getAttribute("data");
+			if (isDeleteRecord(custBankInfo.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
+				custBankInfo.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerBankInfo", custBankInfo);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				map.put("CustomerBankInfoList", CustomerBankInfoList);
+				map.put("retailCustomer",
+						StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerChequeInfoItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerChequeInformation.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerChequeInfo custChequeInfo = (CustomerChequeInfo) item.getAttribute("data");
+			if (isDeleteRecord(custChequeInfo.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custChequeInfo.setLovDescCustCIF(this.custCIF.getValue());
+				custChequeInfo.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerChequeInfo", custChequeInfo);
+				map.put("finFormatter", ccyFormatter);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerChequeInfoDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerExternalLiability.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerExtLiability custExtLiability = (CustomerExtLiability) item.getAttribute("data");
+			if (isDeleteRecord(custExtLiability.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custExtLiability.setLovDescCustCIF(this.custCIF.getValue());
+				custExtLiability.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerExtLiability", custExtLiability);
+				map.put("finFormatter", ccyFormatter);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerIncome.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerIncome customerIncome = (CustomerIncome) item.getAttribute("data");
+			if (isDeleteRecord(customerIncome.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("customerIncome", customerIncome);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("ccyFormatter", ccyFormatter);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public void onDirectorDetailItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerDirectory.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final DirectorDetail directorDetail = (DirectorDetail) item.getAttribute("data");
+			if (isDeleteRecord(directorDetail.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("directorDetail", directorDetail);
+				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				BigDecimal totSharePerc = BigDecimal.ZERO;
+				if (directorDetail.getSharePerc() != null) {
+					totSharePerc = getTotSharePerc().subtract(directorDetail.getSharePerc());
+				}
+				map.put("totSharePerc", totSharePerc);
+				if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
+					map.put("isEnquiry", true);
+				}
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public BigDecimal getTotSharePerc() {
+		BigDecimal totSharePerc = BigDecimal.ZERO;
+		for (DirectorDetail directorDetail : getDirectorList()) {
+			if (directorDetail.getSharePerc() != null) {
+				totSharePerc = totSharePerc.add(directorDetail.getSharePerc());
+			}
+		}
+		return totSharePerc;
 	}
 
 	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
@@ -1856,6 +2221,14 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
+	public List<DirectorDetail> getDirectorList() {
+		return directorList;
+	}
+
+	public void setDirectorList(List<DirectorDetail> directorList) {
+		this.directorList = directorList;
+	}
+
 	public void doSetShareHoldersDesignationCode(List<DirectorDetail> directorList) {
 		logger.debug("Entering");
 		if (directorList != null) {
@@ -1941,6 +2314,18 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
+	}
+
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
+	}
+
+	public Object getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+
+	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
 }

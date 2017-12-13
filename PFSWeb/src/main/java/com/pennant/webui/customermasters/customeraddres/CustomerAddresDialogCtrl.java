@@ -86,6 +86,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -147,6 +148,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private boolean newCustomer=false;
 	private List<CustomerAddres> customerAddress;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	private String moduleType="";
     private String userRole="";
@@ -220,6 +222,22 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 			this.customerAddres.setWorkflowId(0);
 			if(arguments.containsKey("roleCode")){
+				userRole = arguments.get("roleCode").toString();
+				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerAddresDialog");
+			}
+		}
+		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			setNewCustomer(true);
+
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord(true);
+			} else {
+				setNewRecord(false);
+			}
+
+			this.customerAddres.setWorkflowId(0);
+			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerAddresDialog");
 			}
@@ -1775,6 +1793,14 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 
 		return value;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 
 }

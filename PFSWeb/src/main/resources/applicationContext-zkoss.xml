@@ -4936,6 +4936,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 	
 <!-- External File Upload -->
