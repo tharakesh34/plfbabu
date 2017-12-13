@@ -42,11 +42,6 @@
 			<artifactId>ojdbc8</artifactId>
 			<version>12.2.0.1.0</version>
 		</dependency>
-		<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat-dbcp</artifactId>
-		    <scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>

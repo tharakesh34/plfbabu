@@ -309,6 +309,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private Date custAppDate;
 	private String sourceSystem;
 	private String branchRefno;
+	private String lovDescRequestStage;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -1792,5 +1793,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setBranchRefno(String branchRefno) {
 		this.branchRefno = branchRefno;
 	}
+
+	public String getLovDescRequestStage() {
+		return lovDescRequestStage;
+	}
+
+	public void setLovDescRequestStage(String lovDescRequestStage) {
+		this.lovDescRequestStage = lovDescRequestStage;
+	}
+
 
 }

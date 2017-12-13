@@ -18,11 +18,11 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-core</artifactId>
-			<version>0.2.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
@@ -32,4 +32,5 @@
 			<version>${spring.version}</version>
 		</dependency>
 	</dependencies>
+
 </project>

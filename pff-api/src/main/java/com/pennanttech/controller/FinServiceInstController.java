@@ -51,7 +51,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -766,7 +766,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 				if (advancePayments != null) {
 					for (FinAdvancePayments advPayment : advancePayments) {
-						int paymentSeq = finAdvancePaymentsService.getCountByFinReference(financeMain.getFinReference());
+						int paymentSeq = 0;
+						paymentSeq = finAdvancePaymentsService.getMaxPaymentSeq(financeMain.getFinReference());
 						advPayment.setFinReference(financeMain.getFinReference());
 						advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						advPayment.setNewRecord(true);

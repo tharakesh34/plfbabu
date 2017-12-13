@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -36,4 +37,8 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getFinanceWithCollateral/{collateralRef}")
 	public FinanceInquiry getFinanceWithCollateral(@PathParam("collateralRef") String collateralRef) throws ServiceException;
+	
+	@POST
+	@Path("/finance/updateLoan")
+	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException;
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -34,10 +35,10 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfields.ExtendedField;
-import com.pennant.backend.model.extendedfields.ExtendedFieldData;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -471,7 +472,7 @@ public class CollateralController {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 						
 						if(StringUtils.equalsIgnoreCase(extFieldData.getFieldName(), "SeqNo")) {
-							exdFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldData.getFieldValue())));
+							exdFieldRender.setSeqNo(Integer.valueOf(Objects.toString(extFieldData.getFieldValue(),"")));
 							isSeqFound = true;
 						}
 					}

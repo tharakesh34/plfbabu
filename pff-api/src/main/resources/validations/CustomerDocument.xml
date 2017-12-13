@@ -62,13 +62,13 @@
 		</field>
 
 		<field name="custDocName">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>docName is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-			</constraint>
+			</constraint> -->
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>docName should have maximum 100 characters</message>
 				<groups>
@@ -81,13 +81,13 @@
 
 
 		<field name="custDocType">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>docFormat is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-			</constraint>
+			</constraint> -->
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>docFormat should have maximum 8 characters</message>
 				<groups>

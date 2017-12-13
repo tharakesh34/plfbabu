@@ -49,7 +49,7 @@
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
 		<module>../pff-api</module>
-		<module>../pff-test-suite</module>
+		<module>../pff-niyogin</module>
 	</modules>
 
 	<dependencyManagement>
@@ -58,12 +58,12 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>0.3</version>
+				<version>0.5</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.1</version>
+				<version>0.3</version>
 			</dependency>
 			<!-- Logging Framework -->
 			<dependency>
@@ -77,16 +77,6 @@
 				<version>1.7.7</version>
 			</dependency>
 			<!-- Apache Commons -->
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>1.3.1</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>2.6</version>
-			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
@@ -111,14 +101,7 @@
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
 				<version>1.4.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-dbcp</artifactId>
-				<version>8.5.12</version>
-			</dependency>
-			
+			</dependency>			
 			<!-- Spring Framework -->
 			<dependency>
 				<groupId>org.springframework</groupId>

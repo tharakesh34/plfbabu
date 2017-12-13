@@ -5,11 +5,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.PennantConstants;
@@ -31,6 +33,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	
 	private FinanceDataDefaulting financeDataDefaulting;
 	private FinanceDataValidation financeDataValidation;
+	private CustomizeFinanceDataValidation customizeFinanceDataValidation;
 
 	/**
 	 * Create finance schedule (WIF) by receiving the request from interface.<br>
@@ -71,7 +74,12 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
+			if(ImplementationConstants.CLIENT_NFL){
+				customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData,
+						true);
+			} else {
+				financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
+			}
 
 			if(!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
@@ -189,5 +197,9 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	@Autowired
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
+	}
+	@Autowired
+	public void setCustomizeFinanceDataValidation(CustomizeFinanceDataValidation customizeFinanceDataValidation) {
+		this.customizeFinanceDataValidation = customizeFinanceDataValidation;
 	}
 }

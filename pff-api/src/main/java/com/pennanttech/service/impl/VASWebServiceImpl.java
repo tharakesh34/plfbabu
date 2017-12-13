@@ -15,8 +15,8 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.extendedfields.ExtendedField;
-import com.pennant.backend.model.extendedfields.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.util.VASConsatnts;
@@ -207,7 +207,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				for (Entry<String, Object> entry : mapValues.entrySet()) {
 					ExtendedFieldData detail = new ExtendedFieldData();
 					detail.setFieldName(entry.getKey());
-					detail.setFieldValue(String.valueOf(entry.getValue()));
+					detail.setFieldValue(entry.getValue());
 					extendedFieldDataList.add(detail);
 				}
 				ExtendedField extended = new ExtendedField();

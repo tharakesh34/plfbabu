@@ -10,9 +10,6 @@
         <dependent-module archiveName="pff-core-4.1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-core/pff-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-model-4.1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="PFSJava-4.1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSJava/PFSJava">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -20,6 +17,9 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="pff-interface-4.1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pff-model-4.1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="pff-api"/>

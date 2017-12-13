@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
@@ -28,6 +29,7 @@ import com.pennant.validation.CreateFinancewithWIFGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
@@ -81,17 +83,21 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				//financeDataValidation.setFinanceDetail(financeDetail);
+				financeDataValidation.setFinanceDetail(financeDetail);
 			}
 			//TODO temporary FIX
-			customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
-
+			if (ImplementationConstants.CLIENT_NFL) {
+				customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail,
+						true);
+			} else {
+				financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
+						financeDetail.getFinScheduleData(), true);
+				//validate FinanceDetail Validations
+				financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+			}
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
-
-			//validate FinanceDetail Validations
-			//financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
@@ -392,6 +398,29 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return financeDetail;
 	}
 
+	/**
+	 * Method for update finance details(Disbursement, Mandate and Extended fields)
+	 * 
+	 * @param financeDetail
+	 * @return WSReturnStatus
+	 */
+	@Override
+	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		//validate FinanceDetail Validations
+		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN,
+				financeDetail, true);
+		if (!finSchData.getErrorDetails().isEmpty()) {
+			FinanceDetail finDetail = getErrorMessage(finSchData);
+			return finDetail.getReturnStatus();
+		}
+		
+		WSReturnStatus response = createFinanceController.updateFinance(financeDetail);
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+	
 	private FinanceDetail getErrorMessage(FinScheduleData financeSchdData) {
 		for (ErrorDetails erroDetail : financeSchdData.getErrorDetails()) {
 			FinanceDetail response = new FinanceDetail();
@@ -491,5 +520,4 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public void setCustomizeFinanceDataValidation(CustomizeFinanceDataValidation customizeFinanceDataValidation) {
 		this.customizeFinanceDataValidation = customizeFinanceDataValidation;
 	}
-
 }

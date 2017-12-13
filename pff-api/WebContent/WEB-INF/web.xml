@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 
-	<display-name>PLF-API</display-name>
+	<display-name>pennApps Lending Factory</display-name>
 	<description>pennApps Lending Factory</description>
 
 	<context-param>
@@ -15,11 +15,25 @@
 			 	classpath:applicationContext-db.xml,
 				classpath:applicationContext-daos.xml,
  				classpath:applicationContext-core-interface.xml,
- 				classpath:client-interfaces-context.xml
+ 				classpath:client-interfaces-context.xml,
+				<!-- classpath:client-interfaces-niyogin-context.xml -->
 		</param-value>
 	</context-param>
+	<context-param>
+		<param-name>APP_ID</param-name>
+		<param-value>1</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_CODE</param-name>
+		<param-value>PFF</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_TYPE</param-name>
+		<param-value>API</param-value>
+	</context-param>
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<display-name>Application startup</display-name>
+		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
 	</listener>
 	<servlet>
 		<description>PLF Services Endpoint</description>

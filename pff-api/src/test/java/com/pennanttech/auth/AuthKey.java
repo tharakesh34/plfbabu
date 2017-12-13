@@ -14,7 +14,7 @@ public class AuthKey {
 	@Test(enabled = true)
 	public void generate() throws UnsupportedEncodingException {
 		// Usage: user:<user name>:<password>
-		String authDetails = "user:admin:test";
+		String authDetails = "user:admin:admin";
 		String authKey = new String(Base64.encode(authDetails.getBytes()), "UTF-8");
 
 		logger.info(authDetails);
