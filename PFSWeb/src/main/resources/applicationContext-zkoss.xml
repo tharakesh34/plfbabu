@@ -1842,7 +1842,6 @@
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="shortMessageService" ref="shortMessageService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
-		<property name="pdfParserCaller" ref="pdfParserCaller" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
