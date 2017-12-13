@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,10 +90,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennant.backend.model.extendedfields.ExtendedField;
-import com.pennant.backend.model.extendedfields.ExtendedFieldData;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -2028,7 +2029,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
 								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
 							exdFieldData.setFieldName(entry.getKey());
-							exdFieldData.setFieldValue(String.valueOf(entry.getValue()));
+							exdFieldData.setFieldValue(entry.getValue());
 							extendedFieldDataList.add(exdFieldData);
 						}
 					}
@@ -2297,7 +2298,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(String.valueOf(extendedFieldData.getFieldValue()))) {
+						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(),""))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
 							auditDetail
@@ -2489,7 +2490,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
 								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
 							exdFieldData.setFieldName(entry.getKey());
-							exdFieldData.setFieldValue(String.valueOf(entry.getValue()));
+							exdFieldData.setFieldValue(entry.getValue());
 							extendedFieldDataList.add(exdFieldData);
 						}
 					}

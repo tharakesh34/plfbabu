@@ -1,23 +1,28 @@
 package com.pennant.backend.service.custom;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.finance.CustomServiceTask;
@@ -27,103 +32,232 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.BlacklistCheck;
+import com.pennanttech.pff.external.BureauScore;
+import com.pennanttech.pff.external.CibilConsumerService;
+import com.pennanttech.pff.external.CrifConsumerService;
+import com.pennanttech.pff.external.ExperianCommercialService;
+import com.pennanttech.pff.external.ExperianConsumerService;
+import com.pennanttech.pff.external.ExternalDedup;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
 	private static final Logger				logger	= Logger.getLogger(FinanceExternalServiceTask.class);
 
 	// Open the below commented code once pff-interface configuration setup completed.
-	/*	@Autowired(required = false)
+	@Autowired(required = false)
 	private ExternalDedup externalDedup;
 
 	@Autowired(required = false)
 	private BlacklistCheck blacklistCheck;
 
 	@Autowired(required = false)
-	private BureauScore bureauscore;*/
+	private ExperianConsumerService experianconsumerService;
 
-	private CollateralMarkProcess							collateralMarkProcess;
-	private DDAControllerService							ddaControllerService;
+	@Autowired(required = false)
+	private ExperianCommercialService experianCommercialService;
+
+	@Autowired(required = false)
+	private CrifConsumerService crifConsumerService;
+
+	@Autowired(required = false)
+	private BureauScore bureauscore;
+	
+	@Autowired(required = false)
+	private CibilConsumerService cibilConsumerService;
+
+	private CollateralMarkProcess	collateralMarkProcess;
+	private DDAControllerService	ddaControllerService;
+	private ServiceTaskDAO			serviceTaskDAO;
 
 	@Override
-	public boolean executeExternalServiceTask(AuditHeader auditHeader, String method) {
+	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		List<ErrorDetails> errors = new ArrayList<>();
 		boolean taskExecuted = false;
-
-		switch (method) {
-		case PennantConstants.method_doCheckScore:
-			doCheckScore(afinanceDetail);
+		boolean executed = getServiceTaskStatus(serviceTask, afinanceMain.getFinReference());
+		if(executed) {
 			taskExecuted = true;
-			break;
-		case PennantConstants.method_doCheckExceptions:
-			auditHeader = doCheckExceptions(auditHeader);
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doCheckLPOApproval:
-			errors = doCollateralMark(afinanceDetail.getFinanceCollaterals());
-			if(!errors.isEmpty()) {
-				auditHeader.getErrorMessage().addAll(errors);
-			}
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_checkDDAResponse:
-			errors = checkDDAResponse(afinanceDetail);
-			if(!errors.isEmpty()) {
-				auditHeader.getErrorMessage().addAll(errors);
-			}
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doClearQueues:
-			afinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doFundsAvailConfirmed:
-			errors = doFundsAvailConfirmed(afinanceDetail);
-			if(!errors.isEmpty()) {
-				auditHeader.getErrorMessage().addAll(errors);
-			}
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doCheckProspectCustomer:
-			doCheckProspectCustomer(afinanceDetail);
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doCheckSMECustomer:
-			doCheckSMECustomer(afinanceDetail);
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_sendDDARequest:
-			errors = sendDDARequest(afinanceDetail);
-			if(!errors.isEmpty()) {
-				auditHeader.getErrorMessage().addAll(errors);
-			}
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_doCheckShariaRequired:
-			//Setting this property which is used in workflow condition post sharia
-			afinanceMain.setShariaApprovalReq(true);//FIXME:what is the default value for sharia required
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_externalDedup:
-			// call external dedup interface
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_hunter:
-			// call blacklist check interface
-			taskExecuted = true;
-			break;
-		case PennantConstants.method_Bureau:
-			// call Bureau check interface
-			taskExecuted = true;
-			break;
-		default:
 			return taskExecuted;
 		}
+
+		try {
+			switch (serviceTask.getOperation()) {
+			case PennantConstants.method_doCheckScore:
+				doCheckScore(afinanceDetail);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doCheckExceptions:
+				auditHeader = doCheckExceptions(auditHeader);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doCheckLPOApproval:
+				errors = doCollateralMark(afinanceDetail.getFinanceCollaterals());
+				if(!errors.isEmpty()) {
+					auditHeader.getErrorMessage().addAll(errors);
+				}
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_checkDDAResponse:
+				errors = checkDDAResponse(afinanceDetail);
+				if(!errors.isEmpty()) {
+					auditHeader.getErrorMessage().addAll(errors);
+				}
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doClearQueues:
+				afinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doFundsAvailConfirmed:
+				errors = doFundsAvailConfirmed(afinanceDetail);
+				if(!errors.isEmpty()) {
+					auditHeader.getErrorMessage().addAll(errors);
+				}
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doCheckProspectCustomer:
+				doCheckProspectCustomer(afinanceDetail);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doCheckSMECustomer:
+				doCheckSMECustomer(afinanceDetail);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_sendDDARequest:
+				errors = sendDDARequest(afinanceDetail);
+				if(!errors.isEmpty()) {
+					auditHeader.getErrorMessage().addAll(errors);
+				}
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_doCheckShariaRequired:
+				//Setting this property which is used in workflow condition post sharia
+				afinanceMain.setShariaApprovalReq(true);//FIXME:what is the default value for sharia required
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_externalDedup:
+				auditHeader = externalDedup.checkDedup(auditHeader);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_hunter:
+				auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
+				taskExecuted = true;
+				break;
+			case PennantConstants.method_Bureau:
+				try {
+					Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
+					if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+						auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
+					} else if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
+						auditHeader = experianCommercialService.getBureauCommercial(auditHeader);
+					}
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in Experian Bureau:", e);
+					taskExecuted = true;
+				}
+				break;
+			case PennantConstants.method_Crif:
+				try {
+					//auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
+					auditHeader=crifConsumerService.getCrifBureauConsumer(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in CRIFF Bureau:", e);
+					taskExecuted = true;
+				}
+				break;
+			case PennantConstants.method_Cibil_Consumer:
+				try {
+					auditHeader=cibilConsumerService.getCibilConsumer(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in CIBIL Bureau:", e);
+					taskExecuted = true;
+				}
+				break;
+			default:
+				return taskExecuted;
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			ServiceTaskDetail serviceTaskDetail = new ServiceTaskDetail();
+			serviceTaskDetail.setStatus("Failed");
+			serviceTaskDetail.setRemarks(e.getMessage());
+			logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
+			throw e;
+		}
+		ServiceTaskDetail serviceTaskDetail = new ServiceTaskDetail();
+		// checking for whether service task executed successfully or not
+		if (auditHeader.getErrorMessage() != null && !auditHeader.getErrorMessage().isEmpty()) {
+			serviceTaskDetail.setStatus("Failed");
+			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				serviceTaskDetail.setRemarks(errorDetail.getErrorCode()+":"+errorDetail.getErrorMessage());
+			}
+		}
+		serviceTaskDetail.setStatus("Success");
+		serviceTaskDetail.setRemarks(Labels.getLabel("SERVICETASK_EXECUTED"));
+
+		logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 		return taskExecuted;
+	}
+
+	/**
+	 * Method for validate the execution status of service task.
+	 * 
+	 * @param serviceTask
+	 * @param reference
+	 * @return boolean
+	 */
+	private boolean getServiceTaskStatus(ServiceTask serviceTask, String reference) {
+		logger.debug(Literal.ENTERING);
+		boolean executed = false;
+		if(serviceTask.isRerunnable()) {
+			executed = false;
+		} else {
+			String module = FinanceConstants.MODULE_NAME;
+			String serviceTaskName = serviceTask.getOperation();
+			List<ServiceTaskDetail> details = serviceTaskDAO.getServiceTaskDetails(module, reference, serviceTaskName);
+			if(details.isEmpty()) {
+				executed = false;
+			} else {
+				for (ServiceTaskDetail serviceTaskDetail : details) {
+					if(StringUtils.equals(serviceTaskDetail.getStatus(), "Success")) {
+						executed = true;
+						break;
+					} else {
+						executed = false;
+					}
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return executed;
+	}
+
+	private void logServiceTaskDetails(AuditHeader auditHeader, ServiceTask serviceTask, ServiceTaskDetail serviceTaskDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		serviceTaskDetail.setServiceModule(FinanceConstants.MODULE_NAME);
+		serviceTaskDetail.setReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		serviceTaskDetail.setServiceTaskId(serviceTask.getId());
+		serviceTaskDetail.setServiceTaskName(serviceTask.getOperation());
+		serviceTaskDetail.setUserId(financeDetail.getUserDetails().getLoginUsrID());
+		serviceTaskDetail.setExecutedTime(new Timestamp(System.currentTimeMillis()));
+		if(serviceTaskDetail.getRemarks() != null && serviceTaskDetail.getRemarks().length() > 200) {
+			serviceTaskDetail.setRemarks(serviceTaskDetail.getRemarks().substring(0, 190));
+		}
+
+		serviceTaskDAO.save(serviceTaskDetail, "");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckScore(FinanceDetail afinanceDetail) {
@@ -309,5 +443,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	public void setDdaControllerService(DDAControllerService ddaControllerService) {
 		this.ddaControllerService = ddaControllerService;
+	}
+
+	public void setServiceTaskDAO(ServiceTaskDAO serviceTaskDAO) {
+		this.serviceTaskDAO = serviceTaskDAO;
 	}
 }

@@ -44,9 +44,10 @@
 package com.pennant.backend.service.finance;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 
 public interface CustomServiceTask {
 
-	public boolean executeExternalServiceTask(AuditHeader auditHeader, String method);
+	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask);
 	
 }

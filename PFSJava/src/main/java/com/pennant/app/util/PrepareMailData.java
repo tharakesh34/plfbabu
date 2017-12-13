@@ -67,7 +67,7 @@ public class PrepareMailData implements Serializable {
 						mailTemplate.setLovDescAttachmentName(mailData.getMailAttachmentName());
 						
 						connection = getDataSource().getConnection();
-						boolean attachment =  getReportUtil().generateExcelReport(PathUtil.APP_ROOT_PATH, PathUtil.CLIENT_PATH + PathUtil.MAIL_ATTACHMENT_REPORT, mailData.getMailAttachmentName(), "",
+						boolean attachment =  getReportUtil().generateExcelReport(PathUtil.MAIL_ATTACHMENT_REPORT, mailData.getMailAttachmentName(), "",
 								false, "", connection,appDate);
 						if (attachment) {
 							attachmentPath = new File(PathUtil.getPath(PathUtil.MAIL_ATTACHMENT_REPORT) + mailData.getMailAttachmentName());

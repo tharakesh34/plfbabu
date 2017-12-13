@@ -1,6 +1,7 @@
 package com.pennant.app.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -960,6 +961,129 @@ public class MailUtil extends MailUtility {
 		data.setUsrRole(financeSuspHead.getRoleCode());
 
 		return data;
+	}
+	
+	public List<MailTemplate> getMailDetails(List<Long> notificationIdList, HashMap<String, Object> fieldsAndValues,
+			List<DocumentDetails> docList, Map<String, List<String>> mailIdMap) throws IOException, TemplateException {
+		logger.debug("Entering");
+		
+		List<MailTemplate> templates=new ArrayList<MailTemplate>();		
+		// Fetching List of Notification using Notification ID list
+		List<Notifications> notificationsList = getNotificationsService()
+				.getApprovedNotificationsByRuleIdList(notificationIdList);
+		if (notificationsList.isEmpty()) {
+			logger.debug("No Notificatin Defined...");
+			return null;
+		}
+		List<DocumentDetails> documentslist = null;
+		documentslist = docList;
+		for (Notifications notifications : notificationsList) {
+			MailTemplate mailTemplate = null;
+			// Getting Mail Template
+			Integer templateId = (Integer) this.ruleExecutionUtil.executeRule(notifications.getRuleTemplate(),
+					fieldsAndValues, null, RuleReturnType.INTEGER);
+			if (templateId > 0) {
+				mailTemplate = getMailTemplateService().getApprovedMailTemplateById(templateId);
+				if (mailTemplate != null && mailTemplate.isActive() && mailTemplate.isEmailTemplate()) {
+					List<String> emailList = null;
+					String templateType = notifications.getTemplateType();
+					if (NotificationConstants.TEMPLATE_FOR_AE.equals(templateType)
+							|| NotificationConstants.TEMPLATE_FOR_TAT.equals(templateType)
+							|| NotificationConstants.TEMPLATE_FOR_QP.equals(templateType)
+							|| NotificationConstants.TEMPLATE_FOR_GE.equals(templateType)) {
+						// Getting UserRoles
+						String ruleResString = (String) this.ruleExecutionUtil.executeRule(
+								notifications.getRuleReciepent(), fieldsAndValues, null, RuleReturnType.STRING);
+						if (StringUtils.isEmpty(ruleResString)) { // FIXME
+																	// to be
+																	// verified
+							continue;
+						}
+						// Prepare Mail ID Details
+						emailList = getSecurityUserOperationsService().getUsrMailsByRoleIds(ruleResString);
+					} else {
+						// If No mail Id exists No need to continue
+						if (mailIdMap == null) {
+							continue;
+						}
+						// Other Type of Template, we need to Fetch from Map
+						// passing as parameter using Template Type in
+						// Notification
+						if (!mailIdMap.containsKey(templateType)) {
+							continue;
+						}
+						emailList = mailIdMap.get(templateType);
+					}
+					if (emailList == null || emailList.isEmpty()) {
+						continue;
+					}
+					// Check Mail ID List
+					String[] mailId = null;
+					List<String> usrMailList = new ArrayList<String>();
+					if (emailList != null && !emailList.isEmpty()) {
+						for (String usrMail : emailList) {
+							if (StringUtils.isNotBlank(usrMail)) {
+								usrMailList.add(usrMail);
+							}
+						}
+						mailId = new String[usrMailList.size()];
+						mailId = (String[]) usrMailList.toArray(mailId);
+						usrMailList = null;
+					}
+
+					if (mailId != null && StringUtils.isNotEmpty(StringUtils.join(mailId, ","))) {
+						// Template Fields Bean Preparation
+						mailTemplate.setLovDescMailId(mailId);
+						Map<String, Object> model = new HashMap<String, Object>();
+						model.put("vo", fieldsAndValues);
+						String mailContentFormatted = "";
+						String mailSubject = "";
+
+						mailContentFormatted = getMailTemplateData("mailContent", mailTemplate,
+								new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET),
+								model);
+						mailSubject = getMailTemplateData("mailSubject", mailTemplate, mailTemplate.getEmailSubject(),
+								model);
+
+						mailTemplate.setLovDescFormattedContent(mailContentFormatted);
+						mailTemplate.setEmailSubject(mailSubject);
+					}
+					// Getting the Attached Documents
+					String ruleResString = (String) this.ruleExecutionUtil.executeRule(
+							notifications.getRuleAttachment(), fieldsAndValues, null, RuleReturnType.STRING);
+					if (StringUtils.isNotEmpty(ruleResString)) {
+						String[] documentCtgList = (ruleResString).split(",");
+						for (String docCtg : documentCtgList) {
+							if (documentslist != null) {
+								for (DocumentDetails documentDetails : documentslist) {
+									if (docCtg.equals(documentDetails.getDocCategory())) {
+										mailTemplate.setLovDescAttachmentName(documentDetails.getDocName());
+										mailTemplate.setLovDescEmailAttachment(documentDetails.getDocImage());
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+			if(mailTemplate!=null){
+				templates.add(mailTemplate);
+			}
+			
+		}
+		logger.debug("Leaving");
+		return templates;
+	}
+
+	private String getMailTemplateData(String templateName, MailTemplate mailTemplate, String templateSource,
+			Map<String, Object> model) throws IOException, TemplateException {
+		StringTemplateLoader loader = new StringTemplateLoader();
+		loader.putTemplate(templateName, templateSource);
+		getFreemarkerMailConfiguration().setTemplateLoader(loader);
+		Template template = getFreemarkerMailConfiguration().getTemplate(templateName);
+		String result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+		return result;
 	}
 
 	// ******************************************************//

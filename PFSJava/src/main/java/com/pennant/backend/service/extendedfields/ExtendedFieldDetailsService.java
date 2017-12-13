@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,10 +24,11 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.extendedfields.ExtendedField;
-import com.pennant.backend.model.extendedfields.ExtendedFieldData;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
@@ -160,6 +162,13 @@ public class ExtendedFieldDetailsService {
 			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
+			}
+			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						tableName + type)) {
+					extendedFieldRender.setNewRecord(true);
+				}
 			}
 			saveRecord = false;
 			updateRecord = false;
@@ -588,7 +597,7 @@ public class ExtendedFieldDetailsService {
 		
 		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		String fieldName = exrFldData.getFieldName();
-		String fieldValue = String.valueOf(exrFldData.getFieldValue());
+		String fieldValue = Objects.toString(exrFldData.getFieldValue(),"");
 
 		switch (deatils.getFieldType()) {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
@@ -782,7 +791,7 @@ public class ExtendedFieldDetailsService {
 				if (!StringUtils.contains(moduleMapping.getTableName(), "Builder")) {
 					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-								(String) filters[0][0], fieldValue);
+								(String)filters[0][0], fieldValue);
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
 								null, fieldValue);
@@ -790,7 +799,7 @@ public class ExtendedFieldDetailsService {
 				} else {
 					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],
-								(String) filters[0][0], fieldValue);
+								(String)filters[0][0], fieldValue);
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],
 								null, fieldValue);
@@ -915,7 +924,7 @@ public class ExtendedFieldDetailsService {
 					if (!StringUtils.contains(moduleMapping1.getTableName(), "Builder")) {
 						if (filters != null) {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
-									lovFields[0], (String) filters[0][0], type);
+									lovFields[0], (String)filters[0][0], type);
 						} else {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
 									lovFields[0], null, type);
@@ -923,7 +932,7 @@ public class ExtendedFieldDetailsService {
 					} else {
 						if (filters != null) {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
-									lovFields[1], (String) filters[0][0], type);
+									lovFields[1], (String)filters[0][0], type);
 						} else {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(),
 									lovFields[1], null, type);
@@ -1077,7 +1086,10 @@ public class ExtendedFieldDetailsService {
 		if (extendedFieldHeader != null) {
 			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(), "");
 			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
-		} else if (extendedFieldData!=null && !extendedFieldData.isEmpty()) {
+		} 
+		//if configuration  is not available and end user gives extDetails through API
+		//Extended fields is not applicable for Current Module
+		else if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Extended fields";
 			valueParm[1] = module;
@@ -1107,6 +1119,13 @@ public class ExtendedFieldDetailsService {
 			List<String> fieldList=new ArrayList<String>();
 			for (ExtendedField details : extendedFieldData) {
 				int exdMandConfigCount = 0;
+				if (details.getExtendedFieldDataList() != null) {
+					if (details.getExtendedFieldDataList().isEmpty()) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "fieldName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+						return errorDetails;
+					}
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					//if fieldName is blank then sets FieldName is Mandatory
 					if (StringUtils.isBlank(extFieldData.getFieldName())) {
@@ -1117,7 +1136,7 @@ public class ExtendedFieldDetailsService {
 					}
 
 					//if fieldValue is blank then sets fieldValue is Mandatory
-					if (StringUtils.isBlank(String.valueOf(extFieldData.getFieldValue()))) {
+					if (StringUtils.isBlank(Objects.toString(extFieldData.getFieldValue(),""))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "fieldValue";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
@@ -1158,6 +1177,7 @@ public class ExtendedFieldDetailsService {
 						}
 					}
 				}
+			}
 				//extendedDetailsCount :: mandatory fields from configuration
 				//exdMandConfigCount :: mandatory fields from JSON
 				//these are not match then sets the error like
@@ -1175,6 +1195,7 @@ public class ExtendedFieldDetailsService {
 			//get the ExtendedField--List from JSON
 			for (ExtendedField details : extendedFieldData) {
 				//get the ExtendedFieldData--List from  ExtendedField
+				if (details.getExtendedFieldDataList() != null) {
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					//get the each EXTFD that are given in json
 					//exdFldConfig ::EXTFieldDetailslist from configuration
@@ -1193,6 +1214,7 @@ public class ExtendedFieldDetailsService {
 					}
 				}
 			}
+		}
 		}
 		logger.debug(Literal.LEAVING);
 		return errorDetails;

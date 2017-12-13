@@ -53,7 +53,6 @@ import com.pennant.backend.model.mandate.MandateStatusUpdate;
 public interface MandateService {
 	
 	Mandate getMandate();
-	Mandate getNewMandate();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 	Mandate getMandateById(long id);
 	Mandate getMandateStatusUpdateById(long id,String status);
@@ -68,4 +67,6 @@ public interface MandateService {
 	List<FinanceEnquiry> getMandateFinanceDetailById(long mandateID);
 	int getFileCount(String fileName);
 	List<Mandate>getApprovedMandatesByCustomerId(long custID);
+	void getDocumentImage(Mandate mandate);
+	byte[] getDocumentManImage(String mandateRef);
 }

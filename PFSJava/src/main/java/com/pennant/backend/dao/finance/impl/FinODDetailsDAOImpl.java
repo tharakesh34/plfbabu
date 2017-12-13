@@ -66,8 +66,8 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * DAO methods implementation for the <b>FinODDetails model</b> class.<br>

@@ -59,10 +59,10 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pff.core.App;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
@@ -306,9 +306,9 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if(i == 2){
 					syntax.append("Adt");
 				}
-				syntax.append(module);
+				syntax.append(StringUtils.trim(module));
 				syntax.append("_");
-				syntax.append(subModule);
+				syntax.append(StringUtils.trim(subModule));
 				syntax.append("_ED");
 				syntax.append(StringUtils.trimToEmpty(tableType));
 				if(i == 2){
@@ -391,7 +391,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				}else{
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
-			}  else if (App.DATABASE == App.Database.PSQL){
+			}  else if (App.DATABASE == App.Database.POSTGRES){
 				syntax.append("create table ");
 				if (i == 2) {
 					syntax.append("Adt");

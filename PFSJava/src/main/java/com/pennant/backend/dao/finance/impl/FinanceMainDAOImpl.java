@@ -64,11 +64,11 @@ import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -1688,7 +1688,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 						" SET NextUserId= (CASE WHEN NextRoleCode NOT like '%,%' AND COALESCE(NextUserId, ' ') LIKE (' ') THEN :NEW_USER_ID");
 				updateSql.append(
 						" WHEN NextRoleCode like '%,%' AND COALESCE(NextUserId, ' ') LIKE (' ') THEN :NEW_USER_ID ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					updateSql.append(
 							" WHEN NextRoleCode like '%,%' AND NOT COALESCE(NextUserId, ' ') LIKE (' ') THEN NextUserId||','||:NEW_USER_ID END) ");
 				} else {
@@ -2675,21 +2675,22 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	@Override
 	public BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference) {
 		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
-		sql.append(" where FinReference in (select FinReference from FinanceMain_View ");
-		sql.append(" where MandateId = :MandateId and FinIsActive = 1 and FinReference != :FinReference)");
-		sql.append(" group by FinReference");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("MandateId", mandateId);
-		paramSource.addValue("FinReference", finReference);
-
-		logger.debug(Literal.LEAVING);
-		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+//FIXME Need to convert this sum of, max of logic to java .since it is not supported by Postgresql 
+//		// Prepare the SQL.
+//		StringBuilder sql = new StringBuilder("select coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
+//		sql.append(" where FinReference in (select FinReference from FinanceMain_View ");
+//		sql.append(" where MandateId = :MandateId and FinIsActive = 1 and FinReference != :FinReference)");
+//		sql.append(" group by FinReference");
+//
+//		// Execute the SQL, binding the arguments.
+//		logger.trace(Literal.SQL + sql);
+//		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+//		paramSource.addValue("MandateId", mandateId);
+//		paramSource.addValue("FinReference", finReference);
+//
+//		logger.debug(Literal.LEAVING);
+//		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+		return BigDecimal.ZERO;
 	}
 	
 	@Override
@@ -2909,5 +2910,27 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return financeMain;
 	}
-	
+
+	/**
+	 * 
+	 * 
+	 */
+	@Override
+	public void updateFinMandateId(long mandateId, String finReference, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("MandateId", mandateId);
+		
+		StringBuilder sql = new StringBuilder("Update FinanceMain");
+		sql.append(type);
+		sql.append(" set MandateId =:MandateId");
+		sql.append(" where FinReference =:FinReference");
+		logger.debug("updateSql: " + sql.toString());
+
+		this.namedParameterJdbcTemplate.update(sql.toString(), source);
+
+		logger.debug("Leaving");
+	}
 }

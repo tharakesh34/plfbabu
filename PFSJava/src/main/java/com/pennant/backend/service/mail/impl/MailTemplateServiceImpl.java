@@ -49,6 +49,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
@@ -62,6 +63,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.MailService;
 
 /**
  * Service implementation for methods that depends on <b>MailTemplate</b>.<br>
@@ -70,9 +73,12 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class MailTemplateServiceImpl extends GenericService<MailTemplate> implements MailTemplateService {
 	private static final Logger logger = Logger.getLogger(MailTemplateServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
-	private MailTemplateDAO mailTemplateDAO;
-	private SecurityUserDAO securityUserDAO;
+	private AuditHeaderDAO		auditHeaderDAO;
+	private MailTemplateDAO		mailTemplateDAO;
+	private SecurityUserDAO		securityUserDAO;
+	
+	@Autowired(required = false)
+	private MailService			mailService;
 
 	public MailTemplateServiceImpl() {
 		super();
@@ -388,6 +394,21 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 		}
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	
+	/**
+	 * Method for call the ExternalServiceTask to send Mail.
+	 * 
+	 * @param custMailIdList
+	 * @param templates
+	 * @return
+	 */
+	@Override
+	public void sendMail(List<String> custMailIdList, List<MailTemplate> templates) {
+		logger.debug(Literal.ENTERING);
+		mailService.sendEmail(custMailIdList, templates);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

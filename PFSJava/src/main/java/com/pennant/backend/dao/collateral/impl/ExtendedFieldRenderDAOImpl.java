@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 
 public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	private static Logger	logger	= Logger.getLogger(ExtendedFieldRenderDAOImpl.class);
@@ -318,5 +318,32 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		logger.debug("Leaving");
 		
 		return recordCount;
+	}
+	
+
+	/**
+	 * Method for check the ExtendedFields with the given reference and seqNo is available or not
+	 * 
+	 * @param reference
+	 * @param seqNo
+	 * @param tableName
+	 */
+	@Override
+	public boolean isExists(String reference, int seqNo, String tableName) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder(" Select count(*) from ");
+		sql.append(tableName);
+		sql.append(" where Reference = :Reference AND SeqNo = :SeqNo ");
+
+		source.addValue("Reference", reference);
+		source.addValue("SeqNo", seqNo);
+
+		int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		if (count > 0) {
+			return true;
+		}
+		logger.debug("Leaving");
+		return false;
 	}
 }

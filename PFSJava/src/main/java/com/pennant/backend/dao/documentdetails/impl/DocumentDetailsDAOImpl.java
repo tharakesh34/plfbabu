@@ -328,6 +328,37 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 	}
 	
 	@Override
+	public DocumentDetails getDocumentDetails(long id, String type) {
+		logger.debug("Entering");
+		DocumentDetails documentDetails = new DocumentDetails();
+
+		documentDetails.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived,");
+		selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" From DocumentDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DocId =:DocId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
+		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+
+		try {
+			documentDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			documentDetails = null;
+		}
+		
+		logger.debug("Leaving");
+		
+		return documentDetails;
+	}
+	
+	@Override
 	public DocumentDetails getDocumentDetailsById(long id, String type, boolean readAttachment) {
 		logger.debug("Entering");
 		DocumentDetails documentDetails = new DocumentDetails();

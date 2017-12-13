@@ -42,51 +42,37 @@
  */
 package com.pennant.app.util;
 
+import com.pennanttech.pennapps.core.App;
+
 public class PathUtil {
-
-	public static String		ENV_NAME					= "APP_ROOT_PATH";
-	public static String		CLIENT_PATH					= "/PFF/BASE";
-	public static String		APP_ROOT_PATH				= "";
-
-	// Configurations path
-	public static final String	CONFIG						= "/config";
 	
 	// Mail Attachment & Reports Download path
-	public static final String	DOWNLOAD					= "/Downloads";
-	public static final String	MAIL_ATTACHMENT_DOWNLOAD	= "/Downloads/Mail";
-	public static final String	REPORTS_EOMDOWNLOAD_FOLDER	= "/Downloads/EndOfMonth";
-	public static final String	EOD_FILE_FOLDER				= "/Downloads/EOD";
-	public static final String	EOD_FILE_HISTORY			= "/Downloads/EOD/History";
-	public static final String	ECMS_ARCHIVEDOC_LOCATION	= "/Downloads/EOD/ECMSArchiveDocs/";
-	public static final String	SAS_EXTRACTS_LOCATION		= "/Downloads/EOD/SASExtracts/";
+	public static final String	DOWNLOAD					= "Downloads";
+	public static final String	MAIL_ATTACHMENT_DOWNLOAD	= "Downloads/Mail";
+	public static final String	REPORTS_EOMDOWNLOAD_FOLDER	= "Downloads/EndOfMonth";
+	public static final String	EOD_FILE_FOLDER				= "Downloads/EOD";
+	public static final String	EOD_FILE_HISTORY			= "Downloads/EOD/History";
+	public static final String	ECMS_ARCHIVEDOC_LOCATION	= "Downloads/EOD/ECMSArchiveDocs/";
+	public static final String	SAS_EXTRACTS_LOCATION		= "Downloads/EOD/SASExtracts/";
 
 	// Agreement Detail Paths
-	public static final String	FINANCE_AGREEMENTS			= "/Agreements";
-	public static final String	MMA_AGREEMENTS				= "/Agreements/MMAgreements";
+	public static final String	FINANCE_AGREEMENTS			= "Agreements";
+	public static final String	MMA_AGREEMENTS				= "Agreements/MMAgreements";
 
 	// Report Detail paths
-	public static final String	REPORTS_CHECKS				= "/Reports/Checks";
-	public static final String	REPORTS_AUDIT				= "/Reports/Audit";
-	public static final String	REPORTS_ENDOFMONTH			= "/Reports/EndOfMonth";
-	public static final String	REPORTS_FINANCE				= "/Reports/Finance";
-	public static final String	REPORTS_LIST				= "/Reports/List";
-	public static final String	REPORTS_ORGANIZATION		= "/Reports/Client";
+	public static final String	REPORTS_CHECKS				= "Reports/Checks";
+	public static final String	REPORTS_AUDIT				= "Reports/Audit";
+	public static final String	REPORTS_ENDOFMONTH			= "Reports/EndOfMonth";
+	public static final String	REPORTS_FINANCE				= "Reports/Finance";
+	public static final String	REPORTS_LIST				= "Reports/List";
+	public static final String	REPORTS_ORGANIZATION		= "Reports/Client";
 
 	// Images
-	public static final String	REPORTS_IMAGE_CLIENT		= "/Reports/images/OrgLogo.png";
-	public static final String	REPORTS_IMAGE_PRODUCT		= "/Reports/images/ProductLogo.jpg";
-	public static final String	MAIL_ATTACHMENT_AGGREMENT	= "/Downloads/Mail/MailAttachments/Aggrements/";
-	public static final String	MAIL_ATTACHMENT_REPORT		= "/Downloads/Mail/Attachments/Reports/";
-	public static final String	MAIL_BODY					= "/Downloads/Mail/body/";
-
-	/**
-	 * Method for Set Environment Variable to Root Path Location
-	 * 
-	 * @param envVarPath
-	 */
-	public static void setRootPath(String envVarPath) {
-		APP_ROOT_PATH = envVarPath;
-	}
+	public static final String	REPORTS_IMAGE_CLIENT		= "Reports/images/OrgLogo.png";
+	public static final String	REPORTS_IMAGE_PRODUCT		= "Reports/images/ProductLogo.jpg";
+	public static final String	MAIL_ATTACHMENT_AGGREMENT	= "Downloads/Mail/MailAttachments/Aggrements/";
+	public static final String	MAIL_ATTACHMENT_REPORT		= "Downloads/Mail/Attachments/Reports/";
+	public static final String	MAIL_BODY					= "Downloads/Mail/body/";
 
 	/**
 	 * Method for Fetch the application Configuration's path
@@ -95,7 +81,7 @@ public class PathUtil {
 	 * @return
 	 */
 	public static String getPath(String requetedPath) {
-		return APP_ROOT_PATH + CLIENT_PATH + requetedPath;
+		return App.getResourcePath(requetedPath);
 	}
 
 }

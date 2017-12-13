@@ -44,6 +44,7 @@
 package com.pennant.backend.service.mandate.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
@@ -60,6 +62,7 @@ import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -83,6 +86,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateStatusDAO		mandateStatusDAO;
 	private MandateStatusUpdateDAO	mandateStatusUpdateDAO;
 	private FinanceMainDAO			financeMainDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -120,14 +124,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	@Override
 	public Mandate getMandate() {
 		return getMandateDAO().getMandate();
-	}
-
-	/**
-	 * @return the mandate for New Record
-	 */
-	@Override
-	public Mandate getNewMandate() {
-		return getMandateDAO().getNewMandate();
 	}
 
 	/**
@@ -176,10 +172,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (mandate.isNew()) {
+			getDocument(mandate);
 			mandate.setId(getMandateDAO().save(mandate, tableType));
 			auditHeader.getAuditDetail().setModelData(mandate);
 			auditHeader.setAuditReference(String.valueOf(mandate.getMandateID()));
 		} else {
+			getDocument(mandate);
 			getMandateDAO().update(mandate, tableType);
 			if (StringUtils.trimToEmpty(mandate.getModule()).equals(MandateConstants.MODULE_REGISTRATION)) {
 				MandateStatus mandateStatus = new MandateStatus();
@@ -318,6 +316,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_NEW);
 			}
 			
+			getDocument(mandate);
+
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				mandate.setRecordType("");
@@ -574,4 +574,44 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Override
+	public void getDocumentImage(Mandate mandate) {
+		DocumentManager data = getDocumentManagerDAO().getById(mandate.getDocumentRef());
+		if (data != null) {
+			mandate.setDocImage(data.getDocImage());
+		}
+	}
+
+	@Override
+	public byte[] getDocumentManImage(String mandateRef) {
+		DocumentManager data = getDocumentManagerDAO().getById(Long.valueOf(mandateRef));
+		if (data != null) {
+			return data.getDocImage();
+		}
+		return null;
+	}
+
+	private void getDocument(Mandate mandate) {
+		DocumentManager documentManager = new DocumentManager();
+		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
+			DocumentManager olddocumentManager = getDocumentManagerDAO().getById(mandate.getDocumentRef());
+			byte[] arr1 = olddocumentManager.getDocImage();
+			byte[] arr2 = mandate.getDocImage();
+			if (!Arrays.equals(arr1, arr2)) {
+				documentManager.setDocImage(arr2);
+				mandate.setDocumentRef(getDocumentManagerDAO().save(documentManager));
+			}
+		} else {
+			documentManager.setDocImage(mandate.getDocImage());
+			mandate.setDocumentRef(getDocumentManagerDAO().save(documentManager));
+		}
+	}
+
+	public DocumentManagerDAO getDocumentManagerDAO() {
+		return documentManagerDAO;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
 }

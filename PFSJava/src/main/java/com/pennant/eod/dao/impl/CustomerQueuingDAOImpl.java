@@ -20,8 +20,8 @@ import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
@@ -60,7 +60,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
 		insertSql.append("SELECT  DISTINCT CustID, ");
 		
-		if (App.DATABASE.name() == Database.PSQL.name()) {
+		if (App.DATABASE.name() == Database.POSTGRES.name()) {
 			insertSql.append(" to_date(:EodDate, '");
 			insertSql.append(PennantConstants.DBDateFormat);
 			insertSql.append("'),   ");

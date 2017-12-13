@@ -66,8 +66,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil;
 
 /**

@@ -69,10 +69,10 @@ public class ReferenceGenerator implements Serializable {
 		// Product code
 		String branch = financeMain.getSwiftBranchCode();
 
-		if (branch.length() < 3) {
-			branch = StringUtils.leftPad(branch, 3, '0');
+		if (branch.length() < 4) {
+			branch = StringUtils.leftPad(branch, 4, '0');
 		} else {
-			branch = branch.substring(0, 3);
+			branch = branch.substring(0, 4);
 		}
 
 		// Product code.
@@ -92,7 +92,7 @@ public class ReferenceGenerator implements Serializable {
 		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("LOAN_REFERENCE_IDENTIFIER"))) {
 			return ReferenceConstants.DIVISION_IDENTIFIER.concat(branch).concat(product).concat(sequence);
 		} else {
-			return branch.concat(product).concat(sequence);
+			return product.concat(branch).concat(sequence);
 		}
 	}
 

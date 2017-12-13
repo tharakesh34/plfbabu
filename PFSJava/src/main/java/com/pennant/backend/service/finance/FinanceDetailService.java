@@ -190,4 +190,7 @@ public interface FinanceDetailService {
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, WorkflowEngine engine) 
 			throws AppException, JaxenException;
+	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
+	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
+	DocumentDetails getDocumentDetails(long id, String type);
  }

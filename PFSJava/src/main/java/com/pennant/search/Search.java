@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
-import com.pennanttech.pff.core.App;
 
 /**
  * A convenient fully-featured implementation of ISearch and IMutableSearch for general use in Java code.
@@ -526,7 +526,7 @@ public class Search implements IMutableSearch, Serializable {
 				this.addFilterOr(filters);
 				break;
 				
-			case PSQL:
+			case POSTGRES:
 				if (emptyEqual) {
 					filters = new Filter[3];
 					filters[0] = Filter.isNull(field);

@@ -281,9 +281,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerDocument.setRecordType("");
-				DocumentManager documentManager = new DocumentManager();
-				documentManager.setDocImage(customerDocument.getCustDocImage());
-				customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				if (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(customerDocument.getCustDocImage());
+					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+				}
 				getCustomerDocumentDAO().save(customerDocument, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -397,16 +399,54 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 
+			DocumentType docType = documentTypeService.getDocumentTypeById(customerDocument.getCustDocCategory());
 
-			if(StringUtils.isBlank(customerDocument.getDocUri())) {
-				if(customerDocument.getCustDocImage() ==null || customerDocument.getCustDocImage().length<=0){
-					String[] valueParm = new String[2];
-					valueParm[0] = "docContent";
-					valueParm[1] = "docRefId";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				} 
+			if (docType == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerDocument.getCustDocCategory();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
 			}
+
+			if(docType.isDocIsMandatory()){
+				if(StringUtils.isBlank(customerDocument.getDocUri())) {
+					if(customerDocument.getCustDocImage() ==null || customerDocument.getCustDocImage().length<=0){
+						String[] valueParm = new String[2];
+						valueParm[0] = "docContent";
+						valueParm[1] = "docRefId";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} 
+				}
+				if(StringUtils.isBlank(customerDocument.getCustDocName())){
+					String[] valueParm = new String[2];
+					valueParm[0] = "docName";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if(StringUtils.isBlank(customerDocument.getCustDocType())){
+					String[] valueParm = new String[2];
+					valueParm[0] = "docFormat";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+
+			if ((StringUtils.isNotBlank(customerDocument.getDocUri())) || (customerDocument.getCustDocImage() != null
+					|| customerDocument.getCustDocImage().length > 0)) {
+				if (StringUtils.isBlank(customerDocument.getCustDocType())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "docFormat";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			
+			
 			// validate custDocIssuedCountry
 			if (StringUtils.isBlank(customerDocument.getCustDocIssuedCountry())) {
 				String[] valueParm = new String[2];
@@ -424,17 +464,20 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				auditDetail.setErrorDetail(errorDetail);
 			}
 
-			DocumentType docType = documentTypeService.getDocumentTypeById(customerDocument.getCustDocCategory());
-			if (docType == null || !docType.isDocIsCustDoc()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDocument.getCustDocCategory();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			}
-
 			// validate Is Customer document?
-			if (docType.isDocIsCustDoc()) {
+			/*if (docType.isDocIsCustDoc()) {
+				if (StringUtils.isBlank(customerDocument.getCustDocTitle())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CustDocTitle";
+					valueParm[1] = docType.getDocTypeCode();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				} else {
+					customerDocument.setCustDocTitle(customerDocument.getCustDocTitle().toUpperCase());
+				}
+			}*/
+			if (docType.isDocIdNumMand()) {
 				if (StringUtils.isBlank(customerDocument.getCustDocTitle())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocTitle";
@@ -446,11 +489,12 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					customerDocument.setCustDocTitle(customerDocument.getCustDocTitle().toUpperCase());
 				}
 			}
+			
 			if (StringUtils.equals(customerDocument.getCustDocCategory(), "03")) {
 				Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 				if(customerDocument.getCustDocTitle() !=null){
 					Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
-					if(matcher.find() == false ){
+					if(!matcher.matches()){
 						String[] valueParm = new String[0];
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
@@ -459,7 +503,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 			// validate DocIssuedAuthority
-			if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
+			if (docType.isDocIssuedAuthorityMand()) {
 				if (StringUtils.isBlank(customerDocument.getCustDocSysName())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocIssuedAuth";
@@ -501,37 +545,39 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			if(!(StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_PDF) 
-					|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_DOC)
-					|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_DOCX)
-					|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_IMAGE))){
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDocument.getCustDocType();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-			}
-			String docFormate = customerDocument.getCustDocName()
-					.substring(customerDocument.getCustDocName().lastIndexOf(".") + 1);
-			if (StringUtils.equals(customerDocument.getCustDocName(), docFormate)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "docName: " + docFormate;
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-			}
-			boolean isImage = false;
-			if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
-				if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
-						|| StringUtils.equals(docFormate, "png")) {
-					isImage = true;
-				}
-			}
-			if (!isImage) {
-				if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "document type: " + customerDocument.getCustDocName();
-					valueParm[1] = customerDocument.getCustDocType();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+			if (customerDocument.isDocIsMandatory()) {
+				if (!(StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_PDF)
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOC)
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOCX)
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE))) {
+					String[] valueParm = new String[1];
+					valueParm[0] = customerDocument.getCustDocType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+				}
+				String docFormate = customerDocument.getCustDocName()
+						.substring(customerDocument.getCustDocName().lastIndexOf(".") + 1);
+				if (StringUtils.equals(customerDocument.getCustDocName(), docFormate)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docName: " + docFormate;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				boolean isImage = false;
+				if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
+					if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
+							|| StringUtils.equals(docFormate, "png")) {
+						isImage = true;
+					}
+				}
+				if (!isImage) {
+					if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "document type: " + customerDocument.getCustDocName();
+						valueParm[1] = customerDocument.getCustDocType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
 				}
 			}
 			if (customerDocument.getCustDocIssuedOn() != null && customer != null) {

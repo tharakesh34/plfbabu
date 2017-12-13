@@ -139,7 +139,37 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public Customer getNewCustomer() {
 		return getCustomerDAO().getNewCustomer(true);
 	}
+	
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
+	
+	public BranchDAO getBranchDAO() {
+		return branchDAO;
+	}
 
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	public ProvinceDAO getProvinceDAO() {
+		return provinceDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+
+	public CityDAO getCityDAO() {
+		return cityDAO;
+	}
+
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
+	}
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -759,8 +789,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			Object[][] filters = moduleMapping.getLovFilters();
 			int count=0;
 			if(filters !=null){
-				count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-						(String) filters[0][0], fieldValue);
+			 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], 
+					 (String)filters[0][0], fieldValue);
 			} 
 			if(count <= 0) {
 				String[] valueParm = new String[2];
@@ -799,6 +829,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Leaving");
 		return errorDetail;
 	}
+	
 	/**
 	 * prepare the GCD Customer related data
 	 */
@@ -819,35 +850,5 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 		logger.debug("Leaving");
 	}
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
-		this.customerDocumentDAO = customerDocumentDAO;
-	}
-	public BranchDAO getBranchDAO() {
-		return branchDAO;
-	}
-
-	public void setBranchDAO(BranchDAO branchDAO) {
-		this.branchDAO = branchDAO;
-	}
-
-	public ProvinceDAO getProvinceDAO() {
-		return provinceDAO;
-	}
-
-	public void setProvinceDAO(ProvinceDAO provinceDAO) {
-		this.provinceDAO = provinceDAO;
-	}
-
-	public CityDAO getCityDAO() {
-		return cityDAO;
-	}
-
-	public void setCityDAO(CityDAO cityDAO) {
-		this.cityDAO = cityDAO;
-	}
-
 	
 }

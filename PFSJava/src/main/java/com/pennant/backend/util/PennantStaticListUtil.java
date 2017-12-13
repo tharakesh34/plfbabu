@@ -18,7 +18,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -274,7 +274,7 @@ public class PennantStaticListUtil {
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TIME, Labels.getLabel("label_TIME")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT, Labels.getLabel("label_UPPERCASETEXT")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, Labels.getLabel("label_GROUPBOX")));
-			/*fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TABPANEL, Labels.getLabel("label_TABPANEL")));*/
+			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TABPANEL, Labels.getLabel("label_TABPANEL")));
 		}
 		return fieldType;
 	}
@@ -1252,13 +1252,13 @@ public class PennantStaticListUtil {
 			templateForList = new ArrayList<ValueLabel>(9);
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_CN, Labels.getLabel("label_MailTemplateDialog_CustomerNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_AE, Labels.getLabel("label_MailTemplateDialog_AlertNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DN, Labels.getLabel("label_MailTemplateDialog_DealerNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TP, Labels.getLabel("label_MailTemplateDialog_ProviderNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_QP, Labels.getLabel("label_MailTemplateDialog_QueuePriority")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_GE, Labels.getLabel("label_MailTemplateDialog_GraceEndDate")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PO, Labels.getLabel("label_MailTemplateDialog_POAuthNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT, Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT, Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DN, Labels.getLabel("label_MailTemplateDialog_DealerNotification")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TP, Labels.getLabel("label_MailTemplateDialog_ProviderNotification")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_QP, Labels.getLabel("label_MailTemplateDialog_QueuePriority")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_GE, Labels.getLabel("label_MailTemplateDialog_GraceEndDate")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PO, Labels.getLabel("label_MailTemplateDialog_POAuthNotification")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT, Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
+//			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT, Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
 		}
 		return templateForList;
 	}

@@ -209,17 +209,8 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public boolean isDocIsPdfExtRequired() {
 		return docIsPdfExtRequired;
 	}
-
 	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
 		this.docIsPdfExtRequired = docIsPdfExtRequired;
-	}
-
-	public long getPdfMappingRef() {
-		return pdfMappingRef;
-	}
-
-	public void setPdfMappingRef(long pdfMappingRef) {
-		this.pdfMappingRef = pdfMappingRef;
 	}
 
 	public boolean isDocIsPasswordProtected() {
@@ -228,5 +219,13 @@ public class DocumentType extends AbstractWorkflowEntity {
 
 	public void setDocIsPasswordProtected(boolean docIsPasswordProtected) {
 		this.docIsPasswordProtected = docIsPasswordProtected;
+	}
+
+	public long getPdfMappingRef() {
+		return pdfMappingRef;
+	}
+
+	public void setPdfMappingRef(long pdfMappingRef) {
+		this.pdfMappingRef = pdfMappingRef;
 	}
 }

@@ -454,7 +454,7 @@ public class RepaymentProcessUtil {
 			}
 			
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-				extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
+				//extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
 			}
 
 			boolean rpyProcessed = false;

@@ -66,11 +66,11 @@ import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
@@ -111,7 +111,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, ");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -228,12 +228,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" (ModuleId, FieldName, FieldType, FieldLength, FieldPrec, FieldLabel, " );
 		insertSql.append(" FieldMandatory, FieldConstraint, FieldSeqOrder, FieldList, " );
 		insertSql.append(" FieldDefaultValue, FieldMinValue, FieldMaxValue, FieldUnique, MultiLine,ParentTag,");
-		insertSql.append(" InputElement, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" InputElement,Editable, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :FieldName, :FieldType, :FieldLength, :FieldPrec, " );
 		insertSql.append(" :FieldLabel, :FieldMandatory, :FieldConstraint, :FieldSeqOrder, " );
 		insertSql.append(" :FieldList, :FieldDefaultValue, :FieldMinValue, " );
-		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement, ");
+		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -274,7 +274,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" FieldMandatory = :FieldMandatory, FieldConstraint = :FieldConstraint, " );
 		updateSql.append(" FieldSeqOrder = :FieldSeqOrder, " );
 		updateSql.append(" FieldList = :FieldList, FieldDefaultValue = :FieldDefaultValue, " );
-		updateSql.append(" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue, " );
+		updateSql.append(" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue,Editable = :Editable, " );
 		updateSql.append(" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
@@ -305,7 +305,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
-		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
 		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -338,7 +338,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
-		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
 		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
@@ -365,7 +365,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
-		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
 		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,  ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
@@ -454,7 +454,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			
 			if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldDetail.getFieldType())
 					&& PennantConstants.RECORD_TYPE_UPD.equals(fieldDetail.getRecordType())
-					&& App.DATABASE == Database.PSQL) {
+					&& App.DATABASE == Database.POSTGRES) {
 				sql.append(" TYPE ");
 			}
 			
@@ -508,7 +508,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(" number(");
 				datatype.append(fieldDetail.getFieldLength());
 				datatype.append(", 0) ");
-			} else if(App.DATABASE == Database.PSQL){
+			} else if(App.DATABASE == Database.POSTGRES){
 				datatype.append(" numeric(");
 				datatype.append(fieldDetail.getFieldLength());
 				datatype.append(", 0) ");
@@ -521,7 +521,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case INT:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" number(10,0) ");
-			} else if (App.DATABASE == Database.PSQL) {
+			} else if (App.DATABASE == Database.POSTGRES) {
 				datatype.append(" integer ");
 			} else {
 				datatype.append(" int ");
@@ -541,7 +541,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(" number(");
 				datatype.append(fieldDetail.getFieldLength()).append(", ");
 				datatype.append(fieldDetail.getFieldPrec()).append(") ");
-			} else if (App.DATABASE == Database.PSQL) {
+			} else if (App.DATABASE == Database.POSTGRES) {
 				datatype.append(" numeric(");
 				datatype.append(fieldDetail.getFieldLength()).append(", ");
 				datatype.append(fieldDetail.getFieldPrec()).append(") ");
@@ -556,7 +556,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case TIME:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" date ");
-			} else if (App.DATABASE == Database.PSQL) {
+			} else if (App.DATABASE == Database.POSTGRES) {
 				datatype.append(" timestamp without time zone ");
 			} else {
 				datatype.append(" datetime ");
@@ -565,7 +565,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case BOOLEAN:
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" number (1,0) ");
-			} else if (App.DATABASE == Database.PSQL) {
+			} else if (App.DATABASE == Database.POSTGRES) {
 				if (!PennantConstants.RECORD_TYPE_UPD.equals(fieldDetail.getRecordType())) {
 					datatype.append(" boolean ");
 					datatype.append(" DEFAULT FALSE ");
@@ -597,6 +597,14 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append("_SR varchar2(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_MR number(13,9) ) "); 
+			} else if (App.DATABASE == Database.POSTGRES) {
+				datatype.append("_BR varchar(8) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_SR varchar(8) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_MR decimal(13,9) ");  
 			} else {
 				datatype.append("_BR varchar(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
@@ -619,6 +627,14 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append("_AC varchar2(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_SC varchar2(8) ) "); 
+			} else if (App.DATABASE == Database.POSTGRES) {
+				datatype.append("_CC varchar(4) , "); 
+				datatype.append(" add "); 
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_AC varchar(4) , "); 
+				datatype.append(" add ");
+				datatype.append(fieldDetail.getFieldName()); 
+				datatype.append("_SC varchar(8) "); 
 			} else {
 				datatype.append("_CC varchar(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 

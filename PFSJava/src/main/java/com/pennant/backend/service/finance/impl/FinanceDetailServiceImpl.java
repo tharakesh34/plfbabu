@@ -110,8 +110,8 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
@@ -125,6 +125,7 @@ import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
@@ -202,6 +203,7 @@ import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.Crm;
@@ -3882,22 +3884,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
 
-		String finishedTasks = "";
-		String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+		//String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
 
-		if (StringUtils.isNotBlank(serviceTasks)) {
-			while (!"".equals(serviceTasks)) {
-				String method = serviceTasks.split(";")[0];
-				auditHeader = execute(auditHeader, method, role, usrAction, engine);
-
-				finishedTasks += (method + ";");
-				serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
+		if (serviceTasks != null && !serviceTasks.isEmpty()) {
+			for(ServiceTask task: serviceTasks) {
+				auditHeader = execute(auditHeader, task, role, usrAction, engine);
 			}
 			if(!auditHeader.isProcessCompleted()) {
-				auditHeader = execute(auditHeader, "", role, usrAction, engine);
+				auditHeader = execute(auditHeader, null, role, usrAction, engine);
 			}
 		} else {
-			auditHeader = execute(auditHeader, "", role, usrAction, engine);
+			auditHeader = execute(auditHeader, null, role, usrAction, engine);
 		}
 		return auditHeader;
 	}
@@ -3906,7 +3904,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method for process and execute workflow service tasks
 	 * 
 	 * @param auditHeader
-	 * @param method
+	 * @param task
 	 * @param role
 	 * @param usrAction
 	 * @param engine
@@ -3914,7 +3912,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
-	private AuditHeader execute(AuditHeader auditHeader, String method, String role, String usrAction,
+	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task, String role, String usrAction,
 			WorkflowEngine engine) throws InterfaceException, JaxenException {
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -3924,7 +3922,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String taskId = engine.getUserTaskId(role);
 		setNextTaskDetails(taskId, afinanceMain, engine, usrAction, role);
 
-		switch (method) {
+		if(task == null) {
+			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+				auditHeader = delete(auditHeader, false);
+				auditHeader.setDeleteNotes(true);
+			} else {
+				auditHeader = saveOrUpdate(auditHeader, false);
+				auditHeader.setProcessCompleted(true);
+			}
+			
+			return auditHeader;
+		}
+		switch (task.getOperation()) {
 		case PennantConstants.method_doApprove:
 			auditHeader = doApprove(auditHeader, false);
 			auditHeader.setProcessCompleted(true);
@@ -3948,8 +3957,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		default:
 			// Execute any other custom service tasks
-			if(StringUtils.isNotBlank(method)) {
-				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, method);
+			if(StringUtils.isNotBlank(task.getOperation())) {
+				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
 				if(taskExecuted) {
 					return auditHeader;
 				}
@@ -8328,6 +8337,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public DocumentDetails getFinDocDetailByDocId(long docId, String type, boolean readAttachment) {
 		return getDocumentDetailsDAO().getDocumentDetailsById(docId, type, readAttachment);
 	}
+	
+	@Override
+	public DocumentDetails getDocumentDetails(long docId, String type) {
+		return getDocumentDetailsDAO().getDocumentDetails(docId, type);
+	}
 
 	@Override
 	public List<DocumentDetails> getDocumentDetails(String finReference, String finProcEvent) {
@@ -8754,5 +8768,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
+	}
+
+	@Override
+	public FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -28,4 +28,6 @@ public interface DocumentDetailsDAO {
 	DocumentDetails getDocumentDetailsById(long id, String type, boolean readAttachment);
 
 	DocumentDetails getDocumentDetails(String ref, String category, String module, String type);
+
+	DocumentDetails getDocumentDetails(long id, String type);
 }

@@ -36,8 +36,8 @@ import com.healthmarketscience.sqlbuilder.UnaryCondition;
 import com.healthmarketscience.sqlbuilder.custom.NamedParamObject;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * A singleton instance of this class is maintained for each SessionFactory.
@@ -401,9 +401,9 @@ public class JdbcSearchProcessor implements Serializable {
 			return getSqlServerLimitRowsSql(query.toString(), offset, pageSize);
 		case DB2:
 			return getDB2LimitRowsSql(query.toString(), offset, pageSize);
-		case MYSQL:
+		case MY_SQL:
 			return getMySqlLimitRowsSql(query.toString(), offset, pageSize);
-		case PSQL:
+		case POSTGRES:
 			return getPostgreSqlLimitRowsSql(query.toString(), offset, pageSize);
 		default:
 			return query.toString();

@@ -54,7 +54,8 @@ public class PennantConstants {
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
-		SeqFinMaintainInstructions,SeqCustomerAddresses,SeqFinASSETTYPES,SeqReceiptAllocationDetail
+		SeqFinMaintainInstructions,SeqServiceTaskDetails,SeqMailTemplate,SeqCustomerAddresses,SeqFinASSETTYPES,
+		SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -185,10 +186,11 @@ public class PennantConstants {
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
 	
-	public static final String method_externalDedup = "externalDedup";
+	public static final String method_externalDedup = "executeExperianDedup";
 	public static final String method_hunter = "executeHunter";
 	public static final String method_Bureau = "executeBureau";
-
+	public static final String method_Crif = "executeCrif";
+	public static final String method_Cibil_Consumer = "executeCibilConsumer";
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";
@@ -671,6 +673,7 @@ public class PennantConstants {
 	// Validation Groups
 	public static final String VLD_CRT_SCHD              	= "CRTSCHD";
 	public static final String VLD_CRT_LOAN					= "CRTLOAN";
+	public static final String VLD_UPD_LOAN					= "UPDLOAN";
 	public static final String VLD_SRV_LOAN					= "SRVLOAN";
 	public static final String NOT_AVAILABLE				= "NAV";
 	

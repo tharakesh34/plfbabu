@@ -41,20 +41,6 @@
 		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 
 	<!-- ====================================================== -->
-	<!-- Menu Details Configuration -->
-	<!-- ====================================================== -->
-
-	<bean id="menuDetailsDAO" class="com.pennant.backend.dao.impl.MenuDetailsDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
-	</bean>
-
-	<bean name="menuDetailsService"
-		class="com.pennant.backend.service.impl.MenuDetailsServiceImpl">
-		<property name="menuDetailsDAO" ref="menuDetailsDAO" />
-	</bean>
-
-	<!-- ====================================================== -->
 	<!-- Error Details Configuration -->
 	<!-- ====================================================== -->
 
@@ -167,6 +153,15 @@
 		<property name="securityRoleService" ref="securityRoleService" />
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
+		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+
+	</bean>
+	
+	<bean id="smsUtil" class="com.pennant.app.util.SMSUtil" scope="prototype">
+		<property name="freemarkerSMSConfiguration" ref="freemarkerMailConfiguration" />
+		<property name="smsTemplateService" ref="mailTemplateService" />
+		<property name="notificationsService" ref="notificationsService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 
 	</bean>
@@ -4211,7 +4206,6 @@
 		<!-- GST -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="customerService" ref="customerService" />
-		
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -4423,7 +4417,7 @@
 	<!-- FinAssetTypes -->
 	<bean id="finAssetTypeDAO"
 		class="com.pennant.backend.dao.collateral.impl.FinAssetTypesDAOImpl"
-		parent="basisNextidDao">
+		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -5701,7 +5695,7 @@
 	<!--============ Receipt Allocation Details ============== -->
 
 	<bean id="receiptAllocationDetailDAO"
-		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" parent="basisNextidDao">
+		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" >
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -8340,6 +8334,7 @@
 		<property name="mandateStatusUpdateDAO" ref="mandateStatusUpdateDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
 	<!-- Finance Mandate -->
 	<bean id="finMandateService"
@@ -10335,15 +10330,6 @@
 
 	<bean name="cacheAdministrationService"
 		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
-	
-	<bean id="gCDCustomerDAO"
-		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<!-- GCDCustomers END -->
-	
 	<!-- <bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/> -->
 	
 	<bean id="soaReportGenerationDAO"
@@ -10442,7 +10428,7 @@
 	</bean>
 	
 	<!-- custom service tasks -->
-	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+<!-- 	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
@@ -10454,10 +10440,11 @@
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
-	</bean>
-	<bean id="customServiceTaskTarget" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
+	</bean> -->
+	<bean id="customServiceTask" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
+		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
 	<!--Customize Finance Data Validation Service -->
 	<bean id="customizeFinanceDataValidation"
@@ -10465,10 +10452,32 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
-	
-	<!-- for pdf parser -->
-	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
-		<constructor-arg ref="pfsDatasource" />
+
+	<!-- custom service tasks -->
+	<bean id="shortMessageService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="shortMessageServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
 	</bean>
-	
+	<bean id="shortMessageServiceTarget"
+		class="com.pennant.backend.service.sms.impl.ShortMessageServiceImpl" />
+
+	<bean id="serviceTaskDAO"
+		class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="transactionManager" ref="pfsTransactionManager" />
+	</bean>
+
+	<bean id="externalDocumentManager"
+		class="com.pennanttech.pff.document.external.ExternalDocumentManager"/>
 </beans>

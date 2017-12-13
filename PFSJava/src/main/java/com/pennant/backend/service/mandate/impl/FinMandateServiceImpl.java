@@ -45,16 +45,19 @@ package com.pennant.backend.service.mandate.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
@@ -62,6 +65,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -87,13 +91,24 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private FinanceMainDAO		financeMainDAO;
 	private BankBranchService	bankBranchService;
 
+	@Autowired
+	private DocumentManagerDAO documentManagerDAO;
+
 	public FinMandateServiceImpl() {
 		super();
 	}
 
 	@Override
 	public Mandate getMnadateByID(long mandateID) {
-		return mandateDAO.getMandateById(mandateID, "_View");
+		Mandate mandate = mandateDAO.getMandateById(mandateID, "_View");
+		if (mandate != null) {
+			DocumentManager data = documentManagerDAO.getById(mandate.getDocumentRef());
+			if (data != null) {
+				mandate.setDocImage(data.getDocImage());
+			}
+		}
+
+		return mandate;
 	}
 
 	@Override
@@ -127,11 +142,13 @@ public class FinMandateServiceImpl implements FinMandateService {
 						mandate.setMandateID(oldmandate.getMandateID());
 						mandate.setOrgReference(finmain.getFinReference());
 						mandate.setStatus(MandateConstants.STATUS_FIN);
+						getDocument(mandate);
 						mandateDAO.updateFinMandate(mandate, tableType);
 						auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_UPD));
 					} else {
 						mandate.setStatus(MandateConstants.STATUS_FIN);
 						mandate.setOrgReference(finmain.getFinReference());
+						getDocument(mandate);
 						long mandateID = mandateDAO.save(mandate, tableType);
 						finmain.setMandateID(mandateID);
 						auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
@@ -169,6 +186,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					mandate.setStatus(MandateConstants.STATUS_NEW);
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					getDocument(mandate);
 					long mandateID = mandateDAO.save(mandate, tableType);
 					finmain.setMandateID(mandateID);
 					auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
@@ -469,6 +487,24 @@ public class FinMandateServiceImpl implements FinMandateService {
 		newauditHeader.setAuditSessionID(auditHeader.getAuditSessionID());
 		newauditHeader.setUsrLanguage(auditHeader.getUsrLanguage());
 		return newauditHeader;
+	}
+
+	private void getDocument(Mandate mandate) {
+		DocumentManager documentManager = new DocumentManager();
+		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
+			DocumentManager olddocumentManager = documentManagerDAO.getById(mandate.getDocumentRef());
+			if(olddocumentManager != null) {
+				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr2 = mandate.getDocImage();
+				if (!Arrays.equals(arr1, arr2)) {
+					documentManager.setDocImage(arr2);
+					mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+				}
+			}
+		} else {
+			documentManager.setDocImage(mandate.getDocImage());
+			mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+		}
 	}
 
 	public AuditDetail getAuditDetails(Mandate mandate, int auditSeq, String transType) {

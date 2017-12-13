@@ -219,7 +219,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				}
 
 				if (updateRecord) {
-
 					getFinAdvancePaymentsDAO().update(finPayment, tableType);
 				}
 
@@ -747,8 +746,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	@Override
-	public int getCountByFinReference(String finReference) {
-		return finAdvancePaymentsDAO.getCountByFinReference(finReference);
+	public int getMaxPaymentSeq(String finReference) {
+		return finAdvancePaymentsDAO.getMaxPaymentSeq(finReference);
+	}
+	
+	@Override
+	public int getFinAdvCountByRef(String finReference, String type) {
+		return finAdvancePaymentsDAO.getFinAdvCountByRef(finReference, type);
 	}
 
 }

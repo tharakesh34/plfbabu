@@ -43,7 +43,7 @@
 
 package com.pennant.backend.dao.staticparms;
 
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 
 public interface ExtendedFieldHeaderDAO {
 

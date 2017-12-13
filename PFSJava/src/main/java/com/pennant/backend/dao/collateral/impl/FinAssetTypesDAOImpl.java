@@ -15,12 +15,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 
-public class FinAssetTypesDAOImpl extends BasisNextidDaoImpl<FinAssetTypes> implements FinAssetTypeDAO {
+public class FinAssetTypesDAOImpl implements FinAssetTypeDAO {
 private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	
 	// Spring Named JDBC Template
@@ -57,12 +56,6 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		logger.debug("Entering");
 
 		StringBuilder query = new StringBuilder();
-
-		if (finAssetTypes.getFinAssetTypeId() == Long.MIN_VALUE) {
-			finAssetTypes.setFinAssetTypeId(getNextidviewDAO().getNextId("SeqFinASSETTYPES"));
-			logger.debug("get NextID:" + finAssetTypes.getFinAssetTypeId());
-		}
-
 		query.append("Insert Into FinAssetTypes");
 		query.append(StringUtils.trimToEmpty(type));
 		query.append(" (FinAssetTypeId,Reference, AssetType, SeqNo, ");

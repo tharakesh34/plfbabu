@@ -200,7 +200,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 	public DocumentType getApprovedDocumentTypeById(String id) {
 		return getDocumentTypeDAO().getDocumentTypeById(id, "_AView");
 	}
-
+	
 	/**Getting pdf type list for pdf uploader menuitem*/ 
 	public List<DocumentType> getApprovedPdfExternalList() {
 		return getDocumentTypeDAO().getApprovedPdfExternalList("_AView");

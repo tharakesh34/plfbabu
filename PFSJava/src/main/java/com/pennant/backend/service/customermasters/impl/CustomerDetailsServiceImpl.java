@@ -60,6 +60,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -84,8 +85,9 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailPastDue;
@@ -126,10 +128,10 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
@@ -178,32 +180,32 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerDocumentService customerDocumentService;
 
 	// Declaring Classes For validation for Lists
-	private CustomerRatingValidation customerRatingValidation;
-	private CustomerPhoneNumberValidation customerPhoneNumberValidation;
-	private CustomerPRelationValidation customerPRelationValidation;
-	private CustomerEmploymentDetailValidation customerEmploymentDetailValidation;
-	private CustomerIncomeValidation customerIncomeValidation;
-	private CustomerEMailValidation customerEMailValidation;
-	private CustomerAddressValidation customerAddressValidation;
-	private CustomerDocumentValidation customerDocumentValidation;
-	private CorporateCustomerValidation corporateCustomerValidation;
-	private CustomerDirectorValidation customerDirectorValidation;
-	private CustomerBalanceSheetValidation customerBalanceSheetValidation;
-	private CustomerBankInfoValidation customerBankInfoValidation;
-	private CustomerChequeInfoValidation customerChequeInfoValidation;
-	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
-	private LovFieldDetailService lovFieldDetailService;
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	private LimitRebuild limitRebuild;
-	private PhoneTypeDAO    phoneTypeDAO;
-	private CustomerService customerService;
-	private PinCodeDAO pinCodeDAO;
-	
-	
+	private CustomerRatingValidation			customerRatingValidation;
+	private CustomerPhoneNumberValidation		customerPhoneNumberValidation;
+	private CustomerPRelationValidation			customerPRelationValidation;
+	private CustomerEmploymentDetailValidation	customerEmploymentDetailValidation;
+	private CustomerIncomeValidation			customerIncomeValidation;
+	private CustomerEMailValidation				customerEMailValidation;
+	private CustomerAddressValidation			customerAddressValidation;
+	private CustomerDocumentValidation			customerDocumentValidation;
+	private CorporateCustomerValidation			corporateCustomerValidation;
+	private CustomerDirectorValidation			customerDirectorValidation;
+	private CustomerBalanceSheetValidation		customerBalanceSheetValidation;
+	private CustomerBankInfoValidation			customerBankInfoValidation;
+	private CustomerChequeInfoValidation		customerChequeInfoValidation;
+	private CustomerExtLiabilityValidation		customerExtLiabilityValidation;
+	private LovFieldDetailService				lovFieldDetailService;
+	private LimitRebuild						limitRebuild;
+	private PhoneTypeDAO						phoneTypeDAO;
+
+	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
+	private ExtendedFieldDetailsService			extendedFieldDetailsService;
+	private PinCodeDAO							pinCodeDAO;
+	private CustomerService						customerService;
+
 	@Autowired(required = false)
 	private Crm crm;
-
+	
 	public CustomerDetailsServiceImpl() {
 		super();
 	}
@@ -1737,24 +1739,48 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("AddressType", adress.getCustAddrType()));
+				auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
+				PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
+				if (pincode != null) {
+					if (StringUtils.isNotBlank(adress.getCustAddrCountry())
+							&& !adress.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+				
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrCountry();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} else {
+						adress.setCustAddrCountry(pincode.getpCCountry());
+					}
 
-				Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
-						adress.getCustAddrProvince(), "");
-				if (province == null) {
-					String[] valueParm = new String[2];
-					valueParm[0] = adress.getCustAddrProvince();
-					valueParm[1] = adress.getCustAddrCountry();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-				City city = getCityDAO().getCityById(adress.getCustAddrCountry(), adress.getCustAddrProvince(),
-						adress.getCustAddrCity(), "");
-				if (city == null) {
-					String[] valueParm = new String[2];
-					valueParm[0] = adress.getCustAddrCity();
-					valueParm[1] = adress.getCustAddrProvince();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
+					Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
+							pincode.getpCProvince(), "");
+					if (province != null && StringUtils.isNotBlank(adress.getCustAddrProvince())
+							&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
+
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrProvince();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} else {
+						adress.setCustAddrProvince(pincode.getpCProvince());
+					}
+
+					if (StringUtils.isNotBlank(adress.getCustAddrCity())
+							&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
+						
+						String[] valueParm = new String[2];
+						valueParm[0] = adress.getCustAddrCity();
+						valueParm[1] = adress.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+
+					} else {
+						adress.setCustAddrCity(pincode.getCity());
+					}
+
 				}
 				if(StringUtils.isNotBlank(adress.getCustAddrZIP())){
 					if(adress.getCustAddrZIP().length()<3 || adress.getCustAddrZIP().length()>6){
@@ -1840,9 +1866,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
+					} else {
+						if (mobileNumber.length() > 20) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "PhoneNumber lenght";
+							valueParm[1] = "20";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90220", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
 					}
 
-				}
+				} 
 				auditDetail.setErrorDetail(validateMasterCode("PhoneType", custPhoneDetail.getPhoneTypeCode()));
 				if (!(custPhoneDetail.getPhoneTypePriority() >= 1 && custPhoneDetail.getPhoneTypePriority() <= 5)) {
 					String[] valueParm = new String[1];
@@ -2124,8 +2159,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
-				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];
@@ -2296,11 +2330,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
 		if (moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
-			String[][] filters = (String[][]) moduleMapping.getLovFilters();
+
+			Object[][] filters = moduleMapping.getLovFilters();
 			int count = 0;
 			if (filters != null) {
 				count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-						filters[0][0], fieldValue);
+						(String)filters[0][0], fieldValue);
 			}
 			if (count <= 0) {
 				String[] valueParm = new String[2];
@@ -2399,10 +2434,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-
+		
 		// process to send finone request and create or update the data.
 		createOrUpdateCrmCustomer(aAuditHeader);
-
+	
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
@@ -2770,13 +2805,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						getCustomerIncomeValidation().incomeListValidation(customerDetails, method, usrLanguage));
 			}
 
-			// Address Validation
-			if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Address");
-				details = getAddressValidation().addressListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
-			}
-
 			// PRelation Validation
 			if (customerDetails.getCustomerEMailList() != null && customerDetails.getCustomerEMailList().size() > 0) {
 				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EMail");
@@ -2792,6 +2820,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetails.addAll(details);
 			}
 
+		}
+
+		// Address Validation
+		if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Address");
+			details = getAddressValidation().addressListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
 		}
 		// Director Validation
 		if (customerDetails.getCustomerDirectorList() != null && customerDetails.getCustomerDirectorList().size() > 0) {
@@ -2955,20 +2990,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
 		}
+		
+		if (customer.getCustCRCPR()!=null) {
+			if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
+				String[] errorParameters = new String[1];
+				if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
+					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
+							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
+				} else {
+					errorParameters[0] = PennantJavaUtil.getLabel("label_CustTradeLicenseNumber") + ":"
+							+ customer.getCustCRCPR();
+				}
 
-		if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
-			String[] errorParameters = new String[1];
-			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
-				errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
-						+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-			} else {
-				errorParameters[0] = PennantJavaUtil.getLabel("label_CustTradeLicenseNumber") + ":"
-						+ customer.getCustCRCPR();
+				auditDetail
+						.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 			}
-
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 		}
-
 		// customer dedup validation
 		if (customerDetails.getCustomerDedupList() != null && !customerDetails.getCustomerDedupList().isEmpty()) {
 			for (CustomerDedup customerDedup : customerDetails.getCustomerDedupList()) {
@@ -5512,5 +5549,5 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
 	}
-
+	
 }

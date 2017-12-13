@@ -27,8 +27,8 @@ public class ImplementationConstants {
 	//AHB Implementation for Core Customer creation which includes reserve CIF and  Create CIF
 	public static final boolean	VALIDATE_CORE_CUST_UPDATE		= false;
 	public static final boolean	ALLOW_COVENANT_TYPES			= true;		// Covenants Allowed or not
-	public static final boolean	COLLATERAL_INTERNAL				= true;		// Which Collateral We are using Internal or Third Party Collaterals
-	public static final boolean	ALLOW_VAS						= true;		// VAS required or not
+	public static final boolean	COLLATERAL_INTERNAL				= false;	// Which Collateral We are using Internal or Third Party Collaterals
+	public static final boolean	ALLOW_VAS						= false;	// VAS required or not
 	// F = Administration/Insurance/Other Fees
 	// C = Past due Penalty
 	// I = Profit
@@ -49,7 +49,7 @@ public class ImplementationConstants {
 	//Pre-Approval Required
 	public static final boolean	PREAPPROVAL_ALLOWED				= false;
 	// Allow Quick Disbursement
-	public static final boolean	ALLOW_QUICK_DISB				= true;
+	public static final boolean	ALLOW_QUICK_DISB				= false;
 	// Allow Deviations
 	public static final boolean	ALLOW_DEVIATIONS				= true;
 
@@ -85,6 +85,7 @@ public class ImplementationConstants {
 	public static final String	CLIENT_AHB						= "AHB";
 	public static final String	CLIENT_BFL						= "BFL";
 	public static final String	CLIENT_NAME						= CLIENT_BFL;
+	public static final boolean	CLIENT_NFL						= true;
 
 	// Address Type Details
 	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY		= false;
@@ -110,4 +111,5 @@ public class ImplementationConstants {
 	public static final boolean FRQ_DATE_VALIDATION				= true;   //Constant to check Frequency and Date Match/Not
 
 	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// Excess upfront fees paid by customer to be created as Payable Advise/Excess.
+	public static final boolean	CO_APP_ENQ_SAME_AS_CUST_ENQ	    = true;		// Inquiry menu in the co-applicant should show screen as customer details
 }

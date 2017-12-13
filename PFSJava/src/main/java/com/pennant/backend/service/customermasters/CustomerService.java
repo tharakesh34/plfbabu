@@ -70,5 +70,5 @@ public interface CustomerService {
 	String getCustSuspRemarks(long custID);
 	Customer getSuspendCustomer(Long value);
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
-	void prepareGCDCustomerData(CustomerDetails customerDetails);
+	public void prepareGCDCustomerData(CustomerDetails customerDetails) ;
 }

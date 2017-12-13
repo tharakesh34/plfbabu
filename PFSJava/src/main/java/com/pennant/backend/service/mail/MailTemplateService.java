@@ -57,4 +57,5 @@ public interface MailTemplateService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	void sendMail(List<String> custMailIdList, List<MailTemplate> templates);
 }

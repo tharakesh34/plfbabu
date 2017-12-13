@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,10 +104,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennant.backend.model.extendedfields.ExtendedField;
-import com.pennant.backend.model.extendedfields.ExtendedFieldData;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -2034,7 +2035,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(String.valueOf(extendedFieldData.getFieldValue()))) {
+						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(),""))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
