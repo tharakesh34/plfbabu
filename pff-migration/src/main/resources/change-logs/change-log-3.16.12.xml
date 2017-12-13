@@ -43,4 +43,130 @@
 <changeSet id="11" author="Manoj">
 	<modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="TRANSACTIONREF" newDataType="VARCHAR2(50)"/>
 </changeSet>
+
+<changeSet id="13" author="Prasad" dbms="oracle">
+	<createView viewName="RPT_VOUCHER_VIEW" replaceIfExists="true">
+		Select P.finEvent STAGEID,LinkedTranId LEA_VOUCHERID,PostDate VOUCHERDATE,
+       B.BRANCHSWIFTBRNCDE BRANCHID,FM.FInType PRODUCTFLAG,FM.FINREFERENCE,
+       FM.FINSTARTDATE AGREEMENTDATE,
+       CASE WHEN FM.FINCURRASSETVALUE=FM.FINASSETVALUE then 'Fully Disbursed' else 'Partially Disbursed' end DISB_STATUS,
+       CASE WHEN FM.FinIsActive=1 then 'Active' WHEN FM.closingstatus='C' then 'Cancelled' else 'Closed' end CURRENT_STATUS,
+       CASE WHEN FM.closingstatus='W' then 'WRITEOFF' else 'REGULAR ' end NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ActypeDesc GROUPGLDESC,to_char(Coalesce(DRAMT/ccyMinorCcyUnits,0),'99999999999999D00') DRAMT,
+       to_char(Coalesce(CRAMT/ccyMinorCcyUnits,0) ,'99999999999999D00') CRAMT, 
+       AT.TAXAPPLICABLE GST_APPLICABLE,B.BRANCHPROVINCE FROM_STATEID,Case when FT.PROVINCE is not null then FT.PROVINCE else custAddrPRovince end TO_STATEID       
+from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAMT,CRAMT from (
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,P.FINREFERENCE,P.DRORCR,P.PostAmount
+      from postings P inner join Financemain F on F.finreference = P.finreference
+	  where (P.PostAmount != 0)
+      union all
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,V.Primarylinkref,P.DRORCR,P.PostAmount
+      from postings P inner join vasrecording V on V.vasreference = P.finreference
+	  where (P.PostAmount != 0)
+      )PIVOT (sum(PostAmount) for DRORCR in('D' as DRAMT ,'C' as CRAMT))) P inner join
+     FinanceMain FM on FM.Finreference = P.Finreference inner join
+     RMTBranches B on B.BranchCOde = FM.FinBranch INNER JOIN 
+     Accounts AM  ON AM.ACCOUNTID = P.ACCOUNT INNER JOIN 
+     RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACTYPE INNER JOIN 
+     RMTCURRENCIES RC on RC.ccyCode = FM.FINCCY LEFT JOIN
+     FinTaxDetail FT on FT.FINREFERENCE = FM.FINREFERENCE LEFT JOIN
+     CUSTOMERADDRESSES CA on CA.Custid =FM.custid and CustAddrPriority=5
+	</createView>
+</changeSet>
+<changeSet id="13" author="Prasad" dbms="mssql">
+	<createView viewName="RPT_VOUCHER_VIEW" replaceIfExists="true">
+		Select P.finEvent STAGEID,LinkedTranId+transorder LEA_VOUCHERID,PostDate VOUCHERDATE,
+       B.BRANCHSWIFTBRNCDE BRANCHID,FM.FInType PRODUCTFLAG,FM.FINREFERENCE,
+       FM.FINSTARTDATE AGREEMENTDATE,
+       CASE WHEN FM.FINCURRASSETVALUE=FM.FINASSETVALUE then 'Fully Disbursed' else 'Partially Disbursed' end as DISB_STATUS,
+       CASE WHEN FM.FinIsActive=1 then 'Active' WHEN FM.closingstatus='C' then 'Cancelled' else 'Closed' end as CURRENT_STATUS,
+       CASE WHEN FM.closingstatus='W' then 'WRITEOFF' else 'REGULAR ' end as NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ActypeDesc GROUPGLDESC,Coalesce(DRAMT/ccyMinorCcyUnits,0) as DRAMT,
+       Coalesce(CRAMT/ccyMinorCcyUnits,0) as CRAMT, 
+       AT.TAXAPPLICABLE GST_APPLICABLE,B.BRANCHPROVINCE FROM_STATEID,Case when FT.PROVINCE is not null then FT.PROVINCE else custAddrPRovince end TO_STATEID       
+from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAMT,CRAMT from (
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,P.FINREFERENCE,P.DRORCR,P.PostAmount
+      from postings P inner join Financemain F on F.finreference = P.finreference
+	  where (P.PostAmount != 0)
+      union all
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,V.Primarylinkref,P.DRORCR,P.PostAmount
+      from postings P inner join vasrecording V on V.vasreference = P.finreference
+	  where (P.PostAmount != 0)
+      )T PIVOT(sum(PostAmount) for DRORCR in([DRAMT],[CRAMT])) as Piv) as P inner join
+     FinanceMain FM on FM.Finreference = P.Finreference inner join
+     RMTBranches B on B.BranchCOde = FM.FinBranch INNER JOIN 
+     Accounts AM  ON AM.ACCOUNTID = P.ACCOUNT INNER JOIN 
+     RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACTYPE INNER JOIN 
+     RMTCURRENCIES RC on RC.ccyCode = FM.FINCCY LEFT JOIN
+     FinTaxDetail FT on FT.FINREFERENCE = FM.FINREFERENCE LEFT JOIN
+     CUSTOMERADDRESSES CA on CA.Custid =FM.custid and CustAddrPriority=5
+	</createView>
+</changeSet>
+<changeSet id="13" author="Prasad" dbms="postgresql">
+	<createView viewName="RPT_VOUCHER_VIEW" replaceIfExists="true">
+		Select P.finEvent STAGEID,LinkedTranId${call.concatenate}transorder LEA_VOUCHERID,PostDate VOUCHERDATE,
+       B.BRANCHSWIFTBRNCDE BRANCHID,FM.FInType PRODUCTFLAG,FM.FINREFERENCE,
+       FM.FINSTARTDATE AGREEMENTDATE,
+       CASE WHEN FM.FINCURRASSETVALUE=FM.FINASSETVALUE then 'Fully Disbursed' else 'Partially Disbursed' end DISB_STATUS,
+       CASE WHEN FM.FinIsActive=1 then 'Active' WHEN FM.closingstatus='C' then 'Cancelled' else 'Closed' end CURRENT_STATUS,
+       CASE WHEN FM.closingstatus='W' then 'WRITEOFF' else 'REGULAR ' end NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ActypeDesc GROUPGLDESC,to_char(Coalesce(DRAMT/ccyMinorCcyUnits,0),'99999999999999D00') DRAMT,
+       to_char(Coalesce(CRAMT/ccyMinorCcyUnits,0) ,'99999999999999D00') CRAMT, 
+       AT.TAXAPPLICABLE GST_APPLICABLE,B.BRANCHPROVINCE FROM_STATEID,Case when FT.PROVINCE is not null then FT.PROVINCE else custAddrPRovince end TO_STATEID       
+from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAMT,CRAMT from (
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,P.FINREFERENCE,P.DRORCR,P.PostAmount
+      from postings P inner join Financemain F on F.finreference = P.finreference
+	  where (P.PostAmount != 0)
+      union all
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,V.Primarylinkref,P.DRORCR,P.PostAmount
+      from postings P inner join vasrecording V on V.vasreference = P.finreference
+	  where (P.PostAmount != 0)
+      )PIVOT (sum(PostAmount) for DRORCR in('D' as DRAMT ,'C' as CRAMT))) P inner join
+     FinanceMain FM on FM.Finreference = P.Finreference inner join
+     RMTBranches B on B.BranchCOde = FM.FinBranch INNER JOIN 
+     Accounts AM  ON AM.ACCOUNTID = P.ACCOUNT INNER JOIN 
+     RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACTYPE INNER JOIN 
+     RMTCURRENCIES RC on RC.ccyCode = FM.FINCCY LEFT JOIN
+     FinTaxDetail FT on FT.FINREFERENCE = FM.FINREFERENCE LEFT JOIN
+     CUSTOMERADDRESSES CA on CA.Custid =FM.custid and CustAddrPriority=5
+	</createView>
+</changeSet>
+<changeSet id="14" author="Prasad">
+	<createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+		Select NULL MODULEID,Case when DSM.FIELDCODEVALUE_char is not null then DSM.FIELDCODEVALUE_char else 'X' end STAGEID,
+            P.LINKEDTRANID ${call.concatenate}TRANSORDER LEA_VOUCHERID,NULL FA_VOUCHERID,
+    Case when DSM.FIELDCODEVALUE_char is not null then DSM.FIELDCODEVALUE_char else 'X' end VOUCHERTYPE,
+    P.POSTDATE VOUCHERDATE,P.VALUEDATE VALUEDATE,RB.BANKREFNO BRANCHID,RB.BRANCHCODE BRANCH_CODE,
+    RB.BRANCHDESC BRANCHDESC,RCP.BUSINESSAREA BUSINESS_AREA,AM.PROFITCENTERID PROFIT_CENTRE,FM.FINTYPE PRODUCT_FLAG,
+    NULL SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,${call.substr}(fm.finreference,-7,7) AGREEMENTID,FM.FINREFERENCE AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+    FP.FIRSTDISBDATE DISBURSALDATE,FM.FINISACTIVE LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+    ${call.substr}(P.ACCOUNT,1,12) FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HOSTACCOUNT SAPGL_CODE,
+    AM.COSTCENTERID COST_CENTRE,
+    COALESCE(CASE WHEN P.DRORCR='D' THEN P.POSTAMOUNT END,0) DRAMT,
+    COALESCE(CASE WHEN P.DRORCR='C' THEN P.POSTAMOUNT END,0) CRAMT,
+    P.DRORCR DRCR_FLAG,P.POSTAMOUNT DRCR_AMT,P.TRANDESC NARRATION,
+    NULL CHEQUEID,
+    NULL BUSINESSDATE,
+    NULL PROCESSDATE,
+    NULL SEGMENT,'N' PROCESSED_FLAG,NULL BATCH_ID from (
+    Select P.LINKEDTRANID,P.TRANSORDER,P.FINREFERENCE,P.POSTDATE,P.VALUEDATE,P.ACCOUNT,P.FINEVENT,P.DRORCR,P.POSTAMOUNT,P.TRANDESC           
+    from postings P where (P.PostAmount != 0)
+    union all
+    Select P.LINKEDTRANID,P.TRANSORDER,V.Primarylinkref,P.POSTDATE,P.VALUEDATE,P.ACCOUNT,P.FINEVENT,P.DRORCR,P.POSTAMOUNT,P.TRANDESC  
+    from postings P 
+    Inner join vasrecording V on V.vasreference = P.finReference where (P.PostAmount != 0))P
+    INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE=P.FINREFERENCE
+    INNER JOIN FINPFTDETAILS FP ON FM.FINREFERENCE=FP.FINREFERENCE
+    INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH
+    LEFT JOIN RMTCOUNTRYVSPROVINCE RCP ON RCP.CPPROVINCE = RB.BRANCHPROVINCE
+    INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+    INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+    LEFT JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+    LEFT JOIN FINPROVISIONS FPR ON FPR.FINREFERENCE = FM.PROMOTIONCODE
+    LEFT JOIN DataMart_Stage_Mapping DSM on DSM.FieldCode = P.FINEVENT and DSM.FieldType='Event'
+	</createView>
+</changeSet>
+
+
+
 </databaseChangeLog>
