@@ -103,7 +103,9 @@ public class ExperianUtility {
 		if (documentList != null && !documentList.isEmpty()) {
 			for (CustomerDocument document : documentList) {
 				if (StringUtils.equals(document.getCustDocCategory(), docType)) {
-					docNumber = document.getCustDocTitle();
+					if(document.getCustDocTitle()!=null){
+						docNumber = document.getCustDocTitle();	
+					}
 					break;
 				}
 			}

@@ -46,18 +46,14 @@
 		<property name="serviceUrl" value="${soa.sms.url}" />
 		<property name="client" ref="jsonClient" />
 	</bean> 
-	<!-- ExperianBureauConsumerService -->
-	<bean id="experianconsumerService"
-		class="com.pennanttech.niyogin.experian.consumer.service.ExperianConsumerServiceImpl" parent="niyoginService">
-		<property name="serviceUrl" value="${exp.bureau.consumer.url}" />
+	<!-- ExperianBureauService -->
+	<bean id="experianBureauService"
+		class="com.pennanttech.niyogin.experian.service.ExperianBureauServiceImpl" parent="niyoginService">
+		<property name="consumerUrl" value="${exp.bureau.consumer.url}" />
+		<property name="commercialUrl" value="${exp.bureau.commercial.url}" />
+		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="client" ref="jsonClient" />
 	</bean> 
-	<!-- ExperianBureauCommercialService -->
-	<bean id="experianCommercialService"
-		class="com.pennanttech.niyogin.experian.commercial.service.ExperianCommercialServiceImpl" parent="niyoginService">
-		<property name="serviceUrl" value="${exp.bureau.commercial.url}" />
-		<property name="client" ref="jsonClient" />
-	</bean>
 	<!-- CRIFBureauCommercialService -->
 	<bean id="criffBureauService"
 		class="com.pennanttech.niyogin.criff.service.CrifBureauServiceImpl" parent="niyoginService">
