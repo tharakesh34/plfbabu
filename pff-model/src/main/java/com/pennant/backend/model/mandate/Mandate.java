@@ -620,4 +620,12 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	public void setDocImage(byte[] docImage) {
 		this.docImage = docImage;
 	}
+	
+	public String getExternalRef() {
+		return externalRef;
+	}
+
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
+	}
 }
