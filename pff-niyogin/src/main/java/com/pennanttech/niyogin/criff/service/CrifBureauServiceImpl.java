@@ -146,8 +146,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 					InterfaceConstants.PFF_CUSTCTG_SME)) {
 				CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
 				serviceUrl = commercialUrl;
-				//jsonResponse = client.post(serviceUrl, commercial);
-				jsonResponse = getResponse();
+				jsonResponse = client.post(serviceUrl, commercial);
+				//jsonResponse = getResponse();
 				extConfigFileName = "crifBureauCommercial";
 				requestObject = commercial;
 			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
