@@ -9,10 +9,7 @@
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
-	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface-bajaj</artifactId>
-	<version>${pff.version}</version>
-	<packaging>jar</packaging>
 
 	<properties>
 		<cxf.version>3.1.8</cxf.version>
@@ -20,7 +17,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${pff.groupId}</groupId>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
 			<artifactId>pff-interface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -41,7 +38,7 @@
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
 			<artifactId>data-engine</artifactId>
-			<version>2.1.7</version>
+			<version>2.1.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
@@ -52,6 +49,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-dbcp</artifactId>
+			<version>9.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

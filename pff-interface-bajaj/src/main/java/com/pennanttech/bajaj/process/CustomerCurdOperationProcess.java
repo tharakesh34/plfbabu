@@ -19,8 +19,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.gcd.GcdCustomer;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 
 public class CustomerCurdOperationProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(CustomerCurdOperationProcess.class);

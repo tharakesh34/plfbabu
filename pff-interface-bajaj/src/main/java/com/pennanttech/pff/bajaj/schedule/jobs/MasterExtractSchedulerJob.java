@@ -11,8 +11,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 
 public class MasterExtractSchedulerJob implements Job, Serializable {
 	private static final long serialVersionUID = 1L;

@@ -30,8 +30,8 @@ import com.pennanttech.bajaj.model.Province;
 import com.pennanttech.bajaj.model.TaxDetail;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 
 public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);

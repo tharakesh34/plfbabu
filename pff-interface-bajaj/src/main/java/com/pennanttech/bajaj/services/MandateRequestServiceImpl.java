@@ -20,8 +20,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.services.MandateRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -39,14 +39,14 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 		String userName = (String) params[4];
 		String selectedBranchs = (String) params[5];
 
-		String[] mandateIds = new String[mandateIdList.size()];
+		Long[] mandateIds = new Long[mandateIdList.size()];
 
 		int i = 0;
 		for (Long mandateId : mandateIdList) {
-			mandateIds[i++] = String.valueOf(mandateId);
+			mandateIds[i++] = mandateId;
 		}
 
-		List<String> mandates = prepareRequest(mandateIds);
+		List<Long> mandates = prepareRequest(mandateIds);
 
 		if (mandates == null || mandates.isEmpty()) {
 			return;
@@ -73,7 +73,7 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 		dataEngine.exportData("MANDATES_EXPORT");
 	}
 
-	private List<String> prepareRequest(String[] mandateIds) throws Exception {
+	private List<Long> prepareRequest(Long[] mandateIds) throws Exception {
 		logger.debug(Literal.ENTERING);
 		final Map<String, Integer> bankCodeSeq = getCountByProcessed();
 
@@ -114,13 +114,12 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
-			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<String>() {
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
 				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					String id = null;
+				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
-					rowMap.put("BANK_SEQ", getSequence((String) rowMap.get("BANK_CODE"), bankCodeSeq));
+					rowMap.put("BANK_SEQ", getSequence(rowMap.get("BANK_CODE").toString(), bankCodeSeq));
 					rowMap.put("EXTRACTION_DATE", getAppDate());
 
 					String appId = null;
@@ -145,7 +144,7 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 						CUST_EMI = BigDecimal.ZERO;
 					}
 
-					if (StringUtils.trimToNull((String) rowMap.get("FINREFERENCE")) == null) {
+					if (StringUtils.trimToNull(rowMap.get("FINREFERENCE").toString()) == null) {
 						if (CUST_EMI.compareTo(UPPER_LIMIT) > 0) {
 							rowMap.put("EMI", UPPER_LIMIT);
 							rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
@@ -170,8 +169,8 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 					rowMap.remove("CUST_EMI");
 					rowMap.remove("FIRSTDUEDATE");
 					
-					id = String.valueOf(insertData(rowMap));
-					logMandateHistory((BigDecimal)rowMap.get("MANDATEID"), id);
+					long id = insertData(rowMap);
+					logMandateHistory((Long) rowMap.get("mandateid"), id);
 					rowMap = null;
 					return id;
 				}
@@ -192,7 +191,7 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "MANDATE_REQUESTS");
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		try {
-			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "ID" });
+			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "id" });
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -244,7 +243,7 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 		return bankCodeMap;
 	}
 	
-	private void logMandateHistory(BigDecimal mandateId, String requestId) {
+	private void logMandateHistory(long mandateId, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
