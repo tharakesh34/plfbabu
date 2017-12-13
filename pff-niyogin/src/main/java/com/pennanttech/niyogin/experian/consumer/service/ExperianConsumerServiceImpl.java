@@ -210,7 +210,7 @@ public class ExperianConsumerServiceImpl extends NiyoginService implements Exper
 		List<CAISAccountHistory> caisAccountHistories = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
 			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = client.getResponseObject(jsonEmiBounceResponse, "", CAISAccountHistory.class, true);
+			Object responseObj = client.getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {

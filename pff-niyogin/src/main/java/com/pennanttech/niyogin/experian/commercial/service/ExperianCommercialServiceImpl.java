@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -51,6 +52,8 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 	private final String		SUIT_FILED						= "SUITFILED";
 	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
 	private final String		NO_EMI_BOUNCES_IN_SIX_MONTHS	= "EMI6MNTHS";
+	private final String		DOC_TYPE_PAN					= "03";
+	private final String		GENDER_MALE						= "Male";
 
 	private String				status							= "SUCCESS";
 	private String				errorCode						= null;
@@ -126,27 +129,25 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		Customer customer = customerDetails.getCustomer();
 
 		BureauCommercial bureauCommercial = new BureauCommercial();
-		String appId = financeDetail.getFinScheduleData().getFinanceMain().getApplicationNo();
-		bureauCommercial.setApplicationId(appId);
-		bureauCommercial.setStgUnqRefId(financeDetail.getFinReference());
+		bureauCommercial.setApplicationId(customer.getCustCIF());
+		bureauCommercial.setStgUnqRefId(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 
 		Applicant applicant = new Applicant();
 		applicant.setFirstName(customer.getCustFName());
 		applicant.setLastName(customer.getCustLName());
 		applicant.setDob(customer.getCustDOB());
-		applicant.setGender(customer.getCustGenderCode());
+		applicant.setGender(StringUtils.isBlank(customer.getCustGenderCode())?GENDER_MALE:customer.getCustGenderCode());
 
-		String pan = "";
+		// Fetch PAN document
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null) {
 			for (CustomerDocument document : documentList) {
-				if (document.getCustDocCategory().equals("03")) {
-					pan = document.getCustDocTitle();
+				if (StringUtils.equals(document.getCustDocCategory(), DOC_TYPE_PAN)) {
+					applicant.setPan(document.getCustDocTitle());
 					break;
 				}
 			}
 		}
-		applicant.setPan(pan);
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			CustomerPhoneNumber customerPhone = ExperianUtility
 					.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
@@ -219,7 +220,7 @@ public class ExperianCommercialServiceImpl extends NiyoginService implements Exp
 		List<BpayGridResponse> bpayGridResponses = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
 			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = client.getResponseObject(jsonEmoBounceResponse, "", BpayGridResponse.class, true);
+			Object responseObj = client.getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
 			bpayGridResponses = (List<BpayGridResponse>) responseObj;
 		}
 

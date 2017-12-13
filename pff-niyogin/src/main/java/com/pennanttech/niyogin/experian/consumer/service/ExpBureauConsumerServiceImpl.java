@@ -165,7 +165,7 @@ public class ExpBureauConsumerServiceImpl extends NiyoginService implements Expe
 		List<CAISAccountHistory> caisAccountHistories = null;
 		if (extendedFieldMap.get("EMI3MONTHS") != null) {
 			String jsonResponse = extendedFieldMap.get("EMI3MONTHS").toString();
-			Object responseObj = jsonClient.getResponseObject(jsonResponse, "", CAISAccountHistory.class, true);
+			Object responseObj = jsonClient.getResponseObject(jsonResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
