@@ -881,4 +881,10 @@ UNION ALL
 			alter table disbursement_requests alter column id set default nextval('seqdisbursementrequests');
 		</sql>
 	</changeSet>
+	<changeSet id="37" author="Jayant" dbms="postgresql">
+		<modifyDataType tableName="interfacelogdetails" columnName="request" newDataType="citext"/>
+	</changeSet>
+	<changeSet id="38" author="Jayant" dbms="postgresql">
+		<modifyDataType tableName="interfacelogdetails" columnName="response" newDataType="citext"/>
+	</changeSet>
 	</databaseChangeLog>
