@@ -2954,7 +2954,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		
-		if (customer.getCustCRCPR()!=null) {
+		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
 			if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
 				String[] errorParameters = new String[1];
 				if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
