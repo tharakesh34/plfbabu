@@ -18,7 +18,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -38,8 +37,7 @@ import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.BureauScore;
 import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
-import com.pennanttech.pff.external.ExperianCommercialService;
-import com.pennanttech.pff.external.ExperianConsumerService;
+import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.ExternalDedup;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
@@ -53,10 +51,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private BlacklistCheck blacklistCheck;
 
 	@Autowired(required = false)
-	private ExperianConsumerService experianconsumerService;
-
-	@Autowired(required = false)
-	private ExperianCommercialService experianCommercialService;
+	private ExperianBureauService experianBureauService;
 
 	@Autowired(required = false)
 	private CriffBureauService criffBureauService;
@@ -150,33 +145,22 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_Bureau:
 				try {
-					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
+					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CRIFF Bureau:", e);
 					taskExecuted = false;
 					throw new InterfaceException("9999", e.getMessage());
 				}
-				try {
-					Customer customer = afinanceDetail.getCustomerDetails().getCustomer();
-					if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
-						auditHeader = experianconsumerService.getExperianConsumer(auditHeader);
-					} else if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
-						auditHeader = experianCommercialService.getBureauCommercial(auditHeader);
-					}
-					taskExecuted = true;
-				} catch (Exception e) {
-					logger.error("Exception in Experian Bureau:", e);
-					taskExecuted = true;
-				}
 				break;
 			case PennantConstants.method_Crif:
 				try {
-					//auditHeader=crifConsumerService.executeCriffBureau(auditHeader);
+					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CRIFF Bureau:", e);
-					taskExecuted = true;
+					taskExecuted = false;
+					throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
 			case PennantConstants.method_Cibil_Consumer:
