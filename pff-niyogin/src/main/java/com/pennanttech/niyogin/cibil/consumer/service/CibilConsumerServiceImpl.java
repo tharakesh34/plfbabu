@@ -23,7 +23,7 @@ import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerAddress;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerRequest;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilPersonalDetails;
 import com.pennanttech.niyogin.clients.JSONClient;
-import com.pennanttech.niyogin.utility.ExperianUtility;
+import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CibilConsumerService;
@@ -130,7 +130,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		personalDetails.setGender(customer.getLovDescCustGenderCodeName());
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			CustomerPhoneNumber customerPhone = ExperianUtility
+			CustomerPhoneNumber customerPhone = NiyoginUtility
 					.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
 			if (customerPhone != null) {
 				personalDetails.setMobile(customerPhone.getPhoneNumber());
@@ -160,7 +160,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		cibilConsumerRequest.setPersonalDetails(personalDetails);
 
 		if (customerDetails.getAddressList() != null) {
-			CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
+			CustomerAddres customerAddres = NiyoginUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5);
 			cibilConsumerRequest.setAddress(prepareAddress(customerAddres));
 		} else {
 			cibilConsumerRequest.setAddress(new CibilConsumerAddress());

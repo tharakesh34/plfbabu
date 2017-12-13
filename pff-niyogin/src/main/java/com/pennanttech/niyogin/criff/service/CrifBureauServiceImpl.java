@@ -43,7 +43,7 @@ import com.pennanttech.niyogin.criff.model.LoanDetailsData;
 import com.pennanttech.niyogin.criff.model.PaymentHistory;
 import com.pennanttech.niyogin.criff.model.PersonalAddress;
 import com.pennanttech.niyogin.criff.model.TradeLine;
-import com.pennanttech.niyogin.utility.ExperianUtility;
+import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -295,7 +295,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		commercial.setCompanyAddress(prepareComapnyAddress(customerDetails.getAddressList()));
 
 		commercial.setCompanyName(customer.getCustShrtName());
-		commercial.setCompanyMobile(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+		commercial.setCompanyMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_OFF));
 		commercial.setCompanyPAN(commercial.getApplicant().getPan());
 		commercial.setLegalEntity(customer.getLovDescCustTypeCodeName());
@@ -331,9 +331,9 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		applicant.setDob(formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
 		applicant.setGender(InterfaceConstants.PFF_GENDER_M);
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		applicant.setPan(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		applicant.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
 		applicant.setMaritalStatus(InterfaceConstants.PFF_MARITAL_STATUS);
-		applicant.setMobile(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), 
+		applicant.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), 
 				InterfaceConstants.PHONE_TYPE_PER));
 		// personal address details
 		applicant.setPersonalAddress(preparePersonalAddress(customerDetails.getAddressList()));
@@ -342,7 +342,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 	private PersonalAddress preparePersonalAddress(List<CustomerAddres> addressList) {
 		PersonalAddress personalAddress = new PersonalAddress();
-		CustomerAddres address = ExperianUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
+		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
 		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(), 
 				address.getCustAddrCity(),"_AView");
@@ -365,7 +365,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 	private CompanyAddress prepareComapnyAddress(List<CustomerAddres> addressList) {
 		CompanyAddress companyAddress = new CompanyAddress();
-		CustomerAddres address = ExperianUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
+		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 
 		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(), 
 				address.getCustAddrCity(),"_AView");

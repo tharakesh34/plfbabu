@@ -24,7 +24,7 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
 import com.pennanttech.niyogin.dedup.model.ExperianDedup;
 import com.pennanttech.niyogin.dedup.model.Phone;
-import com.pennanttech.niyogin.utility.ExperianUtility;
+import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -145,17 +145,17 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null && !documentList.isEmpty()) {
-			experianDedup.setPan(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-			experianDedup.setAadhaar(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
-			experianDedup.setPassport(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
+			experianDedup.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+			experianDedup.setAadhaar(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+			experianDedup.setPassport(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
 		}
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
-			experianDedup.setEmailId(ExperianUtility.getHignPriorityEmail(emailList, 5));
+			experianDedup.setEmailId(NiyoginUtility.getHignPriorityEmail(emailList, 5));
 		}
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
-			CustomerAddres customerAddres = ExperianUtility.getHighPriorityAddress(addressList, 5);
+			CustomerAddres customerAddres = NiyoginUtility.getHighPriorityAddress(addressList, 5);
 			experianDedup.setAddress(prepareAddress(customerAddres));
 		} else {
 			experianDedup.setAddress(new Address());
@@ -163,7 +163,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
 		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-			CustomerPhoneNumber custPhoneNumber = ExperianUtility.getHighPriorityPhone(phoneNumberList, 5);
+			CustomerPhoneNumber custPhoneNumber = NiyoginUtility.getHighPriorityPhone(phoneNumberList, 5);
 			experianDedup.setPhone(preparePhone(custPhoneNumber));
 		} else {
 			experianDedup.setPhone(new Phone());

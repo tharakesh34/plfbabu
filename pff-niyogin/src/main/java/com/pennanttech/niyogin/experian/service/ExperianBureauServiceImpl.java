@@ -40,7 +40,7 @@ import com.pennanttech.niyogin.experian.model.CAISAccountHistory;
 import com.pennanttech.niyogin.experian.model.CompanyAddress;
 import com.pennanttech.niyogin.experian.model.ConsumerAddress;
 import com.pennanttech.niyogin.experian.model.PersonalDetails;
-import com.pennanttech.niyogin.utility.ExperianUtility;
+import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -199,7 +199,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		commercial.setApplicant(prepareApplicant(customerDetails));
 		commercial.setCompanyName(customer.getCustShrtName());
 		commercial.setCompanyAddress(prepareCompanyAddress(customerDetails.getAddressList()));
-		commercial.setCompanyMobile(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+		commercial.setCompanyMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_OFF));
 		commercial.setCompanyPan(commercial.getApplicant().getPan());
 		commercial.setLegalEntity(customer.getLovDescCustTypeCodeName());
@@ -223,8 +223,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		applicant.setDob(formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
 		applicant.setGender(InterfaceConstants.PFF_GENDER_M);
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		applicant.setPan(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-		applicant.setMobile(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+		applicant.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		applicant.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));
 
 		applicant.setMaritalStatus(InterfaceConstants.PFF_MARITAL_STATUS);
@@ -239,7 +239,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private Address preparePersonalAddress(List<CustomerAddres> addressList) {
-		CustomerAddres address = ExperianUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
+		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(),
 				address.getCustAddrCity(), "_AView");
 
@@ -267,7 +267,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	private CompanyAddress prepareCompanyAddress(List<CustomerAddres> addressList) {
 		CompanyAddress companyAddress = new CompanyAddress();
-		CustomerAddres address = ExperianUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
+		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(),
 				address.getCustAddrCity(), "_AView");
 		String addrLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","
@@ -317,11 +317,11 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		personalDetails.setLastName(customer.getCustShrtName());
 		personalDetails.setDob(formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
 		personalDetails.setGender(InterfaceConstants.PFF_GENDER_M);
-		personalDetails.setMobile(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+		personalDetails.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		personalDetails.setPan(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-		personalDetails.setUid_(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+		personalDetails.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		personalDetails.setUid_(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
 
 		return personalDetails;
 	}
@@ -334,7 +334,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	private ConsumerAddress prepareConsumerAddress(List<CustomerAddres> addressList) {
 		ConsumerAddress consumerAddress = new ConsumerAddress();
-		CustomerAddres address = ExperianUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
+		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(),
 				address.getCustAddrCity(), "_AView");
 

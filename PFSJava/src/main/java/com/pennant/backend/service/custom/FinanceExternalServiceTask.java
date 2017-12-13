@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -143,33 +144,36 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 				taskExecuted = true;
 				break;
-			case PennantConstants.method_Bureau:
+			case PennantConstants.method_Experian_Bureau:
 				try {
 					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CRIFF Bureau:", e);
-					taskExecuted = false;
-					throw new InterfaceException("9999", e.getMessage());
+					taskExecuted = true;
+					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
+					//throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
-			case PennantConstants.method_Crif:
+			case PennantConstants.method_Crif_Bureau:
 				try {
 					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CRIFF Bureau:", e);
-					taskExecuted = false;
-					throw new InterfaceException("9999", e.getMessage());
+					taskExecuted = true;
+					setRemarks(auditHeader, PennantConstants.method_Crif_Bureau, e.getMessage());
+					//throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
-			case PennantConstants.method_Cibil_Consumer:
+			case PennantConstants.method_Cibil_Bureau:
 				try {
-					auditHeader=cibilConsumerService.getCibilConsumer(auditHeader);
+					auditHeader = cibilConsumerService.getCibilConsumer(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in CIBIL Bureau:", e);
 					taskExecuted = true;
+					setRemarks(auditHeader, PennantConstants.method_Cibil_Bureau, e.getMessage());
 				}
 				break;
 			default:
@@ -196,6 +200,31 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 		logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 		return taskExecuted;
+	}
+
+	/**
+	 * Method for set Reason code and remarks.
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @param message
+	 */
+	private void setRemarks(AuditHeader auditHeader, String method, String message) {
+		FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		Map<String, Object> extendedMap = finDeatil.getExtendedFieldRender().getMapValues();
+		if(message != null) {
+			message = message.substring(0, 143);
+		}
+		if(StringUtils.equals(method, PennantConstants.method_Experian_Bureau)) {
+			extendedMap.put("REASONCODE", "9999");
+			extendedMap.put("REMARKSEXPERIANBEA", message);
+		} else if(StringUtils.equals(method, PennantConstants.method_Crif_Bureau)) {
+			extendedMap.put("REASONCODECRIF", "9999");
+			extendedMap.put("REMARKSCRIF", message);
+		} else if(StringUtils.equals(method, PennantConstants.method_Cibil_Bureau)) {
+			/*extendedMap.put("REASONCODECRIF", "9999");
+			extendedMap.put("REMARKSCRIF", message);*/
+		}
 	}
 
 	/**

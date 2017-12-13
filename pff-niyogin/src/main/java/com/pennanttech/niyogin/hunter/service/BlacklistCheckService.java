@@ -21,7 +21,7 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
-import com.pennanttech.niyogin.utility.ExperianUtility;
+import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -119,16 +119,16 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
 
 		if (customerDetails.getCustomerEMailList() != null) {
-			customerBasicDetail.setEmailId(ExperianUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+			customerBasicDetail.setEmailId(NiyoginUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
 		}
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			customerBasicDetail.setPhone(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), InterfaceConstants.PHONE_TYPE_PER));
+			customerBasicDetail.setPhone(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), InterfaceConstants.PHONE_TYPE_PER));
 		}
 
 		Address address = null;
 		if (customerDetails.getAddressList() != null) {
-			address = prepareAddress(ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5));
+			address = prepareAddress(NiyoginUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5));
 		} else {
 			address = new Address();
 		}
