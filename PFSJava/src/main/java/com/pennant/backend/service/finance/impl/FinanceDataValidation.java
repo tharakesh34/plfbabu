@@ -1167,7 +1167,8 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
-		if(extFinDetail.getMandate() != null && financeDetail.getMandate() != null) {
+		if((extFinDetail.getMandate() != null && StringUtils.isBlank(extFinDetail.getMandate().getAccNumber()))
+				&& financeDetail.getMandate() != null) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90405", null)));
 			return errorDetails;
 		} else {
@@ -1517,16 +1518,16 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90303", valueParm)));
 						return errorDetails;
 					} else {
-						if (!StringUtils.equalsIgnoreCase(curMandate.getCustCIF(), financeDetail.getFinScheduleData()
-								.getFinanceMain().getLovDescCustCIF())) {
+						if (!StringUtils.equalsIgnoreCase(curMandate.getCustCIF(),
+								financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 							String[] valueParm = new String[2];
 							valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
 							valueParm[1] = curMandate.getCustCIF();
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90310", valueParm)));
 							return errorDetails;
 						}
-						if (!StringUtils.equalsIgnoreCase(curMandate.getMandateType(), financeDetail
-								.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
+						if (!StringUtils.equalsIgnoreCase(curMandate.getMandateType(),
+								financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
 							String[] valueParm = new String[2];
 							valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
 							valueParm[1] = curMandate.getMandateType();
@@ -1539,7 +1540,7 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90312", valueParm)));
 							return errorDetails;
 						}
-						if(!curMandate.isActive()){
+						if (!curMandate.isActive()) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "mandate:";
 							valueParm[1] = String.valueOf(mandate.getMandateID());
@@ -1573,7 +1574,7 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = "accNumber";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					 return errorDetails;
+					return errorDetails;
 				}
 				if (mandate.getAccNumber().length() > 50) {
 					String[] valueParm = new String[2];
@@ -1609,34 +1610,35 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
-				
-				if(mandate.getMaxLimit() == null) {
+
+				if (mandate.getMaxLimit() == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "maxLimit"; 
+					valueParm[0] = "maxLimit";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90242", valueParm)));
 					return errorDetails;
 				}
-				
-				if(mandate.getMaxLimit().compareTo(BigDecimal.ZERO) <= 0) {
+
+				if (mandate.getMaxLimit().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "maxLimit";
 					valueParm[1] = "0";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 					return errorDetails;
 				}
-				if(mandate.getExpiryDate() != null){
-				if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
-						|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "Mandate ExpiryDate";
-					valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
-					return errorDetails;
-				}	
+				if (mandate.getExpiryDate() != null) {
+					if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+							|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Mandate ExpiryDate";
+						valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+						return errorDetails;
+					}
 				}
-				if(mandate.getStartDate() != null){
-					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+				if (mandate.getStartDate() != null) {
+					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
+							-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 					if (mandate.getStartDate().before(mandbackDate)
 							|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
@@ -1644,7 +1646,7 @@ public class FinanceDataValidation {
 						valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
-					}	
+					}
 				}
 				boolean isValidBranch = true;
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
@@ -1653,13 +1655,13 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = mandate.getIFSC();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
-					}else{
+					} else {
 						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
-						if(StringUtils.isBlank(mandate.getMICR())){
+						if (StringUtils.isBlank(mandate.getMICR())) {
 							mandate.setMICR(bankBranch.getMICR());
 						} else {
-							if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+							if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "MICR";
 								valueParm[1] = mandate.getMICR();
@@ -1679,28 +1681,28 @@ public class FinanceDataValidation {
 					} else {
 						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
-						if(StringUtils.isBlank(mandate.getMICR())){
+						if (StringUtils.isBlank(mandate.getMICR())) {
 							mandate.setMICR(bankBranch.getMICR());
 						} else {
-							if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+							if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "MICR";
 								valueParm[1] = mandate.getMICR();
-								 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
-								 return errorDetails;
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+								return errorDetails;
 							}
 						}
-					
+
 					}
 				}
-				if(!isValidBranch){
+				if (!isValidBranch) {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getMandateType();
-					 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90333", valueParm)));
-					 return errorDetails;
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90333", valueParm)));
+					return errorDetails;
 				}
 				//validate AccNumber length
-				if(StringUtils.isNotBlank(mandate.getBankCode())){
+				if (StringUtils.isNotBlank(mandate.getBankCode())) {
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 					if (accNoLength != 0) {
 						if (mandate.getAccNumber().length() != accNoLength) {
@@ -1728,7 +1730,7 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
 					}
 				}
-				String  jointAccHolderName= mandate.getJointAccHolderName();
+				String jointAccHolderName = mandate.getJointAccHolderName();
 				if (StringUtils.isNotBlank(jointAccHolderName)) {
 					if (!(jointAccHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
 						String[] valueParm = new String[1];
@@ -1736,8 +1738,7 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
 					}
 				}
-				
-				
+
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
 					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
@@ -1800,8 +1801,8 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90309", valueParm)));
 					}
 				}
-				if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), financeDetail.getFinScheduleData()
-						.getFinanceMain().getFinRepayMethod())) {
+				if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(),
+						financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
 					valueParm[1] = mandate.getMandateType();
@@ -1809,10 +1810,41 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 			}
-		} else {
-			String[] valueParm = new String[1];
-			valueParm[0] = "mandate";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+			if (StringUtils.isNotBlank(mandate.getDocumentName())) {
+				String docName = mandate.getDocumentName();
+				//document Name Extension validation
+				if (docName.endsWith(".jpg") || docName.endsWith(".jpeg") || docName.endsWith(".png")
+						|| docName.endsWith(".pdf")) {
+					//TODO : {0} must be provided for {1}
+					if (mandate.getDocImage() == null||mandate.getDocImage().length==0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "docContent";
+						valueParm[1] = docName;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90406", valueParm)));
+					}
+
+				} else if (!docName.contains(".")) {
+					//Uploaded document {0} extension should be required.
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getDocumentName();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90291", valueParm)));
+				} else {
+					//TODO: uploaded document {0} is not supported
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getDocumentName();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90407", valueParm)));
+
+				}
+			}
+			
+			//TODO {0} must be provided for {1}
+			if(mandate.getDocImage() != null&&StringUtils.isBlank(mandate.getDocumentName())){
+				String[] valueParm = new String[2];
+				valueParm[0] = "documentName";
+				valueParm[1] = "docContent";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90406", valueParm)));
+			}
+
 		}
 		return errorDetails;
 	}
