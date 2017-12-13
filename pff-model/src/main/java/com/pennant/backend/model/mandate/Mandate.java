@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = { "custCIF", "useExisting", "mandateID", "mandateRef", "mandateType", "bankCode", "branchCode",
 		"iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate", "startDate",
 		"expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "status", "active",
-		"totEMIAmount","returnStatus" })
+		"totEMIAmount","documentName","docImage","returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity implements Entity {
@@ -149,9 +149,10 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String orgReference;
 	private String sourceId;
 	private String	finReference;
-
+	@XmlElement
 	private String documentName;
 	private long documentRef = Long.MIN_VALUE;
+	@XmlElement(name="docContent")
 	private byte[] docImage;
  
 

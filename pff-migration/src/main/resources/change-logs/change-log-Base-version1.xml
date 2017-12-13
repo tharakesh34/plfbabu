@@ -959,4 +959,18 @@ Insert into DOCUMENTDATAMAPPING values (2,'ITR5','ITR-5 Form Description');
 Insert into DOCUMENTDATAMAPPING values (3,'ST3','Form for Return of Service Tax');
 	</sql>
  </changeSet>
+ 
+ 	 <changeSet id="45" author="Ganesh.p">
+	<sql>
+		Delete from ErrorDetails where ErrorCode = '90406';
+		INSERT INTO ErrorDetails VALUES('90406','EN','E','{0} must be provided for {1}.','test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="Ganesh.p">
+	<sql>
+		Delete from ErrorDetails where ErrorCode = '90407';
+		INSERT INTO ErrorDetails VALUES('90407','EN','E','uploaded document {0} is not supported.','test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
  </databaseChangeLog>
