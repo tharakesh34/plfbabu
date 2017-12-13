@@ -10476,7 +10476,12 @@
 
 	<bean id="externalDocumentManager"
 		class="com.pennanttech.pff.document.external.ExternalDocumentManager"/>
-		
+	
+	<!-- for Document parser -->
+	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
+		<constructor-arg ref="pfsDatasource" />
+	</bean>
+	
 	<!-- Licence File Upload -->
 	<bean id="licenceFileDAO"
 		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"

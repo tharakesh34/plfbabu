@@ -326,7 +326,6 @@ import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.DispatchMode;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
-import com.pennant.backend.model.systemmasters.DocumentDataMapping;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
@@ -354,6 +353,7 @@ import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
+import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -2028,10 +2028,10 @@ public class PennantJavaUtil {
 				new String[][] { { "FieldCode", "0", "PUR_LOAN" } }, 300));
 		
 		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
-				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "Type", "Type" }, null, 350));
+				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "Type", "TypeDescription" }, null, 350));
 		
 		ModuleUtil.register("PdfDocumentType", new ModuleMapping("PdfDocumentType", DocumentType.class, new String[] {
-				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "PdfMappingRef", "DocTypeDesc"},
+				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode","DocTypeDesc"},
 				new Object[][] { { "DocTypeIsActive", "0", "1" }}, 350));
 	}
 

@@ -105,7 +105,8 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, " );
-			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand,");
+			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
+			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -151,7 +152,8 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(", DocPurpose, DocUri");
 		if (type.contains("View")) {
 			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
-			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand");
+			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
+			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
 		}
 		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -181,6 +183,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(" CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive,");
 		selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, ");
 		selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, DocPurpose, DocUri,");
+		selectSql.append(" DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  CustomerDocuments_AView");
@@ -294,12 +297,12 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
 		insertSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified, CustDocVerifiedBy,");
-		insertSql.append(" CustDocIsAcrive,CustDocCategory, CustDocName, DocRefId, DocPurpose, DocUri,");
+		insertSql.append(" CustDocIsAcrive,CustDocCategory, CustDocName, DocRefId, DocPurpose, DocUri, PdfPassWord,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustID, :CustDocType, :CustDocTitle, :CustDocSysName, :CustDocRcvdOn," );
 		insertSql.append(" :CustDocExpDate, :CustDocIssuedOn, :CustDocIssuedCountry, :CustDocIsVerified, :CustDocVerifiedBy,");
-		insertSql.append(" :CustDocIsAcrive,:CustDocCategory, :CustDocName, :DocRefId, :DocPurpose, :DocUri,");
+		insertSql.append(" :CustDocIsAcrive,:CustDocCategory, :CustDocName, :DocRefId, :DocPurpose, :DocUri, :PdfPassWord,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -339,7 +342,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		updateSql.append(" CustDocName=:CustDocName," );
 		updateSql.append(" CustDocIssuedCountry = :CustDocIssuedCountry, CustDocIsVerified = :CustDocIsVerified," );
 		updateSql.append(" CustDocVerifiedBy = :CustDocVerifiedBy, CustDocIsAcrive = :CustDocIsAcrive, DocRefId = :DocRefId,");
-		updateSql.append(" DocPurpose = :DocPurpose, DocUri = :DocUri, Version = :Version , LastMntBy = :LastMntBy,");
+		updateSql.append(" DocPurpose = :DocPurpose, DocUri = :DocUri, PdfPassWord = :PdfPassWord, Version = :Version , LastMntBy = :LastMntBy,");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
 		updateSql.append(" WorkflowId = :WorkflowId ");
@@ -374,6 +377,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, ");
 			selectSql.append(" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive, ");
 			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, ");
+			selectSql.append(" DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");

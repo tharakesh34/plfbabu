@@ -213,6 +213,11 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.8.3</version>
 		</dependency>
+		   <dependency>
+			<groupId>com.pennanttech.document</groupId>
+			<artifactId>document-parser</artifactId>
+			<version>1.0.3</version>
+		</dependency> 
 	</dependencies>
 
 	<build>

@@ -278,6 +278,11 @@
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
+		 <dependency>
+			<groupId>com.pennanttech.document</groupId>
+			<artifactId>document-parser</artifactId>
+			<version>1.0.3</version>
+		</dependency> 
 	</dependencies>
 
 	<build>
