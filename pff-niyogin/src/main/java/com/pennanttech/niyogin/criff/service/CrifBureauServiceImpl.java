@@ -54,7 +54,7 @@ import com.pennanttech.pff.external.service.NiyoginService;
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
 	private static final Logger	logger				= Logger.getLogger(CrifBureauServiceImpl.class);
-	private String				extConfigFileName	= "crifBureauConsumer";
+	private String				extConfigFileName;
 	private String				consumerUrl;
 	private String				commercialUrl;
 	private JSONClient			client;
