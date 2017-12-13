@@ -343,7 +343,17 @@ public class DateUtil {
 		return convert(new GregorianCalendar(year, month, day));
 	}
 
-	// FIXME  ADD Comments
+
+	/**
+	 * Returns {@link Date} by adding or subtracting the specified number of
+	 * months to the given {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object on which add or subtract the months.
+	 * @param months
+	 *            The number of months to add or subtract.
+	 * @return A {@link Date} by adding or subtracting by adding or subtracting
+	 */
 	public static Date addMonths(Date date, int months) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -351,7 +361,16 @@ public class DateUtil {
 		return cal.getTime();
 	}
 
-	// FIXME  ADD Comments
+	/**
+	 * Returns {@link Date} by adding or subtracting the specified number of
+	 * days to the given {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object on which add or subtract the days.
+	 * @param days
+	 *            The number of days to add or subtract.
+	 * @return A {@link Date} by adding or subtracting by adding or subtracting
+	 */
 	public static Date addDays(Date date, int days) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -359,7 +378,14 @@ public class DateUtil {
 		return cal.getTime();
 	}
 
-	// FIXME  ADD Comments
+	/**
+	 * Returns {@link java.sql.Date} for the specified {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object which which needs to be convert to
+	 *            {@link java.sql.Date} .
+	 * @return A {@link java.sql.Date}
+	 */
 	public static java.sql.Date getSqlDate(Date date) {
 		if (date == null) {
 			throw new IllegalArgumentException();

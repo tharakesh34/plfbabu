@@ -36,16 +36,6 @@
 			<artifactId>spring-context</artifactId>
 		</dependency>
 
-		<!-- Apache Commons -->
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-
 		<!-- Jax-RS Provider for JSON Content Type -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -59,6 +49,25 @@
 		</dependency>
 
 		<!-- Apache Axiom Library for XML Infoset Compliant Object Model -->
+		<dependency>
+			<groupId>org.apache.ws.commons.axiom</groupId>
+			<artifactId>axiom-api</artifactId>
+			<version>1.2.8</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-activation_1.1_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-javamail_1.4_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-impl</artifactId>
@@ -76,10 +85,6 @@
 					<groupId>org.apache.geronimo.specs</groupId>
 					<artifactId>geronimo-stax-api_1.0_spec</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -92,10 +97,6 @@
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>2.3.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat-dbcp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
