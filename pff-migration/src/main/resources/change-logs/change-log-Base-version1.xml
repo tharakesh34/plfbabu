@@ -855,7 +855,7 @@ UNION ALL
 			<column name="ErrorDesc" type="nvarchar(200)"/>
 		</createTable>
 	</changeSet>
-<changeSet id="34" author="Amit">
+<!-- <changeSet id="34" author="Amit">
 	<sql>
 		INSERT INTO SecRights SELECT (select (SeqNo+1) from
 		SeqSecRights),3,'CustomerDocumentDialog_pdfPassword','CustomerDocumentDialog',0,1000,current_timestamp,'Approved','
@@ -873,7 +873,8 @@ UNION ALL
 		SecGroupRights);
 	</sql>
 	</changeSet>
-	<changeSet id="35" author="Jayant" dbms="postgresql">
+ -->	
+ <changeSet id="35" author="Jayant" dbms="postgresql">
 		<createSequence sequenceName="seqdisbursementrequests" cycle="false" startValue="1" incrementBy="1" minValue="1"/>
 	</changeSet>
 	<changeSet id="36" author="Jayant" dbms="postgresql">
@@ -887,4 +888,75 @@ UNION ALL
 	<changeSet id="38" author="Jayant" dbms="postgresql">
 		<modifyDataType tableName="interfacelogdetails" columnName="response" newDataType="citext"/>
 	</changeSet>
-	</databaseChangeLog>
+ <changeSet id="39" author="Amit">
+		<sql>
+			drop table DOCUMENTDATACONFIG;
+		</sql>
+	</changeSet>
+		<changeSet id="40" author="Amit">
+		<createTable tableName="DOCUMENTDATACONFIG">
+			<column name="Year" type="nvarchar(50)"/>
+			<column name="Label" type="nvarchar(50)"/>
+			<column name="LabelText" type="nvarchar(250)"/>
+			<column name="LabelValueType" type="nvarchar(50)"/>
+			<column name="DefaultValue" type="nvarchar(50)" />
+			<column name="FormulaExecutionType" type="nvarchar(50)"/>
+			<column name="IndexOf" type="nvarchar(50)"/>
+			<column name="ExternalRef" type="nvarchar(250)"/>
+			<column name="MappingValue" type="NUMBER(19,0)"/>
+			<column name="IsActive" type="NUMBER(1,0)" defaultValue="1"/>
+			<column name="Formula" type="nvarchar(500)"/>
+			<column name="DateFormat" type="nvarchar(100)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="41" author="Amit">
+	<sql>
+Insert into DOCUMENTDATACONFIG 
+values ('2015-16','3c','Total of current assets, loans and advances (av + biv)','int','-1','horizontal','0','BALCURASSET',1,1,null, null);
+
+Insert into DOCUMENTDATACONFIG 
+values ('2015-16','iE','Total (iA + iB + iC + iD)','int','-1','horizontal','0','BALCURLIAB',1,1,null, null);
+
+Insert into DOCUMENTDATACONFIG 
+values ('2015-16','iA','Sundry Creditors','int','-1','horizontal','0','SUNDRCREDY1',1,1,null, null);
+
+Insert into DOCUMENTDATACONFIG 
+values ('2015-16','diii','Total (iE + iiE )','int','-1','horizontal','0','PROVY1',1,1,null, null);
+
+Insert into DOCUMENTDATACONFIG 
+values ('2016-2017',' ','No of days beyond due date','int','-1','horizontal','0','NOOFDAYSBEYONDDUE',3,1,null,null);
+
+Insert into DOCUMENTDATACONFIG 
+values ('2016-2017',' ','Due date for filing of this return','Date',null,'horizontal','0','DUEDATEFORFILINRET',3,1,null,'dd/MM/yyyy');
+
+Insert into DOCUMENTDATACONFIG 
+values ('2016-2017',' ','Actual date of filing','Date',null,'horizontal','0','ACTUALDATEOFFILNG',3,1,null,'dd/MM/yyyy');
+	</sql>
+	</changeSet>
+	
+	<changeSet id="42" author="Amit">
+		<sql>
+			drop table DocumentDataMapping;
+		</sql>
+	</changeSet>
+	<changeSet id="43" author="Amit">
+		<createTable tableName="DocumentDataMapping">
+			<column name="MappingId" type="NUMBER(19,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Type" type="VARCHAR2(50)" >
+			<constraints primaryKey="false" nullable="false" />
+			</column>
+			<column name="TypeDescription" type="VARCHAR2(200)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="44" author="Amit">
+	<sql>
+Insert into DOCUMENTDATAMAPPING values (1,'ITR4','ITR-4 Form Description');
+Insert into DOCUMENTDATAMAPPING values (2,'ITR5','ITR-5 Form Description');
+Insert into DOCUMENTDATAMAPPING values (3,'ST3','Form for Return of Service Tax');
+	</sql>
+ </changeSet>
+ </databaseChangeLog>
