@@ -20,7 +20,7 @@ public class CustomerBasicDetail implements Serializable {
 	private Address address;
 	@XmlElement(name = "loan_amount")
 	private BigDecimal loanAmount;
-	private long phone;
+	private String phone;
 	@XmlElement(name = "email_id")
 	private String emailId;
 
@@ -40,11 +40,11 @@ public class CustomerBasicDetail implements Serializable {
 		this.loanAmount = loanAmount;
 	}
 
-	public long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

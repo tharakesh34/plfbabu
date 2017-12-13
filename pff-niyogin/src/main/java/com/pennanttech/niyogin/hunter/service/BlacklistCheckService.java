@@ -4,20 +4,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -25,8 +21,10 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
+import com.pennanttech.niyogin.utility.ExperianUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.service.NiyoginService;
 
@@ -116,39 +114,21 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		hunterRequest.setProductCode(financeMain.getFinType());
 		hunterRequest.setAppDate(getAppDate());
 		CustomerBasicDetail customerBasicDetail = new CustomerBasicDetail();
-		StringBuilder builder = new StringBuilder();
 
-		if (StringUtils.isNotBlank(customer.getCustFName())) {
-			builder.append(customer.getCustFName());
-		}
-		if (StringUtils.isNotBlank(customer.getCustMName())) {
-			builder.append(" ");
-			builder.append(customer.getCustMName());
-		}
-
-		if (StringUtils.isNotBlank(customer.getCustLName())) {
-			builder.append(" ");
-			builder.append(customer.getCustLName());
-		}
-		if (builder.length() == 0 && StringUtils.isNotBlank(customer.getCustShrtName())) {
-			builder.append(customer.getCustShrtName());
-		}
-
-		customerBasicDetail.setName(builder.toString());
+		customerBasicDetail.setName(customer.getCustShrtName());
 		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
 
 		if (customerDetails.getCustomerEMailList() != null) {
-			customerBasicDetail.setEmailId(getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+			customerBasicDetail.setEmailId(ExperianUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
 		}
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			long phoneNo = Long.parseLong(getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5));
-			customerBasicDetail.setPhone(phoneNo);
+			customerBasicDetail.setPhone(ExperianUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), InterfaceConstants.PHONE_TYPE_PER));
 		}
 
 		Address address = null;
 		if (customerDetails.getAddressList() != null) {
-			address = prepareAddress(getHighPriorityAddress(customerDetails.getAddressList(), 5));
+			address = prepareAddress(ExperianUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5));
 		} else {
 			address = new Address();
 		}
@@ -197,63 +177,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		return address;
 	}
 
-	/**
-	 * Method to get the High priority email.
-	 * 
-	 * @param customerEMailList
-	 * @param priority
-	 * @return String EmailId
-	 */
-	private String getHignPriorityEmail(List<CustomerEMail> customerEMailList, int priority) {
-		for (CustomerEMail customerEMail : customerEMailList) {
-			if (customerEMail.getCustEMailPriority() == priority) {
-				return customerEMail.getCustEMail();
-			}
-		}
-		if (priority > 1) {
-			getHignPriorityEmail(customerEMailList, priority - 1);
-		}
-		return null;
-	}
-
-	/**
-	 * Method to get the High priority PhoneNumeber
-	 * 
-	 * @param customerPhoneNumList
-	 * @param priority
-	 * @return String CustomerPhoneNumber
-	 */
-	private String getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList, int priority) {
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
-				return customerPhoneNumber.getPhoneNumber();
-			}
-		}
-		if (priority > 1) {
-			getHighPriorityPhone(customerPhoneNumList, priority - 1);
-		}
-		return null;
-	}
-
-	/**
-	 * Method to get the High Priority Address.
-	 * 
-	 * @param addressList
-	 * @param priority
-	 * @return CustomerAddres
-	 */
-	private CustomerAddres getHighPriorityAddress(List<CustomerAddres> addressList, int priority) {
-
-		for (CustomerAddres customerAddres : addressList) {
-			if (customerAddres.getCustAddrPriority() == priority) {
-				return customerAddres;
-			}
-		}
-		if (priority > 1) {
-			getHighPriorityAddress(addressList, priority - 1);
-		}
-		return null;
-	}
 
 	/**
 	 * Method for prepare the Extended Field details map according to the given response.

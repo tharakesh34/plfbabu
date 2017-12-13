@@ -27,6 +27,7 @@ import com.pennanttech.niyogin.dedup.model.Phone;
 import com.pennanttech.niyogin.utility.ExperianUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.ExternalDedup;
 import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.external.service.NiyoginService;
@@ -124,18 +125,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return validatedMap;
 	}
 
-	/**
-	 * Method for prepare data and logging
-	 * 
-	 * @param experianDedupRequest
-	 * @param reference
-	 */
-	private void doInterfaceLogging(ExperianDedup experianDedupRequest, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, experianDedupRequest, jsonResponse,
-				reqSentOn, status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
-	}
-
+	
 	/**
 	 * Method for Prepare the ExperianDedup Request object.
 	 * 
@@ -148,28 +138,17 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		ExperianDedup experianDedup = new ExperianDedup();
 		Customer customer = customerDetails.getCustomer();
 		experianDedup.setApplicantType(applicantType);
-		experianDedup.setFirstName(customer.getCustFName());
-		experianDedup.setLastName(customer.getCustLName());
-		experianDedup.setGender(customer.getLovDescCustGenderCodeName());
+		experianDedup.setFirstName(customer.getCustShrtName());
+		experianDedup.setLastName(customer.getCustShrtName());
+		experianDedup.setGender(customer.getCustGenderCode());
 		experianDedup.setDob(customer.getCustDOB());
-		String pan = "";
-		String aadhar = "";
-		String passport = "";
+
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		if (documentList != null) {
-			for (CustomerDocument document : documentList) {
-				if (document.getCustDocCategory().equals("01")) {
-					aadhar = document.getCustDocTitle();
-				} else if (document.getCustDocCategory().equals("02")) {
-					passport = document.getCustDocTitle();
-				} else if (document.getCustDocCategory().equals("03")) {
-					pan = document.getCustDocTitle();
-				}
-			}
+		if (documentList != null && !documentList.isEmpty()) {
+			experianDedup.setPan(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+			experianDedup.setAadhaar(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+			experianDedup.setPassport(ExperianUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
 		}
-		experianDedup.setPan(pan);
-		experianDedup.setAadhaar(aadhar);
-		experianDedup.setPassport(passport);
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
 			experianDedup.setEmailId(ExperianUtility.getHignPriorityEmail(emailList, 5));
@@ -254,6 +233,19 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
 		}
 	}
+	
+	/**
+	 * Method for prepare data and logging
+	 * 
+	 * @param experianDedupRequest
+	 * @param reference
+	 */
+	private void doInterfaceLogging(ExperianDedup experianDedupRequest, String reference) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, experianDedupRequest, jsonResponse,
+				reqSentOn, status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
+	}
+
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;

@@ -18,6 +18,7 @@ public class InterfaceConstants {
 	// Document types
 	public static final String	DOC_TYPE_PAN		= "03";
 	public static final String	DOC_TYPE_UID		= "01";
+	public static final String	DOC_TYPE_PASSPORT		= "02";
 
 	// Phone types
 	public static final String	PHONE_TYPE_PER		= "MOBILE1";
