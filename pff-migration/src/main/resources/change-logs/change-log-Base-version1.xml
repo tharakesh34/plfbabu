@@ -873,5 +873,12 @@ UNION ALL
 		SecGroupRights);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="35" author="Jayant" dbms="postgresql">
+		<createSequence sequenceName="seqdisbursementrequests" cycle="false" startValue="1" incrementBy="1" minValue="1"/>
+	</changeSet>
+	<changeSet id="36" author="Jayant" dbms="postgresql">
+		<sql>
+			alter table disbursement_requests alter column id set default nextval('seqdisbursementrequests');
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
