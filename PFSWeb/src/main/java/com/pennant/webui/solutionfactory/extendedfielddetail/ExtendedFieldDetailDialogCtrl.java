@@ -130,7 +130,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Intbox		fieldMultilinetxt;
 	protected Combobox 		parentTag;
 	protected Label			label_ExtendedFieldDetailDialog_FieldSeqOrder;
-	protected Label 		label_ExtendedFieldDetailDialog_Parent;
+	protected Checkbox 		fieldEditable;
 
 	protected Listbox 		listBoxFieldDet;
 	protected Paging 		pagingFieldDetList;
@@ -159,6 +159,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Row rowMandatory;
 	protected Row rowConstraint;
 	protected Row rowfieldMultilinetxt;
+	protected Row rowfieldparentTag;
+	protected Row rowfieldIsEditable;
 	protected Hbox parent_fieldConstraint;
 	private boolean newRecord=false;
 	private boolean newFieldDetail=false;
@@ -273,7 +275,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.fieldName.setMaxlength(18);
-		this.fieldLabel.setMaxlength(30);
+		this.fieldLabel.setMaxlength(50);
 		this.fieldLength.setMaxlength(4);
 		this.fieldPrec.setMaxlength(2);
 		this.fieldSeqOrder.setMaxlength(4);
@@ -441,6 +443,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		if (StringUtils.isNotBlank(aExtendedFieldDetail.getFieldType())) {
 			onFieldTypeChange(aExtendedFieldDetail.getFieldType(), isNewRecord());
 		}
+		if (aExtendedFieldDetail.isNewRecord()) {
+			this.fieldEditable.setChecked(true);
+		} else {
+			this.fieldEditable.setChecked(aExtendedFieldDetail.isEditable());
+		}
 
 		logger.debug("Leaving");
 	}
@@ -451,7 +458,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		if(extendedFieldDetail!=null){
 			parentList=new ArrayList<ValueLabel>();
 			for(ExtendedFieldDetail detail:extendedFieldDetail){
-				if(!detail.isInputElement()){
+				if(!detail.isInputElement()&&!detail.getFieldName().equals(this.fieldName.getValue())){
 					parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
 				}
 			}
@@ -956,6 +963,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aExtendedFieldDetail.setEditable(this.fieldEditable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -1237,6 +1249,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldUnique.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldUnique"));
 			this.fieldMultilinetxt.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldMultilinetxt"));
 			this.parentTag.setDisabled((isReadOnly("ExtendedFieldDetailDialog_parentTag")));
+			this.fieldEditable.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldEditable"));
 		}
 		
 		boolean isMaintainRcd = false;
@@ -1940,28 +1953,23 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
 				}
 			}
-			//TODO if GROUPBOx display the list of non input elements in parentTAg
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, fieldType)){
+		
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, fieldType)
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)) {
 				this.rowfieldDefaultValue.setVisible(false);
 				this.rowMandatory.setVisible(false);
-				this.parentTag.setVisible(false);
-				this.label_ExtendedFieldDetailDialog_Parent.setVisible(false);
-			}else{
-				this.parentTag.setVisible(true);
-				this.label_ExtendedFieldDetailDialog_Parent.setVisible(true);
+				this.rowfieldIsEditable.setVisible(false);
+			} else {
+
+				this.rowfieldIsEditable.setVisible(true);
+			}
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)) {
+				this.rowfieldparentTag.setVisible(false);
+			} else {
+				this.rowfieldparentTag.setVisible(true);
 			}
 			
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)){
-				this.rowfieldDefaultValue.setVisible(false);
-				this.rowMandatory.setVisible(false);
-				this.parentTag.setVisible(false);
-				this.label_ExtendedFieldDetailDialog_Parent.setVisible(false);
-			}else{
-				//this.parentTag.setVisible(true);
-				//this.label_ExtendedFieldDetailDialog_Parent.setVisible(true);
-			}
-
-
 			if(this.rowfieldLength.isVisible()){
 				if(isTextType()){
 					this.fieldDefaultValue.setStyle("text-align:left;");

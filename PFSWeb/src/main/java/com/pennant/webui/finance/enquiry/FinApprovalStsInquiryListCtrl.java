@@ -43,11 +43,13 @@
 package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -60,8 +62,10 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.enquiry.model.FinApprovalStsInquiryListModelItemRenderer;
@@ -95,6 +99,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	protected Listheader listheader_FinApprovalStsInquiryList_PreviousRole;
 
 	protected Button button_FinApprovalStsInquiryList_Search;
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 
 	// NEEDED for the ReUse in the SearchWindow
 
@@ -457,5 +462,50 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 			this.listheader_FinApprovalStsInquiryList_FinType.setLabel(Labels
 					.getLabel("label_FacilityApprovalStsInquiryList_FacilityType.value"));
 		}
+	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.custCIF.setValue(customer.getCustCIF());
+		} else {
+			this.custCIF.setValue("");
+		}
+		logger.debug("Leaving ");
 	}
 }

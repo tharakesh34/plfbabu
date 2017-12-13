@@ -98,6 +98,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.service.AmazonS3Bucket;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -260,16 +261,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 					return;
 				} 
 			}
-			
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
-			
 			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-								
-				if("S".equals(status.getStatus())) {
-					new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
-				}				
+
+				if ("S".equals(status.getStatus())) {
+					new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+				}
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			}

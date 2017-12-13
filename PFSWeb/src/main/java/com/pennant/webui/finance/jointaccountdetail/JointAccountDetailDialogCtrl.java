@@ -49,6 +49,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -57,8 +58,10 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -72,19 +75,23 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -92,6 +99,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -130,6 +138,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Checkbox includeRepay;
 	protected Label label_RepayAccountId;
 	protected AccountSelectionBox repayAccountId;
+	
 
 	protected Row row2;
 	protected Label label_CustCIFStatus;
@@ -140,6 +149,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Hbox hbox_CustCIFWorstStatus;
 	protected Space space_CustCIFWorstStatus;
 	protected Textbox custCIFWorstStatus;
+
+	protected Row row3;
+	protected Label label_CatOfCoApplicant;
+	protected Hbox hbox_CatOfCoApplicant;
+	protected Space space_CatOfCoApplicant;
+	protected Combobox catOfCoApplicant;
+	
+	protected Checkbox															authoritySignatory;
+	protected Intbox															sequence;
+	protected Hbox																hbox_Sequence;
+	protected Label																label_Sequence;
+
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
@@ -184,6 +205,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String cif[]=null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
+	@Autowired
+	CustomerDetailsService customerDetailsService;
 	
 	/**
 	 * default constructor.<br>
@@ -550,21 +574,30 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("custCIF", this.custCIF.getValue());
 			
-			customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-			map.put("custid",customer.getCustID());
-			map.put("jointcustid", this.custCIF.getValue());
-			
-			if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
-				map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
-				map.put("finReference", getFinanceMain().getFinReference());
-			}
-			map.put("finance", true);
-			if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_JountAccountDetailDialog, map);
+			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
+				CustomerDetails customerDetails = customerDetailsService.getApprovedCustomerById(this.custID.longValue());
+				map.put("customerDetails", customerDetails);
+				map.put("newRecord", false);
+				map.put("isEnqProcess", true);
+				map.put("CustomerEnq", true);
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
 			}else{
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_JountAccountDetailDialog, map);
+				map.put("custCIF", this.custCIF.getValue());
+				customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
+				map.put("custid",customer.getCustID());
+				map.put("jointcustid", this.custCIF.getValue());
+				
+				if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+					map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
+					map.put("finReference", getFinanceMain().getFinReference());
+				}
+				map.put("finance", true);
+				if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_JountAccountDetailDialog, map);
+				}else{
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_JountAccountDetailDialog, map);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
@@ -610,6 +643,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doEdit();
 			// setFocus
 			this.custCIF.focus();
+			this.hbox_Sequence.setVisible(false);
+			this.label_Sequence.setVisible(false);
+
 		} else {
 			if (isNewContributor()) {
 				doEdit();
@@ -620,6 +656,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
+			}
+			if (aJountAccountDetail.getSequence() == 0) {
+				this.hbox_Sequence.setVisible(false);
+				this.label_Sequence.setVisible(false);
 			}
 		}
 		try {
@@ -701,6 +741,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.custCIF.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
+		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"),this.catOfCoApplicant);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -732,7 +773,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		logger.debug("Leaving");
 	}
-
+	
+	public boolean isReadOnly(String componentName){
+		return getUserWorkspace().isReadOnly(componentName);
+	}
+	
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
@@ -814,8 +859,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setValue(aJountAccountDetail.getLovDescCIFName());
 		this.custCIFStatus.setValue(aJountAccountDetail.getStatus());
 		this.custCIFWorstStatus.setValue(aJountAccountDetail.getWorstStatus());
+		fillComboBox(this.catOfCoApplicant,aJountAccountDetail.getCatOfcoApplicant(),this.coapplicantList,"");	
 		this.recordStatus.setValue(aJountAccountDetail.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJountAccountDetail.getRecordType()));
+		this.authoritySignatory.setChecked(aJountAccountDetail.isAuthoritySignatory());
+		this.sequence.setValue(aJountAccountDetail.getSequence());
 		logger.debug("Leaving");
 	}
 
@@ -1179,6 +1227,24 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// catOfCoApplicant
+		try {
+			aJountAccountDetail.setCatOfcoApplicant(this.catOfCoApplicant.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aJountAccountDetail.setAuthoritySignatory(this.authoritySignatory.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aJountAccountDetail.setSequence(this.sequence.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -1203,6 +1269,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.repayAccountId.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_RepayAccountId.value"),null,true));
 		}
 
+		if (!this.sequence.isReadonly() && this.authoritySignatory.isChecked()) {
+			this.sequence.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_JountAccountDetailDialog_Sequence.value"), true, false, 1, 9));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1213,6 +1284,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		this.custCIF.setConstraint("");
 		this.repayAccountId.setConstraint("");
+		this.catOfCoApplicant.setConstraint("");
+		this.sequence.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1232,6 +1305,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doRemoveLOVValidation() {
 		this.custCIFName.setConstraint("");
 		this.custCIF.setConstraint("");
+		this.catOfCoApplicant.setConstraint("");
 	}
 
 	/**
@@ -1243,6 +1317,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setErrorMessage("");
 		this.custCIFName.setErrorMessage("");
 		this.repayAccountId.setErrorMessage("");
+		this.catOfCoApplicant.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1313,6 +1388,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setValue("");
 		this.includeRepay.setChecked(false);
 		this.repayAccountId.setValue("");
+		this.catOfCoApplicant.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -1455,6 +1531,41 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					} else {
 						jointAccountDetailList.add(jountAccountDetail);
 					}
+				} else if (jountAccountDetail.getSequence() == aJountAccountDetail.getSequence()
+						&& aJountAccountDetail.getSequence() != 0) {
+					String[] valueParam = new String[1];
+					String[] errParam = new String[1];
+					valueParam[0] = String.valueOf(aJountAccountDetail.getSequence());
+					errParam[0] = PennantJavaUtil.getLabel("label_JointSequence") + ":" + valueParam[0];
+					if (isNewRecord()) {
+
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParam, valueParam),
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					} else if (index != i) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParam, valueParam),
+								getUserWorkspace().getUserLanguage()));
+					}
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+							aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded = true;
+							jointAccountDetailList.add(aJountAccountDetail);
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded = true;
+							jointAccountDetailList.add(aJountAccountDetail);
+						} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
+						}
+					} else {
+						jointAccountDetailList.add(jountAccountDetail);
+					}
+
 				} else {
 					jointAccountDetailList.add(jountAccountDetail);
 				}
@@ -1481,6 +1592,23 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private AuditHeader getAuditHeader(JointAccountDetail aJountAccountDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJountAccountDetail.getBefImage(), aJountAccountDetail);
 		return new AuditHeader(String.valueOf(aJountAccountDetail.getJointAccountId()), null, null, null, auditDetail, aJountAccountDetail.getUserDetails(), getOverideMap());
+	}
+
+	public void onCheck$authoritySignatory(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckAuthoritySignatory();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doCheckAuthoritySignatory() {
+		if (authoritySignatory.isChecked()) {
+			this.hbox_Sequence.setVisible(true);
+			this.label_Sequence.setVisible(true);
+		} else {
+			this.hbox_Sequence.setVisible(false);
+			this.label_Sequence.setVisible(false);
+			this.sequence.setValue(0);
+		}
 	}
 
 	// ******************************************************//

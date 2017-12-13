@@ -78,8 +78,7 @@
 				style="align:left;overflow:hidden;border:0px;" >
 				<div id="divWest"
 					style="align:center;margin-left:70px;">
-					<image src="/images/Pennant/Loading.gif"
-						height="38px" />
+					<image src="/images/Loading.gif" height="38px" />
 				</div>
 			</west>
 

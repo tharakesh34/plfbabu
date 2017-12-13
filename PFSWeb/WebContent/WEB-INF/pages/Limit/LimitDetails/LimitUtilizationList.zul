@@ -41,7 +41,12 @@
 								<row>
 									<label id="label_LimitDetailsList_Id" value="${c:l('label_LimitDetailsList_Id.value')}" />
 									<listbox id="sortOperator_Id" width="43px" mold="select" rows="1" />
-									<textbox id="id" width="180px" maxlength="20" />
+									<hbox>
+										<textbox id="id" width="180px" maxlength="20" />
+										<button id="btnSearchCustCIF"
+											tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+											image="/images/icons/more.png" />
+									</hbox>
 									<label id="label_LimitDetailsList_ResponsibleBranch" value="${c:l('label_LimitDetailsList_ResponsibleBranch.value')}" />
 									<listbox id="sortOperator_ResponsibleBranch" width="43px" mold="select" rows="1" />
 									<textbox id="responsibleBranch" width="180px" />

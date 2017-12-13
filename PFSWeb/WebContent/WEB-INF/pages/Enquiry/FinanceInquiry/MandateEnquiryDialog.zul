@@ -170,6 +170,15 @@
 										<textbox id="umrNumber"
 											maxlength="50" width="200px" readonly="true" />
 									</hbox>
+									<label id="label_MandateDoc"
+										value="${c:l('label_MandateDialog_MandateDoc.value')}" />
+										<hbox>
+										<space spacing="2px" />
+										<textbox id="documentName"
+											width="155px" maxlength="200" readonly="true" />
+										<button
+											label="${c:l('label_MandateDialog_btnView.value')}"  id="btnViewMandateDoc" visible="true"/>
+									</hbox>
 								</row>
 							</rows>
 						</grid>

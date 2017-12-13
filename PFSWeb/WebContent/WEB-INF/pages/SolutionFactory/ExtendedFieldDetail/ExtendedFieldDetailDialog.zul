@@ -236,7 +236,7 @@
 										width="50px" maxlength="14" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row id="rowfieldparentTag" visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_Parent"
 									value="${c:l('label_ExtendedFieldDetailDialog_Parent.value')}" />
@@ -246,6 +246,17 @@
 										readonly="true" width="200px" />
 								</hbox>
 							</row>
+							<row id="rowfieldIsEditable" visible="true">
+								<label
+									id="label_ExtendedFieldDetailDialog_IsEditable"
+									value="${c:l('label_ExtendedFieldDetailDialog_IsEditable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="fieldEditable"
+										checked="true" />
+								</hbox>
+							</row>
+							
 						</rows>
 					</grid>
 				</groupbox>

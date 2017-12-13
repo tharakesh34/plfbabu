@@ -99,7 +99,6 @@
 
 	<bean id="mainMenuCtrl" abstract="true"
 		class="com.pennant.common.menu.MainMenuCtrl" scope="session">
-		<property name="menuDetailsService" ref="menuDetailsService" />
 	</bean>
 
 	<!-- MessageBarController -->
@@ -117,10 +116,8 @@
 
 	<!-- UserBarController -->
 
-	<bean id="userBarCtrl" class="com.pennant.webui.util.UserBarCtrl"
-		scope="prototype">
-		<property name="menuDetailsService" ref="menuDetailsService" />
-	</bean>
+	<bean id="userBarCtrl" class="com.pennant.webui.util.UserBarCtrl" 
+		scope="prototype" />
 
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->
@@ -1210,6 +1207,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl"
@@ -1815,6 +1813,9 @@
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="mailUtil" ref="mailUtil" />
+		<property name="smsUtil" ref="smsUtil" />
+		<property name="extMailService" value="${commn.mail.isExtService:false}"  />
+		<property name="extSMSService" value="${commn.sms.isExtService:false}"  />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="finDelegationDeviationCtrl" ref="finDelegationDeviationCtrl" />
@@ -1839,6 +1840,8 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="shortMessageService" ref="shortMessageService" />
+		<property name="mailTemplateService" ref="mailTemplateService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
@@ -1966,6 +1969,7 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 	<!--============ Deviation Detail ============== -->
@@ -4734,6 +4738,7 @@
 		class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl"
 		scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 
@@ -4929,8 +4934,15 @@
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 	
-<!-- External File Upload  -->
-	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	<!--============ Customer Enquiry Details ============== -->
+			
+	<bean id="customerDialogCtrlr"
+		class="com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="directorDetailService" ref="directorDetailService" />
 	</bean>
 	
+<!-- External File Upload -->
+	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype"/>
 </beans>

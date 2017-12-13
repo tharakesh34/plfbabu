@@ -29,7 +29,7 @@
 						</hbox>
 					</div>
 				</north>
-				<center border="none">
+				<center border="none" autoscroll="true">
 					<div>
 						<groupbox id="gb_basicDetails" mold="3d">
 							<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
@@ -41,51 +41,99 @@
 								</columns>
 								<rows>
 									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentSequence.value')}" />
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_PaymentSequence.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<intbox id="paymentSequence" />
+											<intbox
+												id="paymentSequence" />
 										</hbox>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentDetail.value')}" />
+										<cell colspan="2" rowspan="9"
+											valign="top">
+											<iframe id="docName"
+												width="100%">
+											</iframe>
+										</cell>
+									</row>
+									<row>
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_PaymentDetail.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="paymentDetail" />
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox
+												id="paymentDetail" 
+												width="155px"/>
 										</hbox>
 									</row>
 									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="disbDate" width="155px" />
-											<intbox id="disbSeq" visible="false" />
-											<decimalbox id="disbDateAmount" readonly="true"  width="155px" style="border:none; background-color:white ;font-weight:bold; text-align:left;"/>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="disbDate"
+												width="155px" />
+											<intbox id="disbSeq"
+												visible="false" />
+											<decimalbox
+												id="disbDateAmount" readonly="true" width="155px"
+												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
-										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
+									</row>
+									<row>
+										<label id="label_llDate"
+											value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">
-											<space spacing="2px" sclass="mandatory" />
-											<datebox id="llDate" width="155px" />
+											<space spacing="2px"
+												sclass="mandatory" />
+											<datebox id="llDate"
+												width="155px" />
 										</hbox>
 									</row>
 									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentType.value')}" />
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_PaymentType.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="paymentType" width="155px" />
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="paymentType"
+												width="155px" />
 										</hbox>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_AmtToBeReleased.value')}" />
+									</row>
+									<row>
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_AmtToBeReleased.value')}" />
 										<hbox>
-											<currencyBox id="amtToBeReleased" />
+											<currencyBox
+												id="amtToBeReleased" />
 										</hbox>
 									</row>
 									<row>
 										<cell>
 											<hbox>
-												<label id="label_PartnetBankID" value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
+												<label
+													id="label_PartnetBankID"
+													value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
 											</hbox>
 										</cell>
 										<cell>
-											<extendedcombobox id="partnerBankID" />
+											<extendedcombobox
+												id="partnerBankID" />
 										</cell>
+									</row>
+									<row>
+										<hbox>
+											<label
+												value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
+										</hbox>
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="transactionRef"
+												width="150px" />
+										</hbox>
+									</row>
+									<row>
 										<cell rowspan="2">
 											<label value="${c:l('label_FinAdvancePaymentsDialog_Remarks.value')}" />
 										</cell>
@@ -96,43 +144,51 @@
 											</hbox>
 										</cell>
 									</row>
-									<row>
-										<hbox>
-											<label value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
-										</hbox>
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="transactionRef" width="155px" />
-										</hbox>
-									</row>
-									<row visible="false">
-										<label id="label_custContribution" value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
-										<hbox id="hbox_custContribution">
-											<currencyBox id="custContribution" />
-										</hbox>
-										<label id="label_sellerContribution" value="${c:l('label_FinAdvancePaymentsDialog_SellerContribution.value')}" />
-										<hbox id="hbox_sellerContribution">
-											<currencyBox id="sellerContribution" />
-										</hbox>
-									</row>
-									<row visible="false">
-										<label value="${c:l('label_FinAdvancePaymentsDialog_Description.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="description" multiline="true" rows="3" />
-										</hbox>
-										<label id="label_DisbCCy" value="${c:l('label_FinAdvancePaymentsDialog_DisbCCy.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="disbCCy" />
-										</hbox>
-									</row>
-									<row visible="false">
+										<row visible="false">
+											<label
+												id="label_custContribution"
+												value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
+											<hbox
+												id="hbox_custContribution">
+												<currencyBox
+													id="custContribution" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label
+												id="label_sellerContribution"
+												value="${c:l('label_FinAdvancePaymentsDialog_SellerContribution.value')}" />
+											<hbox
+												id="hbox_sellerContribution">
+												<currencyBox
+													id="sellerContribution" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label
+												value="${c:l('label_FinAdvancePaymentsDialog_Description.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="description" multiline="true" rows="3" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label id="label_DisbCCy"
+												value="${c:l('label_FinAdvancePaymentsDialog_DisbCCy.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="disbCCy" />
+											</hbox>
+										</row>
+										<row visible="false">
 										<label id="label_Active" value="${c:l('label_FinAdvancePaymentsDialog_Active.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<checkbox id="active" />
 										</hbox>
+										</row>
+										<row visible="false">
 										<label id="label_InputDate" value="${c:l('label_FinAdvancePaymentsDialog_InputDate.value')}" />
 										<hbox>
 											<space spacing="2px" />

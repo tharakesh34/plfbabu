@@ -365,11 +365,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listcell = new Listcell();
 			Checkbox c = new Checkbox();
-			c.setDisabled(true);
-			c.setChecked(jountAccountDetail.isIncludeRepay());
+			c.setChecked(jountAccountDetail.isAuthoritySignatory());
 			c.setParent(listcell);
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantApplicationUtil.formatAccountNumber(jountAccountDetail.getRepayAccountId()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(jountAccountDetail.getPrimaryExposure() != null ? jountAccountDetail.getPrimaryExposure() : "0"), ccDecimal));
 			listcell.setStyle("text-align:right");

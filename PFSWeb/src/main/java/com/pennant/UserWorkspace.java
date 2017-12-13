@@ -57,7 +57,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
@@ -71,7 +70,7 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennanttech.framework.security.core.AuthenticationManager;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 /**
  * Workspace for the user. One workspace per userSession. <br>
@@ -115,16 +114,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 		// speed up the ModalDialogs while disabling the animation
 		Window.setDefaultActionOnShow("");
-	}
-
-	/**
-	 * Get a logged-in users WorkSpace which holds all necessary vars. <br>
-	 * 
-	 * @return the users WorkSpace
-	 */
-	@Deprecated
-	public static UserWorkspace getInstance() {
-		return (UserWorkspace) SpringUtil.getBean("userWorkspace");
 	}
 
 	/**

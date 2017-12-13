@@ -182,19 +182,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.1.2</version>
+			<artifactId>groovy</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 
-		<!-- Apache Commons -->
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -270,12 +261,6 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>1.7.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-interface-bajaj</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.bitwalker</groupId>

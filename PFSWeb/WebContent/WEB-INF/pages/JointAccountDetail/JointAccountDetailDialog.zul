@@ -132,6 +132,36 @@
 											maxlength="20" width="180px" readonly="true" />
 									</hbox>
 								</row>
+								<row id="row3">
+									<label id="label_CatOfCoApplicant"
+										value="${c:l('label_JountAccountDetailDialog_CatOfCoApplicant.value')}" />
+									<hbox id="hbox_CatOfCoApplicant">
+										<space
+											id="space_CatOfCoApplicant" spacing="2px" />
+										<combobox id="catOfCoApplicant"
+											width="200px" readonly="true" />
+									</hbox>
+									<label id="label_AuthoritySignatory"
+										value="${c:l('label_JountAccountDetailDialog_AuthoritySignatory.value')}" />
+									<hbox
+										id="hbox_AuthoritySignatory">
+										<space
+											id="space_AuthoritySignatory" spacing="2px" />
+										<checkbox
+											id="authoritySignatory" checked="false" />
+									</hbox>
+								</row>
+								<row id="row4">
+									<label id="label_Sequence"
+										value="${c:l('label_JountAccountDetailDialog_Sequence.value')}" />
+									<hbox id="hbox_Sequence">
+										<space spacing="2px"
+											id="space_Sequence" sclass="mandatory" />
+										<intbox id="sequence"
+											width="50px" maxlength="1">
+										</intbox>
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

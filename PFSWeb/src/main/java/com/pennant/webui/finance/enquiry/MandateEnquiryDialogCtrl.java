@@ -127,6 +127,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox						umrNumber;
 	protected Space							space_Reason;
 	protected Space							space_Expirydate;
+	protected Textbox						documentName;
+	protected Button						btnViewMandateDoc;
 
 
 	private boolean							fromLoanEnquiry			= false;
@@ -435,7 +437,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneAreaCode.setValue(aMandate.getPhoneAreaCode());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.umrNumber.setValue(aMandate.getMandateRef());
-
+		this.documentName.setValue(aMandate.getDocumentName());
+		if (aMandate.getDocumentName() == null || aMandate.getDocumentName().equals("")) {
+			this.btnViewMandateDoc.setVisible(false);
+		}
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
@@ -481,7 +486,26 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Executions.createComponents("/WEB-INF/pages/Mandate/MandateStatusList.zul", null, arg);
 		logger.debug("Leaving");
 	}
-	
+
+	public void onClick$btnViewMandateDoc(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		mandate.setDocImage(getMandateService().getDocumentManImage(getMandate().getDocumentRef().toString()));
+
+		if (StringUtils.isNotBlank(mandate.getDocumentName()) && mandate.getDocImage() != null
+				&& StringUtils.isNotBlank(mandate.getDocImage().toString())) {
+			try {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("mandate", mandate);
+				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+
+			} catch (Exception e) {
+				logger.debug(e);
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

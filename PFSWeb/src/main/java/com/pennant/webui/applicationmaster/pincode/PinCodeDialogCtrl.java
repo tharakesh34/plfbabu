@@ -54,6 +54,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -89,6 +90,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 	protected Checkbox					active;
 	private PinCode						pinCode;														// overhanded per param
 	private Textbox						areaName;
+	private Longbox						groupId;
+	protected Checkbox					isServiceable;
 
 	private transient PinCodeListCtrl	pinCodeListCtrl;												// overhanded per param
 	private transient PinCodeService	pinCodeService;
@@ -169,6 +172,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		logger.debug(Literal.ENTERING);
 
 		this.pinCodes.setMaxlength(10);
+		this.groupId.setMaxlength(8);
 		this.city.setModuleName("City");
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
@@ -316,6 +320,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		this.city.setValue(aPinCode.getCity());
 		this.active.setChecked(aPinCode.isActive());
 		this.areaName.setValue(aPinCode.getAreaName());
+		this.groupId.setValue(aPinCode.getGroupId());
+		this.isServiceable.setChecked(aPinCode.isServiceable());
 		if (aPinCode.isNewRecord()) {
 			this.city.setDescription("");
 		} else {
@@ -362,6 +368,18 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		//Active
 		try {
 			aPinCode.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Groupid
+		try {
+			aPinCode.setGroupId(this.groupId.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//isSerivceable
+		try {
+			aPinCode.setServiceable(this.isServiceable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -554,6 +572,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		readOnlyComponent(isReadOnly("PinCodeDialog_City"), this.city);
 		readOnlyComponent(isReadOnly("PinCodeDialog_AreaName"), this.areaName);
 		readOnlyComponent(isReadOnly("PinCodeDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("PinCodeDialog_GroupId"), this.groupId);
+		readOnlyComponent(isReadOnly("PinCodeDialog_IsServiceable"), this.isServiceable);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -582,6 +602,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		readOnlyComponent(true, this.city);
 		readOnlyComponent(true, this.areaName);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.groupId);
+		readOnlyComponent(true, this.isServiceable);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -603,8 +625,9 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		this.pinCodes.setValue("");
 		this.city.setValue("");
 		this.city.setDescription("");
-		this.areaName.setValue("");
 		this.active.setChecked(false);
+		this.isServiceable.setChecked(false);
+		this.groupId.setValue(0L);
 
 		logger.debug("Leaving");
 	}

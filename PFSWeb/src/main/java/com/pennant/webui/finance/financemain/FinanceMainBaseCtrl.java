@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -141,6 +142,7 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SMSUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -162,9 +164,10 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -192,6 +195,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -216,9 +220,11 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.service.sms.ShortMessageService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -256,12 +262,14 @@ import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
+
+import freemarker.template.TemplateException;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -747,7 +755,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private AccountEngineExecution							engineExecution;
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
-	private MailUtil										mailUtil;
+	private MailUtil										mailUtil;	
+	private SMSUtil											smsUtil;
+	private boolean 										extMailService;
+	private boolean 										extSMSService;	
 	private StepPolicyService								stepPolicyService;
 	private FinanceReferenceDetailService					financeReferenceDetailService;
 	private RuleExecutionUtil								ruleExecutionUtil;
@@ -757,6 +768,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupValidation									dedupValidation;
 	private DisbursementPostings 							disbursementPostings;
 	private InstallmentDueService							installmentDueService;
+	private ShortMessageService							 	shortMessageService;
+	private MailTemplateService							 	mailTemplateService;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -998,8 +1011,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
 		this.stepPolicy.setFilters(filter);
 
-		this.accountsOfficer.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
-		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
+		this.accountsOfficer.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
 
@@ -2317,6 +2330,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendFinCollateralTab(boolean onLoad) {
 		logger.debug("Entering");
+		if (!ImplementationConstants.COLLATERAL_INTERNAL) {
+			if (!getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()) {
+				return;
+			}
+		}
+		
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, true);
 		} else {
@@ -2343,6 +2362,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			} else {
+
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 			}
@@ -5436,7 +5456,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.doWriteComponentsToBean(aFinScheduleData);
 
 		// Extended Field validations
-		aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());
+		if(aFinanceDetail.getExtendedFieldHeader() != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save());			
+		}
 				
 		//Save Contributor List Details
 		if (isRIAExist) {
@@ -6032,14 +6054,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 						// Mail ID details preparation
 						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-
+						List<String> custMailIdList = new ArrayList<String>();
 						// Customer Email Preparation
 						if (isCustomerNotificationExists
 								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
 								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
 
 							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							List<String> custMailIdList = new ArrayList<String>();
+							
 							for (CustomerEMail customerEMail : emailList) {
 								custMailIdList.add(customerEMail.getCustEMail());
 							}
@@ -6047,15 +6069,57 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
 							}
 						}
-
-						try {
-							HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
-									.getFinScheduleData().getFinanceMain());
-							getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
-									aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
-						} catch (Exception e) {
-							logger.warn("Exception: ", e);
+						
+						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
+								.getFinScheduleData().getFinanceMain());						
+						
+						if (isExtMailService()) {
+							try {
+								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
+										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);								
+								// send mail to external service
+								getMailTemplateService().sendMail(custMailIdList, templates);
+							} catch (IOException e) {
+								logger.error("Unable to read or process freemarker configuration or template :" + e);
+							} catch (TemplateException e) {
+								logger.error("Problem initializing freemarker or rendering template :" + e);
+							}
+						}else{
+							
+							try {				
+								getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
+										aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
+							} catch (Exception e) {
+								logger.warn("Exception: ", e);
+							}
+							
 						}
+						
+						//Customer mobile numbers logic start
+						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
+						List<String> custPhoneNoList = new ArrayList<String>();
+						List<CustomerPhoneNumber> phoneNoList=new ArrayList<CustomerPhoneNumber>();
+						if (isCustomerNotificationExists
+								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
+								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
+							
+							phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
+							
+							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
+								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
+							}
+							if (!custPhoneNoList.isEmpty()) {
+								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
+							}
+						}
+						//Customer mobile numbers logic	end						
+						if (isExtSMSService()) {
+							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
+							
+							// send SMS to external service
+							getShortMessageService().sendMessage(phoneNoList, smsList);
+						}
+						
 					}
 
 				}
@@ -6551,8 +6615,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Extended Field details
 		if (aFinanceDetail.getExtendedFieldRender() != null) {
+			int seqNo = 0;
 			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
 			details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(afinanceMain.getRecordStatus());
@@ -12139,6 +12205,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FIXME: AlloW QUick Disbursement to be added in RMTFinanceTypes also. Explained to Chaitanya and Siva
 		if (ImplementationConstants.ALLOW_QUICK_DISB) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_quickDisb"), this.quickDisb);
+			this.quickDisb.setVisible(false);
 		} else {
 			this.quickDisb.setDisabled(true);
 		}
@@ -15361,6 +15428,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public MailUtil getMailUtil() {
 		return mailUtil;
 	}
+	
+	public SMSUtil getSmsUtil() {
+		return smsUtil;
+	}
+
+	public void setSmsUtil(SMSUtil smsUtil) {
+		this.smsUtil = smsUtil;
+	}
+	
+	public boolean isExtMailService() {
+		return extMailService;
+	}
+
+	public void setExtMailService(boolean extMailService) {
+		this.extMailService = extMailService;
+	}
+
+	public boolean isExtSMSService() {
+		return extSMSService;
+	}
+
+	public void setExtSMSService(boolean extSMSService) {
+		this.extSMSService = extSMSService;
+	}
+
 
 	public Window getMainWindow() {
 		return mainWindow;
@@ -15816,6 +15908,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
+	}
+
+	public ShortMessageService getShortMessageService() {
+		return shortMessageService;
+	}
+
+	public void setShortMessageService(ShortMessageService shortMessageService) {
+		this.shortMessageService = shortMessageService;
+	}
+
+	public MailTemplateService getMailTemplateService() {
+		return mailTemplateService;
+	}
+
+	public void setMailTemplateService(MailTemplateService mailTemplateService) {
+		this.mailTemplateService = mailTemplateService;
 	}
 
 }

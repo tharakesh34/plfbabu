@@ -1,6 +1,10 @@
 /**
  * Styles used for Main Menu.
  */
+.z-tree-body {
+	overflow: hidden !important;
+}
+
 .z-treecell-content {
 	font-family: 'PT Sans', Verdana, Tahoma, Arial; font-size: 13px; font-weight: normal;
 }

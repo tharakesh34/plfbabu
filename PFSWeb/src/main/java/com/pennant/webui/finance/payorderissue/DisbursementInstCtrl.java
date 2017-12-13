@@ -66,13 +66,16 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -80,6 +83,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 public class DisbursementInstCtrl {
@@ -96,6 +100,7 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement>	financeDisbursements;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
+	private FinanceDetailService		financeDetailService;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -318,7 +323,8 @@ public class DisbursementInstCtrl {
 
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list)
 			throws Exception {
-
+		logger.debug("Entering");
+		
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
 		aFinAdvancePayments.setFinReference(financeMain.getFinReference());
 		aFinAdvancePayments.setPaymentSeq(getNextPaymentSequence(list));
@@ -328,13 +334,35 @@ public class DisbursementInstCtrl {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
-
+		getDocumentImage(dialogCtrl, map);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
-
+		
+		logger.debug("Leaving");
 	}
 
-	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry)
-			throws InterruptedException {
+	private void getDocumentImage(Object dialogCtrl, HashMap<String, Object> map) throws Exception {
+		logger.debug("Entering");
+		
+		DocumentDetailDialogCtrl DocumentDetailDialogCtrl = (DocumentDetailDialogCtrl) dialogCtrl.getClass()
+				.getMethod("getDocumentDetailDialogCtrl").invoke(dialogCtrl);
+		String document = SysParamUtil.getValueAsString("DISB_DOC");
+
+		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
+			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
+				if (details.getDocImage() == null && details.getDoctype() != null) {
+					details.setDocImage(getFinanceDetailService()
+							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
+				}
+				map.put("documentDetails", details);
+				break;
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry) throws Exception {
+		logger.debug("Entering");
 
 		Listitem listitem = listbox.getSelectedItem();
 		if (listitem != null && listitem.getAttribute("data") != null) {
@@ -349,10 +377,13 @@ public class DisbursementInstCtrl {
 				aFinAdvancePayments.setNewRecord(false);
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finAdvancePayments", aFinAdvancePayments);
+				getDocumentImage(dialogCtrl, map);
 				doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry);
 
 			}
 		}
+
+		logger.debug("Leaving");
 	}
 
 	private void doshowDialog(HashMap<String, Object> map, Object listCtrl, Object dialogCtrl, String module,
@@ -601,6 +632,14 @@ public class DisbursementInstCtrl {
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

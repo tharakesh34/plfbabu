@@ -67,6 +67,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -152,7 +153,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	protected Label label_ReportFilterFieldsDialog_FieldWidth;
 	protected Label label_ReportFilterFieldsDialog_FilterRequired;
 	protected Label label_ReportFilterFieldsDialog_DefaultFilter;
-	protected Textbox txt_PasswordInstructions;
+	protected Html instructions;
 
 	protected Row row_Zero;
 	protected Row row_One;
@@ -1616,33 +1617,33 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	private void doFillInstructions(String filedType) {
 
 		if (filedType.equals(PennantConstants.List_Select)) {
-			this.txt_PasswordInstructions.setValue("");
+			this.instructions.setContent("");
 		} else {
 			FIELDTYPE fieldValueType = FIELDTYPE.valueOf(filedType);
 			switch (fieldValueType) {
 			case TXT:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.Textbox"));
+				this.instructions.setContent(getInstructions("TXT"));
 				break;
 			case STATICLIST:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.StaticList"));
+				this.instructions.setContent(getInstructions("STATICLIST"));
 				break;
 			case DYNAMICLIST:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.DynamicList"));
+				this.instructions.setContent(getInstructions("DYNAMICLIST"));
 				break;
 			case LOVSEARCH:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.LovSearch"));
+				this.instructions.setContent(getInstructions("LOVSEARCH"));
 				break;
 			case MULTISELANDLIST:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.MultiSelAndList"));
+				this.instructions.setContent(getInstructions("MULTISELANDLIST"));
 				break;
 			case MULTISELINLIST:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.MultiSelInList"));
+				this.instructions.setContent(getInstructions("MULTISELINLIST"));
 				break;
 			case STATICVALUE:
-				this.txt_PasswordInstructions.setValue(Labels.getLabel("instruction.ReportFilter.StaticValue"));
+				this.instructions.setContent(getInstructions("STATICVALUE"));
 				break;
 			default:
-				this.txt_PasswordInstructions.setValue("");
+				this.instructions.setContent("");
 				break;
 			}
 		}
@@ -1846,6 +1847,64 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
+	}
+	
+	
+	private String getInstructions(String component) {
+		StringBuilder builder = new StringBuilder();
+		
+		if(component.equals("TXT")) {
+			builder.append("* 'Field Constraint' is regix .It is must to avoid injection problems .<br/>");
+			builder.append("* 'Field ErrorMessage' is error message to show when regix fails.<br/>");
+			builder.append("*  Regix must follow single \\ pattern .Eg:\\+^[0-9\\s]+");
+			return builder.toString();
+		}
+		else if (component.equals("STATICLIST")) {
+			builder.append("* This StaticList Type renders a ComboBox with value labels.<br/>");
+			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod,java method name which returns value,Labels to render ComboBox.");
+			return builder.toString();
+		}
+		else if (component.equals("DYNAMICLIST")) {
+			builder.append("* This DynamicList Type renders a ComboBox with value labels witch comes from table.<br/>");
+			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
+			builder.append("* 'Value Get Method' is getMethod for ComboBox Value.<br/>");
+			builder.append("* 'Value Label Method' is getMethod for ComboBox Label.");
+			return builder.toString();
+		}
+		
+		else if (component.equals("LOVSEARCH")) {
+			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
+			builder.append("* 'Value Get Method' is getMethod for hidden TextBox value.<br/>");
+			builder.append( "* 'Value Label Method' is getMethod for Label TextBox value.");
+			return builder.toString();
+		}
+		else if (component.equals("MULTISELANDLIST")) {
+			builder.append("* This is useful in use single component for different status.<br/>");
+			builder.append("* This Multi Select(With And Condition) Type renders a BandBox with multi select check boxes values.<br/>");
+			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns dbFieldName,value,Labels to render BandBox.<br/>");
+			builder.append("Eg :To Select differnt User Status from one component.PennantAppUtil Method must follw below.<br/>");
+			builder.append("public static ArrayList<ValueLabel> getUserStatusList() { <br/>");
+			builder.append("reportNames.add(new ValueLabel(\"usrEnabled\",\"1\",\"User Enabled\" <br/>");
+			builder.append("reportNames.add(new ValueLabel(\"usrAcExp\",\"1\",\"User Expired\" <br/>");
+			builder.append("reportNames.add(new ValueLabel(\"usrIsMultiBranch\",\"1\",\"Multi Branch\" <br/>");
+			builder.append("reportNames.add(new ValueLabel(\"usrCanOverrideLimits\",\"1\",\"Over Ride Limits\" <br/>");
+			builder.append("return reportNames;<br/>");
+			builder.append("}");
+			
+			return builder.toString();
+		}
+		else if (component.equals("MULTISELINLIST")) {
+			builder.append("* This Multi Select(With In Condition) Type renders a BandBox with multi select check boxes values .<br/>");
+			builder.append("* This will form a In condition for all Selected values. Eg . RecordType in ('NEW','Edit','Delete')<br/>");
+			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns value,Labels to render BandBox.");
+			return builder.toString();
+		}
+		else if (component.equals("STATICVALUE")) {
+			builder.append("* This is for hidden values with no filter to display .like our report always select Active records only.<br/>");
+			builder.append("* As it appends in query must follow sql rules");
+			return builder.toString();
+		}
+		return builder.toString();
 	}
 
 }

@@ -34,6 +34,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
@@ -92,7 +93,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected int   oldVar_sortOperator_finBranch;
 
 	private transient ReceiptRealizationService receiptRealizationService;
-
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 	/**
 	 * The default constructor.
 	 */
@@ -271,33 +272,48 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	}
 
 	/**
-	 * When user clicks on  "btnSearchCustCIF" button
+	 * When user clicks on button "customerId Search" button
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-
-		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
-			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationList, "Customer", this.customer.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
-				this.customer.setValue(selectedValues);
-			}
-
-		}else{
-
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList, "Customer");
-			if (dataObject instanceof String) {
-				this.customer.setValue("");
-			} else {
-				Customer details = (Customer) dataObject;
-				if (details != null) {
-					this.customer.setValue(details.getCustCIF());
-				}
-			}
-		}
+		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.customer.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.customer.setValue(customer.getCustCIF());
+		} else {
+			this.customer.setValue("");
+		}
+		logger.debug("Leaving ");
 	}
 
 	/**

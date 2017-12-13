@@ -484,12 +484,6 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 				doEdit();
 			}else{
 				this.btnEdit.setVisible(false);
-				this.btnDelete.setVisible(false);
-				this.btnSave.setVisible(false);
-				if(isEditable || newRecord){
-					this.btnCtrl.setInitEdit();
-				}
-				doReadOnly();
 				btnCancel.setVisible(false);
 			}
 		}

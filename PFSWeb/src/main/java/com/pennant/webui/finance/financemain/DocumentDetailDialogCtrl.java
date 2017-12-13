@@ -80,6 +80,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
@@ -89,6 +90,8 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
@@ -101,27 +104,28 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_documentDetailDialog; // autoWired
-	protected Borderlayout borderlayoutDocumentDetail; // autoWired
+	protected Window							window_documentDetailDialog;								// autoWired
+	protected Borderlayout						borderlayoutDocumentDetail;									// autoWired
 
-	protected Button btnNew_DocumentDetails; // autoWired
-	protected Listbox listBoxDocumentDetails; // autoWired
-	protected Map<String, DocumentDetails> docDetailMap = null;
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-	private transient FinanceDetailService financeDetailService = null;
-	private transient CustomerDocumentService customerDocumentService = null;
+	protected Button							btnNew_DocumentDetails;										// autoWired
+	protected Listbox							listBoxDocumentDetails;										// autoWired
+	protected Map<String, DocumentDetails>		docDetailMap			= null;
+	private List<DocumentDetails>				documentDetailsList		= new ArrayList<DocumentDetails>();
+	private transient FinanceDetailService		financeDetailService	= null;
+	private transient CustomerDocumentService	customerDocumentService	= null;
+	private ExternalDocumentManager				externalDocumentManager	= null;
 
-	private Object financeMainDialogCtrl = null;
-	private FinanceDetail financeDetail = null;
-	
-	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl  collateralBasicDetailsCtrl;
-	protected Groupbox finBasicdetails;
-	
-	private boolean headerNotrequired = false;
-	private String moduleDefiner = "";
-	private boolean isNotFinanceProcess = false;
-	private String moduleName;
+	private Object								financeMainDialogCtrl	= null;
+	private FinanceDetail						financeDetail			= null;
+
+	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
+	protected Groupbox							finBasicdetails;
+
+	private boolean								headerNotrequired		= false;
+	private String								moduleDefiner			= "";
+	private boolean								isNotFinanceProcess		= false;
+	private String								moduleName;
 
 	/**
 	 * default constructor.<br>
@@ -509,15 +513,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		List<Object> list = getCustomerBasicDetails();
 		if (!finDocumentDetail.isDocReceived() && finDocumentDetail.getDocImage() == null) {
-			if (finDocumentDetail.isDocIsCustDoc()) {
-				finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(list != null ? Long.valueOf(list.get(0).toString()) :  0,
-						finDocumentDetail.getDocCategory());
-			} else {
-				finDocumentDetail = getFinanceDetailService().getFinDocDetailByDocId(finDocumentDetail.getDocId(), "_View", true);
-				map.put("finDocumentDetail", finDocumentDetail);
-			}
-			if (finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-				finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
+			try {
+				finDocumentDetail = getDocumentContent(finDocumentDetail, list, map);
+			} catch (InterfaceException e) {
+				logger.error("Exception", e);
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -584,6 +584,32 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list, HashMap<String, Object> map) {
+		if (finDocumentDetail.isDocIsCustDoc()) {
+			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(list != null ? 
+					Long.valueOf(list.get(0).toString()) : 0, finDocumentDetail.getDocCategory());
+		} else {
+			finDocumentDetail = getFinanceDetailService().getDocumentDetails(finDocumentDetail.getDocId(), "_View");
+			map.put("finDocumentDetail", finDocumentDetail);
+		}
+		
+		if (finDocumentDetail.getDocImage() == null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+			finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
+		}
+		
+		if (finDocumentDetail != null && finDocumentDetail.getDocImage() == null) {
+			if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
+				// Fetch document from interface
+				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri());
+				if (detail != null && detail.getDocImage() != null) {
+					finDocumentDetail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
+				}
+
+			}
+		}
+		return finDocumentDetail;
 	}
 
 	/**
@@ -742,6 +768,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
 	}
 	
 }

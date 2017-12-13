@@ -388,8 +388,7 @@ public class ExtendedCombobox extends Hbox {
 			Filter filter1;
 
 			for (int i = 0; i < lovFilters.length; i++) {
-				filter1 = new Filter((String) lovFilters[i][0], lovFilters[i][2],
-						Integer.parseInt((String) lovFilters[i][1]));
+				filter1 = new Filter((String)lovFilters[i][0], (String)lovFilters[i][2], Integer.parseInt((String)lovFilters[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}

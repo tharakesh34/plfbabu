@@ -42,6 +42,8 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -64,6 +67,7 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
@@ -81,6 +85,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -155,6 +160,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	//protected Textbox							phoneCountryCode;
 	//protected Textbox							phoneAreaCode;
 	protected Textbox							phoneNumber;
+	protected Iframe							docName;
 
 	protected Label								label_liabilityHoldName;
 	protected Hbox								hbox_liabilityHoldName;
@@ -207,6 +213,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected int								accNoLength;
 	private transient BankDetailService			bankDetailService;
 	private FinanceMain							financeMain;
+	private DocumentDetails						documentDetails;
 
 	/**
 	 * default constructor.<br>
@@ -253,6 +260,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				financeDisbursement = (List<FinanceDisbursement>) arguments.get("financeDisbursement");
 			} else {
 				financeDisbursement = null;
+			}
+
+			if (arguments.containsKey("documentDetails")) {
+				documentDetails = (DocumentDetails) arguments.get("documentDetails");
+			} else {
+				documentDetails = null;
 			}
 
 			// READ OVERHANDED params !
@@ -486,8 +499,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
-			this.window_FinAdvancePaymentsDialog.setHeight("65%");
+			this.window_FinAdvancePaymentsDialog.setHeight("70%");
 			this.window_FinAdvancePaymentsDialog.setWidth("85%");
+			this.docName.setHeight((borderLayoutHeight - 275) + "px");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 
@@ -644,7 +658,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.sellerContribution.setTextBoxWidth(150);
 
 		this.liabilityHoldName.setWidth("150px");
-		this.beneficiaryName.setWidth("150px");
+		this.beneficiaryName.setWidth("155px");
 		this.llDate.setWidth("150px");
 		this.valueDate.setWidth("150px");
 		this.llReferenceNo.setWidth("150px");
@@ -783,6 +797,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		checkPaymentType(aFinAdvnancePayments.getPaymentType());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
+
+		AMedia amedia = null;
+		if (documentDetails != null) {
+			if (documentDetails.getDocImage() != null) {
+				InputStream data = new ByteArrayInputStream(documentDetails.getDocImage());
+
+				if (StringUtils.equals(documentDetails.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+					amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+				} else if (StringUtils.equals(documentDetails.getDoctype(), PennantConstants.DOC_TYPE_PDF)) {
+					amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
+				}
+				this.docName.setContent(amedia);
+			}
+		}
 		logger.debug("Leaving");
 	}
 

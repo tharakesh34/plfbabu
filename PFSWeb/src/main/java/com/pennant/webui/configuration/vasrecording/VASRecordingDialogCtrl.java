@@ -75,7 +75,6 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -110,8 +109,8 @@ import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -224,7 +223,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private HashMap<Long, Long>								selectedAnsCountMap		= null;
 	protected Map<String, Object>							flagTypeDataMap			= new HashMap<String, Object>();
 	private ExtendedFieldsGenerator							generator;
-	protected Rows											rows;
+	protected Tabpanel										extendedFieldTabPanel;
 	private ScriptValidationService							scriptValidationService;
 	private String											preValidationScript;
 	private String											postValidationScript;
@@ -1230,10 +1229,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if(isFinanceVas()){
 				
 				// Height Calculation
-				int height = (this.rows.getVisibleItemCount() * 25) + 120;
-				if((borderLayoutHeight*0.95) < height){
-					height = (int) (borderLayoutHeight*0.95);
-				}
+				int height = borderLayoutHeight - 120;
 				this.window_VASRecordingDialog.setHeight(height+"px");
 				this.window_VASRecordingDialog.setWidth("90%");
 				this.groupboxWf.setVisible(false);
@@ -1490,8 +1486,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_VASRecordingDialog);
-		//FIXME:Ganesh with the help of Satish		
-		//generator.setRows(rows);
+		generator.setTabpanel(extendedFieldTabPanel);
+		generator.setRowWidth(220);
+		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-280)+"px");
 		generator.setCcyFormat(getCcyFormat());
 		if (enqiryModule || isCancelProcess) {
 			generator.setReadOnly(true);
@@ -2087,8 +2084,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
 			
-			if(rows.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = rows.getFellowIfAny("ad_"+error.getProperty());
+			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
 				WrongValueException we = new WrongValueException(component, error.getValue());
 				wve.add(we);
 			}

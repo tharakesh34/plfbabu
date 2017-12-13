@@ -80,7 +80,12 @@
 									value="${c:l('label_BlacklistCustomerSearch_CustomerCIF.value')}" />
 								<listbox id="sortOperator_customerCIF"
 									width="43px" mold="select" rows="1" />
-								<textbox id="customerCIF" width="170px" />
+								<hbox>
+									<textbox id="customerCIF" width="170px" />
+									<button id="btnSearchCustCIF"
+										tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+										image="/images/icons/more.png" />
+								</hbox>
 								<label
 									id="label_BlacklistCustomerSearch_custDOB"
 									value="${c:l('label_BlacklistCustomerSearch_custDOB.value')}" />

@@ -120,9 +120,9 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -386,13 +386,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 
 				whereClause.append("(',' ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
 				}
 				whereClause.append(" LovDescFirstTaskOwner ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
@@ -894,7 +894,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.productCategory = financeType.getProductCategory();
 				customerDetails = financeDetail.getCustomerDetails();
 			} else {
-				financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
+				FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+				FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
+				financeDetail.getFinScheduleData().setFinanceMain(finMain);
+				financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 			}
 
 			// If promotion Pick, Set user Entered Details from Existing Data
@@ -1248,11 +1251,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_TRADELICENSE, true));
+							PennantRegularExpressions.REGEX_TRADELICENSE, false));
 				} else {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, true));
+							PennantRegularExpressions.REGEX_PANNUMBER, false));
 				}
 			}
 			try {

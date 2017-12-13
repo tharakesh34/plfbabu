@@ -218,10 +218,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				this.eidNumber.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
-						PennantRegularExpressions.REGEX_EIDNUMBER, true));
+						PennantRegularExpressions.REGEX_EIDNUMBER, false));
 			}else{
 				this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER,true));
+						PennantRegularExpressions.REGEX_PANNUMBER,false));
 			}
 		}
 		logger.debug("Leaving");
@@ -309,7 +309,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					wve.add(e);
 				}
                 
-				String eidNumbr = "";
+				String eidNumbr = null;
 				try{
 					eidNumbr = this.eidNumber.getValue();
 				}catch(WrongValueException e){

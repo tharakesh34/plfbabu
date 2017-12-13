@@ -13,6 +13,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
 
 public class ImageViewCtrl extends GFCBaseCtrl<Object> {
@@ -99,6 +100,26 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 					label_RefId.setVisible(true);
 					document.setVisible(false);
 					label_RefId.setValue(docDetail.getDocUri());
+				}
+			}
+			if (arguments.containsKey("mandate")) {
+				this.window_ImageView.setWidth("75%");
+				this.window_ImageView.setHeight("80%");
+				this.label_RefId.setVisible(true);
+
+				Mandate mandate = (Mandate) arguments.get("mandate");
+				String docType = StringUtils.trimToEmpty(mandate.getDocumentName()).toLowerCase();
+				if (docType.endsWith(".pdf")) {
+					amedia = new AMedia(mandate.getDocumentName(), "pdf", "application/pdf", mandate.getDocImage());
+				} else if (docType.endsWith(".jpg")
+						|| docType.endsWith(".jpeg")
+						|| docType.endsWith(".png")) {
+					amedia = new AMedia(mandate.getDocumentName(), "jpeg", "image/jpeg", mandate.getDocImage());
+				}
+
+				if (mandate != null) {
+					label_RefId.setVisible(true);
+					document.setContent(amedia);
 				}
 			}
 			document.setHeight(getBorderLayoutHeight());

@@ -739,6 +739,7 @@ public class PennantAppUtil {
 		moduleList.add("BuilderCompany");
 		moduleList.add("BuilderProjcet");
 		moduleList.add("Locality");
+		moduleList.add("LoanPurpose");
 		
 		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
 
@@ -2110,5 +2111,26 @@ public class PennantAppUtil {
 		
 		return accountEngineEventsList;
 	}
-	
+	/**
+	 * To get list of LovFields  which are co applicants from BMTLovFieldCode table
+	 * @return
+	 */
+	public static List<ValueLabel> getcoApplicants() {
+		ArrayList<ValueLabel> coApplicants = new ArrayList<ValueLabel>();
+		
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<LovFieldDetail> searchObject = new JdbcSearchObject<LovFieldDetail>(LovFieldDetail.class);
+		searchObject.addTabelName("RMTLovFieldDetail");
+		searchObject.addFilterEqual("fieldCode", "CAT_COAPP");
+		searchObject.addField("fieldCodevalue");
+		searchObject.addField("valuedesc");	
+		
+		List<LovFieldDetail> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel pftRateLabel = new ValueLabel(appList.get(i).getFieldCodeValue(),appList.get(i).getValueDesc());
+			coApplicants.add(pftRateLabel);
+		}
+		return coApplicants;
+		
+	}
 }

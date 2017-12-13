@@ -81,12 +81,12 @@
 									<grid sclass="GridLayoutNoBorder"
 										fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="15%" />
-											<column width="35%" />
-											<column width="15%" />
-											<column width="35%" />
+											<column width="220px" />
+											<column />
+											<column width="220px" />
+											<column />
 										</columns>
-										<rows id="rows">
+										<rows>
 											<row id="row0">
 												<label
 													id="label_ProductCode"
@@ -118,7 +118,7 @@
 													<button
 														id="btnSearchSelection"
 														tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
-														image="/images/icons/LOVSearch.png" visible="false"/>
+														image="/images/icons/LOVSearch.png" visible="false" />
 													<button
 														id="viewInfo" image="/images/icons/more.png"
 														tooltiptext="${c:l('tooltip_Custinfo')}" />
@@ -189,16 +189,20 @@
 													id="label_RecurringDate"
 													value="${c:l('label_VASRecordingDialog_RecurringDate.value')}" />
 												<hbox>
-													<space id="space_RecurringDate" spacing="2px" />
-													<datebox id="recurringDate" width="180px" />
+													<space
+														id="space_RecurringDate" spacing="2px" />
+													<datebox
+														id="recurringDate" width="180px" />
 												</hbox>
-												<label value="${c:l('label_VASRecordingDialog_RenewalFee.value')}" />
+												<label
+													value="${c:l('label_VASRecordingDialog_RenewalFee.value')}" />
 												<hbox>
-													<currencyBox id="renewalFee" width="120px" />
+													<currencyBox
+														id="renewalFee" width="120px" />
 												</hbox>
 											</row>
 											<row id="row5">
-											 <label id="label_DsaId"
+												<label id="label_DsaId"
 													value="${c:l('label_VASRecordingDialog_DsaId.value')}" />
 												<hbox>
 													<extendedcombobox
@@ -212,7 +216,7 @@
 												</hbox>
 											</row>
 											<row id="row6">
-											   <label
+												<label
 													id="label_FulfilOfficerId"
 													value="${c:l('label_VASRecordingDialog_FulfilOfficerId.value')}" />
 												<hbox
@@ -231,9 +235,27 @@
 											</row>
 										</rows>
 									</grid>
+									<tabbox width="100%"
+										height="100%">
+										<tabs
+											style="width:0px;height:0px;border:none;">
+											<tab
+												style="background:none;padding:0px;height:0px;">
+											</tab>
+										</tabs>
+										<tabpanels>
+											<tabpanel
+												id="extendedFieldTabPanel" style="overflow:auto">
+											</tabpanel>
+										</tabpanels>
+									</tabbox>
 								</groupbox>
 							</tabpanel>
 						</tabpanels>
+					</tabbox>
+					</groupbox>
+					</tabpanel>
+					</tabpanels>
 					</tabbox>
 				</center>
 				<south sclass="south-dialog">

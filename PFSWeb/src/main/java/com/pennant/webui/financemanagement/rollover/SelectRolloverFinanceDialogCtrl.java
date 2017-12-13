@@ -79,6 +79,7 @@ import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerLimit;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -104,9 +105,9 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 
 /**
  * This is the controller class for the
@@ -266,13 +267,13 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				}
 				
 				whereClause.append("(',' ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
 				}
 				whereClause.append(" LovDescFirstTaskOwner ");
-				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+				if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 					whereClause.append("||");
 				} else {
 					whereClause.append("+");
@@ -546,7 +547,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 		FinanceDetail financeDetail = getFinanceDetailService().getNewFinanceDetail(false);
 		financeDetail.setNewRecord(true);
 
-		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
+		FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+		FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(), financeType);
+		financeDetail.getFinScheduleData().setFinanceMain(finMain);
+		financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 		financeDetail.getFinScheduleData().setFinanceType(financeType);
 
 		//Step Policy Details

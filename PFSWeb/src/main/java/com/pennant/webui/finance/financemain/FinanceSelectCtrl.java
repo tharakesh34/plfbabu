@@ -119,8 +119,8 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
@@ -209,6 +209,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private boolean isDetailScreen = false;
 	private String buildedWhereCondition = "";
 	final Map<String, Object> map = getDefaultArguments();
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
 	
 	/**
 	 * Default constructor
@@ -584,33 +585,48 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * When user clicks on  "btnSearchCustCIF" button
+	 * When user clicks on button "customerId Search" button
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-		
-		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
-			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_FinanceSelect, "Customer", this.custCIF.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
-				this.custCIF.setValue(selectedValues);
-			}
-			
-		}else{
-
-			Object dataObject = ExtendedSearchListBox.show(this.window_FinanceSelect, "Customer");
-			if (dataObject instanceof String) {
-				this.custCIF.setValue("");
-			} else {
-				Customer details = (Customer) dataObject;
-				if (details != null) {
-					this.custCIF.setValue(details.getCustCIF());
-				}
-			}
-		}
+		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.custCIF.setValue(customer.getCustCIF());
+		} else {
+			this.custCIF.setValue("");
+		}
+		logger.debug("Leaving ");
 	}
 	
 	/**
@@ -922,7 +938,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND (RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else {
-			if(App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL){
+			if(App.DATABASE == Database.ORACLE){
 				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			}else{
 				whereClause.append(" AND (RcdMaintainSts = '' OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
@@ -2646,7 +2662,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		
 		if(StringUtils.isNotEmpty(workflowCode)){
 			
-			if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+			if (App.DATABASE == Database.ORACLE) {
 				buildedWhereCondition = " (NextRoleCode IS NULL ";
 			} else {
 				buildedWhereCondition = " (NextRoleCode = '' ";

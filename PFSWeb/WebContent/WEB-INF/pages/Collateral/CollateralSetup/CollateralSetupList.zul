@@ -73,8 +73,13 @@
 									<listbox
 										id="sortOperator_DepositorCif" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="depositorCif"
-										width="120px" maxlength="12" />
+									<hbox>
+										<textbox id="depositorCif"
+											width="120px" maxlength="12" />
+										<button id="btnSearchCustCIF"
+											tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+											image="/images/icons/more.png" />
+									</hbox>
 									<label
 										id="label_CollateralSetupList_CollateralRef"
 										value="${c:l('label_CollateralSetupList_CollateralRef.value')}" />

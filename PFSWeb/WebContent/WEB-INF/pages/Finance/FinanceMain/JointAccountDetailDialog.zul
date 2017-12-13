@@ -21,8 +21,7 @@
 											<listhead sizable="false">
 												<listheader id="listheader_JointCif" label="${c:l('listheader_Joint_CIF.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_JointCustName" sort="auto" label="${c:l('listheader_Joint_CIFName.label')}" hflex="min" />
-												<listheader id="listheader_JointRepay" label="${c:l('listheader_Joint_Repay.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_JointRepayAccount" sort="auto" label="${c:l('listheader_Joint_Repayment.label')}" hflex="min" />
+												<listheader id="listheader_AutoritySignatory" label="${c:l('listheader_Autority_Signatory.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_JointExposurePrimary" label="${c:l('listheader_Joint_PrimaryExposure.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_JointExposureSecondary" sort="auto" label="${c:l('listheader_Joint_SecondaryExposure.label')}" hflex="min" />
 												<listheader id="listheader_JointExposureGuarantor" sort="auto" label="${c:l('listheader_Joint_GuarantorExposure.label')}" hflex="min" />

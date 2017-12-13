@@ -95,8 +95,8 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/ProvisionList.zul
@@ -923,7 +923,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 			}
 		}
 
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 			buildedWhereCondition = " (NextRoleCode IS NULL ";
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";

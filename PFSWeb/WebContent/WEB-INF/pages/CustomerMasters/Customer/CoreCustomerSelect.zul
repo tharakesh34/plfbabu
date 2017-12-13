@@ -88,8 +88,7 @@
 									value="${c:l('label_CoreCustomerDialog_EIDNumber.value')}"
 									style="padding-left:12px;" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<uppercasebox id="eidNumber"
 										width="170px" />
 								</hbox>

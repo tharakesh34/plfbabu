@@ -66,7 +66,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pennapps.core.App;
 
 /**
  * This is the controller class for the /WEB-INF/pages/index.zul file.
@@ -113,9 +113,9 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		this.label_AppName.setValue(App.NAME);
 
 		if (App.NAME.contains("Lending")) {
-			this.imgsmallLogo.setSrc("/images/Pennant/plf_logo.png");
+			this.imgsmallLogo.setSrc("/images/plf_logo.png");
 		} else {
-			this.imgsmallLogo.setSrc("/images/Pennant/pff_logo.png");
+			this.imgsmallLogo.setSrc("/images/pff_logo.png");
 		}
 
 		LoggedInUser user = getUserWorkspace().getLoggedInUser();
@@ -176,7 +176,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 
 		// create the components from the mainmenu.zul-file and put
 		// it in the west layout area
-		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west, map);
+		Executions.createComponents("/WEB-INF/pages/mainMenu.zul", west, map);
 	}
 
 	/**

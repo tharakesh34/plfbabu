@@ -125,9 +125,9 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 import net.sf.jasperreports.engine.JRExporterParameter;
@@ -1394,7 +1394,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 					
-					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
+					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 						exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
 								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}

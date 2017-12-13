@@ -113,7 +113,7 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfields.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;

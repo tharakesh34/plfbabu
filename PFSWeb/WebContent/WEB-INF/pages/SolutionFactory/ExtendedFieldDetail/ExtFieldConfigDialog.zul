@@ -214,7 +214,7 @@
 												 <label value="${c:l('label_ExtendedFieldConfig_TabHeading.value')}" />
 													<hbox>
 														<space  spacing="2px" sclass="mandatory" />
-														<textbox id="tabHeading" width="110px"  />
+														<textbox id="tabHeading" width="150px"  />
 													</hbox>
 												</row>
 												<row>

@@ -86,11 +86,19 @@
 									<textbox id="pinCodes"
 										maxlength="10" width="150px" />
 								</hbox>
-								<label id="label_City"
-									value="${c:l('label_PinCodeDialog_City.value')}" />
-								<extendedcombobox id="city" />
+								<label id="label_GroupId"
+									value="${c:l('label_PinCodeDialog_GroupId.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<longbox id="groupId"
+										maxlength="8" width="150px" />
+								</hbox>
+								
 							</row>
 							<row id="row1">
+							<label id="label_City"
+									value="${c:l('label_PinCodeDialog_City.value')}" />
+								<extendedcombobox id="city" />
 								<label id="label_AreaName"
 									value="${c:l('label_PinCodeDialog_AreaName.value')}" />
 								<hbox>
@@ -99,9 +107,14 @@
 									<textbox id="areaName"
 										maxlength="100" width="200px" />
 								</hbox>
-								<label id="label_Active"
+							</row>
+							<row id="row2">
+							<label id="label_Active"
 									value="${c:l('label_PinCodeDialog_Active.value')}" />
 								<checkbox id="active" checked="false" />
+							<label id="label_IsServiceable"
+									value="${c:l('label_PinCodeDialog_IsServiceable.value')}" />
+								<checkbox id="isServiceable" checked="false" />
 							</row>
 						</rows>
 					</grid>

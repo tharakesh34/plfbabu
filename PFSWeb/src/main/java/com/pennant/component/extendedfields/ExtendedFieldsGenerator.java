@@ -59,7 +59,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.extendedfields.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -75,24 +75,33 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.framework.web.AbstractController;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-public class ExtendedFieldsGenerator {
-	private static final Logger	logger			= Logger.getLogger(ExtendedFieldsGenerator.class);
+public class ExtendedFieldsGenerator extends AbstractController {
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+
+	private static final Logger	logger				= Logger.getLogger(ExtendedFieldsGenerator.class);
 
 	private Window				window;
 	private Tabs				tabs;
 	private Tabpanel			tabpanel;
-	private Map<String, Object>	fieldValueMap	= new HashMap<>();
+	private Map<String, Object>	fieldValueMap		= new HashMap<>();
 	private boolean				isReadOnly;
 	private String				tabHeight;
 	private String				labelKey;
 	private int					ccyFormat;
+	private int					rowWidth;
+	private final String		TABPANEL_ID			= "Tab_Panel";
+	private Row					row;
 
 	public ExtendedFieldsGenerator() {
 
@@ -117,66 +126,95 @@ public class ExtendedFieldsGenerator {
 		if (extendedFieldDetails == null || extendedFieldDetails.isEmpty()) {
 			return;
 		}
-		
-		int columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
-		
 
-		List<ExtendedFieldDetail> containers=new ArrayList<ExtendedFieldDetail>();
-		List<ExtendedFieldDetail> inputElemets=new ArrayList<ExtendedFieldDetail>();
-		List<ExtendedFieldDetail> inputElemetswithoutParent=new ArrayList<ExtendedFieldDetail>();
-		
+		int columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
+
+		List<ExtendedFieldDetail> containers = new ArrayList<ExtendedFieldDetail>();
+		List<ExtendedFieldDetail> inputElemetswithoutParents = new ArrayList<ExtendedFieldDetail>();
+
+		// group the Containers and inputElements
 		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
 			if (extendedFieldDetail.isInputElement()) {
 				if (extendedFieldDetail.getParentTag() == null) {
-					inputElemetswithoutParent.add(extendedFieldDetail);
-				} else {
-					inputElemets.add(extendedFieldDetail);
+					inputElemetswithoutParents.add(extendedFieldDetail);
 				}
-
 			} else {
 				containers.add(extendedFieldDetail);
 			}
 		}
-		
-		Collections.sort(inputElemetswithoutParent, new ExtendedFieldsComparetor());
-		
-		if(!inputElemetswithoutParent.isEmpty()){
-			renderComponents(inputElemetswithoutParent, columnCount, tabpanel, isReadOnly, newRecord);
+
+		// render the elements which is not having a parent container
+		Collections.sort(inputElemetswithoutParents, new ExtendedFieldsComparator());
+		if (!inputElemetswithoutParents.isEmpty()) {
+			for (int i = 0; i < inputElemetswithoutParents.size(); i++) {
+				ExtendedFieldDetail inputElemetswithoutParent = inputElemetswithoutParents.get(i);
+				renderComponents(inputElemetswithoutParent, columnCount, tabpanel, isReadOnly, newRecord, i);
+			}
 		}
 
-		
-		Collections.sort(containers, new ExtendedFieldsComparetor());
-		
-		for (ExtendedFieldDetail contextendedFieldDetail : containers) {
-			Component parent = createContainer(contextendedFieldDetail);
-			List<ExtendedFieldDetail> childs = getChilds(inputElemets, contextendedFieldDetail);
-			Collections.sort(childs, new ExtendedFieldsComparetor());
-			renderComponents(childs, columnCount, parent, isReadOnly, newRecord);
+		//render the elements which is having a parent container
+		Collections.sort(containers, new ExtendedFieldsComparator());
+		for (ExtendedFieldDetail containerElement : containers) {
+			Component existting = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
+			if (existting == null) {
+				prepareGroupdElements(newRecord, columnCount, extendedFieldDetails, containerElement, tabpanel);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	public class ExtendedFieldsComparetor implements Comparator<ExtendedFieldDetail> {
 
-		@Override
-		public int compare(ExtendedFieldDetail arg0, ExtendedFieldDetail arg1) {
-			
-			if (arg0.getFieldSeqOrder() < arg1.getFieldSeqOrder()) {
-				return 1;
-			}else{
-				return 0;
+	/**
+	 * Method for Group the elements based on parent child relation between components and render the elements. if
+	 * parent contains subParents also it is calling itself, it is a recursive method.
+	 * 
+	 * @param newRecord
+	 * @param columnCount
+	 * @param extendedFieldDetails
+	 * @param containerElement
+	 * @param rootElement
+	 * @throws ParseException
+	 */
+	private void prepareGroupdElements(boolean newRecord, int columnCount,
+			List<ExtendedFieldDetail> extendedFieldDetails, ExtendedFieldDetail containerElement, Component rootElement)
+			throws ParseException {
+
+		Component parent = createContainer(containerElement, rootElement);
+
+		List<ExtendedFieldDetail> childs = getChilds(extendedFieldDetails, containerElement);
+		Collections.sort(childs, new ExtendedFieldsComparator());
+		for (int i = 0; i < childs.size(); i++) {
+			ExtendedFieldDetail child = childs.get(i);
+
+			//if the child is also a parent then creates the container and call the prepareGroupdElements method to
+			//group their child's and then render the elements. if the child is not a parent then render the elements.
+			if (!child.isInputElement() && child.getParentTag() != null) {
+				Component childContainer = null;
+				if (containerElement.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL)) {
+					childContainer = this.tabpanel.getFellowIfAny(TABPANEL_ID + containerElement.getFieldName());
+				} else {
+					childContainer = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
+				}
+
+				prepareGroupdElements(newRecord, columnCount, extendedFieldDetails, child, childContainer);
+			} else {
+				renderComponents(child, columnCount, parent, isReadOnly, newRecord, i);
 			}
-			
 		}
-
 	}
 
-	
-	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> list, ExtendedFieldDetail parent) {
+	/**
+	 * Method to group the list of child's for given parent
+	 * 
+	 * @param extendedFieldDetails
+	 * @param parent
+	 * @return
+	 */
+	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> extendedFieldDetails,
+			ExtendedFieldDetail parent) {
 
 		List<ExtendedFieldDetail> parentinputElemets = new ArrayList<ExtendedFieldDetail>();
-		for (ExtendedFieldDetail extendedFieldDetail : list) {
+		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
 			if (StringUtils.equals(extendedFieldDetail.getParentTag(), parent.getFieldName())) {
 				parentinputElemets.add(extendedFieldDetail);
 			}
@@ -184,81 +222,58 @@ public class ExtendedFieldsGenerator {
 		return parentinputElemets;
 	}
 
-	private Component createContainer(ExtendedFieldDetail container) {
-		
+	/**
+	 * Method for create the Container, it creates the container based on the fieldType and append that container to the
+	 * rootElement
+	 * 
+	 * @param container
+	 * @param rootElement
+	 * @return
+	 */
+	private Component createContainer(ExtendedFieldDetail container, Component rootElement) {
 		String key = container.getFieldType().trim();
 		switch (key) {
 		case ExtendedFieldConstants.FIELDTYPE_GROUPBOX:
-			Groupbox groupbox = new Groupbox();
-			groupbox.setId(container.getFieldName());
-			Caption caption=new Caption(StringUtils.trimToEmpty(container.getFieldLabel()));
-			caption.setParent(groupbox);
-			tabpanel.appendChild(groupbox);
-			
-			return groupbox; 
+			Groupbox groupbox = getGroupbox(container);
+			rootElement.appendChild(groupbox);
+			return groupbox;
 		case ExtendedFieldConstants.FIELDTYPE_TABPANEL:
-
-			Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
-			if (tabbox == null) {
-				tabbox = new Tabbox();
-				tabbox.setId("Tab_ROOT_");
-				this.tabpanel.appendChild(tabbox);
-			}
-			Tabs tabs = tabbox.getTabs();
-			if (tabs==null) {
-				tabs=new Tabs();
-				tabs.setParent(tabbox);
-			}
-			Tab tab=new Tab(StringUtils.trimToEmpty(container.getFieldLabel()));
-			tab.setId(container.getFieldName());
-			tabs.appendChild(tab);
-			
-			
-			Tabpanels tabpanels = tabbox.getTabpanels();
-			if (tabpanels==null) {
-				tabpanels=new Tabpanels();
-				tabpanels.setParent(tabbox);
-			}
-			
-			Tabpanel tabpanel=new Tabpanel();
-			tabpanel.setId("Tab_Panel"+container.getFieldName());
-			tabpanel.setStyle("overflow:auto;");
-			tabpanel.setHeight("100%");
-			tabpanels.appendChild(tabpanel);
-			tabpanels.setParent(tabbox);
-			return tabpanel; 
-
+			return getTabpanel(container);
 		default:
-		
 			return this.tabpanel;
 
 		}
 	}
 
 	/**
-	 * Method for validating extended Field details
+	 * Method For Create the Component and append that component to the parent Container.
 	 * 
-	 * @param extendedFieldDetailList
-	 * @param rows
+	 * @param detail
 	 * @param columnCount
+	 * @param parentComponent
 	 * @param isReadOnly
+	 * @param newRecord
+	 * @param i
 	 * @throws ParseException
 	 */
-	private void renderComponents(List<ExtendedFieldDetail> extendedFieldDetails, int columnCount,Component component ,boolean isReadOnly, boolean newRecord) throws ParseException {
+	private void renderComponents(ExtendedFieldDetail detail, int columnCount, Component parentComponent,
+			boolean isReadOnly, boolean newRecord, int i) throws ParseException {
 		logger.debug(Literal.ENTERING);
-		
-		
+
+		if (rowWidth == 0) {
+			rowWidth = 220;//default
+		}
+
 		Grid grid = new Grid();
 		grid.setStyle("border:0px");
 		grid.setSclass("GridLayoutNoBorder");
-		component.appendChild(grid);
+		parentComponent.appendChild(grid);
 
 		Columns columns = new Columns();
 		grid.appendChild(columns);
 		Rows rows = new Rows();
 		grid.appendChild(rows);
-		
-		
+
 		if (columnCount == 2) {
 			columns.appendChild(getColumn("220px"));
 			columns.appendChild(getColumn());
@@ -268,622 +283,131 @@ public class ExtendedFieldsGenerator {
 			columns.appendChild(new Column("", null, "250px"));
 			columns.appendChild(new Column("", null));
 		}
-		
-		Row row = null;
+
 		Hbox hbox = null;
-		Textbox textbox = null;
-		RateBox rateBox = null;
-		FrequencyBox frqBox = null;
-		String[] staticList = null;
 
-		for (int i = 0; i < extendedFieldDetails.size(); i++) {
-			ExtendedFieldDetail detail = extendedFieldDetails.get(i);
-
-			row = getRow(columnCount, row, i);
-			hbox = new Hbox();
-			row.appendChild(getLabel(detail.getFieldLabel()));
-			row.appendChild(hbox);
-
-			String key = detail.getFieldType().trim();
-			switch (key) {
-			
-			case ExtendedFieldConstants.FIELDTYPE_TEXT:
-			case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-				textbox = new Textbox();
-				textbox.setId(getComponentId(detail.getFieldName()));
-				textbox.setMaxlength(detail.getFieldLength());
-				textbox.setReadonly(isReadOnly);
-
-				// Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					textbox.setValue(detail.getFieldDefaultValue());
-				}
-
-				// Multiple-Line Text box Preparation
-				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, detail.getFieldType().trim())) {
-					textbox.setRows(detail.getMultiLine());
-				}
-
-				// TextBox Width Setting 
-				if (detail.getFieldLength() <= 20) {
-					textbox.setWidth(detail.getFieldLength() * 10 + "px");
-				} else {
-					textbox.setWidth("250px");
-				}
-				hbox.appendChild(textbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Uppercasebox uppercasebox = new Uppercasebox();
-				uppercasebox.setId(getComponentId(detail.getFieldName()));
-				uppercasebox.setMaxlength(detail.getFieldLength());
-				uppercasebox.setReadonly(isReadOnly);
-
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					uppercasebox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					uppercasebox.setValue(detail.getFieldDefaultValue());
-				}
-
-				if (detail.getFieldLength() <= 20) {
-					uppercasebox.setWidth(detail.getFieldLength() * 10 + "px");
-				} else {
-					uppercasebox.setWidth("250px");
-				}
-				hbox.appendChild(uppercasebox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_DATE:
-			case ExtendedFieldConstants.FIELDTYPE_DATETIME:
-			case ExtendedFieldConstants.FIELDTYPE_TIME:
-
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Datebox datebox = null;
-				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())
-						|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,
-								detail.getFieldType().trim())) {
-					datebox = new Datebox();
-					datebox.setId(getComponentId(detail.getFieldName()));
-					datebox.setDisabled(isReadOnly);
-
-					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
-						datebox.setFormat(DateFormat.SHORT_DATE.getPattern());
-						datebox.setWidth("100px");
-					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,
-							detail.getFieldType().trim())) {
-						datebox.setFormat(DateFormat.SHORT_DATE_TIME.getPattern());
-						datebox.setWidth("150px");
-					}
-
-					// Data Setting
-					if (fieldValueMap.containsKey(detail.getFieldName())
-							&& fieldValueMap.get(detail.getFieldName()) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-						if (newRecord) {
-							try {
-								Object dateVal = fieldValueMap.get(detail.getFieldName());
-								if (dateVal != null) {
-									Date date = DateUtility.parse(dateVal.toString(),
-											DateFormat.SHORT_DATE.getPattern());
-									datebox.setValue(date);
-								}
-							} catch (Exception e) {
-								logger.error("Exception :", e);
-							}
-						} else {
-							datebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
-						}
-					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-
-						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
-
-							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
-									detail.getFieldDefaultValue())) {
-								datebox.setValue(DateUtility.getAppDate());
-							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
-									detail.getFieldDefaultValue())) {
-								datebox.setValue(DateUtility.getSysDate());
-							}
-
-						} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,
-								detail.getFieldType().trim())) {
-							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
-									detail.getFieldDefaultValue())) {
-								datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME));
-							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
-									detail.getFieldDefaultValue())) {
-								datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME));
-							}
-						}
-					}
-					hbox.appendChild(datebox);
-				}
-
-				//Time box properties Setup
-				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, detail.getFieldType().trim())) {
-
-					Timebox timebox = new Timebox();
-					timebox.setFormat(PennantConstants.timeFormat);
-					timebox.setId(getComponentId(detail.getFieldName()));
-					timebox.setWidth("80px");
-					timebox.setButtonVisible(!isReadOnly);
-					timebox.setDisabled(isReadOnly);
-
-					// Data Setting
-					if (fieldValueMap.containsKey(detail.getFieldName())
-							&& fieldValueMap.get(detail.getFieldName()) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-						timebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
-					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-						if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME,
-								detail.getFieldDefaultValue())) {
-							timebox.setValue(DateUtility.getTimestamp(new Date()));
-						}
-					}
-					hbox.appendChild(timebox);
-				}
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-			case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-			case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-				Decimalbox decimalbox = new Decimalbox();
-				decimalbox.setStyle("text-align:right");
-				decimalbox.setId(getComponentId(detail.getFieldName()));
-				decimalbox.setWidth(detail.getFieldLength() * 10 + "px");
-				decimalbox.setMaxlength(detail.getFieldLength() + 1);
-				decimalbox.setScale(detail.getFieldPrec());
-				decimalbox.setDisabled(isReadOnly);
-
-				// Format Setting based on Field Type
-				String fieldType = StringUtils.trimToEmpty(detail.getFieldType());
-				switch (fieldType) {
-				case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-					decimalbox.setFormat(PennantApplicationUtil.getRateFormate(detail.getFieldPrec()));
-					break;
-				case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-					decimalbox.setFormat(PennantConstants.percentageFormate2);
-					break;
-				case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-					decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(detail.getFieldPrec()));
-					break;
-				default:
-					break;
-				}
-				// Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					decimalbox.setValue(new BigDecimal(fieldValueMap.get(detail.getFieldName()).toString()));
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					decimalbox.setValue(new BigDecimal(detail.getFieldDefaultValue()));
-				} else {
-					decimalbox.setValue(BigDecimal.ZERO);
-				}
-
-				hbox.appendChild(decimalbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
-				CurrencyBox currencyBox = new CurrencyBox();
-				currencyBox.setId(getComponentId(detail.getFieldName()));
-				currencyBox.setProperties(detail.isFieldMandatory(), getCcyFormat());
-				currencyBox.setReadonly(isReadOnly);
-
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					currencyBox.setValue(PennantApplicationUtil.formateAmount(
-							new BigDecimal(fieldValueMap.get(detail.getFieldName()).toString()), ccyFormat));
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					currencyBox.setValue(PennantApplicationUtil
-							.formateAmount(new BigDecimal(detail.getFieldDefaultValue()), ccyFormat));
-				} else {
-					currencyBox.setValue(BigDecimal.ZERO);
-				}
-				hbox.appendChild(currencyBox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Combobox combobox = new Combobox();
-				combobox.setId(getComponentId(detail.getFieldName()));
-				combobox.setDisabled(isReadOnly);
-				if (detail.getFieldLength() < 10) {
-					combobox.setWidth("100px");
-				} else {
-					combobox.setWidth(detail.getFieldLength() * 10 + "px");
-				}
-
-				// Data Rendering and Setting existing value
-				Comboitem comboitem = new Comboitem();
-				comboitem.setValue("#");
-				comboitem.setLabel(Labels.getLabel("Combo.Select"));
-				combobox.appendChild(comboitem);
-				combobox.setReadonly(true);
-				combobox.setSelectedIndex(0);
-
-				staticList = detail.getFieldList().split(",");
-				for (int j = 0; j < staticList.length; j++) {
-
-					comboitem = new Comboitem();
-					comboitem.setValue(staticList[j]);
-					comboitem.setLabel(staticList[j]);
-					combobox.appendChild(comboitem);
-
-					if (fieldValueMap.containsKey(detail.getFieldName())
-							&& fieldValueMap.get(detail.getFieldName()) != null
-							&& StringUtils.equals(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
-						combobox.setSelectedItem(comboitem);
-					}
-				}
-				hbox.appendChild(combobox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Bandbox bandBox = new Bandbox();
-				Listbox listBox = new Listbox();
-				bandBox.setId(getComponentId(detail.getFieldName()));
-				bandBox.setReadonly(true);
-				bandBox.setTabindex(-1);
-				bandBox.setDisabled(isReadOnly);
-
-				Bandpopup bandpopup = new Bandpopup();
-				listBox.setMultiple(true);
-				listBox.setDisabled(true);
-				bandpopup.appendChild(listBox);
-				bandBox.appendChild(bandpopup);
-
-				staticList = detail.getFieldList().split(",");
-				int maxFieldLength = 0;
-				for (int j = 0; j < staticList.length; j++) {
-
-					Listitem listItem = new Listitem();
-					Listcell listCell = new Listcell();
-					Checkbox checkBox = new Checkbox();
-					checkBox.addEventListener("onCheck", new onMultiSelectionItemSelected());
-					checkBox.setValue(staticList[j]);
-
-					Label label = new Label(staticList[j]);
-					label.setStyle("padding-left:5px");
-					listCell.setValue(staticList[j]);
-					listCell.appendChild(checkBox);
-					listCell.appendChild(label);
-					listItem.appendChild(listCell);
-					listBox.appendChild(listItem);
-
-					if (maxFieldLength < staticList[j].length()) {
-						maxFieldLength = staticList[j].length();
-					}
-
-					if (fieldValueMap.containsKey(detail.getFieldName())
-							&& fieldValueMap.get(detail.getFieldName()) != null && StringUtils
-									.contains(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
-						checkBox.setChecked(true);
-						bandBox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-					}
-				}
-
-				if (maxFieldLength < 10) {
-					bandBox.setWidth("100px");
-					listBox.setWidth("100px");
-				} else {
-
-					int length = maxFieldLength * 10;
-					if (length > 220) {
-						length = 220;
-					}
-					bandBox.setWidth(length + "px");
-					listBox.setWidth(length + "px");
-				}
-				hbox.appendChild(bandBox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
-				ExtendedCombobox extendedCombobox = new ExtendedCombobox();
-				extendedCombobox.setId(getComponentId(detail.getFieldName()));
-				extendedCombobox.setReadonly(isReadOnly);
-
-				// Module Parameters Identification from Module Mapping
-				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
-				String[] lovefields = moduleMapping.getLovFields();
-				if (lovefields.length >= 2) {
-					extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
-							detail.isFieldMandatory(), 8);
-				}
-
-				//Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				}
-
-				hbox.appendChild(extendedCombobox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
-
-				//Adding Space Component
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Hbox extHbox = new Hbox();
-				textbox = new Textbox();
-				textbox.setId("ad_" + detail.getFieldName());
-				textbox.setReadonly(true);
-
-				// Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				}
-				extHbox.appendChild(textbox);
-
-				Button button = null;
-				button = new Button();
-				button.setImage("/images/icons/search.png");
-				button.setVisible(!isReadOnly);
-				extHbox.appendChild(button);
-
-				if (!isReadOnly) {
-					List<Object> list = new ArrayList<Object>();
-					list.add(detail.getFieldList());
-					list.add(textbox);
-					list.add(this.window);
-					button.setAttribute("data", list);
-					button.addEventListener("onClick", new onMultiSelButtonClick());
-				}
-
-				hbox.appendChild(extHbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_BASERATE:
-				rateBox = new RateBox();
-				rateBox.setId(getComponentId(detail.getFieldName()));
-				rateBox.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
-				rateBox.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
-				rateBox.setMandatoryStyle(detail.isFieldMandatory());
-				rateBox.setReadonly(isReadOnly);
-
-				//Data Setting 
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_BR"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_BR")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString())) {
-					rateBox.setBaseValue(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString());
-				}
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_SR"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_SR")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString())) {
-					rateBox.setSpecialValue(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString());
-				}
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_MR"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_MR")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString())) {
-					rateBox.setMarginValue(
-							new BigDecimal(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString()));
-				}
-				hbox.appendChild(rateBox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
-				appendSpace(false, isReadOnly, hbox);
-
-				Checkbox checkbox = new Checkbox();
-				checkbox.setId(getComponentId(detail.getFieldName()));
-				checkbox.setDisabled(isReadOnly);
-
-				//data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					//checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
-					if(App.DATABASE == Database.PSQL){
-						checkbox.setChecked(
-								fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
-					}else{
-						checkbox.setChecked(
-								Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
-					}
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-
-					if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
-						checkbox.setChecked(true);
-					} else {
-						checkbox.setChecked(false);
-					}
-				}
-				hbox.appendChild(checkbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_INT:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Intbox intbox = new Intbox();
-				intbox.setId(getComponentId(detail.getFieldName()));
-				intbox.setReadonly(isReadOnly);
-				intbox.setMaxlength(detail.getFieldLength());
-
-				//Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					intbox.setValue(Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()));
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					intbox.setValue(Integer.parseInt(detail.getFieldDefaultValue().toString()));
-				}
-				hbox.appendChild(intbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_LONG:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Longbox longbox = new Longbox();
-				longbox.setId(getComponentId(detail.getFieldName()));
-				longbox.setReadonly(isReadOnly);
-
-				//Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					longbox.setValue(Long.parseLong(fieldValueMap.get(detail.getFieldName()).toString()));
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					longbox.setValue(Long.parseLong(detail.getFieldDefaultValue().toString()));
-				}
-
-				hbox.appendChild(longbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_RADIO:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Radiogroup radiogroup = new Radiogroup();
-				radiogroup.setId(getComponentId(detail.getFieldName()));
-
-				//options data rendering
-				String[] radiofields = detail.getFieldList().split(",");
-				for (int j = 0; j < radiofields.length; j++) {
-					Radio radio = new Radio();
-					radio.setLabel(radiofields[j]);
-					radio.setValue(radiofields[j]);
-
-					radio.setDisabled(isReadOnly);
-
-					//Data Setting
-					if (fieldValueMap.containsKey(detail.getFieldName())
-							&& fieldValueMap.get(detail.getFieldName()) != null
-							&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())
-							&& StringUtils.trimToEmpty(fieldValueMap.get(detail.getFieldName()).toString())
-									.equals(radiofields[j])) {
-						radio.setChecked(true);
-					} else {
-						radio.setChecked(false);
-					}
-					radiogroup.appendChild(radio);
-				}
-				hbox.appendChild(radiogroup);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
-				AccountSelectionBox accbox = new AccountSelectionBox();
-				accbox.setId(getComponentId(detail.getFieldName()));
-				accbox.setFormatter(getCcyFormat());
-				accbox.setTextBoxWidth(165);
-				accbox.setAccountDetails("", "J7", "1010200250001,1010200500001", true);//TODO : Account Types need to define
-				accbox.setMandatoryStyle(detail.isFieldMandatory());
-				accbox.setButtonVisible(false);// !isReadOnly
-				accbox.setReadonly(isReadOnly);
-
-				//Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					accbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				}
-
-				hbox.appendChild(accbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_FRQ:
-				frqBox = new FrequencyBox();
-				frqBox.setId(getComponentId(detail.getFieldName()));
-				frqBox.setMandatoryStyle(detail.isFieldMandatory());
-
-				//Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					frqBox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				} else {
-					frqBox.setValue("");
-				}
-				hbox.appendChild(frqBox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				textbox = new Textbox();
-				textbox.setId(getComponentId(detail.getFieldName()));
-				textbox.setMaxlength(100);
-				textbox.setWidth("250px");
-				textbox.setReadonly(isReadOnly);
-
-				// Data Setting
-				if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-					textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					textbox.setValue(detail.getFieldDefaultValue());
-				}
-				hbox.appendChild(textbox);
-				break;
-
-			case ExtendedFieldConstants.FIELDTYPE_PHONE:
-
-				appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
-
-				Hbox phHbox = new Hbox();
-
-				Textbox countryCode = new Textbox();
-				countryCode.setId("ad_".concat(detail.getFieldName().concat("_CC")));
-				countryCode.setMaxlength(4);
-				countryCode.setReadonly(isReadOnly);
-				countryCode.setWidth("48px");
-
-				//Data Setting 
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_CC"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_CC")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_CC")).toString())) {
-					countryCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_CC")).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					countryCode.setValue(detail.getFieldDefaultValue());
-				}
-				Textbox areaCode = new Textbox();
-				areaCode.setId("ad_".concat(detail.getFieldName().concat("_AC")));
-				areaCode.setMaxlength(4);
-				areaCode.setReadonly(isReadOnly);
-				areaCode.setWidth("48px");
-
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_AC"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_AC")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_AC")).toString())) {
-					areaCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_AC")).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					areaCode.setValue(detail.getFieldDefaultValue());
-				}
-
-				Textbox subCode = new Textbox();
-				subCode.setId("ad_".concat(detail.getFieldName().concat("_SC")));
-				subCode.setMaxlength(8);
-				subCode.setReadonly(isReadOnly);
-				subCode.setWidth("96px");
-
-				if (fieldValueMap.containsKey(detail.getFieldName().concat("_SC"))
-						&& fieldValueMap.get(detail.getFieldName().concat("_SC")) != null
-						&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SC")).toString())) {
-					subCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_SC")).toString());
-				} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-					subCode.setValue(detail.getFieldDefaultValue());
-				}
-
-				phHbox.appendChild(countryCode);
-				phHbox.appendChild(areaCode);
-				phHbox.appendChild(subCode);
-				hbox.appendChild(phHbox);
-				break;
-			default:
-				break;
+		row = getRow(columnCount, row, i);
+		hbox = new Hbox();
+		row.appendChild(getLabel(detail.getFieldLabel()));
+		row.appendChild(hbox);
+
+		String key = detail.getFieldType().trim();
+
+		Component component = null;
+
+		switch (key) {
+
+		case ExtendedFieldConstants.FIELDTYPE_TEXT:
+		case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getTextbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getUppercasebox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_DATE:
+		case ExtendedFieldConstants.FIELDTYPE_DATETIME:
+		case ExtendedFieldConstants.FIELDTYPE_TIME:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			//Datebox properties Setup
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+				component = getDatebox(detail, newRecord);
 			}
-			rows.appendChild(row);
+			//Timebox properties Setup
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, detail.getFieldType().trim())) {
+				component = getTimebox(detail);
+
+			}
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
+		case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
+		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getDecimalbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+			component = getCurrencyBox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getCombobox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getBandbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
+			component = getExtendedCombobox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getMultiExtendedCombo(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_BASERATE:
+			component = getRateBox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getCheckbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_INT:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getIntbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_LONG:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getLongbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_RADIO:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getRadiogroup(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
+			component = getAccountSelectionBox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_FRQ:
+			component = getFrequencyBox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getTextbox(detail);
+			break;
+
+		case ExtendedFieldConstants.FIELDTYPE_PHONE:
+			appendSpace(detail.isFieldMandatory(), isReadOnly, hbox);
+			component = getPhonebox(detail);
+			break;
+		default:
+			break;
 		}
+		if (component != null) {
+			readOnlyComponent(!detail.isEditable(), component);
+			hbox.appendChild(component);
+		}
+
+		rows.appendChild(row);
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private Component getColumn(String width) {
 		Column column = new Column();
 		column.setWidth(width);
@@ -916,6 +440,7 @@ public class ExtendedFieldsGenerator {
 
 		for (ExtendedFieldDetail detail : extendedFieldDetailList) {
 			String id = getComponentId(detail.getFieldName());
+			isReadOnly=!detail.isEditable();
 
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
 				id = "ad_".concat(detail.getFieldName().concat("_CC"));
@@ -1391,11 +916,12 @@ public class ExtendedFieldsGenerator {
 
 	/**
 	 * Method for Showing Error Details
+	 * 
 	 * @param wve
 	 */
 	private void showErrorDetails(ArrayList<WrongValueException> wve, List<Component> compList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (wve.size() > 0) {
 			for (Component component : compList) {
 				if (component instanceof CurrencyBox) {
@@ -1480,6 +1006,7 @@ public class ExtendedFieldsGenerator {
 	 * @return Row row
 	 */
 	private Row getRow(int columnCount, Row row, int i) {
+
 		if (columnCount == 2) {
 			if (i % 2 == 0) {
 				row = new Row();
@@ -1519,15 +1046,721 @@ public class ExtendedFieldsGenerator {
 	}
 
 	/**
+	 * Method for create Textbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Textbox
+	 */
+	private Textbox getTextbox(ExtendedFieldDetail detail) {
+		Textbox textbox = null;
+		textbox = new Textbox();
+		textbox.setId(getComponentId(detail.getFieldName()));
+		textbox.setMaxlength(detail.getFieldLength());
+		textbox.setReadonly(isReadOnly);
+		if (StringUtils.equals(detail.getFieldType().trim(), ExtendedFieldConstants.FIELDTYPE_ADDRESS)) {
+			textbox.setMaxlength(100);
+			textbox.setWidth("250px");
+		}
+
+		// Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			textbox.setValue(detail.getFieldDefaultValue());
+		}
+		if (StringUtils.equals(detail.getFieldType().trim(), ExtendedFieldConstants.FIELDTYPE_ADDRESS)) {
+			return textbox;
+		}
+		// Multiple-Line Text box Preparation
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, detail.getFieldType().trim())) {
+			textbox.setRows(detail.getMultiLine());
+		}
+
+		// TextBox Width Setting 
+		if (detail.getFieldLength() <= 20) {
+			textbox.setWidth(detail.getFieldLength() * 10 + "px");
+		} else {
+			textbox.setWidth("250px");
+		}
+
+		return textbox;
+	}
+
+	/**
+	 * Method for create Uppercasebox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Uppercasebox
+	 */
+	private Uppercasebox getUppercasebox(ExtendedFieldDetail detail) {
+
+		Uppercasebox uppercasebox = new Uppercasebox();
+		uppercasebox.setId(getComponentId(detail.getFieldName()));
+		uppercasebox.setMaxlength(detail.getFieldLength());
+		uppercasebox.setReadonly(isReadOnly);
+
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			uppercasebox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			uppercasebox.setValue(detail.getFieldDefaultValue());
+		}
+
+		if (detail.getFieldLength() <= 20) {
+			uppercasebox.setWidth(detail.getFieldLength() * 10 + "px");
+		} else {
+			uppercasebox.setWidth("250px");
+		}
+		return uppercasebox;
+	}
+
+	/**
+	 * Method for create Datebox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @param newRecord
+	 * @return Datebox
+	 */
+	private Datebox getDatebox(ExtendedFieldDetail detail, boolean newRecord) {
+
+		Datebox datebox = new Datebox();
+		datebox.setId(getComponentId(detail.getFieldName()));
+		datebox.setDisabled(isReadOnly);
+
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
+			datebox.setFormat(DateFormat.SHORT_DATE.getPattern());
+			datebox.setWidth("100px");
+		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+			datebox.setFormat(DateFormat.SHORT_DATE_TIME.getPattern());
+			datebox.setWidth("150px");
+		}
+
+		// Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			if (newRecord) {
+				try {
+					Object dateVal = fieldValueMap.get(detail.getFieldName());
+					if (dateVal != null) {
+						Date date = DateUtility.parse(dateVal.toString(), DateFormat.SHORT_DATE.getPattern());
+						datebox.setValue(date);
+					}
+				} catch (Exception e) {
+					logger.error("Exception :", e);
+				}
+			} else {
+				datebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
+			}
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
+
+				if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+					datebox.setValue(DateUtility.getAppDate());
+				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+						detail.getFieldDefaultValue())) {
+					datebox.setValue(DateUtility.getSysDate());
+				}
+
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+				if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
+					datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME));
+				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+						detail.getFieldDefaultValue())) {
+					datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME));
+				}
+			}
+		}
+		return datebox;
+	}
+
+	/**
+	 * Method for create Timebox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Timebox
+	 */
+	private Timebox getTimebox(ExtendedFieldDetail detail) {
+
+		Timebox timebox = new Timebox();
+		timebox.setFormat(PennantConstants.timeFormat);
+		timebox.setId(getComponentId(detail.getFieldName()));
+		timebox.setWidth("80px");
+		timebox.setButtonVisible(!isReadOnly);
+		timebox.setDisabled(isReadOnly);
+
+		// Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			timebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME, detail.getFieldDefaultValue())) {
+				timebox.setValue(DateUtility.getTimestamp(new Date()));
+			}
+		}
+		return timebox;
+	}
+
+	/**
+	 * Method for create Decimalbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Decimalbox
+	 */
+	private Decimalbox getDecimalbox(ExtendedFieldDetail detail) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setStyle("text-align:right");
+		decimalbox.setId(getComponentId(detail.getFieldName()));
+		decimalbox.setWidth(detail.getFieldLength() * 10 + "px");
+		decimalbox.setMaxlength(detail.getFieldLength() + 1);
+		decimalbox.setScale(detail.getFieldPrec());
+		decimalbox.setDisabled(isReadOnly);
+		String fieldType = StringUtils.trimToEmpty(detail.getFieldType());
+
+		// Format Setting based on Field Type
+		if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
+			decimalbox.setFormat(PennantApplicationUtil.getRateFormate(detail.getFieldPrec()));
+		} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)) {
+			decimalbox.setFormat(PennantConstants.percentageFormate2);
+
+		} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
+			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(detail.getFieldPrec()));
+		}
+
+		// Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			decimalbox.setValue(new BigDecimal(fieldValueMap.get(detail.getFieldName()).toString()));
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			decimalbox.setValue(new BigDecimal(detail.getFieldDefaultValue()));
+		} else {
+			decimalbox.setValue(BigDecimal.ZERO);
+		}
+		return decimalbox;
+
+	}
+
+	/**
+	 * Method for create CurrencyBox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return CurrencyBox
+	 */
+	private CurrencyBox getCurrencyBox(ExtendedFieldDetail detail) {
+		CurrencyBox currencyBox = new CurrencyBox();
+		currencyBox.setId(getComponentId(detail.getFieldName()));
+		currencyBox.setProperties(detail.isFieldMandatory(), getCcyFormat());
+		currencyBox.setReadonly(isReadOnly);
+
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			currencyBox.setValue(PennantApplicationUtil
+					.formateAmount(new BigDecimal(fieldValueMap.get(detail.getFieldName()).toString()), ccyFormat));
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			currencyBox.setValue(
+					PennantApplicationUtil.formateAmount(new BigDecimal(detail.getFieldDefaultValue()), ccyFormat));
+		} else {
+			currencyBox.setValue(BigDecimal.ZERO);
+		}
+		return currencyBox;
+	}
+
+	/**
+	 * Method for create Combobox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Combobox
+	 */
+	private Combobox getCombobox(ExtendedFieldDetail detail) {
+		String[] staticList = null;
+		Combobox combobox = new Combobox();
+		combobox.setId(getComponentId(detail.getFieldName()));
+		combobox.setDisabled(isReadOnly);
+		if (detail.getFieldLength() < 10) {
+			combobox.setWidth("100px");
+		} else {
+			combobox.setWidth(detail.getFieldLength() * 10 + "px");
+		}
+
+		// Data Rendering and Setting existing value
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		combobox.appendChild(comboitem);
+		combobox.setReadonly(true);
+		combobox.setSelectedIndex(0);
+
+		staticList = detail.getFieldList().split(",");
+		for (int j = 0; j < staticList.length; j++) {
+
+			comboitem = new Comboitem();
+			comboitem.setValue(staticList[j]);
+			comboitem.setLabel(staticList[j]);
+			combobox.appendChild(comboitem);
+
+			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					&& StringUtils.equals(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+		return combobox;
+	}
+
+	/**
+	 * Method for create Bandbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Bandbox
+	 */
+	private Bandbox getBandbox(ExtendedFieldDetail detail) {
+		String[] staticList = null;
+		Bandbox bandBox = new Bandbox();
+		Listbox listBox = new Listbox();
+		bandBox.setId(getComponentId(detail.getFieldName()));
+		bandBox.setReadonly(true);
+		bandBox.setTabindex(-1);
+		bandBox.setDisabled(isReadOnly);
+
+		Bandpopup bandpopup = new Bandpopup();
+		listBox.setMultiple(true);
+		listBox.setDisabled(true);
+		bandpopup.appendChild(listBox);
+		bandBox.appendChild(bandpopup);
+
+		staticList = detail.getFieldList().split(",");
+		int maxFieldLength = 0;
+		for (int j = 0; j < staticList.length; j++) {
+
+			Listitem listItem = new Listitem();
+			Listcell listCell = new Listcell();
+			Checkbox checkBox = new Checkbox();
+			checkBox.addEventListener("onCheck", new onMultiSelectionItemSelected());
+			checkBox.setValue(staticList[j]);
+
+			Label label = new Label(staticList[j]);
+			label.setStyle("padding-left:5px");
+			listCell.setValue(staticList[j]);
+			listCell.appendChild(checkBox);
+			listCell.appendChild(label);
+			listItem.appendChild(listCell);
+			listBox.appendChild(listItem);
+
+			if (maxFieldLength < staticList[j].length()) {
+				maxFieldLength = staticList[j].length();
+			}
+
+			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					&& StringUtils.contains(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
+				checkBox.setChecked(true);
+				bandBox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+			}
+		}
+
+		if (maxFieldLength < 10) {
+			bandBox.setWidth("100px");
+			listBox.setWidth("100px");
+		} else {
+
+			int length = maxFieldLength * 10;
+			if (length > 220) {
+				length = 220;
+			}
+			bandBox.setWidth(length + "px");
+			listBox.setWidth(length + "px");
+		}
+		return bandBox;
+	}
+
+	/**
+	 * Method for create ExtendedCombobox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return ExtendedCombobox
+	 */
+	private ExtendedCombobox getExtendedCombobox(ExtendedFieldDetail detail) {
+		ExtendedCombobox extendedCombobox = new ExtendedCombobox();
+		extendedCombobox.setId(getComponentId(detail.getFieldName()));
+		extendedCombobox.setReadonly(isReadOnly);
+
+		// Module Parameters Identification from Module Mapping
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
+		String[] lovefields = moduleMapping.getLovFields();
+		if (lovefields.length >= 2) {
+			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
+					detail.isFieldMandatory(), 8);
+		}
+
+		//Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		}
+		return extendedCombobox;
+	}
+
+	/**
+	 * Method for create MultiExtendedCombox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Hbox
+	 */
+	private Hbox getMultiExtendedCombo(ExtendedFieldDetail detail) {
+		Hbox extHbox = new Hbox();
+		Textbox textbox = new Textbox();
+		textbox.setId("ad_" + detail.getFieldName());
+		textbox.setReadonly(true);
+
+		// Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			textbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		}
+		extHbox.appendChild(textbox);
+
+		Button button = null;
+		button = new Button();
+		button.setImage("/images/icons/search.png");
+		button.setVisible(!isReadOnly);
+		extHbox.appendChild(button);
+
+		if (!isReadOnly) {
+			List<Object> list = new ArrayList<Object>();
+			list.add(detail.getFieldList());
+			list.add(textbox);
+			list.add(this.window);
+			button.setAttribute("data", list);
+			button.addEventListener("onClick", new onMultiSelButtonClick());
+		}
+		return extHbox;
+	}
+
+	/**
+	 * Method for create Checkbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Checkbox
+	 */
+	private Checkbox getCheckbox(ExtendedFieldDetail detail) {
+		Checkbox checkbox = new Checkbox();
+		checkbox.setId(getComponentId(detail.getFieldName()));
+		checkbox.setDisabled(isReadOnly);
+
+		//data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			//checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
+		if(App.DATABASE == Database.POSTGRES){
+			checkbox.setChecked(
+					fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
+		}else{
+			checkbox.setChecked(
+					Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
+		}
+			
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+
+			if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
+				checkbox.setChecked(true);
+			} else {
+				checkbox.setChecked(false);
+			}
+		}
+		return checkbox;
+	}
+
+	/**
+	 * Method for create Intbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Intbox
+	 */
+	private Intbox getIntbox(ExtendedFieldDetail detail) {
+		Intbox intbox = new Intbox();
+		intbox.setId(getComponentId(detail.getFieldName()));
+		intbox.setReadonly(isReadOnly);
+		intbox.setMaxlength(detail.getFieldLength());
+
+		//Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			intbox.setValue(Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()));
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			intbox.setValue(Integer.parseInt(detail.getFieldDefaultValue().toString()));
+		}
+		return intbox;
+	}
+
+	/**
+	 * Method for create Longbox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Longbox
+	 */
+	private Longbox getLongbox(ExtendedFieldDetail detail) {
+		Longbox longbox = new Longbox();
+		longbox.setId(getComponentId(detail.getFieldName()));
+		longbox.setReadonly(isReadOnly);
+
+		//Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			longbox.setValue(Long.parseLong(fieldValueMap.get(detail.getFieldName()).toString()));
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			longbox.setValue(Long.parseLong(detail.getFieldDefaultValue().toString()));
+		}
+		return longbox;
+	}
+
+	/**
+	 * Method for create AccountSelectionBox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return AccountSelectionBox
+	 */
+	private AccountSelectionBox getAccountSelectionBox(ExtendedFieldDetail detail) {
+		AccountSelectionBox accbox = new AccountSelectionBox();
+		accbox.setId(getComponentId(detail.getFieldName()));
+		accbox.setFormatter(getCcyFormat());
+		accbox.setTextBoxWidth(165);
+		accbox.setAccountDetails("", "J7", "1010200250001,1010200500001", true);//TODO : Account Types need to define
+		accbox.setMandatoryStyle(detail.isFieldMandatory());
+		accbox.setButtonVisible(false);// !isReadOnly
+		accbox.setReadonly(isReadOnly);
+
+		//Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			accbox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		}
+		return accbox;
+	}
+
+	/**
+	 * Method for create Radiogroup based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Radiogroup
+	 */
+	private Radiogroup getRadiogroup(ExtendedFieldDetail detail) {
+		Radiogroup radiogroup = new Radiogroup();
+		radiogroup.setId(getComponentId(detail.getFieldName()));
+
+		//options data rendering
+		String[] radiofields = detail.getFieldList().split(",");
+		for (int j = 0; j < radiofields.length; j++) {
+			Radio radio = new Radio();
+			radio.setLabel(radiofields[j]);
+			radio.setValue(radiofields[j]);
+
+			radio.setDisabled(isReadOnly);
+
+			//Data Setting
+			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+					&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString()) && StringUtils
+							.trimToEmpty(fieldValueMap.get(detail.getFieldName()).toString()).equals(radiofields[j])) {
+				radio.setChecked(true);
+			} else {
+				radio.setChecked(false);
+			}
+			radiogroup.appendChild(radio);
+		}
+		return radiogroup;
+	}
+
+	/**
+	 * Method for create FrequencyBox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return FrequencyBox
+	 */
+	private FrequencyBox getFrequencyBox(ExtendedFieldDetail detail) {
+		FrequencyBox frqBox;
+		frqBox = new FrequencyBox();
+		frqBox.setId(getComponentId(detail.getFieldName()));
+		frqBox.setMandatoryStyle(detail.isFieldMandatory());
+
+		//Data Setting
+		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
+			frqBox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		} else {
+			frqBox.setValue("");
+		}
+		return frqBox;
+	}
+
+	/**
+	 * Method for create Phonebox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return Phonebox (Hbox containing Textboxs)
+	 */
+	private Hbox getPhonebox(ExtendedFieldDetail detail) {
+		Hbox phHbox = new Hbox();
+
+		Textbox countryCode = new Textbox();
+		countryCode.setId("ad_".concat(detail.getFieldName().concat("_CC")));
+		countryCode.setMaxlength(4);
+		countryCode.setReadonly(isReadOnly);
+		countryCode.setWidth("48px");
+
+		//Data Setting 
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_CC"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_CC")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_CC")).toString())) {
+			countryCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_CC")).toString());
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			countryCode.setValue(detail.getFieldDefaultValue());
+		}
+		Textbox areaCode = new Textbox();
+		areaCode.setId("ad_".concat(detail.getFieldName().concat("_AC")));
+		areaCode.setMaxlength(4);
+		areaCode.setReadonly(isReadOnly);
+		areaCode.setWidth("48px");
+
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_AC"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_AC")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_AC")).toString())) {
+			areaCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_AC")).toString());
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			areaCode.setValue(detail.getFieldDefaultValue());
+		}
+
+		Textbox subCode = new Textbox();
+		subCode.setId("ad_".concat(detail.getFieldName().concat("_SC")));
+		subCode.setMaxlength(8);
+		subCode.setReadonly(isReadOnly);
+		subCode.setWidth("96px");
+
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_SC"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_SC")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SC")).toString())) {
+			subCode.setValue(fieldValueMap.get(detail.getFieldName().concat("_SC")).toString());
+		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
+			subCode.setValue(detail.getFieldDefaultValue());
+		}
+
+		phHbox.appendChild(countryCode);
+		phHbox.appendChild(areaCode);
+		phHbox.appendChild(subCode);
+		return phHbox;
+	}
+
+	/**
+	 * Method for create RateBox based on the Extended field details.
+	 * 
+	 * @param detail
+	 * @return RateBox
+	 */
+	private RateBox getRateBox(ExtendedFieldDetail detail) {
+
+		RateBox rateBox = new RateBox();
+		rateBox.setId(getComponentId(detail.getFieldName()));
+		rateBox.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
+		rateBox.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
+		rateBox.setMandatoryStyle(detail.isFieldMandatory());
+		rateBox.setReadonly(isReadOnly);
+
+		//Data Setting 
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_BR"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_BR")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString())) {
+			rateBox.setBaseValue(fieldValueMap.get(detail.getFieldName().concat("_BR")).toString());
+		}
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_SR"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_SR")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString())) {
+			rateBox.setSpecialValue(fieldValueMap.get(detail.getFieldName().concat("_SR")).toString());
+		}
+		if (fieldValueMap.containsKey(detail.getFieldName().concat("_MR"))
+				&& fieldValueMap.get(detail.getFieldName().concat("_MR")) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString())) {
+			rateBox.setMarginValue(new BigDecimal(fieldValueMap.get(detail.getFieldName().concat("_MR")).toString()));
+		}
+		return rateBox;
+	}
+
+	/**
+	 * Method for create Groupbox based on the Extended field details.
+	 * 
+	 * @param container
+	 * @return Groupbox
+	 */
+	private Groupbox getGroupbox(ExtendedFieldDetail container) {
+		Groupbox groupbox = new Groupbox();
+		groupbox.setId(container.getFieldName());
+		Caption caption = new Caption(StringUtils.trimToEmpty(container.getFieldLabel()));
+		caption.setParent(groupbox);
+		return groupbox;
+	}
+
+	/**
+	 * Method for create Tabpanel based on the Extended field details.
+	 * 
+	 * @param container
+	 * @return Tabpanel
+	 */
+	private Tabpanel getTabpanel(ExtendedFieldDetail container) {
+		Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
+		if (tabbox == null) {
+			tabbox = new Tabbox();
+			tabbox.setId("Tab_ROOT_");
+			this.tabpanel.appendChild(tabbox);
+		}
+		Tabs tabs = tabbox.getTabs();
+		if (tabs == null) {
+			tabs = new Tabs();
+			tabs.setParent(tabbox);
+		}
+		Tab tab = new Tab(StringUtils.trimToEmpty(container.getFieldLabel()));
+		tab.setId(container.getFieldName());
+		tabs.appendChild(tab);
+
+		Tabpanels tabpanels = tabbox.getTabpanels();
+		if (tabpanels == null) {
+			tabpanels = new Tabpanels();
+			tabpanels.setParent(tabbox);
+		}
+
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(TABPANEL_ID + container.getFieldName());
+		tabpanel.setStyle("overflow:auto;border:none;");
+		tabpanel.setHeight("100%");
+		tabpanels.appendChild(tabpanel);
+		tabpanels.setParent(tabbox);
+		return tabpanel;
+	}
+
+	/**
+	 * 
+	 * This Comparator class is used to sort the ExtendedFieldDetail based on their sequenceNumber
+	 */
+	public class ExtendedFieldsComparator implements Comparator<ExtendedFieldDetail> {
+		@Override
+		public int compare(ExtendedFieldDetail arg0, ExtendedFieldDetail arg1) {
+
+			if (arg0.getFieldSeqOrder() < arg1.getFieldSeqOrder()) {
+				return 1;
+			} else {
+				return 0;
+			}
+
+		}
+
+	}
+
+	/**
 	 * Method for Preparing component id
 	 * 
-	 * @param String fieldName
+	 * @param String
+	 *            fieldName
 	 * @return String id
 	 */
 	private String getComponentId(String fieldName) {
 		return "ad_".concat(fieldName);
 	}
-	
+
 	public Window getWindow() {
 		return window;
 	}
@@ -1592,5 +1825,12 @@ public class ExtendedFieldsGenerator {
 		this.tabpanel = tabpanel;
 	}
 
+	public int getRowWidth() {
+		return rowWidth;
+	}
+
+	public void setRowWidth(int rowWidth) {
+		this.rowWidth = rowWidth;
+	}
 
 }
