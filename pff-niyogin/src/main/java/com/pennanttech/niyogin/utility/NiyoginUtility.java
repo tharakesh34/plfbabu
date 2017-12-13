@@ -9,7 +9,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
-public class ExperianUtility {
+public class NiyoginUtility {
 
 	/**
 	 * Method to get the High priority email.
