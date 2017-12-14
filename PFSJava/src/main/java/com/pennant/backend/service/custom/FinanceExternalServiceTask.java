@@ -225,27 +225,29 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 */
 	private void setRemarks(AuditHeader auditHeader, String method, String message) {
 		FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		Map<String, Object> extendedMap = finDeatil.getExtendedFieldRender().getMapValues();
-		if(message != null && message.length() > 149) {
-			message = message.substring(0, 143);
-		}
-		if(StringUtils.equals(method, PennantConstants.method_Experian_Bureau)) {
-			extendedMap.put("REASONCODE", "9999");
-			extendedMap.put("REMARKSEXPERIANBEA", message);
-		} else if(StringUtils.equals(method, PennantConstants.method_Crif_Bureau)) {
-			extendedMap.put("REASONCODECRIF", "9999");
-			extendedMap.put("REMARKSCRIF", message);
-		} else if(StringUtils.equals(method, PennantConstants.method_Cibil_Bureau)) {
-			/*extendedMap.put("REASONCODECRIF", "9999");
-			extendedMap.put("REMARKSCRIF", message);*/
-		} else if(StringUtils.equals(method, PennantConstants.method_externalDedup)) {
-			extendedMap.put("REASONCODEINTERNAL", "9999");
-			extendedMap.put("REMARKSINTERNAL", message);
-			extendedMap.put("EXDREQUESTSEND", true);
-		} else if(StringUtils.equals(method, PennantConstants.method_hunter)) {
-			extendedMap.put("REASONCODEHUNTER", "9999");
-			extendedMap.put("REMARKSHUNTER", message);
-			extendedMap.put("HUNTREQSEND", true);
+		if(finDeatil.getExtendedFieldRender() != null) {
+			Map<String, Object> extendedMap = finDeatil.getExtendedFieldRender().getMapValues();
+			if(message != null && message.length() > 149) {
+				message = message.substring(0, 143);
+			}
+			if(StringUtils.equals(method, PennantConstants.method_Experian_Bureau)) {
+				extendedMap.put("REASONCODE", "9999");
+				extendedMap.put("REMARKSEXPERIANBEA", message);
+			} else if(StringUtils.equals(method, PennantConstants.method_Crif_Bureau)) {
+				extendedMap.put("REASONCODECRIF", "9999");
+				extendedMap.put("REMARKSCRIF", message);
+			} else if(StringUtils.equals(method, PennantConstants.method_Cibil_Bureau)) {
+				/*extendedMap.put("REASONCODECRIF", "9999");
+				extendedMap.put("REMARKSCRIF", message);*/
+			} else if(StringUtils.equals(method, PennantConstants.method_externalDedup)) {
+				extendedMap.put("REASONCODEINTERNAL", "9999");
+				extendedMap.put("REMARKSINTERNAL", message);
+				extendedMap.put("EXDREQUESTSEND", true);
+			} else if(StringUtils.equals(method, PennantConstants.method_hunter)) {
+				extendedMap.put("REASONCODEHUNTER", "9999");
+				extendedMap.put("REMARKSHUNTER", message);
+				extendedMap.put("HUNTREQSEND", true);
+			}
 		}
 	}
 
