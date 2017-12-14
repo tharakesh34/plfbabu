@@ -1047,6 +1047,7 @@
 											style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1128,6 +1129,7 @@
 											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
 														box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1185,6 +1187,7 @@
 											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1242,6 +1245,7 @@
 											style="zoom: 1; background: white; border: 1px solid #d7d7d7; 
 												border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1366,6 +1370,7 @@
 									<listbox id="listBoxCustomerIncome"
 										span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
 										sizedByContent="true" fixedLayout="true" sclass="kycgrid"
+										tooltiptext="${c:l('listbox.tooltiptext')}"
 										width="90%" multiple="false">
 										<listhead sizable="true"
 											height="50px"
@@ -1491,6 +1496,7 @@
 										id="listBoxCustomerDirectory" span="true"
 										sizedByContent="true" sclass="kycgrid"
 										emptyMessage="${c:l('listbox.emptyMessage')}" width="90%"
+										tooltiptext="${c:l('listbox.tooltiptext')}"
 										multiple="false">
 										<listhead sizable="true"
 											height="50px">
@@ -1621,6 +1627,7 @@
 											id="listBoxCustomerBankInformation" span="true"
 											sizedByContent="true" width="100%" multiple="false"
 											sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1677,6 +1684,7 @@
 											id="listBoxCustomerChequeInformation" span="true"
 											sizedByContent="true" style="text-align:auto"
 											multiple="false" sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1737,6 +1745,7 @@
 											id="listBoxCustomerFinExposure" span="true"
 											sizedByContent="true" fixedLayout="true" multiple="false"
 											sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
@@ -1804,6 +1813,7 @@
 										<listbox
 											id="listBoxCustomerExternalLiability" span="true"
 											sizedByContent="true" multiple="false" sclass="kycgrid"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
 											emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true"
 												height="50px">
