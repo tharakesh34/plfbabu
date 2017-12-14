@@ -141,9 +141,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					auditHeader = externalDedup.checkDedup(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
-					logger.error("Exception in CRIFF Bureau:", e);
+					logger.error("Exception in Dedup Bureau:", e);
 					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
+					setRemarks(auditHeader, PennantConstants.method_externalDedup, e.getMessage());
 					//throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
@@ -152,9 +152,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
-					logger.error("Exception in CRIFF Bureau:", e);
+					logger.error("Exception in Hunter Bureau:", e);
 					taskExecuted = true;
-					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
+					setRemarks(auditHeader, PennantConstants.method_hunter, e.getMessage());
 					//throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
@@ -241,9 +241,11 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		} else if(StringUtils.equals(method, PennantConstants.method_externalDedup)) {
 			extendedMap.put("REASONCODEINTERNAL", "9999");
 			extendedMap.put("REMARKSINTERNAL", message);
+			extendedMap.put("EXDREQUESTSEND", true);
 		} else if(StringUtils.equals(method, PennantConstants.method_hunter)) {
 			extendedMap.put("REASONCODEHUNTER", "9999");
 			extendedMap.put("REMARKSHUNTER", message);
+			extendedMap.put("HUNTREQSEND", true);
 		}
 	}
 

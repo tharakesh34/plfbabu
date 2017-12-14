@@ -166,8 +166,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			errorDesc = writer.toString();
 			doInterfaceLogging(requestObject, finReference);
 			throw new InterfaceException(errorCode, exp.getMessage());
-		} finally {
-			requestObject = null;
 		}
 
 		//for Straight forwardFields It works

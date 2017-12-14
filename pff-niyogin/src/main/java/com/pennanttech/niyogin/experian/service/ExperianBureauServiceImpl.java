@@ -155,8 +155,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			errorDesc = writer.toString();
 			doInterfaceLogging(requestObject, finReference);
 			throw new InterfaceException(errorCode, exp.getMessage());
-		} finally {
-			requestObject = null;
 		}
 
 		//for Straight forwardFields It works
@@ -661,7 +659,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param reference
 	 */
 	private void doInterfaceLogging(Object requestObj, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, "myres", reqSentOn, status,
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn, status,
 				errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);
 	}

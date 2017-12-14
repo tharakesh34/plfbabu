@@ -3495,9 +3495,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		if (!StringUtils.isBlank(aCustomer.getCustCRCPR()) && !isMandateIDDocExist && validateAllDetails) {
-			doShowValidationMessage(custTab, 4,
+			/*doShowValidationMessage(custTab, 4,
 					isRetailCustomer ? PennantConstants.PANNUMBER : PennantConstants.PANNUMBER);
-			return false;
+			return false;*/
 		}
 		logger.debug("Leaving");
 		return true;
