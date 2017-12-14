@@ -435,7 +435,6 @@ public class CustomizeFinanceDataValidation {
 				//document Name Extension validation
 				if (docName.endsWith(".jpg") || docName.endsWith(".jpeg") || docName.endsWith(".png")
 						|| docName.endsWith(".pdf")) {
-					//TODO : {0} must be provided for {1}
 					if (mandate.getDocImage() == null||mandate.getDocImage().length==0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "docContent";
@@ -458,11 +457,24 @@ public class CustomizeFinanceDataValidation {
 			}
 			
 			//TODO {0} must be provided for {1}
-			if(mandate.getDocImage() != null&&StringUtils.isBlank(mandate.getDocumentName())){
+			if (mandate.getDocImage() != null && StringUtils.isBlank(mandate.getDocumentName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "documentName";
 				valueParm[1] = "docContent";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90406", valueParm)));
+			}
+			
+			if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
+				if (mandate.getDocImage() == null || mandate.getDocImage().length <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "docContent";
+					valueParm[1] = "docRefId";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90123", valueParm)));
+				}
+			} else if(StringUtils.isBlank(mandate.getDocumentName())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Document Name";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 			}
 
 		}
