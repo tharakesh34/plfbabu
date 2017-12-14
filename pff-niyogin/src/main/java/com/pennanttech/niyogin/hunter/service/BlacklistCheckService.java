@@ -53,7 +53,8 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finReference = financeMain.getFinReference();
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
@@ -70,12 +71,18 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			if (extendedFieldMap.get("ERRORCODE") != null) {
 				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
 				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
+				financeMain.setHunterGo(false);
 				throw new InterfaceException(errorCode, errorDesc);
 			} else {
 				extendedFieldMap.put("HUNTREQSEND", true);
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
+				if((Boolean)validatedMap.get("HUNTERMATCH")) {
+					financeMain.setHunterGo(false);
+				} else {
+					financeMain.setHunterGo(true);
+				}
 			}
 
 			logger.info("Response : " + jsonResponse);
@@ -87,6 +94,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
 			doInterfaceLogging(hunterRequest, finReference);
+			financeMain.setHunterGo(false);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		// success case logging

@@ -3886,6 +3886,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
+		String finishedTasks = "";
 
 		//String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
 		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
@@ -3893,6 +3894,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (serviceTasks != null && !serviceTasks.isEmpty()) {
 			for(ServiceTask task: serviceTasks) {
 				auditHeader = execute(auditHeader, task, role, usrAction, engine);
+				finishedTasks = task.getOperation()+";"+finishedTasks;
+				serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
+				if(serviceTasks.isEmpty()) {
+					break;
+				}
 			}
 			if(!auditHeader.isProcessCompleted()) {
 				auditHeader = execute(auditHeader, null, role, usrAction, engine);
@@ -3903,6 +3909,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 	
+	private List<ServiceTask> getRemainingServiceTasks(List<ServiceTask> serviceTasks, WorkflowEngine engine, 
+			String taskId, FinanceMain afinanceMain, String finishedTasks) {
+		// changes regarding parallel work flow 
+		String nextRoleCode = StringUtils.trimToEmpty(afinanceMain.getNextRoleCode());
+		String nextRoleCodes[] = nextRoleCode.split(",");
+		if (nextRoleCodes.length > 1) {
+			return new ArrayList<>();
+		}
+
+		String tasks = engine.getServiceOperationsAsString(taskId, afinanceMain);
+		if (StringUtils.isNotBlank(tasks)) {
+			tasks += ";";
+		}
+		if (!"".equals(finishedTasks)) {
+			String[] list = finishedTasks.split(";");
+			for (int i = 0; i < list.length; i++) {
+				tasks = tasks.replace(list[i] + ";", "");
+			}
+		}
+		
+		if(StringUtils.isBlank(tasks)) {
+			serviceTasks = new ArrayList<>();
+		}
+
+		return serviceTasks;
+	}
+
 	/**
 	 * Method for process and execute workflow service tasks
 	 * 

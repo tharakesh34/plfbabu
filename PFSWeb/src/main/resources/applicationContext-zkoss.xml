@@ -4166,6 +4166,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 

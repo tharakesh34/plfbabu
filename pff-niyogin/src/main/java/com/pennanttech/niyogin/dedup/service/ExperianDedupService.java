@@ -19,6 +19,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
@@ -51,13 +52,13 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String applicantType;
 
 		//for Applicant
 		applicantType = "A";
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		Map<String, Object> validatedMap = checkDedup(experianDedupRequest, finReference);
+		Map<String, Object> validatedMap = checkDedup(experianDedupRequest, financeMain);
 		prepareResponseObj(validatedMap, financeDetail);
 
 		//for CoApplicant
@@ -82,7 +83,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return auditHeader;
 	}
 
-	public Map<String, Object> checkDedup(ExperianDedup experianDedupRequest, String finReference) {
+	public Map<String, Object> checkDedup(ExperianDedup experianDedupRequest, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
@@ -99,12 +100,16 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			if (extendedFieldMap.get("ERRORCODE") != null) {
 				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
 				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
+				financeMain.setDedupMatch(true);
+				setWorkflowDetails(financeMain);
 				throw new InterfaceException(errorCode, errorDesc);
 			} else {
 				extendedFieldMap.remove("ERRORCODE");
 				extendedFieldMap.remove("ERRORMESSAGE");
 				extendedFieldMap.put("EXDREQUESTSEND", true);
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
+				setWorkflowDetails(financeMain);
+				financeMain.setDedupMatch((Boolean)validatedMap.get("MATCH"));
 			}
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception e) {
@@ -114,17 +119,18 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			StringWriter writer = new StringWriter();
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
-			doInterfaceLogging(experianDedupRequest, finReference);
+			doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
+			financeMain.setDedupMatch(true);
+			setWorkflowDetails(financeMain);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		
 		// success case logging
-		doInterfaceLogging(experianDedupRequest, finReference);
+		doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
 		
 		logger.debug(Literal.LEAVING);
 		return validatedMap;
 	}
-
 	
 	/**
 	 * Method for Prepare the ExperianDedup Request object.
@@ -246,6 +252,18 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		logInterfaceDetails(interfaceLogDetail);
 	}
 
+	/**
+	 * 
+	 * @param financeMain
+	 */
+	private void setWorkflowDetails(FinanceMain financeMain) {
+		if(financeMain.isDedupMatch()) {
+			financeMain.setRecordStatus("Saved");
+			financeMain.setUserAction("Save");
+			financeMain.setNextRoleCode(financeMain.getRoleCode());
+			financeMain.setNextTaskId(financeMain.getTaskId());
+		}
+	}
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
