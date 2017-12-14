@@ -281,7 +281,13 @@
 		 <dependency>
 			<groupId>com.pennanttech.document</groupId>
 			<artifactId>document-parser</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.4</version>
+			<exclusions>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+    			<artifactId>log4j-over-slf4j</artifactId>
+			</exclusion>
+			</exclusions>
 		</dependency> 
 	</dependencies>
 
