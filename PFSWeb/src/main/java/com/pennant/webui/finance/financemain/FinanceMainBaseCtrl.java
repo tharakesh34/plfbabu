@@ -259,6 +259,7 @@ import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
+import com.pennant.webui.pdfupload.PdfParserCaller;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -839,6 +840,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//Extended fields
 	private ExtendedFieldCtrl								extendedFieldCtrl		= null;
+	//for pdf extraction
+	private PdfParserCaller                                 pdfParserCaller;
+	private String										    pdfExtTabPanelId;
 
 	/**
 	 * default constructor.<br>
@@ -3610,6 +3614,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(aFinanceMain.getFinReference());
 			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			setPdfExtTabPanelId("TabPanel"+ExtendedFieldConstants.MODULE_LOAN+aFinanceMain.getFinCategory());
 			aFinanceDetail.setExtendedFieldHeader(extendedFieldHeader);
 			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
 
@@ -15122,6 +15127,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		return null;
 	}
+	
+	public void onClickExtbtnEXTRACT(){
+		logger.debug("Entering");
+		try{
+		Map<String, Object> pdfExtractFields = getPdfParserCaller()
+				.callDocumentParser(customerDialogCtrl.getCustomerDocumentDetailList());
+		extendedFieldCtrl.fillcomponentData(pdfExtractFields, getPdfExtTabPanelId(), false);
+		}catch (Exception e) {
+			{
+				if(e.getLocalizedMessage() != null){
+				MessageUtil.showError(e.getLocalizedMessage());
+				}else{
+				MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
@@ -15918,4 +15941,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.mailTemplateService = mailTemplateService;
 	}
 
+	public PdfParserCaller getPdfParserCaller() {
+		return pdfParserCaller;
+	}
+
+	public void setPdfParserCaller(PdfParserCaller pdfParserCaller) {
+		this.pdfParserCaller = pdfParserCaller;
+	}
+
+	public String getPdfExtTabPanelId() {
+		return pdfExtTabPanelId;
+	}
+
+	public void setPdfExtTabPanelId(String pdfExtTabPanelId) {
+		this.pdfExtTabPanelId = pdfExtTabPanelId;
+	}
+	
 }
