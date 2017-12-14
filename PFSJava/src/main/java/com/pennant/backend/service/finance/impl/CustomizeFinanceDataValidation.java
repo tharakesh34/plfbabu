@@ -501,17 +501,14 @@ public class CustomizeFinanceDataValidation {
 					if (StringUtils.isBlank(jointAccDetail.getRepayAccountId())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "RepayAccountId";
-						valueParm[1] = "IncludeRepay";
-						//TODO:90502 {0} is mandatory in the request.
-						//RepayAccountId is only applicable for IncludeRepay customer.
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90124", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 						return errorDetails;
 					}
 				}else if(StringUtils.isNotBlank(jointAccDetail.getRepayAccountId())){
 					String[] valueParm = new String[2];
-					valueParm[0] = "repayAccountId";
+					valueParm[0] = "RepayAccountId";
 					valueParm[1] = "includeRepay";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90124", valueParm)));
 				}
 				if (StringUtils.equals(jointAccDetail.getCustCIF(),
 						financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
