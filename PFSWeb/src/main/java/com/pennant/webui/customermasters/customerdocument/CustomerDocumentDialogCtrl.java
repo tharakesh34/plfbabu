@@ -1986,6 +1986,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 				getCustomerDocument().setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
 				getCustomerDocument().setPdfMappingRef(details.getPdfMappingRef());
+				getCustomerDocument().setDocIsPasswordProtected(details.isDocIsPasswordProtected());
 			}
 		}
 		this.custDocTitle.setValue("");
