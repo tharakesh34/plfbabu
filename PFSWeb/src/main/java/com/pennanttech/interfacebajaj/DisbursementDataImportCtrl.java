@@ -55,7 +55,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private long userId;
 	private DataEngineStatus	DISB_OTHER_IMPORT_STATUS	= new DataEngineStatus("DISB_OTHER_IMPORT");
-	private DataEngineStatus	DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_HDFC_IMPORT");
+	private DataEngineStatus				DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_CITI_IMPORT");
 	
 	@Autowired
 	private DisbursementResponseFileService disbursementResponseFileService;
@@ -95,10 +95,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			String configName = config.getName();
-			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
-				if ("DISB_HDFC_IMPORT".equals(configName)) {
-					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
-					valueLabel = new ValueLabel(configName, "HDFC Bank Disbursement Response");
+			if ("DISB_CITI_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
+				if ("DISB_CITI_IMPORT".equals(configName)) {
+					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_CITI_IMPORT");
+					valueLabel = new ValueLabel(configName, "CITI Bank Disbursement Response");
 					doFillPanel(config, DISB_STP_IMPORT_STATUS);
 					menuList.add(valueLabel);
 				} else {
@@ -208,7 +208,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			try {
 				Thread thread = null;
-				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
+				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_CITI_IMPORT")) {
 					thread = new Thread(new ProcessData(userId, DISB_STP_IMPORT_STATUS));
 				} else {
 					thread = new Thread(new ProcessData(userId, DISB_OTHER_IMPORT_STATUS));
@@ -240,7 +240,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setText("");
 		media = event.getMedia();
 		
-		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
+		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".TXT"))) {
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;

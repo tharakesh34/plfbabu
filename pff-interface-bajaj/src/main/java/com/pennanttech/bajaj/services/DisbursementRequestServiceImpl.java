@@ -158,11 +158,11 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
 		}
 
-		generateFile("DISB_CITY_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
-		generateFile("DISB_CITY_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
-		generateFile("DISB_CITY_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
-		generateFile("DISB_CITY_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
-		generateFile("DISB_CITY_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
+		generateFile("DISB_CITI_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
+		generateFile("DISB_CITI_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
+		generateFile("DISB_CITI_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
+		generateFile("DISB_CITI_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
+		generateFile("DISB_CITI_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
 
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
@@ -235,7 +235,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 		
 		try {
-			if ("DISB_CITY_EXPORT".equals(configName)) {
+			if ("DISB_CITI_EXPORT".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
 				parameterMap.put("SEQ_LPAD_SIZE", 3);
 				parameterMap.put("SEQ_LPAD_VALUE", "0");
