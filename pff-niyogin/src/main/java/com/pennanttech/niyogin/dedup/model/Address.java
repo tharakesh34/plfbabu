@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "addressLine1", "addressLine2", "addressLine3", "city", "pin", "state", "country",
+@XmlType(propOrder = { "addressLine1", "addressLine2", "addressLine3","landmark" ,"city", "pin", "state", "country",
 		"addressType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Address implements Serializable {

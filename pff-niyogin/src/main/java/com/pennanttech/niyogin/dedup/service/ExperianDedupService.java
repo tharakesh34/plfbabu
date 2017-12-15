@@ -20,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
@@ -192,15 +193,23 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	private Address prepareAddress(CustomerAddres customerAddres) {
 		logger.debug(Literal.ENTERING);
 		Address address = new Address();
-		address.setAddressLine1(customerAddres.getCustAddrHNbr());
-		address.setAddressLine2(customerAddres.getCustAddrLine2());
-		address.setAddressLine3(customerAddres.getCustAddrLine3());
+		
+		String addrLines = customerAddres.getCustAddrType() + "," + customerAddres.getCustAddrHNbr() + ","
+				+ customerAddres.getCustAddrStreet();
+		
+		address.setAddressLine1(addrLines);
+		address.setAddressLine2(addrLines);
+		address.setAddressLine3(addrLines);
 		address.setLandmark(customerAddres.getCustAddrStreet());
 
-		address.setCity(customerAddres.getLovDescCustAddrCityName());
+		City city = niyoginDAOImpl.getCityById(customerAddres.getCustAddrCountry(),
+				customerAddres.getCustAddrProvince(), customerAddres.getCustAddrCity(), "_AView");
+
+		address.setCity(city.getPCCityName());
+		address.setState(city.getLovDescPCProvinceName());
+		address.setCountry(city.getLovDescPCCountryName());
+		
 		address.setPin(customerAddres.getCustAddrZIP());
-		address.setState(customerAddres.getLovDescCustAddrProvinceName());
-		address.setCountry(customerAddres.getLovDescCustAddrCountryName());
 		address.setAddressType(customerAddres.getCustAddrType());
 		logger.debug(Literal.LEAVING);
 		return address;
