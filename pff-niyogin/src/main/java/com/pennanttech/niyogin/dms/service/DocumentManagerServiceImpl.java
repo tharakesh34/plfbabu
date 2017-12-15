@@ -23,11 +23,6 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	private String				serviceUrl;
 	private JSONClient			client;
 
-	private String				status				= "SUCCESS";
-	private String				errorCode			= null;
-	private String				errorDesc			= null;
-	private String				jsonResponse		= null;
-	private Timestamp			reqSentOn			= null;
 
 	/**
 	 * Method for Fetch online documents from DMS interface using Reference
@@ -70,7 +65,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		}
 		
 		// success case logging
-		doInterfaceLogging(dmsRequest, "FETCH-DOCUMENT");
+		doInterfaceLogging(dmsRequest, jsonResponse);
 		logger.debug(Literal.LEAVING);
 		return detail;
 	}

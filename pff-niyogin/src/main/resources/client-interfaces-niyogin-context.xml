@@ -14,7 +14,7 @@
 
 	<bean id="niyoginService" class="com.pennanttech.pff.external.service.NiyoginService"
 		abstract="true">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
 	</bean>
 	
@@ -27,7 +27,6 @@
 	<!-- Dedup Fields -->
 	<bean id="externalDedup"
 		class="com.pennanttech.niyogin.dedup.service.ExperianDedupService" parent="niyoginService">
-		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="serviceUrl" value="${exp.internal.dedup.url}" />
 		<property name="client" ref="jsonClient" />
 	</bean>
@@ -51,7 +50,6 @@
 		class="com.pennanttech.niyogin.experian.service.ExperianBureauServiceImpl" parent="niyoginService">
 		<property name="consumerUrl" value="${exp.bureau.consumer.url}" />
 		<property name="commercialUrl" value="${exp.bureau.commercial.url}" />
-		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="client" ref="jsonClient" />
 	</bean> 
 	<!-- CRIFBureauCommercialService -->
@@ -59,7 +57,6 @@
 		class="com.pennanttech.niyogin.criff.service.CrifBureauServiceImpl" parent="niyoginService">
 		<property name="consumerUrl" value="${crif.bureau.consumer.url}" />
 		<property name="commercialUrl" value="${crif.bureau.commercial.url}" />
-		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="client" ref="jsonClient" />
 	</bean>	
 	<!-- CRIFBureauCommercialService -->

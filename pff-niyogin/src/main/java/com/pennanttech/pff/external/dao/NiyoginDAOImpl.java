@@ -1,7 +1,11 @@
 package com.pennanttech.pff.external.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -23,7 +27,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -215,7 +221,7 @@ public class NiyoginDAOImpl {
 		logger.debug("Leaving");
 		return customerEMails;
 	}
-	
+
 	public long getPincodeGroupId(String pincode) {
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT GROUPID FROM PINCODES WHERE PINCODE =:PINCODE");
@@ -229,44 +235,162 @@ public class NiyoginDAOImpl {
 		}
 		return grpid;
 	}
-	
+
 	/**
-	 * Fetch the Record  City details by key field
+	 * Fetch the Record City details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return City
 	 */
-	public City getCityById(final String pCCountry,String pCProvince,String pCCity, String type) {
+	public City getCityById(final String pCCountry, String pCProvince, String pCCity, String type) {
 		logger.debug(Literal.ENTERING);
 		City city = new City();
 		city.setPCCountry(pCCountry);
 		city.setPCProvince(pCProvince);
 		city.setPCCity(pCCity);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
-		if(type.contains("View")){
-			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName," );
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
+		if (type.contains("View")) {
+			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTProvinceVsCity");
-		selectSql.append(StringUtils.trimToEmpty(type)); 
-		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity " );
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(City.class);
-		
-		try{
-			city = this.namedJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(City.class);
+
+		try {
+			city = this.namedJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			city = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return city;
 	}
+
+	/**
+	 * Method for fetch the ExtendedFieldDetails based on given fieldaNames
+	 * 
+	 * @param fieldNames
+	 * @return extendedFieldDetailList
+	 * @throws Exception
+	 */
+	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) throws Exception {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		sql.append("SELECT *  FROM EXTENDEDFIELDDETAIL WHERE FIELDNAME IN(:fieldNames)");
+		paramMap.addValue("fieldNames", fieldNames);
+		logger.debug("selectSql: " + sql.toString());
+		try {
+			RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(ExtendedFieldDetail.class);
+			logger.debug(Literal.LEAVING);
+			return this.namedJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			throw new Exception("Unable to Retrive  the ExtendedFields.");
+		}
+	}
+
+	/**
+	 * Method for get the SMTParameter value
+	 * 
+	 * @param sysParmCode
+	 * @param type
+	 * @return
+	 */
+	public Object getSMTParameter(String sysParmCode, Class<?> type) {
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+		paramMap = new MapSqlParameterSource();
+
+		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE = :SYSPARMCODE");
+		paramMap.addValue("SYSPARMCODE", sysParmCode);
+
+		try {
+			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, type);
+		} catch (Exception e) {
+			logger.error("The parameter code " + sysParmCode + " not configured.");
+		} finally {
+			paramMap = null;
+			sql = null;
+		}
+		return null;
+	}
+
+	protected int updateParameter(String sysParmCode, Object value) throws Exception {
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+		paramMap = new MapSqlParameterSource();
+
+		sql.append("UPDATE SMTPARAMETERS SET SYSPARMVALUE = :SYSPARMVALUE where SYSPARMCODE = :SYSPARMCODE");
+		paramMap.addValue("SYSPARMCODE", sysParmCode);
+		paramMap.addValue("SYSPARMVALUE", value);
+
+		try {
+			return namedJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error("Entering", e);
+			throw new Exception("Unable to update the " + sysParmCode + ".");
+		}
+	}
+
+	protected Date getValueDate() {
+		String appDate;
+		try {
+			appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
+			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+
+	public static MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> map) {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+
+		for (Entry<String, Object> entry : map.entrySet()) {
+			parmMap.addValue(entry.getKey(), entry.getValue());
+		}
+
+		return parmMap;
+	}
+
+	protected long getSeq(String seqName) {
+		logger.debug("Entering");
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder();
+			sql.append("UPDATE ").append(seqName);
+			sql.append(" SET SEQNO = SEQNO + 1");
+			this.namedJdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+
+		try {
+			sql = new StringBuilder();
+			sql.append("SELECT SEQNO FROM ").append(seqName);
+			return this.namedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+		logger.error(Literal.LEAVING);
+		return 0;
+	}
+
 }

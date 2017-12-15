@@ -1,7 +1,9 @@
 package com.pennanttech.niyogin.utility;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -153,6 +155,70 @@ public class NiyoginUtility {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
 		formattedDate = dateFormatter.format(inputDate);
 		return formattedDate;
+	}
+
+	/**
+	 * Method for return the number Of months between two dates
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2) {
+
+		if (date1 == null || date2 == null) {
+			return -1;
+		}
+		if (date1.before(date2)) {
+			java.util.Date temp = date2;
+			date2 = date1;
+			date1 = temp;
+		}
+		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
+		int months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
+		months += years * 12;
+		if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE)) {
+			months--;
+		}
+
+		return months;
+	}
+
+	public static GregorianCalendar convert(java.util.Date date) {
+		if (date == null) {
+			return null;
+		}
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(date);
+		return gc;
+	}
+
+	/**
+	 * Count Number of days between Util Dates
+	 * 
+	 * @param date1
+	 *            (Date)
+	 * 
+	 * @param date2
+	 *            (Date)
+	 * 
+	 * @return int
+	 */
+	public static int getDaysBetween(java.util.Date date1, java.util.Date date2) {
+
+		if (date1 == null || date2 == null) {
+			return -1;
+		}
+		GregorianCalendar gc1 = convert(date1);
+		GregorianCalendar gc2 = convert(date2);
+		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR)) {
+			return Math.abs(gc1.get(Calendar.DAY_OF_YEAR) - gc2.get(Calendar.DAY_OF_YEAR));
+		}
+		long time1 = date1.getTime();
+		long time2 = date2.getTime();
+		long days = (time1 - time2) / (1000 * 60 * 60 * 24);
+
+		return Math.abs((int) days);
 	}
 
 }

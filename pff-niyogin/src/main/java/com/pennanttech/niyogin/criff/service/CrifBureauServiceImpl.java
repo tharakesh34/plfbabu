@@ -8,15 +8,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,47 +45,41 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.CriffBureauService;
-import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger				= Logger.getLogger(CrifBureauServiceImpl.class);
+	private static final Logger	logger																= Logger
+			.getLogger(CrifBureauServiceImpl.class);
 	private String				extConfigFileName;
 	private String				consumerUrl;
 	private String				commercialUrl;
 	private JSONClient			client;
-	private NiyoginDAOImpl		niyoginDAOImpl;
 
-	private String				OLDEST_LOANDISBURSED_DATE="OLDESTLOANDISBUR";
-	private String				NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE="NOPREVIOUSLOANS";
-	private String				IS_APPLICANT_90_PLUS_DPD_IN_LAST_SIX_MONTHS="ISAPPLICANT90DP";
-	private String				IS_APPLICANT_SUBSTANDARD_IN_LAST_SIX_MONTHS="ISAPPLICANTSUBST";
-	private String				IS_APPLICANT_REPORTED_AS_LOSS_IN_LAST_SIX_MONTHS="ISAPPLICANTREPOR";
-	private String				IS_APPLICANT_DOUBTFUL_IN_LAST_SIX_MONTHS="ISAPPLICANTDOUBT";
-	private String				IS_APPLICANT_MENTIONED_AS_SMA="ISAPPMENTSMA";
-	private String				LAST_UPDATE_DATE_IN_BUREAU="LASTUPDATEDATE";
-	private String				NOT_ENOUGH_INFO="NOTENOUGHINFO";
-	private String				MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACTIVE_SECURED_LOANS="MAXPEROFAMTREPAID";
-	private String				SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS="SUMOFDISBURSEDAMT";
-	private String				MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_THE_LAST_12_MONTHS="MAXIMUMDISBURSED";
-	private String				MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS="MINIMUMPEROFAMT";
-	private String				MONTHS_SINCE_30_PLUS_DPD_IN_THE_LAST_12_MONTHS="MNTHSIN30DPDINALAS";
-	private String				NUMBER_OF_BUSINESS_LOANS_OPENED_IN_LAST_6_MONTHS="NOOFBUSILOANS";
-	private String				RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS="RATIOOFOVRDUEDIS";
-	private String				COMBINATION_OF_PREVIOUS_LOANS_TAKEN="AMBOFPRVSLOANS";
-	private String				PRODUCT_INDEX="PROINDEXDETAILSHT";
+	private String				OLDEST_LOANDISBURSED_DATE											= "OLDESTLOANDISBUR";
+	private String				NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE							= "NOPREVIOUSLOANS";
+	private String				IS_APPLICANT_90_PLUS_DPD_IN_LAST_SIX_MONTHS							= "ISAPPLICANT90DP";
+	private String				IS_APPLICANT_SUBSTANDARD_IN_LAST_SIX_MONTHS							= "ISAPPLICANTSUBST";
+	private String				IS_APPLICANT_REPORTED_AS_LOSS_IN_LAST_SIX_MONTHS					= "ISAPPLICANTREPOR";
+	private String				IS_APPLICANT_DOUBTFUL_IN_LAST_SIX_MONTHS							= "ISAPPLICANTDOUBT";
+	private String				IS_APPLICANT_MENTIONED_AS_SMA										= "ISAPPMENTSMA";
+	private String				LAST_UPDATE_DATE_IN_BUREAU											= "LASTUPDATEDATE";
+	private String				NOT_ENOUGH_INFO														= "NOTENOUGHINFO";
+	private String				MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACTIVE_SECURED_LOANS				= "MAXPEROFAMTREPAID";
+	private String				SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS							= "SUMOFDISBURSEDAMT";
+	private String				MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_THE_LAST_12_MONTHS	= "MAXIMUMDISBURSED";
+	private String				MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS						= "MINIMUMPEROFAMT";
+	private String				MONTHS_SINCE_30_PLUS_DPD_IN_THE_LAST_12_MONTHS						= "MNTHSIN30DPDINALAS";
+	private String				NUMBER_OF_BUSINESS_LOANS_OPENED_IN_LAST_6_MONTHS					= "NOOFBUSILOANS";
+	private String				RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS					= "RATIOOFOVRDUEDIS";
+	private String				COMBINATION_OF_PREVIOUS_LOANS_TAKEN									= "AMBOFPRVSLOANS";
+	private String				PRODUCT_INDEX														= "PROINDEXDETAILSHT";
 
-	private Date				appDate				= getAppDate();
-	private String				pincode				= null;
+	private Date				appDate																= getAppDate();
+	private String				pincode																= null;
 
-	private String				errorDesc			= null;
-	private String				jsonResponse		= null;
-	private Timestamp			reqSentOn			= null;
-	private String				status				= InterfaceConstants.STATUS_SUCCESS;
-	private String 				errorCode			= InterfaceConstants.INTFACE_ERROR_CD;
-	private Object				requestObject       = null;
-	private String				serviceUrl       	= null;
+	private Object				requestObject														= null;
+	private String				serviceUrl															= null;
 
 	@Override
 	public AuditHeader executeCriffBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
@@ -112,7 +103,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 			//TODO: Need solution for display co-applicant extended details
 			Map<String, Object> extendedFieldMapForCoApp = new HashMap<>();
-			List<CustomerDetails> coApplicantCustomers = niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
+			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
 			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
 				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
 			}
@@ -136,7 +127,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @param financeDetail
 	 * @param customerDetails
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails)
 			throws ParseException {
@@ -202,13 +193,13 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @return
 	 * @throws ParseException
 	 */
-	private Map<String, Object> prepareCommercialExtendedMap(CriffCommercialResponse commercialResponse, 
+	private Map<String, Object> prepareCommercialExtendedMap(CriffCommercialResponse commercialResponse,
 			Map<String, Object> extendedFieldMap) throws ParseException {
 		List<TradeLine> tradlineList = commercialResponse.getTradelines();
 		if (tradlineList != null && !tradlineList.isEmpty()) {
 			BigDecimal overDueAmt = BigDecimal.ZERO;
 			BigDecimal disBursedAmt = BigDecimal.ZERO;
-			BigDecimal disbursAmtSixMnths =  BigDecimal.ZERO;
+			BigDecimal disbursAmtSixMnths = BigDecimal.ZERO;
 			int noBusLoanOpened = 0;
 			Collections.sort(tradlineList, new SanctionDareComparator());
 			//for oldest loan disbursed date
@@ -216,7 +207,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			extendedFieldMap.put(OLDEST_LOANDISBURSED_DATE, disbursedDate);
 
 			List<String> paymentList = new ArrayList<>();
-			BigDecimal closedloanDisbursAmt =  BigDecimal.ZERO;
+			BigDecimal closedloanDisbursAmt = BigDecimal.ZERO;
 
 			for (TradeLine tradeline : tradlineList) {
 				if (!tradeline.getCreditFacilityStatus().equalsIgnoreCase("Closed")) {
@@ -230,7 +221,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 					closedloanDisbursAmt = closedloanDisbursAmt.add(tradeline.getDisbursedAmount());
 				}
 
-				if (getMonthsBetween(getAppDate(), tradeline.getSanctionDate()) <= 6) {
+				if (NiyoginUtility.getMonthsBetween(getAppDate(), tradeline.getSanctionDate()) <= 6) {
 					disbursAmtSixMnths = disbursAmtSixMnths.add(tradeline.getDisbursedAmount());
 					noBusLoanOpened++;
 				}
@@ -244,7 +235,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//Ratio of Overdue and Disbursement amount for all loans
 			BigDecimal ratioOfOverdue = BigDecimal.ZERO;
-			if(overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
+			if (overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
 				ratioOfOverdue = overDueAmt.divide(disBursedAmt);
 			}
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -262,14 +253,14 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			extendedFieldMap.put(LAST_UPDATE_DATE_IN_BUREAU, lastUpdatedDate);
 		}
 
-		extendedFieldMap.put(PRODUCT_INDEX, niyoginDAOImpl.getPincodeGroupId(pincode));
+		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
 		return extendedFieldMap;
 	}
 
 	private String getResponse() {
-		String response = "{\"statusCode\": 200,\"message\": \"Crif Bureau commercial report extracted\",\"data\": [  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"786300000\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"78,63,00,000\", \"SANCTION-DATE\": \"29-04-2017\", \"DRAWING-POWER\": \"787636231\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Loss\", \"CURRENT-BALANCE\": \"533697247\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"533700000\", \"SANCTION-DATE\": \"28-05-2017\", \"DRAWING-POWER\": \"533700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|APR:2017,58/DBT|Nov:2016,XXX/LOS|JUL:2017,96/SUP|JUN:2017,97/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-04-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"371450644\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"364700000\", \"SANCTION-DATE\": \"18-07-2017\", \"DRAWING-POWER\": \"364700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|Dec:2016,58/LOS|Nov:2016,XXX/LOS|Oct:2016,XXX/SUP|Sep:2016,000/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"320772818\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"327400000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"337723071\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-09-2011\", \"ASSET-CLASSIFICATION\": \"Standard\", \"CURRENT-BALANCE\": \"211522845\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"350000000\", \"SANCTION-DATE\": \"30-07-2007\", \"DRAWING-POWER\": \"147628350\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Sep:2011,XXX/STD|Aug:2011,DDD/DDD|Jul:2011,DDD/DDD|Jun:2011,XXX/STD|May:2011,DDD/DDD|Apr:2011,DDD/DDD|Mar:2011,XXX/STD|Feb:2011,DDD/DDD|Jan:2011,DDD/DDD|Dec:2010,XXX/STD|Nov:2010,DDD/DDD|Oct:2010,DDD/DDD|Sep:2010,XXX/STD|Aug:2010,DDD/DDD|Jul:2010,DDD/DDD|Jun:2010,XXX/STD|May:2010,DDD/DDD|Apr:2010,DDD/DDD|Mar:2010,XXX/STD|Feb:2010,DDD/DDD|Jan:2010,DDD/DDD|Dec:2009,XXX/STD|Nov:2009,DDD/DDD|Oct:2009,DDD/DDD|Sep:2009,XXX/STD|Aug:2009,DDD/DDD|Jul:2009,DDD/DDD|Jun:2009,XXX/STD|May:2009,DDD/DDD|Apr:2009,DDD/DDD|Mar:2009,XXX/STD|Feb:2009,DDD/DDD|Jan:2009,DDD/DDD|Dec:2008,XXX/STD|Nov:2008,DDD/DDD|Oct:2008,DDD/DDD\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S04\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"191087930\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Medium)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"191100000\", \"SANCTION-DATE\": \"10-10-2011\", \"DRAWING-POWER\": \"191100000\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/DBT|Nov:2012,XXX/DBT|Oct:2012,XXX/DBT|Sep:2012,XXX/DBT|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/SUB|May:2012,XXX/SUB|Apr:2012,XXX/SMA|Mar:2012,XXX/SMA|Feb:2012,XXX/SMA|Jan:2012,XXX/SMA|Dec:2011,XXX/SMA|Nov:2011,XXX/STD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  }] } ";
+		String commercialResponse = "{\"statusCode\": 200,\"message\": \"Crif Bureau commercial report extracted\",\"data\": [  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"786300000\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"78,63,00,000\", \"SANCTION-DATE\": \"29-04-2017\", \"DRAWING-POWER\": \"787636231\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Loss\", \"CURRENT-BALANCE\": \"533697247\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"533700000\", \"SANCTION-DATE\": \"28-05-2017\", \"DRAWING-POWER\": \"533700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|APR:2017,58/DBT|Nov:2016,XXX/LOS|JUL:2017,96/SUP|JUN:2017,97/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-04-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"371450644\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"364700000\", \"SANCTION-DATE\": \"18-07-2017\", \"DRAWING-POWER\": \"364700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|Dec:2016,58/LOS|Nov:2016,XXX/LOS|Oct:2016,XXX/SUP|Sep:2016,000/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"320772818\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"327400000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"337723071\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-09-2011\", \"ASSET-CLASSIFICATION\": \"Standard\", \"CURRENT-BALANCE\": \"211522845\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"350000000\", \"SANCTION-DATE\": \"30-07-2007\", \"DRAWING-POWER\": \"147628350\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Sep:2011,XXX/STD|Aug:2011,DDD/DDD|Jul:2011,DDD/DDD|Jun:2011,XXX/STD|May:2011,DDD/DDD|Apr:2011,DDD/DDD|Mar:2011,XXX/STD|Feb:2011,DDD/DDD|Jan:2011,DDD/DDD|Dec:2010,XXX/STD|Nov:2010,DDD/DDD|Oct:2010,DDD/DDD|Sep:2010,XXX/STD|Aug:2010,DDD/DDD|Jul:2010,DDD/DDD|Jun:2010,XXX/STD|May:2010,DDD/DDD|Apr:2010,DDD/DDD|Mar:2010,XXX/STD|Feb:2010,DDD/DDD|Jan:2010,DDD/DDD|Dec:2009,XXX/STD|Nov:2009,DDD/DDD|Oct:2009,DDD/DDD|Sep:2009,XXX/STD|Aug:2009,DDD/DDD|Jul:2009,DDD/DDD|Jun:2009,XXX/STD|May:2009,DDD/DDD|Apr:2009,DDD/DDD|Mar:2009,XXX/STD|Feb:2009,DDD/DDD|Jan:2009,DDD/DDD|Dec:2008,XXX/STD|Nov:2008,DDD/DDD|Oct:2008,DDD/DDD\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S04\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"191087930\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Medium)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"191100000\", \"SANCTION-DATE\": \"10-10-2011\", \"DRAWING-POWER\": \"191100000\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/DBT|Nov:2012,XXX/DBT|Oct:2012,XXX/DBT|Sep:2012,XXX/DBT|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/SUB|May:2012,XXX/SUB|Apr:2012,XXX/SMA|Mar:2012,XXX/SMA|Feb:2012,XXX/SMA|Jan:2012,XXX/SMA|Dec:2011,XXX/SMA|Nov:2011,XXX/STD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  }] } ";
 		//String response = "{\"statusCode\": 200,\"message\": \"Crif Bureau commercial report extracted\",\"data\": [  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"786300000\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"78,63,00,000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"787636231\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"10\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Loss\", \"CURRENT-BALANCE\": \"533697247\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"533700000\", \"SANCTION-DATE\": \"28-12-2011\", \"DRAWING-POWER\": \"533700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/LOS|Feb:2013,XXX/LOS|Jan:2013,XXX/LOS|Dec:2012,XXX/LOS|Nov:2012,XXX/LOS|Oct:2012,XXX/LOS|Sep:2012,XXX/LOS|Aug:2012,XXX/LOS|Jul:2012,XXX/LOS|Jun:2012,XXX/LOS|May:2012,XXX/LOS|Apr:2012,XXX/DBT|Mar:2012,xxx/XXX|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-04-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"371450644\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"364700000\", \"SANCTION-DATE\": \"18-10-2011\", \"DRAWING-POWER\": \"364700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Apr:2013,XXX/DBT|Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/SUB|Nov:2012,XXX/SUB|Oct:2012,XXX/SUB|Sep:2012,XXX/SUB|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/STD|May:2012,XXX/STD|Apr:2012,XXX/STD|Mar:2012,xxx/XXX|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|Dec:2011,xxx/XXX|Nov:2011,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"320772818\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"327400000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"337723071\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-09-2011\", \"ASSET-CLASSIFICATION\": \"Standard\", \"CURRENT-BALANCE\": \"211522845\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"350000000\", \"SANCTION-DATE\": \"30-07-2007\", \"DRAWING-POWER\": \"147628350\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Sep:2011,XXX/STD|Aug:2011,DDD/DDD|Jul:2011,DDD/DDD|Jun:2011,XXX/STD|May:2011,DDD/DDD|Apr:2011,DDD/DDD|Mar:2011,XXX/STD|Feb:2011,DDD/DDD|Jan:2011,DDD/DDD|Dec:2010,XXX/STD|Nov:2010,DDD/DDD|Oct:2010,DDD/DDD|Sep:2010,XXX/STD|Aug:2010,DDD/DDD|Jul:2010,DDD/DDD|Jun:2010,XXX/STD|May:2010,DDD/DDD|Apr:2010,DDD/DDD|Mar:2010,XXX/STD|Feb:2010,DDD/DDD|Jan:2010,DDD/DDD|Dec:2009,XXX/STD|Nov:2009,DDD/DDD|Oct:2009,DDD/DDD|Sep:2009,XXX/STD|Aug:2009,DDD/DDD|Jul:2009,DDD/DDD|Jun:2009,XXX/STD|May:2009,DDD/DDD|Apr:2009,DDD/DDD|Mar:2009,XXX/STD|Feb:2009,DDD/DDD|Jan:2009,DDD/DDD|Dec:2008,XXX/STD|Nov:2008,DDD/DDD|Oct:2008,DDD/DDD\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S04\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"191087930\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Medium)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"191100000\", \"SANCTION-DATE\": \"10-10-2011\", \"DRAWING-POWER\": \"191100000\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/DBT|Nov:2012,XXX/DBT|Oct:2012,XXX/DBT|Sep:2012,XXX/DBT|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/SUB|May:2012,XXX/SUB|Apr:2012,XXX/SMA|Mar:2012,XXX/SMA|Feb:2012,XXX/SMA|Jan:2012,XXX/SMA|Dec:2011,XXX/SMA|Nov:2011,XXX/STD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  }] } ";
-		return response;
+		return commercialResponse;
 	}
 
 	/**
@@ -320,7 +311,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		return consumer;
 	}
 
-
 	private Applicant prepareApplicantDetails(CustomerDetails customerDetails) {
 		Customer customer = customerDetails.getCustomer();
 		Applicant applicant = new Applicant();
@@ -331,7 +321,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		applicant.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
 		applicant.setMaritalStatus(InterfaceConstants.PFF_MARITAL_STATUS);
-		applicant.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), 
+		applicant.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));
 		// personal address details
 		applicant.setPersonalAddress(preparePersonalAddress(customerDetails.getAddressList()));
@@ -342,8 +332,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		PersonalAddress personalAddress = new PersonalAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
-		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(), 
-				address.getCustAddrCity(),"_AView");
+		City city = getCityById(address);
 
 		personalAddress.setHouseNo(address.getCustAddrHNbr());
 		personalAddress.setLandmark(address.getCustAddrStreet());
@@ -352,12 +341,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		personalAddress.setPin(address.getCustAddrZIP());
 		pincode = address.getCustAddrZIP();
 		personalAddress.setState(city.getLovDescPCProvinceName());
-		personalAddress.setCareOf(StringUtils.isNotBlank(address.getCustAddrLine3())?address.getCustAddrLine3():
-			InterfaceConstants.DEFAULT_CAREOF);
-		personalAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict())?address.getCustDistrict():
-			InterfaceConstants.DEFAULT_DIST);
-		personalAddress.setSubDistrict(StringUtils.isNotBlank(address.getCustAddrLine4())?address.getCustAddrLine4():
-			InterfaceConstants.DEFAULT_SUBDIST);
+		personalAddress.setCareOf(StringUtils.isNotBlank(address.getCustAddrLine3()) ? address.getCustAddrLine3()
+				: InterfaceConstants.DEFAULT_CAREOF);
+		personalAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
+				: InterfaceConstants.DEFAULT_DIST);
+		personalAddress.setSubDistrict(StringUtils.isNotBlank(address.getCustAddrLine4()) ? address.getCustAddrLine4()
+				: InterfaceConstants.DEFAULT_SUBDIST);
 		return personalAddress;
 	}
 
@@ -365,18 +354,18 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		CompanyAddress companyAddress = new CompanyAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 
-		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(), 
-				address.getCustAddrCity(),"_AView");
+		City city = getCityById(address);
 
-		companyAddress.setAddress1(address.getCustAddrType()+","+address.getCustAddrHNbr()+","+address.getCustAddrStreet());
-		companyAddress.setAddress2(address.getCustAddrType()+","+address.getCustAddrHNbr()+","+address.getCustAddrStreet());
-		companyAddress.setAddress3(address.getCustAddrType()+","+address.getCustAddrHNbr()+","+address.getCustAddrStreet());
+		String addressLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","+ address.getCustAddrStreet();
+		companyAddress.setAddress1(addressLines);
+		companyAddress.setAddress2(addressLines);
+		companyAddress.setAddress3(addressLines);
 		companyAddress.setCity(city.getPCCityName());
 		companyAddress.setCountry(city.getLovDescPCCountryName());
 		companyAddress.setPin(address.getCustAddrZIP());
 		companyAddress.setState(city.getLovDescPCProvinceName());
-		companyAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict())?address.getCustDistrict():
-			InterfaceConstants.DEFAULT_DIST);
+		companyAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
+				: InterfaceConstants.DEFAULT_DIST);
 		return companyAddress;
 	}
 
@@ -386,7 +375,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @param consumerResponse
 	 * @param extendedFieldMap
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	private Map<String, Object> prepareConsumerExtendedMap(CRIFConsumerResponse consumerResponse,
 			Map<String, Object> extendedFieldMap) throws ParseException {
@@ -408,7 +397,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		BigDecimal maxDsbursmentAmt = BigDecimal.ZERO;
 		BigDecimal overDueAmt = BigDecimal.ZERO;
 		BigDecimal disBursedAmt = BigDecimal.ZERO;
-		BigDecimal disbursAmtSixMnths =  BigDecimal.ZERO;
+		BigDecimal disbursAmtSixMnths = BigDecimal.ZERO;
 		int noBusLoanOpened = 0;
 
 		//for minimum checking take first one and compare
@@ -425,7 +414,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//for max amount repaid across all active secured_loans
 			if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
-				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal())).divide(loanDetail.getDisbursedAmt());
+				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal()))
+						.divide(loanDetail.getDisbursedAmt());
 				if (value.compareTo(maxPerOfAmtRepaidOnSL) > 0) {
 					maxPerOfAmtRepaidOnSL = value;
 				}
@@ -438,7 +428,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//Maximum disbursed Amount across all unsecured loans in the last 12 months
 			Date disbursmentDate = loanDetail.getDisbursedDate();
-			if (getMonthsBetween(appDate, disbursmentDate) <= 12) {
+			if (NiyoginUtility.getMonthsBetween(appDate, disbursmentDate) <= 12) {
 				if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
 					maxDsbursmentAmt = maxDsbursmentAmt.add(loanDetail.getDisbursedAmt());
 				}
@@ -464,7 +454,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			disBursedAmt = disBursedAmt.add(loanDetail.getDisbursedAmt());
 			overDueAmt = overDueAmt.add(loanDetail.getOverdueAmt());
 
-			if (getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
+			if (NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
 				disbursAmtSixMnths = disbursAmtSixMnths.add(loanDetail.getDisbursedAmt());
 				noBusLoanOpened++;
 			}
@@ -492,7 +482,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		//Ratio of Overdue and Disbursement amount for all loans
 		BigDecimal ratioOfOverdue = BigDecimal.ZERO;
-		if(overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
 			ratioOfOverdue = overDueAmt.divide(disBursedAmt);
 		}
 		extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -503,22 +493,23 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		//for last update date in Bureau
 		Collections.sort(loanDetailsList, new InfoAsOnComparator());
 		Date lastUpdatedDate = loanDetailsList.get(0).getInfoAsOn();
-		long months = getMonthsBetween(lastUpdatedDate, appDate);
+		long months = NiyoginUtility.getMonthsBetween(lastUpdatedDate, appDate);
 		if (months > 36) {
 			extendedFieldMap.put(LAST_UPDATE_DATE_IN_BUREAU, lastUpdatedDate);
 		}
 
-		extendedFieldMap.put(PRODUCT_INDEX, niyoginDAOImpl.getPincodeGroupId(pincode));
+		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
 		return extendedFieldMap;
 	}
 
-	private void setPaymentHistoryDetails(Map<String, Object> extendedFieldMap, List<String> paymentList) throws ParseException {
+	private void setPaymentHistoryDetails(Map<String, Object> extendedFieldMap, List<String> paymentList)
+			throws ParseException {
 		List<PaymentHistory> paymentHistories = preparePaymentHistory(paymentList);
 		Collections.sort(paymentHistories, new PaymentHistoryComparator());
 		int zeroCount = 0;
 		int crossCount = 0;
 		for (PaymentHistory paymentHistory : paymentHistories) {
-			if (getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 6) {
+			if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 6) {
 				try {
 					if (Long.valueOf(paymentHistory.getDpd()) >= 90) {
 						extendedFieldMap.put(IS_APPLICANT_90_PLUS_DPD_IN_LAST_SIX_MONTHS, true);
@@ -539,7 +530,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 				}
 			}
 
-			if (getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 12) {
+			if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 12) {
 				if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "000")) {
 					zeroCount++;
 				} else if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "XXX")) {
@@ -572,13 +563,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 		}
 		if (startDate != null) {
-			long dpdMonths = getMonthsBetween(getAppDate(), startDate);
+			long dpdMonths = NiyoginUtility.getMonthsBetween(getAppDate(), startDate);
 			extendedFieldMap.put(MONTHS_SINCE_30_PLUS_DPD_IN_THE_LAST_12_MONTHS, dpdMonths);
 		}
 	}
 
-	private List<PaymentHistory> preparePaymentHistory(List<String> paymentList)
-			throws ParseException {
+	private List<PaymentHistory> preparePaymentHistory(List<String> paymentList) throws ParseException {
 		List<PaymentHistory> paymentHistoryList = new ArrayList<PaymentHistory>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd:MMM:yyyy");
 		for (String payment : paymentList) {
@@ -592,85 +582,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 		}
 		return paymentHistoryList;
-	}
-
-	/**
-	 * Method for return the number Of months between two dates
-	 * 
-	 * @param date1
-	 * @param date2
-	 * @return
-	 */
-	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2) {
-
-		if (date1 == null || date2 == null) {
-			return -1;
-		}
-		if (date1.before(date2)) {
-			java.util.Date temp = date2;
-			date2 = date1;
-			date1 = temp;
-		}
-		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
-		int months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
-		months += years * 12;
-		if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE)) {
-			months--;
-		}
-
-		return months;
-	}
-
-	public static GregorianCalendar convert(java.util.Date date) {
-		if (date == null) {
-			return null;
-		}
-		GregorianCalendar gc = new GregorianCalendar();
-		gc.setTime(date);
-		return gc;
-	}
-
-	/**
-	 * Count Number of days between Util Dates
-	 * 
-	 * @param date1
-	 *            (Date)
-	 * 
-	 * @param date2
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static int getDaysBetween(java.util.Date date1, java.util.Date date2) {
-
-		if (date1 == null || date2 == null) {
-			return -1;
-		}
-		GregorianCalendar gc1 = convert(date1);
-		GregorianCalendar gc2 = convert(date2);
-		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR)) {
-			return Math.abs(gc1.get(Calendar.DAY_OF_YEAR) - gc2.get(Calendar.DAY_OF_YEAR));
-		}
-		long time1 = date1.getTime();
-		long time2 = date2.getTime();
-		long days = (time1 - time2) / (1000 * 60 * 60 * 24);
-
-		return Math.abs((int) days);
-	}
-
-	private void prepareResponseObj(Map<String, Object> validatedMap, FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
-		if (validatedMap != null) {
-			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
-			if (extendedMapObject == null) {
-				extendedMapObject = new HashMap<String, Object>();
-			}
-			for (Entry<String, Object> entry : validatedMap.entrySet()) {
-				extendedMapObject.put(entry.getKey(), entry.getValue());
-			}
-			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -749,10 +660,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 	public void setCommercialUrl(String commercialUrl) {
 		this.commercialUrl = commercialUrl;
-	}
-
-	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
-		this.niyoginDAOImpl = niyoginDAOImpl;
 	}
 
 	public void setClient(JSONClient client) {

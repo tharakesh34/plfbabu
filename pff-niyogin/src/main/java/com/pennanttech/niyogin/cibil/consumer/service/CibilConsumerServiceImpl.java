@@ -3,10 +3,8 @@ package com.pennanttech.niyogin.cibil.consumer.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.log4j.Logger;
@@ -35,12 +33,6 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	private final String		extConfigFileName	= "cibilConsumer";
 	private String				serviceUrl;
 	private JSONClient			client;
-
-	private String				status				= "SUCCESS";
-	private String				errorCode			= null;
-	private String				errorDesc			= null;
-	private String				jsonResponse		= null;
-	private Timestamp			reqSentOn			= null;
 
 	/**
 	 * Method for get the CibilConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -92,10 +84,10 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			doInterfaceLogging(cibilConsumerRequest, finReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
-		
+
 		// success case logging
 		doInterfaceLogging(cibilConsumerRequest, finReference);
-				
+
 		prepareResponseObj(validatedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);
@@ -213,27 +205,6 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, consumerRequest, jsonResponse, reqSentOn,
 				status, errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);
-	}
-
-	/**
-	 * Method for prepare the Extended Field details map according to the given response.
-	 * 
-	 * @param extendedResMapObject
-	 * @param financeDetail
-	 */
-	private void prepareResponseObj(Map<String, Object> validatedMap, FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
-		if (validatedMap != null) {
-			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
-			if (extendedMapObject == null) {
-				extendedMapObject = new HashMap<String, Object>();
-			}
-			for (Entry<String, Object> entry : validatedMap.entrySet()) {
-				extendedMapObject.put(entry.getKey(), entry.getValue());
-			}
-			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	public String getServiceUrl() {

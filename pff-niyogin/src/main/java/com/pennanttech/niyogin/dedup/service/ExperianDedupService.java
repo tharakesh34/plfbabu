@@ -3,10 +3,8 @@ package com.pennanttech.niyogin.dedup.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.log4j.Logger;
@@ -31,7 +29,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.ExternalDedup;
-import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianDedupService extends NiyoginService implements ExternalDedup {
@@ -39,14 +36,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 	private final String		extConfigFileName	= "experianDedup";
 	private String				serviceUrl;
-	private NiyoginDAOImpl		niyoginDAOImpl;
 	private JSONClient			client;
-
-	private String				status				= "SUCCESS";
-	private String				errorCode			= null;
-	private String				errorDesc			= null;
-	private String				jsonResponse		= null;
-	private Timestamp			reqSentOn			= null;
 
 	@Override
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
@@ -202,8 +192,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		address.setAddressLine3(addrLines);
 		address.setLandmark(customerAddres.getCustAddrStreet());
 
-		City city = niyoginDAOImpl.getCityById(customerAddres.getCustAddrCountry(),
-				customerAddres.getCustAddrProvince(), customerAddres.getCustAddrCity(), "_AView");
+		City city = getCityById(customerAddres);
 
 		address.setCity(city.getPCCityName());
 		address.setState(city.getLovDescPCProvinceName());
@@ -230,24 +219,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return phone;
 	}
 
-	/**
-	 * Method for prepare the Extended Field details map according to the given response.
-	 * 
-	 * @param extendedResMapObject
-	 * @param financeDetail
-	 */
-	private void prepareResponseObj(Map<String, Object> extendedResMapObject, FinanceDetail financeDetail) {
-		if (extendedResMapObject != null) {
-			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
-			if (extendedMapObject == null) {
-				extendedMapObject = new HashMap<String, Object>();
-			}
-			for (Entry<String, Object> entry : extendedResMapObject.entrySet()) {
-				extendedMapObject.put(entry.getKey(), entry.getValue());
-			}
-			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
-		}
-	}
 	
 	/**
 	 * Method for prepare data and logging
@@ -278,10 +249,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		this.serviceUrl = serviceUrl;
 	}
 
-	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
-		this.niyoginDAOImpl = niyoginDAOImpl;
-	}
-	
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}

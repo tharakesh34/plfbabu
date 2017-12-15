@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -17,8 +16,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -26,183 +23,43 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
+import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class NiyoginService {
-	private static final Logger				logger				= Logger.getLogger(NiyoginService.class);
+	private static final Logger	logger				= Logger.getLogger(NiyoginService.class);
 
-	protected DataSource					dataSource;
-	protected JdbcTemplate					jdbcTemplate;
-	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
-	
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
-	
-	protected DataSourceTransactionManager	transManager;
-	protected DefaultTransactionDefinition	transDef;
-	
-	public static final int					LENGTH_ACCOUNT		= 50;
-	public static final int					LENGTH_FREQUENCY	= 5;
-	public static final String APIDateFormatter = "yyyy-MM-dd'T'HH:mm:ss";
-	public static final String DELIMITER_COMMA = ",";
+	protected NiyoginDAOImpl	niyoginDAOImpl;
+
+	public static final int		LENGTH_ACCOUNT		= 50;
+	public static final int		LENGTH_FREQUENCY	= 5;
+	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String	DELIMITER_COMMA		= ",";
+
+	public String				status				= InterfaceConstants.STATUS_SUCCESS;
+	public String				errorCode			= null;
+	public String				errorDesc			= null;
+	public String				jsonResponse		= null;
+	public Timestamp			reqSentOn			= null;
 
 	public NiyoginService() {
 		super();
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-		setTransManager(dataSource);
-	}
-
-	protected Object getSMTParameter(String sysParmCode, Class<?> type) {
-		MapSqlParameterSource paramMap;
-
-		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
-
-		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE = :SYSPARMCODE");
-		paramMap.addValue("SYSPARMCODE", sysParmCode);
-
-		try {
-			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, type);
-		} catch (Exception e) {
-			logger.error("The parameter code " + sysParmCode + " not configured.");
-		} finally {
-			paramMap = null;
-			sql = null;
-		}
-		return null;
-	}
-
-	protected int updateParameter(String sysParmCode, Object value) throws Exception {
-		MapSqlParameterSource paramMap;
-
-		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
-
-		sql.append("UPDATE SMTPARAMETERS SET SYSPARMVALUE = :SYSPARMVALUE where SYSPARMCODE = :SYSPARMCODE");
-		paramMap.addValue("SYSPARMCODE", sysParmCode);
-		paramMap.addValue("SYSPARMVALUE", value);
-
-		try {
-			return namedJdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error("Entering", e);
-			throw new Exception("Unable to update the " + sysParmCode + ".");
-		}
-	}
-
-	/**
-	 * Method for fetch the ExtendedFieldDetails based on given fieldaNames
-	 * 
-	 * @param fieldNames
-	 * @return extendedFieldDetailList
-	 * @throws Exception
-	 */
-	protected List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) throws Exception {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		sql.append("SELECT *  FROM EXTENDEDFIELDDETAIL WHERE FIELDNAME IN(:fieldNames)");
-		paramMap.addValue("fieldNames", fieldNames);
-		logger.debug("selectSql: " + sql.toString());
-		try {
-			RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(ExtendedFieldDetail.class);
-			logger.debug(Literal.LEAVING);
-			return this.namedJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
-
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw new Exception("Unable to Retrive  the ExtendedFields.");
-		}
-	}
-
-	protected Date getValueDate() {
-		String appDate;
-		try {
-			appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
-			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
-		} catch (Exception e) {
-
-		}
-		return null;
-	}
-
-	protected Date getAppDate() {
-		String appDate;
-		try {
-			appDate = (String) getSMTParameter("APP_DATE", String.class);
-			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
-		} catch (Exception e) {
-
-		}
-		return null;
-	}
-
-	public static MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> map) {
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
-		for (Entry<String, Object> entry : map.entrySet()) {
-			parmMap.addValue(entry.getKey(), entry.getValue());
-		}
-
-		return parmMap;
-	}
-
-	private void setTransManager(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-
-		this.transManager = new DataSourceTransactionManager(dataSource);
-		this.transDef = new DefaultTransactionDefinition();
-		this.transDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-		this.transDef.setTimeout(120);
-	}
-
-	protected long getSeq(String seqName) {
-		logger.debug("Entering");
-		StringBuilder sql = null;
-
-		try {
-			sql = new StringBuilder();
-			sql.append("UPDATE ").append(seqName);
-			sql.append(" SET SEQNO = SEQNO + 1");
-			this.namedJdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-
-		try {
-			sql = new StringBuilder();
-			sql.append("SELECT SEQNO FROM ").append(seqName);
-			return this.namedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-		logger.error(Literal.LEAVING);
-		return 0;
-	}
 
 	/**
 	 * Method for load the properties file, then iterate the keys of that file and map to jsonResponse.
@@ -213,7 +70,7 @@ public abstract class NiyoginService {
 	 */
 	protected Map<String, Object> getExtendedMapValues(String jsonResponse, String extConfigFileName) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Map<String, Object> extendedFieldMap = new HashMap<>(1);
 		Properties properties = new Properties();
 		InputStream inputStream = this.getClass().getResourceAsStream("/" + extConfigFileName + ".properties");
@@ -236,7 +93,7 @@ public abstract class NiyoginService {
 			extendedFieldMap.put(key, value);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return extendedFieldMap;
 	}
 
@@ -248,17 +105,20 @@ public abstract class NiyoginService {
 	 */
 	protected Map<String, Object> validateExtendedMapValues(Map<String, Object> extendedFieldMap) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Map<String, Object> validatedMap = new HashMap<>(1);
 		Set<String> fieldNames = extendedFieldMap.keySet();
 		String wrongValueMSG = "Inavalid Data received from interface for extended field:";
 		String wrongLengthMSG = "Total length is Excedeed for extended field:";
 		try {
-			List<ExtendedFieldDetail> configurationList = getExtendedFieldDetailsByFieldName(fieldNames);
+			List<ExtendedFieldDetail> configurationList = niyoginDAOImpl.getExtendedFieldDetailsByFieldName(fieldNames);
 			for (String field : fieldNames) {
 				String key = field;
 				Object fieldValue = extendedFieldMap.get(field);
 				ExtendedFieldDetail configuration = null;
+				if (configurationList == null || configurationList.isEmpty()) {
+					return validatedMap;
+				}
 				for (ExtendedFieldDetail extdetail : configurationList) {
 					if (StringUtils.equals(key, extdetail.getFieldName())) {
 						configuration = extdetail;
@@ -268,12 +128,12 @@ public abstract class NiyoginService {
 				if (configuration == null) {
 					continue;
 				}
-			
+
 				String jsonResponseValue = Objects.toString(fieldValue, null);
-				if(jsonResponseValue==null){
+				if (jsonResponseValue == null) {
 					continue;
 				}
-				
+
 				switch (configuration.getFieldType()) {
 
 				case ExtendedFieldConstants.FIELDTYPE_TEXT:
@@ -328,17 +188,17 @@ public abstract class NiyoginService {
 					break;
 
 				case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
-					Boolean  booleanValue;
+					Boolean booleanValue;
 					if (StringUtils.equals(jsonResponseValue, "true")
 							|| StringUtils.equals(jsonResponseValue, "false")) {
-						 booleanValue = jsonResponseValue.equals("true") ? true : false;
+						booleanValue = jsonResponseValue.equals("true") ? true : false;
 					} else if (StringUtils.equals(jsonResponseValue, "1")
 							|| StringUtils.equals(jsonResponseValue, "0")) {
-						 booleanValue = jsonResponseValue.equals("1") ? true : false;
+						booleanValue = jsonResponseValue.equals("1") ? true : false;
 					} else {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 					}
-					validatedMap.put(key,booleanValue);
+					validatedMap.put(key, booleanValue);
 					break;
 
 				case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
@@ -361,8 +221,8 @@ public abstract class NiyoginService {
 						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
 					}
 					try {
-						if(!StringUtils.isEmpty(jsonResponseValue)){
-							intValue = Integer.parseInt(jsonResponseValue);	
+						if (!StringUtils.isEmpty(jsonResponseValue)) {
+							intValue = Integer.parseInt(jsonResponseValue);
 						}
 					} catch (Exception e) {
 						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
@@ -398,9 +258,9 @@ public abstract class NiyoginService {
 				case ExtendedFieldConstants.FIELDTYPE_RADIO:
 					int radioValue = 0;
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, configuration.getFieldType())) {
-						try{
-							  radioValue=Integer.parseInt(jsonResponseValue);
-						}catch (Exception e) {
+						try {
+							radioValue = Integer.parseInt(jsonResponseValue);
+						} catch (Exception e) {
 							throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
 						}
 						if (radioValue > configuration.getFieldLength()) {
@@ -410,7 +270,7 @@ public abstract class NiyoginService {
 						}
 					}
 					break;
-					
+
 				case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
 					String[] values = new String[0];
 					String staticList = configuration.getFieldList();
@@ -479,7 +339,7 @@ public abstract class NiyoginService {
 					}
 					validatedMap.put(key, actRate);
 					break;
-				
+
 				case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
 					double percentage = 0;
 					if (jsonResponseValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
@@ -501,7 +361,7 @@ public abstract class NiyoginService {
 					}
 					validatedMap.put(key, percentage);
 					break;
-					
+
 				case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
 					String[] values1 = new String[0];
 					String[] fieldvalues = new String[0];
@@ -529,7 +389,7 @@ public abstract class NiyoginService {
 						}
 					}
 					break;
-					
+
 				case ExtendedFieldConstants.FIELDTYPE_FRQ:
 					if (jsonResponseValue.length() <= LENGTH_FREQUENCY) {
 						validatedMap.put(key, jsonResponseValue);
@@ -546,7 +406,7 @@ public abstract class NiyoginService {
 						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
 					}
 					break;
-					
+
 				case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
 				case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
 				case ExtendedFieldConstants.FIELDTYPE_BASERATE:
@@ -563,11 +423,41 @@ public abstract class NiyoginService {
 		logger.debug(Literal.ENTERING);
 		return validatedMap;
 	}
-	
+
+	/**
+	 * Method for prepare the Extended Field details map according to the given response.
+	 * 
+	 * @param extendedResMapObject
+	 * @param financeDetail
+	 */
+	protected void prepareResponseObj(Map<String, Object> validatedMap, FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		if (validatedMap != null) {
+			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			if (extendedMapObject == null) {
+				extendedMapObject = new HashMap<String, Object>();
+			}
+			for (Entry<String, Object> entry : validatedMap.entrySet()) {
+				extendedMapObject.put(entry.getKey(), entry.getValue());
+			}
+			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	protected void logInterfaceDetails(InterfaceLogDetail interfaceLogDetail) {
 		interfaceLoggingDAO.save(interfaceLogDetail);
+		doClearInterfaceLogDetails();
 	}
-	
+
+	private void doClearInterfaceLogDetails() {
+		this.status = InterfaceConstants.STATUS_SUCCESS;
+		this.errorCode = null;
+		this.errorDesc = null;
+		this.jsonResponse = null;
+		this.reqSentOn = null;
+	}
+
 	/**
 	 * 
 	 * @param url
@@ -580,7 +470,7 @@ public abstract class NiyoginService {
 	 * @param reference
 	 * @return
 	 */
-	protected InterfaceLogDetail prepareLoggingData(String url, Object request, String response, Timestamp reqSentOn, 
+	protected InterfaceLogDetail prepareLoggingData(String url, Object request, String response, Timestamp reqSentOn,
 			String status, String errorCode, String errorDesc, String reference) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
@@ -591,15 +481,15 @@ public abstract class NiyoginService {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
-		
+
 		InterfaceLogDetail detail = new InterfaceLogDetail();
 		detail.setReference(reference);
 		String[] values = url.split("/");
-		detail.setServiceName(values[values.length-1]);
+		detail.setServiceName(values[values.length - 1]);
 		detail.setEndPoint(url);
 		try {
-			if(request != null) {
-				if(request != null && request instanceof String) {
+			if (request != null) {
+				if (request != null && request instanceof String) {
 					detail.setRequest(request.toString());
 				}
 				detail.setRequest(mapper.writeValueAsString(request));
@@ -612,50 +502,65 @@ public abstract class NiyoginService {
 		detail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
 		detail.setStatus(status);
 		detail.setErrorCode(errorCode);
-		if(errorDesc != null && errorDesc.length() > 200) {
-		detail.setErrorDesc(errorDesc.substring(0, 190));
+		if (errorDesc != null && errorDesc.length() > 200) {
+			detail.setErrorDesc(errorDesc.substring(0, 190));
 		}
 		return detail;
 	}
-	
-	public String formatDate(Date inputDate, String pattern) {
-		String formattedDate = null;
-		if(inputDate == null) {
-			return null;
-		}
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
-		formattedDate = dateFormatter.format(inputDate);
-		return formattedDate;
-	}
-	
+
 	/**
-	 * Take String Date and return UTIL Date in DB Format
+	 * Method for get the appDate
 	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return Date
+	 * @return appDate
 	 */
-	public static Date getFormattedDate(String date, String pattern) {
-		if (date == null) {
-			return null;
-		}
-		return parseDate(date, pattern);
-	}
-	
-	private static Date parseDate(String date, String format) {
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		java.util.Date uDate = null;
+	protected Date getAppDate() {
+		String appDate;
 		try {
-			uDate = df.parse(date);
-		} catch (ParseException e) {
-			logger.error("Exception: ", e);
+			appDate = (String) niyoginDAOImpl.getSMTParameter("APP_DATE", String.class);
+			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
+		} catch (Exception e) {
+
 		}
-		
-		return new Date(uDate.getTime());
+		return null;
 	}
-	
+
+	/**
+	 * Method for getting the City
+	 * 
+	 * @param address
+	 * @return
+	 */
+	protected City getCityById(CustomerAddres address) {
+		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(),
+				address.getCustAddrCity(), "_AView");
+		return city;
+	}
+
+	/**
+	 * Method for get the Co-Applicants
+	 * 
+	 * @param coApplicantIDs
+	 * @return
+	 */
+	protected List<CustomerDetails> getCoApplicants(List<Long> coApplicantIDs) {
+		return niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
+	}
+
+	/**
+	 * Method for get the pincodeGroupId
+	 * 
+	 * @param pincode
+	 */
+	protected long getPincodeGroupId(String pincode) {
+		return niyoginDAOImpl.getPincodeGroupId(pincode);
+	}
+
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
+
+	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
+		this.niyoginDAOImpl = niyoginDAOImpl;
+	}
+
 }

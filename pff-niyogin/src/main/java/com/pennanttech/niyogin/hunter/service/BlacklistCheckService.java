@@ -3,9 +3,7 @@ package com.pennanttech.niyogin.hunter.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.log4j.Logger;
@@ -35,12 +33,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private String				serviceUrl;
 	private JSONClient			client;
 
-	private String				status				= "SUCCESS";
-	private String				errorCode			= null;
-	private String				errorDesc			= null;
-	private String				jsonResponse		= null;
-	private Timestamp			reqSentOn			= null;
-
+	
 	/**
 	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
@@ -183,26 +176,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		address.setPin(customerAddres.getCustAddrZIP());
 		logger.debug(Literal.LEAVING);
 		return address;
-	}
-
-
-	/**
-	 * Method for prepare the Extended Field details map according to the given response.
-	 * 
-	 * @param extendedResMapObject
-	 * @param financeDetail
-	 */
-	private void prepareResponseObj(Map<String, Object> extendedResMapObject, FinanceDetail financeDetail) {
-		if (extendedResMapObject != null) {
-			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
-			if (extendedMapObject == null) {
-				extendedMapObject = new HashMap<String, Object>();
-			}
-			for (Entry<String, Object> entry : extendedResMapObject.entrySet()) {
-				extendedMapObject.put(entry.getKey(), entry.getValue());
-			}
-			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
-		}
 	}
 
 	/**
