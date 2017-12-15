@@ -326,7 +326,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		Applicant applicant = new Applicant();
 		applicant.setFirstName(customer.getCustShrtName());
 		applicant.setLastName(customer.getCustShrtName());
-		applicant.setDob(formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
+		applicant.setDob(NiyoginUtility.formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
 		applicant.setGender(InterfaceConstants.PFF_GENDER_M);
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		applicant.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));

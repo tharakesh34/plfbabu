@@ -1,5 +1,7 @@
 package com.pennanttech.niyogin.utility;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +39,8 @@ public class NiyoginUtility {
 	 * @param priority
 	 * @return String CustomerPhoneNumber
 	 */
-	public static CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList, int priority) {
+	public static CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList,
+			int priority) {
 		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
 			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
 				return customerPhoneNumber;
@@ -70,17 +73,17 @@ public class NiyoginUtility {
 	}
 
 	/**
-	 * Method to fetch customer phone number
+	 * Method to fetch customer phone number.
 	 * 
 	 * @param customerPhoneNumList
-	 * @param phoneType 
+	 * @param phoneType
 	 * @return
 	 */
 	public static String getPhoneNumber(List<CustomerPhoneNumber> customerPhoneNumList, String phoneType) {
 		String phoneNumber = "";
 		if (customerPhoneNumList != null && !customerPhoneNumList.isEmpty()) {
 			for (CustomerPhoneNumber phone : customerPhoneNumList) {
-				if(StringUtils.equals(phone.getPhoneTypeCode(), phoneType)) {
+				if (StringUtils.equals(phone.getPhoneTypeCode(), phoneType)) {
 					phoneNumber = phone.getPhoneNumber();
 					break;
 				} else {
@@ -92,7 +95,7 @@ public class NiyoginUtility {
 	}
 
 	/**
-	 * Method to fetch customer document number
+	 * Method to fetch customer document number.
 	 * 
 	 * @param documentList
 	 * @param docType
@@ -103,8 +106,8 @@ public class NiyoginUtility {
 		if (documentList != null && !documentList.isEmpty()) {
 			for (CustomerDocument document : documentList) {
 				if (StringUtils.equals(document.getCustDocCategory(), docType)) {
-					if(document.getCustDocTitle()!=null){
-						docNumber = document.getCustDocTitle();	
+					if (document.getCustDocTitle() != null) {
+						docNumber = document.getCustDocTitle();
 					}
 					break;
 				}
@@ -113,6 +116,13 @@ public class NiyoginUtility {
 		return docNumber;
 	}
 
+	/**
+	 * Method for fetch the customer address.
+	 * 
+	 * @param addressList
+	 * @param addrType
+	 * @return
+	 */
 	public static CustomerAddres getCustomerAddress(List<CustomerAddres> addressList, String addrType) {
 		CustomerAddres customerAddres = new CustomerAddres();
 		if (addressList != null && !addressList.isEmpty()) {
@@ -127,4 +137,22 @@ public class NiyoginUtility {
 		}
 		return customerAddres;
 	}
+
+	/**
+	 * Method for format the date according to the given pattern.
+	 * 
+	 * @param inputDate
+	 * @param pattern
+	 * @return
+	 */
+	public static String formatDate(Date inputDate, String pattern) {
+		String formattedDate = null;
+		if (inputDate == null) {
+			return null;
+		}
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
+		formattedDate = dateFormatter.format(inputDate);
+		return formattedDate;
+	}
+
 }
