@@ -163,7 +163,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
-					logger.error("Exception in CRIFF Bureau:", e);
+					logger.error("Exception in Experian Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
 					//throw new InterfaceException("9999", e.getMessage());
