@@ -49,7 +49,6 @@
 		class="com.pennanttech.niyogin.experian.service.ExperianBureauServiceImpl" parent="niyoginService">
 		<property name="consumerUrl" value="${exp.bureau.consumer.url}" />
 		<property name="commercialUrl" value="${exp.bureau.commercial.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean> 
 	<!-- CRIFBureauCommercialService -->
 	<bean id="criffBureauService"

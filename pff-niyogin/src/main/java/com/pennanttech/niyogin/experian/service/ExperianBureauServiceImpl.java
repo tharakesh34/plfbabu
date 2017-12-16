@@ -1,7 +1,5 @@
 package com.pennanttech.niyogin.experian.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,7 +24,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.experian.model.Address;
 import com.pennanttech.niyogin.experian.model.Applicant;
 import com.pennanttech.niyogin.experian.model.BillPayGrid;
@@ -50,7 +46,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private String				extConfigFileName;
 	private String				consumerUrl;
 	private String				commercialUrl;
-	private JSONClient			client;
 
 	private final String		SUIT_FILED						= "SUITFILED";
 	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
@@ -120,46 +115,25 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			throws ParseException {
 		logger.debug(Literal.ENTERING);
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		try {
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_SME)) {
-				BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-				serviceUrl = commercialUrl;
-				jsonResponse = client.post(serviceUrl, commercial);
-				//jsonResponse = getResponse();
-				extConfigFileName = "experianBureauCommercial";
-				requestObject = commercial;
-			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-				BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-				serviceUrl = consumerUrl;
-				jsonResponse = client.post(serviceUrl, consumer);
-				//jsonResponse = getResponse();
-				extConfigFileName = "experianBureauConsumer";
-				requestObject = consumer;
-			}
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-			status = InterfaceConstants.STATUS_FAILED;
-			StringWriter writer = new StringWriter();
-			exp.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(requestObject, finReference);
-			throw new InterfaceException(errorCode, exp.getMessage());
+		Map<String, Object> extendedFieldMap = null;
+
+		reference = finReference;
+		
+		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
+			BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
+			serviceUrl = commercialUrl;
+			extConfigFileName = "experianBureauCommercial";
+			requestObject = commercial;
+
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+			BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
+			serviceUrl = consumerUrl;
+			extConfigFileName = "experianBureauConsumer";
+			requestObject = consumer;
 		}
 
-		//for Straight forwardFields It works
-		Map<String, Object> extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-		// error validation on Response status
-		if (extendedFieldMap.get("ERRORCODE") != null) {
-			errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
-			errorDesc = Objects.toString(extendedFieldMap.get("ERRORDESC"));
-			throw new InterfaceException(errorCode, errorDesc);
-		} else {
-			extendedFieldMap.remove("ERRORCODE");
-			extendedFieldMap.remove("ERRORDESC");
-		}
+		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
 			extendedFieldMap = prepareCommercialExtendedMap(extendedFieldMap);
@@ -360,7 +334,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		List<BillPayGrid> billPayGridList = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
 			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = client.getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
+			Object responseObj = getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
 			List<BpayGridResponse> bpayGridResponses = (List<BpayGridResponse>) responseObj;
 			if (bpayGridResponses != null && !bpayGridResponses.isEmpty()) {
 				billPayGridList = prepareBillpayGridList(bpayGridResponses);
@@ -423,7 +397,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		List<CAISAccountHistory> caisAccountHistories = null;
 		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
 			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
-			Object responseObj = client.getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
+			Object responseObj = getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		} else {
 			extendedFieldMap.remove(NO_EMI_BOUNCES_IN_3_MONTHS);
@@ -611,10 +585,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 	public void setCommercialUrl(String commercialUrl) {
 		this.commercialUrl = commercialUrl;
-	}
-
-	public void setClient(JSONClient client) {
-		this.client = client;
 	}
 
 }
