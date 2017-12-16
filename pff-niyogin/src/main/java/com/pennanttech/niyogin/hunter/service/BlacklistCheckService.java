@@ -1,10 +1,7 @@
 package com.pennanttech.niyogin.hunter.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +12,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.logging.model.InterfaceLogDetail;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
@@ -31,7 +27,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private static final Logger	logger				= Logger.getLogger(BlacklistCheckService.class);
 	private final String		extConfigFileName	= "hunter";
 	private String				serviceUrl;
-	private JSONClient			client;
 
 	
 	/**
@@ -47,6 +42,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
 		String finReference = financeMain.getFinReference();
 		HunterRequest hunterRequest = prepareRequestObj(financeDetail);
 		Map<String, Object> validatedMap = null;
@@ -54,42 +50,25 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-
+		
+		reference=finReference;
+	
 		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, hunterRequest);
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-			// error validation on Response status
-			if (extendedFieldMap.get("ERRORCODE") != null) {
-				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
-				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
-				financeMain.setHunterGo(false);
-				throw new InterfaceException(errorCode, errorDesc);
-			} else {
-				extendedFieldMap.put("HUNTREQSEND", true);
-				extendedFieldMap.remove("ERRORCODE");
-				extendedFieldMap.remove("ERRORMESSAGE");
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
-				if((Boolean)validatedMap.get("HUNTERMATCH")) {
-					financeMain.setHunterGo(false);
-				} else {
-					financeMain.setHunterGo(true);
-				}
-			}
-
-			logger.info("Response : " + jsonResponse);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(hunterRequest, finReference);
+			extendedFieldMap = post(serviceUrl, hunterRequest, extConfigFileName);
+		} catch (InterfaceException e) {
 			financeMain.setHunterGo(false);
-			throw new InterfaceException("9999", e.getMessage());
+			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
+	
+		extendedFieldMap.put("HUNTREQSEND", true);
+		validatedMap = validateExtendedMapValues(extendedFieldMap);
+		
+		if ((Boolean) validatedMap.get("HUNTERMATCH")) {
+			financeMain.setHunterGo(false);
+		} else {
+			financeMain.setHunterGo(true);
+		}
+
 		// success case logging
 		doInterfaceLogging(hunterRequest, finReference);
 				
@@ -194,8 +173,5 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		this.serviceUrl = serviceUrl;
 	}
 
-	public void setClient(JSONClient client) {
-		this.client = client;
-	}
 
 }

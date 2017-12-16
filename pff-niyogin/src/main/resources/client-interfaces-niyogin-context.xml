@@ -16,6 +16,7 @@
 		abstract="true">
 		<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
 		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
+		<property name="client" ref="jsonClient" />
 	</bean>
 	
 	<bean id="jsonClient" class="com.pennanttech.niyogin.clients.JSONClient"/>
@@ -28,12 +29,10 @@
 	<bean id="externalDedup"
 		class="com.pennanttech.niyogin.dedup.service.ExperianDedupService" parent="niyoginService">
 		<property name="serviceUrl" value="${exp.internal.dedup.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean>
 	<bean id="blacklistCheck"
 		class="com.pennanttech.niyogin.hunter.service.BlacklistCheckService" parent="niyoginService">
 		<property name="serviceUrl" value="${experian.hunter.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean>
  	<bean id="mailService"
 		class="com.pennanttech.niyogin.communication.service.MailServiceImpl" parent="niyoginService">

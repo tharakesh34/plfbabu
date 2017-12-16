@@ -1,11 +1,8 @@
 package com.pennanttech.niyogin.dedup.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +17,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dedup.model.Address;
 import com.pennanttech.niyogin.dedup.model.ExperianDedup;
 import com.pennanttech.niyogin.dedup.model.Phone;
@@ -36,7 +32,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 	private final String		extConfigFileName	= "experianDedup";
 	private String				serviceUrl;
-	private JSONClient			client;
 
 	@Override
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
@@ -60,12 +55,11 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			for (JointAccountDetail coApplicant : coapplicants) {
 				coApplicantIDs.add(coApplicant.getCustID());
 			}
-			//TODO
-			List<CustomerDetails> coApplicantCustomers = niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
+
+			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
 			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
 				ExperianDedup experianDedupCoAppRequest = prepareRequestObj(coAppCustomerDetails, applicantType);
-				finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-				Map<String, Object> coAppValidatedMap = checkDedup(experianDedupCoAppRequest, finReference);
+				Map<String, Object> coAppValidatedMap = checkDedup(experianDedupCoAppRequest, financeMain);
 				prepareResponseObj(coAppValidatedMap, financeDetail);
 			}
 		}*/
@@ -82,39 +76,20 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 		
-		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, experianDedupRequest);
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
+		reference=financeMain.getFinReference();
 
-			// error validation on Response status
-			if (extendedFieldMap.get("ERRORCODE") != null) {
-				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
-				errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
-				financeMain.setDedupMatch(true);
-				setWorkflowDetails(financeMain);
-				throw new InterfaceException(errorCode, errorDesc);
-			} else {
-				extendedFieldMap.remove("ERRORCODE");
-				extendedFieldMap.remove("ERRORMESSAGE");
-				extendedFieldMap.put("EXDREQUESTSEND", true);
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
-				setWorkflowDetails(financeMain);
-				financeMain.setDedupMatch((Boolean)validatedMap.get("MATCH"));
-			}
-			logger.info("Response : " + jsonResponse);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
+		try {
+			extendedFieldMap = post(serviceUrl, experianDedupRequest, extConfigFileName);
+		} catch (InterfaceException e) {
 			financeMain.setDedupMatch(true);
 			setWorkflowDetails(financeMain);
-			throw new InterfaceException("9999", e.getMessage());
+			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
+		
+		extendedFieldMap.put("EXDREQUESTSEND", true);
+		validatedMap = validateExtendedMapValues(extendedFieldMap);
+		setWorkflowDetails(financeMain);
+		financeMain.setDedupMatch((Boolean)validatedMap.get("MATCH"));
 		
 		// success case logging
 		doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
@@ -249,7 +224,4 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		this.serviceUrl = serviceUrl;
 	}
 
-	public void setClient(JSONClient client) {
-		this.client = client;
-	}
 }
