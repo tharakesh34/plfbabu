@@ -55,7 +55,6 @@
 		class="com.pennanttech.niyogin.criff.service.CrifBureauServiceImpl" parent="niyoginService">
 		<property name="consumerUrl" value="${crif.bureau.consumer.url}" />
 		<property name="commercialUrl" value="${crif.bureau.commercial.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean>	
 	<!-- CRIFBureauCommercialService -->
 	<bean id="cibilConsumerService"

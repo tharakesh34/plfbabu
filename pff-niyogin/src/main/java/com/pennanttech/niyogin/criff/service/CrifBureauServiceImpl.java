@@ -1,7 +1,5 @@
 package com.pennanttech.niyogin.criff.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -14,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,7 +25,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.criff.model.Applicant;
 import com.pennanttech.niyogin.criff.model.CRIFConsumerResponse;
 import com.pennanttech.niyogin.criff.model.CompanyAddress;
@@ -49,12 +45,10 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger																= Logger
-			.getLogger(CrifBureauServiceImpl.class);
+	private static final Logger	logger								= Logger.getLogger(CrifBureauServiceImpl.class);
 	private String				extConfigFileName;
 	private String				consumerUrl;
 	private String				commercialUrl;
-	private JSONClient			client;
 
 	private String				OLDEST_LOANDISBURSED_DATE											= "OLDESTLOANDISBUR";
 	private String				NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE							= "NOPREVIOUSLOANS";
@@ -132,53 +126,34 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails)
 			throws ParseException {
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		try {
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_SME)) {
-				CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-				serviceUrl = commercialUrl;
-				jsonResponse = client.post(serviceUrl, commercial);
-				//jsonResponse = getResponse();
-				extConfigFileName = "crifBureauCommercial";
-				requestObject = commercial;
-			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-				CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-				serviceUrl = consumerUrl;
-				jsonResponse = client.post(serviceUrl, consumer);
-				extConfigFileName = "crifBureauConsumer";
-				requestObject = consumer;
-			}
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-			status = InterfaceConstants.STATUS_FAILED;
-			StringWriter writer = new StringWriter();
-			exp.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(requestObject, finReference);
-			throw new InterfaceException(errorCode, exp.getMessage());
+		Map<String, Object> extendedFieldMap = null;
+
+		reference = finReference;
+
+		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
+			CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
+			extendedFieldMap = post(serviceUrl, commercial, extConfigFileName);
+			serviceUrl = commercialUrl;
+			extConfigFileName = "crifBureauCommercial";
+			requestObject = commercial;
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+			CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
+			serviceUrl = consumerUrl;
+			extConfigFileName = "crifBureauConsumer";
+			requestObject = consumer;
 		}
 
 		//for Straight forwardFields It works
-		Map<String, Object> extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-		// error validation on Response status
-		if (extendedFieldMap.get("ERRORCODE") != null) {
-			errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
-			errorDesc = Objects.toString(extendedFieldMap.get("ERRORMESSAGE"));
-			throw new InterfaceException(errorCode, errorDesc);
-		} else {
-			extendedFieldMap.remove("ERRORCODE");
-			extendedFieldMap.remove("ERRORMESSAGE");
-		}
+		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			Object responseObj = client.getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
+			Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 			CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
 			extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
 		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
 				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			Object responseObj = client.getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
+			Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
 			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 			extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
 		}
@@ -662,7 +637,4 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		this.commercialUrl = commercialUrl;
 	}
 
-	public void setClient(JSONClient client) {
-		this.client = client;
-	}
 }
