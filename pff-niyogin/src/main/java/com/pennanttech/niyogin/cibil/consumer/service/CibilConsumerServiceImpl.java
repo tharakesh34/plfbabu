@@ -1,11 +1,8 @@
 package com.pennanttech.niyogin.cibil.consumer.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +17,6 @@ import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerAddress;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerRequest;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilPersonalDetails;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -32,7 +28,6 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 
 	private final String		extConfigFileName	= "cibilConsumer";
 	private String				serviceUrl;
-	private JSONClient			client;
 
 	/**
 	 * Method for get the CibilConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -46,44 +41,18 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+
 		CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(financeDetail);
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-
-		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, cibilConsumerRequest);
-
-			//for direct mapping fields
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-			// error validation on Response status
-			if (extendedFieldMap.get("ERRORCODE") != null) {
-				errorCode = Objects.toString(extendedFieldMap.get("ERRORCODE"));
-				errorDesc = Objects.toString(extendedFieldMap.get("ERRORDESC"));
-				throw new InterfaceException(errorCode, errorDesc);
-			} else {
-				extendedFieldMap.remove("ERRORCODE");
-				extendedFieldMap.remove("ERRORDESC");
-			}
-
-			//validate the map with Configuration
-			validatedMap = validateExtendedMapValues(extendedFieldMap);
-
-			logger.info("Response : " + jsonResponse);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(cibilConsumerRequest, finReference);
-			throw new InterfaceException("9999", e.getMessage());
-		}
+		reference = finReference;
+	
+		extendedFieldMap = post(serviceUrl, cibilConsumerRequest, extConfigFileName);
+		//validate the map with Configuration
+		validatedMap = validateExtendedMapValues(extendedFieldMap);
 
 		// success case logging
 		doInterfaceLogging(cibilConsumerRequest, finReference);
@@ -213,14 +182,6 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
-	}
-
-	public JSONClient getClient() {
-		return client;
-	}
-
-	public void setClient(JSONClient client) {
-		this.client = client;
 	}
 
 }

@@ -60,7 +60,6 @@
 	<bean id="cibilConsumerService"
 		class="com.pennanttech.niyogin.cibil.consumer.service.CibilConsumerServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${cibil.consumer.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean>	
 	
 	<!-- DMS Service -->
