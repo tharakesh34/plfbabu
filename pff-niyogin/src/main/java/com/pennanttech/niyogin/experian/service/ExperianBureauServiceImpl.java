@@ -79,8 +79,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 
-		// Execute Bureau for Actual customer
-		Map<String, Object> extendedFieldMap = executeBureau(financeDetail, customerDetails);
+		//validate the map with configuration
+		Map<String, Object> validatedExtendedMap = executeBureau(financeDetail, customerDetails);
 
 		// Execute Bureau for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
@@ -96,9 +96,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
 			}
 		}
-
-		//validate the map with configuration
-		Map<String, Object> validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
 
 		// success case logging
 		doInterfaceLogging(requestObject, finReference);
@@ -122,9 +119,10 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		logger.debug(Literal.ENTERING);
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		Map<String, Object> extendedFieldMap = null;
+		Map<String, Object> validatedExtendedMap = null;
 
 		reference = finReference;
-		
+
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
 			BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
 			serviceUrl = commercialUrl;
@@ -140,14 +138,27 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
-		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			extendedFieldMap = prepareCommercialExtendedMap(extendedFieldMap);
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			extendedFieldMap = prepareConsumerExtendedMap(extendedFieldMap);
+		try {
+
+			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+					InterfaceConstants.PFF_CUSTCTG_SME)) {
+				extendedFieldMap = prepareCommercialExtendedMap(extendedFieldMap);
+			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+				extendedFieldMap = prepareConsumerExtendedMap(extendedFieldMap);
+			}
+
+			//validate the map with configuration
+			validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			doLogError(e, finReference, requestObject);
+			throw new InterfaceException("9999", e.getMessage());
 		}
+
 		logger.debug(Literal.LEAVING);
-		return extendedFieldMap;
+		return validatedExtendedMap;
 
 	}
 
@@ -209,8 +220,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private Address preparePersonalAddress(List<CustomerAddres> addressList) {
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
-		City city=getCityById(address);
-		
+		City city = getCityById(address);
+
 		Address personalAddress = new Address();
 		String houseNo;
 		if (address.getCustAddrHNbr() != null) {
@@ -302,9 +313,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private ConsumerAddress prepareConsumerAddress(List<CustomerAddres> addressList) {
 		ConsumerAddress consumerAddress = new ConsumerAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
-		
+
 		City city = getCityById(address);
-		
+
 		String houseNo;
 		if (address.getCustAddrHNbr() != null) {
 			houseNo = address.getCustAddrHNbr();
@@ -540,7 +551,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		return false;
 	}
 
-
 	/**
 	 * 
 	 * This Comparator class is used to sort the BillPayGrid based on their bpayDate H to L
@@ -565,7 +575,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 	}
 
-
 	/**
 	 * Method for prepare data and logging
 	 * 
@@ -573,8 +582,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param reference
 	 */
 	private void doInterfaceLogging(Object requestObj, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn, status,
-				errorCode, errorDesc, reference);
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);
 	}
 

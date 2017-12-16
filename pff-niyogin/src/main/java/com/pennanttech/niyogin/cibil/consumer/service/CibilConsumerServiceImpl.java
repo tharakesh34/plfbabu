@@ -49,11 +49,16 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 		reference = finReference;
-	
-		extendedFieldMap = post(serviceUrl, cibilConsumerRequest, extConfigFileName);
-		//validate the map with Configuration
-		validatedMap = validateExtendedMapValues(extendedFieldMap);
 
+		extendedFieldMap = post(serviceUrl, cibilConsumerRequest, extConfigFileName);
+		try {
+			//validate the map with Configuration
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			doLogError(e, finReference, cibilConsumerRequest);
+			throw new InterfaceException("9999", e.getMessage());
+		}
 		// success case logging
 		doInterfaceLogging(cibilConsumerRequest, finReference);
 

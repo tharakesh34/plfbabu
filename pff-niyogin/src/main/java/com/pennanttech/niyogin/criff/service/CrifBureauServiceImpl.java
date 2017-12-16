@@ -85,8 +85,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 
-		// Execute Bureau for Actual customer
-		Map<String, Object> extendedFieldMap = executeBureau(financeDetail, customerDetails);
+		//validate the map with configuration
+		Map<String, Object> validatedExtendedMap = executeBureau(financeDetail, customerDetails);
 
 		// Execute Bureau for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
@@ -102,10 +102,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
 			}
 		}
-
-		//validate the map with configuration
-		Map<String, Object> validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
-
+		
 		// success case logging
 		doInterfaceLogging(requestObject, finReference);
 
@@ -127,6 +124,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			throws ParseException {
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		Map<String, Object> extendedFieldMap = null;
+		Map<String, Object> validatedExtendedMap = null;
 
 		reference = finReference;
 
@@ -146,17 +144,27 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		//for Straight forwardFields It works
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
-		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
-			CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
-			extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
-			CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
-			extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
+		try {
+
+			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+					InterfaceConstants.PFF_CUSTCTG_SME)) {
+				Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
+				CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
+				extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
+			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+				Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
+				CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
+				extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
+				
+				validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			doLogError(e, finReference, requestObject);
+			throw new InterfaceException("9999", e.getMessage());
 		}
-		return extendedFieldMap;
+		return validatedExtendedMap;
 	}
 
 	/**
@@ -330,7 +338,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		City city = getCityById(address);
 
-		String addressLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","+ address.getCustAddrStreet();
+		String addressLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","
+				+ address.getCustAddrStreet();
 		companyAddress.setAddress1(addressLines);
 		companyAddress.setAddress2(addressLines);
 		companyAddress.setAddress3(addressLines);
@@ -410,7 +419,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//for min per of amt repaid across all unsecure loans
 			if (loanDetail.getSecurityDetails() != null && loanDetail.getSecurityDetails().isEmpty()) {
-				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal())).divide(loanDetail.getDisbursedAmt());
+				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal()))
+						.divide(loanDetail.getDisbursedAmt());
 				if (value.compareTo(minPerOfAmtRepaidOnSL) < 0) {
 					minPerOfAmtRepaidOnSL = value;
 				}
