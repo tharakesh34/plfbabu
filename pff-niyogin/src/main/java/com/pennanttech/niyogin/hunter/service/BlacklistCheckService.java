@@ -28,7 +28,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private final String		extConfigFileName	= "hunter";
 	private String				serviceUrl;
 
-	
 	/**
 	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
@@ -50,19 +49,27 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-		
-		reference=finReference;
-	
+
+		reference = finReference;
+
 		try {
 			extendedFieldMap = post(serviceUrl, hunterRequest, extConfigFileName);
 		} catch (InterfaceException e) {
 			financeMain.setHunterGo(false);
 			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
-	
+
 		extendedFieldMap.put("HUNTREQSEND", true);
-		validatedMap = validateExtendedMapValues(extendedFieldMap);
-		
+
+		try {
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			financeMain.setHunterGo(false);
+			doLogError(e, finReference, hunterRequest);
+			throw new InterfaceException("9999", e.getMessage());
+		}
+
 		if ((Boolean) validatedMap.get("HUNTERMATCH")) {
 			financeMain.setHunterGo(false);
 		} else {
@@ -71,7 +78,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		// success case logging
 		doInterfaceLogging(hunterRequest, finReference);
-				
+
 		prepareResponseObj(validatedMap, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -99,11 +106,13 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
 
 		if (customerDetails.getCustomerEMailList() != null) {
-			customerBasicDetail.setEmailId(NiyoginUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+			customerBasicDetail
+					.setEmailId(NiyoginUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
 		}
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			customerBasicDetail.setPhone(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(), InterfaceConstants.PHONE_TYPE_PER));
+			customerBasicDetail.setPhone(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+					InterfaceConstants.PHONE_TYPE_PER));
 		}
 
 		Address address = null;
@@ -172,6 +181,5 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
-
 
 }

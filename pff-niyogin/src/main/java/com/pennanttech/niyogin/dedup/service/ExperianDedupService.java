@@ -44,26 +44,30 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		//for Applicant
 		applicantType = "A";
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
-		Map<String, Object> validatedMap = checkDedup(experianDedupRequest, financeMain);
-		prepareResponseObj(validatedMap, financeDetail);
+		try {
+			Map<String, Object> validatedMap = checkDedup(experianDedupRequest, financeMain);
+			prepareResponseObj(validatedMap, financeDetail);
 
-		//for CoApplicant
-		/*List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
-		if (coapplicants != null && !coapplicants.isEmpty()) {
-			applicantType = "C";
-			List<Long> coApplicantIDs = new ArrayList<Long>(1);
-			for (JointAccountDetail coApplicant : coapplicants) {
-				coApplicantIDs.add(coApplicant.getCustID());
-			}
-
-			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
-			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
-				ExperianDedup experianDedupCoAppRequest = prepareRequestObj(coAppCustomerDetails, applicantType);
-				Map<String, Object> coAppValidatedMap = checkDedup(experianDedupCoAppRequest, financeMain);
-				prepareResponseObj(coAppValidatedMap, financeDetail);
-			}
-		}*/
-
+			//for CoApplicant
+			/*
+			 * List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList(); if (coapplicants !=
+			 * null && !coapplicants.isEmpty()) { applicantType = "C"; List<Long> coApplicantIDs = new
+			 * ArrayList<Long>(1); for (JointAccountDetail coApplicant : coapplicants) {
+			 * coApplicantIDs.add(coApplicant.getCustID()); }
+			 * 
+			 * List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs); for (CustomerDetails
+			 * coAppCustomerDetails : coApplicantCustomers) { ExperianDedup experianDedupCoAppRequest =
+			 * prepareRequestObj(coAppCustomerDetails, applicantType); Map<String, Object> coAppValidatedMap =
+			 * checkDedup(experianDedupCoAppRequest, financeMain); prepareResponseObj(coAppValidatedMap, financeDetail);
+			 * } }
+			 */
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			financeMain.setDedupMatch(true);
+			setWorkflowDetails(financeMain);
+			doLogError(e, financeMain.getFinReference(), experianDedupRequest);
+			throw new InterfaceException("9999", e.getMessage());
+		}
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -75,8 +79,8 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-		
-		reference=financeMain.getFinReference();
+
+		reference = financeMain.getFinReference();
 
 		try {
 			extendedFieldMap = post(serviceUrl, experianDedupRequest, extConfigFileName);
@@ -85,19 +89,29 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			setWorkflowDetails(financeMain);
 			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
-		
+
 		extendedFieldMap.put("EXDREQUESTSEND", true);
-		validatedMap = validateExtendedMapValues(extendedFieldMap);
+
+		try {
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			financeMain.setDedupMatch(true);
+			setWorkflowDetails(financeMain);
+			doLogError(e, financeMain.getFinReference(), experianDedupRequest);
+			throw new InterfaceException("9999", e.getMessage());
+		}
+
 		setWorkflowDetails(financeMain);
-		financeMain.setDedupMatch((Boolean)validatedMap.get("MATCH"));
-		
+		financeMain.setDedupMatch((Boolean) validatedMap.get("MATCH"));
+
 		// success case logging
 		doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
-		
+
 		logger.debug(Literal.LEAVING);
 		return validatedMap;
 	}
-	
+
 	/**
 	 * Method for Prepare the ExperianDedup Request object.
 	 * 
@@ -119,7 +133,8 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		if (documentList != null && !documentList.isEmpty()) {
 			experianDedup.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
 			experianDedup.setAadhaar(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
-			experianDedup.setPassport(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
+			experianDedup
+					.setPassport(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
 		}
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
@@ -158,10 +173,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	private Address prepareAddress(CustomerAddres customerAddres) {
 		logger.debug(Literal.ENTERING);
 		Address address = new Address();
-		
+
 		String addrLines = customerAddres.getCustAddrType() + "," + customerAddres.getCustAddrHNbr() + ","
 				+ customerAddres.getCustAddrStreet();
-		
+
 		address.setAddressLine1(addrLines);
 		address.setAddressLine2(addrLines);
 		address.setAddressLine3(addrLines);
@@ -172,7 +187,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		address.setCity(city.getPCCityName());
 		address.setState(city.getLovDescPCProvinceName());
 		address.setCountry(city.getLovDescPCCountryName());
-		
+
 		address.setPin(customerAddres.getCustAddrZIP());
 		address.setAddressType(customerAddres.getCustAddrType());
 		logger.debug(Literal.LEAVING);
@@ -194,7 +209,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return phone;
 	}
 
-	
 	/**
 	 * Method for prepare data and logging
 	 * 
@@ -212,7 +226,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	 * @param financeMain
 	 */
 	private void setWorkflowDetails(FinanceMain financeMain) {
-		if(financeMain.isDedupMatch()) {
+		if (financeMain.isDedupMatch()) {
 			financeMain.setRecordStatus("Saved");
 			financeMain.setUserAction("Save");
 			financeMain.setNextRoleCode(financeMain.getRoleCode());
