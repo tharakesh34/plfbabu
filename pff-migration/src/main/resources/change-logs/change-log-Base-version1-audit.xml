@@ -49,4 +49,11 @@
      	<column name="PdfPassWord" type="nvarchar(200)"/>
      </addColumn>
     </changeSet>
+    
+    <changeSet id="5" author="Ganesh.p">
+     <addColumn tableName="ADTCustomers">
+     	<column name="CustsourceId" type="nvarchar(10)"/>
+     </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
