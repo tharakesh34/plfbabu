@@ -62,7 +62,13 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private Object				requestObject					= null;
 	private String				serviceUrl						= null;
 
-
+	/**
+	 * Method for execute Experian Bureau service<br>
+	 *   - Execute Commercial bureau service for SME and CORP customers<br>.
+	 *   - Execute Consumer service for RETAIL customer.
+	 * 
+	 * @param auditHeader
+	 */
 	@Override
 	public AuditHeader executeExperianBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
 		logger.debug(Literal.ENTERING);
@@ -124,7 +130,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			serviceUrl = commercialUrl;
 			extConfigFileName = "experianBureauCommercial";
 			requestObject = commercial;
-
 		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
 				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
 			BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);

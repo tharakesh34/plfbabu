@@ -2933,4 +2933,35 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Method for fetch existing mandate id by reference.
+	 * 
+	 * @param finReference
+	 * @param type
+	 * @return mandateId
+	 */
+	@Override
+	public long getMandateIdByRef(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT MandateId From FinanceMain");
+		selectSql.append(type);
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		long mandateId = Long.MIN_VALUE;
+		try {
+			mandateId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			mandateId = Long.MIN_VALUE;
+		}
+		logger.debug(Literal.LEAVING);
+		return mandateId;
+	}
 }

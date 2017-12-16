@@ -29,6 +29,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -127,6 +128,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private AuditHeaderDAO				auditHeaderDAO;
 	private FinanceMainDAO				financeMainDAO;
 	private ExtendedFieldDetailsService	extendedFieldDetailsService;
+	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
 
 	protected transient WorkflowEngine	workFlow	= null;
 
@@ -870,12 +872,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method for
+	 * Method for process disbursement instructions and set default values
 	 * 
 	 * @param financeDetail
-	 * @param userDetails
-	 * @param stp
-	 * @param financeMain
 	 */
 	private void doProcessDisbInstructions(FinanceDetail financeDetail) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1267,15 +1266,22 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.setUserDetails(userDetails);
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
 
-			WSReturnStatus status = updateDisbursementInst(financeDetail, tableType.getSuffix());
-			if(StringUtils.isNotBlank(status.getReturnCode())) {
-				return status;
+			if(financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
+				WSReturnStatus status = updateDisbursementInst(financeDetail, tableType.getSuffix());
+				if(StringUtils.isNotBlank(status.getReturnCode())) {
+					return status;
+				}
 			}
-			updateFinMandateDetails(financeDetail, tableType.getSuffix());
-			
+
+			// Save or Update mandate details
+			if(financeDetail.getMandate() != null) {
+				updateFinMandateDetails(financeDetail, tableType.getSuffix());
+			}
+
 			// update Extended field details
-			extendedFieldDetailsService.updateFinExtendedDetails(financeDetail, tableType.getSuffix());
-			
+			if(financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
+				extendedFieldDetailsService.updateFinExtendedDetails(financeDetail, tableType.getSuffix());
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return APIErrorHandlerService.getFailedStatus();
@@ -1285,13 +1291,30 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	private void updateFinMandateDetails(FinanceDetail financeDetail, String type) {
+		logger.debug(Literal.ENTERING);
 		// process mandate details
 		doProcessMandate(financeDetail);
-		AuditHeader auditHeader = getAuditHeader(financeDetail.getMandate(), PennantConstants.TRAN_ADD);
+		AuditHeader auditHeader = null;
+
+		// Update mandate details if exists
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		long extMandateId = financeMainDAO.getMandateIdByRef(finReference, TableType.TEMP_TAB.getSuffix());
+		if(extMandateId != Long.MIN_VALUE && extMandateId != 0) {
+			financeDetail.getMandate().setNewRecord(false);
+			financeDetail.getMandate().setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			financeDetail.getMandate().setVersion(1);
+			auditHeader = getAuditHeader(financeDetail.getMandate(), PennantConstants.TRAN_UPD);
+		} else {
+			auditHeader = getAuditHeader(financeDetail.getMandate(), PennantConstants.TRAN_ADD);
+		}
 		finMandateService.saveOrUpdate(financeDetail, auditHeader, type);
-		// update FinanceMain table
-		long mandateId = financeDetail.getFinScheduleData().getFinanceMain().getMandateID();
-		financeMainDAO.updateFinMandateId(mandateId, financeDetail.getFinReference(), type);
+
+		if(extMandateId == Long.MIN_VALUE || extMandateId == 0) {
+			// update FinanceMain table
+			long mandateId = financeDetail.getFinScheduleData().getFinanceMain().getMandateID();
+			financeMainDAO.updateFinMandateId(mandateId, financeDetail.getFinReference(), type);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private WSReturnStatus updateDisbursementInst(FinanceDetail financeDetail, String type) {
@@ -1306,6 +1329,15 @@ public class CreateFinanceController extends SummaryDetailService {
 				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
 			}
 		}
+		
+		// Delete Disbursement details if exists
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		List<FinAdvancePayments> extAdvPayments = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, 
+				TableType.TEMP_TAB.getSuffix());
+		if(extAdvPayments != null && !extAdvPayments.isEmpty()) {
+			finAdvancePaymentsDAO.deleteByFinRef(finReference, TableType.TEMP_TAB.getSuffix());
+		}
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditDetails.addAll(finAdvancePaymentsService.saveOrUpdate(financeDetail.getAdvancePaymentsList(),
 				type, PennantConstants.TRAN_WF));
@@ -1547,5 +1579,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+	
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
 }

@@ -60,12 +60,12 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			StringWriter writer = new StringWriter();
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
-			doInterfaceLogging(dmsRequest, "FETCH-DOCUMENT");
+			doInterfaceLogging(dmsRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		
 		// success case logging
-		doInterfaceLogging(dmsRequest, jsonResponse);
+		doInterfaceLogging(dmsRequest);
 		logger.debug(Literal.LEAVING);
 		return detail;
 	}
@@ -76,9 +76,9 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param hunterRequest
 	 * @param reference
 	 */
-	private void doInterfaceLogging(DocumentRequest request, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, request, "Document", reqSentOn,
-				status, errorCode, errorDesc, reference);
+	private void doInterfaceLogging(DocumentRequest request) {
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, request, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, "Document");
 		logInterfaceDetails(interfaceLogDetail);
 	}
 

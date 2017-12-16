@@ -111,34 +111,35 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pff.core.TableType;
 
 public class FinanceDataValidation {
 
-	private BaseRateDAO						baseRateDAO;
-	private SplRateDAO						splRateDAO;
-	private BranchDAO						branchDAO;
-	private CustomerDAO						customerDAO;
-	private FinanceMainDAO					financeMainDAO;
-	private FinanceDetailService			financeDetailService;
-	private BankDetailService				bankDetailService;
-	private BankBranchService				bankBranchService;
-	private DocumentTypeService				documentTypeService;
-	private CustomerDetailsService			customerDetailsService;
-	private FlagDAO							flagDAO;
-	private CollateralSetupService			collateralSetupService;
-	private MandateService					mandateService;
-	private StepPolicyService				stepPolicyService;
-	private RelationshipOfficerService		relationshipOfficerService;
-	private FinTypePartnerBankService		finTypePartnerBankService;
-	private VASConfigurationService			vASConfigurationService;
-	private ScriptValidationService			scriptValidationService;
-	private RuleExecutionUtil				ruleExecutionUtil;
-	private RuleService						ruleService;
-	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
-	private ProvinceDAO						provinceDAO;
-	private CityDAO							cityDAO;
-	private FinanceDetail					financeDetail;
-	private CustomerDocumentService			customerDocumentService;
+	private BaseRateDAO					baseRateDAO;
+	private SplRateDAO					splRateDAO;
+	private BranchDAO					branchDAO;
+	private CustomerDAO					customerDAO;
+	private FinanceMainDAO				financeMainDAO;
+	private FinanceDetailService		financeDetailService;
+	private BankDetailService			bankDetailService;
+	private BankBranchService			bankBranchService;
+	private DocumentTypeService			documentTypeService;
+	private CustomerDetailsService		customerDetailsService;
+	private FlagDAO						flagDAO;
+	private CollateralSetupService		collateralSetupService;
+	private MandateService				mandateService;
+	private StepPolicyService			stepPolicyService;
+	private RelationshipOfficerService	relationshipOfficerService;
+	private FinTypePartnerBankService	finTypePartnerBankService;
+	private VASConfigurationService		vASConfigurationService;
+	private ScriptValidationService		scriptValidationService;
+	private RuleExecutionUtil			ruleExecutionUtil;
+	private RuleService					ruleService;
+	private FinTypeVASProductsDAO		finTypeVASProductsDAO;
+	private ProvinceDAO					provinceDAO;
+	private CityDAO						cityDAO;
+	private FinanceDetail				financeDetail;
+	private CustomerDocumentService		customerDocumentService;
 	private PartnerBankDAO				partnerBankDAO;
 	private ExtendedFieldDetailsService	extendedFieldDetailsService;
 
@@ -1147,32 +1148,26 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> validateUpdateFinance(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<>();
 
-		FinanceMain finMain = financeMainDAO.getFinanceMainById(financeDetail.getFinReference(), "_Temp", false);
+		String type = TableType.TEMP_TAB.getSuffix();
+		FinanceMain finMain = financeMainDAO.getFinanceMainById(financeDetail.getFinReference(), type, false);
 		if(finMain == null) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90403", null)));
 			return errorDetails;
 		}
-		// fetch FinanceDetails
-		FinanceDetail extFinDetail = financeDetailService.getOriginationFinance(finMain.getFinReference(), 
-				finMain.getNextRoleCode(), FinanceConstants.FINSER_EVENT_ORG, finMain.getRoleCode());
-		financeDetail.setFinScheduleData(extFinDetail.getFinScheduleData());
+		// fetch Finance Schedule details
+		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(finMain.getFinReference(), type, false);
+		financeDetail.setFinScheduleData(finScheduleData);
 		
-		if(!extFinDetail.getAdvancePaymentsList().isEmpty() && !financeDetail.getAdvancePaymentsList().isEmpty()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90404", null)));
-			return errorDetails;
-		} else {
-			// validate disbursement details
-			//errorDetails = disbursementValidation(financeDetail);
+		// validate disbursement details
+		if(financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
+			errorDetails = disbursementValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
 		}
-		if((extFinDetail.getMandate() != null && StringUtils.isBlank(extFinDetail.getMandate().getAccNumber()))
-				&& financeDetail.getMandate() != null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90405", null)));
-			return errorDetails;
-		} else {
-			// validate mandate details
+		
+		// validate Mandate details
+		if(financeDetail.getMandate() != null) {
 			errorDetails = mandateValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
@@ -1180,12 +1175,15 @@ public class FinanceDataValidation {
 		}
 
 		//Extended Field Details Validation
-		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
-		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-				ExtendedFieldConstants.MODULE_LOAN, subModule);
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		if(financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
+			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
+			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
+					ExtendedFieldConstants.MODULE_LOAN, subModule);
+			if (!errorDetails.isEmpty()) {
+				return errorDetails;
+			}
 		}
+		
 		return errorDetails;
 	}
 
@@ -4417,5 +4415,4 @@ public class FinanceDataValidation {
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
-
 }

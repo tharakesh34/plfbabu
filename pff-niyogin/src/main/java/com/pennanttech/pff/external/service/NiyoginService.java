@@ -70,8 +70,14 @@ public abstract class NiyoginService {
 		super();
 	}
 
-
-
+	/**
+	 * 
+	 * 
+	 * @param serviceUrl
+	 * @param requestObject
+	 * @param extConfigFileName
+	 * @return
+	 */
 	protected Map<String, Object> post(String serviceUrl, Object requestObject, String extConfigFileName) {
 		Map<String, Object> extendedFieldMap = null;
 		try {
@@ -89,7 +95,6 @@ public abstract class NiyoginService {
 				extendedFieldMap.remove(errorDescKey);
 			}
 			//extendedFieldMap.put("jsonResponse", jsonResponse);
-			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			status = "FAILED";
@@ -104,12 +109,17 @@ public abstract class NiyoginService {
 		}
 		return extendedFieldMap;
 	}
-	
-	
+
+	/**
+	 * 
+	 * 
+	 * @param jsonResponse
+	 * @param responseClass
+	 * @param isList
+	 * @return
+	 */
 	public Object getResponseObject(String jsonResponse, Class<?> responseClass, boolean isList) {
-
 		return client.getResponseObject(jsonResponse, responseClass, isList);
-
 	}
 
 	/**
