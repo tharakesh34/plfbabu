@@ -570,6 +570,28 @@ public abstract class NiyoginService {
 	}
 
 	/**
+	 * Method for log the Exception details
+	 * 
+	 * @param e
+	 * @param serviceUrl
+	 * @param requestObject
+	 */
+	protected void doLogError(Exception e, String serviceUrl, Object requestObject) {
+		logger.debug(Literal.ENTERING);
+
+		status = "FAILED";
+		errorCode = "9999";
+		StringWriter writer = new StringWriter();
+		e.printStackTrace(new PrintWriter(writer));
+		errorDesc = writer.toString();
+		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObject, jsonResponse, reqSentOn,
+				status, errorCode, errorDesc, reference);
+		logInterfaceDetails(interfaceLogDetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
 	 * Method for get the appDate
 	 * 
 	 * @return appDate
