@@ -111,6 +111,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIsPdfExtRequired= false;;
 	private boolean docIsPasswordProtected= false;;
 	private long pdfMappingRef= Long.MIN_VALUE;
+	@XmlElement(name="docPassword")
 	private String pdfPassWord;
 	
 	

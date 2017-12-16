@@ -310,6 +310,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String sourceSystem;
 	private String branchRefno;
 	private String lovDescRequestStage;
+	private String custSourceID = null;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -1800,6 +1801,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setLovDescRequestStage(String lovDescRequestStage) {
 		this.lovDescRequestStage = lovDescRequestStage;
+	}
+
+	public String getCustSourceID() {
+		return custSourceID;
+	}
+
+	public void setCustSourceID(String custSourceID) {
+		this.custSourceID = custSourceID;
 	}
 
 }

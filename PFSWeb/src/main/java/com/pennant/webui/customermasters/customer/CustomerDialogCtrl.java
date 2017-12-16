@@ -163,6 +163,7 @@ import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -1629,6 +1630,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setCustPassportNo(getCustDocID(PennantConstants.PASSPORT));
 		aCustomer.setPhoneNumber(getMobileNumber());
 
+		if (StringUtils.isBlank(aCustomer.getCustSourceID())) {
+			aCustomer.setCustSourceID(App.CODE);
+		}
+
 		// Extended Field validations
 		extendedFieldCtrl.setParentTab(custTab);
 		if(aCustomerDetails.getExtendedFieldHeader() != null) {
@@ -1653,6 +1658,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (this.directorDetails.isVisible()) {
 			aCustomerDetails.setCustomerDirectorList(this.directorList);
 		}
+		
 		logger.debug("Leaving");
 	}
 

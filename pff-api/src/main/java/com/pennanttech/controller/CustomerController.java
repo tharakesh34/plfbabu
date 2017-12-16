@@ -84,6 +84,7 @@ public class CustomerController {
 			Customer customer = customerDetails.getCustomer();
 			customer.setCustNationality("IN");
 			customer.setCustCOB("IN");
+			customer.setCustSourceID(APIConstants.FINSOURCE_ID_API);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
