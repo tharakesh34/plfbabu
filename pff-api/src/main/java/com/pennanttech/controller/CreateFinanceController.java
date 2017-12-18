@@ -29,6 +29,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -98,6 +99,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -129,6 +131,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceMainDAO				financeMainDAO;
 	private ExtendedFieldDetailsService	extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
+	private DocumentDetailsDAO			documentDetailsDAO;
+	private DocumentService				documentService;
+
 
 	protected transient WorkflowEngine	workFlow	= null;
 
@@ -1282,6 +1287,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			if(financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
 				extendedFieldDetailsService.updateFinExtendedDetails(financeDetail, tableType.getSuffix());
 			}
+			
+			// save or update document details
+			if(financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
+				updatedFinanceDocuments(financeDetail);
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return APIErrorHandlerService.getFailedStatus();
@@ -1289,6 +1299,57 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
+
+	/**
+	 * Method for Save or update Finance documents.
+	 * 
+	 * @param financeDetail
+	 */
+	private void updatedFinanceDocuments(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		AuditHeader auditHeader = null;
+		for (DocumentDetails detail : financeDetail.getDocumentDetailsList()) {
+			detail.setNewRecord(true);
+			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			detail.setVersion(1);
+			detail.setReferenceId(financeMain.getFinReference());
+
+			// set update properties if exists
+			String finReference = financeMain.getFinReference();
+			String docCategory = detail.getDocCategory();
+			String module = FinanceConstants.MODULE_NAME;
+			String type = TableType.TEMP_TAB.getSuffix();
+			DocumentDetails extDocDetail = documentDetailsDAO.getDocumentDetails(finReference, docCategory, module,
+					type);
+			if (extDocDetail != null) {
+				detail.setDocId(extDocDetail.getDocId());
+				detail.setNewRecord(false);
+				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				detail.setVersion(extDocDetail.getVersion() + 1);
+			}
+
+			detail.setDocModule(FinanceConstants.MODULE_NAME);
+			detail.setUserDetails(financeMain.getUserDetails());
+			detail.setRecordStatus(financeMain.getRecordStatus());
+			//workflow relates
+			detail.setWorkflowId(financeMain.getWorkflowId());
+			detail.setRoleCode(financeMain.getRoleCode());
+			detail.setNextRoleCode(financeMain.getNextRoleCode());
+			detail.setTaskId(financeMain.getTaskId());
+			detail.setNextTaskId(financeMain.getNextTaskId());
+
+			if (StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				auditHeader = getAuditHeader(detail, PennantConstants.TRAN_UPD);
+			} else {
+				auditHeader = getAuditHeader(detail, PennantConstants.TRAN_ADD);
+			}
+			documentService.saveOrUpdate(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 
 	private void updateFinMandateDetails(FinanceDetail financeDetail, String type) {
 		logger.debug(Literal.ENTERING);
@@ -1353,6 +1414,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, finMain.getBefImage(), finMain);
 		return new AuditHeader(finMain.getFinReference(), null, null, null, auditDetail,
 				finMain.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetails>>());
+	}
+	
+	private AuditHeader getAuditHeader(DocumentDetails documentDetails, String transType) {
+		AuditDetail auditDetail = new AuditDetail(transType, 1, documentDetails.getBefImage(), documentDetails);
+		return new AuditHeader(documentDetails.getReferenceId(), null, null, null, auditDetail,
+				documentDetails.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetails>>());
 	}
 
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
@@ -1583,5 +1650,13 @@ public class CreateFinanceController extends SummaryDetailService {
 	
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+	
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public void setDocumentService(DocumentService documentService) {
+		this.documentService = documentService;
 	}
 }

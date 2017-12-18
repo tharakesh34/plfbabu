@@ -1815,4 +1815,10 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="55" author="Durga Prasad D">
+		<sql>
+			insert into ErrorDetails values('90408','EN','E','Customer document with category: {0} is not allowed in update loan.','test','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	
  </databaseChangeLog>

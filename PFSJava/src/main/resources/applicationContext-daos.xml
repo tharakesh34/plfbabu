@@ -4236,6 +4236,7 @@
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="documentService" ref="documentService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -10513,5 +10514,33 @@
 	</bean>
 	<bean name="licenceFileServiceTarget" class="com.pennant.backend.service.licencefile.impl.LicenceFileServiceImpl">
 		<property name="licenceFileDAO" ref="licenceFileDAO" />
+	</bean>
+	
+	<!-- Finance documents -->
+	<bean id="documentService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="documentServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="documentServiceTarget" class="com.pennanttech.pff.document.impl.DocumentServiceImpl">
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		
+		<property name="documentTypeService" ref="documentTypeService" />
 	</bean>
 </beans>
