@@ -286,9 +286,16 @@ public class NiyoginDAOImpl {
 	 */
 	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) throws Exception {
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		sql.append("SELECT *  FROM EXTENDEDFIELDDETAIL WHERE FIELDNAME IN(:fieldNames)");
+
+		StringBuilder sql = new StringBuilder("Select ModuleId, FieldName, FieldType, ");
+		sql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, ");
+		sql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, ");
+		sql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ExtendedFieldDetail  WHERE FIELDNAME IN(:fieldNames)");
 		paramMap.addValue("fieldNames", fieldNames);
 		logger.debug("selectSql: " + sql.toString());
 		try {
@@ -299,7 +306,7 @@ public class NiyoginDAOImpl {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			throw new Exception("Unable to Retrive  the ExtendedFields.");
+			throw new InterfaceException("9999", "Unable to Retrive  the ExtendedFieldDetail.");
 		}
 	}
 
@@ -391,6 +398,44 @@ public class NiyoginDAOImpl {
 		}
 		logger.error(Literal.LEAVING);
 		return 0;
+	}
+
+	
+	/**
+	 * Method for get the Email's of a Customer
+	 * 
+	 * @param customerIds
+	 * @param type
+	 * @return
+	 */
+	public List<CustomerEMail> getCustomersEmails(Set<Long> customerIds, String type) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode,");
+		if (type.contains("_View")) {
+			selectSql.append(" lovDescCustEMailTypeCode,");
+		}
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  CustomerEMails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID IN(:customerIds)");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		paramMap.addValue("customerIds", customerIds);
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			logger.debug(Literal.LEAVING);
+			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+			logger.debug(Literal.LEAVING);
+			return this.namedJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			throw new InterfaceException("9999", "Unable to Retrive  the Customer Email  Details.");
+		}
 	}
 
 }

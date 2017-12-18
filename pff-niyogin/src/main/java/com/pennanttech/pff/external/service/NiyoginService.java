@@ -30,6 +30,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
@@ -629,6 +630,17 @@ public abstract class NiyoginService {
 		return niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
 	}
 
+	
+	/**
+	 * Method for get the list of email's for given customerIds
+	 * 
+	 * @param customerIds
+	 * @return
+	 */
+	protected List<CustomerEMail> getCustomersEmails(Set<Long> customerIds) {
+		return niyoginDAOImpl.getCustomersEmails(customerIds, "_VIEW");
+	}
+	
 	/**
 	 * Method for get the pincodeGroupId
 	 * 
