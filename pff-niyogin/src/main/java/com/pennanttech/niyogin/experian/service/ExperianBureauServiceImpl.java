@@ -138,6 +138,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
+	
 		try {
 
 			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
