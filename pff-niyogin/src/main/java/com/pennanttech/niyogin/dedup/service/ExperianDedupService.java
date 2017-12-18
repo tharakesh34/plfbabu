@@ -65,7 +65,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			logger.error("Exception: ", e);
 			financeMain.setDedupMatch(true);
 			setWorkflowDetails(financeMain);
-			doLogError(e, financeMain.getFinReference(), experianDedupRequest);
+			doLogError(e, serviceUrl, experianDedupRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);
@@ -87,26 +87,27 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		} catch (InterfaceException e) {
 			financeMain.setDedupMatch(true);
 			setWorkflowDetails(financeMain);
-			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
 
-		extendedFieldMap.put("EXDREQUESTSEND", true);
+		if (!financeMain.isDedupMatch()) {
+			
+			extendedFieldMap.put("EXDREQUESTSEND", true);
+			
+			try {
+				validatedMap = validateExtendedMapValues(extendedFieldMap);
+			} catch (Exception e) {
+				logger.error("Exception: ", e);
+				financeMain.setDedupMatch(true);
+				setWorkflowDetails(financeMain);
+				throw new InterfaceException("9999", e.getMessage());
+			}
 
-		try {
-			validatedMap = validateExtendedMapValues(extendedFieldMap);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			financeMain.setDedupMatch(true);
 			setWorkflowDetails(financeMain);
-			doLogError(e, financeMain.getFinReference(), experianDedupRequest);
-			throw new InterfaceException("9999", e.getMessage());
+			financeMain.setDedupMatch((Boolean) validatedMap.get("MATCH"));
+
+			// success case logging
+			doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
 		}
-
-		setWorkflowDetails(financeMain);
-		financeMain.setDedupMatch((Boolean) validatedMap.get("MATCH"));
-
-		// success case logging
-		doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
 
 		logger.debug(Literal.LEAVING);
 		return validatedMap;
