@@ -56,7 +56,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			validatedMap = validateExtendedMapValues(extendedFieldMap);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, finReference, cibilConsumerRequest);
+			doLogError(e, serviceUrl, cibilConsumerRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		// success case logging

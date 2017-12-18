@@ -66,7 +66,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			financeMain.setHunterGo(false);
-			doLogError(e, finReference, hunterRequest);
+			doLogError(e, serviceUrl, hunterRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
