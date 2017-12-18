@@ -133,8 +133,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			serviceUrl = commercialUrl;
 			extConfigFileName = "crifBureauCommercial";
 			requestObject = commercial;
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
 			CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
 			serviceUrl = consumerUrl;
 			extConfigFileName = "crifBureauConsumer";
@@ -146,22 +145,19 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		try {
 
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_SME)) {
+			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_SME)) {
 				Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 				CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
 				extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
-			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
 				Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
 				CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 				extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
-				
-				validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
 			}
+			validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, finReference, requestObject);
+			doLogError(e, serviceUrl, requestObject);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		return validatedExtendedMap;
