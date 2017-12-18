@@ -69,4 +69,11 @@
 		<property name="client" ref="jsonClient" />
 	</bean>	
 	
+		<!-- LegalDesk -->
+	<bean id="legalDeskService"
+		class="com.pennanttech.niyogin.legaldesk.service.LegalDeskServiceImpl" parent="niyoginService">
+		<!-- <property name="serviceUrl" value="${niyogin.legaldesk.url}" /> -->
+	</bean>	
+	
+	
 </beans>
