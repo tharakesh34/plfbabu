@@ -154,7 +154,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, finReference, requestObject);
+			doLogError(e, serviceUrl, requestObject);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
