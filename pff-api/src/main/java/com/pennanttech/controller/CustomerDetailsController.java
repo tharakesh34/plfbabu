@@ -1411,6 +1411,11 @@ public class CustomerDetailsController {
 		customerDocument.setLastMntBy(userDetails.getUserId());
 		customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerDocument.setVersion(1);
+		
+		if(StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "JPG")
+				|| StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "PNG")) {
+			customerDocument.setCustDocType(PennantConstants.DOC_TYPE_IMAGE);
+		}
 		//get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(customerDocument,PennantConstants.TRAN_WF);

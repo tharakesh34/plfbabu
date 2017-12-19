@@ -658,10 +658,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia("document.pdf", "pdf", "application/pdf",
 						aCustomerDocument.getCustDocImage());
-			} else if (aCustomerDocument.getCustDocType().equals(
-					PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg",
-						aCustomerDocument.getCustDocImage());
+			} else if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aCustomerDocument.getCustDocImage());
 			} else if (aCustomerDocument.getCustDocType().equals(
 					PennantConstants.DOC_TYPE_WORD) || aCustomerDocument.getCustDocType().equals(
 							PennantConstants.DOC_TYPE_MSG)) {
