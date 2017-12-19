@@ -8,15 +8,19 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "name", "seqNumbOfSign", "email" })
 @XmlRootElement(name = "signers_info")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class SignerDetails {
 
+	@XmlElement(name = "name")
 	private String	name;
 
 	@XmlElement(name = "sequence_of_signature")
 	private int		seqNumbOfSign;
 
+	@XmlElement(name = "email")
 	private String	email;
+
+	private long	custID;
 
 	public String getName() {
 		return name;
@@ -40,6 +44,14 @@ public class SignerDetails {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
 	}
 
 }

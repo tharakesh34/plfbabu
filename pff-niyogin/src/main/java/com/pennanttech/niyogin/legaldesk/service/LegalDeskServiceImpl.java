@@ -6,8 +6,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -15,13 +18,14 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
-import com.pennanttech.niyogin.legaldesk.model.CoBorrower;
 import com.pennanttech.niyogin.legaldesk.model.FormData;
 import com.pennanttech.niyogin.legaldesk.model.LegalDeskRequest;
 import com.pennanttech.niyogin.legaldesk.model.PartyAddress;
+import com.pennanttech.niyogin.legaldesk.model.SignerDetails;
 import com.pennanttech.niyogin.legaldesk.model.SignersInfo;
 import com.pennanttech.niyogin.legaldesk.model.StampPaperData;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
@@ -36,6 +40,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	private final String		extConfigFileName	= "legalDesk";
 	private String				serviceUrl;
 
+	/**
+	 * Method for execute the LegalDesk.
+	 * 
+	 * @param auditHeader
+	 * @return auditHeader
+	 */
 	@Override
 	public AuditHeader extecuteLegalDesk(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
@@ -63,10 +73,15 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		return auditHeader;
 	}
 
+	/**
+	 * Method for prepare the LegalDeskRequest request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
 	private LegalDeskRequest prepareRequestObj(FinanceDetail financeDetail) {
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		LegalDeskRequest legalDeskRequest = new LegalDeskRequest();
-		legalDeskRequest.setStampPaperData(prepareStampPaperData(customerDetails));
+		legalDeskRequest.setStampPaperData(prepareStampPaperData(financeDetail));
 
 		legalDeskRequest.setSignersInfo(prepareSignersInfo(financeDetail));
 
@@ -74,18 +89,39 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		return legalDeskRequest;
 	}
 
-	private StampPaperData prepareStampPaperData(CustomerDetails customerDetails) {
+	/**
+	 * Method for prepare the StampPaperData request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private StampPaperData prepareStampPaperData(FinanceDetail financeDetail) {
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
 		StampPaperData stampPaperData = new StampPaperData();
 		stampPaperData.setFirstParty(customer.getCustShrtName());
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		stampPaperData.setFirstPartyAddress(preparePartyAddress(addressList));
-		//TODO:
-		stampPaperData.setStampAmount("");
-		stampPaperData.setStampDutyPaidBy("");
+
+		//TODO: two fin detail methods are there
+		List<FinFeeDetail> feeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailActualList();
+		for (FinFeeDetail finFee : feeDetailsList) {
+			if (StringUtils.equals(finFee.getFeeTypeCode(), "STAMPFEE")) {
+				String feeAmt = Objects.toString(finFee.getActualAmount(), "");
+				stampPaperData.setStampAmount(feeAmt);
+			}
+		}
+
+		stampPaperData.setStampDutyPaidBy(customer.getCustShrtName());
 		return stampPaperData;
 	}
 
+	/**
+	 * Method for prepare the PartyAddress request object.
+	 * 
+	 * @param addressList
+	 * @return
+	 */
 	private PartyAddress preparePartyAddress(List<CustomerAddres> addressList) {
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 		City city = getCityDetails(address);
@@ -101,28 +137,64 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		return partyAddress;
 	}
 
+	/**
+	 * Method for prepare the SignersInfo request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		SignersInfo signersInfo = new SignersInfo();
+		signersInfo.setLeanders(prepareLendersList(financeDetail));
+		signersInfo.setBorrowers(prepareBorrowersList(financeDetail));
 		return signersInfo;
 	}
 
-	private List<CoBorrower> prepareCoBorrowers(FinanceDetail financeDetail) {
-		List<CoBorrower> coBorrowersList = new ArrayList<CoBorrower>(1);
+	/**
+	 * Method for prepare the lender list request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private List<SignerDetails> prepareLendersList(FinanceDetail financeDetail) {
+		List<SignerDetails> lendersList = null;
+		if (true) {
+			lendersList = new ArrayList<SignerDetails>();
+			//for()
+			SignerDetails lender = new SignerDetails();
+			lender.setName("Niyogin");
+			lender.setSeqNumbOfSign(5);
+			lender.setEmail("lender@niyogin.in");
+			lendersList.add(lender);
+		}
+		return lendersList;
+	}
+
+	/**
+	 * Method for prepare the borrower list request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private List<SignerDetails> prepareBorrowersList(FinanceDetail financeDetail) {
+		List<SignerDetails> borrowersList = null;
 
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		Set<Long> customerIds = new HashSet<Long>(1);
 		if (coapplicants != null && !coapplicants.isEmpty()) {
+			borrowersList = new ArrayList<SignerDetails>(1);
+
 			for (JointAccountDetail coApplicant : coapplicants) {
 				if (coApplicant.isAuthoritySignatory()) {
-					CoBorrower coBorrower = new CoBorrower();
-					coBorrower.setName(coApplicant.getLovDescCIFName());
-					coBorrower.setSeqNumbOfSign(coApplicant.getSequence());
-					coBorrower.setCustID(coApplicant.getCustID());
-					coBorrowersList.add(coBorrower);
+					SignerDetails borrower = new SignerDetails();
+					borrower.setName(coApplicant.getLovDescCIFName());
+					borrower.setSeqNumbOfSign(coApplicant.getSequence());
+					borrower.setCustID(coApplicant.getCustID());
+					borrowersList.add(borrower);
 					customerIds.add(coApplicant.getCustID());
 				}
 			}
-			if (!coBorrowersList.isEmpty()) {
+			if (!borrowersList.isEmpty()) {
 
 				List<CustomerEMail> custEmails = getCustomersEmails(customerIds);
 				List<CustomerEMail> tempEmailList = new ArrayList<CustomerEMail>(1);
@@ -134,9 +206,9 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 						}
 					}
 					String email = NiyoginUtility.getHignPriorityEmail(tempEmailList, 5);
-					for (CoBorrower coBorrower : coBorrowersList) {
-						if (custId == coBorrower.getCustID()) {
-							coBorrower.setEmail(email);
+					for (SignerDetails borrower : borrowersList) {
+						if (custId == borrower.getCustID()) {
+							borrower.setEmail(email);
 						}
 					}
 				}
@@ -144,19 +216,33 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			}
 
 		}
-		return coBorrowersList;
+		return borrowersList;
 	}
 
+	/**
+	 * Method for prepare the FormData request object.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
 	private FormData prepareFormData(FinanceDetail financeDetail) {
-
 		FormData formData = new FormData();
-		formData.setCoBorrowers(prepareCoBorrowers(financeDetail));
-		formData.setPurposeOfLoan("");
+		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+
+		if (extendedMap != null) {
+			for (Entry<String, Object> entry : extendedMap.entrySet()) {
+				if (StringUtils.equals(entry.getKey(), "LOANPURPOSE")) {
+					formData.setPurposeOfLoan(Objects.toString(entry.getValue(), null));
+				}
+			}
+		}
+
 		formData.setTenure("");
 		formData.setIntrestType("");
 		formData.setRateOfIntrest("");
 		formData.setInstalmentAmt("");
-		formData.setInstalmentStartdate(new Date());
+		String instlmntDate = NiyoginUtility.formatDate(new Date(), "dd/MM/yyyy");
+		formData.setInstalmentStartdate(instlmntDate);
 		formData.setInstalmentSchedule("");
 		formData.setProcessingFees("");
 		formData.setPenaltyCharges("");

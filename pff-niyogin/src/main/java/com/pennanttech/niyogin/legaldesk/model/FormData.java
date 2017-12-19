@@ -1,23 +1,18 @@
 package com.pennanttech.niyogin.legaldesk.model;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "coBorrowers", "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest", "instalmentAmt",
+@XmlType(propOrder = { "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest", "instalmentAmt",
 		"instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges", "documentationCharges",
 		"foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt", "disbursementOfLoan", "loanType" })
 @XmlRootElement(name = "FormData")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FormData {
 
-	@XmlElement(name = "co_borrower")
-	private List<CoBorrower> coBorrowers;
 
 	@XmlElement(name = "purpose_of_loan")
 	private String	purposeOfLoan;
@@ -34,7 +29,7 @@ public class FormData {
 	private String	instalmentAmt;
 
 	@XmlElement(name = "instalment_startdate")
-	private Date	instalmentStartdate;
+	private String	instalmentStartdate;
 
 	@XmlElement(name = "instalment_schedule")
 	private String	instalmentSchedule;
@@ -64,14 +59,6 @@ public class FormData {
 
 	@XmlElement(name = "loan_type")
 	private String	loanType;
-
-	public List<CoBorrower> getCoBorrowers() {
-		return coBorrowers;
-	}
-
-	public void setCoBorrowers(List<CoBorrower> coBorrowers) {
-		this.coBorrowers = coBorrowers;
-	}
 
 	public String getPurposeOfLoan() {
 		return purposeOfLoan;
@@ -113,11 +100,11 @@ public class FormData {
 		this.instalmentAmt = instalmentAmt;
 	}
 
-	public Date getInstalmentStartdate() {
+	public String getInstalmentStartdate() {
 		return instalmentStartdate;
 	}
 
-	public void setInstalmentStartdate(Date instalmentStartdate) {
+	public void setInstalmentStartdate(String instalmentStartdate) {
 		this.instalmentStartdate = instalmentStartdate;
 	}
 
