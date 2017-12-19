@@ -1209,6 +1209,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			extendedFieldCtrl.setCcyFormat(2);
 			extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
+			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);

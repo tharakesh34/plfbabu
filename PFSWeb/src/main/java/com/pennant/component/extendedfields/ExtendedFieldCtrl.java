@@ -31,6 +31,7 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
+import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
@@ -56,6 +57,7 @@ public class ExtendedFieldCtrl {
 	private Tab								tab;
 	private boolean							isNewRecord	= false;
 	private Tabpanel						tabpanel;
+	private Window 							window;
 
 	private ExtendedFieldHeader				extendedFieldHeader;
 	private ExtendedFieldRender				extendedFieldRender;
@@ -78,6 +80,7 @@ public class ExtendedFieldCtrl {
 		this.generator.setRowWidth(220);
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
+		this.generator.setWindow(window);
 		this.tab.setLabel(extendedFieldHeader.getTabHeading());
 
 		// Pre-Validation Checking & Setting Defaults
@@ -558,6 +561,14 @@ public class ExtendedFieldCtrl {
 	 */
 	public static void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		ExtendedFieldCtrl.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public Window getWindow() {
+		return window;
+	}
+
+	public void setWindow(Window window) {
+		this.window = window;
 	}
 
 }
