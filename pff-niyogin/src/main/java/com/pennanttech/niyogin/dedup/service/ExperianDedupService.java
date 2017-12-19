@@ -183,7 +183,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		address.setAddressLine3(addrLines);
 		address.setLandmark(customerAddres.getCustAddrStreet());
 
-		City city = getCityById(customerAddres);
+		City city = getCityDetails(customerAddres);
 
 		address.setCity(city.getPCCityName());
 		address.setState(city.getLovDescPCProvinceName());

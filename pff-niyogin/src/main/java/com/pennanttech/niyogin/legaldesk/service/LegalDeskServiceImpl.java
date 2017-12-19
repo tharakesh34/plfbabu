@@ -88,7 +88,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 	private PartyAddress preparePartyAddress(List<CustomerAddres> addressList) {
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 
 		PartyAddress partyAddress = new PartyAddress();
 		partyAddress.setStreet(address.getCustAddrStreet());

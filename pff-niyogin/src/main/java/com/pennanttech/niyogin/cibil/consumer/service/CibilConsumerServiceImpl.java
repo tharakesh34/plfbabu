@@ -13,6 +13,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerAddress;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerRequest;
@@ -20,6 +21,7 @@ import com.pennanttech.niyogin.cibil.consumer.model.CibilPersonalDetails;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
@@ -81,8 +83,8 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		Customer customer = customerDetails.getCustomer();
 		CibilConsumerRequest cibilConsumerRequest = new CibilConsumerRequest();
 
-		cibilConsumerRequest.setApplicationId(financeDetail.getFinReference());
-		cibilConsumerRequest.setStgUniqueRefId(customer.getCustCIF());
+		cibilConsumerRequest.setApplicationId(customer.getCustID());
+		cibilConsumerRequest.setStgUniqueRefId(customer.getCustID());
 
 		CibilPersonalDetails personalDetails = new CibilPersonalDetails();
 		if (customer.getCustFName() != null) {
@@ -92,12 +94,12 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		}
 		personalDetails.setMiddleName(customer.getCustMName());
 		personalDetails.setLastName(customer.getCustLName());
-		personalDetails.setDob(customer.getCustDOB());
-		personalDetails.setGender(customer.getLovDescCustGenderCodeName());
+		personalDetails.setDob(NiyoginUtility.formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
+		personalDetails.setGender(InterfaceConstants.PFF_GENDER_M);
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
-			CustomerPhoneNumber customerPhone = NiyoginUtility
-					.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
+			CustomerPhoneNumber customerPhone =null;
+			customerPhone= NiyoginUtility.getHighPriorityPhone(customerDetails.getCustomerPhoneNumList(), 5);
 			if (customerPhone != null) {
 				personalDetails.setMobile(customerPhone.getPhoneNumber());
 			} else {
@@ -108,20 +110,12 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		personalDetails.setNomineeName(null);
 		personalDetails.setNomineeRelation(null);
 
-		String pan = "";
-		String aadhar = "";
+		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null) {
-			for (CustomerDocument document : documentList) {
-				if (document.getCustDocCategory().equals("01")) {
-					aadhar = document.getCustDocTitle();
-				} else if (document.getCustDocCategory().equals("03")) {
-					pan = document.getCustDocTitle();
-				}
-			}
+			personalDetails.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+			personalDetails.setUid(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
 		}
-		personalDetails.setPan(pan);
-		personalDetails.setUid(aadhar);
 
 		cibilConsumerRequest.setPersonalDetails(personalDetails);
 
@@ -140,29 +134,32 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	/**
 	 * Method for prepare the Address request object.
 	 * 
-	 * @param customerAddres
+	 * @param custAddres
 	 * @return address
 	 */
-	private CibilConsumerAddress prepareAddress(CustomerAddres customerAddres) {
+	private CibilConsumerAddress prepareAddress(CustomerAddres custAddres) {
 		logger.debug(Literal.ENTERING);
 		CibilConsumerAddress address = new CibilConsumerAddress();
 		String houseNo;
-		if (customerAddres.getCustAddrHNbr() != null) {
-			houseNo = customerAddres.getCustAddrHNbr();
+		if (custAddres.getCustAddrHNbr() != null) {
+			houseNo = custAddres.getCustAddrHNbr();
 		} else {
-			houseNo = customerAddres.getCustFlatNbr();
+			houseNo = custAddres.getCustFlatNbr();
 		}
 		address.setHouseNo(houseNo);
-		//TODO
-		address.setSocietyName("");
+		String societyName=custAddres.getCustAddrLine1()+","+custAddres.getCustAddrLine2()+","+custAddres.getCustAddrLine2();
+		address.setSocietyName(societyName);
 		address.setCareOf("");
-		address.setLandmark(customerAddres.getCustAddrStreet());
-		address.setCategory(customerAddres.getCustAddrType());
-		address.setCity(customerAddres.getCustAddrCity());
-		address.setCountry(customerAddres.getCustAddrCountry());
-		address.setDistrict(customerAddres.getCustDistrict());
-		address.setPin(customerAddres.getCustAddrZIP());
-		address.setState(customerAddres.getCustAddrProvince());
+		address.setLandmark(custAddres.getCustAddrStreet());
+		address.setCategory(custAddres.getCustAddrType());
+		
+		City city=getCityDetails(custAddres);
+		
+		address.setCity(city.getPCCityName());
+		address.setCountry(city.getLovDescPCCountryName());
+		address.setDistrict(custAddres.getCustDistrict());
+		address.setPin(custAddres.getCustAddrZIP());
+		address.setState(city.getLovDescPCProvinceName());
 
 		logger.debug(Literal.ENTERING);
 		return address;

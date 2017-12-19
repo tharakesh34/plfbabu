@@ -1,7 +1,6 @@
 package com.pennanttech.niyogin.cibil.consumer.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +26,7 @@ public class CibilPersonalDetails implements Serializable {
 	private String				lastName;
 
 	@XmlElement(name = "DOB")
-	private Date				dob;
+	private String				dob;
 
 	@XmlElement(name = "GENDER")
 	private String				gender;
@@ -71,11 +70,11 @@ public class CibilPersonalDetails implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Date getDob() {
+	public String getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(String dob) {
 		this.dob = dob;
 	}
 

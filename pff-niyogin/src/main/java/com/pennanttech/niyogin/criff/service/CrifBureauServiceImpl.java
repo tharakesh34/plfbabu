@@ -310,7 +310,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		PersonalAddress personalAddress = new PersonalAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 
 		personalAddress.setHouseNo(address.getCustAddrHNbr());
 		personalAddress.setLandmark(address.getCustAddrStreet());
@@ -332,7 +332,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		CompanyAddress companyAddress = new CompanyAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 
 		String addressLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","
 				+ address.getCustAddrStreet();

@@ -16,29 +16,29 @@ public class CibilConsumerRequest implements Serializable {
 	private static final long serialVersionUID = -2400900921015801759L;
 
 	@XmlElement(name = "STG_UNQ_REF_ID")
-	private String					stgUniqueRefId;
+	private long					stgUniqueRefId;
 
 	@XmlElement(name = "APPLICATION_ID")
-	private String					applicationId;
+	private long					applicationId;
 
 	@XmlElement(name = "personal")
 	private CibilPersonalDetails	personalDetails;
 
 	private CibilConsumerAddress	address;
 
-	public String getStgUniqueRefId() {
+	public long getStgUniqueRefId() {
 		return stgUniqueRefId;
 	}
 
-	public void setStgUniqueRefId(String stgUniqueRefId) {
+	public void setStgUniqueRefId(long stgUniqueRefId) {
 		this.stgUniqueRefId = stgUniqueRefId;
 	}
 
-	public String getApplicationId() {
+	public long getApplicationId() {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
+	public void setApplicationId(long applicationId) {
 		this.applicationId = applicationId;
 	}
 

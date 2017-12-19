@@ -245,7 +245,7 @@ public class NiyoginDAOImpl {
 	 *            (String) ""/_Temp/_View
 	 * @return City
 	 */
-	public City getCityById(final String pCCountry, String pCProvince, String pCCity, String type) {
+	public City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type) {
 		logger.debug(Literal.ENTERING);
 		City city = new City();
 		city.setPCCountry(pCCountry);

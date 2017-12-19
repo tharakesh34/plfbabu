@@ -221,7 +221,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private Address preparePersonalAddress(List<CustomerAddres> addressList) {
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 
 		Address personalAddress = new Address();
 		String houseNo;
@@ -248,7 +248,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private CompanyAddress prepareCompanyAddress(List<CustomerAddres> addressList) {
 		CompanyAddress companyAddress = new CompanyAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 		String addrLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","
 				+ address.getCustAddrStreet();
 		companyAddress.setAddressLine1(addrLines);
@@ -315,7 +315,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		ConsumerAddress consumerAddress = new ConsumerAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
-		City city = getCityById(address);
+		City city = getCityDetails(address);
 
 		String houseNo;
 		if (address.getCustAddrHNbr() != null) {

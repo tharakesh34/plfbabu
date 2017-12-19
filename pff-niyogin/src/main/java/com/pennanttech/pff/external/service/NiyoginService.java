@@ -614,8 +614,8 @@ public abstract class NiyoginService {
 	 * @param address
 	 * @return
 	 */
-	protected City getCityById(CustomerAddres address) {
-		City city = niyoginDAOImpl.getCityById(address.getCustAddrCountry(), address.getCustAddrProvince(),
+	protected City getCityDetails(CustomerAddres address) {
+		City city = niyoginDAOImpl.getCityDetails(address.getCustAddrCountry(), address.getCustAddrProvince(),
 				address.getCustAddrCity(), "_AView");
 		return city;
 	}
