@@ -1,5 +1,7 @@
 package com.pennanttech.niyogin.legaldesk.model;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,52 +15,51 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FormData {
 
-
 	@XmlElement(name = "purpose_of_loan")
-	private String	purposeOfLoan;
+	private String		purposeOfLoan;
 
-	private String	tenure;
+	private int			tenure;
 
 	@XmlElement(name = "intrest_type")
-	private String	intrestType;
+	private String		intrestType;
 
 	@XmlElement(name = "rate_of_intrest")
-	private String	rateOfIntrest;
+	private BigDecimal	rateOfIntrest		= BigDecimal.ZERO;
 
 	@XmlElement(name = "instalment_amount")
-	private String	instalmentAmt;
+	private BigDecimal	instalmentAmt		= BigDecimal.ZERO;
 
 	@XmlElement(name = "instalment_startdate")
-	private String	instalmentStartdate;
+	private String		instalmentStartdate;
 
 	@XmlElement(name = "instalment_schedule")
-	private String	instalmentSchedule;
+	private int			instalmentSchedule;
 
 	@XmlElement(name = "processing_fees")
-	private String	processingFees;
+	private String		processingFees;
 
 	@XmlElement(name = "penal_charges")
-	private String	penaltyCharges;
+	private String		penaltyCharges;
 
 	@XmlElement(name = "documentation_charges")
-	private String	documentationCharges;
+	private String		documentationCharges;
 
-	private String	foreclosure;
+	private String		foreclosure;
 
 	@XmlElement(name = "charges_for_dihorner")
-	private String	chargesForDihorner;
+	private String		chargesForDihorner;
 
 	@XmlElement(name = "default_emi_charges")
-	private String	defaultEmiCharges;
+	private String		defaultEmiCharges;
 
 	@XmlElement(name = "insurance_amount_gst")
-	private String	insuranceGstAmt;
+	private String		insuranceGstAmt;
 
 	@XmlElement(name = "disbursement_of_loan")
-	private String	disbursementOfLoan;
+	private BigDecimal	disbursementOfLoan	= BigDecimal.ZERO;
 
 	@XmlElement(name = "loan_type")
-	private String	loanType;
+	private String		loanType;
 
 	public String getPurposeOfLoan() {
 		return purposeOfLoan;
@@ -68,11 +69,11 @@ public class FormData {
 		this.purposeOfLoan = purposeOfLoan;
 	}
 
-	public String getTenure() {
+	public int getTenure() {
 		return tenure;
 	}
 
-	public void setTenure(String tenure) {
+	public void setTenure(int tenure) {
 		this.tenure = tenure;
 	}
 
@@ -84,19 +85,19 @@ public class FormData {
 		this.intrestType = intrestType;
 	}
 
-	public String getRateOfIntrest() {
+	public BigDecimal getRateOfIntrest() {
 		return rateOfIntrest;
 	}
 
-	public void setRateOfIntrest(String rateOfIntrest) {
+	public void setRateOfIntrest(BigDecimal rateOfIntrest) {
 		this.rateOfIntrest = rateOfIntrest;
 	}
 
-	public String getInstalmentAmt() {
+	public BigDecimal getInstalmentAmt() {
 		return instalmentAmt;
 	}
 
-	public void setInstalmentAmt(String instalmentAmt) {
+	public void setInstalmentAmt(BigDecimal instalmentAmt) {
 		this.instalmentAmt = instalmentAmt;
 	}
 
@@ -108,11 +109,11 @@ public class FormData {
 		this.instalmentStartdate = instalmentStartdate;
 	}
 
-	public String getInstalmentSchedule() {
+	public int getInstalmentSchedule() {
 		return instalmentSchedule;
 	}
 
-	public void setInstalmentSchedule(String instalmentSchedule) {
+	public void setInstalmentSchedule(int instalmentSchedule) {
 		this.instalmentSchedule = instalmentSchedule;
 	}
 
@@ -172,11 +173,11 @@ public class FormData {
 		this.insuranceGstAmt = insuranceGstAmt;
 	}
 
-	public String getDisbursementOfLoan() {
+	public BigDecimal getDisbursementOfLoan() {
 		return disbursementOfLoan;
 	}
 
-	public void setDisbursementOfLoan(String disbursementOfLoan) {
+	public void setDisbursementOfLoan(BigDecimal disbursementOfLoan) {
 		this.disbursementOfLoan = disbursementOfLoan;
 	}
 
@@ -187,5 +188,4 @@ public class FormData {
 	public void setLoanType(String loanType) {
 		this.loanType = loanType;
 	}
-
 }

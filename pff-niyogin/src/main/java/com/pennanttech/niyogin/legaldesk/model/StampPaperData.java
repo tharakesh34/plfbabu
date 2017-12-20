@@ -1,5 +1,7 @@
 package com.pennanttech.niyogin.legaldesk.model;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -18,7 +20,7 @@ public class StampPaperData {
 	private PartyAddress	firstPartyAddress;
 
 	@XmlElement(name = "stamp_amount")
-	private String			stampAmount;
+	private BigDecimal		stampAmount	= BigDecimal.ZERO;
 
 	@XmlElement(name = "stamp_duty_paid_by")
 	private String			stampDutyPaidBy;
@@ -39,11 +41,11 @@ public class StampPaperData {
 		this.firstPartyAddress = firstPartyAddress;
 	}
 
-	public String getStampAmount() {
+	public BigDecimal getStampAmount() {
 		return stampAmount;
 	}
 
-	public void setStampAmount(String stampAmount) {
+	public void setStampAmount(BigDecimal stampAmount) {
 		this.stampAmount = stampAmount;
 	}
 

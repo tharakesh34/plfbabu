@@ -72,7 +72,7 @@
 		<!-- LegalDesk -->
 	<bean id="legalDeskService"
 		class="com.pennanttech.niyogin.legaldesk.service.LegalDeskServiceImpl" parent="niyoginService">
-		<!-- <property name="serviceUrl" value="${niyogin.legaldesk.url}" /> -->
+		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sweeps/createLoanAgreement" />
 	</bean>	
 	
 	

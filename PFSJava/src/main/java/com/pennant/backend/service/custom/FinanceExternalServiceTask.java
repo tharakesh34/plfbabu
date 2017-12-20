@@ -40,6 +40,7 @@ import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
 import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.ExternalDedup;
+import com.pennanttech.pff.external.LegalDeskService;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
 	private static final Logger				logger	= Logger.getLogger(FinanceExternalServiceTask.class);
@@ -62,6 +63,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	
 	@Autowired(required = false)
 	private CibilConsumerService cibilConsumerService;
+	
+	@Autowired(required = false)
+	private LegalDeskService legalDeskService;
 
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
@@ -188,6 +192,15 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in CIBIL Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Cibil_Bureau, e.getMessage());
+				}
+				break;
+			case PennantConstants.method_LegalDesk:
+				try {
+					auditHeader = legalDeskService.extecuteLegalDesk(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in LegalDesk:", e);
+					taskExecuted = true;
 				}
 				break;
 			default:
