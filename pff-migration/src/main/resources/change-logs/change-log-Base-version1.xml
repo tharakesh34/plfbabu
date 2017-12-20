@@ -26,12 +26,12 @@
 		</sql>	
 	</changeSet>
 	
-	<changeSet id="1" author="Prakash">
+	<!-- <changeSet id="1" author="Prakash">
      <addColumn tableName="FinJointAccountDetails">
      	<column name="AuthoritySignatory" type="Boolean"/>
      	<column name="Sequence" type="Number(10,0)"/>
      </addColumn>
-    </changeSet>
+    </changeSet> -->
      
      <changeSet id="2" author="Prakash">
      <addColumn tableName="FinJointAccountDetails_Temp">
@@ -1820,5 +1820,154 @@ UNION ALL
 			insert into ErrorDetails values('90408','EN','E','Customer document with category: {0} is not allowed in update loan.','test','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-	
+	<changeSet id="56" author="Jayant">
+		<createTable tableName="ReasonTypes">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="57" author="Jayant">
+		<createTable tableName="ReasonCategory">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="58" author="Jayant">
+		<createTable tableName="Reasons">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="ReasonTypeId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="ReasonCategoryId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="59" author="Jayant">
+		<createTable tableName="ReasonTypes_Temp">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="60" author="Jayant">
+		<createTable tableName="ReasonCategory_Temp">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="61" author="Jayant">
+		<createTable tableName="Reasons_Temp">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="ReasonTypeId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="ReasonCategoryId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
  </databaseChangeLog>

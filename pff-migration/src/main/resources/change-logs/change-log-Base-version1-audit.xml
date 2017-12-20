@@ -55,5 +55,79 @@
      	<column name="CustsourceId" type="nvarchar(10)"/>
      </addColumn>
     </changeSet>
-    
+    <changeSet id="6" author="Jayant">
+		<createTable tableName="AdtReasonTypes">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="7" author="Jayant">
+		<createTable tableName="AdtReasonCategory">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="8" author="Jayant">
+		<createTable tableName="AdtReasons">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="ReasonTypeId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="ReasonCategoryId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
