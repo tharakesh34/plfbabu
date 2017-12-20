@@ -217,5 +217,22 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
 				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
     </createView>
 </changeSet>
-	
+	<changeSet id="13" author="Jayant">
+		<dropPrimaryKey tableName="AdtReasonCategory" constraintName="pk_adtreasoncategory"/>
+	</changeSet>
+	<changeSet id="14" author="Jayant">
+		<dropPrimaryKey tableName="AdtReasonTypes" constraintName="pk_adtreasontypes"/>
+	</changeSet>
+	<changeSet id="15" author="Jayant">
+		<dropPrimaryKey tableName="AdtReasons" constraintName="pk_adtreasons"/>
+	</changeSet>
+	<changeSet id="16" author="Jayant">
+		<addPrimaryKey tableName="AdtReasonCategory" columnNames="auditid,auditdate,auditseq,auditimage" constraintName="pk_adtreasoncategory"/>
+	</changeSet>
+	<changeSet id="17" author="Jayant">
+		<addPrimaryKey tableName="AdtReasonTypes" columnNames="auditid,auditdate,auditseq,auditimage" constraintName="pk_adtreasontypes"/>
+	</changeSet>
+	<changeSet id="18" author="Jayant">
+		<addPrimaryKey tableName="AdtReasons" columnNames="auditid,auditdate,auditseq,auditimage" constraintName="pk_adtreasons"/>
+	</changeSet>
 </databaseChangeLog>
