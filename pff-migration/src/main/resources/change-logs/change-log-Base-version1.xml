@@ -1970,4 +1970,307 @@ UNION ALL
 			<column name="WorkFlowId" type="BIGINT"/>
 		</createTable>
 	</changeSet>
+	<changeSet id="62" author="Haritha">
+	<sql>
+		INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'REASONCATEGORY_VIEW', 'Allow to view ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'REASONCATEGORY_MAKER', 'WF Maker for ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'REASONCATEGORY_APPROVER', 'WF Approver for ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		
+		
+		INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonCategory','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonCategoryEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_ReasonCategoryList_PrintList','ReasonCategoryList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_ReasonCategoryList_NewReasonCategory','ReasonCategoryList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_ReasonCategoryDialog_btnNew','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_ReasonCategoryDialog_btnEdit','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_ReasonCategoryDialog_btnDelete','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_ReasonCategoryDialog_btnSave','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'ReasonCategoryDialog_Id','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'ReasonCategoryDialog_Code','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ReasonCategoryDialog_Description','ReasonCategoryDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		
+		
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMasterEnquiry'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+25+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+26+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		update SeqSecGroupRights set SeqNo = (SeqNo+26+3) ;
+		
+		
+		INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+		
+		INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+		update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+		
+		INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonCategory','menu_Item_ReasonCategory','/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonCategory' FROM SeqPTMenuDetails WHERE 0=0;
+		
+		INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonCategoryEnquiry','menu_Item_ReasonCategoryEnquiry?enqiryModule=Y" ','/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryEnquiryList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonCategory' FROM SeqPTMenuDetails WHERE 0=0;
+		
+		update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+		
+		update SeqSecGroups set SeqNo = (SeqNo+3) ;
+		
+		update SeqSecRights set SeqNo = (SeqNo+10+3) ;
+  </sql>
+	
+</changeSet>
+<changeSet id="63" author="Haritha">
+	<createView viewName="ReasonCategory_AView" replaceIfExists="true">
+SELECT		T1.Id, T1.Code, T1.Description		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	ReasonCategory AS T1 
+</createView>
+</changeSet>
+<changeSet id="64" author="Haritha">
+	<createView viewName="ReasonCategory_View" replaceIfExists="true">
+
+			SELECT		T1.Id, T1.Code, T1.Description		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	ReasonCategory_Temp AS T1 
+			UNION ALL
+			
+			SELECT		T1.Id, T1.Code, T1.Description		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	ReasonCategory AS T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM ReasonCategory_TEMP WHERE Id = T1.Id)
+</createView>
+</changeSet>
+	
+	<changeSet id="65" author="Haritha">
+		<createTable tableName="SeqReasonCategory">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="66" author="Haritha">
+	<sql>
+	
+		INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'REASONTYPES_VIEW', 'Allow to view ReasonTypes', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'REASONTYPES_MAKER', 'WF Maker for ReasonTypes', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'REASONTYPES_APPROVER', 'WF Approver for ReasonTypes', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		
+		INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonTypes','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonTypesEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_ReasonTypesList_PrintList','ReasonTypesList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_ReasonTypesList_NewReasonTypes','ReasonTypesList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_ReasonTypesDialog_btnNew','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_ReasonTypesDialog_btnEdit','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_ReasonTypesDialog_btnDelete','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_ReasonTypesDialog_btnSave','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'ReasonTypesDialog_Id','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'ReasonTypesDialog_Code','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ReasonTypesDialog_Description','ReasonTypesDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+25+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+26+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		
+		update SeqSecGroupRights set SeqNo = (SeqNo+26+3) ;
+		
+		INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+		INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+		
+		update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+		
+		INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonTypes','menu_Item_ReasonTypes','/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonTypes' FROM SeqPTMenuDetails WHERE 0=0;
+		INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonTypesEnquiry','menu_Item_ReasonTypesEnquiry?enqiryModule=Y" ','/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesEnquiryList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonTypes' FROM SeqPTMenuDetails WHERE 0=0;
+		
+		update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+		update SeqSecGroups set SeqNo = (SeqNo+3) ;
+		update SeqSecRights set SeqNo = (SeqNo+10+3) ;
+	
+	</sql>
+	</changeSet>
+	<changeSet id="67" author="Haritha">
+	<createView viewName="ReasonTypes_AView" replaceIfExists="true">
+		SELECT		T1.Id, T1.Code, T1.Description		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	ReasonTypes AS T1 
+   </createView>
+</changeSet>
+
+	<changeSet id="68" author="Haritha">
+		<createView viewName="ReasonTypes_View" replaceIfExists="true">
+			    SELECT		T1.Id, T1.Code, T1.Description		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	ReasonTypes_Temp AS T1 
+			UNION ALL
+			
+			SELECT		T1.Id, T1.Code, T1.Description		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	ReasonTypes AS T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM ReasonTypes_TEMP WHERE Id = T1.Id)
+		</createView>
+	
+	</changeSet>
+
+	<changeSet id="69" author="Haritha">
+		<createTable tableName="SeqReasonTypes">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+		<changeSet id="70" author="Haritha">
+		   <sql>
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'REASONCODE_VIEW', 'Allow to view ReasonCode', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'REASONCODE_MAKER', 'WF Maker for ReasonCode', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'REASONCODE_APPROVER', 'WF Approver for ReasonCode', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonCode','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_ApplicationMaster_ReasonCodeEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_ReasonCodeList_PrintList','ReasonCodeList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_ReasonCodeList_NewReasonCode','ReasonCodeList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_ReasonCodeDialog_btnNew','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_ReasonCodeDialog_btnEdit','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_ReasonCodeDialog_btnDelete','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_ReasonCodeDialog_btnSave','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'ReasonCodeDialog_Id','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'ReasonCodeDialog_ReasonTypeID','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ReasonCodeDialog_ReasonCategoryID','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'ReasonCodeDialog_Code','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'ReasonCodeDialog_Description','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'ReasonCodeDialog_Active','ReasonCodeDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMasterEnquiry'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+6) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+6) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			update SeqSecGroupRights set SeqNo = (SeqNo+26+6) ;
+			
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonCode','menu_Item_ReasonCode','/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonCode' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'ReasonCodeEnquiry','menu_Item_ReasonCodeEnquiry?enqiryModule=Y" ','/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeEnquiryList.zul',0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,'menuItem_ApplicationMaster_ReasonCode' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+			update SeqSecGroups set SeqNo = (SeqNo+3) ;
+			update SeqSecRights set SeqNo = (SeqNo+10+6) ;
+		 </sql>
+	</changeSet>
+	<changeSet id="71" author="Jayant">
+		<dropTable tableName="Reasons"/>
+		<createTable tableName="Reasons">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="ReasonTypeId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="ReasonCategoryId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Active" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="72" author="Jayant">
+		<dropTable tableName="Reasons_Temp"/>
+		<createTable tableName="Reasons_Temp">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="ReasonTypeId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="ReasonCategoryId" type="BIGINT">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Code" type="VARCHAR(8)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Active" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="BIGINT"/>
+			<column name="LastMntOn" type="DATETIME"/>
+			<column name="RecordStatus" type="VARCHAR(50)"/>
+			<column name="RoleCode" type="VARCHAR(100)"/>
+			<column name="NextRoleCode" type="VARCHAR(200)"/>
+			<column name="TaskId" type="VARCHAR(50)"/>
+			<column name="NextTaskId" type="VARCHAR(200)"/>
+			<column name="RecordType" type="VARCHAR(50)"/>
+			<column name="WorkFlowId" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="73" author="Haritha">
+		<createView viewName="Reasons_AView" replaceIfExists="true">
+			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+
+         </createView>
+	</changeSet>
+
+	<changeSet id="74" author="Haritha">
+		<createView viewName="Reasons_View" replaceIfExists="true">
+	        			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons_Temp AS T1 
+			UNION ALL
+			
+			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM Reasons_TEMP WHERE Id = T1.Id)
+	        			
+	     </createView>
+	</changeSet>
+
+	<changeSet id="75" author="Haritha">
+		<createTable tableName="SeqReasons">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+
+	</changeSet>     
  </databaseChangeLog>

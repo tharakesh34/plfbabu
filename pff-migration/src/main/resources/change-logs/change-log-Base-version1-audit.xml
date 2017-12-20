@@ -19,11 +19,18 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	
 
 	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
-			Set search_path = plfaudit,public,pg_catalog;
+			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
@@ -57,6 +64,18 @@
     </changeSet>
     <changeSet id="6" author="Jayant">
 		<createTable tableName="AdtReasonTypes">
+		<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="Id" type="BIGINT" >
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
@@ -80,6 +99,18 @@
 	</changeSet>
 	<changeSet id="7" author="Jayant">
 		<createTable tableName="AdtReasonCategory">
+		<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="Id" type="BIGINT" >
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
@@ -103,6 +134,18 @@
 	</changeSet>
 	<changeSet id="8" author="Jayant">
 		<createTable tableName="AdtReasons">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="Id" type="BIGINT" >
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
@@ -116,6 +159,9 @@
 				<constraints nullable="false" unique="true"/>
 			</column>
 			<column name="Description" type="VARCHAR(50)"/>
+			<column name="Active" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
 			<column name="Version" type="INT">
 				<constraints nullable="false"/>
 			</column>
@@ -130,4 +176,46 @@
 			<column name="WorkFlowId" type="BIGINT"/>
 		</createTable>
 	</changeSet>
+	<changeSet id="10" author="Haritha">
+		<createView viewName="AdtReasonCategory_View"
+			replaceIfExists="true">
+    <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId, T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName  AS AuditUserName,TH.AuditTranType AS AuditTranType, 
+                      Aft.Id as AftId, Aft.Code as AftCode, Aft.Description as AftDescription, 
+                      Bef.Id as BefId, Bef.Code as BefCode, Bef.Description as BefDescription 
+			FROM      AuditHeader AS TH INNER JOIN
+                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasonCategory AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasonCategory AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+			WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCategory')]]>
+    
+    </createView>
+	</changeSet>
+
+	<changeSet id="11" author="Haritha">
+		<createView viewName="AdtReasonTypes_View" replaceIfExists="true">
+   <![CDATA[ SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId, T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName  AS AuditUserName,TH.AuditTranType AS AuditTranType, 
+                      Aft.Id as AftId, Aft.Code as AftCode, Aft.Description as AftDescription, 
+                      Bef.Id as BefId, Bef.Code as BefCode, Bef.Description as BefDescription 
+			FROM      AuditHeader AS TH INNER JOIN
+                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasonTypes AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasonTypes AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
+    
+    </createView>
+	</changeSet>
+    
+    <changeSet id="12" author="Haritha">
+	<createView viewName="AdtReasons_View" replaceIfExists="true">
+    <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId,T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName AS AuditUserName,TH.AuditTranType AS AuditTranType, 
+                      Aft.Id as AftId, Aft.ReasonTypeID as AftReasonTypeID, Aft.ReasonCategoryID as AftReasonCategoryID, Aft.Code as AftCode, Aft.Description as AftDescription, Aft.Active as AftActive, 
+                      Bef.Id as BefId, Bef.ReasonTypeID as BefReasonTypeID, Bef.ReasonCategoryID as BefReasonCategoryID, Bef.Code as BefCode, Bef.Description as BefDescription, Bef.Active as BefActive 
+				FROM  AuditHeader AS TH INNER JOIN
+                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasons AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasons AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
+    </createView>
+</changeSet>
+	
 </databaseChangeLog>
