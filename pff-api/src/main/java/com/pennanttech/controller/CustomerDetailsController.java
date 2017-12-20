@@ -1413,7 +1413,9 @@ public class CustomerDetailsController {
 		customerDocument.setVersion(1);
 		
 		if(StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "JPG")
-				|| StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "PNG")) {
+				|| StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "PNG")
+				|| StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "JPEG")
+			    || StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "JFIF")) {
 			customerDocument.setCustDocType(PennantConstants.DOC_TYPE_IMAGE);
 		}
 		//get the header details from the request
