@@ -235,4 +235,33 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
 	<changeSet id="18" author="Jayant">
 		<addPrimaryKey tableName="AdtReasons" columnNames="auditid,auditdate,auditseq,auditimage" constraintName="pk_adtreasons"/>
 	</changeSet>
+	<changeSet id="19" author="Jayant">
+		<renameColumn tableName="AdtReasons" oldColumnName="reasonTypeID" newColumnName="reasonTypeCode"/>
+	</changeSet>
+	<changeSet id="20" author="Jayant">
+		<renameColumn tableName="AdtReasons" oldColumnName="reasonCategoryID" newColumnName="reasonCategoryCode"/>
+	</changeSet>
+	<changeSet id="21" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view adtreasons_view cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="22" author="Jayant">
+		<modifyDataType tableName="AdtReasons" columnName="reasonCategoryCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="23" author="Jayant">
+		<modifyDataType tableName="AdtReasons" columnName="reasonTypeCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="24" author="Haritha">
+	<createView viewName="AdtReasons_View" replaceIfExists="true">
+    <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId,T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName AS AuditUserName,TH.AuditTranType AS AuditTranType, 
+                      Aft.Id as AftId, Aft.ReasonTypeCode as AftReasonTypeCode, Aft.ReasonCategoryCode as AftReasonCategoryCode, Aft.Code as AftCode, Aft.Description as AftDescription, Aft.Active as AftActive, 
+                      Bef.Id as BefId, Bef.ReasonTypeCode as BefReasonTypeCode, Bef.ReasonCategoryCode as BefReasonCategoryCode, Bef.Code as BefCode, Bef.Description as BefDescription, Bef.Active as BefActive 
+				FROM  AuditHeader AS TH INNER JOIN
+                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasons AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasons AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
+    </createView>
+</changeSet>
 </databaseChangeLog>

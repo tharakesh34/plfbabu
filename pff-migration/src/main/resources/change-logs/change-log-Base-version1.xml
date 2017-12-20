@@ -2348,4 +2348,57 @@ WHERE     NOT EXISTS
 			 LimitParams T8 ON T1.RuleCode = T8.QueryCode
 		</createView>
 	</changeSet>  
+	<changeSet id="79" author="Jayant">
+		<renameColumn tableName="Reasons" oldColumnName="reasonTypeID" newColumnName="reasonTypeCode"/>
+	</changeSet>
+	<changeSet id="80" author="Jayant">
+		<renameColumn tableName="Reasons" oldColumnName="reasonCategoryID" newColumnName="reasonCategoryCode"/>
+	</changeSet>
+	<changeSet id="81" author="Jayant">
+		<renameColumn tableName="Reasons_Temp" oldColumnName="reasonTypeID" newColumnName="reasonTypeCode"/>
+	</changeSet>
+	<changeSet id="82" author="Jayant"> 
+		<renameColumn tableName="Reasons_Temp" oldColumnName="reasonCategoryID" newColumnName="reasonCategoryCode"/>
+	</changeSet>
+	<changeSet id="83" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view reasons_view cascade;
+			drop view reasons_aview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="84" author="Jayant">
+		<modifyDataType tableName="Reasons" columnName="reasonCategoryCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="85" author="Jayant">
+		<modifyDataType tableName="Reasons_Temp" columnName="reasonCategoryCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="86" author="Jayant">
+		<modifyDataType tableName="Reasons" columnName="reasonTypeCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="87" author="Jayant">
+		<modifyDataType tableName="Reasons_Temp" columnName="reasonTypeCode" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet id="88" author="Haritha">
+		<createView viewName="Reasons_AView" replaceIfExists="true">
+			SELECT		T1.Id, T1.ReasonTypeCode, T1.ReasonCategoryCode, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+
+         </createView>
+	</changeSet>
+
+	<changeSet id="89" author="Haritha">
+		<createView viewName="Reasons_View" replaceIfExists="true">
+	        			SELECT		T1.Id, T1.ReasonTypeCode, T1.ReasonCategoryCode, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons_Temp AS T1 
+			UNION ALL
+			
+			SELECT		T1.Id, T1.ReasonTypeCode, T1.ReasonCategoryCode, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM Reasons_TEMP WHERE Id = T1.Id)
+	        			
+	     </createView>
+	</changeSet>
  </databaseChangeLog>
