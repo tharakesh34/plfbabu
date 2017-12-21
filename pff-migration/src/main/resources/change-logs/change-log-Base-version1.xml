@@ -2401,4 +2401,28 @@ WHERE     NOT EXISTS
 	        			
 	     </createView>
 	</changeSet>
+	<changeSet id="90.1" author="Jayant">
+		<dropUniqueConstraint tableName="reasons" uniqueColumns="code" constraintName="reasons_code_key"/>
+	</changeSet>
+	<changeSet id="90.2" author="Jayant">
+		<dropUniqueConstraint tableName="reasons" uniqueColumns="reasoncategorycode" constraintName="reasons_reasoncategoryid_key"/>
+	</changeSet>
+	<changeSet id="90.3" author="Jayant">
+		<dropUniqueConstraint tableName="reasons" uniqueColumns="reasontypecode" constraintName="reasons_reasontypeid_key"/>
+	</changeSet>
+	<changeSet id="91.1" author="Jayant">
+		<dropUniqueConstraint tableName="reasons_temp" uniqueColumns="code" constraintName="reasons_temp_code_key"/>
+	</changeSet>
+	<changeSet id="91.2" author="Jayant">
+		<sql>
+			alter table reasons_temp drop constraint reasons_temp_reasoncategoryid_key;
+		</sql>
+	</changeSet>
+	<changeSet id="91.3" author="Jayant">
+		<dropUniqueConstraint tableName="reasons_temp" uniqueColumns="reasontypecode" constraintName="reasons_temp_reasontypeid_key"/>
+	</changeSet>
+	<changeSet id="92" author="Jayant">
+		<addUniqueConstraint tableName="reasons" columnNames="code,reasoncategorycode,reasontypecode" constraintName="UK_RSN_CODECTGTYPE"/>
+		<addUniqueConstraint tableName="reasons_temp" columnNames="code,reasoncategorycode,reasontypecode" constraintName="UK_RSN_T_CODECTGTYPE"/>
+	</changeSet>
  </databaseChangeLog>
