@@ -66,7 +66,6 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -75,7 +74,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -83,8 +81,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 public class DisbursementInstCtrl {
 	private static final Logger			logger				= Logger.getLogger(DisbursementInstCtrl.class);
@@ -100,7 +98,8 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement>	financeDisbursements;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
-	private FinanceDetailService		financeDetailService;
+	private DocumentDetails				documentDetails;
+	private ExternalDocumentManager		externalDocumentManager	= null;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -198,7 +197,6 @@ public class DisbursementInstCtrl {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
 		listbox.getItems().clear();
@@ -248,7 +246,7 @@ public class DisbursementInstCtrl {
 				listbox.appendChild(listgroup);
 
 				List<FinAdvancePayments> list = entrySet.getValue();
-				Comparator<FinAdvancePayments> comp = new BeanComparator("paymentSeq");
+				Comparator<FinAdvancePayments> comp = new BeanComparator<FinAdvancePayments>("paymentSeq");
 				Collections.sort(list, comp);
 
 				for (FinAdvancePayments detail : list) {
@@ -334,30 +332,10 @@ public class DisbursementInstCtrl {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
-		getDocumentImage(dialogCtrl, map);
+		setDocContent(documentDetails);
+		map.put("documentDetails", documentDetails);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
 		
-		logger.debug("Leaving");
-	}
-
-	private void getDocumentImage(Object dialogCtrl, HashMap<String, Object> map) throws Exception {
-		logger.debug("Entering");
-		
-		DocumentDetailDialogCtrl DocumentDetailDialogCtrl = (DocumentDetailDialogCtrl) dialogCtrl.getClass()
-				.getMethod("getDocumentDetailDialogCtrl").invoke(dialogCtrl);
-		String document = SysParamUtil.getValueAsString("DISB_DOC");
-
-		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
-			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
-				if (details.getDocImage() == null && details.getDoctype() != null) {
-					details.setDocImage(getFinanceDetailService()
-							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
-				}
-				map.put("documentDetails", details);
-				break;
-			}
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -377,7 +355,8 @@ public class DisbursementInstCtrl {
 				aFinAdvancePayments.setNewRecord(false);
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finAdvancePayments", aFinAdvancePayments);
-				getDocumentImage(dialogCtrl, map);
+				setDocContent(documentDetails);
+				map.put("documentDetails", documentDetails);
 				doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry);
 
 			}
@@ -617,6 +596,25 @@ public class DisbursementInstCtrl {
 		}
 		return false;
 	}
+	
+	private void setDocContent(DocumentDetails documentDetails) {
+		if (documentDetails ==null) {
+			return;
+		}
+		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+			documentDetails.setDocImage(PennantAppUtil.getDocumentImage(documentDetails.getDocRefId()));
+		}
+
+		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
+			documentDetails.setDocImage(PennantAppUtil.getDocumentImage(documentDetails.getDocRefId()));
+			// Fetch document from interface
+			DocumentDetails extdetail = externalDocumentManager.getExternalDocument(documentDetails.getDocUri());
+			if (extdetail != null && extdetail.getDocImage() != null) {
+				documentDetails.setDocImage(PennantApplicationUtil.decode(extdetail.getDocImage()));
+			}
+		}
+	}
+	
 
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
@@ -634,12 +632,16 @@ public class DisbursementInstCtrl {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
+	public DocumentDetails getDocumentDetails() {
+		return documentDetails;
 	}
 
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
+	public void setDocumentDetails(DocumentDetails documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
 	}
 
 }

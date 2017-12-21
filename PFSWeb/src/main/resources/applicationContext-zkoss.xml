@@ -4740,7 +4740,7 @@
 		class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl"
 		scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 

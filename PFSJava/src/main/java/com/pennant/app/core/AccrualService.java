@@ -360,7 +360,7 @@ public class AccrualService extends ServiceHelper {
 				int daysInCurPeriod = curSchd.getNoOfDays();
 				pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
 						0, RoundingMode.HALF_DOWN);
-				pftAmz=CalculationUtil.roundAmount(pftAmz, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+				pftAmz = CalculationUtil.roundAmount(pftAmz, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 			} else {
 				//Do Nothing
 			}
@@ -387,7 +387,8 @@ public class AccrualService extends ServiceHelper {
 					int daysInCurPeriod = curSchd.getNoOfDays();
 					pftAmzPD = curSchd.getProfitCalc().multiply(new BigDecimal(days))
 							.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
-					pftAmzPD=CalculationUtil.roundAmount(pftAmzPD, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+					pftAmzPD = CalculationUtil.roundAmount(pftAmzPD, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
 				} else {
 					//Do Nothing
 				}
@@ -425,7 +426,8 @@ public class AccrualService extends ServiceHelper {
 
 		//Schedule Information
 		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
-			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) || curSchd.getSchDate().compareTo(pftDetail.getMaturityDate())==0) {
+			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
+					|| curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 				//Installments, Paid and OD
 				pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
@@ -510,8 +512,9 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
 
 		//NEXT Schedule Details
-		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())){
-			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) || curSchd.getSchDate().compareTo(pftDetail.getMaturityDate())==0) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
+			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
+					|| curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 				if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 					pftDetail.setNSchdDate(curSchd.getSchDate());
 					pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
@@ -661,29 +664,37 @@ public class AccrualService extends ServiceHelper {
 	public static List<ProjectedAccrual> calAccrualsOnMonthEnd(FinanceMain finMain,
 			List<FinanceScheduleDetail> schdDetails, Date monthEnd) {
 
+		Date maturityDate = finMain.getMaturityDate();
+		String calRoundingMode = finMain.getCalRoundingMode();
+		int roundingTarget = finMain.getRoundingTarget();
+
 		// build month end till the maturity
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
 
-		List<Date> months = new ArrayList<Date>();
 		Date newMonth = new Date(monthEnd.getTime());
 		newMonth = DateUtil.getDatePart(newMonth);
-
-		while (finMain.getMaturityDate().compareTo(newMonth) > 0) {
-			months.add((Date) newMonth.clone());
+		while (maturityDate.compareTo(newMonth) > 0) {
+			if (newMonth.compareTo(finMain.getFinStartDate()) >= 0) {
+				ProjectedAccrual prjAcc = new ProjectedAccrual();
+				prjAcc.setAccruedOn(newMonth);
+				list.add(prjAcc);
+			}
 			newMonth = DateUtility.addMonths(newMonth, 1);
 			newMonth = DateUtility.getMonthEnd(newMonth);
 			newMonth = DateUtil.getDatePart(newMonth);
 		}
-
-		if (!months.contains(finMain.getMaturityDate())) {
-			months.add(finMain.getMaturityDate());
+		// if maturity not found in the list add the maturity date to month end
+		if (!isDateExsists(list, maturityDate)) {
+			ProjectedAccrual prjAcc = new ProjectedAccrual();
+			prjAcc.setAccruedOn(maturityDate);
+			list.add(prjAcc);
 		}
 
 		BigDecimal cummAccAmt = BigDecimal.ZERO;
-		for (Date monthEndDate : months) {
 
-			ProjectedAccrual prjAcc = new ProjectedAccrual();
-			prjAcc.setAccruedOn(monthEndDate);
+		for (ProjectedAccrual prjAcc : list) {
+
+			Date curMntEndDate = prjAcc.getAccruedOn();
 
 			FinanceScheduleDetail prvSchd = null;
 			FinanceScheduleDetail curSchd = null;
@@ -696,58 +707,78 @@ public class AccrualService extends ServiceHelper {
 			for (int i = 0; i < schdDetails.size(); i++) {
 				curSchd = schdDetails.get(i);
 				curSchdDate = curSchd.getSchDate();
+
 				if (i == 0) {
 					prvSchd = curSchd;
 				} else {
 					prvSchd = schdDetails.get(i - 1);
 				}
+
 				prvSchdDate = prvSchd.getSchDate();
-				if (curSchdDate.compareTo(finMain.getMaturityDate()) == 0 || i == schdDetails.size() - 1) {
+
+				if (curSchdDate.compareTo(maturityDate) == 0 || i == schdDetails.size() - 1) {
 					nextSchd = curSchd;
 				} else {
 					nextSchd = schdDetails.get(i + 1);
 				}
 				nextSchdDate = nextSchd.getSchDate();
-
-				BigDecimal pftAmz = BigDecimal.ZERO;
-				BigDecimal acrNormal = BigDecimal.ZERO;
-
-				// Amortization
-				if (curSchdDate.compareTo(monthEndDate) < 0) {
-					pftAmz = curSchd.getProfitCalc();
-				} else if (monthEndDate.compareTo(prvSchdDate) > 0 && monthEndDate.compareTo(nextSchdDate) <= 0) {
-					int days = getNoDays(prvSchdDate, monthEndDate);
-					int daysInCurPeriod = curSchd.getNoOfDays();
-					pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days))
-							.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
-				}
-				acrNormal = pftAmz.subtract(curSchd.getSchdPftPaid());
-				//Set Amortization for various periods
-				prjAcc.setPftAmz(prjAcc.getPftAmz().add(pftAmz));
-				prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(acrNormal));
 				//due date
-				Date accMonthStart = DateUtility.getMonthStart(monthEndDate);
+				Date accMonthStart = DateUtility.getMonthStart(curMntEndDate);
 				accMonthStart = DateUtil.getDatePart(accMonthStart);
-				if (curSchdDate.compareTo(accMonthStart) >= 0 && curSchdDate.compareTo(monthEndDate) <= 0) {
-					if (prjAcc.getSchdDate() == null) {
+				if (curSchdDate.compareTo(accMonthStart) >= 0 && curSchdDate.compareTo(curMntEndDate) <= 0) {
+					if (prjAcc.getSchdDate() == null && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
 						prjAcc.setSchdDate(curSchdDate);
 						prjAcc.setSchdPri(curSchd.getPrincipalSchd());
 						prjAcc.setSchdPft(curSchd.getProfitSchd());
+						prjAcc.setSchdTot(curSchd.getRepayAmount());
 					}
 				}
 
-				if (curSchdDate.compareTo(monthEndDate) > 0) {
+				BigDecimal pftAmz = BigDecimal.ZERO;
+
+				if (curSchdDate.compareTo(curMntEndDate) <= 0) {
+					prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(curSchd.getProfitCalc()));
+					if (curSchdDate.compareTo(maturityDate) == 0) {
+						prjAcc.setPftAccrued(prjAcc.getPftAccrued().subtract(cummAccAmt));
+					}
+					continue;
+				}
+
+				if (curMntEndDate.compareTo(curSchdDate) < 0 && curMntEndDate.compareTo(prvSchdDate) > 0) {
+					int days = getNoDays(curMntEndDate, prvSchdDate);
+					int daysInCurPeriod = curSchd.getNoOfDays();
+					BigDecimal profitCalc = curSchd.getProfitCalc();
+					if (profitCalc.compareTo(BigDecimal.ZERO) != 0) {
+						pftAmz = profitCalc.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0,
+								RoundingMode.HALF_DOWN);
+						//rounding
+						pftAmz = CalculationUtil.roundAmount(pftAmz, calRoundingMode, roundingTarget);
+						prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(pftAmz));
+					}
+				}
+
+				if (nextSchdDate.compareTo(curMntEndDate) >= 0) {
+					prjAcc.setPftAccrued(prjAcc.getPftAccrued().subtract(cummAccAmt));
 					break;
 				}
 			}
-			prjAcc.setCumulativeAccrued(cummAccAmt);
-			prjAcc.setSchdTot(prjAcc.getSchdPri().add(prjAcc.getSchdPft()));
-
-			list.add(prjAcc);
 			cummAccAmt = cummAccAmt.add(prjAcc.getPftAccrued());
+			prjAcc.setCumulativeAccrued(cummAccAmt);
+			System.out.println(DateUtility.formatToShortDate(prjAcc.getAccruedOn()) + " ," + prjAcc.getPftAccrued()
+					+ "," + prjAcc.getCumulativeAccrued() + "," + DateUtility.formatToShortDate(prjAcc.getSchdDate())
+					+ "," + prjAcc.getSchdPri() + "," + prjAcc.getSchdPft());
 
 		}
 		return list;
+	}
+
+	private static boolean isDateExsists(List<ProjectedAccrual> list, Date schDate) {
+		for (ProjectedAccrual projectedAccrual : list) {
+			if (projectedAccrual.getAccruedOn().compareTo(schDate) == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static int getNoDays(Date date1, Date date2) {
