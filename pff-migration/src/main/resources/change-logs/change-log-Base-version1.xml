@@ -2537,4 +2537,46 @@ WHERE     NOT EXISTS
 	        			
 	     </createView>
 	</changeSet>
+	
+	<changeSet id="109" author="dURGAPRASAD.G">
+		<dropTable tableName="ReasonDetails" />
+		<dropTable tableName="ReasonHeader" />
+	</changeSet>
+	
+	<changeSet id="110" author="Durgaprasad.g">
+		<createTable tableName="ReasonHeader">
+			<column name="Id" type="BIGINT" >
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Module" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reference" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Remarks" type="VARCHAR(1000)"/>
+			<column name="Rolecode" type="VARCHAR(200)"/>
+			<column name="Activity" type="VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ToUser" type="BIGINT"/>
+			<column name="LogTime" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="111" author="Durgaprasad.g">
+		<createTable tableName="ReasonDetails">
+			<column name="HeaderId" type="BIGINT" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ReasonId" type="BIGINT" >
+				<constraints nullable="false"/>
+			</column>
+			 
+		</createTable>
+	</changeSet>
+
+		<changeSet id="112" author="Durgaprasad.g">
+	  <addForeignKeyConstraint constraintName="FK_RH_ID" referencedTableName="ReasonHeader" baseColumnNames="HeaderId" baseTableName="ReasonDetails" referencedColumnNames="Id"/>
+	</changeSet>
  </databaseChangeLog>
