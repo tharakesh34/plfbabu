@@ -4666,7 +4666,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
 
 		Filter[] countrysystemDefault = new Filter[1];
-		countrysystemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
 		if (countryObj != null) {
 			Country country = (Country) countryObj;

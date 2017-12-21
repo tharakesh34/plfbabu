@@ -578,7 +578,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
 				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
 						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new Object[][] { { "GroupIsActive", "0",
-						"1"} }, 400));
+						1} }, 400));
 
 		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
 				"Mandates_AView" }, manadateWF, new String[] { "MandateID","BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
@@ -973,17 +973,17 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinanceWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_FTView" }, masterWF, new String[] {
 						"LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new Object[][] { { "ModuleName",
-							"0", "FINANCE" }, { "FinIsActive", "0", "1"} }, 600));
+							"0", "FINANCE" }, { "FinIsActive", "0", 1} }, 600));
 		
 		ModuleUtil.register("CollateralWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, masterWF, new String[] {
 						"TypeCode", "CollateralDesc" }, new Object[][] { { "ModuleName",
-						"0", "COLLATERAL" }, { "FinIsActive", "0", "1"} }, 300));
+						"0", "COLLATERAL" }, { "FinIsActive", "0", 1} }, 300));
 		
 		ModuleUtil.register("CommitmentWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, masterWF, new String[] {
 						"TypeCode", "CommitmentTypeDesc" }, new Object[][] { { "ModuleName",
-							"0", "COMMITMENT" }, { "FinIsActive", "0", "1"} }, 300));
+							"0", "COMMITMENT" }, { "FinIsActive", "0", 1} }, 300));
 
 		ModuleUtil.register("PromotionWorkFlow", new ModuleMapping("PromotionWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_PTView" }, masterWF, new String[] {

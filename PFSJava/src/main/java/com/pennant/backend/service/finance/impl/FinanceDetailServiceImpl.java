@@ -56,6 +56,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -94,6 +95,7 @@ import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -196,6 +198,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
@@ -8805,13 +8808,175 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType) {
-		// TODO Auto-generated method stub
-		return null;
+		if (financeMain == null) {
+			WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceMain");
+			financeMain = new FinanceMain();
+			if (workFlowDetails != null) {
+				financeMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+			}
+		}
+
+		// Basic Details
+		financeMain.setFinType(financeType.getFinType());
+		financeMain.setLovDescFinTypeName(financeType.getFinTypeDesc());
+		financeMain.setPromotionCode(financeType.getPromotionCode());
+		financeMain.setFinCcy(financeType.getFinCcy());
+		financeMain.setProfitDaysBasis(financeType.getFinDaysCalType());
+		financeMain.setScheduleMethod(financeType.getFinSchdMthd());
+		financeMain.setFinStartDate(DateUtility.getAppDate());
+		financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
+		financeMain.setTDSApplicable(financeType.isTDSApplicable());
+		financeMain.setProductCategory(financeType.getProductCategory());
+		financeMain.setFinCategory(financeType.getFinCategory());
+		//Step Policy Details 
+		if(financeType.isSteppingMandatory()){
+			financeMain.setStepFinance(financeType.isStepFinance());
+			financeMain.setStepPolicy(StringUtils.trimToEmpty(financeType.getDftStepPolicy()).equals(PennantConstants.List_Select) ? "" : financeType.getDftStepPolicy());
+			financeMain.setLovDescStepPolicyName(StringUtils.trimToEmpty(financeType.getLovDescDftStepPolicyName()));
+			financeMain.setStepType(financeType.getDftStepPolicyType());
+		}else{
+			financeMain.setStepFinance(false);
+		}
+		financeMain.setManualSchedule(financeType.isManualSchedule());
+		//Grace period details
+
+		//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
+		if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)){
+			financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
+		}else{
+			financeMain.setAllowGrcPeriod(false);
+		}
+		
+		if(financeMain.isAllowGrcPeriod()){
+
+			financeMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
+			financeMain.setGraceSpecialRate(financeType.getFinGrcSplRate());
+			financeMain.setGrcPftRate(financeType.getFinGrcIntRate());
+			financeMain.setGrcPftFrq(financeType.getFinGrcDftIntFrq());
+			financeMain.setGrcProfitDaysBasis(financeType.getFinDaysCalType());
+			if (StringUtils.isNotEmpty(financeType.getFinGrcDftIntFrq()) &&
+					FrequencyUtil.validateFrequency(financeType.getFinGrcDftIntFrq()) == null) {
+				financeMain.setNextGrcPftDate(FrequencyUtil.getNextDate(financeType.getFinGrcDftIntFrq(), 1, 
+						financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			}
+			financeMain.setAllowGrcPftRvw(financeType.isFinGrcIsRvwAlw());
+			financeMain.setGrcPftRvwFrq(financeType.getFinGrcRvwFrq());
+			if (StringUtils.isNotEmpty(financeType.getFinGrcRvwFrq()) &&
+					FrequencyUtil.validateFrequency(financeType.getFinGrcRvwFrq()) == null) {
+				financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeType.getFinGrcRvwFrq(), 1,
+						financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			}
+			financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
+			financeMain.setGrcCpzFrq(financeType.getFinGrcCpzFrq());
+			if (StringUtils.isNotEmpty(financeType.getFinGrcCpzFrq()) &&
+					FrequencyUtil.validateFrequency(financeType.getFinGrcCpzFrq()) == null) {
+				financeMain.setNextGrcCpzDate(FrequencyUtil.getNextDate(financeType.getFinGrcCpzFrq(), 1,
+						financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			}
+			financeMain.setCpzAtGraceEnd(financeType.isFinIsIntCpzAtGrcEnd());
+			financeMain.setGrcRateBasis(financeType.getFinGrcRateType().substring(0, 1));
+			financeMain.setAllowGrcRepay(financeType.isFinIsAlwGrcRepay());
+			financeMain.setGrcSchdMthd(financeType.getFinGrcSchdMthd());
+			financeMain.setGrcMargin(financeType.getFinGrcMargin());
+
+			financeMain.setGrcAdvBaseRate(financeType.getGrcAdvBaseRate());
+			financeMain.setGrcAdvMargin(financeType.getGrcAdvMargin());
+			financeMain.setGrcAdvPftRate(financeType.getGrcAdvPftRate());
+		}
+
+		//RepaymentDetails
+		financeMain.setNumberOfTerms(financeType.getFinDftTerms());
+		financeMain.setRepayBaseRate(financeType.getFinBaseRate());
+		financeMain.setRepaySpecialRate(financeType.getFinSplRate());
+		financeMain.setRepayMargin(financeType.getFinMargin());
+		financeMain.setRepayProfitRate(financeType.getFinIntRate());
+		financeMain.setRepayFrq(financeType.getFinRpyFrq());
+		if (StringUtils.isNotEmpty(financeType.getFinRpyFrq()) &&
+				FrequencyUtil.validateFrequency(financeType.getFinRpyFrq()) == null) {
+			financeMain.setNextRepayDate(FrequencyUtil.getNextDate(financeType.getFinRpyFrq(), 1,
+					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}
+		financeMain.setRepayPftFrq(financeType.getFinDftIntFrq());
+		if (StringUtils.isNotEmpty(financeType.getFinDftIntFrq()) &&
+				FrequencyUtil.validateFrequency(financeType.getFinDftIntFrq()) == null) {
+			financeMain.setNextRepayPftDate(FrequencyUtil.getNextDate(financeType.getFinDftIntFrq(), 1,
+					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}
+		financeMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
+		financeMain.setRepayRvwFrq(financeType.getFinRvwFrq());
+		financeMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
+		financeMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
+		financeMain.setPastduePftMargin(financeType.getPastduePftMargin());
+		financeMain.setDroppingMethod(financeType.getDroppingMethod());
+		financeMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
+		
+		if (StringUtils.isNotEmpty(financeType.getFinRvwFrq()) &&
+				FrequencyUtil.validateFrequency(financeType.getFinRvwFrq()) == null) {
+			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeType.getFinRvwFrq(), 1,
+					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}
+		financeMain.setAllowRepayCpz(financeType.isFinIsIntCpz());
+		financeMain.setRepayCpzFrq(financeType.getFinCpzFrq());
+		if (StringUtils.isNotEmpty(financeType.getFinCpzFrq()) &&
+				FrequencyUtil.validateFrequency(financeType.getFinCpzFrq()) == null) {
+			financeMain.setNextRepayCpzDate(FrequencyUtil.getNextDate(financeType.getFinCpzFrq(), 1, 
+					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}
+		financeMain.setRepayRateBasis(financeType.getFinRateType().substring(0, 1));
+		financeMain.setEqualRepay(financeType.isEqualRepayment());
+		financeMain.setNewRecord(true);
+		financeMain.setRecordType("");
+
+		financeMain.setLovDescIsSchdGenerated(false);
+		financeMain.setDefferments(financeType.getFinMaxDifferment());
+		financeMain.setPlanDeferCount(financeType.getPlanDeferCount());
+		financeMain.setRvwRateApplFor(financeType.getFinRvwRateApplFor());
+		financeMain.setFinRepayMethod(financeType.getFinRepayMethod());
+		financeMain.setRpyAdvBaseRate(financeType.getRpyAdvBaseRate());
+		financeMain.setRpyAdvMargin(financeType.getRpyAdvMargin());
+		financeMain.setRpyAdvPftRate(financeType.getRpyAdvPftRate());
+		financeMain.setRolloverFrq(StringUtils.trimToEmpty(financeType.getRollOverFrq()));
+		if (StringUtils.isNotEmpty(financeType.getRollOverFrq()) &&
+				FrequencyUtil.validateFrequency(financeType.getRollOverFrq()) == null) {
+			financeMain.setNextRolloverDate(FrequencyUtil.getNextDate(financeType.getRollOverFrq(), financeMain.getNumberOfTerms(),
+					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}
+		
+		financeMain.setAlwBPI(financeType.isAlwBPI());
+		financeMain.setBpiTreatment(financeType.getBpiTreatment());
+		financeMain.setPlanEMIHAlw(financeType.isPlanEMIHAlw());
+		financeMain.setPlanEMIHMethod(financeType.getPlanEMIHMethod());
+		financeMain.setPlanEMIHLockPeriod(financeType.getPlanEMIHLockPeriod());
+		financeMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
+		financeMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
+		financeMain.setPlanEMICpz(financeType.isPlanEMICpz());
+		financeMain.setCalRoundingMode(financeType.getRoundingMode());
+		financeMain.setRoundingTarget(financeType.getRoundingTarget());
+		financeMain.setAlwMultiDisb(financeType.isFinIsAlwMD());
+		financeMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
+		financeMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
+		financeMain.setMaxReAgeHolidays(financeType.getMaxReAgeHolidays());
+		financeMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
+		financeMain.setReAgeCpz(financeType.isReAgeCpz());
+
+		return financeMain;
 	}
 
 	@Override
 	public FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType) {
-		// TODO Auto-generated method stub
-		return null;
+		//overdue Penalty Details
+		if (finODPenaltyRate == null) {
+			finODPenaltyRate = new FinODPenaltyRate();
+		}
+		finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
+		finODPenaltyRate.setODIncGrcDays(financeType.isODIncGrcDays());
+		finODPenaltyRate.setODChargeCalOn(financeType.getODChargeCalOn());
+		finODPenaltyRate.setODGraceDays(financeType.getODGraceDays());
+		finODPenaltyRate.setODChargeType(financeType.getODChargeType());
+		finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
+		finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
+		finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+		
+		return finODPenaltyRate;
 	}
 }

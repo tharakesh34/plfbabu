@@ -7,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -21,7 +22,7 @@ import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 
-@Produces("application/json")
+@Produces(MediaType.APPLICATION_JSON)
 public interface CustomerRESTService {
 
 	@POST
