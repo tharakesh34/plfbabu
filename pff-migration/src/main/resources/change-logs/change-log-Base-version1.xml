@@ -2246,7 +2246,7 @@ FROM    	ReasonCategory AS T1
 	<changeSet id="73" author="Haritha">
 		<createView viewName="Reasons_AView" replaceIfExists="true">
 			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
-						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.reasonCategoryCodeTaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
 			FROM    	Reasons AS T1 
 
          </createView>
@@ -2473,5 +2473,60 @@ WHERE     NOT EXISTS
 	<sql>
 		Insert into SeqReasonHeader Values (0);
 	</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view reasons_view cascade;
+			drop view reasons_aview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="99" author="Jayant">
+		<renameColumn tableName="Reasons" oldColumnName="reasonTypeCode" newColumnName="reasonTypeID"/>
+	</changeSet>
+	<changeSet id="100" author="Jayant">
+		<renameColumn tableName="Reasons" oldColumnName="reasonCategoryCode" newColumnName="reasonCategoryID"/>
+	</changeSet>
+	<changeSet id="101" author="Jayant">
+		<renameColumn tableName="Reasons_Temp" oldColumnName="reasonTypeCode" newColumnName="reasonTypeID"/>
+	</changeSet>
+	<changeSet id="102" author="Jayant"> 
+		<renameColumn tableName="Reasons_Temp" oldColumnName="reasonCategoryCode" newColumnName="reasonCategoryID"/>
+	</changeSet>
+	
+	<changeSet id="103" author="Jayant">
+		<modifyDataType tableName="Reasons" columnName="reasonTypeID" newDataType="BIGINT"/>
+	</changeSet>
+	<changeSet id="104" author="Jayant">
+		<modifyDataType tableName="Reasons_Temp" columnName="reasonTypeID" newDataType="BIGINT"/>
+	</changeSet>
+	<changeSet id="105" author="Jayant">
+		<modifyDataType tableName="Reasons" columnName="reasonCategoryID" newDataType="BIGINT"/>
+	</changeSet>
+	<changeSet id="106" author="Jayant">
+		<modifyDataType tableName="Reasons_Temp" columnName="reasonCategoryID" newDataType="BIGINT"/>
+	</changeSet>
+	<changeSet id="107" author="Haritha">
+		<createView viewName="Reasons_AView" replaceIfExists="true">
+			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+
+         </createView>
+	</changeSet>
+
+	<changeSet id="108" author="Haritha">
+		<createView viewName="Reasons_View" replaceIfExists="true">
+	        			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons_Temp AS T1 
+			UNION ALL
+			
+			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	Reasons AS T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM Reasons_TEMP WHERE Id = T1.Id)
+	        			
+	     </createView>
 	</changeSet>
  </databaseChangeLog>
