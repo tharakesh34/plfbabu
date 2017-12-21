@@ -26,5 +26,30 @@
 		</sql>	
 	</changeSet>
 	
+	<changeSet id="1" author="Haritha" dbms="postgresql">
+		 <sql>
+		 	drop view Reasons_View cascade;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="2" author="Haritha">
+	<createView viewName="Reasons_View" replaceIfExists="true">
+	SELECT T1.id,T1.reasontypeid, T1.reasoncategoryid, T1.code, T1.description,T1.active,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,
+             T1.rolecode,T1.nextrolecode,T1.taskid,T1.nexttaskid,T1.recordtype,T1.workflowid,
+             T2.code reasonCategoryCode,T3.code reasonTypeCode
+            FROM reasons_temp T1
+    inner join reasoncategory T2 on T1.reasoncategoryid=T2.id 
+    inner join reasontypes T3 on T1.reasontypeid=T3.id
+    UNION ALL
+    SELECT T1.id,T1.reasontypeid,T1.reasoncategoryid,T1.code,T1.description,T1.active,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,
+             T1.rolecode,T1.nextrolecode,T1.taskid,T1.nexttaskid,T1.recordtype,T1.workflowid,
+             T2.code reasonCategoryCode,T3.code reasonTypeCode
+             FROM reasons T1
+   inner join reasoncategory T2 on T1.reasoncategoryid=T2.id 
+   inner join reasontypes T3 on T1.reasontypeid=T3.id
+   WHERE NOT (EXISTS ( SELECT 1 FROM reasons_temp WHERE id = T1.id));	
+	</createView>
+</changeSet>
+	
 	
  </databaseChangeLog>
