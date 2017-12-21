@@ -264,6 +264,9 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
 				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
     </createView>
 </changeSet>
+
+
+
 <changeSet id="25.1" author="Jayant" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasons" constraintName="adtreasons_code_key"/>
 </changeSet>
@@ -275,13 +278,27 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
 <changeSet id="25.3" author="Jayant" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasons" constraintName="adtreasons_reasontypeid_key"/>
 </changeSet>
-
+<changeSet id="25.1" author="Jayant" dbms="oracle">
+		<dropUniqueConstraint tableName="adtreasons" constraintName="SYS_C00355007"/>
+</changeSet>
+<changeSet id="25.2" author="Jayant" dbms="oracle">
+	<sql>
+		alter table adtreasons drop constraint SYS_C00355008;
+	</sql>
+</changeSet>
+<changeSet id="25.3" author="Jayant" dbms="oracle">
+		<dropUniqueConstraint tableName="adtreasons" constraintName="SYS_C00355006"/>
+</changeSet>
 <changeSet id="26" author="Haritha" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasoncategory" constraintName="adtreasoncategory_code_key"/>
 </changeSet>
-
+<changeSet id="26" author="Haritha" dbms="oracle">
+		<dropUniqueConstraint tableName="adtreasoncategory" constraintName="SYS_C00354997"/>
+</changeSet>
 <changeSet id="27" author="Haritha" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasontypes" constraintName="adtreasontypes_code_key"/>
 </changeSet>
-
+<changeSet id="27" author="Haritha" dbms="oracle">
+		<dropUniqueConstraint tableName="adtreasontypes" constraintName="SYS_C00354988"/>
+</changeSet>
 </databaseChangeLog>
