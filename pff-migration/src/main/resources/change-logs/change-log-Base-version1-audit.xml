@@ -274,5 +274,14 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
 </changeSet>
 <changeSet id="25.3" author="Jayant">
 		<dropUniqueConstraint tableName="adtreasons" constraintName="adtreasons_reasontypeid_key"/>
-</changeSet>	
+</changeSet>
+
+<changeSet id="26" author="Haritha">
+		<dropUniqueConstraint tableName="adtreasoncategory" constraintName="adtreasoncategory_code_key"/>
+</changeSet>
+
+<changeSet id="27" author="Haritha">
+		<dropUniqueConstraint tableName="adtreasontypes" constraintName="adtreasontypes_code_key"/>
+</changeSet>
+
 </databaseChangeLog>
