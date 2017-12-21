@@ -62,7 +62,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = {"custAddrType", "custAddrHNbr", "custFlatNbr", "custAddrStreet" , "custAddrLine1", "custAddrLine2", "custPOBox",
 		"custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP", "custAddrFrom","typeOfResidence","custAddrPriority"})
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerAddres extends AbstractWorkflowEntity implements Entity{
+public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -3309604710675073740L;
 	
 	private long custAddressId=Long.MIN_VALUE;
@@ -327,7 +327,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity{
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails){
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails=userDetails;
 
 	}

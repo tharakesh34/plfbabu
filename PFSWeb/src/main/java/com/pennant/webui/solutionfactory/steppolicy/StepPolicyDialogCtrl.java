@@ -91,7 +91,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -805,7 +805,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aStepPolicyHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aStepPolicyHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aStepPolicyHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aStepPolicyHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

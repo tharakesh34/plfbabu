@@ -98,7 +98,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -635,7 +635,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		try {
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);
-			disbursementRequestService.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID(), ((PartnerBank)partnerBank.getObject()).getFileName());
+			disbursementRequestService.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getUserId(), ((PartnerBank)partnerBank.getObject()).getFileName());
 			
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");

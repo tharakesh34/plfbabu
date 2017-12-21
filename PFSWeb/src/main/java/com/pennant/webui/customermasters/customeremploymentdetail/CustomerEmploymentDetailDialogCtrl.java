@@ -81,9 +81,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -131,6 +132,16 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private boolean newRecord=false;
 	private boolean newCustomer=false;
 	private CustomerDialogCtrl customerDialogCtrl;
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	}
+
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	private List<CustomerEmploymentDetail> customerEmploymentDetails;
 	private String moduleType="";
 	private String userRole="";
@@ -184,9 +195,26 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("customerDialogCtrl")){
+		if (arguments.containsKey("customerDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
+			setNewCustomer(true);
+
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord(true);
+			} else {
+				setNewRecord(false);
+			}
+			this.customerEmploymentDetail.setWorkflowId(0);
+			if (arguments.containsKey("roleCode")) {
+				userRole = arguments.get("roleCode").toString();
+				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+			}
+		}
+		
+		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+
+			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
 			setNewCustomer(true);
 
 			if(arguments.containsKey("newRecord")){
@@ -1099,7 +1127,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aCustomerEmploymentDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerEmploymentDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerEmploymentDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -237,14 +237,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails= getError ("41003",securityUser.getUsrLogin() , 
-						securityUser.getUserDetails().getUsrLanguage());
+						securityUser.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			ErrorDetails errorDetails= getError ("41006",securityUser.getUsrLogin() ,
-					securityUser.getUserDetails().getUsrLanguage());
+					securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -339,7 +339,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -368,7 +368,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -459,7 +459,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -486,14 +486,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
-						securityUserDivBranch.getUserDetails().getUsrLanguage());
+						securityUserDivBranch.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUserDivBranch.getUsrID()) ,
-					securityUserDivBranch.getUserDetails().getUsrLanguage());
+					securityUserDivBranch.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -548,14 +548,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
-						securityUser.getUserDetails().getUsrLanguage());
+						securityUser.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUser.getUsrID()) ,
-					securityUser.getUserDetails().getUsrLanguage());
+					securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}

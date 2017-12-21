@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -612,7 +612,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

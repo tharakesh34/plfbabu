@@ -120,7 +120,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -1780,7 +1780,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			try {
 				boolean isRcdDeleted = getReportConfigurationService().deleteSearchTemplate(
-						reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+						reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getUserId(),
 						this.cbSelectTemplate.getSelectedItem().getLabel());
 
 				if (isRcdDeleted) {
@@ -2609,7 +2609,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		this.cbSelectTemplate.getChildren().clear();
 
 		templateLibraryMap = getReportConfigurationService().getTemplatesByReportID(reportConfiguration.getReportID(),
-				getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				getUserWorkspace().getLoggedInUser().getUserId());
 
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);

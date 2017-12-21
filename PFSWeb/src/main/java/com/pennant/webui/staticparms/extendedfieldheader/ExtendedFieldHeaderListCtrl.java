@@ -71,7 +71,7 @@ import com.pennant.backend.service.staticparms.ExtendedFieldHeaderService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.staticparms.extendedfieldheader.model.ExtendedFieldHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

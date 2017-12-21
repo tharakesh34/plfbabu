@@ -83,7 +83,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -919,7 +919,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccountMapping.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountMapping.setUserDetails(getUserWorkspace().getLoggedInUser());
 

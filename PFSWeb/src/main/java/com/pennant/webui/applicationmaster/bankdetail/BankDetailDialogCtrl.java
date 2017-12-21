@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -696,7 +696,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBankDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBankDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBankDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBankDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

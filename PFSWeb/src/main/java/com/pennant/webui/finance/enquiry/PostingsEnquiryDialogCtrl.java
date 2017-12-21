@@ -72,7 +72,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

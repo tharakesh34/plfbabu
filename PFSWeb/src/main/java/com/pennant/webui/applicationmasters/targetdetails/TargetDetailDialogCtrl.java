@@ -25,7 +25,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	private static final long serialVersionUID = -2229794581795422226L;
@@ -493,7 +493,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aTargetDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTargetDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTargetDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTargetDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

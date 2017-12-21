@@ -60,7 +60,7 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.webui.finance.guarantordetail.model.GuarantorDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 
 /**

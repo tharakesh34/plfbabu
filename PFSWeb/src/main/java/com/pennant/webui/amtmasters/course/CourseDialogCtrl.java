@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -617,7 +617,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCourse.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCourse.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCourse.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCourse.setUserDetails(getUserWorkspace().getLoggedInUser());
 

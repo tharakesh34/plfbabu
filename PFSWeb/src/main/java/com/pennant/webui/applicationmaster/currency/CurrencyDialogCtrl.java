@@ -74,7 +74,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Currency/currencyDialog.zul file.
@@ -955,7 +955,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aCurrency.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCurrency.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCurrency.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCurrency.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

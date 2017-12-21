@@ -13,6 +13,12 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
+	<!-- Data-Engine -->
+		<dependency>
+			<groupId>com.pennanttech.framework.components</groupId>
+			<artifactId>data-engine</artifactId>
+			<version>2.1.8-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps.pff</groupId>
 			<artifactId>pff-model</artifactId>

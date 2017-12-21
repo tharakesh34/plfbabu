@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/MaritalStatusCode/maritalStatusCodeDialog.zul file.
@@ -650,7 +650,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aMaritalStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aMaritalStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMaritalStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMaritalStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

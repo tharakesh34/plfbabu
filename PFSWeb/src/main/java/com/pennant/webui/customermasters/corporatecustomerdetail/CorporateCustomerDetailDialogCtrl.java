@@ -83,7 +83,7 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -1301,7 +1301,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCorporateCustomerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCorporateCustomerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCorporateCustomerDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCorporateCustomerDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

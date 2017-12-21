@@ -247,12 +247,12 @@ public class DelegationDeviationServiceImpl implements DelegationDeviationServic
 		AuditHeader auditHeader=new AuditHeader();
 		auditHeader.setAuditModule("DEVIATION");
 		auditHeader.setAuditReference(finType);
-		auditHeader.setAuditUsrId(userDetails.getLoginUsrID());
+		auditHeader.setAuditUsrId(userDetails.getUserId());
 		auditHeader.setAuditBranchCode(userDetails.getBranchCode());
 		auditHeader.setAuditDeptCode(userDetails.getDepartmentCode());
 		auditHeader.setAuditSystemIP(userDetails.getIpAddress());
 		auditHeader.setAuditSessionID(userDetails.getSessionId());
-		auditHeader.setUsrLanguage(userDetails.getUsrLanguage());
+		auditHeader.setUsrLanguage(userDetails.getLanguage());
 		int count=0;
 		for (AuditDetail auditDetail : auditDetails) {
 			auditDetail.setAuditSeq(count++);
@@ -380,7 +380,7 @@ public class DelegationDeviationServiceImpl implements DelegationDeviationServic
 		deviationHeader.setRecordType("");
 		deviationHeader.setRecordStatus("");
 		deviationHeader.setVersion(deviationHeader.getVersion() + 1);
-		deviationHeader.setLastMntBy(userDetails.getLoginUsrID());
+		deviationHeader.setLastMntBy(userDetails.getUserId());
 		deviationHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 	}
 
@@ -388,7 +388,7 @@ public class DelegationDeviationServiceImpl implements DelegationDeviationServic
 		deviationDetail.setRecordType("");
 		deviationDetail.setRecordStatus("");
 		deviationDetail.setVersion(deviationDetail.getVersion() + 1);
-		deviationDetail.setLastMntBy(userDetails.getLoginUsrID());
+		deviationDetail.setLastMntBy(userDetails.getUserId());
 		deviationDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 	}
 	

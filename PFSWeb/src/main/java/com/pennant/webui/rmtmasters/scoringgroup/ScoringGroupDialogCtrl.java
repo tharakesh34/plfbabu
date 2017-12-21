@@ -102,7 +102,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.scoringslab.model.ScoringSlabListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -1393,7 +1393,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aScoringGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aScoringGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aScoringGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aScoringGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 

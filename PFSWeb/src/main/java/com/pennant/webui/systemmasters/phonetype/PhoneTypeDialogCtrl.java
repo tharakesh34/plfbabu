@@ -73,7 +73,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -678,7 +678,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPhoneType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPhoneType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPhoneType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPhoneType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

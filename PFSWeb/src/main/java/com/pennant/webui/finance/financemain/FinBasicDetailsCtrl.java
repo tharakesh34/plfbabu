@@ -21,7 +21,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 

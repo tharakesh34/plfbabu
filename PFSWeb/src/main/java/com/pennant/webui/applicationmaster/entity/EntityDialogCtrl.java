@@ -74,7 +74,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -1122,7 +1122,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEntity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEntity.setUserDetails(getUserWorkspace().getLoggedInUser());
 

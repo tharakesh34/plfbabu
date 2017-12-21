@@ -184,6 +184,17 @@
 										checked="false" />
 								</hbox>
 							</row>
+							
+							<row visible="false" id="passwordRow">
+									<label id="label_pdfpasword"
+										value="${c:l('label_CustomerDocumentDialog_pdf_password.value')}" />
+									<hbox>
+									<space spacing="2px" sclass="mandatory"/>
+										<textbox id="pdfPassword"
+											type="password" maxlength="200" width="80%" />
+									</hbox>
+								</row>
+							
 						</rows>
 					</grid>
 				</groupbox>

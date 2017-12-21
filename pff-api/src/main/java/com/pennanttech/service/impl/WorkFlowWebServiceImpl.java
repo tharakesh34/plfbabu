@@ -41,7 +41,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		WorkFlowDetails response = new WorkFlowDetails();
 		workFlowDetails.setNewRecord(true);
 		workFlowDetails.setWorkflowId(0);
-		workFlowDetails.setLastMntBy(userDetails.getLoginUsrID());
+		workFlowDetails.setLastMntBy(userDetails.getUserId());
 		workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create); // validating object
 			for(ErrorDetails errDetail : errorDetails) {// returning in case of exception
@@ -79,7 +79,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		WorkFlowDetails response = new WorkFlowDetails();
 		try {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			workFlowDetails.setLastMntBy(userDetails.getLoginUsrID());
+			workFlowDetails.setLastMntBy(userDetails.getUserId());
 			workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			workFlowDetails.setWorkFlowId(workFlowDetails.getWorkFlowDesignId());
 			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Update);

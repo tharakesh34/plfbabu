@@ -125,7 +125,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -1656,7 +1656,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
-		aFacility.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFacility.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFacility.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFacility.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {

@@ -81,7 +81,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 
 /**
@@ -890,7 +890,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	private boolean doProcess(Query aQuery, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aQuery.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aQuery.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQuery.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQuery.setUserDetails(getUserWorkspace().getLoggedInUser());
 

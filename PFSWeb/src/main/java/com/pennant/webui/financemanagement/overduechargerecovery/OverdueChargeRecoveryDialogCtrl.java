@@ -92,7 +92,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
@@ -1063,7 +1063,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aOverdueChargeRecovery.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aOverdueChargeRecovery.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aOverdueChargeRecovery.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aOverdueChargeRecovery.setUserDetails(getUserWorkspace().getLoggedInUser());
 

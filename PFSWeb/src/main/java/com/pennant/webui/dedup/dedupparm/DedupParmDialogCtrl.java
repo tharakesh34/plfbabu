@@ -97,7 +97,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 
@@ -1656,7 +1656,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDedupParm.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDedupParm.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDedupParm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDedupParm.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -17,7 +17,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -115,7 +115,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.ENTERING);
 
 		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId());
 		}
 
 		logger.debug(Literal.LEAVING);

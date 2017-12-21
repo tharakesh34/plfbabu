@@ -316,7 +316,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleId =:ModuleId order by FieldSeqOrder ASC");
+		selectSql.append(" Where ModuleId =:ModuleId order by ParentTag DESC ,FieldSeqOrder ASC");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);

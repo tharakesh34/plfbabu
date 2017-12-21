@@ -83,7 +83,7 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1236,7 +1236,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 	private boolean doProcess(TakafulProvider aTakafulProvider, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aTakafulProvider.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTakafulProvider.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTakafulProvider.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTakafulProvider.setUserDetails(getUserWorkspace().getLoggedInUser());
 

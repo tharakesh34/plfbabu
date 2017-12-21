@@ -80,7 +80,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.financereferencedetail.model.FinanceReferenceDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;

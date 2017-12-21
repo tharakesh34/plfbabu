@@ -62,7 +62,7 @@ import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.service.applicationmaster.FinanceApplicationCodeService;
 import com.pennant.webui.applicationmaster.financeapplicationcode.model.FinanceApplicationCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

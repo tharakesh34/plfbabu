@@ -16,7 +16,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.webui.finance.enquiry.model.RepayEnquiryComparator;
 import com.pennant.webui.finance.enquiry.model.RepayEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	private static final long serialVersionUID = 2338460659547934642L;

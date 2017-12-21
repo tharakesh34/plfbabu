@@ -73,7 +73,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**

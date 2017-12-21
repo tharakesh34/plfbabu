@@ -91,7 +91,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
@@ -976,7 +976,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aProvince.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProvince.setUserDetails(getUserWorkspace().getLoggedInUser());
 

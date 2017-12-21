@@ -82,7 +82,7 @@ import com.pennant.backend.model.reports.ReportsMonthEndConfiguration;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;

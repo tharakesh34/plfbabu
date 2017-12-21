@@ -1842,6 +1842,7 @@
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="shortMessageService" ref="shortMessageService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
+		<property name="pdfParserCaller" ref="pdfParserCaller" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
@@ -4165,6 +4166,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 
@@ -4941,8 +4943,17 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 	
 <!-- External File Upload -->
 	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<!-- External File Upload  -->
+	<bean id="pdfUploadListCtrl" class="com.pennant.webui.pdfupload.PdfUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
+	
+	<!-- Document parsercaller  -->
+	<bean id="pdfParserCaller" class="com.pennant.webui.pdfupload.PdfParserCaller" scope="prototype">
+	</bean>
 </beans>

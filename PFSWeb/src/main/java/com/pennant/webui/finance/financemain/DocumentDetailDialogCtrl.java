@@ -89,7 +89,7 @@ import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
@@ -595,18 +595,15 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			map.put("finDocumentDetail", finDocumentDetail);
 		}
 		
-		if (finDocumentDetail.getDocImage() == null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-			finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
-		}
-		
-		if (finDocumentDetail != null && finDocumentDetail.getDocImage() == null) {
-			if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
+		if(finDocumentDetail.getDocImage() == null) {
+			if (finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+				finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
+			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
 				// Fetch document from interface
 				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri());
 				if (detail != null && detail.getDocImage() != null) {
 					finDocumentDetail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 				}
-
 			}
 		}
 		return finDocumentDetail;

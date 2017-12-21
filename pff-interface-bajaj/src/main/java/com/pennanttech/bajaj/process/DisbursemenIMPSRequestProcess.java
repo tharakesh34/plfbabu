@@ -21,7 +21,7 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequestProcess.class);
 
-	private List<String>		disbursments;
+	private List<Long>			disbursments;
 
 	public DisbursemenIMPSRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
@@ -140,7 +140,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	public void setDisbursments(List<String> disbursments) {
+	public void setDisbursments(List<Long> disbursments) {
 		this.disbursments = disbursments;
 	}
 }

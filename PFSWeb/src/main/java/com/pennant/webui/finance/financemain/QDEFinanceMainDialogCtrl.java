@@ -113,7 +113,7 @@ import com.pennant.webui.dedup.dedupparm.FetchBlackListDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -1767,7 +1767,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 

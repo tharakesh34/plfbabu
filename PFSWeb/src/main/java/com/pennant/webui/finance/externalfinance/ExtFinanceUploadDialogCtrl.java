@@ -62,7 +62,7 @@ import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.externalinput.ExtFinanceData;
 import com.pennant.externalinput.service.ExtFinanceUploadService;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the

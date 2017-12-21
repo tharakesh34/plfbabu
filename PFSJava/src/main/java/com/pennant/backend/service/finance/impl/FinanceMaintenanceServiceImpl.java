@@ -1034,7 +1034,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String usrLanguage = financeMain.getUserDetails().getUsrLanguage();
+		String usrLanguage = financeMain.getUserDetails().getLanguage();
 
 		//Collateral Assignments details
 		//=======================================

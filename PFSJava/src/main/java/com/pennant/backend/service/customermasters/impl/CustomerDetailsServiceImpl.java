@@ -2763,7 +2763,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = customerDetails.getCustomer().getUserDetails().getUsrLanguage();
+		String usrLanguage = customerDetails.getCustomer().getUserDetails().getLanguage();
 		String custctg = customerDetails.getCustomer().getCustCtgCode();
 
 		// Rating Validation
@@ -2991,7 +2991,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		
-		if (customer.getCustCRCPR()!=null) {
+		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
 			if (isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR())) {
 				String[] errorParameters = new String[1];
 				if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {

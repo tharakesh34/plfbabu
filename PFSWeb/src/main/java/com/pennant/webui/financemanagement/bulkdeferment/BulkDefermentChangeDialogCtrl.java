@@ -103,7 +103,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkChangeDialoglItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -891,7 +891,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBulkProcessHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBulkProcessHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBulkProcessHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBulkProcessHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -62,7 +62,7 @@ import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennant.backend.service.applicationmaster.SalesOfficerService;
 import com.pennant.webui.applicationmaster.salesofficer.model.SalesOfficerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

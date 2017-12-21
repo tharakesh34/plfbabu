@@ -62,7 +62,7 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
 import com.pennant.backend.service.systemmasters.PRelationCodeService;
 import com.pennant.webui.systemmasters.prelationcode.model.PRelationCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

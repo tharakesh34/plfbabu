@@ -85,7 +85,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -679,7 +679,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aWeekendMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aWeekendMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aWeekendMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aWeekendMaster.setUserDetails(getUserWorkspace().getLoggedInUser());
 

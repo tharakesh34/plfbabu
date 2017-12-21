@@ -133,8 +133,8 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		StringBuilder selectSql = new StringBuilder("Select MandateID, CustID, MandateRef, MandateType, BankBranchID,");
 		selectSql.append(" AccNumber, AccHolderName, JointAccHolderName, AccType, OpenMandate,StartDate, ");
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
-		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, Version ,LastMntBy,");
-		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
+		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, ExternalRef,");
+		selectSql.append(" Version ,LastMntBy,LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
@@ -316,15 +316,15 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		insertSql.append(" (MandateID, CustID, MandateRef, MandateType, BankBranchID, AccNumber, AccHolderName,");
 		insertSql.append(" JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit,");
 		insertSql.append(" Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status, ApprovalID,");
-		insertSql.append(" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, Version , LastMntBy, LastMntOn,");
-		insertSql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
+		insertSql.append(" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
+		insertSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
 		insertSql.append(" WorkflowId,OrgReference)");
 		insertSql.append(" Values(:MandateID, :CustID, :MandateRef, :MandateType, :BankBranchID, :AccNumber, ");
 		insertSql.append(" :AccHolderName, :JointAccHolderName, :AccType, :OpenMandate, :StartDate, :ExpiryDate,");
 		insertSql.append(" :MaxLimit, :Periodicity, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Status,");
-		insertSql.append(" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :Version,:LastMntBy, :LastMntOn,");
-		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
-		insertSql.append(" :WorkflowId, :OrgReference)");
+		insertSql.append(" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef,");
+		insertSql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(" :RecordType, :WorkflowId, :OrgReference)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -361,7 +361,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode,");
 		updateSql.append(" PhoneNumber = :PhoneNumber, Status = :Status, ApprovalID = :ApprovalID,");
 		updateSql.append("  Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
-		updateSql.append(" DocumentName = :DocumentName, DocumentRef = :DocumentRef,");
+		updateSql.append(" DocumentName = :DocumentName, DocumentRef = :DocumentRef, ExternalRef = :ExternalRef,");
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
@@ -410,7 +410,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode,");
 		updateSql.append(" PhoneNumber = :PhoneNumber, ApprovalID = :ApprovalID,");
 		updateSql.append(" Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
-		updateSql.append(" DocumentName = :DocumentName, DocumentRef = :DocumentRef,");
+		updateSql.append(" DocumentName = :DocumentName, DocumentRef = :DocumentRef, ExternalRef = :ExternalRef,");
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -665,7 +665,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aProfitCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aProfitCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
 

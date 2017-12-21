@@ -88,7 +88,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.masters.calendar.model.HolidayCalendarModelRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -697,7 +697,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aHolidayMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aHolidayMaster.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aHolidayMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aHolidayMaster.setUserDetails(getUserWorkspace().getLoggedInUser());
 

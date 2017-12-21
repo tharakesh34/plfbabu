@@ -93,7 +93,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -1152,7 +1152,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAssetType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAssetType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAssetType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAssetType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

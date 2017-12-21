@@ -91,7 +91,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -900,7 +900,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aInsuranceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aInsuranceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aInsuranceType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aInsuranceType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

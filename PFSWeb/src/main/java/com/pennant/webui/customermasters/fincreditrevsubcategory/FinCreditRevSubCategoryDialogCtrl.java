@@ -98,7 +98,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -1084,7 +1084,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aFinCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinCreditRevSubCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinCreditRevSubCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinCreditRevSubCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

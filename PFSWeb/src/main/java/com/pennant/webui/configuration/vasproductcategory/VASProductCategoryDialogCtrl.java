@@ -71,7 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -740,7 +740,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	private boolean doProcess(VASProductCategory aVASProductCategory, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aVASProductCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASProductCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASProductCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASProductCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 

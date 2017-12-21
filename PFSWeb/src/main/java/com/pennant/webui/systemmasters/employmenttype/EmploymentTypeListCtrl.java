@@ -61,7 +61,7 @@ import com.pennant.backend.model.systemmasters.EmploymentType;
 import com.pennant.backend.service.systemmasters.EmploymentTypeService;
 import com.pennant.webui.systemmasters.employmenttype.model.EmploymentTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

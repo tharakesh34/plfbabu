@@ -83,7 +83,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -747,7 +747,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFacilityReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFacilityReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFacilityReferenceDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFacilityReferenceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

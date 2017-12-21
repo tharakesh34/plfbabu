@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -731,7 +731,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		String nextRoleCode = "";
 
 		aSalesOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSalesOfficer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSalesOfficer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

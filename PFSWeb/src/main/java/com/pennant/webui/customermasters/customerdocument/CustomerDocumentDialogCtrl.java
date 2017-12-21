@@ -77,6 +77,7 @@ import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -120,7 +121,7 @@ import com.pennant.webui.finance.financemain.FinDelegationDeviationCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -166,7 +167,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Space     space_CustDocExpDate;       
 	protected Space     space_custDocIssuedOn;		
 	protected Space     space_CustIDNumber;			
-	protected Space     space_CustDocSysName;       
+	protected Space     space_CustDocSysName;     
+	protected Row       passwordRow;
+	protected Textbox   pdfPassword;
 	// not auto wired variables
 	private CustomerDocument customerDocument; // overHanded per parameter
 	private transient CustomerDocumentListCtrl customerDocumentListCtrl; // overHanded per parameter
@@ -421,6 +424,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedCountry.setValueColumn("CountryCode");
 		this.custDocIssuedCountry.setDescColumn("CountryDesc");
 		this.custDocIssuedCountry.setValidateColumns(new String[] { "CountryCode" });
+		if(getCustomerDocument().isDocIsPasswordProtected()){
+			this.passwordRow.setVisible(true);
+		}
+		
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -562,6 +569,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		
 		this.custDocSysName.setValue(aCustomerDocument.getCustDocSysName());
+		this.pdfPassword.setValue(aCustomerDocument.getPdfPassWord());
 		this.custDocRcvdOn.setValue(aCustomerDocument.getCustDocRcvdOn());
 		this.custDocExpDate.setValue(aCustomerDocument.getCustDocExpDate());
 		this.custDocIssuedOn.setValue(aCustomerDocument.getCustDocIssuedOn());
@@ -646,30 +654,23 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		AMedia amedia = null;
 
 		if (aCustomerDocument.getCustDocImage() != null) {
-			if (aCustomerDocument.getCustDocType().equals(
-					PennantConstants.DOC_TYPE_PDF)) {
-				amedia = new AMedia("document.pdf", "pdf", "application/pdf",
-						aCustomerDocument.getCustDocImage());
+			if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia("document.pdf", "pdf", "application/pdf", aCustomerDocument.getCustDocImage());
+			} else if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aCustomerDocument.getCustDocImage());
 			} else if (aCustomerDocument.getCustDocType().equals(
-					PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg",
-						aCustomerDocument.getCustDocImage());
-			} else if (aCustomerDocument.getCustDocType().equals(
-					PennantConstants.DOC_TYPE_WORD) || aCustomerDocument.getCustDocType().equals(
-							PennantConstants.DOC_TYPE_MSG)) {
+					PennantConstants.DOC_TYPE_WORD) || aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
-				ageementLink
-						.setContent("<a href='' style = 'font-weight:bold'>"
+				ageementLink.setContent("<a href='' style = 'font-weight:bold'>"
 								+ aCustomerDocument.getCustDocName() + "</a> ");
 				
 				List<Object> list = new ArrayList<Object>();
 				list.add(aCustomerDocument.getCustDocType());
 				list.add(aCustomerDocument.getCustDocImage());
 				
-				ageementLink.addForward("onClick",
-						window_CustomerDocumentDialog, "onDocumentClicked",	list);
+				ageementLink.addForward("onClick", window_CustomerDocumentDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
 			}
 
@@ -749,6 +750,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		try {
 			aCustomerDocument.setLovDescCustDocIssuedCountry(custDocIssuedCountry.getDescription());
 			aCustomerDocument.setCustDocIssuedCountry(this.custDocIssuedCountry.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerDocument.setPdfPassWord(this.pdfPassword.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -934,6 +940,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocVerifiedBy.setConstraint(new PTNumberValidator(Labels.getLabel(
 					"label_CustomerDocumentDialog_CustDocVerifiedBy.value"), true));
 		}
+		
+		if (this.passwordRow.isVisible()) {
+			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_pdf_password.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -947,6 +958,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custCIF.setConstraint("");
 		this.custDocTitle.setConstraint("");
 		this.custDocSysName.setConstraint("");
+		this.pdfPassword.setConstraint("");
 		this.custDocRcvdOn.setConstraint("");
 		this.custDocExpDate.setConstraint("");
 		this.custDocIssuedOn.setConstraint("");
@@ -983,6 +995,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custCIF.setErrorMessage("");
 		this.custDocTitle.setErrorMessage("");
 		this.custDocSysName.setErrorMessage("");
+		this.pdfPassword.setErrorMessage("");
 		this.custDocRcvdOn.setErrorMessage("");
 		this.custDocExpDate.setErrorMessage("");
 		this.custDocIssuedOn.setErrorMessage("");
@@ -1135,6 +1148,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocTitle.setReadonly(isReadOnly("CustomerDocumentDialog_custDocTitle"));
 		this.btnUploadDoc.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIssuedCountry"));
 		this.custDocSysName.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
+		this.pdfPassword.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.custDocRcvdOn.setDisabled(isReadOnly("CustomerDocumentDialog_custDocRcvdOn"));
 		this.custDocExpDate.setDisabled(isReadOnly("CustomerDocumentDialog_custDocExpDate"));
 		this.custDocIssuedOn.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIssuedOn"));
@@ -1187,6 +1201,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocTitle.setReadonly(true);
 			this.btnUploadDoc.setDisabled(true);
 			this.custDocSysName.setReadonly(true);
+			this.pdfPassword.setReadonly(true);
 			this.custDocRcvdOn.setDisabled(true);
 			this.custDocExpDate.setDisabled(true);
 			this.custDocIssuedOn.setDisabled(true);
@@ -1218,6 +1233,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocTitle.setReadonly(true);
 		this.btnUploadDoc.setDisabled(true);
 		this.custDocSysName.setReadonly(true);
+		this.pdfPassword.setReadonly(true);
 		this.custDocRcvdOn.setDisabled(true);
 		this.custDocExpDate.setDisabled(true);
 		this.custDocIssuedOn.setDisabled(true);
@@ -1251,6 +1267,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocType.setDescription("");
 		this.custDocTitle.setValue("");
 		this.custDocSysName.setValue("");
+		this.pdfPassword.setValue("");
 		this.custDocRcvdOn.setText("");
 		this.custDocExpDate.setText("");
 		this.custDocIssuedOn.setText("");
@@ -1418,10 +1435,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerDocument,tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getCustomerDialogCtrl().doFillDocumentDetails(this.customerDocuments);
-						if(isFinanceProcess){
-							processChecklistDocuments(aCustomerDocument,true);
+						if (isFinanceProcess) {
+							processChecklistDocuments(aCustomerDocument, true);
 						}
 						closeDialog();
 					}
@@ -1536,7 +1553,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 							if(isDocNewRecord){
 								aCustomerDocument.setRecordType("");
 							}
-							aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+							aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							aCustomerDocument.setUserDetails(getUserWorkspace().getLoggedInUser());
 							
 							if(isNewRecord()){
@@ -1762,7 +1779,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerDocument.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1955,6 +1972,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					isDocuploadMand = true;
 					this.space_documnetName.setSclass(PennantConstants.mandateSclass);
 				}
+				if (details.isDocIsPasswordProtected()) {
+					this.passwordRow.setVisible(true);
+				}else{
+					this.passwordRow.setVisible(false);
+				}
+				getCustomerDocument().setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
+				getCustomerDocument().setPdfMappingRef(details.getPdfMappingRef());
+				getCustomerDocument().setDocIsPasswordProtected(details.isDocIsPasswordProtected());
 			}
 		}
 		this.custDocTitle.setValue("");

@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -645,7 +645,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCorpRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCorpRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCorpRelationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCorpRelationCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

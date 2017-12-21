@@ -338,7 +338,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		String auditTranType = auditHeader.getAuditTranType();
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = securityUser.getUserDetails().getUsrLanguage();
+		String usrLanguage = securityUser.getUserDetails().getLanguage();
 		List<SecurityUserDivBranch> securityUserDivBranchList = securityUser.getSecurityUserDivBranchList();
 		if (securityUserDivBranchList != null  && !securityUserDivBranchList.isEmpty()) {
 			auditDetails = getAuditUserDivBranchs(securityUser, auditTranType, method, usrLanguage, false);

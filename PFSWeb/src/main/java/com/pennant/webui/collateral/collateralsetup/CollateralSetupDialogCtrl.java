@@ -142,7 +142,7 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRenderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1089,7 +1089,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		if (aCollateralSetup.isNew()) {
-			aCollateralSetup.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aCollateralSetup.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aCollateralSetup.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		// Basic Details Error Detail
@@ -2071,7 +2071,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCollateralSetup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCollateralSetup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCollateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCollateralSetup.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -2122,7 +2122,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (aCollateralSetup.getCoOwnerDetailList() != null && !aCollateralSetup.getCoOwnerDetailList().isEmpty()) {
 				for (CoOwnerDetail details : aCollateralSetup.getCoOwnerDetailList()) {
 					details.setCollateralRef(aCollateralSetup.getCollateralRef());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setUserDetails(getUserWorkspace().getLoggedInUser());
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
@@ -2145,7 +2145,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					&& !aCollateralSetup.getCollateralThirdPartyList().isEmpty()) {
 				for (CollateralThirdParty details : aCollateralSetup.getCollateralThirdPartyList()) {
 					details.setCollateralRef(aCollateralSetup.getCollateralRef());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setUserDetails(getUserWorkspace().getLoggedInUser());
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
@@ -2167,7 +2167,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if(extendedFieldRenderList !=null && ! extendedFieldRenderList.isEmpty() ){
 				for(ExtendedFieldRender details :extendedFieldRenderList ){
 					details.setReference(aCollateralSetup.getCollateralRef());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
 					details.setWorkflowId(aCollateralSetup.getWorkflowId());
@@ -2189,7 +2189,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				for (FinFlagsDetail details : finFlagsDetailList) {
 					if(StringUtils.isNotBlank(details.getRecordType())){
 						details.setReference(aCollateralSetup.getCollateralRef());
-						details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+						details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 						details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						details.setRecordStatus(aCollateralSetup.getRecordStatus());
 						details.setWorkflowId(aCollateralSetup.getWorkflowId());
@@ -2216,7 +2216,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					}
 					details.setReferenceId(aCollateralSetup.getCollateralRef());
 					details.setDocModule(CollateralConstants.MODULE_NAME);
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
 					details.setWorkflowId(aCollateralSetup.getWorkflowId());
@@ -2238,7 +2238,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					&& !aCollateralSetup.getCollateralCheckLists().isEmpty()) {
 				for (FinanceCheckListReference details : aCollateralSetup.getCollateralCheckLists()) {
 					details.setFinReference(aCollateralSetup.getCollateralRef());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aCollateralSetup.getRecordStatus());
 					details.setWorkflowId(aCollateralSetup.getWorkflowId());

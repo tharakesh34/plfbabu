@@ -43,7 +43,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("IdList", idList);
-		parmMap.addValue("EXCLUDEREASON", "0");
+		parmMap.addValue("EXCLUDEREASON", 0);
 
 		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
@@ -125,14 +125,14 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		map.addValue("BR_CODE", rs.getString("BRANCHSWIFTBRNCDE"));
 		map.addValue("AGREEMENTNO", rs.getString("FINREFERENCE"));
 		map.addValue("MICR_CODE", rs.getString("MICR"));
-		map.addValue("ACC_TYPE", rs.getString("ACCTYPE"));
+		map.addValue("ACC_TYPE", rs.getInt("ACCTYPE"));
 		map.addValue("LEDGER_FOLIO", "000");
 		map.addValue("FINWARE_ACNO", rs.getString("ACCNUMBER"));
 		map.addValue("DEST_ACC_HOLDER", rs.getString("CUSTSHRTNAME"));
 		map.addValue("PDC_BY_NAME", rs.getString("ACCHOLDERNAME"));
 		map.addValue("BANK_NAME", rs.getString("BANKNAME"));
 		map.addValue("BANK_ADDRESS", rs.getString("BRANCHDESC"));
-		map.addValue("EMI_NO", rs.getString("EMINO"));
+		map.addValue("EMI_NO", rs.getInt("EMINO"));
 		String mnadteType = rs.getString("MANDATETYPE");
 
 		if (StringUtils.equals(mnadteType, "ECS") || StringUtils.equals(mnadteType, "DDM")) {

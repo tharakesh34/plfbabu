@@ -105,7 +105,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -1400,7 +1400,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCollateralStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCollateralStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCollateralStructure.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCollateralStructure.setUserDetails(getUserWorkspace().getLoggedInUser());
 

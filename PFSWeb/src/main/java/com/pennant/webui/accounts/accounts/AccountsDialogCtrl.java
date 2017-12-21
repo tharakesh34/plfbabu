@@ -88,7 +88,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -1061,7 +1061,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aAccounts.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccounts.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccounts.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccounts.setUserDetails(getUserWorkspace().getLoggedInUser());
 

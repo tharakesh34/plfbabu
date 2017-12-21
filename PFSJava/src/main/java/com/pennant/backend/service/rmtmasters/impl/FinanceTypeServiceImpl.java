@@ -579,7 +579,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = financeType.getUserDetails().getUsrLanguage();
+		String usrLanguage = financeType.getUserDetails().getLanguage();
 
 		// List
 		auditHeader = prepareChildsAudit(auditHeader, method);

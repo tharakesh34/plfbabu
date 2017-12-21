@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -610,7 +610,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aScoringType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aScoringType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aScoringType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aScoringType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -41,7 +41,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuserroles.model.SecurityGroupRightModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -432,7 +432,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 				 aSecGroupRights.setRightID(getNewAssignedMap().get(rightId).getRightID());
 				 aSecGroupRights.setLovDescRightName(getNewAssignedMap().get(rightId).getRightName());
 				 aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				 aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				 aSecGroupRights.setNextRoleCode("");
 				 aSecGroupRights.setNextTaskId("");
@@ -453,7 +453,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 				 aSecGroupRights.setLovDescRightName(getOldAssignedMap().get(rightId).getRightName());
 				 aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				 aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				 aSecGroupRights.setNextRoleCode("");
 				 aSecGroupRights.setNextTaskId("");
 				 aSecGroupRights.setTaskId("");

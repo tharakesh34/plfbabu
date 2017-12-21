@@ -362,7 +362,7 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 
 				List<AuditDetail> auditDetails= setBrokerbondAuditData(sukukBroker, method);				
 				
-				auditDetails = brokerbondListValidation(auditDetails, method, sukukBroker.getUserDetails().getUsrLanguage());
+				auditDetails = brokerbondListValidation(auditDetails, method, sukukBroker.getUserDetails().getLanguage());
 				auditDetailMap.put("SukukBrokerBonds", auditDetails);
 				auditHeader.setAuditDetails(auditDetails);				
 				sukukBroker.setAuditDetailMap(auditDetailMap);

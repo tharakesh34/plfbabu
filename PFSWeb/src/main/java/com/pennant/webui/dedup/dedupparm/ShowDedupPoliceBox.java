@@ -46,7 +46,7 @@ import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class ShowDedupPoliceBox extends Window implements Serializable {

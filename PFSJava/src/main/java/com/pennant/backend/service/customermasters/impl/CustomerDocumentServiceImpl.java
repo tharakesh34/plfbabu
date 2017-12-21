@@ -587,6 +587,17 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					return auditDetail;
 				}
 			}
+			
+			if (docType.isDocIsPasswordProtected()) {
+				if (StringUtils.isBlank(customerDocument.getPdfPassWord())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docPassword";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			
 		}	
 		logger.debug("Leaving");
 		return auditDetail;

@@ -78,7 +78,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -736,7 +736,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerAdditionalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerAdditionalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerAdditionalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerAdditionalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

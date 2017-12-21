@@ -64,7 +64,7 @@ import com.pennant.backend.service.applicationmaster.InterestRateTypeService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.applicationmaster.interestratetype.model.InterestRateTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

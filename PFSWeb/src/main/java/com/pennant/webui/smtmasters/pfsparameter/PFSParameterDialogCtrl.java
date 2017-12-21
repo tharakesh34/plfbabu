@@ -86,7 +86,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -925,7 +925,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPFSParameter.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPFSParameter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPFSParameter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPFSParameter.setUserDetails(getUserWorkspace().getLoggedInUser());
 

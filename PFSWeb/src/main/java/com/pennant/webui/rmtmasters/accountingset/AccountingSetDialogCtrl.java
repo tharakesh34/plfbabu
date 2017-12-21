@@ -96,7 +96,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
@@ -857,7 +857,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAccountingSet.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountingSet.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccountingSet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountingSet.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1374,7 +1374,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				valueParm[1] = finTypes;
 				errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
 				feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-						(PennantConstants.KEY_FIELD, "WFEE04", errParm, valueParm), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
+						(PennantConstants.KEY_FIELD, "WFEE04", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 			}
 		}
 		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
@@ -1448,7 +1448,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					valueParm[1] = finTypeFeeCodeMap.get(finTypeFeeCode);
 					errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
 					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-							(PennantConstants.KEY_FIELD, "WFEE05", errParm, valueParm), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
+							(PennantConstants.KEY_FIELD, "WFEE05", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 
 				}
 			}

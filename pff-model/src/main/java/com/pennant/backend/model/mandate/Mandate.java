@@ -67,102 +67,104 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = { "custCIF", "useExisting", "mandateID", "mandateRef", "mandateType", "bankCode", "branchCode",
 		"iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate", "startDate",
 		"expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "status", "active",
-		"totEMIAmount","returnStatus" })
+		"totEMIAmount", "documentName", "docImage", "externalRef", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity implements Entity {
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
 	@XmlElement
-	private long mandateID = Long.MIN_VALUE;
-	private long requestID;
+	private long				mandateID			= Long.MIN_VALUE;
+	private long				requestID;
 	@XmlElement
-	private String mandateRef;
-	private long custID;
+	private String				mandateRef;
+	private long				custID;
 
 	@XmlElement(name = "cif")
-	private String custCIF;
-	private String custShrtName;
+	private String				custCIF;
+	private String				custShrtName;
 
 	@XmlElement
-	private String mandateType;
+	private String				mandateType;
 
-	private long bankBranchID;
+	private long				bankBranchID;
 	@XmlElement
-	private String branchCode;
-	private String branchDesc;
+	private String				branchCode;
+	private String				branchDesc;
 
 	@XmlElement
-	private String bankCode;
+	private String				bankCode;
 
-	private String bankName;
-	private String city;
+	private String				bankName;
+	private String				city;
 
 	@XmlElement(name = "micr")
-	private String mICR;
+	private String				mICR;
 
 	@XmlElement(name = "ifsc")
-	private String iFSC;
+	private String				iFSC;
 	@XmlElement
-	private String accNumber;
+	private String				accNumber;
 	@XmlElement
-	private String accHolderName;
+	private String				accHolderName;
 	@XmlElement
-	private String jointAccHolderName;
+	private String				jointAccHolderName;
 	@XmlElement
-	private String accType;
+	private String				accType;
 
-	private String accTypeName;
+	private String				accTypeName;
 	@XmlElement
-	private boolean openMandate;
+	private boolean				openMandate;
 	@XmlElement
-	private Date startDate;
+	private Date				startDate;
 	@XmlElement
-	private Date expiryDate;
+	private Date				expiryDate;
 	@XmlElement
-	private BigDecimal maxLimit;
+	private BigDecimal			maxLimit;
 	@XmlElement
-	private String periodicity;
+	private String				periodicity;
 	@XmlElement
-	private String phoneCountryCode;
+	private String				phoneCountryCode;
 	@XmlElement
-	private String phoneAreaCode;
+	private String				phoneAreaCode;
 	@XmlElement
-	private String phoneNumber;
+	private String				phoneNumber;
 
 	@XmlElement
-	private String status;
-	private String statusName;
-	private String reason;
-	private Date inputDate;
+	private String				status;
+	private String				statusName;
+	private String				reason;
+	private Date				inputDate;
 	@XmlElement
-	private boolean active;
-	private String approvalID;
-	private boolean newRecord;
-	private String lovValue;
-	private Mandate befImage;
-	private LoggedInUser userDetails;
-	private String module;
+	private boolean				active;
+	private String				approvalID;
+	private boolean				newRecord;
+	private String				lovValue;
+	private Mandate				befImage;
+	private LoggedInUser		userDetails;
+	private String				module;
 	@XmlElement
-	private boolean useExisting;
-	private String mandateCcy;
-	private String orgReference;
-	private String sourceId;
-	private String	finReference;
-
-	private String documentName;
-	private long documentRef = Long.MIN_VALUE;
-	private byte[] docImage;
- 
+	private boolean				useExisting;
+	private String				mandateCcy;
+	private String				orgReference;
+	private String				sourceId;
+	private String				finReference;
+	@XmlElement
+	private String				documentName;
+	private long				documentRef			= Long.MIN_VALUE;
+	@XmlElement(name = "docContent")
+	private byte[]				docImage;
+	@XmlElement(name = "docRefId")
+	private String				externalRef;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
-	private Mandate validateMandate = this;
+	private Mandate				validateMandate		= this;
 	@XmlElement
-	private WSReturnStatus returnStatus;
+	private WSReturnStatus		returnStatus;
 	@XmlElement
-	private BigDecimal totEMIAmount;
-	private String pccityName;
+	private BigDecimal			totEMIAmount;
+	private String				pccityName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -617,5 +619,13 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocImage(byte[] docImage) {
 		this.docImage = docImage;
+	}
+	
+	public String getExternalRef() {
+		return externalRef;
+	}
+
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
 	}
 }

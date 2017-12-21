@@ -62,7 +62,7 @@ import com.pennant.backend.model.systemmasters.NationalityCode;
 import com.pennant.backend.service.systemmasters.NationalityCodeService;
 import com.pennant.webui.systemmasters.nationalitycode.model.NationalityCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

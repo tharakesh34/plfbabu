@@ -62,7 +62,7 @@ import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.webui.systemmasters.department.model.DepartmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

@@ -63,7 +63,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.webui.applicationmaster.currency.model.CurrencyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

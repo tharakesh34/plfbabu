@@ -84,6 +84,7 @@ public class CustomerController {
 			Customer customer = customerDetails.getCustomer();
 			customer.setCustNationality("IN");
 			customer.setCustCOB("IN");
+			customer.setCustSourceID(APIConstants.FINSOURCE_ID_API);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
@@ -237,7 +238,7 @@ public class CustomerController {
 			curCustomer.setCustCIF(custCIF);
 			curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			curCustomer.setVersion(1);
-			curCustomer.setLastMntBy(userDetails.getLoginUsrID());
+			curCustomer.setLastMntBy(userDetails.getUserId());
 		} else {
 			Customer prvCustomer = prvCustomerDetails.getCustomer();
 			if (StringUtils.isBlank(curCustomer.getCustDftBranch())) {
@@ -251,7 +252,7 @@ public class CustomerController {
 			curCustomer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			curCustomer.setVersion((prvCustomer.getVersion()) + 1);
-			curCustomer.setLastMntBy(userDetails.getLoginUsrID());
+			curCustomer.setLastMntBy(userDetails.getUserId());
 			curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			// copy properties
 			BeanUtils.copyProperties(curCustomer, prvCustomer);
@@ -543,7 +544,7 @@ public class CustomerController {
 			exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
 			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+			exdFieldRender.setLastMntBy(userDetails.getUserId());
 			exdFieldRender.setSeqNo(++seqNo);
 			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
 			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
@@ -915,7 +916,7 @@ public class CustomerController {
 		curCustomer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		curCustomer.setNewRecord(false);
 		curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		curCustomer.setLastMntBy(userDetails.getLoginUsrID());
+		curCustomer.setLastMntBy(userDetails.getUserId());
 		curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		curCustomer.setVersion(prvCustomer.getVersion()+1);
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
@@ -1000,7 +1001,7 @@ public class CustomerController {
 		customerEmploymentDetail.setNewRecord(true);
 		customerEmploymentDetail.setVersion(1);
 		customerEmploymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerEmploymentDetail.setLastMntBy(userDetails.getLoginUsrID());
+		customerEmploymentDetail.setLastMntBy(userDetails.getUserId());
 		customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(customerEmploymentDetail,PennantConstants.TRAN_WF);
@@ -1052,7 +1053,7 @@ public class CustomerController {
 			customerEmploymentDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerEmploymentDetail.setNewRecord(false);
 			customerEmploymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			customerEmploymentDetail.setLastMntBy(userDetails.getLoginUsrID());
+			customerEmploymentDetail.setLastMntBy(userDetails.getUserId());
 			customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerEmploymentDetail.setVersion((customerEmploymentDetailService.getVersion(
 					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpId())) + 1);

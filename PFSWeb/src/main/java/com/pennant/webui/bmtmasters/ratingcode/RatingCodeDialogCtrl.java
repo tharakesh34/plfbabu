@@ -74,7 +74,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -690,7 +690,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRatingCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRatingCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRatingCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRatingCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

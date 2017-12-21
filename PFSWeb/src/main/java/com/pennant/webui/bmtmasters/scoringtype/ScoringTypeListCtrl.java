@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.scoringtype.model.ScoringTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -226,7 +226,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 					String whereCond =  " AND ScoType='"+ scoringType.getScoType()+"' AND version=" + scoringType.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(scoringType.getWorkflowId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), "ScoringType", 
+							getUserWorkspace().getLoggedInUser().getUserId(), "ScoringType", 
 							whereCond, scoringType.getTaskId(), scoringType.getNextTaskId());
 					if (userAcces){
 						showDetailView(scoringType);

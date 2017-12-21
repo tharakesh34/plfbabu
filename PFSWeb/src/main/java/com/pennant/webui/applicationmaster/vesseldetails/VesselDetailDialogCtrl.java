@@ -71,7 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -724,7 +724,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aVesselDetail.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aVesselDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVesselDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

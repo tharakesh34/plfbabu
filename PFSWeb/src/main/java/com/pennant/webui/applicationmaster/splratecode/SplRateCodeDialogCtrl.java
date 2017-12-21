@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -646,7 +646,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		String nextRoleCode="";
 
 		aSplRateCode.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSplRateCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSplRateCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

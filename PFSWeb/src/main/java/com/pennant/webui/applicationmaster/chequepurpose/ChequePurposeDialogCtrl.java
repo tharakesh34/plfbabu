@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 
 /**
@@ -669,7 +669,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 	private boolean doProcess(ChequePurpose aChequePurpose,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aChequePurpose.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aChequePurpose.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aChequePurpose.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aChequePurpose.setUserDetails(getUserWorkspace().getLoggedInUser());
 

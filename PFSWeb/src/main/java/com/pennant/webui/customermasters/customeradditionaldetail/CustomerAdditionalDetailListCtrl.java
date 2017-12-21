@@ -64,7 +64,7 @@ import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 import com.pennant.backend.service.customermasters.CustomerAdditionalDetailService;
 import com.pennant.webui.customermasters.customeradditionaldetail.model.CustomerAdditionalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

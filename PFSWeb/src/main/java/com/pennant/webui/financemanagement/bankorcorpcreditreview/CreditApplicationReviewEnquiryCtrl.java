@@ -91,7 +91,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
@@ -520,7 +520,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						for(FinCreditReviewSummary finCreditReviewSummary : finCreditReviewSummaryList){
 							finCreditReviewSummary.setRecordType(ltstFinCreditReviewDetails.getRecordType());
 							finCreditReviewSummary.setNewRecord(ltstFinCreditReviewDetails.isNew());
-							finCreditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+							finCreditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							finCreditReviewSummary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 							finCreditReviewSummary.setRecordStatus(ltstFinCreditReviewDetails.getRecordStatus());
 							finCreditReviewSummary.setWorkflowId(ltstFinCreditReviewDetails.getWorkflowId());
@@ -582,7 +582,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCreditReviewDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCreditReviewDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCreditReviewDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCreditReviewDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 

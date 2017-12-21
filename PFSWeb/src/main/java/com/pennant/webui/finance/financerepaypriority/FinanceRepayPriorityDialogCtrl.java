@@ -71,7 +71,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -610,7 +610,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aFinanceRepayPriority.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceRepayPriority.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceRepayPriority.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceRepayPriority.setUserDetails(getUserWorkspace().getLoggedInUser());
 

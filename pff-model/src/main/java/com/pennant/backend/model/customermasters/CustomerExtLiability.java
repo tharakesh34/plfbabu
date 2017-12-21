@@ -214,7 +214,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	}
 	
 	public void setLoginDetails(LoggedInUser userDetails){
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails=userDetails;
 		
 	}

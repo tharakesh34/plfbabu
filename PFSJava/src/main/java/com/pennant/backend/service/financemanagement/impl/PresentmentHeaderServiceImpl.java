@@ -556,7 +556,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			receiptHeader.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 			receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			receiptHeader.setNewRecord(true);
-			receiptHeader.setLastMntBy(userDetails.getLoginUsrID());
+			receiptHeader.setLastMntBy(userDetails.getUserId());
 			receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			receiptHeader.setUserDetails(userDetails);

@@ -84,7 +84,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerBalanceSheet
@@ -948,7 +948,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerBalanceSheet.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerBalanceSheet.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerBalanceSheet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerBalanceSheet.setUserDetails(getUserWorkspace().getLoggedInUser());
 

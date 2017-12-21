@@ -129,7 +129,7 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 		}else{
 			long templateUser = -1; 
 			if(saveTemplateFor.getSelectedIndex() == 0){
-				templateUser = getUserWorkspace().getLoggedInUser().getLoginUsrID();
+				templateUser = getUserWorkspace().getLoggedInUser().getUserId();
 			}
 			boolean  isSaved = this.reportGenerationPromptDialogCtrl.doSaveTemplate(
 					reportId ,templateUser,this.templateName.getValue());

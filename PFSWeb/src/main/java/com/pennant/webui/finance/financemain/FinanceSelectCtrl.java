@@ -114,7 +114,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -1313,7 +1313,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showDetailView(financeDetail);
@@ -1386,7 +1386,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showMaintainDetailView(financeDetail);
@@ -1468,7 +1468,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showRepayDetailView(repayData);
@@ -1548,7 +1548,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showReceiptDetailView(receiptData);
@@ -1627,7 +1627,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showWriteoffDetailView(writeoffHeader);
@@ -1708,7 +1708,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 					
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showTakafulPremiumExcludefDetailView(feeRule);
@@ -1812,7 +1812,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showCancellationDetailView(financeDetail);
@@ -1890,7 +1890,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getUserId()
 							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showRepayCancelView(financeDetail);
@@ -2334,7 +2334,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 							+ aFinanceMain.getVersion() + " ";
 
 					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), workflowCode, whereCond,
+							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
 							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces) {
 						showFinCovenantMaintanceView(finMaintainInstruction, financeDetail);

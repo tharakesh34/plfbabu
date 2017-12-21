@@ -84,7 +84,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -601,7 +601,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aQueueAssignmentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aQueueAssignmentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQueueAssignmentHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQueueAssignmentHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

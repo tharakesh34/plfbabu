@@ -63,7 +63,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.service.applicationmaster.PinCodeService;
 import com.pennant.webui.applicationmaster.pincode.model.PinCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;

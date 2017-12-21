@@ -15,6 +15,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 

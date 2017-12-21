@@ -41,7 +41,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>JountAccountDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId" })
+@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId","authoritySignatory","sequence" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class JointAccountDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -63,7 +63,9 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String worstStatus;
 	private String status;
 	private String catOfcoApplicant;
+	@XmlElement
 	private boolean					authoritySignatory;
+	@XmlElement
 	private int						sequence;
 
 	private List<FinanceExposure> primaryList = null;

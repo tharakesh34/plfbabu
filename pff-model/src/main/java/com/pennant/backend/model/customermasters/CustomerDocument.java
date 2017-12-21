@@ -108,6 +108,11 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIdNumMand = false;
 	private boolean docIssuedAuthorityMand = false;
 	private boolean docIsMandatory = false;
+	private boolean docIsPdfExtRequired= false;;
+	private boolean docIsPasswordProtected= false;;
+	private long pdfMappingRef= Long.MIN_VALUE;
+	@XmlElement(name="docPassword")
+	private String pdfPassWord;
 	
 	
 	private String sourceId;
@@ -142,6 +147,10 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("custDocImage");
 		excludeFields.add("sourceId");
 		excludeFields.add("docIsMandatory");
+		excludeFields.add("docIsPdfExtRequired");
+		excludeFields.add("docIsPasswordProtected");
+		excludeFields.add("pdfMappingRef");
+		excludeFields.add("custCtgCode");
 		return excludeFields;
 	}
 
@@ -366,7 +375,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
 
 	}
@@ -427,4 +436,35 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		this.docIsMandatory = docIsMandatory;
 	}
 
+	public boolean isDocIsPdfExtRequired() {
+		return docIsPdfExtRequired;
+	}
+
+	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
+		this.docIsPdfExtRequired = docIsPdfExtRequired;
+	}
+
+	public boolean isDocIsPasswordProtected() {
+		return docIsPasswordProtected;
+	}
+
+	public void setDocIsPasswordProtected(boolean docIsPasswordProtected) {
+		this.docIsPasswordProtected = docIsPasswordProtected;
+	}
+
+	public long getPdfMappingRef() {
+		return pdfMappingRef;
+	}
+
+	public void setPdfMappingRef(long pdfMappingRef) {
+		this.pdfMappingRef = pdfMappingRef;
+	}
+
+	public String getPdfPassWord() {
+		return pdfPassWord;
+	}
+
+	public void setPdfPassWord(String pdfPassWord) {
+		this.pdfPassWord = pdfPassWord;
+	}
 }

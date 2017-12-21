@@ -66,7 +66,7 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

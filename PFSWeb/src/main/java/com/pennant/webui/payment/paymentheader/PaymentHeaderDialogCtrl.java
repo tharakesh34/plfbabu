@@ -107,7 +107,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -923,7 +923,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPaymentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPaymentHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPaymentHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPaymentHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

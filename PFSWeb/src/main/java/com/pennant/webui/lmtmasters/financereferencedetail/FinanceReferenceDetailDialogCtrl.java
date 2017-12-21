@@ -100,7 +100,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 
 /**
@@ -938,7 +938,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 					errParm[1] = PennantJavaUtil.getLabel("FeeTypes") + ":" + valueParm[1];
 					errParm[2] = PennantJavaUtil.getLabel("FinanceType_label");
 					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-							(PennantConstants.KEY_FIELD, "WFEE06", errParm, valueParm), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
+							(PennantConstants.KEY_FIELD, "WFEE06", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 				}else{
 					String[] errParm = new String[3];
 					String[] valueParm = new String[3];
@@ -948,7 +948,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 					valueParm[2] = missedFees;
 					errParm[2] = PennantJavaUtil.getLabel("FeeTypes") + ":" + valueParm[2];
 					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-							(PennantConstants.KEY_FIELD, "WFEE07", errParm, valueParm), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
+							(PennantConstants.KEY_FIELD, "WFEE07", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 				}
 			}
 		}
@@ -1140,7 +1140,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceReferenceDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceReferenceDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceReferenceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

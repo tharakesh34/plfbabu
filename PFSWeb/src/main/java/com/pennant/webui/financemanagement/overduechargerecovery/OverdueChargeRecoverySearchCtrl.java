@@ -68,7 +68,7 @@ import com.pennant.search.SearchResult;
 import com.pennant.util.AdvancedGroupsModelArray;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryComparator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 

@@ -68,7 +68,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -692,7 +692,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aBuilderCompany.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aBuilderCompany.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aBuilderCompany.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aBuilderCompany.setUserDetails(getUserWorkspace().getLoggedInUser());
 

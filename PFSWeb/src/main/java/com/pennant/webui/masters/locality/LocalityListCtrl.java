@@ -62,7 +62,7 @@ import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.service.masters.LocalityService;
 import com.pennant.webui.masters.locality.model.LocalityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;

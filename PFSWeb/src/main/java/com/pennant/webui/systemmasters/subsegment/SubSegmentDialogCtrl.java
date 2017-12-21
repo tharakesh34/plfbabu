@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -681,7 +681,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSubSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSubSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSubSegment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSubSegment.setUserDetails(getUserWorkspace().getLoggedInUser());
 

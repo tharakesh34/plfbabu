@@ -42,7 +42,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	private static final long serialVersionUID = -6646226859133636932L;

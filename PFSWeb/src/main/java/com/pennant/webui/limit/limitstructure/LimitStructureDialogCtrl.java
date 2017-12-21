@@ -96,7 +96,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -532,7 +532,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		limitStructureDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		limitStructureDetail.setVersion(limitStructureDetail.getVersion() + 1);
 		limitStructureDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		limitStructureDetail.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		limitStructureDetail.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 
 		//validateInsertingRow(limitStructureDetail);
 		key = key + 1;
@@ -1330,7 +1330,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			unclassifiedDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			unclassifiedDetails.setVersion(unclassifiedDetails.getVersion() + 1);
 			unclassifiedDetails.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-			unclassifiedDetails.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			unclassifiedDetails.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		}
 
 		key = key + 1;
@@ -1565,11 +1565,11 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	private boolean doProcess(LimitStructure aLimitStructure, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aLimitStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLimitStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitStructure.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitStructure.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (aLimitStructure.isNew()) {
-			aLimitStructure.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aLimitStructure.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitStructure.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (isWorkFlowEnabled()) {

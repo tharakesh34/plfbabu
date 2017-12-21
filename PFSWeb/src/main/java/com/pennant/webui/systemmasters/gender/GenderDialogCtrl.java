@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -648,7 +648,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aGender.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aGender.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aGender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGender.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -283,7 +283,7 @@ public class CollateralController {
 		collateralSetup.setSourceId(APIConstants.FINSOURCE_ID_API);
 		collateralSetup.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		collateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		collateralSetup.setLastMntBy(userDetails.getLoginUsrID());
+		collateralSetup.setLastMntBy(userDetails.getUserId());
 
 		// generate collateral reference in case of empty
 		if(StringUtils.isBlank(collateralSetup.getCollateralRef())) {
@@ -319,7 +319,7 @@ public class CollateralController {
 		if (thirdPartyCollaterals != null) {
 			for (CollateralThirdParty thirdPartyColl : thirdPartyCollaterals) {
 				thirdPartyColl.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				thirdPartyColl.setLastMntBy(userDetails.getLoginUsrID());
+				thirdPartyColl.setLastMntBy(userDetails.getUserId());
 				thirdPartyColl.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				thirdPartyColl.setUserDetails(userDetails);
 
@@ -366,7 +366,7 @@ public class CollateralController {
 				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setUserDetails(userDetails);
-				detail.setLastMntBy(userDetails.getLoginUsrID());
+				detail.setLastMntBy(userDetails.getUserId());
 
 				Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(detail.getCoOwnerCIF());
 				if(coOwnerCustomer != null) {
@@ -425,7 +425,7 @@ public class CollateralController {
 				exdFieldRender.setReference(collateralSetup.getCollateralRef());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setLastMntBy(userDetails.getUserId());
 				
 				if(StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
 					exdFieldRender.setSeqNo(++seqNo);

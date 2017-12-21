@@ -68,7 +68,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -653,7 +653,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		String nextRoleCode = "";
 
 		aEmploymentType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aEmploymentType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEmploymentType
 				.setUserDetails(getUserWorkspace().getLoggedInUser());

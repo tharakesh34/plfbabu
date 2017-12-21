@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.customermasters.fincreditrevsubcategory.model.FinCreditRevSubCategoryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -208,7 +208,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND SubCategoryCode='"+ finCreditRevSubCategory.getSubCategoryCode()+"' AND version=" + finCreditRevSubCategory.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(finCreditRevSubCategory.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "FinCreditRevSubCategory", whereCond, finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
+					boolean userAcces =  validateUserAccess(finCreditRevSubCategory.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "FinCreditRevSubCategory", whereCond, finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
 					if (userAcces){
 						showDetailView(finCreditRevSubCategory);
 					}else{

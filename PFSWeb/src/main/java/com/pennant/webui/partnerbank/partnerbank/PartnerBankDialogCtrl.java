@@ -84,7 +84,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 
@@ -1268,7 +1268,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aPartnerBank.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPartnerBank.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPartnerBank.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPartnerBank.setUserDetails(getUserWorkspace().getLoggedInUser());
 

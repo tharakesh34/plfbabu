@@ -90,7 +90,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
@@ -906,7 +906,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aReportConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReportConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReportConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReportConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

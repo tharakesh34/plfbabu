@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -650,7 +650,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceApplicationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceApplicationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceApplicationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceApplicationCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

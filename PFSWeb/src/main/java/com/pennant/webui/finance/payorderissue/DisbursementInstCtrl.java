@@ -84,7 +84,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
 	private static final Logger			logger				= Logger.getLogger(DisbursementInstCtrl.class);

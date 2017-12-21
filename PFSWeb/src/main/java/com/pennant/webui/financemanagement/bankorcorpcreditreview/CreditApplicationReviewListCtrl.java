@@ -74,7 +74,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.model.CreditApplicationReviewListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -350,7 +350,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 							+ creditReviewDetails.getVersion() + " ";
 
 					boolean userAcces = validateUserAccess(creditReviewDetails.getWorkflowId(), getUserWorkspace()
-							.getLoggedInUser().getLoginUsrID(), "FinCreditReviewDetails", whereCond,
+							.getLoggedInUser().getUserId(), "FinCreditReviewDetails", whereCond,
 							creditReviewDetails.getTaskId(), creditReviewDetails.getNextTaskId());
 					if (userAcces) {
 						doShowDialogPage(creditReviewDetails);

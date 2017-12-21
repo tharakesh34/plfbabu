@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -635,7 +635,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aGroupStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aGroupStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aGroupStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGroupStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

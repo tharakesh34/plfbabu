@@ -4238,6 +4238,7 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
+		<property name="documentService" ref="documentService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -9840,6 +9841,9 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="savePresentmentDetails">PROPAGATION_REQUIRED</prop>
+				<prop key="updatePresentmentDetails">PROPAGATION_REQUIRED</prop>
+				<prop key="getSeqNumber">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -10451,6 +10455,10 @@
 		class="com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="bankBranchService" ref="bankBranchService" />
+		<property name="mandateService" ref="mandateService" />
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 
 	<!-- custom service tasks -->
@@ -10480,4 +10488,65 @@
 
 	<bean id="externalDocumentManager"
 		class="com.pennanttech.pff.document.external.ExternalDocumentManager"/>
+	
+	<!-- for Document parser -->
+	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
+		<constructor-arg ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Licence File Upload -->
+	<bean id="licenceFileDAO"
+		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="licenceFileService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="licenceFileServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="licenceFileServiceTarget" class="com.pennant.backend.service.licencefile.impl.LicenceFileServiceImpl">
+		<property name="licenceFileDAO" ref="licenceFileDAO" />
+	</bean>
+	
+	<!-- Finance documents -->
+	<bean id="documentService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="documentServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="documentServiceTarget" class="com.pennanttech.pff.document.impl.DocumentServiceImpl">
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		
+		<property name="documentTypeService" ref="documentTypeService" />
+	</bean>
 </beans>

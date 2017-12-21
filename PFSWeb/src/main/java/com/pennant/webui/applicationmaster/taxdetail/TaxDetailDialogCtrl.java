@@ -77,7 +77,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.systemmasters.province.ProvinceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -1322,7 +1322,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

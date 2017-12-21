@@ -3,6 +3,7 @@ package com.pennant.component.extendedfields;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,27 @@ import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Timebox;
+import org.zkoss.zul.Window;
 
+import com.pennant.AccountSelectionBox;
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
+import com.pennant.FrequencyBox;
+import com.pennant.RateBox;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -28,6 +45,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
+import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldCtrl {
@@ -39,6 +57,7 @@ public class ExtendedFieldCtrl {
 	private Tab								tab;
 	private boolean							isNewRecord	= false;
 	private Tabpanel						tabpanel;
+	private Window 							window;
 
 	private ExtendedFieldHeader				extendedFieldHeader;
 	private ExtendedFieldRender				extendedFieldRender;
@@ -47,7 +66,7 @@ public class ExtendedFieldCtrl {
 	private static ScriptValidationService	scriptValidationService;
 	private static ExtFieldConfigService	extFieldConfigService;
 	private static ExtendedFieldRenderDAO	extendedFieldRenderDAO;
-	 
+	private static Map<String, Object> tabPanelsMap = new HashMap<>(); 
 
 	/**
 	 * Method for Rendering the Extended field details
@@ -61,6 +80,7 @@ public class ExtendedFieldCtrl {
 		this.generator.setRowWidth(220);
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
+		this.generator.setWindow(window);
 		this.tab.setLabel(extendedFieldHeader.getTabHeading());
 
 		// Pre-Validation Checking & Setting Defaults
@@ -291,7 +311,7 @@ public class ExtendedFieldCtrl {
 	}
 
 	public void createTab(Tabs tabs, Tabpanels tabPanels) {
-
+		
 		if (tabs.getFellowIfAny("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName()) != null) {
 			Tab tab = (Tab) tabs.getFellow("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 			tab.close();
@@ -306,7 +326,139 @@ public class ExtendedFieldCtrl {
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setHeight("100%");
 		tabpanel.setParent(tabPanels);
+		// it store all tabpanel id (for pdf extraction)
+		tabPanelsMap.put("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName(), tabpanel);
+	}
+	
+	public void fillcomponentData(Map<String, Object> compopnentData, String tabPanelId, boolean isDelete) {
+		logger.debug(Literal.ENTERING);
+		Tabpanel pdfExtractionPanel = null;
 
+		if (!tabPanelsMap.isEmpty() && tabPanelsMap.size() > 0) {
+			for (Map.Entry<String, Object> entry : tabPanelsMap.entrySet()) {
+				String key = entry.getKey();
+				if (key.equals(tabPanelId)) {
+					pdfExtractionPanel = (Tabpanel) tabPanelsMap.get(key);
+				}
+			}
+		}
+		if (pdfExtractionPanel != null && compopnentData.size()>0) {
+			setcomponentData(compopnentData, pdfExtractionPanel, isDelete);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setcomponentData(Map<String, Object> compopnentData, Tabpanel panel, boolean isDelete) {
+
+		for (Component component : panel.getFellows()) {
+			String key = component.getId().replace("ad_", "");
+			if (compopnentData.containsKey(key)) {
+				Object value = compopnentData.get(key);
+				if (component instanceof Textbox) {
+					Textbox textbox = (Textbox) component;
+					if (isDelete) {
+						textbox.setText("");
+					} else {
+						textbox.setText(String.valueOf(value));
+					}
+				} else if (component instanceof Uppercasebox) {
+				} else if (component instanceof Datebox) {
+					Datebox datebox = (Datebox) component;
+					if (isDelete) {
+						datebox.setValue(null);
+					} else {
+						datebox.setValue((Date) value);
+					}
+				} else if (component instanceof Timebox) {
+					Timebox timebox = (Timebox) component;
+					if (isDelete) {
+						timebox.setText("");
+					} else {
+						timebox.setText(String.valueOf(value));
+					}
+				} else if (component instanceof Decimalbox) {
+					Decimalbox decimalbox = (Decimalbox) component;
+					if (isDelete) {
+						decimalbox.setText("");
+					} else {
+						decimalbox.setText(String.valueOf(value));
+					}
+				} else if (component instanceof CurrencyBox) {
+					CurrencyBox currencyBox = (CurrencyBox) component;
+					if (isDelete) {
+						currencyBox.setValue("");
+					} else {
+						currencyBox.setValue(String.valueOf(value));
+					}
+				} else if (component instanceof Combobox) {
+					Combobox combobox = (Combobox) component;
+					if (isDelete) {
+						combobox.setValue("");
+					} else {
+						combobox.setValue(String.valueOf(value));
+					}
+				} else if (component instanceof Bandbox) {
+					Bandbox bandbox = (Bandbox) component;
+					if (isDelete) {
+						bandbox.setValue("");
+					} else {
+						bandbox.setValue(String.valueOf(value));
+					}
+				} else if (component instanceof ExtendedCombobox) {
+					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+					if (isDelete) {
+						extendedCombobox.setValue("");
+					} else {
+						extendedCombobox.setValue(String.valueOf(value));
+					}
+				} else if (component instanceof RateBox) {
+					RateBox rateBox = (RateBox) component;
+					if (isDelete) {
+						rateBox.setBaseValue("");
+					} else {
+						rateBox.setBaseValue(String.valueOf(value));
+					}
+				} else if (component instanceof Checkbox) {
+					Checkbox checkbox = (Checkbox) component;
+					if (isDelete) {
+						checkbox.setValue("");
+					} else {
+						checkbox.setValue(String.valueOf(value));
+					}
+				} else if (component instanceof Intbox) {
+					Intbox intbox = (Intbox) component;
+					if (isDelete) {
+						intbox.setValue(0);
+					} else {
+						intbox.setValue(Integer.valueOf(String.valueOf(value)));
+					}
+				} else if (component instanceof Longbox) {
+					Longbox longbox = (Longbox) component;
+					if (isDelete) {
+						longbox.setValue(0l);
+					} else {
+						longbox.setValue(Long.valueOf(String.valueOf(value)));
+					}
+				} else if (component instanceof Radiogroup) {
+				} else if (component instanceof AccountSelectionBox) {
+					AccountSelectionBox accountSelectionBox = (AccountSelectionBox) component;
+					if (isDelete) {
+						accountSelectionBox.setValue("");
+					} else {
+						accountSelectionBox.setValue(String.valueOf(value));
+					}
+					
+				} else if (component instanceof FrequencyBox) {
+					FrequencyBox frequencyBox = (FrequencyBox) component;
+					if (isDelete) {
+						frequencyBox.setValue("");
+					} else {
+						frequencyBox.setValue(String.valueOf(value));
+					}
+
+				}
+			}
+		}
 	}
 
 	/**
@@ -409,6 +561,14 @@ public class ExtendedFieldCtrl {
 	 */
 	public static void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		ExtendedFieldCtrl.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public Window getWindow() {
+		return window;
+	}
+
+	public void setWindow(Window window) {
+		this.window = window;
 	}
 
 }

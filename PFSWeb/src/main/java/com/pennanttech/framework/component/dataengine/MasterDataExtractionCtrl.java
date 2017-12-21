@@ -2,7 +2,7 @@ package com.pennanttech.framework.component.dataengine;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;

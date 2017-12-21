@@ -783,8 +783,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	public LimitHeader procExternalFinance(InputStream finInput, LoggedInUser user) {
 		logger.debug("Entering");
-		userID = user.getLoginUsrID();
-		userLangauge = user.getUsrLanguage();
+		userID = user.getUserId();
+		userLangauge = user.getLanguage();
 		LimitHeader headerDetails = new LimitHeader();
 		String status = "";
 		int rcdCount = 0;
@@ -819,9 +819,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					headerDetails.setNewRecord(true);
 					headerDetails.setActive(true);
 					headerDetails.setVersion(1);
-					headerDetails.setCreatedBy(user.getLoginUsrID());
+					headerDetails.setCreatedBy(user.getUserId());
 					headerDetails.setCreatedOn(new Timestamp(System.currentTimeMillis()));					
-					headerDetails.setLastMntBy(user.getLoginUsrID());
+					headerDetails.setLastMntBy(user.getUserId());
 					headerDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));					
 
 					headerDetails = prepareExtFinanceData(finRow, headerDetails,user);

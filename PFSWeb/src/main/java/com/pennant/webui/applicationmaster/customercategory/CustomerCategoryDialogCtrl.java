@@ -75,7 +75,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -694,7 +694,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 

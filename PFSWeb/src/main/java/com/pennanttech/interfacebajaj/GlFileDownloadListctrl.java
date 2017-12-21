@@ -84,7 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.bajaj.process.SAPGLProcess;
 import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.config.DataEngineConfig;

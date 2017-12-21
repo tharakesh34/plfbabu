@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.question.model.QuestionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -226,7 +226,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND QuestionId="+ question.getQuestionId()+" AND version=" + question.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(question.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "Question", whereCond, question.getTaskId(), question.getNextTaskId());
+					boolean userAcces =  validateUserAccess(question.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "Question", whereCond, question.getTaskId(), question.getNextTaskId());
 					if (userAcces){
 						showDetailView(question);
 					}else{

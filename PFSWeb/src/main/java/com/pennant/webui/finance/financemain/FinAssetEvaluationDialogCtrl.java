@@ -88,7 +88,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -371,7 +371,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			finAssetEvaluation.setNewRecord(true);
 		}
 		finAssetEvaluation.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-		finAssetEvaluation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		finAssetEvaluation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		finAssetEvaluation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		finAssetEvaluation.setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setFinAssetEvaluation(finAssetEvaluation);
@@ -1285,7 +1285,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinAssetEvaluation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinAssetEvaluation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinAssetEvaluation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinAssetEvaluation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

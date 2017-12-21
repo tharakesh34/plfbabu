@@ -114,7 +114,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -1139,7 +1139,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFeePostings.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFeePostings.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFeePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFeePostings.setUserDetails(getUserWorkspace().getLoggedInUser());
 

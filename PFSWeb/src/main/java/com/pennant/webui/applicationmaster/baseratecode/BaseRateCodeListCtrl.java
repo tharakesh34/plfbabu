@@ -61,7 +61,7 @@ import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.webui.applicationmaster.baseratecode.model.BaseRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

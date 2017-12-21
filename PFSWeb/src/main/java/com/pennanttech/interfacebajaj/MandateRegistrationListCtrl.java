@@ -101,7 +101,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -704,7 +704,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
 			dataEngine.exportData("MANDATES_EXPORT");*/
 				
-			MandateProcess process = new MandateProcess(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getLoginUsrID() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue());
+			MandateProcess process = new MandateProcess(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getUserId() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue());
 			Thread thread = new Thread(process);
 			thread.start();
 			
@@ -797,7 +797,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		public void run() {
 			try {
 				mandateRequestService.sendReqest(mandateIdList, this.fromDate, this.toDate, getUserWorkspace()
-						.getLoggedInUser().getLoginUsrID(), getUserWorkspace().getLoggedInUser().getUserName(),
+						.getLoggedInUser().getUserId(), getUserWorkspace().getLoggedInUser().getUserName(),
 						this.branchDetails);
 			} catch (Exception e) {
 

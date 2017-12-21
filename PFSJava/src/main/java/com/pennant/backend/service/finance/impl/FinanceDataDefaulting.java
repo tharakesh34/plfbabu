@@ -488,7 +488,7 @@ public class FinanceDataDefaulting {
 		//defaults from application
 		finMain.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		finMain.setInitiateUser(userDetails.getLoginUsrID());
+		finMain.setInitiateUser(userDetails.getUserId());
 		finMain.setInitiateDate(DateUtility.getAppDate());
 		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 		finMain.setCalRoundingMode(financeType.getRoundingMode());

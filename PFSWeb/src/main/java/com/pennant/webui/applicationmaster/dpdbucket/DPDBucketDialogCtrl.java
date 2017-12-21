@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -631,7 +631,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDPDBucket.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDPDBucket.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDPDBucket.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDPDBucket.setUserDetails(getUserWorkspace().getLoggedInUser());
 

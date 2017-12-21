@@ -171,7 +171,7 @@ import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -2812,11 +2812,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
-		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommitment.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-		aCommitment.getCommitmentMovement().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCommitment.getCommitmentMovement().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.getCommitmentMovement().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommitment.getCommitmentMovement().setUserDetails(getUserWorkspace().getLoggedInUser());
 

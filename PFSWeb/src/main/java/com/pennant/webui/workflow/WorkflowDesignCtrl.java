@@ -53,7 +53,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	private static final long serialVersionUID = -1351367303946249042L;

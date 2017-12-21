@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -649,7 +649,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 			AuditHeader auditHeader = null;
 			String nextRoleCode = "";
 
-			aNPABucket.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aNPABucket.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aNPABucket.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aNPABucket.setUserDetails(getUserWorkspace().getLoggedInUser());
 

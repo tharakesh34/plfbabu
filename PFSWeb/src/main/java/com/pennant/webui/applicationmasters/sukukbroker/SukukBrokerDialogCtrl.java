@@ -83,7 +83,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmasters.sukukbrokerbonds.model.SukukBrokerBondsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -692,7 +692,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 	private boolean doProcess(SukukBroker aSukukBroker,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aSukukBroker.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSukukBroker.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSukukBroker.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSukukBroker.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

@@ -94,7 +94,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -839,7 +839,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCheckList.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCheckList.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCheckList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCheckList.setUserDetails(getUserWorkspace().getLoggedInUser());
 

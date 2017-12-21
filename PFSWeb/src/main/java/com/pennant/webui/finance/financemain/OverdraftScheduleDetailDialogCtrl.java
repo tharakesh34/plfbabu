@@ -22,7 +22,7 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {

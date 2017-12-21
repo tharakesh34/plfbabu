@@ -70,7 +70,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -657,7 +657,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRejectDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRejectDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRejectDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRejectDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 

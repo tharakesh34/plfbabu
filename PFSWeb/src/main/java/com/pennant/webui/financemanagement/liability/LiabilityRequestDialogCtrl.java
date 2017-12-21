@@ -103,7 +103,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -641,7 +641,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		int format=CurrencyUtil.getFormat(afinanceMain.getFinCcy());
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 		afinanceMain.setRoleCode(getRole());
@@ -713,7 +713,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			liabilityRequest.setInitiatedBy(afinanceMain.getInitiateUser());
 		}
 		liabilityRequest.setVersion(afinanceMain.getVersion());
-		liabilityRequest.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		liabilityRequest.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		liabilityRequest.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		liabilityRequest.setFinanceDetail(aFinanceDetail);
@@ -1628,7 +1628,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		if (intiateUser == 0) {
 			if (isFirstTask() && getUserWorkspace().getUserRoles().contains(getWorkFlow().firstTaskOwner())) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain()
-						.setInitiateUser(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+						.setInitiateUser(getUserWorkspace().getLoggedInUser().getUserId());
 			}
 		}
 

@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -633,7 +633,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSegment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSegment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSegment.setUserDetails(getUserWorkspace().getLoggedInUser());
 

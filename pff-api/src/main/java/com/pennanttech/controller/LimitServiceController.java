@@ -354,7 +354,7 @@ public class LimitServiceController {
 
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 			limitHeader.setNewRecord(true);
-			limitHeader.setLastMntBy(userDetails.getLoginUsrID());
+			limitHeader.setLastMntBy(userDetails.getUserId());
 			limitHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			limitHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			limitHeader.setCreatedOn(new Timestamp(new Date().getTime()));
@@ -371,7 +371,7 @@ public class LimitServiceController {
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
 		for (LimitDetails detail : limitDetails) {
 			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-				detail.setLastMntBy(userDetails.getLoginUsrID());
+				detail.setLastMntBy(userDetails.getUserId());
 				detail.setNewRecord(true);
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -444,7 +444,7 @@ public class LimitServiceController {
 				for (LimitDetails detail : limitHeader.getCustomerLimitDetailsList()) {
 					for(LimitDetails prvDetail : prvLimitHeader.getCustomerLimitDetailsList()) {
 						if(detail.getLimitStructureDetailsID() == prvDetail.getLimitStructureDetailsID()) {
-							prvDetail.setLastMntBy(userDetails.getLoginUsrID());
+							prvDetail.setLastMntBy(userDetails.getUserId());
 							prvDetail.setNewRecord(false);
 							prvDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 							prvDetail.setLastMntOn(new Timestamp(new Date().getTime()));

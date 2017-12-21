@@ -70,7 +70,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -656,7 +656,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aLanguage.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLanguage.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLanguage.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLanguage.setUserDetails(getUserWorkspace().getLoggedInUser());
 

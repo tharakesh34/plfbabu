@@ -81,7 +81,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -1134,7 +1134,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		String nextRoleCode = "";
 
 		aAccountType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aAccountType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAccountType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -84,7 +84,7 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.security.core.User;
 
 /**
@@ -1279,7 +1279,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBranch.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBranch.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBranch.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1646,7 +1646,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		SecurityUser secUser = null;
 		if (!users.isEmpty()) {
 			for (User user : users) {
-				if (user.getUserId() != getUserWorkspace().getLoggedInUser().getLoginUsrID()) {
+				if (user.getUserId() != getUserWorkspace().getLoggedInUser().getUserId()) {
 					if (builder.length() > 0) {
 						builder.append("</br>");
 					}

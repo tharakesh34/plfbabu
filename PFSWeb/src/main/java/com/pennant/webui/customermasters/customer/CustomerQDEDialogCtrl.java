@@ -87,7 +87,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -521,7 +521,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		AuditHeader auditHeader = null;
 		Customer aCustomer = aCustomerDetails.getCustomer();
 
-		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

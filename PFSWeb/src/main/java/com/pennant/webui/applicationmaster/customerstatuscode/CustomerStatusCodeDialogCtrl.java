@@ -72,7 +72,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -679,7 +679,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerStatusCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerStatusCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerStatusCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

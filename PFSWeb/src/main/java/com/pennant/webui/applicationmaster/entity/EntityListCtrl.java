@@ -63,7 +63,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.webui.applicationmaster.entity.model.EntityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;

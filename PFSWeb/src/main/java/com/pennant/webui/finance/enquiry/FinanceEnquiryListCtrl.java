@@ -92,7 +92,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -1036,7 +1036,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			sql.append(" (Reference ").append(operatorSign).append(" '").append(reference.replace("'", "''"))
 					.append("') and");
 		}
-		sql.append(" (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getLoginUsrID()).append(')');
+		sql.append(" (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getUserId()).append(')');
 		sql.append("))");
 
 		// Get the result set

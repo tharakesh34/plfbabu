@@ -109,8 +109,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 		securityRoles = AuthenticationManager.getSecurityRoles();
 
 		Sessions.getCurrent().setAttribute(org.zkoss.web.Attributes.PREFERRED_LOCALE,
-				org.zkoss.util.Locales.getLocale(loggedInUser.getUsrLanguage()));
-		org.zkoss.util.Locales.setThreadLocal(org.zkoss.util.Locales.getLocale(loggedInUser.getUsrLanguage()));
+				org.zkoss.util.Locales.getLocale(loggedInUser.getLanguage()));
+		org.zkoss.util.Locales.setThreadLocal(org.zkoss.util.Locales.getLocale(loggedInUser.getLanguage()));
 
 		// speed up the ModalDialogs while disabling the animation
 		Window.setDefaultActionOnShow("");
@@ -232,7 +232,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 			SecurityRight secRight = new SecurityRight();
 			secRight.setLoginAppId(App.ID);
 			secRight.setLoginAppCode(App.CODE);
-			secRight.setUsrID(loggedInUser.getLoginUsrID());
+			secRight.setUsrID(loggedInUser.getUserId());
 			secRight.setRoleCd(roleCode);
 			secRight.setPage(page);
 			secRight.setMenuRight(menuRightName);
@@ -332,7 +332,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	public String getUserLanguage() {
-		return getLoggedInUser().getUsrLanguage();
+		return getLoggedInUser().getLanguage();
 	}
 
 	public List<SecurityUserDivBranch> getDivisionBranches() {

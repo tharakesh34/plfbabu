@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
@@ -599,7 +599,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityOperation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityOperation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

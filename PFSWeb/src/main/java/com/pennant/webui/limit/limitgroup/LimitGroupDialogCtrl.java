@@ -95,7 +95,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -918,7 +918,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		} else {
 			LimitGroupLines limitGroupItems = new LimitGroupLines();
 			limitGroupItems.setNewRecord(true);
-			limitGroupItems.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			limitGroupItems.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			limitGroupItems.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			limitGroupItems.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			limitGroupItems.setVersion(limitGroupItems.getVersion() + 1);
@@ -1457,11 +1457,11 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	private boolean doProcess(LimitGroup aLimitGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aLimitGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLimitGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (aLimitGroup.isNew()) {
-			aLimitGroup.setCreatedBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aLimitGroup.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitGroup.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (isWorkFlowEnabled()) {

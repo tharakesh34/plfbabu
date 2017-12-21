@@ -62,7 +62,7 @@ import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 import com.pennant.backend.service.applicationmaster.CorpRelationCodeService;
 import com.pennant.webui.applicationmaster.corprelationcode.model.CorpRelationCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

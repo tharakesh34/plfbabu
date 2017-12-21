@@ -99,7 +99,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -557,7 +557,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 		
-		aFinanceFlags.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceFlags.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceFlags.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceFlags.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -94,7 +94,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -859,7 +859,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aReinstateFinance.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReinstateFinance.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReinstateFinance.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReinstateFinance.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -63,7 +63,7 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
 import com.pennant.backend.service.customermasters.CustomerPRelationService;
 import com.pennant.webui.customermasters.customerprelation.model.CustomerPRelationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

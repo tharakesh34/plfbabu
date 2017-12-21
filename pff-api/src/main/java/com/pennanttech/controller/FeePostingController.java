@@ -77,7 +77,7 @@ public class FeePostingController {
 		feePostings.setVersion(1);
 		feePostings.setPostDate(DateUtility.getAppDate());
 		feePostings.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		feePostings.setLastMntBy(userDetails.getLoginUsrID());
+		feePostings.setLastMntBy(userDetails.getUserId());
 		feePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		feePostings.setSourceId(APIConstants.FINSOURCE_ID_API);
 	}

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -622,7 +622,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aIdentityDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aIdentityDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aIdentityDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aIdentityDetails.setUserDetails(getUserWorkspace().getLoggedInUser());
 

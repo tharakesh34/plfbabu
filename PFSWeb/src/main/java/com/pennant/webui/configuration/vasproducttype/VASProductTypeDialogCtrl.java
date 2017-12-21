@@ -74,7 +74,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -807,7 +807,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	private boolean doProcess(VASProductType aVASProductType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASProductType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASProductType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

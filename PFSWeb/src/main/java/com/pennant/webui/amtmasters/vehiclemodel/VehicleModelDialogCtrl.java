@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -611,7 +611,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 		
-		aVehicleModel.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVehicleModel.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVehicleModel.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleModel.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

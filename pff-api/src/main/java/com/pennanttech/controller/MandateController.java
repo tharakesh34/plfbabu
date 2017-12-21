@@ -303,7 +303,7 @@ public class MandateController {
 		mandate.setIFSC(bankBranch.getIFSC());
 		mandate.setBankBranchID(bankBranch.getBankBranchID());
 		mandate.setInputDate(DateUtility.getAppDate());
-		mandate.setLastMntBy(userDetails.getLoginUsrID());
+		mandate.setLastMntBy(userDetails.getUserId());
 		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
 		logger.debug("Leaving");

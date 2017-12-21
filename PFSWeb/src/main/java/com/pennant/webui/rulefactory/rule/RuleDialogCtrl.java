@@ -92,7 +92,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/ruleDialog.zul file.
@@ -1246,7 +1246,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRule.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRule.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRule.setUserDetails(getUserWorkspace().getLoggedInUser());
 

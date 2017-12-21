@@ -30,7 +30,7 @@ import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.webui.systemmasters.academic.model.AcademicListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

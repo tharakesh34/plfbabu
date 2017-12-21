@@ -61,7 +61,7 @@ import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.service.amtmasters.VehicleManufacturerService;
 import com.pennant.webui.amtmasters.vehiclemanufacturer.model.VehicleManufacturerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

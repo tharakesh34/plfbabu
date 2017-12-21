@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 
 /**
@@ -640,7 +640,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	private boolean doProcess(SukukBond aSukukBond,String tranType){
 		logger.debug("Entering");
 		boolean processCompleted=false;
-		aSukukBond.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aSukukBond.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSukukBond.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSukukBond.setUserDetails(getUserWorkspace().getLoggedInUser());
 		

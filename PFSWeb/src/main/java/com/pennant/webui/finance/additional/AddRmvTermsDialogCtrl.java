@@ -74,7 +74,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long				serialVersionUID	= 2623911832045017662L;

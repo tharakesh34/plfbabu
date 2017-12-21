@@ -364,7 +364,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		OverdueCharge overdueCharge = (OverdueCharge) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = overdueCharge.getUserDetails().getUsrLanguage();
+		String usrLanguage = overdueCharge.getUserDetails().getLanguage();
 
 		// FeeTier Validation
 		if (overdueCharge.getChargeDetailEntries() != null && overdueCharge.getChargeDetailEntries() .size() > 0) {

@@ -55,7 +55,7 @@ import com.pennant.search.Filter;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryComparator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
@@ -373,7 +373,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ overdueChargeRecovery.getFinReference()+"' AND version=" + overdueChargeRecovery.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(overdueChargeRecovery.getWorkflowId(),getUserWorkspace().getLoggedInUser().getLoginUsrID(), "OverdueChargeRecovery", whereCond, overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
+					boolean userAcces =  validateUserAccess(overdueChargeRecovery.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "OverdueChargeRecovery", whereCond, overdueChargeRecovery.getTaskId(), overdueChargeRecovery.getNextTaskId());
 					if (userAcces){
 						showDetailView(overdueChargeRecovery);
 					}else{

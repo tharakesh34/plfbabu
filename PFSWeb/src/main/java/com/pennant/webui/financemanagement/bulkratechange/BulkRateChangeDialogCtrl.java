@@ -106,7 +106,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -939,7 +939,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBulkRateChangeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBulkRateChangeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBulkRateChangeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBulkRateChangeHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Department/departmentDialog.zul file.
@@ -635,7 +635,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDepartment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDepartment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDepartment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDepartment.setUserDetails(getUserWorkspace().getLoggedInUser());
 

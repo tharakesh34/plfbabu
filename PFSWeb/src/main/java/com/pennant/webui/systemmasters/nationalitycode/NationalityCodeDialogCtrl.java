@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -641,7 +641,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aNationalityCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aNationalityCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aNationalityCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aNationalityCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

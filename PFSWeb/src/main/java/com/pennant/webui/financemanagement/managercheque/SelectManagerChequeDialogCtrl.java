@@ -65,7 +65,7 @@ import com.pennant.backend.model.financemanagement.ManagerCheque;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.managercheque.ManagerChequeListCtrl.MCType;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>

@@ -81,7 +81,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -512,7 +512,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aFinMaintainInstruction.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinMaintainInstruction.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinMaintainInstruction.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinMaintainInstruction.setUserDetails(getUserWorkspace().getLoggedInUser());
 

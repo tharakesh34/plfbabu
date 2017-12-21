@@ -100,7 +100,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 
 import freemarker.cache.StringTemplateLoader;
@@ -1038,7 +1038,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		boolean processCompleted = false;
 		String nextRoleCode = "";
 
-		aMailTemplate.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aMailTemplate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMailTemplate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMailTemplate.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -637,7 +637,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDispatchMode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDispatchMode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDispatchMode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDispatchMode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

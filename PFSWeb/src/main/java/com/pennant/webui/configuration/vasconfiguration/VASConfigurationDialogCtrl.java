@@ -110,7 +110,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -1649,7 +1649,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aVASConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aVASConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVASConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

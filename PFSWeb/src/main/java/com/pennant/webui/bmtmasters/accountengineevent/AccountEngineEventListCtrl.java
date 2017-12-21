@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.accountengineevent.model.AccountEngineEventListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -231,7 +231,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 				+ "' AND version=" + accountEngineEvent.getVersion() + " ";
 
 				if (isWorkFlowEnabled()) {
-					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(), getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(), getUserWorkspace().getLoggedInUser().getUserId(),
 							"AccountEngineEvent", whereCond, accountEngineEvent.getTaskId(), accountEngineEvent.getNextTaskId());
 					if (userAcces) {
 						showDetailView(accountEngineEvent);

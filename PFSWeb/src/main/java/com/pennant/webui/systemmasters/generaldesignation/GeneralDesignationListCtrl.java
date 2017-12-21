@@ -61,7 +61,7 @@ import com.pennant.backend.model.systemmasters.GeneralDesignation;
 import com.pennant.backend.service.systemmasters.GeneralDesignationService;
 import com.pennant.webui.systemmasters.generaldesignation.model.GeneralDesignationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

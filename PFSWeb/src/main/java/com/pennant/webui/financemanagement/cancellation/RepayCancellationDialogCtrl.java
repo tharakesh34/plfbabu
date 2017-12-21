@@ -82,7 +82,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -588,7 +588,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 

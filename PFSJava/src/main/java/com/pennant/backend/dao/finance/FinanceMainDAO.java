@@ -272,4 +272,6 @@ public interface FinanceMainDAO {
 	int getFinCountByCustId(long custID);
 
 	void updateFinMandateId(long mandateId, String finReference, String type);
+
+	long getMandateIdByRef(String finReference, String type);
 }

@@ -408,7 +408,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		AccountingSet accountingSet = (AccountingSet) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = accountingSet.getUserDetails().getUsrLanguage();
+		String usrLanguage = accountingSet.getUserDetails().getLanguage();
 
 		// FeeTier Validation
 		if (accountingSet.getTransactionEntries() != null && accountingSet.getTransactionEntries().size() > 0) {

@@ -62,7 +62,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.webui.finance.manualadvise.ManualAdviseListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/

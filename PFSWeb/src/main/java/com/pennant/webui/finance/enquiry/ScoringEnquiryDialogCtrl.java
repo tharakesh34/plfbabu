@@ -36,7 +36,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;

@@ -86,9 +86,10 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -134,6 +135,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private boolean newCustomer=false;
 	private List<CustomerIncome> customerIncomes;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private int ccyFormatter = 0;
 	private String moduleType="";
@@ -205,6 +207,26 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			}
 			this.customerIncome.setWorkflowId(0);
 			if(arguments.containsKey("roleCode")){
+				userRole = arguments.get("roleCode").toString();
+				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
+			}
+		}
+		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+
+			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			setNewCustomer(true);
+
+			if (arguments.containsKey("ccyFormatter")) {
+				ccyFormatter = (Integer) arguments.get("ccyFormatter");
+			}
+
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord(true);
+			} else {
+				setNewRecord(false);
+			}
+			this.customerIncome.setWorkflowId(0);
+			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
@@ -935,7 +957,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerIncome.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerIncome.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerIncome.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1284,5 +1306,13 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	}
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 }

@@ -82,7 +82,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -537,7 +537,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

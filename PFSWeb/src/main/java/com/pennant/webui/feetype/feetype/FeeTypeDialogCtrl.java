@@ -83,7 +83,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -888,7 +888,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private boolean doProcess(FeeType aFeeType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aFeeType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFeeType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFeeType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFeeType.setUserDetails(getUserWorkspace().getLoggedInUser());
 

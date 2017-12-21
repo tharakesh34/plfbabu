@@ -85,9 +85,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber
@@ -132,6 +133,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private boolean newCustomer = false;
 	private List<CustomerPhoneNumber> customerPhoneNumbers;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	private String moduleType = "";
 	private String userRole = "";
@@ -191,6 +193,22 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 			if (arguments.containsKey("customerDialogCtrl")) {
 				setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
+				setNewCustomer(true);
+
+				if (arguments.containsKey("newRecord")) {
+					setNewRecord(true);
+				} else {
+					setNewRecord(false);
+				}
+				this.customerPhoneNumber.setWorkflowId(0);
+				if (arguments.containsKey("roleCode")) {
+					userRole = arguments.get("roleCode").toString();
+					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerPhoneNumberDialog");
+				}
+
+			}
+			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
 				setNewCustomer(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -978,7 +996,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerPhoneNumber.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerPhoneNumber.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerPhoneNumber.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1320,6 +1338,14 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 
 }

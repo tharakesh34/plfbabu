@@ -31,7 +31,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

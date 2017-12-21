@@ -62,7 +62,7 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.service.facility.FacilityService;
 import com.pennant.webui.facility.facility.model.FacilityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;

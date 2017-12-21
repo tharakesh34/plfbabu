@@ -78,7 +78,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.provision.ProvisionListCtrl;
 import com.pennant.webui.financemanagement.provisionmovement.model.ProvisionMovementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -309,7 +309,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 							+ "' AND version=" + provisionMovement.getVersion() + " ";
 
 					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getLoginUsrID(), "ProvisionMovement", 
+							getUserWorkspace().getLoggedInUser().getUserId(), "ProvisionMovement", 
 							whereCond, provisionMovement.getTaskId(), provisionMovement.getNextTaskId());
 					if (userAcces){
 						showDetailView(provisionMovement);

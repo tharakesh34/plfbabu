@@ -145,7 +145,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -4212,7 +4212,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinanceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceType.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -4287,7 +4287,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			for (FinTypeVASProducts details : finTypeVASProductsList) {
 				if (StringUtils.isNotBlank(details.getRecordType())) {
 					details.setFinType(aFinanceType.getFinType());
-					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(aFinanceType.getRecordStatus());
 					details.setWorkflowId(aFinanceType.getWorkflowId());

@@ -86,7 +86,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -981,7 +981,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aFinSuspHold.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinSuspHold.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinSuspHold.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinSuspHold.setUserDetails(getUserWorkspace().getLoggedInUser());
 

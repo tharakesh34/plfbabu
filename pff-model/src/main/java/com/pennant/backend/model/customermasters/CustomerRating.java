@@ -197,7 +197,7 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
 
 	}

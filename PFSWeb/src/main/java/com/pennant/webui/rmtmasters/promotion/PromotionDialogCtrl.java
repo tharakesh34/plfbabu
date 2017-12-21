@@ -110,7 +110,7 @@ import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul file. <br>
@@ -1421,7 +1421,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private boolean doProcess(Promotion aPromotion, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPromotion.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPromotion.setUserDetails(getUserWorkspace().getLoggedInUser());
 

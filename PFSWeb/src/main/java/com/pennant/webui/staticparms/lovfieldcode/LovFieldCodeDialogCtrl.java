@@ -77,7 +77,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -683,7 +683,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aLovFieldCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aLovFieldCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLovFieldCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLovFieldCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

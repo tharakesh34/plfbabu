@@ -65,7 +65,7 @@ import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 /**

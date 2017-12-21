@@ -75,7 +75,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -657,7 +657,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aExtendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aExtendedFieldHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aExtendedFieldHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aExtendedFieldHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

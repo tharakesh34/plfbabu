@@ -53,7 +53,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -592,7 +592,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aFinTaxUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinTaxUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinTaxUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		if (isWorkFlowEnabled()) {

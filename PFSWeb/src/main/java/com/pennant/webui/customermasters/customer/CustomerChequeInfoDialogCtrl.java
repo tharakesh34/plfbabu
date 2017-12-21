@@ -84,7 +84,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -124,6 +124,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	private boolean newCustomer=false;
 	private List<CustomerChequeInfo> CustomerChequeInfoList;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
@@ -199,6 +200,23 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 							"CustomerChequeInfoDialog");
 				}
 			}
+
+			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+				setNewCustomer(true);
+
+				if (arguments.containsKey("newRecord")) {
+					setNewRecord(true);
+				} else {
+					setNewRecord(false);
+				}
+				this.customerChequeInfo.setWorkflowId(0);
+				if (arguments.containsKey("roleCode")) {
+					userRole = arguments.get("roleCode").toString();
+					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerChequeInfoDialog");
+				}
+			}
+
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
@@ -1076,6 +1094,14 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	}
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
+	}
+
+	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
+		return customerEnquiryDialogCtrlr;
+	}
+
+	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
+		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
 	}
 	
 }

@@ -92,7 +92,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1243,7 +1243,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aCustomerPRelation.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCustomerPRelation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerPRelation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerPRelation.setUserDetails(getUserWorkspace().getLoggedInUser());
 

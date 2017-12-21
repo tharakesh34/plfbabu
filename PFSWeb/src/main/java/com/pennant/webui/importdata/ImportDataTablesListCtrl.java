@@ -21,7 +21,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -886667223042963669L;

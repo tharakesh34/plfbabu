@@ -72,7 +72,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -722,7 +722,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCountry.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aCountry.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCountry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCountry.setUserDetails(getUserWorkspace().getLoggedInUser());
 

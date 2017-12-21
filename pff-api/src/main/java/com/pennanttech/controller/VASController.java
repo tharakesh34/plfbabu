@@ -56,7 +56,7 @@ public class VASController {
 			vasRecording.setNewRecord(true);
 			vasRecording.setVasStatus("N");
 			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			vasRecording.setLastMntBy(userDetails.getLoginUsrID());
+			vasRecording.setLastMntBy(userDetails.getUserId());
 			vasRecording.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			vasRecording.setVersion(1);
 			VASConfiguration vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(vasRecording
@@ -80,7 +80,7 @@ public class VASController {
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setLastMntBy(userDetails.getUserId());
 				exdFieldRender.setSeqNo(++seqNo);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);

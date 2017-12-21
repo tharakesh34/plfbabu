@@ -88,7 +88,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -988,7 +988,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aDashboardConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aDashboardConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDashboardConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDashboardConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
 

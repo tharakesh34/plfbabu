@@ -88,7 +88,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuser.SecurityUserDialogCtrl;
 import com.pennant.webui.administration.securityuser.SecurityUserListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -634,7 +634,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		String nextRoleCode = "";
 
 		aSecurityUser.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSecurityUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityUser.setUserDetails(getUserWorkspace().getLoggedInUser());
 	

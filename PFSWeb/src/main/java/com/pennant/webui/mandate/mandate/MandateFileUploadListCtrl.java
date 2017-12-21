@@ -66,7 +66,7 @@ import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -171,7 +171,7 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 			if(mandateService.getFileCount(amedia.getName()) == 0){
 			mandateStatusUpdate.setStartDate(DateUtility.getAppDate());
 			mandateStatusUpdate.setUserDetails(getUserWorkspace().getLoggedInUser());
-			mandateStatusUpdate.setUserId(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			mandateStatusUpdate.setUserId(getUserWorkspace().getLoggedInUser().getUserId());
 			mandateStatusUpdate.setFileName(amedia.getName());
 			long fileid = mandateService.processStatusSave(mandateStatusUpdate);
 			for (String line : data) {

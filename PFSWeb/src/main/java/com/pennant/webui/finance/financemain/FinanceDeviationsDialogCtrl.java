@@ -78,7 +78,7 @@ import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
@@ -697,7 +697,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 						&& !combobox.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
 					deviationDetail.setApprovalStatus(combobox.getSelectedItem().getValue().toString());
 					deviationDetail.setDelegatedUserId(String.valueOf(getUserWorkspace().getLoggedInUser()
-							.getLoginUsrID()));
+							.getUserId()));
 				}
 			}
 
@@ -730,12 +730,12 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		AuditHeader auditHeader = new AuditHeader();
 		auditHeader.setAuditModule(ModuleUtil.getTableName(FinanceDeviations.class.getSimpleName()));
 		auditHeader.setAuditReference(finreference);
-		auditHeader.setAuditUsrId(userDetails.getLoginUsrID());
+		auditHeader.setAuditUsrId(userDetails.getUserId());
 		auditHeader.setAuditBranchCode(userDetails.getBranchCode());
 		auditHeader.setAuditDeptCode(userDetails.getDepartmentCode());
 		auditHeader.setAuditSystemIP(userDetails.getIpAddress());
 		auditHeader.setAuditSessionID(userDetails.getSessionId());
-		auditHeader.setUsrLanguage(userDetails.getUsrLanguage());
+		auditHeader.setUsrLanguage(userDetails.getLanguage());
 		return auditHeader;
 	}
 

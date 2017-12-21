@@ -41,7 +41,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private static final long	serialVersionUID		= 2290501784830847866L;

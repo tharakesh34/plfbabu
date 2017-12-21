@@ -61,7 +61,7 @@ import com.pennant.backend.model.reports.ReportList;
 import com.pennant.backend.service.reports.ReportListService;
 import com.pennant.webui.reports.reportlist.model.ReportListListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

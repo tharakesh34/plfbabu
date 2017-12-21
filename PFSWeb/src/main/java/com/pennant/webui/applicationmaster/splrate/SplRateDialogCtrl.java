@@ -75,7 +75,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -700,7 +700,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		String nextRoleCode="";
 
 		aSplRate.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aSplRate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSplRate.setUserDetails(getUserWorkspace().getLoggedInUser());
 

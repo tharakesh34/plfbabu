@@ -172,7 +172,7 @@ import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -2337,7 +2337,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.webui.util;
+package com.pennanttech.pennapps.web.util;
 
 import java.text.MessageFormat;
 import java.util.HashMap;

@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.accounts.accounts.model.AccountsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -272,7 +272,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 					String whereCond =  " AND AccountId='"+ acounts.getAccountId()+"' AND version=" + acounts.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(acounts.getWorkflowId()
-							,getUserWorkspace().getLoggedInUser().getLoginUsrID(), "Accounts"
+							,getUserWorkspace().getLoggedInUser().getUserId(), "Accounts"
 							, whereCond, acounts.getTaskId(), acounts.getNextTaskId());
 					if (userAcces){
 						doShowDialogPage(acounts);

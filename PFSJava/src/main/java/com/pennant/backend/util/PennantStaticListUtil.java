@@ -273,6 +273,7 @@ public class PennantStaticListUtil {
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TEXT, Labels.getLabel("label_TEXT")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TIME, Labels.getLabel("label_TIME")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT, Labels.getLabel("label_UPPERCASETEXT")));
+			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_BUTTON, Labels.getLabel("label_BUTTON")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, Labels.getLabel("label_GROUPBOX")));
 			fieldType.add(new ValueLabel(ExtendedFieldConstants.FIELDTYPE_TABPANEL, Labels.getLabel("label_TABPANEL")));
 		}

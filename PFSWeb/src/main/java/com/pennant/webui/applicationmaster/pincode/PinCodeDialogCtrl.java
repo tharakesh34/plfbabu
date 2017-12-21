@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -698,7 +698,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPinCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aPinCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPinCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPinCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

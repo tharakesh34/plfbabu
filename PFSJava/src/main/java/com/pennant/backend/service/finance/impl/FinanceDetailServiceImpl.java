@@ -3883,6 +3883,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
+		String finishedTasks = "";
 
 		//String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks, engine);
 		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
@@ -3890,6 +3891,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (serviceTasks != null && !serviceTasks.isEmpty()) {
 			for(ServiceTask task: serviceTasks) {
 				auditHeader = execute(auditHeader, task, role, usrAction, engine);
+				finishedTasks = task.getOperation()+";"+finishedTasks;
+				serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
+				if(serviceTasks.isEmpty()) {
+					break;
+				}
 			}
 			if(!auditHeader.isProcessCompleted()) {
 				auditHeader = execute(auditHeader, null, role, usrAction, engine);
@@ -3900,6 +3906,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 	
+	private List<ServiceTask> getRemainingServiceTasks(List<ServiceTask> serviceTasks, WorkflowEngine engine, 
+			String taskId, FinanceMain afinanceMain, String finishedTasks) {
+		// changes regarding parallel work flow 
+		String nextRoleCode = StringUtils.trimToEmpty(afinanceMain.getNextRoleCode());
+		String nextRoleCodes[] = nextRoleCode.split(",");
+		if (nextRoleCodes.length > 1) {
+			return new ArrayList<>();
+		}
+
+		String tasks = engine.getServiceOperationsAsString(taskId, afinanceMain);
+		if (StringUtils.isNotBlank(tasks)) {
+			tasks += ";";
+		}
+		if (!"".equals(finishedTasks)) {
+			String[] list = finishedTasks.split(";");
+			for (int i = 0; i < list.length; i++) {
+				tasks = tasks.replace(list[i] + ";", "");
+			}
+		}
+		
+		if(StringUtils.isBlank(tasks)) {
+			serviceTasks = new ArrayList<>();
+		}
+
+		return serviceTasks;
+	}
+
 	/**
 	 * Method for process and execute workflow service tasks
 	 * 
@@ -5135,7 +5168,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String auditTranType = auditHeader.getAuditTranType();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String usrLanguage = financeMain.getUserDetails().getUsrLanguage();
+		String usrLanguage = financeMain.getUserDetails().getLanguage();
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -6745,7 +6778,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 					new ErrorDetails("Limit", "41002", errParm, valueParm), finDetails.getUserDetails()
-							.getUsrLanguage()));
+							.getLanguage()));
 			logger.debug("Leaving");
 			return auditHeader;
 
@@ -6761,7 +6794,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
 
 					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", "41002", errParm,
-							valueParm), finDetails.getUserDetails().getUsrLanguage()));
+							valueParm), finDetails.getUserDetails().getLanguage()));
 
 					return auditHeader;
 
@@ -6796,7 +6829,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", errorCode,
-								errParm, valueParm), finDetails.getUserDetails().getUsrLanguage()));
+								errParm, valueParm), finDetails.getUserDetails().getLanguage()));
 						logger.debug("Leaving");
 						return auditHeader;
 					}

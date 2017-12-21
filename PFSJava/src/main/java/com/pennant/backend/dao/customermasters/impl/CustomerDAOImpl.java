@@ -197,7 +197,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustAddlVar81, CustAddlVar82, CustAddlVar83, CustAddlVar84, CustAddlVar85, CustAddlVar86, CustAddlVar87," );
 		selectSql.append(" CustAddlVar88, CustAddlVar89, CustAddlDate1, CustAddlDate2, CustAddlDate3, CustAddlDate4, CustAddlDate5," );
 		selectSql.append(" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, " );
-		selectSql.append(" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5," );
+		selectSql.append(" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5,CustSourceID," );
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger, " );
 		
@@ -347,7 +347,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" CustAddlDate4, CustAddlDate5, CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5," );
         insertSql.append(" CustAddlVar6, CustAddlVar7, CustAddlVar8, CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1," );
         insertSql.append(" CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5, CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4,CustAddlInt5 ," );
-        insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
+        insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
         insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer," );
         
         insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
@@ -366,7 +366,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" :CustAddlDate5, :CustAddlVar1, :CustAddlVar2, :CustAddlVar3, :CustAddlVar4, :CustAddlVar5, :CustAddlVar6, :CustAddlVar7," );
         insertSql.append(" :CustAddlVar8, :CustAddlVar9, :CustAddlVar10, :CustAddlVar11, :CustAddlDec1, :CustAddlDec2, :CustAddlDec3, :CustAddlDec4," );
         insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5," );
-        insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR," );
+        insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR,:CustSourceID," );
         insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer," );
         insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -428,7 +428,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		updateSql.append(" CustAddlDec2 = :CustAddlDec2, CustAddlDec3 = :CustAddlDec3, CustAddlDec4 = :CustAddlDec4, CustAddlDec5 = :CustAddlDec5," );
 		updateSql.append(" CustAddlInt1 = :CustAddlInt1, CustAddlInt2 = :CustAddlInt2, CustAddlInt3 = :CustAddlInt3, CustAddlInt4 = :CustAddlInt4," );
 		updateSql.append(" CustAddlInt5 = :CustAddlInt5,DedupFound=:DedupFound,SkipDedup=:SkipDedup,CustTotalExpense=:CustTotalExpense," );
-		updateSql.append(" CustBlackListDate = :CustBlackListDate, NoOfDependents=:NoOfDependents,CustCRCPR=:CustCRCPR," );
+		updateSql.append(" CustBlackListDate = :CustBlackListDate, NoOfDependents=:NoOfDependents,CustCRCPR=:CustCRCPR,CustSourceID=:CustSourceID," );
 		updateSql.append(" JointCust = :JointCust, JointCustName = :JointCustName, JointCustDob = :JointCustDob," );
 		updateSql.append(" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber, SalariedCustomer = :SalariedCustomer," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
@@ -1862,7 +1862,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, " );
 		selectSql.append(" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5," );
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,");
-		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR," );
+		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
 		selectSql.append(" FROM  Customers");

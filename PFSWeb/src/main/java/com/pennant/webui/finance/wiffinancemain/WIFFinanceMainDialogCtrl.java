@@ -151,7 +151,7 @@ import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -4427,7 +4427,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		afinanceMain.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		afinanceMain.setUserDetails(getUserWorkspace().getLoggedInUser());
 

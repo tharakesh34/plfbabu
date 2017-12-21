@@ -480,7 +480,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 
 		AssetType assetType = (AssetType) auditDetail.getModelData();
-		String usrLanguage = assetType.getUserDetails().getUsrLanguage();
+		String usrLanguage = assetType.getUserDetails().getLanguage();
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 

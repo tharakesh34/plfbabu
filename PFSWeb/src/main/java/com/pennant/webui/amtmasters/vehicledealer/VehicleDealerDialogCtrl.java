@@ -85,7 +85,7 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 
 /**
@@ -1343,7 +1343,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		String nextRoleCode = "";
 
 		aVehicleDealer.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+				.getUserId());
 		aVehicleDealer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleDealer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

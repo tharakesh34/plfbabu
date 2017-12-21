@@ -420,12 +420,12 @@ public class AuditHeader implements java.io.Serializable,Entity {
 		this.auditLoanNo=loanNo;
 		
 		if (userDetails!=null){
-			this.auditUsrId =  userDetails.getLoginUsrID();
+			this.auditUsrId =  userDetails.getUserId();
 			this.auditBranchCode = userDetails.getBranchCode();
 			this.auditDeptCode =userDetails.getDepartmentCode();
 			this.auditSystemIP = userDetails.getIpAddress();
 			this.auditSessionID = userDetails.getSessionId();
-			this.usrLanguage = userDetails.getUsrLanguage();
+			this.usrLanguage = userDetails.getLanguage();
 		}
 		
 		this.auditTranType = auditDetail.getAuditTranType();

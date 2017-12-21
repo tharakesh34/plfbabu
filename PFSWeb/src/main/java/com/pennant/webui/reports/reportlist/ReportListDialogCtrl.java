@@ -79,7 +79,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 
 /**
@@ -753,7 +753,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		AuditHeader auditHeader =  null;
 		String nextRoleCode="";
 
-		aReportList.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReportList.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReportList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReportList.setUserDetails(getUserWorkspace().getLoggedInUser());
 

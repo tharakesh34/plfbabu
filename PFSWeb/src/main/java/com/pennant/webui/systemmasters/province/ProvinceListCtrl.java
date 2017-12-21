@@ -61,7 +61,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.webui.systemmasters.province.model.ProvinceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 

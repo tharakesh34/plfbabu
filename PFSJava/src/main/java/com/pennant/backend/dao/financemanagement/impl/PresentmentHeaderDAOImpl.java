@@ -321,8 +321,8 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
-			stmt.setString(1, "1");
-			stmt.setString(2, "1");
+			stmt.setInt(1, 1);
+			stmt.setInt(2, 1);
 			stmt.setDate(3, getDate(detailHeader.getFromDate()));
 			stmt.setDate(4, getDate(detailHeader.getToDate()));
 			stmt.setDate(5, getDate(detailHeader.getFromDate()));

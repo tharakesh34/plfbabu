@@ -258,7 +258,7 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 	    this.auditDetailMap = auditDetailMap;
     }
 	public void setLoginDetails(LoggedInUser userDetails) {
-		setLastMntBy(userDetails.getLoginUsrID());
+		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
 	}
 

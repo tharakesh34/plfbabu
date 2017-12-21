@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -669,7 +669,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aRelationshipOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aRelationshipOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aRelationshipOfficer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aRelationshipOfficer.setUserDetails(getUserWorkspace().getLoggedInUser());
 

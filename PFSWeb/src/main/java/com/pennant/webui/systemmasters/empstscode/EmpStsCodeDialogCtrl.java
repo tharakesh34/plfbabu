@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EmpStsCode/empStsCodeDialog.zul file.
@@ -639,7 +639,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEmpStsCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEmpStsCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEmpStsCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aEmpStsCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -23,7 +23,7 @@ import com.pennant.backend.service.finance.BulkRateChangeProcessService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 
