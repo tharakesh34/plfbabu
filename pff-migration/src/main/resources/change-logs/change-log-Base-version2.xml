@@ -273,4 +273,13 @@ UNION ALL
    WHERE NOT (EXISTS ( SELECT 1 FROM reasons_temp WHERE id = T1.id));	
 	</createView>
 </changeSet>
+<changeSet id="3" author="somasekhar" >
+		<createSequence sequenceName="SeqCustomerAddresses" startValue="1" incrementBy="1" maxValue="999999999999" cycle="false"/>
+</changeSet>
+<changeSet id="4" author="somasekhar" >
+		<createSequence sequenceName="SeqFinASSETTYPES" startValue="1" incrementBy="1" maxValue="999999999999" cycle="false"/>
+</changeSet>
+<changeSet id="5" author="somasekhar" >
+		<createSequence sequenceName="SeqReceiptAllocationDetail" startValue="1" incrementBy="1" maxValue="999999999999" cycle="false"/>
+</changeSet>
  </databaseChangeLog>
