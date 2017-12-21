@@ -182,10 +182,10 @@
     <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId, T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName  AS AuditUserName,TH.AuditTranType AS AuditTranType, 
                       Aft.Id as AftId, Aft.Code as AftCode, Aft.Description as AftDescription, 
                       Bef.Id as BefId, Bef.Code as BefCode, Bef.Description as BefDescription 
-			FROM      AuditHeader AS TH INNER JOIN
-                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
-                      ADTReasonCategory AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
-                      ADTReasonCategory AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+			FROM      AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasonCategory  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasonCategory  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
 			WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCategory')]]>
     
     </createView>
@@ -196,10 +196,10 @@
    <![CDATA[ SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId, T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName  AS AuditUserName,TH.AuditTranType AS AuditTranType, 
                       Aft.Id as AftId, Aft.Code as AftCode, Aft.Description as AftDescription, 
                       Bef.Id as BefId, Bef.Code as BefCode, Bef.Description as BefDescription 
-			FROM      AuditHeader AS TH INNER JOIN
-                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
-                      ADTReasonTypes AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
-                      ADTReasonTypes AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+			FROM      AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasonTypes  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasonTypes  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
 WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
     
     </createView>
@@ -210,10 +210,10 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
     <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId,T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName AS AuditUserName,TH.AuditTranType AS AuditTranType, 
                       Aft.Id as AftId, Aft.ReasonTypeID as AftReasonTypeID, Aft.ReasonCategoryID as AftReasonCategoryID, Aft.Code as AftCode, Aft.Description as AftDescription, Aft.Active as AftActive, 
                       Bef.Id as BefId, Bef.ReasonTypeID as BefReasonTypeID, Bef.ReasonCategoryID as BefReasonCategoryID, Bef.Code as BefCode, Bef.Description as BefDescription, Bef.Active as BefActive 
-				FROM  AuditHeader AS TH INNER JOIN
-                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
-                      ADTReasons AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
-                      ADTReasons AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+				FROM  AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasons AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasons  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
 				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
     </createView>
 </changeSet>
@@ -257,30 +257,30 @@ WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonTypes')]]>
     <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId,T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName AS AuditUserName,TH.AuditTranType AS AuditTranType, 
                       Aft.Id as AftId, Aft.ReasonTypeCode as AftReasonTypeCode, Aft.ReasonCategoryCode as AftReasonCategoryCode, Aft.Code as AftCode, Aft.Description as AftDescription, Aft.Active as AftActive, 
                       Bef.Id as BefId, Bef.ReasonTypeCode as BefReasonTypeCode, Bef.ReasonCategoryCode as BefReasonCategoryCode, Bef.Code as BefCode, Bef.Description as BefDescription, Bef.Active as BefActive 
-				FROM  AuditHeader AS TH INNER JOIN
-                      SecUsers_View AS T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
-                      ADTReasons AS AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
-                      ADTReasons AS BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+				FROM  AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasons  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasons  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
 				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
     </createView>
 </changeSet>
-<changeSet id="25.1" author="Jayant">
+<changeSet id="25.1" author="Jayant" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasons" constraintName="adtreasons_code_key"/>
 </changeSet>
-<changeSet id="25.2" author="Jayant">
+<changeSet id="25.2" author="Jayant" dbms="postgresql">
 	<sql>
 		alter table adtreasons drop constraint adtreasons_reasoncategoryid_key;
 	</sql>
 </changeSet>
-<changeSet id="25.3" author="Jayant">
+<changeSet id="25.3" author="Jayant" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasons" constraintName="adtreasons_reasontypeid_key"/>
 </changeSet>
 
-<changeSet id="26" author="Haritha">
+<changeSet id="26" author="Haritha" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasoncategory" constraintName="adtreasoncategory_code_key"/>
 </changeSet>
 
-<changeSet id="27" author="Haritha">
+<changeSet id="27" author="Haritha" dbms="postgresql">
 		<dropUniqueConstraint tableName="adtreasontypes" constraintName="adtreasontypes_code_key"/>
 </changeSet>
 
