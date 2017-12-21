@@ -138,7 +138,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 			getReasonTypesDAO().update(reasonTypes,tableType);
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -169,7 +169,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 		ReasonTypes reasonTypes = (ReasonTypes) auditHeader.getAuditDetail().getModelData();
 		getReasonTypesDAO().delete(reasonTypes,TableType.MAIN_TAB);
 		
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -266,12 +266,12 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reasonTypes);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -306,7 +306,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getReasonTypesDAO().delete(reasonTypes,TableType.TEMP_TAB);
 			
-			//getAuditHeaderDAO().addAudit(auditHeader);
+			getAuditHeaderDAO().addAudit(auditHeader);
 			
 			logger.info(Literal.LEAVING);
 			return auditHeader;

@@ -142,7 +142,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 			getReasonCodeDAO().update(reasonCode,tableType);
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -173,7 +173,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
 		getReasonCodeDAO().delete(reasonCode,TableType.MAIN_TAB);
 		
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -270,12 +270,12 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reasonCode);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -310,7 +310,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getReasonCodeDAO().delete(reasonCode,TableType.TEMP_TAB);
 			
-			//getAuditHeaderDAO().addAudit(auditHeader);
+			getAuditHeaderDAO().addAudit(auditHeader);
 			
 			logger.info(Literal.LEAVING);
 			return auditHeader;

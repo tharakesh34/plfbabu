@@ -141,7 +141,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 			getReasonCategoryDAO().update(reasonCategory,tableType);
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -172,7 +172,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 		ReasonCategory reasonCategory = (ReasonCategory) auditHeader.getAuditDetail().getModelData();
 		getReasonCategoryDAO().delete(reasonCategory,TableType.MAIN_TAB);
 		
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -269,12 +269,12 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-	//	getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reasonCategory);
-	//	getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -309,7 +309,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getReasonCategoryDAO().delete(reasonCategory,TableType.TEMP_TAB);
 			
-		//	getAuditHeaderDAO().addAudit(auditHeader);
+			getAuditHeaderDAO().addAudit(auditHeader);
 			
 			logger.info(Literal.LEAVING);
 			return auditHeader;
