@@ -661,15 +661,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Filter filter[] = new Filter[1];
 		switch (str) {
 		case MandateConstants.TYPE_ECS:
-			filter[0] = new Filter("ECS", "1", Filter.OP_EQUAL);
+			filter[0] = new Filter("ECS", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			break;
 		case MandateConstants.TYPE_DDM:
-			filter[0] = new Filter("DDA", "1", Filter.OP_EQUAL);
+			filter[0] = new Filter("DDA", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			break;
 		case MandateConstants.TYPE_NACH:
-			filter[0] = new Filter("NACH", "1", Filter.OP_EQUAL);
+			filter[0] = new Filter("NACH", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			break;
 
