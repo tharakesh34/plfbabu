@@ -10489,7 +10489,83 @@
 	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
 		<constructor-arg ref="pfsDatasource" />
 	</bean>
+
+	<!-- ReasonCode -->
+	<bean id="reasonCodeDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.ReasonCodeDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="reasonCodeService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="reasonCodeServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="reasonCodeServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.ReasonCodeServiceImpl">
+		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
 	
+	<!-- ReasonCategory -->
+	<bean id="reasonCategoryDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReasonCategoryDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="reasonCategoryService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="reasonCategoryServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="reasonCategoryServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ReasonCategoryServiceImpl">
+       <property name="reasonCategoryDAO" ref="reasonCategoryDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+		<!-- ReasonTypes -->
+	<bean id="reasonTypesDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReasonTypesDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="reasonTypesService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="reasonTypesServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="reasonTypesServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ReasonTypesServiceImpl">
+       <property name="reasonTypesDAO" ref="reasonTypesDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 	<!-- Licence File Upload -->
 	<bean id="licenceFileDAO"
 		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"

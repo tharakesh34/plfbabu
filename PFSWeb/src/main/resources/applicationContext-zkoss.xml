@@ -4879,6 +4879,34 @@
 		<property name="entityService" ref="entityService"/>
 	</bean>
 	
+	<!-- ReasonTypes -->
+	<bean id="reasonTypesListCtrl" class="com.pennant.webui.applicationmaster.reasontypes.ReasonTypesListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="reasonTypesService" ref="reasonTypesService" />
+	</bean>
+	<bean id="reasonTypesDialogCtrl" class="com.pennant.webui.applicationmaster.reasontypes.ReasonTypesDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="reasonTypesService" ref="reasonTypesService"/>
+	</bean>
+	
+	
+		<!-- ReasonCategory -->
+	<bean id="reasonCategoryListCtrl" class="com.pennant.webui.applicationmaster.reasoncategory.ReasonCategoryListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="reasonCategoryService" ref="reasonCategoryService" />
+	</bean>
+	<bean id="reasonCategoryDialogCtrl" class="com.pennant.webui.applicationmaster.reasoncategory.ReasonCategoryDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="reasonCategoryService" ref="reasonCategoryService"/>
+	</bean>
+	
+		<!-- ReasonCode -->
+	<bean id="reasonCodeListCtrl" class="com.pennant.webui.applicationmaster.reasoncode.ReasonCodeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="reasonCodeService" ref="reasonCodeService" />
+	</bean>
+	<bean id="reasonCodeDialogCtrl" class="com.pennant.webui.applicationmaster.reasoncode.ReasonCodeDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="reasonCodeService" ref="reasonCodeService"/>
+	</bean>
+	
 	<!-- Finance Tax Detail Upload -->
 	
 	<bean id="finTaxUploadDetailListCtrl"
