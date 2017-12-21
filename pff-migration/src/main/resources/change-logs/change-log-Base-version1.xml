@@ -2226,7 +2226,7 @@ FROM    	ReasonCategory  T1
 	<changeSet id="73" author="Haritha">
 		<createView viewName="Reasons_AView" replaceIfExists="true">
 			SELECT		T1.Id, T1.ReasonTypeID, T1.ReasonCategoryID, T1.Code, T1.Description, T1.Active		
-						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.reasonCategoryCodeTaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
 			FROM    	Reasons  T1 
 
          </createView>
