@@ -75,6 +75,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.policecase.PoliceCase;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
@@ -243,6 +244,9 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name="extendedDetails")
 	@XmlElement(name="extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
+	
+	// Reason Details
+	private ReasonHeader reasonHeader;
 
 	public FinanceDetail() {
 		
@@ -877,6 +881,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
+	}
+
+	public ReasonHeader getReasonHeader() {
+		return reasonHeader;
+	}
+
+	public void setReasonHeader(ReasonHeader reasonHeader) {
+		this.reasonHeader = reasonHeader;
 	}
 
 

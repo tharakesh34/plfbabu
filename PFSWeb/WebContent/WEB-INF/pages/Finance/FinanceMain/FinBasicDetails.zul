@@ -30,6 +30,8 @@
 								style="font-weight:bold;" />
 							<a id="userActivityLog" visible="false"
 								label="Activity Log" style="padding-left:100px;" />
+							<a id="reasonDeatilsLog" visible="false"
+								label="Reason Details Log" style="padding-left:100px;" />
 						</hbox>
 					</row>
 					<row id="row_ProfitDays" height="24px">

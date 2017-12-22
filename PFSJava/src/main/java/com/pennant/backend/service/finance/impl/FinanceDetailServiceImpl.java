@@ -82,6 +82,7 @@ import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -160,6 +161,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -267,6 +269,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomServiceTask	   			customServiceTask;
 	private CustomerService 				customerService;
+	
+	private ReasonDetailDAO 				reasonDetailDAO;
 	
 	@Autowired(required = false)
 	private Crm crm;
@@ -2300,6 +2304,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 processLimitSaveOrUpdate(aAuditHeader,false);
 		}
 
+		// Saving the reasons
+		saveReasonDetails(financeDetail);
+		
 		if (!isWIF) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -2822,6 +2829,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Step Details Deletion
 		getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "");
 
+		// Saving the reasons
+		saveReasonDetails(financeDetail);
+		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
 				.getBefImage(), financeMain));
@@ -3816,6 +3826,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 			}
 			
+			// Saving the reasons
+			saveReasonDetails(financeDetail);
+			 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -5101,6 +5114,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		auditHeader.setAuditDetails(auditDetails);
 
+		
+		// Saving the reasons
+		saveReasonDetails(financeDetail);
+		
 		if (!isWIF) {
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -8978,5 +8995,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 		
 		return finODPenaltyRate;
+	}
+
+	// Saving the reason details
+	private void saveReasonDetails(FinanceDetail financeDetail) {
+		ReasonHeader reasonHeader = financeDetail.getReasonHeader();
+		if (reasonHeader != null) {
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			reasonHeader.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
+			reasonHeader.setReference(financeMain.getFinReference());
+			reasonHeader.setRoleCode(financeMain.getRoleCode());
+			reasonHeader.setActivity(financeMain.getRecordStatus());
+			reasonHeader.setToUser(financeMain.getLastMntBy());
+			reasonHeader.setLogTime(financeMain.getLastMntOn());
+			this.reasonDetailDAO.save(reasonHeader);
+		}
+	}
+	 
+	public ReasonDetailDAO getReasonDetailDAO() {
+		return reasonDetailDAO;
+	}
+
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
 	}
 }

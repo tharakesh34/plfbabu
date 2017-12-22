@@ -114,6 +114,9 @@ import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.applicationmaster.Query;
+import com.pennant.backend.model.applicationmaster.ReasonCategory;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
+import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
@@ -571,6 +574,14 @@ public class PennantJavaUtil {
 		
 				
 		/************* Application Masters *************/
+		ModuleUtil.register("ReasonCode", new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons",
+		"Reasons_AView" }, masterWF, new String[] {"ReasonTypeID","ReasonCategoryID","Code","Description","Active"},null, 600));
+		
+		ModuleUtil.register("ReasonTypes", new ModuleMapping("ReasonTypes", ReasonTypes.class, new String[] { "ReasonTypes",
+		"ReasonTypes_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
+		
+		ModuleUtil.register("ReasonCategory", new ModuleMapping("ReasonCategory", ReasonCategory.class, new String[] { "ReasonCategory",
+		"ReasonCategory_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
 				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",

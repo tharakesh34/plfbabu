@@ -1,3 +1,9 @@
+pff 4.1.0, 2017-12-22
+---------------------
+- Merged Reason Category Master code from Base/MLOD to Base/Trunk
+- Merged Reason Code Master code from Base/MLOD to Base/Trunk
+- Merged Reason Type Master code from Base/MLOD to Base/Trunk
+
 pff 4.1.0, 2017-12-21
 ---------------------
 1.	DMS Integration.

@@ -1,9 +1,13 @@
 package com.pennant.backend.service.approvalstatusenquiry.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
@@ -12,6 +16,7 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryServiceImpl.class);
 
 	protected ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
+	protected ReasonDetailDAO reasonDetailDAO;
 	protected NotesDAO      notesDAO;
 	private static final String MODULE_FINANCEMAIN = "financeMain";
 	private static final String MODULE_FACILITY = "facility";
@@ -75,7 +80,12 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 		logger.debug("Leaving ");
 		return notes;
 	}
-	
+
+	@Override
+	public List<Map<String, Object>> getResonDetailsLog(String reference) {
+		return this.reasonDetailDAO.getReasonDetailsLog(reference);
+
+	}
 	public ApprovalStatusEnquiryDAO getApprovalStatusEnquiryDAO() {
     	return approvalStatusEnquiryDAO;
     }
@@ -91,5 +101,13 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	public void setNotesDAO(NotesDAO notesDAO) {
     	this.notesDAO = notesDAO;
     }
+
+	public ReasonDetailDAO getReasonDetailDAO() {
+		return reasonDetailDAO;
+	}
+
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
+	}
 	
 }
