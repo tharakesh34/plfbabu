@@ -4979,4 +4979,8 @@
 	<!-- Document parsercaller  -->
 	<bean id="pdfParserCaller" class="com.pennant.webui.pdfupload.PdfParserCaller" scope="prototype">
 	</bean>
+	
+	<!--============ Reason Details ============== -->
+	<bean id="reasonDetailsCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsCtrl" parent="basisCtrl" scope="prototype"/>
+	<bean id="reasonDetailsLogDialogCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsLogDialogCtrl" parent="basisListCtrl" scope="prototype"/>
 </beans>

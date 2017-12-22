@@ -3,6 +3,8 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,6 +46,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Row row_ProfitDays;									// autoWired
 	
 	protected A userActivityLog;									// autoWired
+	protected A reasonDeatilsLog;									// autoWired
 	
 	private Object parentCtrl = null;
 	private String finEventCode = null;
@@ -121,6 +124,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		
 		if(!newRecord && isActivityLogVisible(finEventCode)) {
 			this.userActivityLog.setVisible(true);
+			this.reasonDeatilsLog.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -135,6 +139,11 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onClick$userActivityLog(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 		doUserActivityLog();
+		logger.debug("Leaving" +event.toString());
+	}
+	public void onClick$reasonDeatilsLog(Event event) throws Exception {
+		logger.debug("Entering" +event.toString());
+		doReasonDeatilsLog();
 		logger.debug("Leaving" +event.toString());
 	}
 
@@ -159,8 +168,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			map.put("customerFinanceDetail", customerFinanceDetail);
 			map.put("userActivityLog", true);
 			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryDialog.zul", null, map);
+				Executions.createComponents("/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryDialog.zul", null, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -170,6 +178,37 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		
 		logger.debug("Leaving ");
 		
+	}
+	
+	private void doReasonDeatilsLog() {
+		logger.debug("Entering ");
+		
+		List<Map<String, Object>> list = null;
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
+		
+		if (finBasic_finReference != null && finBasic_finReference.getValue() != null) {
+			list = approvalStatusEnquiryService.getResonDetailsLog(this.finBasic_finReference.getValue());
+			if(StringUtils.isEmpty(finEventCode)){
+				customerFinanceDetail = getApprovalStatusEnquiryService().getCustomerFinanceById(this.finBasic_finReference.getValue(), finEventCode);
+			}else{
+				customerFinanceDetail = getApprovalStatusEnquiryService().getApprovedCustomerFinanceById(this.finBasic_finReference.getValue(), finEventCode);
+			}
+		}
+		
+		if (list != null && !list.isEmpty()) {
+			map.put("reasonDetails", list);
+			map.put("customerFinanceDetail", customerFinanceDetail);
+			try { 
+				Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetailsLogDialog.zul", null, map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		} else if (finBasic_finReference != null && finBasic_finReference.getValue() != null) {
+			MessageUtil.showError("No Reason details are available for the reference : " + finBasic_finReference.getValue());
+		}
+		
+		logger.debug("Leaving ");
 	}
 	public ApprovalStatusEnquiryService getApprovalStatusEnquiryService() {
 		return approvalStatusEnquiryService;

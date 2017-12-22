@@ -61,9 +61,9 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -257,29 +257,27 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			if (!allow) {
 				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
 				return;
-			} else {
-				doReject();
-			}
+			} 
+		} 
+		
+		boolean capturereaonse = true;
+		if (capturereaonse) {
+			doFillReasons(recordStatus);
 		} else {
 			doSave();
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * When  record is rejected . <br>
-	 * 
-	 */
-	public void doReject() throws InterruptedException{
-		logger.debug("Entering");
 
+	public void doFillReasons(String reason) throws InterruptedException{
+		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
 		map.put("financeMainDialogCtrl", this);
+		map.put("reason", reason);
 		try{
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
-					window_ConvFinanceMainDialog, map);
+			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", window_ConvFinanceMainDialog, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

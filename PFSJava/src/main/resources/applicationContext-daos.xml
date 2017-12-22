@@ -4168,6 +4168,7 @@
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -7120,6 +7121,7 @@
 	<bean name="approvalStatusEnquiryService"
 		class="com.pennant.backend.service.approvalstatusenquiry.impl.ApprovalStatusEnquiryServiceImpl">
 		<property name="approvalStatusEnquiryDAO" ref="approvalStatusEnquiryDAO" />
+		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
 		<property name="notesDAO" ref="notesDAO" />
 	</bean>
 	<bean id="approvalStatusEnquiryDAO"
@@ -10621,4 +10623,10 @@
 		
 		<property name="documentTypeService" ref="documentTypeService" />
 	</bean>
+	
+		<!-- Reason Detail -->
+	<bean id="reasonDetailDAO" class="com.pennant.backend.dao.reason.deatil.impl.ReasonDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 </beans>
