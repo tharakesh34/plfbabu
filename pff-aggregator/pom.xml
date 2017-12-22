@@ -58,12 +58,12 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>0.5</version>
+				<version>0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.3</version>
+				<version>0.3.1</version>
 			</dependency>
 			<!-- Logging Framework -->
 			<dependency>
