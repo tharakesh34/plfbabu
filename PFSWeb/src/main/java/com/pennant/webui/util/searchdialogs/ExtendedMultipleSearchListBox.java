@@ -513,7 +513,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 			for (int i = 0; i < condArray.length; i++) {
 
-				filter1 = new Filter((String)condArray[i][0], (String)condArray[i][2], Integer.parseInt((String)condArray[i][1]));
+				filter1 = new Filter((String)condArray[i][0], condArray[i][2], Integer.parseInt((String)condArray[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}

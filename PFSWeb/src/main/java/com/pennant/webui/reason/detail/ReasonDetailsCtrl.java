@@ -52,7 +52,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	protected Textbox remarks;
 
 	private Object financeMainDialogCtrl = null;
-	private String reason = null;
+	private int reason = 0;
 
 	public ReasonDetailsCtrl() {
 		super();
@@ -82,7 +82,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		}
 		
 		if (arguments.containsKey("reason")) {
-			this.reason = (String) arguments.get("reason");
+			this.reason = Integer.parseInt(arguments.get("reason").toString());
 		}
 
 		doSetFieldProperties();
@@ -101,8 +101,8 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		this.reasonCategory.setValidateColumns(new String[] { "Code", "Description" });
 		
 		StringBuilder whereClause = new StringBuilder();
-		whereClause.append(" Id in (Select ReasonCategoryId from Reasons Where ReasonTypeId = (Select Id from ReasonTypes Where Code  = '");
-		whereClause.append(reason).append("' ))");
+		whereClause.append(" Id in (Select ReasonCategoryId from Reasons Where ReasonTypeId = (Select Id from ReasonTypes Where Id  = ");
+		whereClause.append(reason).append(" ))");
 		
 		this.reasonCategory.setWhereClause(whereClause.toString());
 		this.reasonCategory.setMandatoryStyle(true);
@@ -134,7 +134,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		if (StringUtils.trimToNull(this.reasonCategory.getValue()) != null) {
 			ReasonCategory reasonCategory = (ReasonCategory) this.reasonCategory.getObject();
 			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("ReasonCategoryId", reasonCategory.getId(), Filter.OP_NOT_EQUAL);		
+			filter[0] = new Filter("ReasonCategoryId", reasonCategory.getId(), Filter.OP_EQUAL);		
 			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode", resonTypesMap, filter);
 		} else {
 			dataObject = ExtendedMultipleSearchListBox.show(this.window_ReasonDetailsDialog, "ReasonCode", resonTypesMap);

@@ -260,9 +260,20 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			} 
 		} 
 		
-		boolean capturereaonse = true;
-		if (capturereaonse) {
-			doFillReasons(recordStatus);
+		int  capturereaonse = 0;
+		
+		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
+				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
+				&& StringUtils.isEmpty(moduleDefiner)) {
+			capturereaonse=2;//reject
+		}else if (StringUtils.equalsIgnoreCase("HOLD", recordStatus))  {
+			capturereaonse=1;//hold
+		}
+		
+		
+		if (capturereaonse!=0) {
+			doFillReasons(capturereaonse);
 		} else {
 			doSave();
 		}
@@ -271,7 +282,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 
-	public void doFillReasons(String reason) throws InterruptedException{
+	public void doFillReasons(int reason) throws InterruptedException{
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);

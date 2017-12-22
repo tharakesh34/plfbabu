@@ -493,8 +493,13 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("Entering ");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RoleIds", Arrays.asList(roleIds.split(",")));
-
+		List<Integer> list = new ArrayList<>();
+		List<String> listAsString = Arrays.asList(roleIds.split(","));
+		for(String roleId: listAsString) {
+			list.add(Integer.parseInt(roleId));
+		}
+		source.addValue("RoleIds", list);
+		
 		StringBuilder selectSql = new StringBuilder("SELECT DISTINCT UsrEmail from UserOperationRoles_View ");
 		selectSql.append(" WHERE RoleId IN (:RoleIds) AND COALESCE(UsrEmail, ' ') <> ' '  ");
 

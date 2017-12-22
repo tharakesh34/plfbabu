@@ -575,7 +575,8 @@ public class PennantJavaUtil {
 				
 		/************* Application Masters *************/
 		ModuleUtil.register("ReasonCode", new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons",
-		"Reasons_AView" }, masterWF, new String[] {"ReasonTypeID","ReasonCategoryID","Code","Description","Active"},null, 600));
+		"Reasons_AView" }, masterWF, new String[] {"ReasonTypeID","ReasonCategoryID","Code","Description"},
+				new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("ReasonTypes", new ModuleMapping("ReasonTypes", ReasonTypes.class, new String[] { "ReasonTypes",
 		"ReasonTypes_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
