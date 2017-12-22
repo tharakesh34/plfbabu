@@ -1973,6 +1973,12 @@ UNION ALL
 
 <changeSet id="62" author="Haritha">
 	<sql>
+		update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+		
+		update SeqSecGroups set SeqNo = (SeqNo+3) ;
+		
+		update SeqSecRights set SeqNo = (SeqNo+10+3) ;
+		
 		INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'REASONCATEGORY_VIEW', 'Allow to view ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 		INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'REASONCATEGORY_MAKER', 'WF Maker for ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 		INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'REASONCATEGORY_APPROVER', 'WF Approver for ReasonCategory', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
