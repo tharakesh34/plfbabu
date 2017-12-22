@@ -47,7 +47,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader extecuteLegalDesk(AuditHeader auditHeader) throws InterfaceException {
+	public AuditHeader executeLegalDesk(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
