@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -82,9 +83,13 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, reasonTypeCode, reasonCategoryCode, code, description, active, ");
+		sql.append(" id, reasonTypeID, reasonCategoryID, code, description, active, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(",reasonCategoryCode,reasonTypeCode");
+		}
 		sql.append(" From Reasons");
 		sql.append(type);
 		sql.append(" Where id = :id");
@@ -110,12 +115,12 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 	}		
 	
 	@Override
-	public boolean isDuplicateKey(String reasonTypeCode,String reasonCategoryCode,String code, TableType tableType) {
+	public boolean isDuplicateKey(long reasonTypeID,long reasonCategoryID,String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "reasonTypeCode = :reasonTypeCode AND reasonCategoryCode = :reasonCategoryCode AND code = :code";
+		String whereClause = "reasonTypeID = :reasonTypeID AND reasonCategoryID = :reasonCategoryID AND code = :code";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -132,8 +137,8 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("reasonTypeCode", reasonTypeCode);
-		paramSource.addValue("reasonCategoryCode", reasonCategoryCode);
+		paramSource.addValue("reasonTypeID", reasonTypeID);
+		paramSource.addValue("reasonCategoryID", reasonCategoryID);
 		paramSource.addValue("code", code);
 		
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
@@ -154,10 +159,10 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into Reasons");
 		sql.append(tableType.getSuffix());
-		sql.append("(id, reasonTypeCode, reasonCategoryCode, code, description, active, ");
+		sql.append("(id, reasonTypeID, reasonCategoryID, code, description, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :id, :reasonTypeCode, :reasonCategoryCode, :code, :description, :active, ");
+		sql.append(" :id, :reasonTypeID, :reasonCategoryID, :code, :description, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Get the identity sequence number.
@@ -186,7 +191,7 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 		// Prepare the SQL.
 		StringBuilder	sql =new StringBuilder("update Reasons" );
 		sql.append(tableType.getSuffix());
-		sql.append("  set reasonTypeCode = :reasonTypeCode, reasonCategoryCode = :reasonCategoryCode, code = :code, ");
+		sql.append("  set reasonTypeID = :reasonTypeID, reasonCategoryID = :reasonCategoryID, code = :code, ");
 		sql.append(" description = :description, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -246,5 +251,43 @@ public class ReasonCodeDAOImpl extends BasisNextidDaoImpl<ReasonCode> implements
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
+
+
+	@Override
+	public boolean isreasonCategoryIDExists(long rCategoryCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reasonCategoryID", rCategoryCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(reasonCategoryID)");
+		selectSql.append(" From Reasons_view ");
+		selectSql.append(" Where reasonCategoryID=:reasonCategoryID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
+
+	@Override
+	public boolean isreasonTypeIDExists(long rTypeCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reasonTypeID", rTypeCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(reasonTypeID)");
+		selectSql.append(" From Reasons_view ");
+		selectSql.append(" Where reasonTypeID=:reasonTypeID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
+
+	
 	
 }	

@@ -479,7 +479,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aReasonTypes.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aReasonTypes.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aReasonTypes.getRecordType()).equals("")){
 				aReasonTypes.setVersion(aReasonTypes.getVersion()+1);

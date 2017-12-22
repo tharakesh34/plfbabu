@@ -171,17 +171,16 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		}
 		
 		ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
-		getReasonCodeDAO().delete(reasonCode,TableType.MAIN_TAB);
-		
+		getReasonCodeDAO().delete(reasonCode, TableType.MAIN_TAB);
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * getReasons fetch the details by using ReasonsDAO's getReasonsById
-	 * method.
+	 * getReasons fetch the details by using ReasonsDAO's getReasonsById method.
 	 * 
 	 * @param id
 	 *            id of the ReasonCode.
@@ -189,7 +188,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	 */
 	@Override
 	public ReasonCode getReasonCode(long id) {
-		return getReasonCodeDAO().getReasonCode(id,"_View");
+		return getReasonCodeDAO().getReasonCode(id, "_View");
 	}
 
 	/**
@@ -203,9 +202,9 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	 * @return Reasons
 	 */
 	public ReasonCode getApprovedReasonCode(long id) {
-		return getReasonCodeDAO().getReasonCode(id,"_AView");
-	}	
-		
+		return getReasonCodeDAO().getReasonCode(id, "_AView");
+	}
+
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or
@@ -282,94 +281,98 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		
 		}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getReasonCodeDAO().delete with parameters
-		 * reasonCode,"_Temp" 3) Audit the record in to AuditHeader and
-		 * AdtReasons by using auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		@Override
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.info(Literal.ENTERING);
-			
-			auditHeader = businessValidation(auditHeader,"doApprove");
-			if (!auditHeader.isNextProcess()) {
-				logger.info(Literal.LEAVING);
-				return auditHeader;
-			}
+	
 
-			ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getReasonCodeDAO().delete(reasonCode,TableType.TEMP_TAB);
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getReasonCodeDAO().delete with parameters
+	 * reasonCode,"_Temp" 3) Audit the record in to AuditHeader and AdtReasons
+	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	@Override
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug(Literal.ENTERING);
-			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+		ReasonCode reasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
 
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getReasonCodeDAO().delete(reasonCode, TableType.TEMP_TAB);
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.info(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * getReasonCodeDAO().getErrorDetail with Error ID and language as
+	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @return
+	 */
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
+		ReasonCode reasonCode = (ReasonCode) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (reasonCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
+				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
+						reasonCode.getCode(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeID();
+			parameters[1] = PennantJavaUtil.getLabel("label_ReasonCategoryID") + ": "
+					+ reasonCode.getReasonCategoryID();
+			parameters[2] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonCode.getCode();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		/**
-		 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-		 * from getReasonCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-		 * the to auditDeail Object
-		 * 
-		 * @param auditDetail
-		 * @param usrLanguage
-		 * @return
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug(Literal.ENTERING);
-			
-			// Get the model object.
-			ReasonCode reasonCode = (ReasonCode) auditDetail.getModelData();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-			// Check the unique keys.
-			if (reasonCode.isNew() && reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeCode(),reasonCode.getReasonCategoryCode(),reasonCode.getCode(),
-					reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				
-				parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeCode();
-				parameters[1] = PennantJavaUtil.getLabel("label_ReasonCategoryID") + ": " + reasonCode.getReasonCategoryCode();
-				parameters[2] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonCode.getCode();
-
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
-
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			logger.debug(Literal.LEAVING);
-			return auditDetail;
-		}
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
 
 }

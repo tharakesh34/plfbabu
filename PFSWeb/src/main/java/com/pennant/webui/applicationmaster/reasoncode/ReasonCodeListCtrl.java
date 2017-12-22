@@ -141,8 +141,9 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 		registerButton(button_ReasonCodeList_NewReasonCode, "button_ReasonCodeList_NewReasonCode", true);
 
 		registerField("id");
-		registerField("reasonTypeCode", listheader_ReasonTypeID, SortOrder.NONE, reasonTypeID, sortOperator_ReasonTypeID, Operators.STRING);
-		registerField("reasonCategoryCode", listheader_ReasonCategoryID, SortOrder.NONE, reasonCategoryID, sortOperator_ReasonCategoryID, Operators.STRING);
+			registerField("ReasonTypeID", listheader_ReasonTypeID, SortOrder.NONE, reasonTypeID, sortOperator_ReasonTypeID, Operators.STRING);
+			registerField("ReasonCategoryID", listheader_ReasonCategoryID, SortOrder.NONE, reasonCategoryID, sortOperator_ReasonCategoryID, Operators.STRING);
+
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
 		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);

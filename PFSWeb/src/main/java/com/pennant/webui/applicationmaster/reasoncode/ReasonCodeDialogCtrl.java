@@ -76,27 +76,27 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the
  * /WEB-INF/pages/ApplicationMaster/ReasonCode/reasonCodeDialog.zul file. <br>
  */
-public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
+public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
 	private static final long serialVersionUID = 1L;
-	private static final  Logger logger = Logger.getLogger(ReasonCodeDialogCtrl.class);
-	
+	private static final Logger logger = Logger.getLogger(ReasonCodeDialogCtrl.class);
+
 	/*
 	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ReasonCodeDialog; 
- 	protected ExtendedCombobox 		reasonTypeID; 
- 	protected ExtendedCombobox 		reasonCategoryID; 
-	protected Textbox 		code; 
-	protected Textbox 		description; 
-  protected Checkbox 		active; 
+	protected Window window_ReasonCodeDialog;
+	protected ExtendedCombobox reasonTypeID;
+	protected ExtendedCombobox reasonCategoryID;
+	protected Textbox code;
+	protected Textbox description;
+	protected Checkbox active;
 	private ReasonCode reasonCode; // overhanded per param
 
-	private transient ReasonCodeListCtrl reasonCodeListCtrl; // overhanded per param
+	private transient ReasonCodeListCtrl reasonCodeListCtrl; // overhanded per
+																// param
 	private transient ReasonCodeService reasonCodeService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -109,17 +109,18 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 	protected void doSetProperties() {
 		super.pageRightName = "ReasonCodeDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.reasonCode.getId()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.reasonCode.getId()));
 		return referenceBuffer.toString();
 	}
 
 	
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -151,12 +152,12 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 					this.reasonCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -176,28 +177,24 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.code.setMaxlength(8);
-			this.description.setMaxlength(50);
-			
-			this.reasonTypeID.setMaxlength(8);
-			this.reasonTypeID.setMandatoryStyle(true);
-			this.reasonTypeID.setModuleName("ReasonTypes");
-			this.reasonTypeID.setValueColumn("Code");
-			this.reasonTypeID.setDescColumn("Description");
-			this.reasonTypeID.setValidateColumns(new String[] { "Code" });
-			
-			
-			
-			
-			this.reasonCategoryID.setMaxlength(8);
-			this.reasonCategoryID.setMandatoryStyle(true);
-			this.reasonCategoryID.setModuleName("ReasonCategory");
-			this.reasonCategoryID.setValueColumn("Code");
-			this.reasonCategoryID.setDescColumn("Description");
-			this.reasonCategoryID.setValidateColumns(new String[] { "Code" });
-			
-		
+
+		this.code.setMaxlength(8);
+		this.description.setMaxlength(50);
+
+		this.reasonTypeID.setMaxlength(8);
+		this.reasonTypeID.setMandatoryStyle(true);
+		this.reasonTypeID.setModuleName("ReasonTypes");
+		this.reasonTypeID.setValueColumn("Id");
+		this.reasonTypeID.setDescColumn("Code");
+		this.reasonTypeID.setValidateColumns(new String[] { "Code" });
+
+		this.reasonCategoryID.setMaxlength(8);
+		this.reasonCategoryID.setMandatoryStyle(true);
+		this.reasonCategoryID.setModuleName("ReasonCategory");
+		this.reasonCategoryID.setValueColumn("Id");
+		this.reasonCategoryID.setDescColumn("Code");
+		this.reasonCategoryID.setValidateColumns(new String[] { "Code" });
+
 		setStatusDetails();
 		
 		logger.debug(Literal.LEAVING);
@@ -342,14 +339,31 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 	 */
 	public void doWriteBeanToComponents(ReasonCode aReasonCode) {
 		logger.debug(Literal.ENTERING);
-	
-			this.reasonCategoryID.setValue(aReasonCode.getReasonCategoryCode());
-			this.reasonTypeID.setValue(aReasonCode.getReasonTypeCode());
-			this.code.setValue(aReasonCode.getCode());
-			this.description.setValue(aReasonCode.getDescription());
-			this.active.setChecked(aReasonCode.isActive());
 		
-		
+		this.reasonCategoryID.setValue(String.valueOf(aReasonCode.getReasonCategoryID()));
+		this.reasonTypeID.setValue(String.valueOf(aReasonCode.getReasonTypeID()));
+		this.code.setValue(aReasonCode.getCode());
+		this.description.setValue(aReasonCode.getDescription());
+		this.active.setChecked(aReasonCode.isActive());
+
+		if (aReasonCode.isNewRecord()) {
+			this.reasonCategoryID.setDescription("");
+			this.reasonTypeID.setDescription("");
+			this.reasonCategoryID.setValue("");
+			this.reasonTypeID.setValue("");
+		} else {
+			this.reasonCategoryID.setValue(String.valueOf(aReasonCode.getReasonCategoryID()));
+			this.reasonTypeID.setValue(String.valueOf(aReasonCode.getReasonTypeID()));
+			
+			this.reasonCategoryID.setDescription(String.valueOf(aReasonCode.getReasonCategoryCode()));
+			this.reasonTypeID.setDescription(String.valueOf(aReasonCode.getReasonTypeCode()));
+		}
+		if (aReasonCode.isNew() || (aReasonCode.getRecordType() != null ? aReasonCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -367,7 +381,9 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 		
 		//Reason Type
 		try {
-			aReasonCode.setReasonTypeCode(this.reasonTypeID.getValue());
+			
+			aReasonCode.setReasonTypeID(Long.valueOf(this.reasonTypeID.getValue()));
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -375,20 +391,21 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 		
 		
 		try {
-			aReasonCode.setReasonCategoryCode(this.reasonCategoryID.getValue());
+			aReasonCode.setReasonCategoryID(Long.valueOf(this.reasonCategoryID.getValue()));
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Code
+		// Code
 		try {
-		    aReasonCode.setCode(this.code.getValue());
-		}catch (WrongValueException we ) {
+			aReasonCode.setCode(this.code.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Description
 		try {
-		    aReasonCode.setDescription(this.description.getValue());
-		}catch (WrongValueException we ) {
+			aReasonCode.setDescription(this.description.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
@@ -402,7 +419,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 		doRemoveLOVValidation();
 		
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -538,7 +555,8 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aReasonCode.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aReasonCode.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aReasonCode.getRecordType()).equals("")){
 				aReasonCode.setVersion(aReasonCode.getVersion()+1);
@@ -586,300 +604,298 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode>{
 			readOnlyComponent(true, this.code);
 			
 		}
-	
-			readOnlyComponent(isReadOnly("ReasonCodeDialog_Description"), this.description);
-			readOnlyComponent(isReadOnly("ReasonCodeDialog_Active"), this.active);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.reasonCode.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
+
+		readOnlyComponent(isReadOnly("ReasonCodeDialog_Description"), this.description);
+		readOnlyComponent(isReadOnly("ReasonCodeDialog_Active"), this.active);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.reasonCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.reasonTypeID);
-			readOnlyComponent(true, this.reasonCategoryID);
-			readOnlyComponent(true, this.code);
-			readOnlyComponent(true, this.description);
-			readOnlyComponent(true, this.active);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-			 	this.reasonTypeID.setValue("");;
-			 	this.reasonCategoryID.setValue("");
-				this.code.setValue("");
-				this.description.setValue("");
-				this.active.setChecked(false);
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final ReasonCode aReasonCode = new ReasonCode();
-			BeanUtils.copyProperties(this.reasonCode, aReasonCode);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aReasonCode);
-
-			isNew = aReasonCode.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aReasonCode.getRecordType())) {
-					aReasonCode.setVersion(aReasonCode.getVersion() + 1);
-					if (isNew) {
-						aReasonCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aReasonCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aReasonCode.setNewRecord(true);
-					}
-				}
+				btnCancel.setVisible(false);
 			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
+
+		readOnlyComponent(true, this.reasonTypeID);
+		readOnlyComponent(true, this.reasonCategoryID);
+		readOnlyComponent(true, this.code);
+		readOnlyComponent(true, this.description);
+		readOnlyComponent(true, this.active);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
+
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.reasonTypeID.setValue("");
+		;
+		this.reasonCategoryID.setValue("");
+		this.code.setValue("");
+		this.description.setValue("");
+		this.active.setChecked(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final ReasonCode aReasonCode = new ReasonCode();
+		BeanUtils.copyProperties(this.reasonCode, aReasonCode);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aReasonCode);
+
+		isNew = aReasonCode.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aReasonCode.getRecordType())) {
 				aReasonCode.setVersion(aReasonCode.getVersion() + 1);
 				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
+					aReasonCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					aReasonCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aReasonCode.setNewRecord(true);
 				}
 			}
-
-			try {
-				if (doProcess(aReasonCode, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (final DataAccessException e) {
-				logger.error(e);
-				MessageUtil.showError(e);
-			}
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(ReasonCode aReasonCode, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
-
-			aReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
-			aReasonCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aReasonCode.setUserDetails(getUserWorkspace().getLoggedInUser());
-
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aReasonCode.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aReasonCode.getNextTaskId());
-
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aReasonCode);
-					}
-
-					if (isNotesMandatory(taskId, aReasonCode)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aReasonCode.setTaskId(taskId);
-				aReasonCode.setNextTaskId(nextTaskId);
-				aReasonCode.setRoleCode(getRole());
-				aReasonCode.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aReasonCode, tranType);
-				String operationRefs = getServiceOperations(taskId, aReasonCode);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aReasonCode, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		} else {
+			aReasonCode.setVersion(aReasonCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
 			} else {
-				auditHeader = getAuditHeader(aReasonCode, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				tranType = PennantConstants.TRAN_UPD;
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		try {
+			if (doProcess(aReasonCode, tranType)) {
+				refreshList();
+				closeDialog();
+			}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			ReasonCode aReasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
 
-			try {
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(ReasonCode aReasonCode, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		aReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aReasonCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aReasonCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = reasonCodeService.delete(auditHeader);
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aReasonCode.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aReasonCode.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aReasonCode);
+				}
+
+				if (isNotesMandatory(taskId, aReasonCode)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aReasonCode.setTaskId(taskId);
+			aReasonCode.setNextTaskId(nextTaskId);
+			aReasonCode.setRoleCode(getRole());
+			aReasonCode.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aReasonCode, tranType);
+			String operationRefs = getServiceOperations(taskId, aReasonCode);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aReasonCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aReasonCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		ReasonCode aReasonCode = (ReasonCode) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = reasonCodeService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = reasonCodeService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = reasonCodeService.doApprove(auditHeader);
+
+						if (aReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = reasonCodeService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = reasonCodeService.doReject(auditHeader);
+						if (aReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = reasonCodeService.doApprove(auditHeader);
-
-							if (aReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = reasonCodeService.doReject(auditHeader);
-							if (aReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_ReasonCodeDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_ReasonCodeDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.reasonCode), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ReasonCodeDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_ReasonCodeDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.reasonCode), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(ReasonCode aReasonCode, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aReasonCode.getBefImage(), aReasonCode);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aReasonCode.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setReasonCodeService(ReasonCodeService reasonCodeService) {
-			this.reasonCodeService = reasonCodeService;
-		}
-			
+	private AuditHeader getAuditHeader(ReasonCode aReasonCode, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReasonCode.getBefImage(), aReasonCode);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aReasonCode.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setReasonCodeService(ReasonCodeService reasonCodeService) {
+		this.reasonCodeService = reasonCodeService;
+	}
+
 }

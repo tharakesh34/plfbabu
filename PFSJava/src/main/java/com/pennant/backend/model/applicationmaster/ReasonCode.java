@@ -65,6 +65,8 @@ public class ReasonCode extends AbstractWorkflowEntity  implements Entity {
 private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
+	private long reasonTypeID;
+	private long reasonCategoryID;
 	private String reasonTypeCode;
 	private String reasonCategoryCode;
     private String code;
@@ -94,8 +96,8 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("reasonTypeIDName");
-			excludeFields.add("reasonCategoryIDName");
+			excludeFields.add("reasonTypeCode");
+			excludeFields.add("reasonCategoryCode");
 	return excludeFields;
 	}
 
@@ -178,6 +180,21 @@ private static final long serialVersionUID = 1L;
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+	public long getReasonTypeID() {
+		return reasonTypeID;
+	}
+
+	public void setReasonTypeID(long reasonTypeID) {
+		this.reasonTypeID = reasonTypeID;
+	}
+
+	public long getReasonCategoryID() {
+		return reasonCategoryID;
+	}
+
+	public void setReasonCategoryID(long reasonCategoryID) {
+		this.reasonCategoryID = reasonCategoryID;
 	}
 
 }

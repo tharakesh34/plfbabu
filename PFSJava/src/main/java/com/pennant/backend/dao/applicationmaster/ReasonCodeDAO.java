@@ -73,6 +73,11 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(String reasonTypeCode, String reasonCategoryCode, String code, TableType tableType);	
+	boolean isDuplicateKey(long reasonTypeCode, long reasonCategoryCode, String code, TableType tableType);	
+	boolean isreasonCategoryIDExists(long rCategoryCode);
+	boolean isreasonTypeIDExists(long rTypeCode);
+
+	
+
 	
 }
