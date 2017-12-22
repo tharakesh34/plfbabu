@@ -196,7 +196,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_LegalDesk:
 				try {
-					auditHeader = legalDeskService.extecuteLegalDesk(auditHeader);
+					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in LegalDesk:", e);
