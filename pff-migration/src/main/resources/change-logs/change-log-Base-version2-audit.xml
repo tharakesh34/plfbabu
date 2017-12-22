@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="pre_run_for_pgp_adt" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+<changeSet id="1" author="Jayant">
+	<renameColumn tableName="AdtReasons" oldColumnName="reasonTypeCode"
+		newColumnName="reasonTypeID" />
+</changeSet>
+	<changeSet id="2" author="Jayant">
+		<renameColumn tableName="AdtReasons" oldColumnName="reasonCategoryCode"
+			newColumnName="reasonCategoryID" />
+	</changeSet>
+	<changeSet id="3" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view adtreasons_view cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="Jayant">
+		<modifyDataType tableName="AdtReasons" columnName="reasonCategoryID"
+			newDataType="BIGINT" />
+	</changeSet>
+	<changeSet id="5" author="Jayant">
+		<modifyDataType tableName="AdtReasons" columnName="reasonTypeID"
+			newDataType="BIGINT" />
+	</changeSet>
+	<changeSet id="6" author="Haritha">
+		<createView viewName="AdtReasons_View" replaceIfExists="true">
+    <![CDATA[SELECT     TH.AuditId, TH.AuditDate AS AuditDateTime, ${call.adtdate} AuditDate, ${call.adttime} AuditTime, COALESCE(AFT.AuditSeq, BEF.AuditSeq) AS AuditSeq, TH.AuditUsrId,T1.UsrFName${call.concatenate}T1.UsrMName${call.concatenate}T1.UsrLName AS AuditUserName,TH.AuditTranType AS AuditTranType, 
+                      Aft.Id as AftId, Aft.ReasonTypeId as AftReasonTypeId, Aft.ReasonCategoryId as AftReasonCategoryId, Aft.Code as AftCode, Aft.Description as AftDescription, Aft.Active as AftActive, 
+                      Bef.Id as BefId, Bef.ReasonTypeId as BefReasonTypeId, Bef.ReasonCategoryId as BefReasonCategoryId, Bef.Code as BefCode, Bef.Description as BefDescription, Bef.Active as BefActive 
+				FROM  AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTReasons  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTReasons  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
+    </createView>
+	</changeSet>
+	
+ </databaseChangeLog>
