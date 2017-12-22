@@ -212,7 +212,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					auditHeader = holdFinanceService.executeHoldFinance(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
-					logger.error("Exception in LegalDesk:", e);
+					logger.error("Exception in HoldFinance:", e);
 					taskExecuted = true;
 				}
 				break;

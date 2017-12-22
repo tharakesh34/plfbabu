@@ -321,7 +321,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setLovDescCustShrtName(list != null ? String.valueOf(list.get(2).toString()) : "");
 
 			Filter[] countrysystemDefault = new Filter[1];
-			countrysystemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
 
 			if (countryObj != null) {
