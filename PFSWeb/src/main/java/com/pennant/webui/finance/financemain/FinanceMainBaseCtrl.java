@@ -5437,7 +5437,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
 					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
-					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+					|| this.userAction.getSelectedItem().getLabel().contains("Hold")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}

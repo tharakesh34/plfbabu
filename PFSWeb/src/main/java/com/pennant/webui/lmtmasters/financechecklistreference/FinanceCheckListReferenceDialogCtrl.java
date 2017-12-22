@@ -936,7 +936,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			boolean validationSuccess = true;
 
 			if (!("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction) || userAction.contains("Reject") || 
-					userAction.contains("Resubmit")) && !map.containsKey("agreement")) {
+					userAction.contains("Resubmit") || userAction.contains("Hold")) && !map.containsKey("agreement")) {
 				validationSuccess = validation_CheckList(this.financeDetail, getUserWorkspace().getUserLanguage());
 			}
 

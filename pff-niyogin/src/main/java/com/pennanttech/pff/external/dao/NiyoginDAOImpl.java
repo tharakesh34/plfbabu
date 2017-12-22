@@ -445,15 +445,15 @@ public class NiyoginDAOImpl {
 	 * @param id
 	 * @return
 	 */
-	public List<HoldReason> getholdReasonsById(long id) {
+	public List<HoldReason> getholdReasonsById(List<Long> reasonIds) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT T1.CODE, T1.DESCRIPTION, T2.CODE AS HOLDCATAGEORY FROM PLF.REASONS T1");
 		selectSql.append(" INNER JOIN PLF.REASONCATEGORY T2 ON T1.REASONCATEGORYID = T2.ID ");
-		selectSql.append(" WHERE T1.REASONCATEGORYID = :id");
+		selectSql.append(" WHERE T1.Id in(:id)");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("id", id);
+		paramMap.addValue("id", reasonIds);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			logger.debug(Literal.LEAVING);

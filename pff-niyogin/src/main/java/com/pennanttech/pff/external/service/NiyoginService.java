@@ -656,8 +656,8 @@ public abstract class NiyoginService {
 	 * @param id
 	 * @return
 	 */
-	protected List<HoldReason> getholdReasonsById(long id) {
-		return niyoginDAOImpl.getholdReasonsById(id);
+	protected List<HoldReason> getholdReasonsById(List<Long> reasonIds) {
+		return niyoginDAOImpl.getholdReasonsById(reasonIds);
 	}
 
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {

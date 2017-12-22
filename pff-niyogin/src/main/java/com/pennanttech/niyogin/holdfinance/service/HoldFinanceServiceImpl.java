@@ -1,6 +1,7 @@
 package com.pennanttech.niyogin.holdfinance.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 
 		HoldFinanceRequest holdFinanceRequest = new HoldFinanceRequest();
-		holdFinanceRequest.setLoanReference(financeDetail.getFinReference());
+		holdFinanceRequest.setLoanReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 		holdFinanceRequest.setCif(customer.getCustCIF());
 		holdFinanceRequest.setCustomerName(customer.getCustShrtName());
 
@@ -86,8 +87,11 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		List<HoldReason> holdReasons = null;
 
 		if (detailsList != null && !detailsList.isEmpty()) {
-			long headerId = detailsList.get(0).getHeaderId();
-			holdReasons = getholdReasonsById(headerId);
+			List<Long> idList = new ArrayList<>();
+			for(ReasonDetails detail: detailsList) {
+				idList.add(detail.getReasonId());
+			}
+			holdReasons = getholdReasonsById(idList);
 		}
 		if (holdReasons != null && !holdReasons.isEmpty()) {
 			holdFinanceRequest.setHoldCategory(String.valueOf(holdReasons.get(0).getHoldCatageory()));
