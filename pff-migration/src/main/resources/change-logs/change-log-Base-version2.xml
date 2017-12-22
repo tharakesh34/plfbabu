@@ -270,7 +270,7 @@ UNION ALL
              FROM reasons T1
    inner join reasoncategory T2 on T1.reasoncategoryid=T2.id 
    inner join reasontypes T3 on T1.reasontypeid=T3.id
-   WHERE NOT (EXISTS ( SELECT 1 FROM reasons_temp WHERE id = T1.id));	
+   WHERE NOT (EXISTS ( SELECT 1 FROM reasons_temp WHERE id = T1.id))	
 	</createView>
 </changeSet>
 <changeSet id="3" author="somasekhar" >
