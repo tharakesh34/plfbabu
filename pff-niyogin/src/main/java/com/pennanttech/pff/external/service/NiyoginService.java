@@ -37,6 +37,7 @@ import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
+import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -648,6 +649,15 @@ public abstract class NiyoginService {
 	 */
 	protected long getPincodeGroupId(String pincode) {
 		return niyoginDAOImpl.getPincodeGroupId(pincode);
+	}
+	
+	/**
+	 * Method for get the Hold reasons.
+	 * @param id
+	 * @return
+	 */
+	protected List<HoldReason> getholdReasonsById(long id) {
+		return niyoginDAOImpl.getholdReasonsById(id);
 	}
 
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {

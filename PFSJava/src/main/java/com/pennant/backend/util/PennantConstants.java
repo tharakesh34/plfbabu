@@ -192,6 +192,7 @@ public class PennantConstants {
 	public static final String method_Crif_Bureau = "executeCrif";
 	public static final String method_Cibil_Bureau = "executeCibilConsumer";
 	public static final String method_LegalDesk = "executeLegalDesk";
+	public static final String method_HoldFinance = "executeHoldFinance";
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";

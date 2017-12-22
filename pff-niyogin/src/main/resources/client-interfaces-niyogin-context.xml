@@ -75,5 +75,11 @@
 		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sweeps/createLoanAgreement" />
 	</bean>	
 	
+		<!-- HoldFinance -->
+	<bean id="holdFinanceService"
+		class="com.pennanttech.niyogin.holdfinance.service.HoldFinanceServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sails/holdCustomerLoan" />
+	</bean>	
+
 	
 </beans>

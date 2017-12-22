@@ -20,10 +20,10 @@ import org.testng.annotations.Test;
 
 import com.jayway.jsonpath.JsonPath;
 
-@Test
+@Test(enabled = false)
 public class ExtendedMapFromPropertiesTest {
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void getExtendedMapObjectFromJson() throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
@@ -87,7 +87,7 @@ public class ExtendedMapFromPropertiesTest {
 		}
 	}
 	
-	@Test
+	@Test(enabled = false)
 	public void getExtendedMapObjectFromReflection() throws IOException {/*
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
@@ -156,7 +156,7 @@ public class ExtendedMapFromPropertiesTest {
 		}
 	*/}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void getFieldsMap() {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		InputStream input = null;
@@ -222,7 +222,7 @@ public class ExtendedMapFromPropertiesTest {
 		return  "{\"statusCode\": 200,\"message\": \"Hunter online matching completed\",\"data\": {\"MatchSummary\": 1,\"TotalMatchScore\": 210,\"Rules\": [ {\"RuleID\": \"NIYO_VEL_ADD\",\"ruleCount\": 4, \"Score\": 30 }, {\"RuleID\": \"NH_NC_PAN\",\"ruleCount\": 1,\"Score\": 90 }],\"MatchSchemes\": [ {\"SchemeID\": 15,\"Score\": 120 }]} } ";
 	}
 	
-	@Test
+	@Test(enabled = false)
 	public void testCollectionRemove(){
 		List<String> list = new ArrayList<>();
 		list.add("1");

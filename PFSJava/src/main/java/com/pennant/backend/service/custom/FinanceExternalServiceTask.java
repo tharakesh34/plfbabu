@@ -40,6 +40,7 @@ import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
 import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.ExternalDedup;
+import com.pennanttech.pff.external.HoldFinanceService;
 import com.pennanttech.pff.external.LegalDeskService;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
@@ -66,6 +67,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	
 	@Autowired(required = false)
 	private LegalDeskService legalDeskService;
+	
+	@Autowired(required = false)
+	private HoldFinanceService		holdFinanceService;
 
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
@@ -197,6 +201,15 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			case PennantConstants.method_LegalDesk:
 				try {
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
+					taskExecuted = true;
+				} catch (Exception e) {
+					logger.error("Exception in LegalDesk:", e);
+					taskExecuted = true;
+				}
+				break;
+			case PennantConstants.method_HoldFinance:
+				try {
+					auditHeader = holdFinanceService.executeHoldFinance(auditHeader);
 					taskExecuted = true;
 				} catch (Exception e) {
 					logger.error("Exception in LegalDesk:", e);

@@ -30,6 +30,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -436,6 +437,34 @@ public class NiyoginDAOImpl {
 			logger.error("Exception", e);
 			throw new InterfaceException("9999", "Unable to Retrive  the Customer Email  Details.");
 		}
+	}
+
+	/**
+	 * Method for get the hold reasons.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<HoldReason> getholdReasonsById(long id) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT T1.CODE, T1.DESCRIPTION, T2.CODE AS HOLDCATAGEORY FROM PLF.REASONS T1");
+		selectSql.append(" INNER JOIN PLF.REASONCATEGORY T2 ON T1.REASONCATEGORYID = T2.ID ");
+		selectSql.append(" WHERE T1.REASONCATEGORYID = :id");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("id", id);
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			logger.debug(Literal.LEAVING);
+			RowMapper<HoldReason> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HoldReason.class);
+			logger.debug(Literal.LEAVING);
+			return this.namedJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			throw new InterfaceException("9999", "Unable to Retrive  the HoldReason Details.");
+		}
+
 	}
 
 }
