@@ -4975,7 +4975,9 @@
 	</bean>
 	
 <!-- External File Upload -->
-	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	<property name="batchUploadConfigService" ref="batchUploadConfigService" />
+	</bean>
 	
 	<!-- External File Upload  -->
 	<bean id="pdfUploadListCtrl" class="com.pennant.webui.pdfupload.PdfUploadListCtrl" parent="basisListCtrl" scope="prototype">

@@ -358,7 +358,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		// Check the unique keys.
 		if (reasonCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
 				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
-						reasonCode.getCode(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+						reasonCode.getCode().trim(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeID();

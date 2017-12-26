@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -49,18 +50,20 @@ public class BatchUploadProcessor {
 	private File file;
 	private String apiUrl = null;
 	private String extraHeader = null;
+	private String sourceFileName = null;
 	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
 	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
 
-	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader) {
+	public BatchUploadProcessor(File file, String authorization, String apiUrl, String extraHeader, String sourceFileName) {
 		this.file = file;
 		this.authorization = authorization;
 		this.apiUrl = apiUrl;
 		this.extraHeader = extraHeader; // it could be blank.
+		this.sourceFileName = sourceFileName;
 		inIt(file);
 	}
 
-	private void inIt(File file2) {
+	private void inIt(File file) {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -85,7 +88,7 @@ public class BatchUploadProcessor {
 		// sanity check
 		validateFile();
 		// deep check
-		TemplateMatcher matcher = new TemplateMatcher(workbook, apiUrl);
+		TemplateMatcher matcher = new TemplateMatcher(workbook, sourceFileName);
 		matcher.doCompair();
 		
 		List<String> keys = BatchProcessorUtil.getAllKeysByIndex(workbook, 0);
@@ -391,8 +394,6 @@ public class BatchUploadProcessor {
 	/** this method will validate uploaded file if Validation fails throws ValidationException */
 	public void validateFile() {
 		Sheet sheet = workbook.getSheetAt(0);
-		List<String> KeyList = BatchProcessorUtil.getAllKeysByIndex(workbook, 0);
-
 		if (!sheet.getSheetName().equals("<ROOT>")) {
 			throw new ValidationException(BatchUploadProcessorConstatnt.INVALID_FILE_TEMPLATE_MSG);
 		}
@@ -404,6 +405,7 @@ public class BatchUploadProcessor {
 				throw new ValidationException(BatchUploadProcessorConstatnt.INVALID_FILE_TEMPLATE_MSG);
 			}
 		}
+		List<String> KeyList = BatchProcessorUtil.getAllKeysByIndex(workbook, 0);
 		if (KeyList.isEmpty() && KeyList.size() == 0) { // there is no keys in <ROOT> sheet.
 			throw new ValidationException(BatchUploadProcessorConstatnt.PARENT_KEYS_FOUND);
 		}
@@ -518,6 +520,9 @@ public class BatchUploadProcessor {
 			Response response = client.post(jsondata.toString());
 			String body = response.readEntity(String.class);
 			headerMessageId = response.getHeaderString(BatchUploadProcessorConstatnt.MESSAGE_ID);
+			if (headerMessageId == null && StringUtils.isBlank(body)) {
+				throw new RuntimeException(BatchUploadProcessorConstatnt.UNABLE_TO_PROCESS);
+			}
 			logger.info("MESSAGEID :: " + headerMessageId + "  API RESPONSE :: " + body);
 
 			if (response.getStatus() == 200 && body != null) {

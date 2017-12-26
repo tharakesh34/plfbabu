@@ -22,14 +22,14 @@ public class TemplateMatcher {
 	private Workbook targetWorkbook = null; // Uploaded excel
 	// main template, from resources/BatchUpload_Templates directory
 	private Workbook sourceWorkbook = null; 
-	 // based on url pick excel file from resources/BatchUpload_Templates directory.
-	private String apiUrl = null;
+	 // based on sourceFileName pick excel file from resources/BatchUpload_Templates directory.
+	private String sourceFileName = null;
 	
 
-	public TemplateMatcher(Workbook targetWorkbook, String apiUrl) {
+	public TemplateMatcher(Workbook targetWorkbook, String sourceFileName) {
 		super();
 		this.targetWorkbook = targetWorkbook;
-		this.apiUrl = apiUrl;
+		this.sourceFileName = sourceFileName;
 		
 		inItSourceWorkbook();
 	}
@@ -37,7 +37,7 @@ public class TemplateMatcher {
 	/** to get  sourceWorkbook*/
 	private void inItSourceWorkbook() {
 
-		File file = getExceluByusingUrl();
+		File file = getSourceExcelByusingUrl();
 		
 		FileInputStream fis = null;
 		try {
@@ -54,17 +54,11 @@ public class TemplateMatcher {
 	}
 
    /** to pick particular excel from  resources/BatchUpload_Templates directory.*/
- 	private File getExceluByusingUrl() {
+ 	private File getSourceExcelByusingUrl() {
  		
- 		String fileName = "";
- 		final String filePath = "BatchUploadTemplates/";
- 		 for (ApiType excelType : ApiType.values()){
- 			 if(apiUrl.contains(excelType.toString())){
- 				fileName = excelType.toString().concat(".xls");
- 				break;
- 			 }
- 		 }
- 		 File batchUploadTemplates = new File(filePath);
+ 		String fileName = sourceFileName.concat(".xls");
+
+ 		File batchUploadTemplates = new File(BatchUploadProcessorConstatnt.FILE_PATH);
 		if (batchUploadTemplates.exists()) {
 			batchUploadTemplates.delete();
 		} 
@@ -74,7 +68,7 @@ public class TemplateMatcher {
 		File file = new File(batchUploadTemplates.getPath().concat(fileName));
 		try {
 			file.createNewFile();
-			inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath+fileName);
+			inputStream = this.getClass().getClassLoader().getResourceAsStream(BatchUploadProcessorConstatnt.FILE_PATH+fileName);
 			outputStream = new FileOutputStream(file);
 			IOUtils.copy(inputStream, outputStream);
 			inputStream.close();
@@ -94,17 +88,17 @@ public class TemplateMatcher {
 
 		int numberOfSourceSheets = sourceWorkbook.getNumberOfSheets();
 		int numberOfTargetSheets = targetWorkbook.getNumberOfSheets();
-
-		if (numberOfSourceSheets > numberOfTargetSheets) { // number of sheet should not be less than template.
+		// number of sheet should not be less than template.
+		if (numberOfSourceSheets > numberOfTargetSheets) { 
 			throw new ValidationException(
-					"Number of sheets contains " + numberOfTargetSheets + " required " + numberOfSourceSheets);
+					"Uploaded Excel Contains " + numberOfTargetSheets + " Sheets But Required " + numberOfSourceSheets);
 		}
-
 		for (int sourcIndex = 0; sourcIndex < numberOfSourceSheets; sourcIndex++) {
 			String sourceSheetName = sourceWorkbook.getSheetName(sourcIndex);
 			String targetSheetName = targetWorkbook.getSheetName(sourcIndex);
 			if (!sourceSheetName.equals(targetSheetName)) {
-				throw new ValidationException(sourceSheetName + BatchUploadProcessorConstatnt.INVALID_SHEET_MSG);
+				int position = sourcIndex+1;
+				throw new ValidationException("Could Not Found "+ '"'+sourceSheetName+'"' + " Sheet at "+ position +" Position");
 			}
 			List<String> sourcekeys = BatchProcessorUtil.getAllKeysByIndex(sourceWorkbook, sourcIndex);
 			List<String> targetkeys = BatchProcessorUtil.getAllKeysByIndex(targetWorkbook, sourcIndex);
@@ -115,7 +109,6 @@ public class TemplateMatcher {
 				throw new ValidationException(sourcekeys + " keys are not found in " + targetSheetName + " sheet.");
 			}
 		}
-
 	}
 	
 

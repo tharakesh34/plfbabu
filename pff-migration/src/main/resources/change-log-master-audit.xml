@@ -2,6 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<include file="change-logs/change-log-2.26-unicode_char_cleanup-audit.xml" />
+<!--     <include file="change-logs/change-log-2.26-unicode_char_cleanup-audit.xml" />
 	<include file="change-logs/change-log-2.26-bool-correction-audit.xml" />
 	<include file="change-logs/change-log-2.26-audit.xml" />
 	<include file="change-logs/change-log-2.27-bool-correction-audit.xml" />
@@ -55,7 +56,7 @@
 	<include file="change-logs/change-log-3.16.8-audit.xml" />
 	<include file="change-logs/change-log-3.16.9-audit.xml" />
 	<include file="change-logs/change-log-3.16.10-audit.xml" />
-	<include file="change-logs/change-log-3.16.11-audit.xml" />
+	<include file="change-logs/change-log-3.16.11-audit.xml" /> -->
 	<include file="change-logs/change-log-3.16.12-audit.xml" />
 	<include file="change-logs/change-log-3.16.16-audit.xml" />
 	<include file="change-logs/change-log-3.16.16.3-audit.xml" />
@@ -63,4 +64,5 @@
 	<include file="change-logs/change-log-3.16.18-audit.xml" />
 	<include file="change-logs/change-log-MLOD-audit.xml" />
 	<include file="change-logs/change-log-3.16.21.1-audit.xml"/>
+	<include file="change-logs/change-log-Base-version1-audit.xml" />
 </databaseChangeLog>

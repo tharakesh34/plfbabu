@@ -84,6 +84,7 @@ public class BatchProcessorUtil {
 			formattedDate = targetFormat.format(date1);
 		} catch (ParseException e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
+			throw new ValidationException(BatchUploadProcessorConstatnt.DATE_EXCEPTION);
 		}
 		return formattedDate;
 	}

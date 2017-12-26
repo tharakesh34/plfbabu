@@ -10630,9 +10630,19 @@
 		<property name="documentTypeService" ref="documentTypeService" />
 	</bean>
 	
-		<!-- Reason Detail -->
+	<!-- Reason Detail -->
 	<bean id="reasonDetailDAO" class="com.pennant.backend.dao.reason.deatil.impl.ReasonDetailDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- BatchUploadConfig -->
+	<bean id="batchUploadConfigDAO"
+		class="com.pennant.batchupload.fileprocessor.dao.impl.BatchUploadConfigDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean name="batchUploadConfigService" class="com.pennant.batchupload.fileprocessor.service.impl.BatchUploadConfigServiceImpl">
+		<property name="batchUploadConfigDAO" ref="batchUploadConfigDAO" />
+	</bean>
+	
 	
 </beans>

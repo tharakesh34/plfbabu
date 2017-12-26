@@ -360,7 +360,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 
 		// Check the unique keys.
 		if (reasonCategory.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCategory.getRecordType())
-				&& reasonCategoryDAO.isDuplicateKey(reasonCategory.getCode(),
+				&& reasonCategoryDAO.isDuplicateKey(reasonCategory.getCode().trim(),
 						reasonCategory.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

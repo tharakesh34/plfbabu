@@ -17,7 +17,38 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
+	<changeSet id="01" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="POSTVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="02" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="PREVALIDATION" type="NCLOB"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="POSTVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="04" author="DurgaPrasad G">
+		<addColumn tableName="ADTExtendedfieldheader">
+			<column name="PREVALIDATIONREQ" type="SMALLINT"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="05" author="Ganesh.p">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+		<changeSet id="41" author="Ganesh.p">
+		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
+	</changeSet>
 <changeSet id="1" author="Amit">
 	<addColumn tableName="ADTBMTDOCUMENTTYPES">
 		<column name="IsPdfExtRequired" type="boolean" />
@@ -35,4 +66,62 @@
 		tableName="ADTBMTDOCUMENTTYPES" />
 </changeSet>
 
+</databaseChangeLog>
+	
+	<changeSet id="06" author="Prakash">
+		<addColumn tableName="ADTMandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="07" author="Prakash">
+		<addColumn tableName="ADTMandates">
+			<column name="ExternalRef" type="varchar(2000)" />
+		</addColumn> 
+	</changeSet>
+	
+	<changeSet id="08" author="Prakash">
+		<addColumn tableName="ADTMandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="42" author="Surekha">
+		<addColumn tableName="AdtCustomerAddresses">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="43" author="Surekha">
+		<addColumn tableName="AdtPinCodes">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	 <changeSet id="44" author="Surekha">
+     <addColumn tableName="AdtFinJointAccountDetails">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+      <changeSet id="45" author="Surekha">
+     <addColumn tableName="AdtRMTLovFieldDetail">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="46" author="Surekha">
+		<modifyDataType tableName="Adtpincodes" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
+     <changeSet id="47" author="Surekha">
+		<dropNotNullConstraint tableName="adtcustomerdocuments"
+			columnName="custdoctype" columnDataType="VARCHAR2(10)" />
+	</changeSet>
+	 <changeSet id="48" author="Ganesh.p">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL">
+			<column name="EDITABLE" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -319,6 +319,8 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory>{
 	
 			this.code.setValue(aReasonCategory.getCode());
 			this.description.setValue(aReasonCategory.getDescription());
+			this.recordStatus.setValue(aReasonCategory.getRecordStatus());
+
 		
 		
 		logger.debug(Literal.LEAVING);
@@ -411,10 +413,10 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCategoryDialog_Code.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCategoryDialog_Code.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCategoryDialog_Description.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCategoryDialog_Description.value"),null,false));
 		}
 	
 		logger.debug(Literal.LEAVING);

@@ -362,7 +362,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 
 		// Check the unique keys.
 		if (reasonTypes.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonTypes.getRecordType())
-				&& reasonTypesDAO.isDuplicateKey(reasonTypes.getCode(),
+				&& reasonTypesDAO.isDuplicateKey(reasonTypes.getCode().trim(),
 						reasonTypes.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

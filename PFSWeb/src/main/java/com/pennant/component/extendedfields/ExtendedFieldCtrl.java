@@ -362,6 +362,12 @@ public class ExtendedFieldCtrl {
 						textbox.setText(String.valueOf(value));
 					}
 				} else if (component instanceof Uppercasebox) {
+					Uppercasebox uppercasebox = (Uppercasebox) component;
+					if (isDelete) {
+						uppercasebox.setText("");
+					} else {
+						uppercasebox.setText(String.valueOf(value));
+					}
 				} else if (component instanceof Datebox) {
 					Datebox datebox = (Datebox) component;
 					if (isDelete) {
@@ -447,7 +453,6 @@ public class ExtendedFieldCtrl {
 					} else {
 						accountSelectionBox.setValue(String.valueOf(value));
 					}
-					
 				} else if (component instanceof FrequencyBox) {
 					FrequencyBox frequencyBox = (FrequencyBox) component;
 					if (isDelete) {
@@ -455,7 +460,6 @@ public class ExtendedFieldCtrl {
 					} else {
 						frequencyBox.setValue(String.valueOf(value));
 					}
-
 				}
 			}
 		}
