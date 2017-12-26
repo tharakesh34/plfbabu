@@ -2042,13 +2042,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		}
-		if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) {
+/*		if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "PAN document";
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
-		}
+		}*/
 
 		// customer bank info details
 		List<CustomerBankInfo> custBankDetails = customerDetails.getCustomerBankInfoList();
