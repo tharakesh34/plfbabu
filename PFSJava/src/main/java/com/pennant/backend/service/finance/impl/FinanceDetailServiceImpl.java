@@ -205,7 +205,6 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -3891,11 +3890,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	
 	/**
 	 * Method for execute workflow service tasks.
+	 * @throws Exception 
 	 * 
 	 */
 	@Override
 	public AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, 
-			WorkflowEngine engine) throws AppException, JaxenException {
+			WorkflowEngine engine) throws Exception {
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
@@ -3958,11 +3958,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param usrAction
 	 * @param engine
 	 * @return
-	 * @throws InterfaceException
-	 * @throws JaxenException
+	 * @throws Exception 
 	 */
 	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task, String role, String usrAction,
-			WorkflowEngine engine) throws InterfaceException, JaxenException {
+			WorkflowEngine engine) throws Exception {
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();

@@ -76,7 +76,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	private ServiceTaskDAO			serviceTaskDAO;
 
 	@Override
-	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) {
+	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -148,7 +148,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader = externalDedup.checkDedup(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in Dedup Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_externalDedup, e.getMessage());
@@ -159,7 +159,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader = blacklistCheck.checkHunterDetails(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in Hunter Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_hunter, e.getMessage());
@@ -170,7 +170,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader=experianBureauService.executeExperianBureau(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in Experian Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
@@ -181,7 +181,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader=criffBureauService.executeCriffBureau(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in CRIFF Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Crif_Bureau, e.getMessage());
@@ -192,7 +192,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader = cibilConsumerService.getCibilConsumer(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in CIBIL Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Cibil_Bureau, e.getMessage());
@@ -202,7 +202,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);
 					taskExecuted = true;
 				}
@@ -211,7 +211,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				try {
 					auditHeader = holdFinanceService.executeHoldFinance(auditHeader);
 					taskExecuted = true;
-				} catch (Exception e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception in HoldFinance:", e);
 					taskExecuted = true;
 				}
