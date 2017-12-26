@@ -424,6 +424,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		}
 
 		disbursementInstCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
+		disbursementInstCtrl.setDocumentDetails(aPayOrderIssueHeader.getDocumentDetails());
 		List<ErrorDetails> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
 				aPayOrderIssueHeader.isLoanApproved());
 		valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());

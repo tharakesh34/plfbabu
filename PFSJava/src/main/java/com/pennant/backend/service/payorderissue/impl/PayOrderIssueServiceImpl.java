@@ -50,11 +50,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -63,6 +66,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -70,6 +74,7 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.TableType;
@@ -89,6 +94,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PostingsPreparationUtil	postingsPreparationUtil;
 	private FinanceMainDAO			financeMainDAO;
 	private DisbursementPostings	disbursementPostings;
+	@Autowired
+	private DocumentDetailsDAO		documentDetailsDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -231,6 +238,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}else{
 			issueHeader.setFinanceDisbursements(teemList);
 		}
+		String module = FinanceConstants.MODULE_NAME;
+		String document = SysParamUtil.getValueAsString("DISB_DOC");
+		
+		if (StringUtils.isNotEmpty(document)) {
+			DocumentDetails docDetails=null;
+			if (issueHeader.isLoanApproved()) {
+				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module, TableType.MAIN_TAB.getSuffix());
+			}else{
+				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module, TableType.TEMP_TAB.getSuffix());
+			}
+			issueHeader.setDocumentDetails(docDetails);
+		}
+		
 
 		issueHeader.setApprovedFinanceDisbursements(mainList);
 		logger.debug("Leaving");

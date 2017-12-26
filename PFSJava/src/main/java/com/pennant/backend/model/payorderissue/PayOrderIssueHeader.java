@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -47,6 +48,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	private List<FinanceDisbursement>			financeDisbursements;
 	private List<FinanceDisbursement>			approvedFinanceDisbursements;
+	private DocumentDetails						documentDetails; 
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -73,6 +75,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		excludeFields.add("loanApproved");
 		excludeFields.add("financeDisbursements");
 		excludeFields.add("approvedFinanceDisbursements");
+		excludeFields.add("documentDetails");
 		excludeFields.add("finIsActive");
 		excludeFields.add("financeMain");
 		excludeFields.add("alwMultiPartyDisb");
@@ -270,5 +273,13 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setAlwMultiPartyDisb(boolean alwMultiPartyDisb) {
 		this.alwMultiPartyDisb = alwMultiPartyDisb;
+	}
+
+	public DocumentDetails getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(DocumentDetails documentDetails) {
+		this.documentDetails = documentDetails;
 	}
 }
