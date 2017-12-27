@@ -126,7 +126,7 @@
 	    <menuItem id="menu_Item_ProfitCenter" zulNavigation="/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterList.zul" rightName="menuItem_applicationmaster_ProfitCenter"/>
 	    <menuItem id="menu_Item_ReasonCategory" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul" rightName="menuItem_ApplicationMaster_ReasonCategory"/>
         <menuItem id="menu_Item_ReasonCategoryEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_ApplicationMaster_ReasonCategoryEnquiry"/>
-		<menuItem id="menu_Item_ReasonTypes" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesList.zul"  rightName="menuItem_ApplicationMaster_ReasonTypes"/>
+		<!-- <menuItem id="menu_Item_ReasonTypes" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesList.zul"  rightName="menuItem_ApplicationMaster_ReasonTypes"/> -->
 		<menuItem id="menu_Item_ReasonTypesEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesEnquiryList.zul?enqiryModule=Y"   rightName="menuItem_ApplicationMaster_ReasonTypesEnquiry"/>
 		<menuItem id="menu_Item_ReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeList.zul"  rightName="menuItem_ApplicationMaster_ReasonCode"/>
 		<menuItem id="menu_Item_ReasonCodeEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeEnquiryList.zul?enqiryModule=Y"   rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry"/>
