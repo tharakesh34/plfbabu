@@ -1034,7 +1034,7 @@ public class FinanceDataDefaulting {
 			finMain.setCalTerms(finMain.getNumberOfTerms());
 			if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
 				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
-						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, financeType.getFddLockPeriod()).getScheduleList();
+						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
 
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
