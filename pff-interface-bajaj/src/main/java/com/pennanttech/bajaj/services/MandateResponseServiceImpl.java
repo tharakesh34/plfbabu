@@ -242,7 +242,7 @@ public class MandateResponseServiceImpl extends BajajService implements MandateR
 
 		paramMap.addValue("MANDATEID", respmandate.getMandateID());
 
-		if ("Y".equals(respmandate.getStatus())) {
+		if (!"Y".equals(respmandate.getStatus())) {
 			paramMap.addValue("STATUS", "REJECTED");
 			paramMap.addValue("MANDATEREF", null);
 		} else {

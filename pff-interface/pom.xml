@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
 			<artifactId>data-engine</artifactId>
-			<version>2.1.8-SNAPSHOT</version>
+			<version>2.1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps.pff</groupId>
