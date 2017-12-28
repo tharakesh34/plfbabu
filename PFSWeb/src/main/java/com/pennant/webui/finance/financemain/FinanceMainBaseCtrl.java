@@ -6273,7 +6273,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 
-		return main.getDeclaredFieldValues();
+		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
+		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
+		return declaredFieldValues;
 	}
 
 	private boolean primaryValidations() {

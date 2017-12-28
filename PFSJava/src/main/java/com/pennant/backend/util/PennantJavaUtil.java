@@ -1549,7 +1549,7 @@ public class PennantJavaUtil {
 				new String[] { "UsrLogin", "UsrFName", "UsrMName", "UsrLName" }, null, 600));
 
 		ModuleUtil.register("SecurityRole", new ModuleMapping("SecurityRole", SecurityRole.class, new String[] {
-				"SecRoles", "SecRoles" }, masterWF , new String[] { "RoleID", "RoleCd" }, null, 300));
+				"SecRoles", "SecRoles" }, masterWF , new String[] {  "RoleCd", "RoleDesc" }, null, 300));
 
 		ModuleUtil.register("SecurityRoleEnq", new ModuleMapping("SecurityRole", SecurityRole.class, new String[] {
 				"SecRoles", "SecRoles" }, masterWF , new String[] { "RoleCd", "RoleDesc" }, null, 450));
