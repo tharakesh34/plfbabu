@@ -6079,15 +6079,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							}
 						}
 						
-						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
-								.getFinScheduleData().getFinanceMain());						
+						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail);						
 						
 						if (isExtMailService()) {
 							try {
 								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
-										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);								
+										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
 								// send mail to external service
-								getMailTemplateService().sendMail(custMailIdList, templates);
+								getMailTemplateService().sendMail(templates);
 							} catch (IOException e) {
 								logger.error("Unable to read or process freemarker configuration or template :" + e);
 							} catch (TemplateException e) {
@@ -6259,9 +6258,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getPreparedMailData(FinanceMain main) {
+	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
+		FinanceMain main=aFinanceDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
 		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
 
@@ -6275,6 +6276,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
+		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
+		
 		return declaredFieldValues;
 	}
 

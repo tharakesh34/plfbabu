@@ -6,6 +6,6 @@ import com.pennant.backend.model.mail.MailTemplate;
 
 public interface MailService {
 	
-	public void sendEmail(List<String> custMailIdList, List<MailTemplate> templates);
+	public void sendEmail(List<MailTemplate> templates);
 }
 	

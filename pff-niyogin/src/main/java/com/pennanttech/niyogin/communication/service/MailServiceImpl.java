@@ -36,14 +36,12 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @return
 	 */
 	@Override
-	public void sendEmail(List<String> toAddress, List<MailTemplate> templates) throws InterfaceException {
+	public void sendEmail(List<MailTemplate> templates) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		if (toAddress != null && !toAddress.isEmpty() && templates != null && !templates.isEmpty()) {
-			for (String emailId : toAddress) {
-				for (MailTemplate template : templates) {
-					send(emailId, template.getEmailSubject(), template.getLovDescFormattedContent());
-				}
+		if (templates != null && !templates.isEmpty()) {
+			for (MailTemplate template : templates) {
+				send(template.getLovDescMailId(), template.getEmailSubject(), template.getLovDescFormattedContent());
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -57,9 +55,9 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param body
 	 * @return
 	 */
-	private void send(String emailId, String subject, String body) {
+	private void send(String[] emailId, String subject, String body) {
 		logger.debug(Literal.ENTERING);
-		Email emailRequest = prepareRequest(emailId, subject, body);
+		Email emailRequest = prepareRequest(String.join(",", emailId), subject, body);
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
