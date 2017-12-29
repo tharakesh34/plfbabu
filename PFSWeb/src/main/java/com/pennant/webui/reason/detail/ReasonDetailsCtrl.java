@@ -300,7 +300,12 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 
 		Object dataObject = reasonCategory.getObject();
 
-		if (dataObject instanceof String) {
+		if (dataObject == null) {
+			this.reasonCategory.setValue("");
+			this.reasons.setValue("");
+			readOnlyComponent(true, this.reasons);
+			readOnlyComponent(true, this.btnReasons);
+		} else if (dataObject instanceof String) {
 			this.reasonCategory.setValue(dataObject.toString());
 			this.reasons.setValue("");
 			readOnlyComponent(true, this.reasons);

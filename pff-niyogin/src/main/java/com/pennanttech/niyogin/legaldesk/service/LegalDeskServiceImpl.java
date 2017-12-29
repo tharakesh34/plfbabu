@@ -108,9 +108,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 		List<FinFeeDetail> feeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		for (FinFeeDetail finFee : feeDetailsList) {
-			if (StringUtils.equals(finFee.getFeeTypeCode(), "STAMPFEE")) {
-				stampPaperData.setStampAmount(finFee.getActualAmount());
-				break;
+			String stampFeeCode = (String) getSMTParameter("STAMPFEE", String.class);
+			if(StringUtils.isNotBlank(stampFeeCode)) {
+				if (StringUtils.equals(finFee.getFeeTypeCode(), stampFeeCode)) {
+					stampPaperData.setStampAmount(finFee.getActualAmount());
+					break;
+				}
 			}
 		}
 

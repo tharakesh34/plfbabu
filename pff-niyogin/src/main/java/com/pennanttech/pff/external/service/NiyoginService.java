@@ -659,6 +659,10 @@ public abstract class NiyoginService {
 	protected List<HoldReason> getholdReasonsById(List<Long> reasonIds) {
 		return niyoginDAOImpl.getholdReasonsById(reasonIds);
 	}
+	
+	protected Object getSMTParameter(String sysParmCode, Class<?> type){
+		return niyoginDAOImpl.getSMTParameter(sysParmCode, type);
+	}
 
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;

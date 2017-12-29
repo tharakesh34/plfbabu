@@ -19,7 +19,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -295,14 +294,18 @@ public class FeeDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
+		boolean isOrigination = false;
+		if(finServiceInst == null) {
+			isOrigination = true;
+		}
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, false,
-					FinanceConstants.MODULEID_FINTYPE));
+		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
+					isOrigination, FinanceConstants.MODULEID_FINTYPE));
 		} else {
 			String promotionType = financeDetail.getFinScheduleData().getFinanceType().getPromotionCode();
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent,
-					false, FinanceConstants.MODULEID_PROMOTION));
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent, isOrigination,
+					FinanceConstants.MODULEID_PROMOTION));
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();

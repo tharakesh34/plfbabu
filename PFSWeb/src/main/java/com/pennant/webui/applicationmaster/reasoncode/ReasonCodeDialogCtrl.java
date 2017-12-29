@@ -179,7 +179,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		logger.debug(Literal.ENTERING);
 
 		this.code.setMaxlength(8);
-		this.description.setMaxlength(50);
+		this.description.setMaxlength(200);
 
 		this.reasonTypeID.setMaxlength(8);
 		this.reasonTypeID.setMandatoryStyle(true);

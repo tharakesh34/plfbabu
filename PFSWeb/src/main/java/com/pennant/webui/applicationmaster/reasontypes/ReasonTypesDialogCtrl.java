@@ -173,7 +173,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 		logger.debug(Literal.ENTERING);
 		
 			this.code.setMaxlength(8);
-			this.description.setMaxlength(50);
+			this.description.setMaxlength(200);
 		
 		setStatusDetails();
 		

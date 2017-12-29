@@ -579,10 +579,10 @@ public class PennantJavaUtil {
 				new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("ReasonTypes", new ModuleMapping("ReasonTypes", ReasonTypes.class, new String[] { "ReasonTypes",
-		"ReasonTypes_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
+		"ReasonTypes_AView" }, masterWF, new String[] {"Code","Description"},null, 600));
 		
 		ModuleUtil.register("ReasonCategory", new ModuleMapping("ReasonCategory", ReasonCategory.class, new String[] { "ReasonCategory",
-		"ReasonCategory_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
+		"ReasonCategory_AView" }, masterWF, new String[] {"Code","Description"},null, 600));
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
 				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",
