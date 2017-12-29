@@ -41,13 +41,6 @@
 		<property name="username" value="${pffextjdbc.username}" />
 		<property name="password" value="${pffextjdbc.password}" />
 	</bean>
-	<bean id="finOneDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${finOnejdbc.driverClassName}" />
-		<property name="url" value="${finOnejdbc.url}" />
-		<property name="username" value="${finOnejdbc.username}" />
-		<property name="password" value="${finOnejdbc.password}" />
-	</bean>
 	
 	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
