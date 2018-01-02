@@ -56,7 +56,7 @@
 	<include file="change-logs/change-log-3.16.8-audit.xml" />
 	<include file="change-logs/change-log-3.16.9-audit.xml" />
 	<include file="change-logs/change-log-3.16.10-audit.xml" />
-	<include file="change-logs/change-log-3.16.11-audit.xml" /> -->
+	<include file="change-logs/change-log-3.16.11-audit.xml" /> 
 	<include file="change-logs/change-log-3.16.12-audit.xml" />
 	<include file="change-logs/change-log-3.16.16-audit.xml" />
 	<include file="change-logs/change-log-3.16.16.3-audit.xml" />
@@ -65,4 +65,7 @@
 	<include file="change-logs/change-log-MLOD-audit.xml" />
 	<include file="change-logs/change-log-3.16.21.1-audit.xml"/>
 	<include file="change-logs/change-log-Base-version1-audit.xml" />
+	<include file="change-logs/change-log-Base-changes-audit.xml" />-->
+	<include file="change-logs/change-log-pdc-audit.xml"/>
+	<include file="change-logs/change-log-Base-version2-audit.xml" />
 </databaseChangeLog>
