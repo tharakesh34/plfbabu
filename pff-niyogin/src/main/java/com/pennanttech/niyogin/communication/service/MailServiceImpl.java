@@ -71,11 +71,11 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 			StringWriter writer = new StringWriter();
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
-			doInterfaceLogging(emailRequest, "MailId: "+emailId+":"+"Subject :"+subject);
+			doInterfaceLogging(emailRequest, "Mail");
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		// success case logging
-		doInterfaceLogging(emailRequest, "MailId: "+emailId+":"+"Subject :"+subject);
+		doInterfaceLogging(emailRequest, "Mail");
 				
 		logger.debug(Literal.LEAVING);
 	}

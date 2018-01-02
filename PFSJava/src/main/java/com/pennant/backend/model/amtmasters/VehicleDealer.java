@@ -145,9 +145,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.dealerName = dealerName;
 	}
 	
-	
-		
-	
 	public String getDealerTelephone() {
     	return dealerTelephone;
     }

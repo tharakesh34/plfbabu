@@ -207,7 +207,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				getFacility().setNatureOfBusinessName(customer.getLovDescCustSectorName());
 				getFacility().setSICCode(customer.getCustSubSector());
 				getFacility().setSICCodeName(customer.getLovDescCustSubSectorName());
-				getFacility().setRelationshipManager(customer.getCustRO1());
+				getFacility().setRelationshipManager(String.valueOf(customer.getCustRO1()));
 				getFacility().setCustDOB(customer.getCustFirstBusinessDate());
 				getFacility().setCustCoreBank(customer.getCustCoreBank());
 				getFacility().setCustRelation(customer.getCustRelation());

@@ -1843,6 +1843,7 @@
 		<property name="shortMessageService" ref="shortMessageService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

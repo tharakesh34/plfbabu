@@ -213,7 +213,7 @@ public class CustomerController {
 			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		}
 		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
-			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+			curCustomer.setCustRO1(Long.parseLong(customerDetails.getPrimaryRelationOfficer()));
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
 			curCustomer.setCustLng(PennantConstants.default_Language);
@@ -660,7 +660,7 @@ public class CustomerController {
 				response.setCustCtgCode(response.getCustomer().getCustCtgCode());
 				response.setCustDftBranch(response.getCustomer().getCustDftBranch());
 				response.setCustBaseCcy(response.getCustomer().getCustBaseCcy());
-				response.setPrimaryRelationOfficer(response.getCustomer().getCustRO1());
+				response.setPrimaryRelationOfficer(String.valueOf((response.getCustomer().getCustRO1())));
 				if(response.getCustomerDocumentsList() !=null){
 				for (CustomerDocument documents : response.getCustomerDocumentsList()) {
 					byte[] custDocImage = getDocumentImage(documents.getDocRefId());
@@ -853,7 +853,7 @@ public class CustomerController {
 				response.setCustCtgCode(customer.getCustCtgCode());
 				response.setCustDftBranch(customer.getCustDftBranch());
 				response.setCustBaseCcy(customer.getCustBaseCcy());
-				response.setPrimaryRelationOfficer(customer.getCustRO1());
+				response.setPrimaryRelationOfficer(String.valueOf(customer.getCustRO1()));
 				response.setCustomer(customer);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -902,7 +902,7 @@ public class CustomerController {
 			curCustomer.setCustBaseCcy(prvCustomer.getCustBaseCcy());
 		}
 		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
-			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+			curCustomer.setCustRO1(Long.parseLong(customerDetails.getPrimaryRelationOfficer()));
 		} else {
 			curCustomer.setCustRO1(prvCustomer.getCustRO1());
 		}

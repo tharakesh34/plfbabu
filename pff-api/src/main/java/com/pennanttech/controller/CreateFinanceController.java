@@ -1494,7 +1494,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		customerDetail.setCustCtgCode(customerDetail.getCustomer().getCustCtgCode());
 		customerDetail.setCustDftBranch(customerDetail.getCustomer().getCustDftBranch());
 		customerDetail.setCustBaseCcy(customerDetail.getCustomer().getCustBaseCcy());
-		customerDetail.setPrimaryRelationOfficer(customerDetail.getCustomer().getCustRO1());
+		customerDetail.setPrimaryRelationOfficer(String.valueOf(customerDetail.getCustomer().getCustRO1()));
 		customerDetail.setCustomer(customerDetail.getCustomer());
 		customerDetail.setCustomerPhoneNumList(null);
 		customerDetail.setCustEmployeeDetail(null);

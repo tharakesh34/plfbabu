@@ -100,6 +100,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -723,14 +724,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setDescColumn("CountryDesc");
 		this.custCOB.setValidateColumns(new String[] { "CountryCode" });
 
-		this.custRO1.setMaxlength(8);
+		/*this.custRO1.setMaxlength(8);
 		this.custRO1.setTextBoxWidth(121);
 		this.custRO1.setMandatoryStyle(true);
 		this.custRO1.setModuleName("RelationshipOfficer");
 		this.custRO1.setValueColumn("ROfficerCode");
 		this.custRO1.setDescColumn("ROfficerDesc");
 		this.custRO1.setValidateColumns(new String[] { "ROfficerCode" });
-
+*/
 		this.target.setMaxlength(8);
 		this.target.setTextBoxWidth(121);
 		this.target.setMandatoryStyle(false);
@@ -853,6 +854,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValueColumn("SubSegmentCode");
 		this.custSubSegment.setDescColumn("SubSegmentDesc");
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
+		
+		this.custRO1.setTextBoxWidth(121);
+		this.custRO1.setMandatoryStyle(true);
+		this.custRO1.setModuleName("SourceOfficer");
+		this.custRO1.setValueColumn("DealerName");
+		this.custRO1.setDescColumn("DealerCity");
+		this.custRO1.setValidateColumns(new String[] { "DealerName" });
+		
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
 		} else {
@@ -1035,7 +1044,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setValue(aCustomer.getCustCOB());
 		this.custDOB.setValue(aCustomer.getCustDOB());
 		this.noOfDependents.setValue(aCustomer.getNoOfDependents());
-		this.custRO1.setValue(aCustomer.getCustRO1());
+		if (aCustomer.getCustRO1() == 0) {
+			this.custRO1.setValue("");
+		} else {
+			this.custRO1.setValue(String.valueOf(aCustomer.getLovDescCustRO1Name()));
+			this.custRO1.setAttribute("DealerId", aCustomer.getCustRO1());
+		}
 		this.custTradeLicenceNum.setValue(aCustomer.getCustTradeLicenceNum());
 		this.custRelatedParty.setValue(StringUtils.trimToEmpty(aCustomer.getCustAddlVar83()));
 		this.custGroupId.setValue(aCustomer.getCustGroupID() == 0 ? "" : String.valueOf(aCustomer.getCustGroupID()));
@@ -1352,7 +1366,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		try {
 			aCustomer.setLovDescCustRO1Name(this.custRO1.getDescription());
-			aCustomer.setCustRO1(StringUtils.trimToNull(this.custRO1.getValidatedValue()));
+			this.custRO1.getValidatedValue();
+			aCustomer.setCustRO1(Long.parseLong(String.valueOf(this.custRO1.getAttribute("DealerId"))));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3670,6 +3685,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		logger.debug("Leaving");
+	}
+	
+	public void onFulfill$custRO1(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = custRO1.getObject();
+		if (dataObject instanceof String) {
+			this.custRO1.setValue(dataObject.toString());
+			this.custRO1.setDescription("");
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.custRO1.setAttribute("DealerId", details.getDealerId());
+				//this.custRO1.setDescription(details.getDealerName());
+			}
+		}
 	}
 
 	/**

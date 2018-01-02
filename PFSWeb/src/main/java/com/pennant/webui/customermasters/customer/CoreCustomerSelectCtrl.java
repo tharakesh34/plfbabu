@@ -388,7 +388,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					//Setting Primary Relation Ship Officer
 					RelationshipOfficer officer = getRelationshipOfficerService().getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
 					if(officer != null){
-						customerDetails.getCustomer().setCustRO1(officer.getROfficerCode());
+						customerDetails.getCustomer().setCustRO1(Long.parseLong(officer.getROfficerCode()));
 						customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
 					}
 

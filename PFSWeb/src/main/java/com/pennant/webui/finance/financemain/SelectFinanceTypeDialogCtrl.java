@@ -1544,7 +1544,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		RelationshipOfficer officer = this.relationshipOfficerService
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
 		if (officer != null) {
-			customer.setCustRO1(officer.getROfficerCode());
+			customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 

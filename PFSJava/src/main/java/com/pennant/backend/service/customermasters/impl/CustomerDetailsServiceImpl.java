@@ -1615,7 +1615,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customer.setCustDftBranch(customerDetails.getCustDftBranch());
 		customer.setCustCoreBank(customerDetails.getCustCoreBank());
 		customer.setCustBaseCcy(customerDetails.getCustBaseCcy());
-		customer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+		customer.setCustRO1(Long.parseLong(customerDetails.getPrimaryRelationOfficer()));
 
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
@@ -5179,10 +5179,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getLovDescCustRO1Name())) {
-			RelationshipOfficer officer = getRelationshipOfficerDAO().getRelationshipOfficerById(customer.getCustRO1(),
+			RelationshipOfficer officer = getRelationshipOfficerDAO().getRelationshipOfficerById(String.valueOf(customer.getCustRO1()),
 					"_Aview");
 			if (officer != null) {
-				customer.setCustRO1(officer.getROfficerCode());
+				customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
 				customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 			}
 		}

@@ -525,7 +525,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		//Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = getRelationshipOfficerService().getApprovedRelationshipOfficerById(getUserWorkspace().getLoggedInUser().getUserName());
 		if(officer != null){
-			customer.setCustRO1(officer.getROfficerCode());
+			customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 

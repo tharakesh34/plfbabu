@@ -434,7 +434,7 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			addCustFieldToUpdateList(listGroupCustomer,"CustGenderCode",getFieldLabel("CustGenderCode"),
 					core.getCustomer().getCustGenderCode(),pff.getCustomer().getCustGenderCode());
 		}
-		if(!StringUtils.trimToEmpty(pff.getCustomer().getCustRO1()).equals(core.getCustomer().getCustRO1())){
+		if(!StringUtils.trimToEmpty(String.valueOf(pff.getCustomer().getCustRO1())).equals(core.getCustomer().getCustRO1())){
 			addCustFieldToUpdateList(listGroupCustomer,"CustRO1",getFieldLabel("CustRO1"),
 					core.getCustomer().getCustRO1(),pff.getCustomer().getCustRO1());
 		}

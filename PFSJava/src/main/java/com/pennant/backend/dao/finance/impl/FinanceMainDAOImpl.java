@@ -2472,8 +2472,15 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	public List<String> getUsersLoginList(List<String> nextRoleCodes) {
 		logger.debug("Entering");
 
+		List<Long> userIds = new ArrayList<>();
+		if(nextRoleCodes != null) {
+			for(String id: nextRoleCodes) {
+				userIds.add(Long.valueOf(id));
+			}
+		}
+		
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("usrid", nextRoleCodes);
+		mapSqlParameterSource.addValue("usrid", userIds);
 
 		StringBuilder selectSql = new StringBuilder("Select  usrlogin from secusers");
 		selectSql.append(" Where usrid IN (:usrid) ");

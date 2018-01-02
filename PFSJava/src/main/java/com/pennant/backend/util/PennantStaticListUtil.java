@@ -1005,6 +1005,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("S", Labels.getLabel("label_Supplier")));
 			dealerType.add(new ValueLabel("DSA", Labels.getLabel("label_DSA")));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
+			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
 		}
 		return dealerType;
 	}
@@ -1260,6 +1261,7 @@ public class PennantStaticListUtil {
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PO, Labels.getLabel("label_MailTemplateDialog_POAuthNotification")));
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT, Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT, Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
+			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP, Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
 		}
 		return templateForList;
 	}

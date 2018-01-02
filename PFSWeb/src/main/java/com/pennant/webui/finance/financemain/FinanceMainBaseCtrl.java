@@ -210,6 +210,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -846,6 +847,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//for pdf extraction
 	private PdfParserCaller                                 pdfParserCaller;
 	private String										    pdfExtTabPanelId;
+	private VehicleDealerService                            vehicleDealerService;
 
 	/**
 	 * default constructor.<br>
@@ -6043,6 +6045,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					List<String> templateTyeList = new ArrayList<String>();
 					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
 					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_SP);
 
 					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
 							aFinanceMain.getFinType(),
@@ -6053,17 +6056,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (!referenceIdList.isEmpty()) {
 
 						boolean isCustomerNotificationExists = false;
+						boolean isSourcingPartnerNotificationExists = false;
 						List<Long> notificationIdlist = new ArrayList<Long>();
 						for (ValueLabel valueLabel : referenceIdList) {
 							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
 							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
 								isCustomerNotificationExists = true;
+							} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(valueLabel.getLabel())) {
+								isSourcingPartnerNotificationExists = true;
 							}
 						}
 
 						// Mail ID details preparation
 						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-						List<String> custMailIdList = new ArrayList<String>();
+						List<String> mailIdList = new ArrayList<String>();
 						// Customer Email Preparation
 						if (isCustomerNotificationExists
 								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
@@ -6072,10 +6078,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
 							
 							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
+								mailIdList.add(customerEMail.getCustEMail());
 							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
+							if (!mailIdList.isEmpty()) {
+								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
+							}
+							// vehicleDealer Email Preparation
+						} else if (isSourcingPartnerNotificationExists) {
+							long vehicleDealer = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
+							String email = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealer)
+									.getEmail();
+							mailIdList.add(email);
+
+							if (!mailIdList.isEmpty()) {
+								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
 							}
 						}
 						
@@ -6107,6 +6123,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
 						List<String> custPhoneNoList = new ArrayList<String>();
 						List<CustomerPhoneNumber> phoneNoList=new ArrayList<CustomerPhoneNumber>();
+						List<String> dealerPhoneNoList = new ArrayList<String>();
 						if (isCustomerNotificationExists
 								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
 								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
@@ -6119,10 +6136,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (!custPhoneNoList.isEmpty()) {
 								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
 							}
+						} else if (isSourcingPartnerNotificationExists) {
+							long vehicleDealer = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
+							String dealerPhoneNo = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealer)
+									.getDealerTelephone();
+							dealerPhoneNoList.add(dealerPhoneNo);
+
+							if (!dealerPhoneNoList.isEmpty()) {
+								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
+							}
 						}
-						//Customer mobile numbers logic	end						
+
+						// Customer mobile numbers logic end						
 						if (isExtSMSService()) {
-							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
+							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues, mobileNoMap);
 							
 							// send SMS to external service
 							getShortMessageService().sendMessage(phoneNoList, smsList);
@@ -15980,4 +16007,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
 	
+	
+	public VehicleDealerService getVehicleDealerService() {
+		return vehicleDealerService;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
+	}
 }

@@ -485,7 +485,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			custNationality.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
 			custRO1.setValue(aCustomer.getCustRO1() + ", ");
-			if (aCustomer.getCustRO1() != null) {
+			if (aCustomer.getCustRO1() != 0) {
 				i++;
 			}
 			custRO1Desc.setValue(aCustomer.getLovDescCustRO1Name());
@@ -752,7 +752,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			custNationalityy.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydescc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
 			custROO1.setValue(aCustomer.getCustRO1() + ", ");
-			if (aCustomer.getCustRO1() != null) {
+			if (aCustomer.getCustRO1() != 0) {
 				i++;
 			}
 			custRO1Descc.setValue(aCustomer.getLovDescCustRO1Name());

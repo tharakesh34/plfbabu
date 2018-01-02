@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  VehicleDealerListCtrl.java                                                   * 	  
+ * FileName    		:  VehicleDealerListCtrl.java                                           * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -45,6 +45,7 @@ package com.pennant.webui.amtmasters.vehicledealer;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -118,6 +119,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	
 
 	private transient VehicleDealerService vehicleDealerService;
+	private String module;
 
 	/**
 	 * default constructor.<br>
@@ -132,18 +134,25 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		super.pageRightName = "VehicleDealerList";
 		super.tableName = "AMTVehicleDealer_AView";
 		super.queueTableName = "AMTVehicleDealer_View";
+		this.module = getArgument("module");
 	}
 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
+		Filter[] filters = new Filter[2];
 		String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
 				this.phoneAreaCode.getValue(), this.dealerTelephone.getValue());
-		Filter filter = SearchFilterControl.getFilter("dealerTelephone", phoneNumber,
-				sortOperator_dealerTelephone);
-		if(filter != null){
-			searchObject.addFilter(filter);
+		if(StringUtils.isEmpty(phoneNumber)){
+			 filters = new Filter[1];
+			 filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
+		}else{
+			 filters = new Filter[2];
+			 filters[0] = SearchFilterControl.getFilter("dealerTelephone", phoneNumber,
+					 sortOperator_dealerTelephone);
+			 filters[1] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
 		}
+		searchObject.addFilterAnd(filters);
 	}
 
 	@Override
@@ -281,10 +290,13 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	 */
 	private void doShowDialogPage(VehicleDealer vehicleDealer) {
 		logger.debug("Entering");
-
+		
+		this.module = getArgument("module");
+		
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("vehicleDealer", vehicleDealer);
 		arg.put("vehicleDealerListCtrl", this);
+		arg.put("module", this.module);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerDialog.zul", null, arg);

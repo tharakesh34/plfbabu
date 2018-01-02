@@ -5127,6 +5127,7 @@
 		class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl">
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
 	<!--============ Vehicle Manfacturer Details ============== -->
@@ -9848,6 +9849,8 @@
 				<prop key="savePresentmentDetails">PROPAGATION_REQUIRED</prop>
 				<prop key="updatePresentmentDetails">PROPAGATION_REQUIRED</prop>
 				<prop key="getSeqNumber">PROPAGATION_REQUIRED</prop>
+				<prop key="updatePresentmentIdAsZero">PROPAGATION_REQUIRED</prop>
+				<prop key="presentmentCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

@@ -1613,8 +1613,12 @@ public class PennantJavaUtil {
 				null, 300));
 
 		ModuleUtil.register("VehicleDealer", new ModuleMapping("VehicleDealer", VehicleDealer.class, new String[] {
-				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] { "DealerId", "DealerName" }, null,
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, null,
 				300));
+		
+		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class, new String[] {
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 
+				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER } }, 300));
 
 		ModuleUtil.register("VehicleManufacturer", new ModuleMapping("VehicleManufacturer", VehicleManufacturer.class,
 				new String[] { "AMTVehicleManufacturer", "AMTVehicleManufacturer_AView" }, masterWF , new String[] {
@@ -1622,7 +1626,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("VehicleModel", new ModuleMapping("VehicleModel", VehicleModel.class, new String[] {
 				"AMTVehicleModel", "AMTVehicleModel_AView" }, masterWF , new String[] { "lovDescVehicleManufacturerName",
-				"VehicleModelDesc", }, null, 300));
+				"VehicleModelDesc" }, null, 300));
 
 		ModuleUtil.register("VehicleVersion", new ModuleMapping("VehicleVersion", VehicleVersion.class, new String[] {
 				"AMTVehicleVersion", "AMTVehicleVersion_AView" }, masterWF , new String[] { "VehicleVersionId",

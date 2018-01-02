@@ -1925,4 +1925,24 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		return count > 0 ? true : false;
 	}
+	
+	public int getCustCountByDealerId(long dealerId) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustRO1(dealerId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Customers");
+		selectSql.append(" Where CustRO1 =:CustRO1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
 }	

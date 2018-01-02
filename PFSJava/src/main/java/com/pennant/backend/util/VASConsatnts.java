@@ -15,5 +15,6 @@ public class VASConsatnts {
 	
 	// Status Details
 	public static final String STATUS_CANCEL            		= "C";
+	public static final String VASAGAINST_PARTNER            	= "SOPT";
 
 }
