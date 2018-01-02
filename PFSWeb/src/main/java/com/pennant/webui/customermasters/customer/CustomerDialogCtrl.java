@@ -1036,12 +1036,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setValue(aCustomer.getCustCOB());
 		this.custDOB.setValue(aCustomer.getCustDOB());
 		this.noOfDependents.setValue(aCustomer.getNoOfDependents());
-		if (aCustomer.getCustRO1() == 0) {
-			this.custRO1.setValue("");
-		} else {
-			this.custRO1.setValue(String.valueOf(aCustomer.getLovDescCustRO1Name()));
-			this.custRO1.setAttribute("DealerId", aCustomer.getCustRO1());
-		}
+		
+		this.custRO1.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()),"");//FIXME 
+		this.custRO1.setAttribute("DealerId", aCustomer.getCustRO1());
+		
 		this.custTradeLicenceNum.setValue(aCustomer.getCustTradeLicenceNum());
 		this.custRelatedParty.setValue(StringUtils.trimToEmpty(aCustomer.getCustAddlVar83()));
 		this.custGroupId.setValue(aCustomer.getCustGroupID() == 0 ? "" : String.valueOf(aCustomer.getCustGroupID()));
@@ -1064,7 +1062,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSectorName()));
 		this.custIndustry.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustIndustryName()));
 		this.custCOB.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustCOBName()));
-		this.custRO1.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()));
 		this.target.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescTargetName()));
 		this.salariedCustomer.setChecked(aCustomer.isSalariedCustomer());
 
@@ -1359,7 +1356,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			aCustomer.setLovDescCustRO1Name(this.custRO1.getDescription());
 			this.custRO1.getValidatedValue();
-			aCustomer.setCustRO1(Long.parseLong(String.valueOf(this.custRO1.getAttribute("DealerId"))));
+			Object object = this.custRO1.getAttribute("DealerId");
+			if (object!=null) {
+				aCustomer.setCustRO1(Long.parseLong(object.toString()));	
+			}else{
+				aCustomer.setCustRO1(0);
+			}
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
