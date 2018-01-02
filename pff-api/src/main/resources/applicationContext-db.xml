@@ -123,6 +123,12 @@
 		<property name="jndiName" value="jdbc/PFFEXT"/>
 		<property name="lookupOnStartup" value="true"/>
 	</bean>
+	
+	<bean id="finOneDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="resourceRef" value="true" />
+      <property name="jndiName" value="jdbc/FINONE" />
+      <property name="lookupOnStartup" value="true" />
+	</bean>
 
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="pfsDatasource" />
