@@ -576,7 +576,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			
 			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
-				CustomerDetails customerDetails = customerDetailsService.getApprovedCustomerById(this.custID.longValue());
+				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),true,"_AView");
 				map.put("customerDetails", customerDetails);
 				map.put("newRecord", false);
 				map.put("isEnqProcess", true);
