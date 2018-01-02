@@ -1597,10 +1597,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			auditDetail.setErrorDetail(validateMasterCode("Currency", customerDetails.getCustBaseCcy()));
 		}
-		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
-			auditDetail.setErrorDetail(
-					validateMasterCode("RelationshipOfficer", customerDetails.getPrimaryRelationOfficer()));
-		}
+		auditDetail.setErrorDetail(
+					validateMasterCode("SourceOfficer", String.valueOf(customerDetails.getPrimaryRelationOfficer())));
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
@@ -1615,7 +1613,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customer.setCustDftBranch(customerDetails.getCustDftBranch());
 		customer.setCustCoreBank(customerDetails.getCustCoreBank());
 		customer.setCustBaseCcy(customerDetails.getCustBaseCcy());
-		customer.setCustRO1(Long.parseLong(customerDetails.getPrimaryRelationOfficer()));
+		customer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());

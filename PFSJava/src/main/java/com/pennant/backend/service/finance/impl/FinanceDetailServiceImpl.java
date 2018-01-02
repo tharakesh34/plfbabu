@@ -118,6 +118,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -182,6 +183,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.ChequeHeaderService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
@@ -252,6 +254,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private FlagDetailValidation			flagDetailValidation;
 	private FinFlagDetailsDAO				finFlagDetailsDAO;
+	private ChequeHeaderService 			chequeHeaderService;
 	private FinTypeInsuranceDAO				finTypeInsuranceDAO;
 	private VASRecordingDAO					vasRecordingDAO;
 	private FinTypeFeesDAO					finTypeFeesDAO;
@@ -459,7 +462,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_TView"));
 			}
 		}
-
+		
 		//Contract Asset Details
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ISTISNA, financeDetail.getFinScheduleData().getFinanceType()
 				.getProductCategory())) {
@@ -522,6 +525,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setFinanceCollaterals(getFinCollateralService()
 					.getFinCollateralsByRef(finReference, "_TView"));
 		}
+
+		//Cheque Header and Cheque Details getting
+		financeDetail.setChequeHeader(getChequeHeaderService().getChequeHeader(finReference));
 
 		logger.debug("Leaving");
 		return financeDetail;
@@ -1940,6 +1946,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 		}
+		
+		// Save Cheque Header Details
+		//=======================================
+		if (financeDetail.getChequeHeader() != null) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			getChequeHeaderService().saveOrUpdate(auditHeader,tableType);
+			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+		}
 
 		// Save schedule details
 		//=======================================
@@ -2262,7 +2277,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeDetail.getFinScheduleData().getFinFeeDetailActualList(), tableType.getSuffix(),
 					auditHeader.getAuditTranType(), isWIF));
 		}
-
+		
 		// Finance Fee Receipts
 		//=======================================
 		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
@@ -2421,7 +2436,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditDetails;
 
 	}
-
+	
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
 	 * 
@@ -2761,6 +2776,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinAssetTypes");
 				getFinAssetTypeDAO().deleteByReference(financeMain.getFinReference(), "");
 				auditDetails.addAll(details);
+			}
+			
+			// Cheque details
+			if (financeDetail.getChequeHeader() != null) {
+				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+				getChequeHeaderService().delete(auditHeader);
+				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+						.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 			}
 
 			// AssetType Extended field Details
@@ -3261,7 +3284,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						auditDetails.addAll(details);
 					}
 				}
-
+				
 				// Save Rolledover Finance Details
 				// =======================================
 				if (financeDetail.getRolledoverFinanceHeader() != null) {
@@ -3423,6 +3446,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			}
 
+			// Save Cheque Header Details
+			// =======================================
+			if (financeDetail.getChequeHeader() != null) {
+				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+				getChequeHeaderService().doApprove(auditHeader,TableType.MAIN_TAB);
+				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+						financeDetail.getChequeHeader().getBefImage(),
+						financeDetail.getChequeHeader()));
+			}
+			
 			// set Customer Details Audit
 			if (financeDetail.getCustomerDetails() != null
 					&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
@@ -3561,7 +3594,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					details = processingFinFlagDetailList(details, "");
 					auditDetails.addAll(details);
 				}
-
+				
 				// AssetType Extended field Details
 				if (financeDetail.getExtendedFieldRenderList() != null
 						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
@@ -4876,6 +4909,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
+		// Cheque Details
+		if (financeDetail.getChequeHeader() != null){
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			getChequeHeaderService().doReject(auditHeader);
+			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+		}
+
 		// Delete Tax Details
 		if (financeDetail.getTaxDetail() != null) {
 			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
@@ -5051,7 +5092,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
 						financeMain.getFinReference(), "_Temp"));
 			}
-
+			
 			// Vas Recording Details details Prasad
 			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
 					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
@@ -5737,7 +5778,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetailMap.put("FinFlagsDetail", setFinFlagAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
 		}
-
+		
 		if (!financeDetail.isExtSource()) {
 
 			//Finance Contribution Details
@@ -5948,7 +5989,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-
+	
 	/**
 	 * Method for Rate changes for IJARAH Finances by Applying Actual rates
 	 * 
@@ -6322,7 +6363,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving ");
 		return auditList;
 	}
-
+	
 	/**
 	 * Method to get Schedule related data.
 	 * 
@@ -6726,7 +6767,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return header;
 	}
-
+	
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy) {
@@ -9017,5 +9058,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
+	}
+
+	public ChequeHeaderService getChequeHeaderService() {
+		return chequeHeaderService;
+	}
+
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
 	}
 }

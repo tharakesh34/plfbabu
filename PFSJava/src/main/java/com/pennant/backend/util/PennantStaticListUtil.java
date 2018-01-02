@@ -217,6 +217,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> disbursmentParty;
 	private static ArrayList<ValueLabel> disbursmentStatus;
 	private static ArrayList<ValueLabel> disbStatusList;
+	private static ArrayList<ValueLabel> chequeTypesList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -2139,6 +2140,9 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.NACH_ALLOWED) {
 				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_NACH,Labels.getLabel("label_Mandate_Nach")));
 			}
+			if (ImplementationConstants.PDC_ALLOWED) {
+				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC,Labels.getLabel("label_Mandate_PDC")));
+			}
 		}
 		return mandateTypeList;
 	}
@@ -2939,5 +2943,15 @@ public class PennantStaticListUtil {
 		return gstMapping;
 	}
 
+	public static ArrayList<ValueLabel> getChequeTypes() {
+		if (chequeTypesList == null) {
+			chequeTypesList = new ArrayList<ValueLabel>(3);
+			chequeTypesList.add(new ValueLabel("PDC", "PDC"));
+			if(!ImplementationConstants.CLIENT_NFL) {
+				chequeTypesList.add(new ValueLabel("UDC", "UDC"));
+			}
+		}
+		return chequeTypesList;
+	}
 }
 

@@ -527,6 +527,7 @@ public class BatchUploadProcessor {
 
 			if (response.getStatus() == 200 && body != null) {
 				JSONObject parentBody = new JSONObject(body);
+				if(StringUtils.isNotBlank(extraHeader)){
 				if (!parentBody.isNull(BatchUploadProcessorConstatnt.FIN_REFERENCE)) {
 					extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.FIN_REFERENCE));
 				} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.MANDATE_ID)) {
@@ -535,6 +536,7 @@ public class BatchUploadProcessor {
 					extraHeaderValue = String.valueOf(parentBody.get(BatchUploadProcessorConstatnt.WORKFLOW_DESIGN_ID));
 				} else if (!parentBody.isNull(BatchUploadProcessorConstatnt.LIMIT_Id)) {
 					extraHeaderValue = String.valueOf(parentBody.getString(BatchUploadProcessorConstatnt.LIMIT_Id));
+				}
 				}
 				parentBody = parentBody.getJSONObject(BatchUploadProcessorConstatnt.RETURN_STATUS);
 				ReturnText = parentBody.getString(BatchUploadProcessorConstatnt.RETURN_TEXT);

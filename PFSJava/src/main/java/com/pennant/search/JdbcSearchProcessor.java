@@ -34,10 +34,10 @@ import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.UnaryCondition;
 import com.healthmarketscience.sqlbuilder.custom.NamedParamObject;
-import com.pennanttech.pennapps.core.feature.ModuleUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * A singleton instance of this class is maintained for each SessionFactory.
@@ -437,8 +437,8 @@ public class JdbcSearchProcessor implements Serializable {
 
 	/**
 	 * Gets the <code>Microsoft SQL Server</code> limit rows statement. e.g., <br/>
-	 * <code>with query as ( </br>
-	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i></br>
+	 * <code>with query as ( <br/>
+	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i><br/>
 	 * ) select * from query where row_nr between 21 and 30;</code>
 	 * 
 	 * @param sql
@@ -487,8 +487,8 @@ public class JdbcSearchProcessor implements Serializable {
 
 	/**
 	 * Gets the <code>DB2</code> limit rows statement. e.g., <br/>
-	 * <code>select * from ( </br>
-	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i></br>
+	 * <code>select * from ( <br/>
+	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i><br/>
 	 * ) where row_nr between 21 and 30;</code>
 	 * 
 	 * @param sql
@@ -551,7 +551,7 @@ public class JdbcSearchProcessor implements Serializable {
 		if (offset <= 0) {
 			result.append(Clause.LIMIT.key).append(pageSize);
 		} else {
-			result.append(Clause.LIMIT.key).append(offset).append(",").append(pageSize);
+			result.append(Clause.LIMIT.key).append(offset).append(',').append(pageSize);
 		}
 
 		return result.toString();

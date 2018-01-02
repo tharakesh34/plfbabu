@@ -365,7 +365,7 @@ public class FinStatementController extends SummaryDetailService {
 		customerDetail.setCustCtgCode(customerDetail.getCustomer().getCustCtgCode());
 		customerDetail.setCustDftBranch(customerDetail.getCustomer().getCustDftBranch());
 		customerDetail.setCustBaseCcy(customerDetail.getCustomer().getCustBaseCcy());
-		customerDetail.setPrimaryRelationOfficer(String.valueOf(customerDetail.getCustomer().getCustRO1()));
+		customerDetail.setPrimaryRelationOfficer(customerDetail.getCustomer().getCustRO1());
 		customerDetail.setCustomer(customerDetail.getCustomer());
 		customerDetail.setCustEmployeeDetail(null);
 		customerDetail.setCustomerExtLiabilityList(null);

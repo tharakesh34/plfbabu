@@ -1,5 +1,6 @@
-
 package com.pennanttech.niyogin.bre.model;
+
+import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,23 +8,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "busPremisesOwnership", "orgType", "numberOfOwnersOrShareholdingPattern",
-		"operationalBusVintage" })
-@XmlRootElement(name = "Business")
+@XmlType(propOrder = { "busPremisesOwnership", "orgType", "numbOfOwnersOrShareholdingPattern",
+		"operationalBusinessVintage" })
+@XmlRootElement(name = "BUSINESS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Business {
 
-	@XmlElement(name = "businesspremisesownership")
-	private String	busPremisesOwnership;
+	@XmlElement(name = "BUSINESSPREMISESOWNERSHIP")
+	private String		busPremisesOwnership;
 
-	@XmlElement(name = "organizationtype")
-	private String	orgType;
+	@XmlElement(name = "ORGANIZATIONTYPE")
+	private String		orgType;
 
-	@XmlElement(name = "numberofownersorshareholdingpattern")
-	private String	numberOfOwnersOrShareholdingPattern;
+	@XmlElement(name = "NUMBEROFOWNERSORSHAREHOLDINGPATTERN")
+	private int			numbOfOwnersOrShareholdingPattern;
 
-	@XmlElement(name = "operationalbusinessvintage")
-	private String	operationalBusVintage;
+	@XmlElement(name = "OPERATIONALBUSINESSVINTAGE")
+	private BigDecimal	operationalBusinessVintage	= BigDecimal.ZERO;
 
 	public String getBusPremisesOwnership() {
 		return busPremisesOwnership;
@@ -41,20 +42,20 @@ public class Business {
 		this.orgType = orgType;
 	}
 
-	public String getNumberOfOwnersOrShareholdingPattern() {
-		return numberOfOwnersOrShareholdingPattern;
+	public int getNumbOfOwnersOrShareholdingPattern() {
+		return numbOfOwnersOrShareholdingPattern;
 	}
 
-	public void setNumberOfOwnersOrShareholdingPattern(String numberOfOwnersOrShareholdingPattern) {
-		this.numberOfOwnersOrShareholdingPattern = numberOfOwnersOrShareholdingPattern;
+	public void setNumbOfOwnersOrShareholdingPattern(int numbOfOwnersOrShareholdingPattern) {
+		this.numbOfOwnersOrShareholdingPattern = numbOfOwnersOrShareholdingPattern;
 	}
 
-	public String getOperationalBusVintage() {
-		return operationalBusVintage;
+	public BigDecimal getOperationalBusinessVintage() {
+		return operationalBusinessVintage;
 	}
 
-	public void setOperationalBusVintage(String operationalBusVintage) {
-		this.operationalBusVintage = operationalBusVintage;
+	public void setOperationalBusinessVintage(BigDecimal operationalBusinessVintage) {
+		this.operationalBusinessVintage = operationalBusinessVintage;
 	}
 
 }

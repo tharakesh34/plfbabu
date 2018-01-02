@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -281,7 +282,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxCustFinanceDetail.getSelectedItem();
-		List<Map<String, Object>> reasonDetailsList = null;
+		List<ReasonDetailsLog> reasonDetailsList = null;
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
@@ -435,7 +436,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 *            The entity that need to be passed to the dialog.
 	 * @param reasonDetailsList 
 	 */
-	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail, List<Map<String, Object>> reasonDetailsList) {
+	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail, List<ReasonDetailsLog> reasonDetailsList) {
 		logger.debug("Entering");
 
 		HashMap<String, Object> arg = new HashMap<String, Object>();

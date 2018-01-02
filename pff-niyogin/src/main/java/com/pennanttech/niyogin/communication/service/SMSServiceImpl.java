@@ -1,7 +1,5 @@
 package com.pennanttech.niyogin.communication.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -22,12 +20,6 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	private JSONClient			client;
 	private String				serviceUrl;
 
-	private String				status			= "SUCCESS";
-	private String				errorCode		= null;
-	private String				errorDesc		= null;
-	private String				jsonResponse	= null;
-	private Timestamp			reqSentOn		= null;
-
 	/**
 	 * Method to send the sms for the given mobile numbers.
 	 * 
@@ -36,13 +28,13 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	 * 
 	 */
 	@Override
-	public void sendSms(List<CustomerPhoneNumber> custPhoneNos, List<String> smsContent) throws InterfaceException {
+	public void sendSms(List<CustomerPhoneNumber> custPhoneNos, List<String> smsContent,String finReference) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		if (custPhoneNos != null && !custPhoneNos.isEmpty() && smsContent != null && !smsContent.isEmpty()) {
 			for (CustomerPhoneNumber custPhone : custPhoneNos) {
 				for (String sms : smsContent) {
-					send(custPhone.getPhoneNumber(), sms);
+					send(custPhone.getPhoneNumber(), sms,finReference);
 				}
 			}
 		}
@@ -55,27 +47,23 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	 * @param mobileNo
 	 * @param content
 	 */
-	private void send(String mobileNo, String content) {
+	private void send(String mobileNo, String content, String finReference) {
 		logger.debug(Literal.ENTERING);
 		Sms smsRequest = prepareRequest(mobileNo, content);
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
+		reference=finReference;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, smsRequest);
 			logger.info("Response : " + jsonResponse.toString());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(smsRequest, "Mobile: "+mobileNo+":"+"Content :"+content);
+			doLogError(e, serviceUrl, smsRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		// success case logging
-		doInterfaceLogging(smsRequest,  "Mobile: "+mobileNo+":"+"Content :"+content);
+		doInterfaceLogging(smsRequest, finReference);
 				
 		logger.debug(Literal.LEAVING);
 	}

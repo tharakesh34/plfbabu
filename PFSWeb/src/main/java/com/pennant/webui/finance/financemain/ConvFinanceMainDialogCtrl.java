@@ -266,13 +266,13 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
 						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
 				&& StringUtils.isEmpty(moduleDefiner)) {
-			capturereaonse=2;//reject
-		}else if (StringUtils.equalsIgnoreCase("HOLD", recordStatus))  {
-			capturereaonse=1;//hold
+			capturereaonse = 2;// reject
+		} else if (StringUtils.equalsIgnoreCase("HOLD", recordStatus)) {
+			capturereaonse = 1;// hold
 		}
 		
 		
-		if (capturereaonse!=0) {
+		if (capturereaonse != 0) {
 			doFillReasons(capturereaonse);
 		} else {
 			doSave();

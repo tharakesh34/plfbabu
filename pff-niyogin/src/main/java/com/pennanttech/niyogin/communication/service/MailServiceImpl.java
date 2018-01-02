@@ -1,7 +1,5 @@
 package com.pennanttech.niyogin.communication.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -22,12 +20,6 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	private JSONClient			client;
 	private String				serviceUrl;
 
-	private String				status			= "SUCCESS";
-	private String				errorCode		= null;
-	private String				errorDesc		= null;
-	private String				jsonResponse	= null;
-	private Timestamp			reqSentOn		= null;
-
 	/**
 	 * Method to send the email for the given list of toAddress.
 	 * 
@@ -36,12 +28,12 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @return
 	 */
 	@Override
-	public void sendEmail(List<MailTemplate> templates) throws InterfaceException {
+	public void sendEmail(List<MailTemplate> templates, String finReference) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		if (templates != null && !templates.isEmpty()) {
 			for (MailTemplate template : templates) {
-				send(template.getLovDescMailId(), template.getEmailSubject(), template.getLovDescFormattedContent());
+				send(template, finReference);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -55,27 +47,28 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param body
 	 * @return
 	 */
-	private void send(String[] emailId, String subject, String body) {
+	private void send(MailTemplate template, String finReference) {
 		logger.debug(Literal.ENTERING);
+		
+		String[] emailId = template.getLovDescMailId();
+		String subject = template.getEmailSubject();
+		String body = template.getLovDescFormattedContent();
+		
 		Email emailRequest = prepareRequest(String.join(",", emailId), subject, body);
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
+		reference = finReference;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, emailRequest);
 			logger.info("Response : " + jsonResponse.toString());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			doInterfaceLogging(emailRequest, "Mail");
+			doLogError(e, serviceUrl, emailRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		// success case logging
-		doInterfaceLogging(emailRequest, "Mail");
+		doInterfaceLogging(emailRequest, reference);
 				
 		logger.debug(Literal.LEAVING);
 	}

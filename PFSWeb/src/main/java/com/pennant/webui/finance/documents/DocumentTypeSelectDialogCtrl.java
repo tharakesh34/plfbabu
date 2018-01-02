@@ -394,7 +394,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				customerDocument.setLovDescCustDocCategory(doctype.getDocTypeDesc());
 				
 				Filter[] countrysystemDefault=new Filter[1];
-				countrysystemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+				countrysystemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
 				Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
 
 				if (countryObj!=null) {

@@ -173,8 +173,12 @@ public abstract class NiyoginService {
 		Set<String> fieldNames = extendedFieldMap.keySet();
 		String wrongValueMSG = "Inavalid Data received from interface for extended field:";
 		String wrongLengthMSG = "Total length is Excedeed for extended field:";
+		List<ExtendedFieldDetail> configurationList=null;
+		if (fieldNames == null || (fieldNames != null && fieldNames.isEmpty())) {
+			throw new InterfaceException("9999", "Invalid configuration");
+		} else {
 		try {
-			List<ExtendedFieldDetail> configurationList = niyoginDAOImpl.getExtendedFieldDetailsByFieldName(fieldNames);
+			configurationList = niyoginDAOImpl.getExtendedFieldDetailsByFieldName(fieldNames);
 			for (String field : fieldNames) {
 				String key = field;
 				Object fieldValue = extendedFieldMap.get(field);
@@ -379,8 +383,7 @@ public abstract class NiyoginService {
 						}
 					}
 
-					validatedMap.put(key, String.valueOf(Math
-							.round((Integer.valueOf(jsonResponseValue) / Math.pow(10, configuration.getFieldPrec())))));
+					validatedMap.put(key, Math.round((Integer.valueOf(jsonResponseValue) / Math.pow(10, configuration.getFieldPrec()))));
 					break;
 
 				case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
@@ -482,6 +485,7 @@ public abstract class NiyoginService {
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw new InterfaceException("9999", "Unable to process");
+		}
 		}
 		logger.debug(Literal.ENTERING);
 		return validatedMap;
@@ -664,6 +668,15 @@ public abstract class NiyoginService {
 		return niyoginDAOImpl.getSMTParameter(sysParmCode, type);
 	}
 
+	/**
+	 * Method for get the CoApplicants with ExtendedField Details
+	 * 
+	 * @param customerIds
+	 * @return
+	 */
+	protected List<CustomerDetails> getCoApplicantsForBre(List<Long> customerIds) {
+		return niyoginDAOImpl.getCoApplicantsForBre(customerIds, "_AVIEW");
+	}
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
@@ -675,5 +688,7 @@ public abstract class NiyoginService {
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}
+
+	
 
 }

@@ -274,7 +274,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custEmpName.setDisplayStyle(3);
         this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
-		this.custEmpName.setValueColumn("EmpName");
+		this.custEmpName.setValueColumn("EmployerId");
 		this.custEmpName.setDescColumn("EmpCity");
 		this.custEmpName.setValidateColumns(new String[] { "EmpName" });
 		

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -20,6 +19,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -183,7 +183,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private void doReasonDeatilsLog() {
 		logger.debug("Entering ");
 		
-		List<Map<String, Object>> list = null;
+		List<ReasonDetailsLog> list = null;
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
 		

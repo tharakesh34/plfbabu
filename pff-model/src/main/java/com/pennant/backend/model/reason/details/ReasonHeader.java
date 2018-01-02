@@ -1,12 +1,13 @@
 package com.pennant.backend.model.reason.details;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.pennant.backend.model.Entity;
 
-public class ReasonHeader implements java.io.Serializable, Entity {
+public class ReasonHeader implements Serializable, Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;

@@ -100,6 +100,10 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		// success case logging
 		doInterfaceLogging(requestObject, finReference);
 
+		if(validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
+			validatedExtendedMap.put("REASONCODE", 200);
+			validatedExtendedMap.put("REMARKSEXPERIANBEA", "No Bureau Data available.");
+		}
 		prepareResponseObj(validatedExtendedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);

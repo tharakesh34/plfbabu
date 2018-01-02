@@ -1919,6 +1919,12 @@
 	<bean id="disbursementDetailDialogCtrl"
 		class="com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="chequeDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService"/>
+	</bean>
 
 	<bean id="istisnaDisbursementDialogCtrl"
 		class="com.pennant.webui.finance.billing.IstisnaDisbursementDetailDialogCtrl"

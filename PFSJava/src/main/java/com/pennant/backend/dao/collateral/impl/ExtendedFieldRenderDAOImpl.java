@@ -290,22 +290,31 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	public int validateMasterData(String tableName, String column, String filterColumn, String fieldValue) {
 		logger.debug("Entering");
 		
+		boolean tempFix = false;
 		MapSqlParameterSource source=new MapSqlParameterSource();
 		source.addValue("ColumnName", column);
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
 		if(StringUtils.equals("CustGrpID", column)) {//FIXME:DDP
 			source.addValue("Value", Integer.parseInt(fieldValue));
+		} else if(StringUtils.equals("DealerName", column)) {
+			tempFix = true;
+			source.addValue("Value", Long.parseLong(fieldValue));
 		}
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
-		selectSql.append(column);
-		selectSql.append("= :Value");
-		if(StringUtils.isNotBlank(filterColumn)){
-			selectSql.append(" AND "+filterColumn+"= 1");
+		if(tempFix) {
+			selectSql.append("DealerId");
+			selectSql.append("= :Value");
+		} else {
+			selectSql.append(column);
+			selectSql.append("= :Value");
+			if(StringUtils.isNotBlank(filterColumn)){
+				selectSql.append(" AND "+filterColumn+"= 1");
+			}
 		}
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;

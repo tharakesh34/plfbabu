@@ -324,8 +324,8 @@ public class ExtendedFieldDetailsValidation {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 				return errors;
 			}
-			exdFieldData.setFieldValue(String.valueOf(Math.round(
-					(Integer.valueOf(Objects.toString(fieldValue,"")) / Math.pow(10, exdConfigDetail.getFieldPrec())))));
+			exdFieldData.setFieldValue(Math.round(
+					(Integer.valueOf(Objects.toString(fieldValue,"")) / Math.pow(10, exdConfigDetail.getFieldPrec()))));
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 				if (Integer.valueOf(Objects.toString(fieldValue,"")) > exdConfigDetail.getFieldMaxValue()
 						|| Integer.valueOf(Objects.toString(fieldValue,"")) < exdConfigDetail.getFieldMinValue()) {

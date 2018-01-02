@@ -6,5 +6,5 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
 public interface ShortMessageService {
 
-	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent);
+	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent, String finReference);
 }

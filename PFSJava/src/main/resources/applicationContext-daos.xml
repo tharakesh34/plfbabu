@@ -4170,6 +4170,7 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -10647,5 +10648,40 @@
 		<property name="batchUploadConfigDAO" ref="batchUploadConfigDAO" />
 	</bean>
 	
+	<!-- ChequeHeader -->
+	<bean name="chequeHeaderDAO"
+		class="com.pennant.backend.dao.pdc.impl.ChequeHeaderDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="chequeHeaderService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="chequeHeaderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="chequeHeaderServiceTarget"
+		class="com.pennant.backend.service.finance.impl.ChequeHeaderServiceImpl">
+		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
+		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
+	</bean>
 	
+	<!-- CHeque Details -->
+	<bean name="chequeDetailDAO"
+		class="com.pennant.backend.dao.pdc.impl.ChequeDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 </beans>

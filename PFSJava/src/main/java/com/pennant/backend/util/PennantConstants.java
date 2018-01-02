@@ -55,7 +55,7 @@ public class PennantConstants {
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
 		SeqFinMaintainInstructions,SeqServiceTaskDetails,SeqMailTemplate,SeqCustomerAddresses,SeqFinASSETTYPES,
-		SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping
+		SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping,SeqChequeHeader,SeqChequeDetail
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -193,6 +193,7 @@ public class PennantConstants {
 	public static final String method_Cibil_Bureau = "executeCibilConsumer";
 	public static final String method_LegalDesk = "executeLegalDesk";
 	public static final String method_HoldFinance = "executeHold";
+	public static final String method_bre = "executeBRE";	
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";

@@ -19,7 +19,6 @@
 		<project.version>2.13.3</project.version>
 	</properties>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
@@ -88,7 +87,6 @@
 			<artifactId>spring-integration-xml</artifactId>
 		</dependency>
 
-
 		<!-- Servlet & JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -96,7 +94,6 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
 
 		<!-- CXF Framwork -->
 		<dependency>
@@ -140,7 +137,6 @@
 			<version>${jackson.version}</version>
 		</dependency>
 
-
 		<!-- web services and rest services API dependency -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -154,7 +150,6 @@
 			<artifactId>validation-api</artifactId>
 			<version>1.1.0.Final</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -168,56 +163,25 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>11.0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>sqljdbc4</artifactId>
 			<version>1.5.0_22-b03</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.zkoss.common</groupId>
-			<artifactId>zcommon</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkplus</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zk</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zul</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.zkoss.zk/zkspring-core -->
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkspring-core</artifactId>
-			<version>3.0</version>
-		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.23</version>
 		</dependency>
-
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>

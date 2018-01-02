@@ -746,8 +746,7 @@ public class ExtendedFieldDetailsService {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 				return errors;
 			}
-			exrFldData.setFieldValue(
-					String.valueOf(Math.round((Integer.valueOf(fieldValue) / Math.pow(10, deatils.getFieldPrec())))));
+			exrFldData.setFieldValue(Math.round((Integer.valueOf(fieldValue) / Math.pow(10, deatils.getFieldPrec()))));
 			if (deatils.getFieldMaxValue() > 0 || deatils.getFieldMinValue() > 0) {
 				if (Integer.valueOf(fieldValue) > deatils.getFieldMaxValue()
 						|| Integer.valueOf(fieldValue) < deatils.getFieldMinValue()) {

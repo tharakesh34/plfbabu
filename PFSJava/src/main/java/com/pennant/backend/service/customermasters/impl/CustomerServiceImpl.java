@@ -583,9 +583,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			auditDetail
 			.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
 		}
-		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
-			auditDetail.setErrorDetail(validateMasterCode("RelationshipOfficers", "ROfficerCode",
-					customerDetails.getPrimaryRelationOfficer()));
+		if (customerDetails.getPrimaryRelationOfficer() != 0) {
+			auditDetail.setErrorDetail(validateMasterCode("SourceOfficer", "DealerId",
+					String.valueOf(customerDetails.getPrimaryRelationOfficer())));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {

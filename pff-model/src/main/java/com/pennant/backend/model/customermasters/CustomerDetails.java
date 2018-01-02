@@ -95,7 +95,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private String custBaseCcy;
 
 	@XmlElement
-	private String primaryRelationOfficer;
+	private long primaryRelationOfficer;
 
 	private String sourceId;
 
@@ -216,11 +216,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.custBaseCcy = custBaseCcy;
 	}
 
-	public String getPrimaryRelationOfficer() {
+	public long getPrimaryRelationOfficer() {
 		return primaryRelationOfficer;
 	}
 
-	public void setPrimaryRelationOfficer(String primaryRelationOfficer) {
+	public void setPrimaryRelationOfficer(long primaryRelationOfficer) {
 		this.primaryRelationOfficer = primaryRelationOfficer;
 	}
 

@@ -163,10 +163,10 @@ import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.rits.cloning.Cloner;
@@ -724,14 +724,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setDescColumn("CountryDesc");
 		this.custCOB.setValidateColumns(new String[] { "CountryCode" });
 
-		/*this.custRO1.setMaxlength(8);
-		this.custRO1.setTextBoxWidth(121);
-		this.custRO1.setMandatoryStyle(true);
-		this.custRO1.setModuleName("RelationshipOfficer");
-		this.custRO1.setValueColumn("ROfficerCode");
-		this.custRO1.setDescColumn("ROfficerDesc");
-		this.custRO1.setValidateColumns(new String[] { "ROfficerCode" });
-*/
 		this.target.setMaxlength(8);
 		this.target.setTextBoxWidth(121);
 		this.target.setMandatoryStyle(false);
@@ -4695,6 +4687,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setCustID(getCustomerDetails().getCustID());
 		customerAddres.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerAddres.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		if(StringUtils.isNotBlank(priority)){
+		customerAddres.setCustAddrPriority(Integer.parseInt(priority));
+		}
 
 		Filter[] countrysystemDefault = new Filter[1];
 		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
@@ -4791,6 +4787,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerPhoneNumber.setPhoneCustID(getCustomerDetails().getCustID());
 		customerPhoneNumber.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerPhoneNumber.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		if(StringUtils.isNotBlank(priority)){
+		customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
+		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerPhoneNumber", customerPhoneNumber);
 		map.put("customerDialogCtrl", this);
@@ -4872,7 +4872,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerEMail.setCustID(getCustomerDetails().getCustID());
 		customerEMail.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerEMail.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		customerEMail.setCustEMailPriority(Integer.parseInt(PennantConstants.EMAILPRIORITY_Medium));
+		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		if(StringUtils.isNotBlank(priority)){
+		customerEMail.setCustEMailPriority(Integer.parseInt(priority));
+		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerEMail", customerEMail);
 		map.put("customerDialogCtrl", this);

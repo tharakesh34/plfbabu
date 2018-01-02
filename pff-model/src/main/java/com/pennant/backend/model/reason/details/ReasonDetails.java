@@ -1,10 +1,12 @@
 package com.pennant.backend.model.reason.details;
 
+import java.io.Serializable;
+
 import com.pennant.backend.model.Entity;
 
-public class ReasonDetails implements java.io.Serializable, Entity {
+public class ReasonDetails implements Serializable, Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long headerId;
 	private long reasonId;
 
@@ -12,7 +14,7 @@ public class ReasonDetails implements java.io.Serializable, Entity {
 	public boolean isNew() {
 		return false;
 	}
-	
+
 	public long getHeaderId() {
 		return headerId;
 	}
@@ -36,7 +38,7 @@ public class ReasonDetails implements java.io.Serializable, Entity {
 
 	@Override
 	public void setId(long id) {
-		
+
 	}
 
 }

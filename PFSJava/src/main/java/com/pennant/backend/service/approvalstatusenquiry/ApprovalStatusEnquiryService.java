@@ -1,9 +1,9 @@
 package com.pennant.backend.service.approvalstatusenquiry;
 
 import java.util.List;
-import java.util.Map;
 
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 
 public interface ApprovalStatusEnquiryService {
 
@@ -15,6 +15,6 @@ public interface ApprovalStatusEnquiryService {
 
 	CustomerFinanceDetail getCustomerFacilityById(String facilityReference);
 
-	List<Map<String, Object>> getResonDetailsLog(String financeReference);
+	List<ReasonDetailsLog> getResonDetailsLog(String financeReference);
 
 }

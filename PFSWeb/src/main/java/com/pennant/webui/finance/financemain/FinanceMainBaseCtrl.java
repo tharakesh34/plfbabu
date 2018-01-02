@@ -168,6 +168,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -721,6 +722,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient Object								childWindowDialogCtrl;
 	private transient CustomerDialogCtrl					customerDialogCtrl;
 	private transient DisbursementDetailDialogCtrl			disbursementDetailDialogCtrl;
+	private transient ChequeDetailDialogCtrl				chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl				deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl						mandateDialogCtrl;
 	private transient FinanceTaxDetailDialogCtrl			financeTaxDetailDialogCtrl;
@@ -1483,7 +1485,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//Fee Details Tab Addition
 			appendFeeDetailTab(onLoad);
 		}
-
+		
 		//Advance Payment Detail Tab Addition
 		if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())))
@@ -1554,6 +1556,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			appendMandateDetailTab(onLoad);
 		}
+
+		//Cheque Details Tab
+		//appendChequeDetailTab(onLoad);//TODO: open when it's completed
 
 		// Collateral Detail Tab
 		if (StringUtils.isEmpty(moduleDefiner)
@@ -1875,6 +1880,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DisbursementDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DISBURSMENT), getDefaultArguments());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Disbursement Details Data in finance
+	 */
+	private void appendChequeDetailTab(boolean onLoad) {
+		logger.debug("Entering");
+		if (onLoad) {
+			createTab(AssetConstants.UNIQUE_ID_CHEQUE, true);
+		} else {
+			final HashMap<String, Object> map = getDefaultArguments();
+			ChequeHeader chequeHeader = null;
+			if(getFinanceMain().isNew() || financeDetail.getChequeHeader()==null){
+				chequeHeader = new ChequeHeader();
+				chequeHeader.setNewRecord(true);
+			}else{
+				chequeHeader = financeDetail.getChequeHeader();
+			}
+			map.put("roleCode", getRole());
+			map.put("financeMainDialogCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", getFinanceDetail());
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_CHEQUE));
+			map.put("fromLoan", true);
+			map.put("ccyFormatter",
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+			map.put("chequeHeader", chequeHeader);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChequeDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_CHEQUE), map);
 		}
 		logger.debug("Leaving");
 	}
@@ -2485,6 +2521,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_FEE:
 			finFeeDetailListCtrl.doSetLabels(getFinBasicDetails());
+			break;
+		case AssetConstants.UNIQUE_ID_CHEQUE:
+			chequeDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_COVENANTTYPE:
 			finCovenantTypeListCtrl.doSetLabels(getFinBasicDetails());
@@ -3594,7 +3633,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_secondaryAccount.setVisible(false);
 			}
 		}
-				
 		logger.debug("Leaving");
 	}
 
@@ -5929,6 +5967,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			mandateDialogCtrl.doSave_Mandate(aFinanceDetail, mandateTab, recSave);
 		}
 		
+		//PDC
+		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
+		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
+			chequeDetailDialogCtrl.doSave(aFinanceDetail,getFinanceMain().getFinReference());
+		}
+		
 		// Tax Detail
 		Tab taxTab = getTab(AssetConstants.UNIQUE_ID_TAX);
 		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
@@ -6096,20 +6140,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 						
 						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail);						
-						
+						String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
 						if (isExtMailService()) {
 							try {
 								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
 										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
 								// send mail to external service
-								getMailTemplateService().sendMail(templates);
+								getMailTemplateService().sendMail(templates, finReference);
 							} catch (IOException e) {
 								logger.error("Unable to read or process freemarker configuration or template :" + e);
 							} catch (TemplateException e) {
 								logger.error("Problem initializing freemarker or rendering template :" + e);
 							}
-						}else{
-							
+						} else {
 							try {				
 								getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
 										aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
@@ -6150,11 +6193,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						// Customer mobile numbers logic end						
 						if (isExtSMSService()) {
 							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues, mobileNoMap);
-							
 							// send SMS to external service
-							getShortMessageService().sendMessage(phoneNoList, smsList);
+							getShortMessageService().sendMessage(phoneNoList, smsList,finReference);
 						}
-						
 					}
 
 				}
@@ -16007,12 +16048,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
 	
-	
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;
 	}
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	public ChequeDetailDialogCtrl getChequeDetailDialogCtrl() {
+		return chequeDetailDialogCtrl;
+	}
+
+	public void setChequeDetailDialogCtrl(ChequeDetailDialogCtrl chequeDetailDialogCtrl) {
+		this.chequeDetailDialogCtrl = chequeDetailDialogCtrl;
 	}
 }

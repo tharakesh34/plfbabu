@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
+import com.pennanttech.pff.external.BreService;
 import com.pennanttech.pff.external.BureauScore;
 import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
@@ -70,6 +71,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	
 	@Autowired(required = false)
 	private HoldFinanceService		holdFinanceService;
+	
+	@Autowired(required = false)
+	private BreService				breService;
 
 	private CollateralMarkProcess	collateralMarkProcess;
 	private DDAControllerService	ddaControllerService;
@@ -216,6 +220,16 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					taskExecuted = true;
 				}
 				break;
+			case PennantConstants.method_bre:
+				try {
+					auditHeader = breService.executeBRE(auditHeader);
+					taskExecuted = true;
+				} catch (InterfaceException e) {
+					logger.error("Exception in BRE:", e);
+					taskExecuted = true;
+					setRemarks(auditHeader, PennantConstants.method_bre, e.getMessage());
+				}
+				break;
 			default:
 				return taskExecuted;
 			}
@@ -273,6 +287,10 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				extendedMap.put("REASONCODEHUNTER", "9999");
 				extendedMap.put("REMARKSHUNTER", message);
 				extendedMap.put("HUNTREQSEND", true);
+			}else if(StringUtils.equals(method, PennantConstants.method_bre)) {
+				extendedMap.put("BREREQSEND", true);
+				extendedMap.put("REASONCODEBRE", "9999");
+				extendedMap.put("REMARKSBRE", message);
 			}
 		}
 	}

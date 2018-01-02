@@ -26,9 +26,9 @@ public class ShortMessageServiceImpl implements ShortMessageService {
 	 */
 
 	@Override
-	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent) {
+	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent, String finReference) {
 		logger.debug(Literal.ENTERING);
-		sMSService.sendSms(custPhoneNoList, smsContent);
+		sMSService.sendSms(custPhoneNoList, smsContent, finReference);
 		logger.debug(Literal.LEAVING);
 	}
 }

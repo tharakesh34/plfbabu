@@ -1185,7 +1185,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 	public void setCountrySystemDefault() {
 		Filter[] systemDefault = new Filter[1];
-		systemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+		systemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object countrydef = PennantAppUtil.getSystemDefault("Country", "", systemDefault);
 		if (countrydef != null) {
 			sysDefaultCountry = (Country) countrydef;

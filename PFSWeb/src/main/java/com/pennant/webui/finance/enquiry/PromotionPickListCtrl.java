@@ -503,7 +503,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setCustLng(SysParamUtil.getValueAsString("APP_LNG"));
 	
 		Filter[] countrysystemDefault=new Filter[1];
-		countrysystemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+		countrysystemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
 		Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
 		
 		if (countryObj!=null) {
@@ -548,13 +548,13 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customerDetails.setCustEmployeeDetail(detail);
 
 		Filter[] systemDefault=new Filter[1];
-		systemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+		systemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
 		Object genderObj=	PennantAppUtil.getSystemDefault("Gender","", systemDefault);
 		if (genderObj !=null) {
 			Gender gender=(Gender) genderObj;
 			Filter[] saltufilters=new Filter[2];
 			saltufilters[0]=new Filter("SalutationGenderCode", gender.getGenderCode(),Filter.OP_EQUAL);
-			saltufilters[1]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+			saltufilters[1]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
 			Object saltuObj=PennantAppUtil.getSystemDefault("Salutation","", saltufilters);
 			
 			customer.setCustGenderCode(gender.getGenderCode());

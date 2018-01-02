@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -79,6 +78,7 @@ import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -123,7 +123,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_windowTitle;
 	protected Label label_FinApprovalStsInquiryDialog_FinReference;
 	protected Label label_FinApprovalStsInquiryDialog_CustDocType;
-	private List<Map<String, Object>> reasonDetailsList = null;
+	private List<ReasonDetailsLog> reasonDetailsList = null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -183,7 +183,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			
 			if (arguments.containsKey("reasonDetailsList")) {
-				this.reasonDetailsList = ((List<Map<String, Object>>) arguments.get("reasonDetailsList"));
+				this.reasonDetailsList = ((List<ReasonDetailsLog>) arguments.get("reasonDetailsList"));
 			} 
 
 			// set Field Properties

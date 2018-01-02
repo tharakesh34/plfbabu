@@ -81,5 +81,11 @@
 		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sails/holdCustomerLoan" />
 	</bean>	
 
+		<!-- BreService -->
+	<bean id="breService"
+		class="com.pennanttech.niyogin.bre.service.BreServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sweeps/scoreCarding" />
+	</bean>	
+
 	
 </beans>

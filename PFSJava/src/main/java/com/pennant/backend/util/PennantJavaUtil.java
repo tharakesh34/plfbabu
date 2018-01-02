@@ -200,6 +200,8 @@ import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.CAFFacilityType;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
@@ -2050,6 +2052,12 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PdfDocumentType", new ModuleMapping("PdfDocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode","DocTypeDesc"},
 				new Object[][] { { "DocTypeIsActive", "0", 1 }}, 350));
+		
+		ModuleUtil.register("ChequeHeader", new ModuleMapping("ChequeHeader", ChequeHeader.class, new String[] { "CHEQUEHEADER",
+		"CHEQUEHEADER_AView" }, masterWF, new String[] {"FinReference","ChequeType","NoOfCheques","TotalAmount"},null, 600));
+		
+		ModuleUtil.register("ChequeDetail", new ModuleMapping("ChequeDetail", ChequeDetail.class, new String[] { "CHEQUEDETAIL",
+		"CHEQUEDETAIL_AView" }, masterWF, new String[] {"HeaderID","BankBranchID","AccountNo","ChequeSerialNo","ChequeDate","ChequeCcy","Status"},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

@@ -27,12 +27,14 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.service.ExtendedFieldConstants;
 
 public class NiyoginDAOImpl {
 	private static final Logger				logger	= Logger.getLogger(NiyoginDAOImpl.class);
@@ -465,6 +467,67 @@ public class NiyoginDAOImpl {
 			throw new InterfaceException("9999", "Unable to Retrive  the HoldReason Details.");
 		}
 
+	}
+
+	/**
+	 * Method for get the CoApplicant details with ExtendedFields.
+	 * 
+	 * @param customerIds
+	 * @param type
+	 * @return
+	 * @throws InterfaceException
+	 */
+	public List<CustomerDetails> getCoApplicantsForBre(List<Long> customerIds, String type) throws InterfaceException {
+		logger.debug(Literal.ENTERING);
+		List<CustomerDetails> customerDetailList = new ArrayList<CustomerDetails>(1);
+		StringBuilder tableName = new StringBuilder("");
+		List<Customer> customers = getCustomerByID(customerIds, type);
+
+		for (Customer customer : customers) {
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustID(customer.getCustID());
+			customerDetails.setCustCIF(customer.getCustCIF());
+			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+			extendedFieldRender.setReference(customer.getCustCIF());
+			tableName.append(ExtendedFieldConstants.MODULE_CUSTOMER);
+			tableName.append("_");
+			tableName.append(customer.getCustCtgCode());
+			tableName.append("_ED");
+			extendedFieldRender.setMapValues(getExtendedField(customer.getCustCIF(), tableName.toString()));
+			customerDetails.setExtendedFieldRender(extendedFieldRender);
+			tableName.setLength(0);
+			customerDetailList.add(customerDetails);
+		}
+		logger.debug(Literal.LEAVING);
+		return customerDetailList;
+
+	}
+
+	/**
+	 * Method for Get Extended field details Maps by Reference
+	 * 
+	 * @param reference
+	 * @param tableName
+	 * @return
+	 */
+	public Map<String, Object> getExtendedField(String reference, String tableName) {
+		logger.debug("Entering");
+		Map<String, Object> renderMap = null;
+		StringBuilder selectSql = new StringBuilder("Select * from ");
+		selectSql.append(tableName);
+		selectSql.append(" where  Reference = :Reference ");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			renderMap = this.namedJdbcTemplate.queryForMap(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exceprtion ", e);
+			renderMap = null;
+		}
+
+		logger.debug("Leaving");
+		return renderMap;
 	}
 
 }

@@ -893,7 +893,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	
 	public void setGenderSystemDefault(){
 		Filter[] systemDefault=new Filter[1];
-		systemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+		systemDefault[0]=new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object genderdef=	PennantAppUtil.getSystemDefault("Gender","", systemDefault);
 		if (genderdef!=null) {
 			sysDefaultgender=(Gender) genderdef;

@@ -6,36 +6,36 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "details", "financials", "business", "perfios" })
-@XmlRootElement(name = "Applicant")
+@XmlType(propOrder = { "demogs", "financials", "business", "perfios" })
+@XmlRootElement(name = "APPLICANT")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Applicant {
 
-	@XmlElement(name = "Details")
-	private ApplicantDetails	details;
+	@XmlElement(name = "DEMOGS")
+	private DeMogs		demogs;
 
-	@XmlElement(name = "Financials")
-	private ApplicantFinancials	financials;
+	@XmlElement(name = "FINANCIALS")
+	private Financials	financials;
 
-	@XmlElement(name = "Business")
-	private Business			business;
+	@XmlElement(name = "BUSINESS")
+	private Business	business;
 
-	@XmlElement(name = "Perfios")
-	private Perfios				perfios;
+	@XmlElement(name = "PERFIOS")
+	private Perfios		perfios;
 
-	public ApplicantDetails getDetails() {
-		return details;
+	public DeMogs getDemogs() {
+		return demogs;
 	}
 
-	public void setDetails(ApplicantDetails details) {
-		this.details = details;
+	public void setDemogs(DeMogs demogs) {
+		this.demogs = demogs;
 	}
 
-	public ApplicantFinancials getFinancials() {
+	public Financials getFinancials() {
 		return financials;
 	}
 
-	public void setFinancials(ApplicantFinancials financials) {
+	public void setFinancials(Financials financials) {
 		this.financials = financials;
 	}
 

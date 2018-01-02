@@ -405,9 +405,11 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @return
 	 */
 	@Override
-	public void sendMail(List<MailTemplate> templates) {
+	public void sendMail(List<MailTemplate> templates, String finReference) {
 		logger.debug(Literal.ENTERING);
-		mailService.sendEmail(templates);
+		
+		mailService.sendEmail(templates, finReference);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
