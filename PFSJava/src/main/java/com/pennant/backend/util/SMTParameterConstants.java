@@ -48,4 +48,5 @@ public class SMTParameterConstants {
 	public static final String	EOD_CHUNK_SIZE		= "EOD_CHUNK_SIZE";
 	public static final String	ACCRUAL_CAL_ON		= "ACCRUAL_CAL_ON";//0-eod, 1-sod
 	public static final String	ROUND_LASTSCHD		= "ROUND_LASTSCHD";
+	public static final String	KYC_PRIORITY		= "DEFAULT_KYC_PRIORITY";
 }

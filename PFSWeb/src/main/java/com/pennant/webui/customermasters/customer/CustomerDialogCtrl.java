@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+o * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -146,6 +146,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.search.Filter;
@@ -4690,7 +4691,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setCustID(getCustomerDetails().getCustID());
 		customerAddres.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerAddres.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerAddres.setCustAddrPriority(Integer.parseInt(priority));
 		}
@@ -4790,7 +4791,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerPhoneNumber.setPhoneCustID(getCustomerDetails().getCustID());
 		customerPhoneNumber.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerPhoneNumber.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
 		}
@@ -4875,7 +4876,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerEMail.setCustID(getCustomerDetails().getCustID());
 		customerEMail.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerEMail.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString("EMAILPRIORITY_VeryHigh");
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerEMail.setCustEMailPriority(Integer.parseInt(priority));
 		}
