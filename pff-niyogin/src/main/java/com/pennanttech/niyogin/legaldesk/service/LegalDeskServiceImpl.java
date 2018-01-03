@@ -153,30 +153,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		SignersInfo signersInfo = new SignersInfo();
-		signersInfo.setLenders(prepareLendersList(financeDetail));
+		signersInfo.setLenders(null);
 		signersInfo.setBorrowers(prepareBorrowersList(financeDetail));
 		logger.debug(Literal.LEAVING);
 		return signersInfo;
 	}
 
-	/**
-	 * Method for prepare the lender list request object.
-	 * 
-	 * @param financeDetail
-	 * @return
-	 */
-	private List<SignerDetails> prepareLendersList(FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
-		List<SignerDetails> lendersList = null;
-		lendersList = new ArrayList<SignerDetails>();
-		SignerDetails lender = new SignerDetails();
-		lender.setName("Niyogin");
-		lender.setSeqNumbOfSign(1);
-		lender.setEmail("lender@niyogin.in");
-		lendersList.add(lender);
-		logger.debug(Literal.LEAVING);
-		return lendersList;
-	}
 
 	/**
 	 * Method for prepare the borrower list request object.
@@ -186,12 +168,25 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private List<SignerDetails> prepareBorrowersList(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		List<SignerDetails> borrowersList = null;
+
+		List<SignerDetails> borrowersList = new ArrayList<>(1);
+
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		Customer customer = customerDetails.getCustomer();
+		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals("3")) {
+			SignerDetails borrower = new SignerDetails();
+			borrower.setName(customer.getCustShrtName());
+			borrower.setSeqNumbOfSign(1);
+			borrower.setCustID(customer.getCustID());
+			List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
+			NiyoginUtility.sortCustomerEmail(customerEMailList);
+			setCustomerEmail(customerEMailList, borrower);
+			borrowersList.add(borrower);
+		}
 
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		Set<Long> customerIds = new HashSet<>(1);
 		if (coapplicants != null && !coapplicants.isEmpty()) {
-			borrowersList = new ArrayList<>(1);
 
 			for (JointAccountDetail coApplicant : coapplicants) {
 				if (coApplicant.isAuthoritySignatory()) {
@@ -205,25 +200,30 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			}
 			if (!borrowersList.isEmpty()) {
 				List<CustomerEMail> custEmails = getCustomersEmails(customerIds);
-				List<CustomerEMail> tempEmailList = new ArrayList<CustomerEMail>(1);
-				for (long custId : customerIds) {
-					tempEmailList.clear();
-					for (CustomerEMail customerEMail : custEmails) {
-						if (custId == customerEMail.getCustID()) {
-							tempEmailList.add(customerEMail);
-						}
-					}
-					String email = NiyoginUtility.getHignPriorityEmail(tempEmailList, 5);
-					for (SignerDetails borrower : borrowersList) {
-						if (custId == borrower.getCustID()) {
-							borrower.setEmail(email);
-						}
-					}
+				NiyoginUtility.sortCustomerEmail(custEmails);
+				for (SignerDetails borrower : borrowersList) {
+					setCustomerEmail(custEmails, borrower);
 				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
 		return borrowersList;
+	}
+
+	/**
+	 * Method for set the High priority Email to the given Borrower.
+	 * 
+	 * @param custEmails
+	 * @param borrower
+	 */
+	private void setCustomerEmail(List<CustomerEMail> custEmails, SignerDetails borrower) {
+		for (CustomerEMail customerEMail : custEmails) {
+			if (customerEMail.getCustID() != borrower.getCustID()) {
+				continue;
+			}
+			borrower.setEmail(customerEMail.getCustEMail());
+			break;
+		}
 	}
 
 	/**

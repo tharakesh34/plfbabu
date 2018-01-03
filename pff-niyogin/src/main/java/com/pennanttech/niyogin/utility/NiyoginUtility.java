@@ -2,6 +2,8 @@ package com.pennanttech.niyogin.utility;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -34,6 +36,24 @@ public class NiyoginUtility {
 		return null;
 	}
 
+	/**
+	 * Method for sort the given CustomerEMailList based on their Priority.
+	 * 
+	 * @param list
+	 */
+	public static void sortCustomerEmail(List<CustomerEMail> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerEMail>() {
+				@Override
+				public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+					return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+				}
+			});
+		}
+	}
+
+	
 	/**
 	 * Method to get the High priority PhoneNumeber
 	 * 
