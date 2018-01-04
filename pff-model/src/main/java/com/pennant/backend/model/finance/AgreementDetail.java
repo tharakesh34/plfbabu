@@ -314,6 +314,8 @@ public class AgreementDetail {
 	private String finMinRate;
 	private String finMaxRate;
 	private String profitRateType;														//Profit Rate Type
+	private String tenor;
+	private String netRefRateLoan;
 	//DDA Fields
 	//===============================
 	private String 	bankName ="";														// DDA Sponsoring Bank
@@ -4134,6 +4136,22 @@ private String custAccount ="";
 
 	public void setAccNumberMandate(String accNumberMandate) {
 		this.accNumberMandate = accNumberMandate;
+	}
+
+	public String getTenor() {
+		return StringUtils.trimToEmpty(tenor);
+	}
+
+	public void setTenor(String tenor) {
+		this.tenor = tenor;
+	}
+
+	public String getNetRefRateLoan() {
+		return StringUtils.trimToEmpty(netRefRateLoan);
+	}
+
+	public void setNetRefRateLoan(String netRefRateLoan) {
+		this.netRefRateLoan = netRefRateLoan;
 	}
 
 	public class CoApplicant {

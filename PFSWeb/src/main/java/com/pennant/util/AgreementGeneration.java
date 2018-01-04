@@ -30,10 +30,12 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
+import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.RateUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -392,16 +394,14 @@ public class AgreementGeneration implements Serializable {
 					//Customer address
 					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
 					setCustomerAddress(agreement, addressList);
+				
 
-					if (detail.getCustomerDetails().getCustomerDocumentsList() != null
-							&& !detail.getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+					List<CustomerDocument> customerDocumentsList = detail.getCustomerDetails().getCustomerDocumentsList();
+					if (customerDocumentsList != null
+							&& !customerDocumentsList.isEmpty()) {
 						
-						for (CustomerDocument customerDocument :detail.getCustomerDetails().getCustomerDocumentsList()) {
-							if (StringUtils.equals(PennantConstants.PANNUMBER,customerDocument.getCustDocCategory())) {
-								agreement.setPanNumber(customerDocument.getCustDocTitle());
-								break;
-							}
-						}
+						//pan number
+						agreement.setPanNumber(PennantApplicationUtil.getPanNumber(customerDocumentsList));
 						
 						String cusCtg = StringUtils.trimToEmpty(customer.getCustCtgCode());
 						boolean corpCust = false;
@@ -409,7 +409,7 @@ public class AgreementGeneration implements Serializable {
 							corpCust = true;
 						}
 
-						for (CustomerDocument customerDocument : detail.getCustomerDetails().getCustomerDocumentsList()) {
+						for (CustomerDocument customerDocument : customerDocumentsList) {
 							String docCategory = customerDocument.getCustDocCategory();
 							if (corpCust) {
 								// Trade License for Corporate Customer/ SME Customer
@@ -602,24 +602,14 @@ public class AgreementGeneration implements Serializable {
 				custIDs.add(custdetails);
 			}
 			
-		
 			for (CustomerDetails customerDetails : custIDs) {
 				//co applicant
 				CoApplicant coapplicant = agreement.new CoApplicant();
-				
 				Customer customer = customerDetails.getCustomer();
 				coapplicant.setCustName(customer.getCustShrtName());
-				
 				//pan number
 				List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
-				if (doclist!=null && !doclist.isEmpty()) {
-					for (CustomerDocument customerDocument : doclist) {
-						if (StringUtils.equals(PennantConstants.PANNUMBER,customerDocument.getCustDocCategory())) {
-							coapplicant.setPanNumber(customerDocument.getCustDocTitle());
-							break;
-						}
-					}
-				}
+				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
 				
 				List<CustomerAddres> addlist = customerDetails.getAddressList();
 				if (addlist!=null && !addlist.isEmpty()) {
@@ -974,6 +964,18 @@ public class AgreementGeneration implements Serializable {
 			agreement.setReviewDate(DateUtility.formatToLongDate(main.getNextRepayRvwDate()));
 			agreement.setFacilityDate(DateUtility.formatToLongDate(main.getFinStartDate()));
 			agreement.setProfitRateType(main.getRepayRateBasis());
+			int tenor = DateUtility.getMonthsBetween(main.getFinStartDate(),
+					main.getMaturityDate(), true);
+			agreement.setTenor(String.valueOf(tenor));
+			
+			if (main.getRepayBaseRate()!=null) {
+				RateDetail details = RateUtil.rates(main.getRepayBaseRate(), main.getFinCcy(), main.getRepaySpecialRate(),
+						main.getRepayMargin(),main.getRpyMinRate(), main.getRpyMaxRate());
+				agreement.setNetRefRateLoan(PennantApplicationUtil.formatRate(details.getNetRefRateLoan().doubleValue(), 9));
+			}else{
+				agreement.setNetRefRateLoan(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 9));
+			}
+		
 
 		} catch (Exception e) {
 			logger.debug(e);

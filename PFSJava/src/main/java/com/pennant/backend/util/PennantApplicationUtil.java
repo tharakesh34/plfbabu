@@ -15,9 +15,11 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.search.Filter;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -620,4 +622,35 @@ public class PennantApplicationUtil {
 		logger.debug("Leaving");
 		return feeEvent;
 	}
+	
+	public static String getPanNumber(List<CustomerDocument> customerDetails) {
+		String pannumber = "";
+		if (customerDetails != null && !customerDetails.isEmpty()) {
+			String[] pancards = null;
+			String panCard = StringUtils.trimToEmpty(SysParamUtil.getValueAsString("PAN_DOC_TYPE"));
+			if (panCard.contains(PennantConstants.DELIMITER_COMMA)) {
+				pancards = panCard.split(PennantConstants.DELIMITER_COMMA);
+			}else{
+				pancards=new String[1];
+				pancards[0]=panCard;
+			}
+
+			if (pancards != null) {
+				for (int i = 0; i < pancards.length; i++) {
+					for (CustomerDocument customerDocument : customerDetails) {
+						if (StringUtils.equals(pancards[0],customerDocument.getCustDocCategory())) {
+							pannumber=StringUtils.trimToEmpty(customerDocument.getCustDocTitle());
+							return pannumber;
+						}
+					}
+				}
+			}
+		}
+		return pannumber;
+	}
+	
+	
+	
+	
+	
  }
