@@ -597,7 +597,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 			for (JointAccountDetail coApplicant : coapplicants) {
 				coApplicantIDs.add(coApplicant.getCustID());
 			}
-			List<CustomerDetails> coApplicantCustomers = getCoApplicantsForBre(coApplicantIDs);
+			List<CustomerDetails> coApplicantCustomers = getCoApplicantsWithExtFields(coApplicantIDs);
 			for (CustomerDetails customerDetails : coApplicantCustomers) {
 				CoAppElement coAppElement = new CoAppElement();
 				coAppElement.setCodeMogs(prepareCodeMogs(customerDetails));

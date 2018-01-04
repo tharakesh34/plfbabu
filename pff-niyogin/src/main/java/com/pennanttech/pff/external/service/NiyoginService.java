@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,9 +29,13 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
@@ -50,7 +55,6 @@ public abstract class NiyoginService {
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
 	private NiyoginDAOImpl	niyoginDAOImpl;
 	private JSONClient			client;
-
 	public static final int		LENGTH_ACCOUNT		= 50;
 	public static final int		LENGTH_FREQUENCY	= 5;
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
@@ -613,6 +617,32 @@ public abstract class NiyoginService {
 		return null;
 	}
 
+	public String getPanNumber(List<CustomerDocument> customerDetails) {
+		String pannumber = "";
+		if (customerDetails != null && !customerDetails.isEmpty()) {
+			String[] pancards = null;
+			String panCard = StringUtils.trimToEmpty((String) getSMTParameter("PAN_DOC_TYPE", String.class));
+			if (panCard.contains(",")) {
+				pancards = panCard.split(",");
+			}else{
+				pancards=new String[1];
+				pancards[0]=panCard;
+			}
+
+			if (pancards != null) {
+				for (int i = 0; i < pancards.length; i++) {
+					for (CustomerDocument customerDocument : customerDetails) {
+						if (StringUtils.equals(pancards[0],customerDocument.getCustDocCategory())) {
+							pannumber=customerDocument.getCustDocTitle();
+							return pannumber;
+						}
+					}
+				}
+			}
+		}
+		return pannumber;
+	}
+	
 	/**
 	 * Method for getting the City
 	 * 
@@ -647,6 +677,15 @@ public abstract class NiyoginService {
 	}
 	
 	/**
+	 * Method for get the list of documents for given customerIds
+	 * 
+	 * @param customerIds
+	 * @return
+	 */
+	protected List<CustomerDocument> getCustomersDocuments(long customerId) {
+		return niyoginDAOImpl.getCustomerDocumentByCustomer(customerId, "");
+	}
+	/**
 	 * Method for get the pincodeGroupId
 	 * 
 	 * @param pincode
@@ -674,9 +713,41 @@ public abstract class NiyoginService {
 	 * @param customerIds
 	 * @return
 	 */
-	protected List<CustomerDetails> getCoApplicantsForBre(List<Long> customerIds) {
-		return niyoginDAOImpl.getCoApplicantsForBre(customerIds, "_AVIEW");
+	protected List<CustomerDetails> getCoApplicantsWithExtFields(List<Long> customerIds) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder tableName = new StringBuilder("");
+		ExtendedFieldHeader extendedFieldHeader = null;
+		Map<String, Object> extMapValues = null;
+		List<CustomerDetails> customerDetailList = new ArrayList<CustomerDetails>(1);
+		List<Customer> customers = niyoginDAOImpl.getCustomerByID(customerIds, "_AVIEW");
+		String module = ExtendedFieldConstants.MODULE_CUSTOMER;
+		for (Customer customer : customers) {
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustID(customer.getCustID());
+			customerDetails.setCustCIF(customer.getCustCIF());
+			extendedFieldHeader = niyoginDAOImpl.getExtendedFieldHeaderByModuleName(module, customer.getCustCtgCode());
+			if (extendedFieldHeader != null) {
+				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+				extendedFieldRender.setReference(customer.getCustCIF());
+				tableName.append(module);
+				tableName.append("_");
+				tableName.append(customer.getCustCtgCode());
+				tableName.append("_ED");
+				extMapValues = niyoginDAOImpl.getExtendedField(customer.getCustCIF(), tableName.toString());
+				extendedFieldRender.setMapValues(extMapValues);
+				customerDetails.setExtendedFieldRender(extendedFieldRender);
+				tableName.setLength(0);
+				customerDetailList.add(customerDetails);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return customerDetailList;
 	}
+	
+	protected String getLovFieldDetailByCode(String fieldCode, String fieldCodeValue) {
+		return niyoginDAOImpl.getLovFieldDetailByCode(fieldCode, fieldCodeValue, "");
+	}
+	
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}

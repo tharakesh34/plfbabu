@@ -11,8 +11,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -204,6 +206,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_LegalDesk:
 				try {
+					setRateOfInst(auditHeader);
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
 					taskExecuted = true;
 				} catch (InterfaceException e) {
@@ -254,6 +257,29 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 		logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 		return taskExecuted;
+	}
+
+	private void setRateOfInst(AuditHeader auditHeader) {
+		//FIXME: How to get RateUtil for Niyogin project
+		try {
+			FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();	
+			
+			BigDecimal rate = BigDecimal.ZERO;
+			if (finMain.getRepayBaseRate() != null) {
+				RateDetail details = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(),
+						finMain.getRepayMargin(),finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+				rate = details.getNetRefRateLoan();
+			} else {
+				rate = finMain.getRepayProfitRate();
+			}
+			finDeatil.getExtendedFieldRender().getMapValues().put("RATE_LEGALDESK", 
+					PennantApplicationUtil.formatRate(rate.doubleValue(), 9));
+			
+			
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
 	}
 
 	/**

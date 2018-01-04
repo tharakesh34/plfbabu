@@ -1,6 +1,7 @@
 package com.pennanttech.pff.external.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +27,15 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.service.ExtendedFieldConstants;
 
 public class NiyoginDAOImpl {
 	private static final Logger				logger	= Logger.getLogger(NiyoginDAOImpl.class);
@@ -437,10 +438,54 @@ public class NiyoginDAOImpl {
 			return this.namedJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			throw new InterfaceException("9999", "Unable to Retrive  the Customer Email  Details.");
+			return Collections.emptyList();
 		}
 	}
 
+	/**
+	 * Fetch the customer documents for the specified customer
+	 * 
+	 * @param custId
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return CustomerDocument
+	 */
+	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setId(custId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
+		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
+		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
+		selectSql.append(", DocPurpose, DocUri");
+		if (type.contains("View")) {
+			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
+			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
+			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
+		}
+		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
+		selectSql.append(", RecordType, WorkflowId");
+		selectSql.append(" FROM CustomerDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" where CustID = :CustID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
+			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+					CustomerDocument.class);
+			
+			return this.namedJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			return Collections.emptyList();
+		}
+	}
+	
 	/**
 	 * Method for get the hold reasons.
 	 * 
@@ -470,40 +515,6 @@ public class NiyoginDAOImpl {
 	}
 
 	/**
-	 * Method for get the CoApplicant details with ExtendedFields.
-	 * 
-	 * @param customerIds
-	 * @param type
-	 * @return
-	 * @throws InterfaceException
-	 */
-	public List<CustomerDetails> getCoApplicantsForBre(List<Long> customerIds, String type) throws InterfaceException {
-		logger.debug(Literal.ENTERING);
-		List<CustomerDetails> customerDetailList = new ArrayList<CustomerDetails>(1);
-		StringBuilder tableName = new StringBuilder("");
-		List<Customer> customers = getCustomerByID(customerIds, type);
-
-		for (Customer customer : customers) {
-			CustomerDetails customerDetails = new CustomerDetails();
-			customerDetails.setCustID(customer.getCustID());
-			customerDetails.setCustCIF(customer.getCustCIF());
-			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
-			extendedFieldRender.setReference(customer.getCustCIF());
-			tableName.append(ExtendedFieldConstants.MODULE_CUSTOMER);
-			tableName.append("_");
-			tableName.append(customer.getCustCtgCode());
-			tableName.append("_ED");
-			extendedFieldRender.setMapValues(getExtendedField(customer.getCustCIF(), tableName.toString()));
-			customerDetails.setExtendedFieldRender(extendedFieldRender);
-			tableName.setLength(0);
-			customerDetailList.add(customerDetails);
-		}
-		logger.debug(Literal.LEAVING);
-		return customerDetailList;
-
-	}
-
-	/**
 	 * Method for Get Extended field details Maps by Reference
 	 * 
 	 * @param reference
@@ -511,7 +522,7 @@ public class NiyoginDAOImpl {
 	 * @return
 	 */
 	public Map<String, Object> getExtendedField(String reference, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, Object> renderMap = null;
 		StringBuilder selectSql = new StringBuilder("Select * from ");
 		selectSql.append(tableName);
@@ -526,8 +537,92 @@ public class NiyoginDAOImpl {
 			renderMap = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return renderMap;
+	}
+
+	/**
+	 * Fetch by Module and Submodule names
+	 */
+	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+
+		source = new MapSqlParameterSource();
+		source.addValue("ModuleName", moduleName);
+		source.addValue("SubModuleName", subModuleName);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
+		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
+		selectSql.append(" From ExtendedFieldHeader");
+		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldHeader.class);
+
+		try {
+			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	/**
+	 * Method for fetch the CustomerTypeCode description for given CustTypeCode.
+	 * 
+	 * @param custtypecode
+	 * @return
+	 */
+	public String getCustTypeDesc(String custTypeCode) {
+		logger.debug("Entering");
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT CUSTTYPEDESC FROM RMTCUSTTYPES ");
+		selectSql.append(" WHERE CUSTTYPECODE= :CUSTTYPECODE");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("CUSTTYPECODE", custTypeCode);
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.LEAVING);
+		try {
+			return namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Fetch the Record  LOV Field Details details by key field
+	 * 
+	 * @param id (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return LovFieldDetail
+	 */
+	public String getLovFieldDetailByCode(String fieldCode, String fieldCodeValue, String type) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FieldCode", fieldCode);
+		paramMap.addValue("FieldCodeValue", fieldCodeValue);
+		
+		StringBuilder selectSql = new StringBuilder("Select valueDesc " );
+		selectSql.append(" From RMTLovFieldDetail"+ StringUtils.trimToEmpty(type) );
+		selectSql.append(" Where FieldCode =:FieldCode AND FieldCodeValue =:FieldCodeValue ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		try{
+			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			return null;
+		}
 	}
 
 }

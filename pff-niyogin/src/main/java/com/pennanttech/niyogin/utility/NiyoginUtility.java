@@ -18,6 +18,58 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 public class NiyoginUtility {
 
 	/**
+	 * Method for sort the given CustomerEMailList based on their Priority High to Low.
+	 * 
+	 * @param list
+	 */
+	public static void sortCustomerEmail(List<CustomerEMail> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerEMail>() {
+				@Override
+				public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+					return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+				}
+			});
+		}
+	}
+
+
+	/**
+	 * Method for sort the given CustomerPhoneNumberList based on their Priority High to Low.
+	 * 
+	 * @param list
+	 */
+	public static void sortCustomerPhoneNumber(List<CustomerPhoneNumber> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerPhoneNumber>() {
+				@Override
+				public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+					return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+				}
+			});
+		}
+	}
+
+	/**
+	 * Method for sort the given CustomerAddresList based on their Priority High to Low.
+	 * 
+	 * @param list
+	 */
+	public static void sortCustomerAddres(List<CustomerAddres> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerAddres>() {
+				@Override
+				public int compare(CustomerAddres detail1, CustomerAddres detail2) {
+					return detail2.getCustAddrPriority() - detail1.getCustAddrPriority();
+				}
+			});
+		}
+	}
+	
+	/**
 	 * Method to get the High priority email.
 	 * 
 	 * @param customerEMailList
@@ -34,23 +86,6 @@ public class NiyoginUtility {
 			getHignPriorityEmail(customerEMailList, priority - 1);
 		}
 		return null;
-	}
-
-	/**
-	 * Method for sort the given CustomerEMailList based on their Priority.
-	 * 
-	 * @param list
-	 */
-	public static void sortCustomerEmail(List<CustomerEMail> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<CustomerEMail>() {
-				@Override
-				public int compare(CustomerEMail detail1, CustomerEMail detail2) {
-					return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
-				}
-			});
-		}
 	}
 
 	
@@ -241,4 +276,59 @@ public class NiyoginUtility {
 		return Math.abs((int) days);
 	}
 
+	public static String formatRate(double value, int decPos) {
+		StringBuffer sb = new StringBuffer("###,###,######");
+
+		if (value != 0) {
+			String subString = String.valueOf(value).substring(String.valueOf(value).indexOf('.'));
+			if (!subString.contains("E")) {
+				
+				if (decPos > 0) {
+					sb.append('.');
+					for (int i = 0; i < decPos; i++) {
+						sb.append('0');
+					}
+				}
+				
+				java.text.DecimalFormat df = new java.text.DecimalFormat();
+				df.applyPattern(sb.toString());
+				String returnResult = df.format(value);
+				returnResult = returnResult.replaceAll("[0]*$", "");
+				if(returnResult.endsWith(".")){
+					returnResult = returnResult + "00";
+				}else if(returnResult.contains(".") && returnResult.substring(returnResult.indexOf('.')+1).length() == 1){
+					returnResult = returnResult + "0";
+				}
+				
+				if(returnResult.startsWith(".")){
+					returnResult = "0"+returnResult;
+				}
+				return returnResult;
+			} else {
+				
+				String actValue = String.valueOf(value).substring(0,String.valueOf(value).indexOf('.'));
+				int powValue = Integer.parseInt(String.valueOf(value).substring(String.valueOf(value).indexOf('E')+1));
+				
+				String string = "0.";
+				if(powValue < 0){
+					powValue = 0-powValue;
+					if(powValue > 0){
+						for (int i = 0; i < powValue-1; i++) {
+							string = string.concat("0");
+						}
+					}
+				}
+				
+				string += actValue;
+				return string;
+			}
+		} else {
+			String string = "0.";
+			for (int i = 0; i < 2; i++) {
+				string =string.concat("0");
+			}
+			return string;
+
+		}
+	}
 }

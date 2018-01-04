@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest", "instalmentAmt",
+@XmlType(propOrder = { "purposeOfLoan", "borrowerPan","sactionAmt", "tenure", "intrestType", "rateOfIntrest", "instalmentAmt",
 		"instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges", "documentationCharges",
 		"foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt", "disbursementOfLoan", "loanType" })
 @XmlRootElement(name = "FormData")
@@ -22,9 +22,15 @@ public class FormData {
 
 	@XmlElement(name = "intrest_type")
 	private String		intrestType;
+	
+	@XmlElement(name = "borrower_pan")
+	private String		borrowerPan;
+	
+	@XmlElement(name = "sancation_amount")
+	private BigDecimal		sactionAmt		= BigDecimal.ZERO;
 
 	@XmlElement(name = "rate_of_intrest")
-	private BigDecimal	rateOfIntrest		= BigDecimal.ZERO;
+	private String	rateOfIntrest;
 
 	@XmlElement(name = "instalment_amount")
 	private BigDecimal	instalmentAmt		= BigDecimal.ZERO;
@@ -85,11 +91,11 @@ public class FormData {
 		this.intrestType = intrestType;
 	}
 
-	public BigDecimal getRateOfIntrest() {
+	public String getRateOfIntrest() {
 		return rateOfIntrest;
 	}
 
-	public void setRateOfIntrest(BigDecimal rateOfIntrest) {
+	public void setRateOfIntrest(String rateOfIntrest) {
 		this.rateOfIntrest = rateOfIntrest;
 	}
 
@@ -187,5 +193,21 @@ public class FormData {
 
 	public void setLoanType(String loanType) {
 		this.loanType = loanType;
+	}
+	
+	public String getBorrowerPan() {
+		return borrowerPan;
+	}
+
+	public void setBorrowerPan(String borrowerPan) {
+		this.borrowerPan = borrowerPan;
+	}
+
+	public BigDecimal getSactionAmt() {
+		return sactionAmt;
+	}
+
+	public void setSactionAmt(BigDecimal sactionAmt) {
+		this.sactionAmt = sactionAmt;
 	}
 }
