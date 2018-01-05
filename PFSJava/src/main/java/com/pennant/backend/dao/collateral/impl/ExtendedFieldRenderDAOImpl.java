@@ -329,6 +329,59 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		return recordCount;
 	}
 	
+	/**
+	 * 
+	 * @param tableName
+	 * @param lovField
+	 * @param filters
+	 * @param fieldValue
+	 * @return
+	 */
+	@Override
+	public int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters,String fieldValue) {
+		logger.debug("Entering");
+		
+		String valueColumn = lovField;
+		String filterColumn = filters[0][0].toString();
+		String filterColumnValue = filters[0][2].toString();
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		if(!filterColumn.contains("IsActive")){
+		source.addValue("filterColumnValue", filterColumnValue);
+		}else{
+			try{
+				source.addValue("filterColumnValue", Integer.parseInt(filterColumnValue));
+			}catch (NumberFormatException e) {
+				logger.debug("Exception: ",e);
+				source.addValue("filterColumnValue", filterColumnValue);
+			}
+		}
+		source.addValue("Value", fieldValue);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT COUNT(*) FROM ");
+		selectSql.append(tableName);
+		selectSql.append(" WHERE ");
+		selectSql.append(valueColumn);
+		selectSql.append("= :Value");
+		if (StringUtils.isNotBlank(filterColumn)) {
+			selectSql.append(" AND " + filterColumn);
+			selectSql.append("= :filterColumnValue");
+		}
+		logger.debug("insertSql: " + selectSql.toString());
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
+		return recordCount;
+	}
+	
 
 	/**
 	 * Method for check the ExtendedFields with the given reference and seqNo is available or not

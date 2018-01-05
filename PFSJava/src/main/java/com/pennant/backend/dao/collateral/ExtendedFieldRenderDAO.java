@@ -25,4 +25,6 @@ public interface ExtendedFieldRenderDAO {
 	int validateMasterData(String tableName, String column, String filterColumn, String fieldValue);
 	
 	boolean isExists(String reference, int seqNo, String tableName);
+
+	int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters, String fieldValue);
 }

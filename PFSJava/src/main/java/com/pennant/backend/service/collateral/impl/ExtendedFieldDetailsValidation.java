@@ -372,20 +372,19 @@ public class ExtendedFieldDetailsValidation {
 				Object[][] filters = moduleMapping.getLovFilters();
 				int count=0;
 				if(!StringUtils.contains(moduleMapping.getTableName(), "Builder")){
-					if(filters !=null){
-
-						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], 
-								(String)filters[0][0], Objects.toString(fieldValue,""));
-
+					if (filters != null) {
+						if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, exdConfigDetail.getFieldType())) {
+							count=extendedFieldRenderDAO.validateExtendedComboBoxData(moduleMapping.getTableName(), lovFields[0], filters, fieldValue.toString());
+						} else {
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],(String)filters[0][0], Objects.toString(fieldValue,""));	
+						}
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],null , Objects.toString(fieldValue,""));
 					}
 				} else {
-					if(filters !=null){
-
+					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1], 
 								(String)filters[0][0], Objects.toString(fieldValue,""));
-
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1],null , Objects.toString(fieldValue,""));
 					}

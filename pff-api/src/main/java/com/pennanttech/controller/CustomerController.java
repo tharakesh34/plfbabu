@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -124,6 +125,9 @@ public class CustomerController {
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 			
+			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			customerDetails.getCustomer().setCustNationality(AppCountry);
+			
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
@@ -219,7 +223,8 @@ public class CustomerController {
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())){
-			curCustomer.setCustCOB(PennantConstants.DEFAULT_COUNTRY);
+			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			curCustomer.setCustCOB(AppCountry);
 		}
 		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),

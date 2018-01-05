@@ -28,6 +28,7 @@ import com.pennanttech.niyogin.legaldesk.model.SignerDetails;
 import com.pennanttech.niyogin.legaldesk.model.SignersInfo;
 import com.pennanttech.niyogin.legaldesk.model.StampPaperData;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.LegalDeskService;
@@ -235,12 +236,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setPurposeOfLoan(valueDesc);
 		formData.setTenure(NiyoginUtility.getMonthsBetween(finMain.getFinStartDate(), finMain.getMaturityDate()));
 		String instType = "";
-		if(StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "R")) {
-			instType = "Reduce";
-		} else if(StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "F")) {
-			instType = "Flat";
-		} else if(StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "C")) {
-			instType = "Flat Converting to Reduce";
+		if (StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "R")) {
+			instType = App.getLabel("label_Reduce");
+		} else if (StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "F")) {
+			instType = App.getLabel("label_Flat");
+		} else if (StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "C")) {
+			instType = App.getLabel("label_Flat_Convert_Reduce");
 		}
 		formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));
 		formData.setSactionAmt(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
@@ -251,13 +252,13 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		String instlmntDate = NiyoginUtility.formatDate(finMain.getNextRepayDate(), "dd/MM/yyyy");
 		formData.setInstalmentStartdate(instlmntDate);
 		formData.setInstalmentSchedule(finMain.getNumberOfTerms());
-		formData.setProcessingFees("2% of Sanction Amount");
-		formData.setPenaltyCharges("2% of outstanding amount");
-		formData.setDocumentationCharges("0.2% of the loan amount");
-		formData.setForeclosure("No foreclosure for 6 Months, 6-12 Months - 5%, 12-24 Months - 4%, 24 months onwards - 3%");
-		formData.setChargesForDihorner("750");
-		formData.setDefaultEmiCharges("0");
-		formData.setInsuranceGstAmt("2%");
+		formData.setProcessingFees(App.getLabel("label_LegalDesk_ProcessingFees"));
+		formData.setPenaltyCharges(App.getLabel("label_LegalDesk_PenaltyCharges"));
+		formData.setDocumentationCharges(App.getLabel("label_LegalDesk_DocumentationCharges"));
+		formData.setForeclosure(App.getLabel("label_LegalDesk_Foreclosure"));
+		formData.setChargesForDihorner(App.getLabel("label_LegalDesk_ChargesForDihorner"));
+		formData.setDefaultEmiCharges(App.getLabel("label_LegalDesk_DefaultEmiCharges"));
+		formData.setInsuranceGstAmt(App.getLabel("label_LegalDesk_InsuranceGstAmt"));
 		formData.setDisbursementOfLoan(finMain.getCurDisbursementAmt());
 		formData.setLoanType(finMain.getFinType());
 		logger.debug(Literal.LEAVING);
