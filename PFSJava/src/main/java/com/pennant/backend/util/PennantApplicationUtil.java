@@ -638,7 +638,7 @@ public class PennantApplicationUtil {
 			if (pancards != null) {
 				for (int i = 0; i < pancards.length; i++) {
 					for (CustomerDocument customerDocument : customerDetails) {
-						if (StringUtils.equals(pancards[0],customerDocument.getCustDocCategory())) {
+						if (StringUtils.equals(pancards[i],customerDocument.getCustDocCategory())) {
 							pannumber=StringUtils.trimToEmpty(customerDocument.getCustDocTitle());
 							return pannumber;
 						}
