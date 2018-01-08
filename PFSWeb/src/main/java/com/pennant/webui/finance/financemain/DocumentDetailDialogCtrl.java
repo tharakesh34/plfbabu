@@ -600,7 +600,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
 			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
 				// Fetch document from interface
-				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri());
+				String custCif=finDocumentDetail.getLovDescCustCIF();
+				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri(),custCif);
 				if (detail != null && detail.getDocImage() != null) {
 					finDocumentDetail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 				}

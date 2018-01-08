@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -30,7 +31,7 @@ public class JSONClient {
 	public String post(String url, Object requestData) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		WebClient client = getClient(url);
+		WebClient client = getClient(StringUtils.trimToEmpty(url));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -1054,8 +1054,9 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {
 						try {
 							// Fetch document from interface
+							String custCif=this.custCIF.getValue();
 							DocumentDetails detail = externalDocumentManager
-									.getExternalDocument(customerDocument.getDocUri());
+									.getExternalDocument(customerDocument.getDocUri(),custCif);
 							customerDocument.setCustDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 						} catch (InterfaceException e) {
 							MessageUtil.showError(e);

@@ -608,7 +608,8 @@ public class DisbursementInstCtrl {
 		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
 			documentDetails.setDocImage(PennantAppUtil.getDocumentImage(documentDetails.getDocRefId()));
 			// Fetch document from interface
-			DocumentDetails extdetail = externalDocumentManager.getExternalDocument(documentDetails.getDocUri());
+			String custCif = documentDetails.getLovDescCustCIF();
+			DocumentDetails extdetail = externalDocumentManager.getExternalDocument(documentDetails.getDocUri(),custCif);
 			if (extdetail != null && extdetail.getDocImage() != null) {
 				documentDetails.setDocImage(PennantApplicationUtil.decode(extdetail.getDocImage()));
 			}

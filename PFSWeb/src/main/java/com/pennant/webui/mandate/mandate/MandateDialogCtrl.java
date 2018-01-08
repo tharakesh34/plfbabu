@@ -1070,7 +1070,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void setMandateDocument(Mandate aMandate) {
 		if(aMandate.getDocImage() == null && StringUtils.isNotBlank(aMandate.getExternalRef())) {
 			// Fetch document from interface
-			DocumentDetails detail = externalDocumentManager.getExternalDocument(aMandate.getExternalRef());
+			String custCif=aMandate.getCustCIF();
+			DocumentDetails detail = externalDocumentManager.getExternalDocument(aMandate.getExternalRef(),custCif);
 			if (detail != null && detail.getDocImage() != null) {
 				aMandate.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 			}
