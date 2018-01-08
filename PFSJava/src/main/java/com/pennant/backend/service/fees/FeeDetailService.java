@@ -343,7 +343,7 @@ public class FeeDetailService {
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			//finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());//TODO: to be fixed by DDP
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 					subtract(finFeeDetail.getWaivedAmount()));
 			if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
