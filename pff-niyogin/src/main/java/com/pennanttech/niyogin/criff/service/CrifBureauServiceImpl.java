@@ -37,6 +37,7 @@ import com.pennanttech.niyogin.criff.model.PaymentHistory;
 import com.pennanttech.niyogin.criff.model.PersonalAddress;
 import com.pennanttech.niyogin.criff.model.TradeLine;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -87,7 +88,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		//validate the map with configuration
 		Map<String, Object> validatedExtendedMap = executeBureau(financeDetail, customerDetails);
-
+		
+		if (validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
+			validatedExtendedMap.put("REASONCODECRIF", statusCode);
+			validatedExtendedMap.put("REMARKSCRIF", App.getLabel("niyogin_No_Data"));
+		}
 		// Execute Bureau for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {

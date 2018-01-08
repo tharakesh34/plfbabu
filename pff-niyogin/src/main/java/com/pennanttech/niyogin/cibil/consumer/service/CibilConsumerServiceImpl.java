@@ -19,6 +19,7 @@ import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerAddress;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilConsumerRequest;
 import com.pennanttech.niyogin.cibil.consumer.model.CibilPersonalDetails;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -56,6 +57,10 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		try {
 			//validate the map with Configuration
 			validatedMap = validateExtendedMapValues(extendedFieldMap);
+			/*if (validatedMap != null && validatedMap.isEmpty()) {
+				validatedMap.put("REASONCODEBRE", statusCode);
+				validatedMap.put("REMARKSBRE", App.getLabel("niyogin_No_Data"));
+			}*/
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			doLogError(e, serviceUrl, cibilConsumerRequest);

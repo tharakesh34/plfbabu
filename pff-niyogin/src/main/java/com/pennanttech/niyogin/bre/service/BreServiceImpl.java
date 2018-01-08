@@ -45,6 +45,7 @@ import com.pennanttech.niyogin.bre.model.SOCIALSC;
 import com.pennanttech.niyogin.bre.model.VatServiceTaxForms;
 import com.pennanttech.niyogin.utility.ExtFieldMapConstants;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -80,6 +81,11 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		extendedFieldMap = post(serviceUrl, breDataRequest, extConfigFileName);
 		try {
 			validatedMap = validateExtendedMapValues(extendedFieldMap);
+			if (validatedMap != null && validatedMap.isEmpty()) {
+				validatedMap.put("REASONCODEBRE", statusCode);
+				validatedMap.put("REMARKSBRE", App.getLabel("niyogin_No_Data"));
+				validatedMap.put("BREREQSEND", true);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			doLogError(e, serviceUrl, breDataRequest);

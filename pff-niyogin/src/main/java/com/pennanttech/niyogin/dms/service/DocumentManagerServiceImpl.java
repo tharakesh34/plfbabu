@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -36,7 +37,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		DocumentDetails detail = new DocumentDetails();
 		DocumentRequest dmsRequest = prepareRequestObj(docExternalRefId);
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-		reference = sourceReference != null ? sourceReference : "DOCUMENT";
+		reference = StringUtils.isEmpty(sourceReference) ? "DOCUMENT" : sourceReference;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, dmsRequest);
@@ -61,12 +62,12 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			StringWriter writer = new StringWriter();
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
-			doInterfaceLogging(dmsRequest);
+			doInterfaceLogging(dmsRequest, sourceReference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		
 		// success case logging
-		doInterfaceLogging(dmsRequest);
+		doInterfaceLogging(dmsRequest, sourceReference);
 		logger.debug(Literal.LEAVING);
 		return detail;
 	}
@@ -77,9 +78,9 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param hunterRequest
 	 * @param reference
 	 */
-	private void doInterfaceLogging(DocumentRequest request) {
+	private void doInterfaceLogging(DocumentRequest request, String sourceReference) {
 		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, request, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, "Document");
+				status, errorCode, errorDesc, sourceReference);
 		logInterfaceDetails(interfaceLogDetail);
 	}
 

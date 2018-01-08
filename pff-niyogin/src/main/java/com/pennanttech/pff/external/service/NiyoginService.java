@@ -53,7 +53,7 @@ public abstract class NiyoginService {
 	private static final Logger	logger				= Logger.getLogger(NiyoginService.class);
 
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
-	private NiyoginDAOImpl	niyoginDAOImpl;
+	private NiyoginDAOImpl		niyoginDAOImpl;
 	private JSONClient			client;
 	public static final int		LENGTH_ACCOUNT		= 50;
 	public static final int		LENGTH_FREQUENCY	= 5;
@@ -65,9 +65,11 @@ public abstract class NiyoginService {
 	public String				errorDesc			= null;
 	public String				jsonResponse		= null;
 	public Timestamp			reqSentOn			= null;
-	
+	public String				statusCode			= null;
+
 	public String				errorCodeKey		= "ERRORCODE";
 	public String				errorDescKey		= "ERRORMESSAGE";
+	public String				statusCodeKey		= "statusCode";
 
 	public String				reference;
 
@@ -86,12 +88,13 @@ public abstract class NiyoginService {
 	 */
 	protected Map<String, Object> post(String serviceUrl, Object requestObject, String extConfigFileName) {
 		Map<String, Object> extendedFieldMap = null;
+	
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 			jsonResponse = client.post(serviceUrl, requestObject);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
 			// error validation on Response status
+			statusCode = Objects.toString(extendedFieldMap.get(statusCodeKey));
 			if (extendedFieldMap.get(errorCodeKey) != null) {
 				errorCode = Objects.toString(extendedFieldMap.get(errorCodeKey));
 				errorDesc = Objects.toString(extendedFieldMap.get(errorDescKey));

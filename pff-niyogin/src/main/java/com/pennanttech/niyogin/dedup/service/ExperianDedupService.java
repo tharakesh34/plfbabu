@@ -21,6 +21,7 @@ import com.pennanttech.niyogin.dedup.model.Address;
 import com.pennanttech.niyogin.dedup.model.ExperianDedup;
 import com.pennanttech.niyogin.dedup.model.Phone;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -46,6 +47,12 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
 		try {
 			Map<String, Object> validatedMap = checkDedup(experianDedupRequest, financeMain);
+
+			if (validatedMap != null && validatedMap.isEmpty()) {
+				validatedMap.put("REASONCODEINTERNAL", statusCode);
+				validatedMap.put("REMARKSINTERNAL", App.getLabel("niyogin_No_Data"));
+				validatedMap.put("EXDREQUESTSEND", true);
+			}
 			prepareResponseObj(validatedMap, financeDetail);
 
 			//for CoApplicant
