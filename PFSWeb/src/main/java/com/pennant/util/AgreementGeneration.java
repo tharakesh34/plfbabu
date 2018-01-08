@@ -43,6 +43,7 @@ import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -500,6 +501,8 @@ public class AgreementGeneration implements Serializable {
 			setCoapplicantDetails(detail, agreement);
 			//Mandate details
 			setMandateDetails(detail, agreement);
+			//customer bank info
+			setCustomerBankInfo(detail, agreement);
 			
 			
 		} catch (Exception e) {
@@ -507,6 +510,25 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug("Leaving");
 		return agreement;
+	}
+
+	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement) {
+		agreement.setCustomerBankInfos(new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
+		if (detail!=null && detail.getCustomerDetails()!=null && detail.getCustomerDetails().getCustomerBankInfoList()!=null) {
+			List<CustomerBankInfo> list = detail.getCustomerDetails().getCustomerBankInfoList();
+			for (CustomerBankInfo customerBankInfo : list) {
+				com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo custbank = agreement.new CustomerBankInfo();
+				custbank.setBankCode(customerBankInfo.getBankCode());
+				custbank.setBankName(customerBankInfo.getLovDescBankName());
+				custbank.setAccountType(customerBankInfo.getAccountType());
+				custbank.setAccountNumber(customerBankInfo.getAccountNumber());
+				agreement.getCustomerBankInfos().add(custbank);
+			}
+			
+		}else{
+			agreement.getCustomerBankInfos().add(agreement.new CustomerBankInfo());
+		}
+		
 	}
 
 	private void setCustomerAddress(AgreementDetail agreement, List<CustomerAddres> addressList) {

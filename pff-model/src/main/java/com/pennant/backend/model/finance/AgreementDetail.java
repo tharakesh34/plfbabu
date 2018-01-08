@@ -4154,6 +4154,14 @@ private String custAccount ="";
 		this.netRefRateLoan = netRefRateLoan;
 	}
 
+	public List<CustomerBankInfo> getCustomerBankInfos() {
+		return customerBankInfos;
+	}
+
+	public void setCustomerBankInfos(List<CustomerBankInfo> customerBankInfos) {
+		this.customerBankInfos = customerBankInfos;
+	}
+
 	public class CoApplicant {
 		
 		private String custName ="";
@@ -4315,9 +4323,47 @@ private String custAccount ="";
 		}
 		
 	}
+	private List<CustomerBankInfo> customerBankInfos;
+ 	
+	public class CustomerBankInfo {
+		private String	bankCode;
+		private String	bankName;
+		private String	accountNumber;
+		private String	accountType;
 
+		public String getBankCode() {
+			return bankCode;
+		}
 
+		public void setBankCode(String bankCode) {
+			this.bankCode = bankCode;
+		}
 
+		public String getBankName() {
+			return StringUtils.trimToEmpty(bankName);
+		}
+
+		public void setBankName(String bankName) {
+			this.bankName = bankName;
+		}
+
+		public String getAccountNumber() {
+			return StringUtils.trimToEmpty(accountNumber);
+		}
+
+		public void setAccountNumber(String accountNumber) {
+			this.accountNumber = accountNumber;
+		}
+
+		public String getAccountType() {
+			return StringUtils.trimToEmpty(accountType);
+		}
+
+		public void setAccountType(String accountType) {
+			this.accountType = accountType;
+		}
+
+	}
 
 
 }

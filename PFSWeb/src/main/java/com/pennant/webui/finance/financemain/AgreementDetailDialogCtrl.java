@@ -542,7 +542,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 							for (Object object2 : result) {
 								String descMethod = "get" + condArray[1];
 								String desc = object2.getClass().getMethod(descMethod).invoke(object2).toString();
-								map.put(fieldName + "_Desc", desc);
+								map.put(fieldName + "_Desc", StringUtils.trimToEmpty(desc));
 							}
 						}
 					} catch (Exception e) {
