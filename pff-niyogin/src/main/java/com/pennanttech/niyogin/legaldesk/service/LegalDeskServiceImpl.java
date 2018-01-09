@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -38,6 +39,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	private static final Logger	logger				= Logger.getLogger(LegalDeskServiceImpl.class);
 	private final String		extConfigFileName	= "legalDesk";
 	private String				serviceUrl;
+	private Map<String, Object>	extendedMap			= null;
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -140,11 +142,38 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		SignersInfo signersInfo = new SignersInfo();
-		signersInfo.setLenders(null);
+		if (extendedMap != null) {
+			signersInfo.setLenders(prepareLendersList(extendedMap));
+		}
 		signersInfo.setBorrowers(prepareBorrowersList(financeDetail));
 		logger.debug(Literal.LEAVING);
 		return signersInfo;
+	}
+
+	
+	/**
+	 * Method for prepare the LenderList
+	 * 
+	 * @param extendedMap
+	 * @return
+	 */
+	private List<SignerDetails> prepareLendersList(Map<String, Object> extendedMap) {
+		logger.debug(Literal.ENTERING);
+		List<SignerDetails> lenderList = new ArrayList<>(6);
+		for (int i = 1; i <= 6; i++) {
+			String lenderName = getStringValue("LENDERSIGNUFNAME" + i) + " " + getStringValue("LENDERSIGNULNAME" + i);
+			if (StringUtils.isNotBlank(lenderName)) {
+				SignerDetails lender = new SignerDetails();
+				lender.setName(lenderName);
+				lender.setEmail(getStringValue("LENDERSIGNUEMAIL" + i));
+				lender.setSeqNumbOfSign(getIntValue("LENDERSIGNUSEQ" + i));
+				lenderList.add(lender);
+			}
+		}
+		logger.debug(Literal.ENTERING);
+		return lenderList;
 	}
 
 	/**
@@ -269,4 +298,17 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		this.serviceUrl = serviceUrl;
 	}
 
+	private String getStringValue(String key) {
+		return Objects.toString(extendedMap.get(key), "");
+	}
+
+	private int getIntValue(String key) {
+		int intValue = 0;
+		try {
+			intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
+		} catch (NumberFormatException e) {
+			logger.error("Exception", e);
+		}
+		return intValue;
+	}
 }

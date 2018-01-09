@@ -691,7 +691,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		try {
 			intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
 		} catch (NumberFormatException e) {
-			
+			logger.error("Exception", e);
 		}
 		return intValue;
 	}
@@ -701,7 +701,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		try {
 			booleanValue = (Boolean) extendedMap.get(key);
 		} catch (Exception e) {
-			
+			logger.error("Exception", e);
 		}
 		return booleanValue;
 
@@ -712,7 +712,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		try {
 			bigDecimalValue = (BigDecimal) extendedMap.get(key);
 		} catch (Exception e) {
-		
+			logger.error("Exception", e);
 		}
 		return bigDecimalValue==null?BigDecimal.ZERO:bigDecimalValue;
 
@@ -724,6 +724,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 			date = (Date) extendedMap.get(key);
 		} catch (Exception e) {
 			date = null;
+			logger.error("Exception", e);
 		}
 		return date;
 	}
