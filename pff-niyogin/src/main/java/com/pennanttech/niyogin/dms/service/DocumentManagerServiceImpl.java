@@ -46,7 +46,6 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			if(extendedFieldMap.get("ERRORMESSAGE") == null) {
 				if (extendedFieldMap.get("DOCSOURCE") != null) {
 					detail.setDocImage(extendedFieldMap.get("DOCSOURCE").toString().getBytes());
-					//detail.setDocImage(image.getBytes());
 				}
 				detail.setDocUri(String.valueOf(extendedFieldMap.get("DOWNLOADURL")));
 				detail.setDocName(String.valueOf(extendedFieldMap.get("DOCNAME")));
@@ -62,12 +61,12 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			StringWriter writer = new StringWriter();
 			e.printStackTrace(new PrintWriter(writer));
 			errorDesc = writer.toString();
-			doInterfaceLogging(dmsRequest, sourceReference);
+			doInterfaceLogging(dmsRequest, reference);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 		
 		// success case logging
-		doInterfaceLogging(dmsRequest, sourceReference);
+		doInterfaceLogging(dmsRequest, reference);
 		logger.debug(Literal.LEAVING);
 		return detail;
 	}

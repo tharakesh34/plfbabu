@@ -520,7 +520,11 @@ public abstract class NiyoginService {
 	}
 
 	protected void logInterfaceDetails(InterfaceLogDetail interfaceLogDetail) {
-		interfaceLoggingDAO.save(interfaceLogDetail);
+		try {
+			interfaceLoggingDAO.save(interfaceLogDetail);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
 		doClearInterfaceLogDetails();
 	}
 
