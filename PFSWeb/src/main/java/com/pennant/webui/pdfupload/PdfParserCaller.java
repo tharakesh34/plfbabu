@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.document.DocumentParser;
 
 public class PdfParserCaller {
@@ -40,7 +40,7 @@ public class PdfParserCaller {
 		logger.debug("Entering");
 		Map<String, Object> parserResult = new HashMap<>();
 		if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
-			customerDocument.setCustDocImage(PennantAppUtil.getDocumentImage(customerDocument.getDocRefId()));
+			customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 		}
 		
 			 parserResult = documentParser.getValueByTypeNYear(customerDocument.getCustDocImage(),

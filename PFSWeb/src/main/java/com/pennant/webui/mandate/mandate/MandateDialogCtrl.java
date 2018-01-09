@@ -89,7 +89,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
@@ -111,9 +110,9 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
@@ -1071,19 +1070,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if(aMandate.getDocImage() == null && StringUtils.isNotBlank(aMandate.getExternalRef())) {
 			// Fetch document from interface
 			String custCif=aMandate.getCustCIF();
-			DocumentDetails detail = externalDocumentManager.getExternalDocument(aMandate.getExternalRef(),custCif);
-			if (detail != null && detail.getDocImage() != null) {
-				aMandate.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
+			AMedia media = externalDocumentManager.getDocumentMedia(aMandate.getDocumentName(),aMandate.getExternalRef(),custCif);
+			if (media!=null) {
+				mandatedoc.setContent(media);
 			}
+
 		}
 		AMedia amedia = null;
 		if (aMandate.getDocImage() != null) {
-			String docType = StringUtils.trimToEmpty(aMandate.getDocumentName()).toLowerCase();
-			if (docType.endsWith(".jpg") || docType.endsWith(".jpeg") || docType.endsWith(".png")) {
-				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aMandate.getDocImage());
-			} else if (docType.endsWith(".pdf")) {
-				amedia = new AMedia("document.pdf", "pdf", "application/pdf", aMandate.getDocImage());
-			}
+			amedia = new AMedia(aMandate.getDocumentName(), null, null, aMandate.getDocImage());
 			imagebyte = aMandate.getDocImage();
 		}
 		mandatedoc.setContent(amedia);

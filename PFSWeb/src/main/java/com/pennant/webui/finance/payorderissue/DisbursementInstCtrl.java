@@ -82,7 +82,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 public class DisbursementInstCtrl {
 	private static final Logger			logger				= Logger.getLogger(DisbursementInstCtrl.class);
@@ -99,7 +98,7 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 	private DocumentDetails				documentDetails;
-	private ExternalDocumentManager		externalDocumentManager	= null;
+	
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -332,7 +331,6 @@ public class DisbursementInstCtrl {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
-		setDocContent(documentDetails);
 		map.put("documentDetails", documentDetails);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
 		
@@ -355,7 +353,6 @@ public class DisbursementInstCtrl {
 				aFinAdvancePayments.setNewRecord(false);
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finAdvancePayments", aFinAdvancePayments);
-				setDocContent(documentDetails);
 				map.put("documentDetails", documentDetails);
 				doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry);
 
@@ -597,25 +594,6 @@ public class DisbursementInstCtrl {
 		return false;
 	}
 	
-	private void setDocContent(DocumentDetails documentDetails) {
-		if (documentDetails ==null) {
-			return;
-		}
-		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
-			documentDetails.setDocImage(PennantAppUtil.getDocumentImage(documentDetails.getDocRefId()));
-		}
-
-		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
-			documentDetails.setDocImage(PennantAppUtil.getDocumentImage(documentDetails.getDocRefId()));
-			// Fetch document from interface
-			String custCif = documentDetails.getLovDescCustCIF();
-			DocumentDetails extdetail = externalDocumentManager.getExternalDocument(documentDetails.getDocUri(),custCif);
-			if (extdetail != null && extdetail.getDocImage() != null) {
-				documentDetails.setDocImage(PennantApplicationUtil.decode(extdetail.getDocImage()));
-			}
-		}
-	}
-	
 
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
@@ -639,10 +617,6 @@ public class DisbursementInstCtrl {
 
 	public void setDocumentDetails(DocumentDetails documentDetails) {
 		this.documentDetails = documentDetails;
-	}
-
-	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
-		this.externalDocumentManager = externalDocumentManager;
 	}
 
 }

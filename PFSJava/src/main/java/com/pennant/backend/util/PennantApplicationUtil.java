@@ -20,6 +20,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.search.Filter;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -649,7 +650,18 @@ public class PennantApplicationUtil {
 		return pannumber;
 	}
 	
-	
+	public static byte[]  getDocumentImage(long docID) {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<DocumentManager> searchObject = new JdbcSearchObject<DocumentManager>(DocumentManager.class);
+		searchObject.addFilterEqual("Id",docID);
+		searchObject.addTabelName("DocumentManager");
+		searchObject.addField("DocImage");
+		List<DocumentManager> documentManagers = pagedListService.getBySearchObject(searchObject);
+		if (documentManagers != null && !documentManagers.isEmpty()) {
+			return documentManagers.get(0).getDocImage();
+		}
+		return null;
+	}
 	
 	
 	

@@ -654,11 +654,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		AMedia amedia = null;
 
 		if (aCustomerDocument.getCustDocImage() != null) {
-			if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
-				amedia = new AMedia("document.pdf", "pdf", "application/pdf", aCustomerDocument.getCustDocImage());
-			} else if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", aCustomerDocument.getCustDocImage());
-			} else if (aCustomerDocument.getCustDocType().equals(
+			if (aCustomerDocument.getCustDocType().equals(
 					PennantConstants.DOC_TYPE_WORD) || aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
@@ -672,8 +668,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				
 				ageementLink.addForward("onClick", window_CustomerDocumentDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
+			}else{
+				amedia = new AMedia(aCustomerDocument.getCustDocName(), null, null, aCustomerDocument.getCustDocImage());
 			}
-
 			finDocumentPdfView.setContent(amedia);
 		}
 		this.recordStatus.setValue(aCustomerDocument.getRecordStatus());

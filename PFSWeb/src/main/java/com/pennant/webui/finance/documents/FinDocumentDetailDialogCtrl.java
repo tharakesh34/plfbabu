@@ -473,12 +473,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
-			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
-			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
-				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
-			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
-			}else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
+//			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
+//			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
+//				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
+//			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+//				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+//			}else
+				
+			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
@@ -490,6 +492,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				
 				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
+			}else{
+				amedia = new AMedia(aDocumentDetails.getDocName(), null, null, aDocumentDetails.getDocImage());
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
@@ -1225,7 +1229,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
 				// Data Fill by QR Bar Code Reader
 				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView.setContent(new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(ddaImageData)));
+					this.finDocumentPdfView.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
 				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
 					this.finDocumentPdfView.setContent(media);
