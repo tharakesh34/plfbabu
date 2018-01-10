@@ -202,7 +202,11 @@
 			<artifactId>quartz-all</artifactId>
 			<version>1.8.6</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.3.4</version>
+		</dependency>
 		<dependency>
 			<groupId>net.objectlab.kit</groupId>
 			<artifactId>datecalc-common</artifactId>
