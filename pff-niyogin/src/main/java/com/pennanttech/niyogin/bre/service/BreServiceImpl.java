@@ -331,7 +331,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		deMogs.setGstin("");
 		deMogs.setCategoryOfApplicant(customer.getCustTypeCode());
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		deMogs.setPanNumber(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		deMogs.setPanNumber(getPanNumber(documentList));
 		if(extendedMap!=null){
 			deMogs.setResidenceTypeOfMDorPROPTRYorMNGNGPARTNER(getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));	
 		}
@@ -341,7 +341,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		if (emailList != null && !emailList.isEmpty()) {
 		deMogs.setEmail(NiyoginUtility.getHignPriorityEmail(emailList, 5));
 		}
-		deMogs.setApplicantAdhaar(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+		deMogs.setApplicantAdhaar(getPanNumber(documentList));//FIXME
 		deMogs.setUdyogadhaar(" ");
 		deMogs.setYrsAtCurResidencePROPorMPorMDetc(getIntValue(ExtFieldMapConstants.YR_CURRENT_RESIDENCE_CUSTOMER));
 		logger.debug(Literal.LEAVING);
@@ -637,7 +637,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		codeMogs.setRelOfScndaryCoAppWithPrimaryCoApp(" ");
 		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		codeMogs.setCoAppPanNumber(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		codeMogs.setCoAppPanNumber(getPanNumber(documentList));
 		//TODO:
 		codeMogs.setSalToPartnerOrDirector(BigDecimal.ZERO);
 		logger.debug(Literal.LEAVING);

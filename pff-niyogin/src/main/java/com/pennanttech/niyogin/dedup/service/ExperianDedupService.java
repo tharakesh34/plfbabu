@@ -24,7 +24,6 @@ import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.ExternalDedup;
 import com.pennanttech.pff.external.service.NiyoginService;
 
@@ -139,10 +138,9 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null && !documentList.isEmpty()) {
-			experianDedup.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-			experianDedup.setAadhaar(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
-			experianDedup
-					.setPassport(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PASSPORT));
+			experianDedup.setPan(getPanNumber(documentList));
+			experianDedup.setAadhaar(getPanNumber(documentList));//FIXME
+			experianDedup.setPassport(getPanNumber(documentList));//FIXME
 		}
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {

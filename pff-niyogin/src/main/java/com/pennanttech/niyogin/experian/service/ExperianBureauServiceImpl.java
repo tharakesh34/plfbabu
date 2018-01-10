@@ -208,7 +208,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		applicant.setDob(NiyoginUtility.formatDate(customer.getCustDOB(), "dd-MM-yyyy"));
 		applicant.setGender(InterfaceConstants.PFF_GENDER_M);
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		applicant.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
+		applicant.setPan(getPanNumber(documentList));
 		applicant.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));
 
@@ -304,8 +304,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		personalDetails.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		personalDetails.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-		personalDetails.setUid_(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+		personalDetails.setPan(getPanNumber(documentList));
+		personalDetails.setUid_(getPanNumber(documentList));//FIXME
 
 		return personalDetails;
 	}

@@ -1066,7 +1066,7 @@ public class MailUtil extends MailUtility {
 
 				}
 			}
-			if(mailTemplate!=null){
+			if(mailTemplate!=null && mailTemplate.isActive()){
 				templates.add(mailTemplate);
 			}
 			

@@ -118,8 +118,8 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null) {
-			personalDetails.setPan(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_PAN));
-			personalDetails.setUid(NiyoginUtility.getDocumentNumber(documentList, InterfaceConstants.DOC_TYPE_UID));
+			personalDetails.setPan(getPanNumber(documentList));
+			personalDetails.setUid(getPanNumber(documentList));//FIXME
 		}
 
 		cibilConsumerRequest.setPersonalDetails(personalDetails);

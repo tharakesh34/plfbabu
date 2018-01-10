@@ -59,21 +59,29 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 			return;
 		}
 		
-		Email emailRequest = prepareRequest(String.join(",", emailId), subject, body);
-		// logging fields Data
-		reqSentOn = new Timestamp(System.currentTimeMillis());
-		reference = finReference;
-		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, emailRequest);
-			logger.info("Response : " + jsonResponse.toString());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, emailRequest);
-			throw new InterfaceException("9999", e.getMessage());
+		//FIXME
+		for (String string : emailId) {
+			//String.join(",", emailId)
+			Email emailRequest = prepareRequest(string, subject, body);
+			// logging fields Data
+			reqSentOn = new Timestamp(System.currentTimeMillis());
+			reference = finReference;
+			try {
+				logger.debug("ServiceURL : " + serviceUrl);
+				jsonResponse = client.post(serviceUrl, emailRequest);
+				logger.info("Response : " + jsonResponse.toString());
+			} catch (Exception e) {
+				logger.error("Exception: ", e);
+				doLogError(e, serviceUrl, emailRequest);
+				throw new InterfaceException("9999", e.getMessage());
+			}
+
+			// success case logging
+			doInterfaceLogging(emailRequest, reference);
 		}
-		// success case logging
-		doInterfaceLogging(emailRequest, reference);
+		
+		
+
 				
 		logger.debug(Literal.LEAVING);
 	}
