@@ -1605,10 +1605,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
-
 		// Extended Field Details
-		appendExtendedFieldDetails(aFinanceDetail);
-
+		if (StringUtils.isEmpty(moduleDefiner)){
+			appendExtendedFieldDetails(aFinanceDetail);
+		}
 		logger.debug("Leaving");
 	}
 
