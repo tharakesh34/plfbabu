@@ -151,6 +151,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
@@ -6098,7 +6099,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					templateTyeList = null;
 					if (!referenceIdList.isEmpty()) {
-
+						VehicleDealer vehicleDealer=null; 
 						boolean isCustomerNotificationExists = false;
 						boolean isSourcingPartnerNotificationExists = false;
 						List<Long> notificationIdlist = new ArrayList<Long>();
@@ -6128,18 +6129,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
 							}
 							// vehicleDealer Email Preparation
-						} else if (isSourcingPartnerNotificationExists) {
-							long vehicleDealer = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
-							String email = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealer)
-									.getEmail();
-							mailIdList.add(email);
+						} 
+						
+						if (isSourcingPartnerNotificationExists) {
+							long vehicleDealerid = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
+							vehicleDealer = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealerid);
+							if (vehicleDealer!=null) {
+								mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
+							}
 
 							if (!mailIdList.isEmpty()) {
 								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
 							}
 						}
 						
-						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail);						
+						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail,vehicleDealer);						
 						String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
 						if (isExtMailService()) {
 							try {
@@ -6179,11 +6183,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (!custPhoneNoList.isEmpty()) {
 								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
 							}
-						} else if (isSourcingPartnerNotificationExists) {
-							long vehicleDealer = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
-							String dealerPhoneNo = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealer)
-									.getDealerTelephone();
-							dealerPhoneNoList.add(dealerPhoneNo);
+						} 
+						
+						if (isSourcingPartnerNotificationExists) {
+							if (vehicleDealer!=null) {
+								mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+							}
 
 							if (!dealerPhoneNoList.isEmpty()) {
 								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
@@ -6326,10 +6331,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail) {
+	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail, VehicleDealer vehicleDealer) {
 		logger.debug("Entering");
 
-		FinanceMain main=aFinanceDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
 		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
@@ -6345,7 +6350,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
-		
+		if (vehicleDealer != null) {
+			declaredFieldValues.putAll(vehicleDealer.getDeclaredFieldValues());
+		}
+
 		return declaredFieldValues;
 	}
 

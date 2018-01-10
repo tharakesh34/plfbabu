@@ -3,6 +3,7 @@ package com.pennanttech.niyogin.communication.service;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.mail.MailTemplate;
@@ -53,6 +54,10 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 		String[] emailId = template.getLovDescMailId();
 		String subject = template.getEmailSubject();
 		String body = template.getLovDescFormattedContent();
+		
+		if (emailId==null || StringUtils.isEmpty(body)) {
+			return;
+		}
 		
 		Email emailRequest = prepareRequest(String.join(",", emailId), subject, body);
 		// logging fields Data

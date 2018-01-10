@@ -38,6 +38,9 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
+		if (financeDetail.getReasonHeader()==null) {
+			return auditHeader;
+		}
 		HoldFinanceRequest holdFinanceRequest = prepareRequestObj(financeDetail);
 		Map<String, Object> validatedMap = null;
 		Map<String, Object> extendedFieldMap = null;
