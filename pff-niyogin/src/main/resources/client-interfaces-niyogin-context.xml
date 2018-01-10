@@ -66,6 +66,7 @@
 	<bean id="documentManagementService"
 		class="com.pennanttech.niyogin.dms.service.DocumentManagerServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${niyogin.dms.service.url}" />
+		<property name="client" ref="jsonClient" />
 	</bean>	
 	
 		<!-- LegalDesk -->
