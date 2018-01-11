@@ -55,16 +55,17 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		// Execute CIBIL for Sole propritor customer
 		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals(InterfaceConstants.CUSTTYPE_SOLEPRO)) {
 			custExtMaP = executeCIBIL(customerDetails, finReference);
+			prepareResponseObj(custExtMaP, financeDetail);
 		}
 		
-		prepareResponseObj(custExtMaP, financeDetail);
 		
 		// Execute CIBIL for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {
 			List<Long> coApplicantIDs = new ArrayList<Long>(1);
 			for (JointAccountDetail coApplicant : coapplicants) {
-				coApplicantIDs.add(coApplicant.getCustID());
+				long custId = getCustomerId(coApplicant.getCustCIF());
+				coApplicantIDs.add(custId);
 			}
 			//TODO: Need solution for display co-applicant extended details
 			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);

@@ -29,6 +29,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
@@ -75,6 +76,8 @@ public class NiyoginDAOImpl {
 			customerDetails.setCustID(customer.getCustID());
 			customerDetails.setAddressList(getCustomerAddresByCustomer(customer.getCustID(), type));
 			customerDetails.setCustomerEMailList(getCustomerEmailByCustomer(customer.getCustID(), type));
+			customerDetails.setCustomerDocumentsList(getCustomerDocumentByCustomer(customer.getCustID(), type));
+			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumberById(customer.getCustID(), type));
 			customerDetailList.add(customerDetails);
 		}
 		logger.debug(Literal.LEAVING);
@@ -225,6 +228,40 @@ public class NiyoginDAOImpl {
 
 		logger.debug("Leaving");
 		return customerEMails;
+	}
+	
+	/**
+	 * Fetch the Customer PhoneNumber By its CustPhoneId
+	 * 
+	 * @param id
+	 * 
+	 * 
+	 * @return
+	 */
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberById(long id, String type) {
+		logger.debug("Entering");
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
+		customerPhoneNumber.setPhoneCustID(id);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
+		if(type.contains("View")){
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" FROM  CustomerPhoneNumbers");
+		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(" Where PhoneCustID =:PhoneCustID") ; 
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				CustomerPhoneNumber.class);
+		
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		logger.debug("Leaving ");
+		return  customerPhoneNumbers;
 	}
 
 	public long getPincodeGroupId(String pincode) {
@@ -623,6 +660,25 @@ public class NiyoginDAOImpl {
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
+		}
+	}
+
+	public long getCustomerId(String custCIF) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("custCIF", custCIF);
+		
+		StringBuilder selectSql = new StringBuilder("Select CustID " );
+		selectSql.append(" From Customers" );
+		selectSql.append(" Where custCIF =:custCIF ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			return 0;
 		}
 	}
 

@@ -93,7 +93,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		if (coapplicants != null && !coapplicants.isEmpty()) {
 			List<Long> coApplicantIDs = new ArrayList<Long>(1);
 			for (JointAccountDetail coApplicant : coapplicants) {
-				coApplicantIDs.add(coApplicant.getCustID());
+				long custId = getCustomerId(coApplicant.getCustCIF());
+				coApplicantIDs.add(custId);
 			}
 			//TODO: Need solution for display co-applicant extended details
 			Map<String, Object> extendedFieldMapForCoApp = new HashMap<>();
@@ -184,7 +185,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		commercial.setCompanyMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_OFF));
 		commercial.setCompanyPan(commercial.getApplicant().getPan());
-		commercial.setLegalEntity(customer.getLovDescCustTypeCodeName());
+		commercial.setLegalEntity(getCustTypeDesc(customer.getCustTypeCode()));
 
 		logger.debug(Literal.LEAVING);
 		return commercial;

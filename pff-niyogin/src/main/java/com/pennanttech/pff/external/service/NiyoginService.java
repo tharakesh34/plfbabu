@@ -671,6 +671,11 @@ public abstract class NiyoginService {
 	protected List<CustomerDetails> getCoApplicants(List<Long> coApplicantIDs) {
 		return niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
 	}
+	
+
+	protected long getCustomerId(String custCIF) {
+		return niyoginDAOImpl.getCustomerId(custCIF);
+	}
 
 	
 	/**
@@ -749,6 +754,10 @@ public abstract class NiyoginService {
 		}
 		logger.debug(Literal.LEAVING);
 		return customerDetailList;
+	}
+	
+	protected String getCustTypeDesc(String custTypeCode) {
+		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
 	}
 	
 	protected String getLovFieldDetailByCode(String fieldCode, String fieldCodeValue) {
