@@ -6187,7 +6187,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						
 						if (isSourcingPartnerNotificationExists) {
 							if (vehicleDealer!=null) {
-								mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+								dealerPhoneNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
 							}
 
 							if (!dealerPhoneNoList.isEmpty()) {
