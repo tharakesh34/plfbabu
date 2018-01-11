@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Sms;
@@ -28,16 +28,20 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	 * 
 	 */
 	@Override
-	public void sendSms(List<CustomerPhoneNumber> custPhoneNos, List<String> smsContent,String finReference) throws InterfaceException {
+	public void sendSms(List<MailTemplate> smsList,String finReference) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		if (custPhoneNos != null && !custPhoneNos.isEmpty() && smsContent != null && !smsContent.isEmpty()) {
-			for (CustomerPhoneNumber custPhone : custPhoneNos) {
-				for (String sms : smsContent) {
-					send(custPhone.getPhoneNumber(), sms,finReference);
+		if (smsList!=null && !smsList.isEmpty()) {
+			for (MailTemplate mailTemplate : smsList) {
+				List<String> listnumbers = mailTemplate.getLovDescMobileNumbers();
+				if (listnumbers!=null && !listnumbers.isEmpty()) {
+					for (String string : listnumbers) {
+						send(string, mailTemplate.getLovDescSMSContent(),finReference);
+					}
 				}
-			}
+			}	
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 

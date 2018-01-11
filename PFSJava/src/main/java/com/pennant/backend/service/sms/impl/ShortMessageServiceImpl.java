@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.sms.ShortMessageService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.SMSService;
@@ -26,9 +26,9 @@ public class ShortMessageServiceImpl implements ShortMessageService {
 	 */
 
 	@Override
-	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent, String finReference) {
+	public void sendMessage(List<MailTemplate> smsList, String finReference) {
 		logger.debug(Literal.ENTERING);
-		sMSService.sendSms(custPhoneNoList, smsContent, finReference);
+		sMSService.sendSms(smsList, finReference);
 		logger.debug(Literal.LEAVING);
 	}
 }

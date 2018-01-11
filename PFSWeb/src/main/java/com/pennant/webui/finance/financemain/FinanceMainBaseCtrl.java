@@ -162,6 +162,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -6086,123 +6087,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_SP);
-
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-							aFinanceMain.getFinType(),
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner,
-							getRole(), templateTyeList);
-
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-						VehicleDealer vehicleDealer=null; 
-						boolean isCustomerNotificationExists = false;
-						boolean isSourcingPartnerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(valueLabel.getLabel())) {
-								isSourcingPartnerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-						List<String> mailIdList = new ArrayList<String>();
-						// Customer Email Preparation
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							
-							for (CustomerEMail customerEMail : emailList) {
-								mailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!mailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
-							}
-							// vehicleDealer Email Preparation
-						} 
-						
-						if (isSourcingPartnerNotificationExists) {
-							long vehicleDealerid = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
-							vehicleDealer = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealerid);
-							if (vehicleDealer!=null) {
-								mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
-							}
-
-							if (!mailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
-							}
-						}
-						
-						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail,vehicleDealer);						
-						String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
-						if (isExtMailService()) {
-							try {
-								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
-										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);
-								// send mail to external service
-								getMailTemplateService().sendMail(templates, finReference);
-							} catch (IOException e) {
-								logger.error("Unable to read or process freemarker configuration or template :" + e);
-							} catch (TemplateException e) {
-								logger.error("Problem initializing freemarker or rendering template :" + e);
-							}
-						} else {
-							try {				
-								getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
-										aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
-							} catch (Exception e) {
-								logger.warn("Exception: ", e);
-							}
-							
-						}
-						
-						//Customer mobile numbers logic start
-						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
-						List<String> custPhoneNoList = new ArrayList<String>();
-						List<CustomerPhoneNumber> phoneNoList=new ArrayList<CustomerPhoneNumber>();
-						List<String> dealerPhoneNoList = new ArrayList<String>();
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
-							
-							phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
-							
-							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
-								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
-							}
-							if (!custPhoneNoList.isEmpty()) {
-								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
-							}
-						} 
-						
-						if (isSourcingPartnerNotificationExists) {
-							if (vehicleDealer!=null) {
-								dealerPhoneNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
-							}
-
-							if (!dealerPhoneNoList.isEmpty()) {
-								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
-							}
-						}
-
-						// Customer mobile numbers logic end						
-						if (isExtSMSService()) {
-							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues, mobileNoMap);
-							// send SMS to external service
-							getShortMessageService().sendMessage(phoneNoList, smsList,finReference);
-						}
-					}
-
+					processNotifications(aFinanceDetail, aFinanceMain);
 				}
 
 				// User Notifications Message/Alert
@@ -6329,6 +6214,124 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void processNotifications(FinanceDetail aFinanceDetail, FinanceMain aFinanceMain)
+			throws IOException, TemplateException {
+		List<String> templateTyeList = new ArrayList<String>();
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_SP);
+
+		String finType = aFinanceMain.getFinType();
+		String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
+		List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(finType, finEvent,
+				getRole(), templateTyeList);
+
+		templateTyeList = null;
+		if (!referenceIdList.isEmpty()) {
+			
+			FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+			CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
+			String finReference = financeMain.getFinReference();
+			List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
+			List<CustomerPhoneNumber> customerPhoneNumList = customerDetails.getCustomerPhoneNumList();
+			List<DocumentDetails> docDetailsList = aFinanceDetail.getDocumentDetailsList();
+			
+			VehicleDealer vehicleDealer = null;
+			boolean isCustomerNotificationExists = false;
+			boolean isSourcingPartnerNotificationExists = false;
+			List<Long> notifyIdlist = new ArrayList<Long>();
+
+			for (ValueLabel valueLabel : referenceIdList) {
+				notifyIdlist.add(Long.valueOf(valueLabel.getValue()));
+				if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
+					isCustomerNotificationExists = true;
+				} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(valueLabel.getLabel())) {
+					isSourcingPartnerNotificationExists = true;
+				}
+			}
+
+			// Mail ID details preparation
+			Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
+			//Customer mobile numbers logic start
+			Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
+
+			// Customer Email Preparation
+			if (isCustomerNotificationExists) {
+				
+				if (customerEMailList != null && !customerEMailList.isEmpty()) {
+					List<String> mailIdList = mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN);
+					if (mailIdList == null) {
+						mailIdList = new ArrayList<String>();
+						mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
+					}
+
+					for (CustomerEMail customerEMail : customerEMailList) {
+						mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN).add(customerEMail.getCustEMail());
+					}
+				}
+				if (customerPhoneNumList != null && !customerPhoneNumList.isEmpty()) {
+					List<String> custPhoneNoList = new ArrayList<String>();
+					for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
+						custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
+					}
+					if (!custPhoneNoList.isEmpty()) {
+						mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
+					}
+				}
+			}
+
+			// vehicleDealer Email Preparation
+			if (isSourcingPartnerNotificationExists) {
+				List<String> mailIdList = new ArrayList<String>();
+				List<String> dealerPhoneNoList = new ArrayList<String>();
+				long vehicleDealerid = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
+				vehicleDealer = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealerid);
+				if (vehicleDealer != null) {
+					mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
+					dealerPhoneNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+				}
+				if (!mailIdList.isEmpty()) {
+					mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
+				}
+
+				if (!dealerPhoneNoList.isEmpty()) {
+					mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
+				}
+
+			}
+
+			HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail, vehicleDealer);
+			
+			if (isExtMailService()) {
+				try {
+					List<MailTemplate> templates = getMailUtil().getMailDetails(notifyIdlist, fieldsAndValues,
+							docDetailsList, mailIDMap);
+					// send mail to external service
+					getMailTemplateService().sendMail(templates, finReference);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+
+			} else {
+				try {
+					getMailUtil().sendMail(notifyIdlist, fieldsAndValues, docDetailsList,
+							mailIDMap, null);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+
+			}
+
+			// Customer mobile numbers logic end						
+			if (isExtSMSService()) {
+				List<MailTemplate> smsList = getSmsUtil().getSMSContent(notifyIdlist, fieldsAndValues,
+						mobileNoMap);
+				// send SMS to external service
+				getShortMessageService().sendMessage(smsList, finReference);
+			}
+		}
 	}
 
 	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail, VehicleDealer vehicleDealer) {
