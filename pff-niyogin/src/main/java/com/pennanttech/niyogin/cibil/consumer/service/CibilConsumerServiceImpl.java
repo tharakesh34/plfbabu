@@ -164,8 +164,10 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null) {
-			personalDetails.setPan(getPanNumber(documentList));
-			personalDetails.setUid(getPanNumber(documentList));//FIXME
+			String panCard = StringUtils.trimToEmpty((String) getSMTParameter("PAN_DOC_TYPE", String.class));
+			personalDetails.setPan(getDocumentNumber(documentList, panCard));
+			String uid = StringUtils.trimToEmpty((String) getSMTParameter("UID_DOC_TYPE", String.class));
+			personalDetails.setUid(getDocumentNumber(documentList, uid));
 		}
 
 		cibilConsumerRequest.setPersonalDetails(personalDetails);
@@ -198,13 +200,14 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			houseNo = custAddres.getCustFlatNbr();
 		}
 		address.setHouseNo(houseNo);
-		String societyName=custAddres.getCustAddrLine1()+","+custAddres.getCustAddrLine2()+","+custAddres.getCustAddrLine2();
+		String societyName = custAddres.getCustAddrLine1() + "," + custAddres.getCustAddrLine2() + ","
+				+ custAddres.getCustAddrLine2();
 		address.setSocietyName(societyName);
 		address.setCareOf("");
 		address.setLandmark(custAddres.getCustAddrStreet());
 		address.setCategory(custAddres.getCustAddrType());
 		
-		City city=getCityDetails(custAddres);
+		City city = getCityDetails(custAddres);
 		
 		if (city != null) {
 			address.setCity(city.getPCCityName());

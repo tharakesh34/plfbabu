@@ -650,6 +650,34 @@ public abstract class NiyoginService {
 		return pannumber;
 	}
 	
+	public String getDocumentNumber(List<CustomerDocument> customerDetails, String type) {
+		String docNumber = "";
+		if(StringUtils.isBlank(type)) {
+			return docNumber;
+		}
+		if (customerDetails != null && !customerDetails.isEmpty()) {
+			String[] docTypes = null;
+			if (type.contains(",")) {
+				docTypes = type.split(",");
+			} else {
+				docTypes = new String[1];
+				docTypes[0] = type;
+			}
+
+			if (docTypes != null) {
+				for (int i = 0; i < docTypes.length; i++) {
+					for (CustomerDocument customerDocument : customerDetails) {
+						if (StringUtils.equals(docTypes[i], customerDocument.getCustDocCategory())) {
+							docNumber = customerDocument.getCustDocTitle();
+							return docNumber;
+						}
+					}
+				}
+			}
+		}
+		return docNumber;
+	}
+	
 	/**
 	 * Method for getting the City
 	 * 
