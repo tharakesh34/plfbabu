@@ -572,7 +572,7 @@
 			<!-- menuItem id="menu_Item_TrialBalanceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DAILYDISBURSALREPORT"/>
 			<menuItem id="menu_Item_TrialBalancesByDealTypeandCurrency" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinDeptReports_TrialBalancesByDealTypeandCurrency"/>-->
 		</menu>
-		<menu id="menu_Category_Past Due Reports" rightName="">
+		<menu id="menu_Category_PastDueReports" rightName="">
 			<menuItem id="menu_Item_DailyPastdue"  zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_DailyPastdue" />	
 			<menuItem id="menu_Item_DailyPastduebyCustomer"  zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_DailyPastduebyCustomer" />	
 			<menuItem id="menu_Item_DelinquentByProduct" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_DelinquencyReports_DelinquentByProduct"/>
@@ -585,7 +585,7 @@
 			<menuItem id="menu_Item_RepaymentsProcessedToday" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_Reports_RepaymentsProcessedToday"/>
 			<menuItem id="menu_Item_FutureRepaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_FutureRepaymentSchedule" />
 		</menu>
-		<menu id="menu_Category_User Level" rightName="">
+		<menu id="menu_Category_UserLevel" rightName="">
 			<menuItem id="menu_Item_UserCreation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_Reports_UserCreationReports"/>
 			<menuItem id="menu_Item_UserModification" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_Reports_UserModificationReports"/>
 			<menuItem id="menu_Item_UserDeletion" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Reports_UserDeletionReports" />
