@@ -61,6 +61,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private boolean newRecord = false;
 	private Date docReceivedDate;
 	private boolean docReceived;
+	private String password;
 
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
@@ -91,6 +92,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custDocVerifiedBy");
 		excludeFields.add("custDocIsAcrive");
 		excludeFields.add("docIsCustDoc");
+		excludeFields.add("password");
 		// In the excludeFields method, docImage is added to avoid attachment stored in Audit Tables
 		excludeFields.add("docImage");
 		return excludeFields;
@@ -348,6 +350,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocReceivedDate(Date docReceivedDate) {
 		this.docReceivedDate = docReceivedDate;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

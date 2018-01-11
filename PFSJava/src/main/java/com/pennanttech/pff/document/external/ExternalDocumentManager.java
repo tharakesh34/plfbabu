@@ -18,7 +18,6 @@ import org.zkoss.util.media.AMedia;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -52,16 +51,22 @@ public class ExternalDocumentManager {
 		}
 		return amedia;
 	}
-	
+
 	public AMedia getDocumentMedia(String fileName, String docRefId, String reference) {
-		DocumentDetails detail = getExternalDocument(fileName,docRefId,reference);
-		AMedia amedia=new AMedia(detail.getDocName(), null, null, detail.getDocImage());
-		return amedia;
+		DocumentDetails detail = getExternalDocument(fileName, docRefId, reference);
+		if (detail != null) {
+			AMedia amedia = new AMedia(detail.getDocName(), null, null, detail.getDocImage());
+			return amedia;
+		} else {
+			return null;
+		}
+
 	}
-	
 
 	public DocumentDetails getExternalDocument(String fileName, String docRefId, String reference) {
 		logger.debug(Literal.ENTERING);
+
+		DocumentDetails returndetails = null;
 
 		String[] docRefIds = null;
 		List<DocumentDetails> documentDetailList = new ArrayList<>(1);
@@ -78,60 +83,59 @@ public class ExternalDocumentManager {
 		}
 
 		if (!documentDetailList.isEmpty()) {
+			DocumentDetails documentDet = documentDetailList.get(0);
 			if (documentDetailList.size() == 1) {
-				documentDetailList.get(0).setDocName(fileName);
-				documentDetailList.get(0).setDocImage(PennantApplicationUtil.decode(documentDetailList.get(0).getDocImage()));
-				return documentDetailList.get(0);
+				documentDet.setDocName(fileName);
+				documentDet.setDocImage(PennantApplicationUtil.decode(documentDet.getDocImage()));
+				returndetails = documentDet;
 			} else {
 				try {
-					ByteArrayOutputStream outsream = null;
-					int arrayIndex = 0;
-					BufferedImage[] images = null;
-					URL[] pdfurl = null;
+					boolean isImage = false;
+					boolean isPDF = false;
 
 					for (DocumentDetails documentDetails : documentDetailList) {
 						URL u = new URL(documentDetails.getDocUri());
 						URLConnection uc = u.openConnection();
 						String contentType = StringUtils.trimToEmpty(uc.getContentType());
 						if (contentType.toUpperCase().contains("IMAGE")) {
-							if (images == null) {
-								images = new BufferedImage[documentDetailList.size()];
-							}
-
-							BufferedImage img = ImageIO.read(u);
-							images[arrayIndex] = img;
-							arrayIndex++;
-						} else {
-							if (pdfurl == null) {
-								pdfurl = new URL[documentDetailList.size()];
-							}
-							pdfurl[arrayIndex] = u;
-							arrayIndex++;
+							isImage = true;
+							break;
+						} else if (contentType.toUpperCase().contains("PDF")) {
+							isPDF = true;
+							break;
 						}
 					}
-					
-					if (images != null) {
-						outsream = mergeImages(images);
-						documentDetailList.get(0).setDocImage(outsream.toByteArray());
-						documentDetailList.get(0).setDocName("document.png");
-					} else {
-						outsream = mergePDF(pdfurl);
-						documentDetailList.get(0).setDocImage(outsream.toByteArray());
-						documentDetailList.get(0).setDocName("document.pdf");
+
+					if (isImage) {
+						ByteArrayOutputStream outsream = mergeImages(documentDetailList);
+						documentDet.setDocImage(outsream.toByteArray());
+						documentDet.setDocName("document.png");
+					} else if (isPDF) {
+						ByteArrayOutputStream outsream = mergePDF(documentDetailList);
+						documentDet.setDocImage(outsream.toByteArray());
+						documentDet.setDocName("document.pdf");
 					}
+					returndetails = documentDet;
 
 				} catch (Exception e) {
 					logger.debug(e);
 				}
-				return documentDetailList.get(0);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-		return documentDetailList.get(0);
+		return returndetails;
 	}
 
-	private ByteArrayOutputStream mergeImages(BufferedImage[] images) throws IOException {
+	private ByteArrayOutputStream mergeImages(List<DocumentDetails> documentDetailList) throws IOException {
+		BufferedImage[] images = new BufferedImage[documentDetailList.size()];
+		for (int i = 0; i < documentDetailList.size(); i++) {
+			DocumentDetails doc = documentDetailList.get(i);
+			URL u = new URL(doc.getDocUri());
+			BufferedImage img = ImageIO.read(u);
+			images[i] = img;
+		}
+
 		int ht = getMaxheightValue(images);
 		int wt = getMaxwidthValue(images);
 		// Create the output image.
@@ -151,24 +155,28 @@ public class ExternalDocumentManager {
 		return outsream;
 	}
 
-	public ByteArrayOutputStream mergePDF(URL[] pdfurl) throws IOException, DocumentException {
+	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList)
+			throws IOException, DocumentException {
 
 		ByteArrayOutputStream outsream = new ByteArrayOutputStream();
 		Document document = new Document();
 		PdfCopy pdfcopy = new PdfCopy(document, outsream);
 		document.open();
-		for (int i = 0; i < pdfurl.length; i++) {
-			PdfReader pdfreader = null;
+		for (DocumentDetails details : documentDetailList) {
 			try {
-				pdfreader = new PdfReader(pdfurl[i]);
-			} catch (BadPasswordException bpe) {
-				pdfreader = new PdfReader(pdfurl[i], "".getBytes());//strPwd.getBytes()
+				PdfReader pdfreader = null;
+				String docUri = details.getDocUri();
+				String password = StringUtils.trimToEmpty(details.getPassword());
+
+				pdfreader = new PdfReader(docUri, password.getBytes());
+				int number_of_pages = pdfreader.getNumberOfPages();
+				for (int page = 0; page < number_of_pages;) {
+					pdfcopy.addPage(pdfcopy.getImportedPage(pdfreader, ++page));
+				}
+			} catch (Exception e) {
+				logger.debug(e);
 			}
 
-			int number_of_pages = pdfreader.getNumberOfPages();
-			for (int page = 0; page < number_of_pages;) {
-				pdfcopy.addPage(pdfcopy.getImportedPage(pdfreader, ++page));
-			}
 		}
 		document.close();
 		return outsream;

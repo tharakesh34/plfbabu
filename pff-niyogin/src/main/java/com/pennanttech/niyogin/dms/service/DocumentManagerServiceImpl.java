@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,8 +48,9 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 				if (extendedFieldMap.get("DOCSOURCE") != null) {
 					detail.setDocImage(extendedFieldMap.get("DOCSOURCE").toString().getBytes());
 				}
-				detail.setDocUri(String.valueOf(extendedFieldMap.get("DOWNLOADURL")));
-				detail.setDocName(String.valueOf(extendedFieldMap.get("DOCNAME")));
+				detail.setDocUri(Objects.toString(extendedFieldMap.get("DOWNLOADURL"),""));
+				detail.setDocName(Objects.toString(extendedFieldMap.get("DOCNAME"),""));
+				detail.setPassword(Objects.toString(extendedFieldMap.get("DOCPASSWORD"),""));
 			} else {
 				throw new InterfaceException("9999", String.valueOf(extendedFieldMap.get("ERRORMESSAGE")));
 			}

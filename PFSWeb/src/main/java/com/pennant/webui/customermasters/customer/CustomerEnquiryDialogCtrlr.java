@@ -1057,8 +1057,10 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 							String custCif=this.custCIF.getValue();
 							DocumentDetails detail = externalDocumentManager
 									.getExternalDocument(customerDocument.getCustDocName(),customerDocument.getDocUri(),custCif);
-							customerDocument.setCustDocImage(detail.getDocImage());
-							customerDocument.setCustDocName(detail.getDocName());
+							if (detail!=null && detail.getDocImage()!=null) {
+								customerDocument.setCustDocImage(detail.getDocImage());
+								customerDocument.setCustDocName(detail.getDocName());
+							}
 						} catch (InterfaceException e) {
 							MessageUtil.showError(e);
 						}
