@@ -75,14 +75,19 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-
+		Map<String, Object> validatedExtendedMap = new HashMap<>();
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 
 		//validate the map with configuration
-		Map<String, Object> validatedExtendedMap = executeBureau(financeDetail, customerDetails);
+		validatedExtendedMap = executeBureau(financeDetail, customerDetails);
 
+		if(validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
+			validatedExtendedMap.put("REASONCODE", statusCode);
+			validatedExtendedMap.put("REMARKSEXPERIANBEA", App.getLabel("niyogin_No_Data"));
+		}
+		prepareResponseObj(validatedExtendedMap, financeDetail);
+		
 		// Execute Bureau for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {
@@ -97,15 +102,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
 			}
 		}
-
-		// success case logging
-		doInterfaceLogging(requestObject, finReference);
-
-		if(validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
-			validatedExtendedMap.put("REASONCODE", statusCode);
-			validatedExtendedMap.put("REMARKSEXPERIANBEA", App.getLabel("niyogin_No_Data"));
-		}
-		prepareResponseObj(validatedExtendedMap, financeDetail);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -142,7 +138,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
-
 	
 		try {
 
@@ -163,9 +158,11 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
+		// success case logging
+		doInterfaceLogging(requestObject, finReference);
+				
 		logger.debug(Literal.LEAVING);
 		return validatedExtendedMap;
-
 	}
 
 	/**
@@ -237,10 +234,12 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 		personalAddress.setHouseNo(houseNo);
 		personalAddress.setLandmark(address.getCustAddrStreet());
-		personalAddress.setCity(city.getPCCityName());
-		personalAddress.setCountry(city.getLovDescPCCountryName());
-		personalAddress.setPin(address.getCustAddrZIP());
-		personalAddress.setState(city.getLovDescPCProvinceName());
+		if (city != null) {
+			personalAddress.setCity(city.getPCCityName());
+			personalAddress.setCountry(city.getLovDescPCCountryName());
+			personalAddress.setPin(address.getCustAddrZIP());
+			personalAddress.setState(city.getLovDescPCProvinceName());
+		}
 		return personalAddress;
 	}
 
@@ -259,10 +258,13 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		companyAddress.setAddressLine1(addrLines);
 		companyAddress.setAddressLine2(addrLines);
 		companyAddress.setAddressLine3(addrLines);
-		companyAddress.setCity(city.getPCCityName());
-		companyAddress.setCountry(city.getLovDescPCCountryName());
-		companyAddress.setPin(address.getCustAddrZIP());
-		companyAddress.setState(city.getLovDescPCProvinceName());
+		
+		if (city != null) {
+			companyAddress.setCity(city.getPCCityName());
+			companyAddress.setCountry(city.getLovDescPCCountryName());
+			companyAddress.setPin(address.getCustAddrZIP());
+			companyAddress.setState(city.getLovDescPCProvinceName());
+		}
 		companyAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
 				: InterfaceConstants.DEFAULT_DIST);
 		return companyAddress;
@@ -333,10 +335,13 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		consumerAddress.setLandmark(address.getCustAddrStreet());
 		consumerAddress.setCareOf(StringUtils.isNotBlank(address.getCustAddrLine3()) ? address.getCustAddrLine3()
 				: InterfaceConstants.DEFAULT_CAREOF);
-		consumerAddress.setCity(city.getPCCityName());
-		consumerAddress.setCountry(city.getLovDescPCCountryName());
-		consumerAddress.setPin(address.getCustAddrZIP());
-		consumerAddress.setState(city.getLovDescPCProvinceName());
+		
+		if (city != null) {
+			consumerAddress.setCity(city.getPCCityName());
+			consumerAddress.setCountry(city.getLovDescPCCountryName());
+			consumerAddress.setPin(address.getCustAddrZIP());
+			consumerAddress.setState(city.getLovDescPCProvinceName());
+		}
 		consumerAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
 				: InterfaceConstants.DEFAULT_DIST);
 		consumerAddress.setSubDistrict(StringUtils.isNotBlank(address.getCustAddrLine4()) ? address.getCustAddrLine4()

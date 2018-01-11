@@ -69,7 +69,7 @@ public abstract class NiyoginService {
 
 	public String				errorCodeKey		= "ERRORCODE";
 	public String				errorDescKey		= "ERRORMESSAGE";
-	public String				statusCodeKey		= "statusCode";
+	public String				statusCodeKey		= "STATUSCODE";
 
 	public String				reference;
 

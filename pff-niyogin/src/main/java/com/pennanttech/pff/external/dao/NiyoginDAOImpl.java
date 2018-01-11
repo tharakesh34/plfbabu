@@ -71,6 +71,7 @@ public class NiyoginDAOImpl {
 
 		for (Customer customer : customers) {
 			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustomer(customer);
 			customerDetails.setCustID(customer.getCustID());
 			customerDetails.setAddressList(getCustomerAddresByCustomer(customer.getCustID(), type));
 			customerDetails.setCustomerEMailList(getCustomerEmailByCustomer(customer.getCustID(), type));

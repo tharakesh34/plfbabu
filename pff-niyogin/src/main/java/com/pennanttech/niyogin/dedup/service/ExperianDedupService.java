@@ -96,9 +96,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		}
 
 		if (!financeMain.isDedupMatch()) {
-			
 			extendedFieldMap.put("EXDREQUESTSEND", true);
-			
 			try {
 				validatedMap = validateExtendedMapValues(extendedFieldMap);
 			} catch (Exception e) {
@@ -144,11 +142,11 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		}
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
-			experianDedup.setEmailId(NiyoginUtility.getHignPriorityEmail(emailList, 5));
+			experianDedup.setEmailId(NiyoginUtility.getEmail(emailList));
 		}
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
-			CustomerAddres customerAddres = NiyoginUtility.getHighPriorityAddress(addressList, 5);
+			CustomerAddres customerAddres = NiyoginUtility.getAddress(addressList);
 			experianDedup.setAddress(prepareAddress(customerAddres));
 		} else {
 			experianDedup.setAddress(new Address());
@@ -156,7 +154,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
 		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-			CustomerPhoneNumber custPhoneNumber = NiyoginUtility.getHighPriorityPhone(phoneNumberList, 5);
+			CustomerPhoneNumber custPhoneNumber = NiyoginUtility.getPhone(phoneNumberList);
 			experianDedup.setPhone(preparePhone(custPhoneNumber));
 		} else {
 			experianDedup.setPhone(new Phone());
@@ -190,9 +188,11 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		City city = getCityDetails(customerAddres);
 
-		address.setCity(city.getPCCityName());
-		address.setState(city.getLovDescPCProvinceName());
-		address.setCountry(city.getLovDescPCCountryName());
+		if(city != null) {
+			address.setCity(city.getPCCityName());
+			address.setState(city.getLovDescPCProvinceName());
+			address.setCountry(city.getLovDescPCCountryName());
+		}
 
 		address.setPin(customerAddres.getCustAddrZIP());
 		address.setAddressType(customerAddres.getCustAddrType());

@@ -339,7 +339,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 				InterfaceConstants.PHONE_TYPE_OFF));
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
-		deMogs.setEmail(NiyoginUtility.getHignPriorityEmail(emailList, 5));
+			deMogs.setEmail(NiyoginUtility.getEmail(emailList));
 		}
 		deMogs.setApplicantAdhaar(getPanNumber(documentList));//FIXME
 		deMogs.setUdyogadhaar(" ");

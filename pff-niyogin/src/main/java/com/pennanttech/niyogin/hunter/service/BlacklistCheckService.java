@@ -112,8 +112,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
 
 		if (customerDetails.getCustomerEMailList() != null) {
-			customerBasicDetail
-					.setEmailId(NiyoginUtility.getHignPriorityEmail(customerDetails.getCustomerEMailList(), 5));
+			customerBasicDetail.setEmailId(NiyoginUtility.getEmail(customerDetails.getCustomerEMailList()));
 		}
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
@@ -123,7 +122,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		Address address = null;
 		if (customerDetails.getAddressList() != null) {
-			address = prepareAddress(NiyoginUtility.getHighPriorityAddress(customerDetails.getAddressList(), 5));
+			address = prepareAddress(NiyoginUtility.getAddress(customerDetails.getAddressList()));
 		} else {
 			address = new Address();
 		}

@@ -81,18 +81,20 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-
+		Map<String, Object> validatedExtendedMap = new HashMap<>();
 		reqSentOn = new Timestamp(System.currentTimeMillis());
 
 		//validate the map with configuration
-		Map<String, Object> validatedExtendedMap = executeBureau(financeDetail, customerDetails);
+		validatedExtendedMap = executeBureau(financeDetail, customerDetails);
 		
 		if (validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
 			validatedExtendedMap.put("REASONCODECRIF", statusCode);
 			validatedExtendedMap.put("REMARKSCRIF", App.getLabel("niyogin_No_Data"));
 		}
+		
+		prepareResponseObj(validatedExtendedMap, financeDetail);
+		
 		// Execute Bureau for co-applicants
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {
@@ -108,11 +110,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 		}
 		
-		// success case logging
-		doInterfaceLogging(requestObject, finReference);
-
-		prepareResponseObj(validatedExtendedMap, financeDetail);
-
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -149,7 +146,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
 
 		try {
-
 			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_SME)) {
 				Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 				CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
@@ -165,6 +161,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			doLogError(e, serviceUrl, requestObject);
 			throw new InterfaceException("9999", e.getMessage());
 		}
+		
+		// success case logging
+		doInterfaceLogging(requestObject, finReference);
+				
 		return validatedExtendedMap;
 	}
 
@@ -240,12 +240,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		return extendedFieldMap;
 	}
 
-	private String getResponse() {
-		String commercialResponse = "{\"statusCode\": 200,\"message\": \"Crif Bureau commercial report extracted\",\"data\": [  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"786300000\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"78,63,00,000\", \"SANCTION-DATE\": \"29-04-2017\", \"DRAWING-POWER\": \"787636231\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Loss\", \"CURRENT-BALANCE\": \"533697247\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"533700000\", \"SANCTION-DATE\": \"28-05-2017\", \"DRAWING-POWER\": \"533700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|APR:2017,58/DBT|Nov:2016,XXX/LOS|JUL:2017,96/SUP|JUN:2017,97/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-04-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"371450644\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"364700000\", \"SANCTION-DATE\": \"18-07-2017\", \"DRAWING-POWER\": \"364700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2017,92/LOS|Feb:2017,91/LOS|Jan:2017,45/LOS|Dec:2016,58/LOS|Nov:2016,XXX/LOS|Oct:2016,XXX/SUP|Sep:2016,000/DBT|Aug:2016,XXX/SMA|Jul:2017,92/LOS|Jun:2017,96/LOS|May:2012,XXX/LOS|Apr:2017,XXX/SUP|Mar:2017,76/SUB|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"320772818\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"327400000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"337723071\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-09-2011\", \"ASSET-CLASSIFICATION\": \"Standard\", \"CURRENT-BALANCE\": \"211522845\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"350000000\", \"SANCTION-DATE\": \"30-07-2007\", \"DRAWING-POWER\": \"147628350\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Sep:2011,XXX/STD|Aug:2011,DDD/DDD|Jul:2011,DDD/DDD|Jun:2011,XXX/STD|May:2011,DDD/DDD|Apr:2011,DDD/DDD|Mar:2011,XXX/STD|Feb:2011,DDD/DDD|Jan:2011,DDD/DDD|Dec:2010,XXX/STD|Nov:2010,DDD/DDD|Oct:2010,DDD/DDD|Sep:2010,XXX/STD|Aug:2010,DDD/DDD|Jul:2010,DDD/DDD|Jun:2010,XXX/STD|May:2010,DDD/DDD|Apr:2010,DDD/DDD|Mar:2010,XXX/STD|Feb:2010,DDD/DDD|Jan:2010,DDD/DDD|Dec:2009,XXX/STD|Nov:2009,DDD/DDD|Oct:2009,DDD/DDD|Sep:2009,XXX/STD|Aug:2009,DDD/DDD|Jul:2009,DDD/DDD|Jun:2009,XXX/STD|May:2009,DDD/DDD|Apr:2009,DDD/DDD|Mar:2009,XXX/STD|Feb:2009,DDD/DDD|Jan:2009,DDD/DDD|Dec:2008,XXX/STD|Nov:2008,DDD/DDD|Oct:2008,DDD/DDD\", \"ACCOUNT-STATUS\": \"Closed\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S04\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"191087930\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Medium)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"191100000\", \"SANCTION-DATE\": \"10-10-2011\", \"DRAWING-POWER\": \"191100000\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/DBT|Nov:2012,XXX/DBT|Oct:2012,XXX/DBT|Sep:2012,XXX/DBT|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/SUB|May:2012,XXX/SUB|Apr:2012,XXX/SMA|Mar:2012,XXX/SMA|Feb:2012,XXX/SMA|Jan:2012,XXX/SMA|Dec:2011,XXX/SMA|Nov:2011,XXX/STD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  }] } ";
-		//String response = "{\"statusCode\": 200,\"message\": \"Crif Bureau commercial report extracted\",\"data\": [  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"786300000\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"78,63,00,000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"787636231\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"10\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Loss\", \"CURRENT-BALANCE\": \"533697247\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"533700000\", \"SANCTION-DATE\": \"28-12-2011\", \"DRAWING-POWER\": \"533700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/LOS|Feb:2013,XXX/LOS|Jan:2013,XXX/LOS|Dec:2012,XXX/LOS|Nov:2012,XXX/LOS|Oct:2012,XXX/LOS|Sep:2012,XXX/LOS|Aug:2012,XXX/LOS|Jul:2012,XXX/LOS|Jun:2012,XXX/LOS|May:2012,XXX/LOS|Apr:2012,XXX/DBT|Mar:2012,xxx/XXX|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-04-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"371450644\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"364700000\", \"SANCTION-DATE\": \"18-10-2011\", \"DRAWING-POWER\": \"364700000\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Apr:2013,XXX/DBT|Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/SUB|Nov:2012,XXX/SUB|Oct:2012,XXX/SUB|Sep:2012,XXX/SUB|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/STD|May:2012,XXX/STD|Apr:2012,XXX/STD|Mar:2012,xxx/XXX|Feb:2012,xxx/XXX|Jan:2012,xxx/XXX|Dec:2011,xxx/XXX|Nov:2011,xxx/XXX|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2012\", \"ASSET-CLASSIFICATION\": \"Sub Standard\", \"CURRENT-BALANCE\": \"320772818\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"327400000\", \"SANCTION-DATE\": \"29-12-2011\", \"DRAWING-POWER\": \"337723071\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"DATE-OF-SUIT\": \"29-12-2011\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\",\"WILFUL-DEFAULT-AS-ON\": \"29-02-2012\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Mar:2012,XXX/SUB|Feb:2012,DDD/DDD|Jan:2012,DDD/DDD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"30-09-2011\", \"ASSET-CLASSIFICATION\": \"Standard\", \"CURRENT-BALANCE\": \"211522845\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Long)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"350000000\", \"SANCTION-DATE\": \"30-07-2007\", \"DRAWING-POWER\": \"147628350\", \"DISBURSED-AMOUNT\": \"25000\", \"OVERDUE-AMOUNT\": \"0\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"SUIT-FILED-STATUS\": \"Not a Suit Filed Case\",\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LIMITED\", \"PAYMENT-HISTORY\": \"Sep:2011,XXX/STD|Aug:2011,DDD/DDD|Jul:2011,DDD/DDD|Jun:2011,XXX/STD|May:2011,DDD/DDD|Apr:2011,DDD/DDD|Mar:2011,XXX/STD|Feb:2011,DDD/DDD|Jan:2011,DDD/DDD|Dec:2010,XXX/STD|Nov:2010,DDD/DDD|Oct:2010,DDD/DDD|Sep:2010,XXX/STD|Aug:2010,DDD/DDD|Jul:2010,DDD/DDD|Jun:2010,XXX/STD|May:2010,DDD/DDD|Apr:2010,DDD/DDD|Mar:2010,XXX/STD|Feb:2010,DDD/DDD|Jan:2010,DDD/DDD|Dec:2009,XXX/STD|Nov:2009,DDD/DDD|Oct:2009,DDD/DDD|Sep:2009,XXX/STD|Aug:2009,DDD/DDD|Jul:2009,DDD/DDD|Jun:2009,XXX/STD|May:2009,DDD/DDD|Apr:2009,DDD/DDD|Mar:2009,XXX/STD|Feb:2009,DDD/DDD|Jan:2009,DDD/DDD|Dec:2008,XXX/STD|Nov:2008,DDD/DDD|Oct:2008,DDD/DDD\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0.0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S04\"  },  { \"ACCOUNT-NO\": \"XXXX\", \"CREDIT-GRANTOR\": \"XXXX\", \"LAST-REPORTED-DATE\": \"31-03-2013\", \"ASSET-CLASSIFICATION\": \"Doubtful\", \"CURRENT-BALANCE\": \"191087930\", \"DPD\": \"0\", \"CREDIT-FACILITY-TYPE\": \"TL(Medium)\", \"CREDIT-FACILITY-STATUS\": \"ACTIVE\", \"SANCTIONED-AMOUNT\": \"191100000\", \"SANCTION-DATE\": \"10-10-2011\", \"DRAWING-POWER\": \"191100000\", \"ISSUED-CURRENCY\": \"INR\", \"SUIT-FILED-AND-WILFUL-DEFAULTS\": {\"WILFUL-DEFAULTER\": \"Not Wilful Defaulter\",\"SUIT-AMOUNT\": \"0\" }, \"BORROWER-NAME\": \"ANKUR DRUGS AND PHARMA LTD\", \"PAYMENT-HISTORY\": \"Mar:2013,XXX/DBT|Feb:2013,XXX/DBT|Jan:2013,XXX/DBT|Dec:2012,XXX/DBT|Nov:2012,XXX/DBT|Oct:2012,XXX/DBT|Sep:2012,XXX/DBT|Aug:2012,XXX/SUB|Jul:2012,XXX/SUB|Jun:2012,XXX/SUB|May:2012,XXX/SUB|Apr:2012,XXX/SMA|Mar:2012,XXX/SMA|Feb:2012,XXX/SMA|Jan:2012,XXX/SMA|Dec:2011,XXX/SMA|Nov:2011,XXX/STD|\", \"ACCOUNT-STATUS\": \"S04\", \"LENDER-TYPE\": \"NAB\", \"WRITEOFF-AMOUNT\": \"0\", \"CREDIT-FACILITY-GROUP\": \"TL\", \"DERIVED-ACCOUNT-STATUS\": \"S05\"  }] } ";
-		return commercialResponse;
-	}
-
 	/**
 	 * Method for prepare commercial request object
 	 * 
@@ -319,11 +313,13 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		personalAddress.setHouseNo(address.getCustAddrHNbr());
 		personalAddress.setLandmark(address.getCustAddrStreet());
-		personalAddress.setCity(city.getPCCityName());
-		personalAddress.setCountry(city.getLovDescPCCountryName());
-		personalAddress.setPin(address.getCustAddrZIP());
-		pincode = address.getCustAddrZIP();
-		personalAddress.setState(city.getLovDescPCProvinceName());
+		if (city != null) {
+			personalAddress.setCity(city.getPCCityName());
+			personalAddress.setCountry(city.getLovDescPCCountryName());
+			personalAddress.setPin(address.getCustAddrZIP());
+			pincode = address.getCustAddrZIP();
+			personalAddress.setState(city.getLovDescPCProvinceName());
+		}
 		personalAddress.setCareOf(StringUtils.isNotBlank(address.getCustAddrLine3()) ? address.getCustAddrLine3()
 				: InterfaceConstants.DEFAULT_CAREOF);
 		personalAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
@@ -344,10 +340,13 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		companyAddress.setAddress1(addressLines);
 		companyAddress.setAddress2(addressLines);
 		companyAddress.setAddress3(addressLines);
-		companyAddress.setCity(city.getPCCityName());
-		companyAddress.setCountry(city.getLovDescPCCountryName());
-		companyAddress.setPin(address.getCustAddrZIP());
-		companyAddress.setState(city.getLovDescPCProvinceName());
+		
+		if (city != null) {
+			companyAddress.setCity(city.getPCCityName());
+			companyAddress.setCountry(city.getLovDescPCCountryName());
+			companyAddress.setPin(address.getCustAddrZIP());
+			companyAddress.setState(city.getLovDescPCProvinceName());
+		}
 		companyAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
 				: InterfaceConstants.DEFAULT_DIST);
 		return companyAddress;

@@ -23,7 +23,6 @@ public class NiyoginUtility {
 	 * @param list
 	 */
 	public static void sortCustomerEmail(List<CustomerEMail> list) {
-
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list, new Comparator<CustomerEMail>() {
 				@Override
@@ -41,7 +40,6 @@ public class NiyoginUtility {
 	 * @param list
 	 */
 	public static void sortCustomerPhoneNumber(List<CustomerPhoneNumber> list) {
-
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list, new Comparator<CustomerPhoneNumber>() {
 				@Override
@@ -58,7 +56,6 @@ public class NiyoginUtility {
 	 * @param list
 	 */
 	public static void sortCustomerAddres(List<CustomerAddres> list) {
-
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list, new Comparator<CustomerAddres>() {
 				@Override
@@ -129,6 +126,52 @@ public class NiyoginUtility {
 		return null;
 	}
 
+	public static String getPhoneNumber(List<CustomerPhoneNumber> phoneList) {
+		String phoneNumber = "";
+		if (phoneList != null && !phoneList.isEmpty()) {
+			if (phoneList.size() > 1) {
+				NiyoginUtility.sortCustomerPhoneNumber(phoneList);
+			}
+			CustomerPhoneNumber phone = phoneList.get(0);
+			phoneNumber = phone.getPhoneNumber();
+		}
+		return phoneNumber;
+	}
+	
+	public static CustomerPhoneNumber getPhone(List<CustomerPhoneNumber> phoneList) {
+		CustomerPhoneNumber phone = new CustomerPhoneNumber();
+		if (phoneList != null && !phoneList.isEmpty()) {
+			if (phoneList.size() > 1) {
+				NiyoginUtility.sortCustomerPhoneNumber(phoneList);
+			}
+			phone = phoneList.get(0);
+		}
+		return phone;
+	}
+	
+	public static String getEmail(List<CustomerEMail> customerEMailList) {
+		String emailId = "";
+		if (customerEMailList != null && !customerEMailList.isEmpty()) {
+			if (customerEMailList.size() > 1) {
+				NiyoginUtility.sortCustomerEmail(customerEMailList);
+			}
+			CustomerEMail email = customerEMailList.get(0);
+			emailId = email.getCustEMail();
+		}
+		return emailId;
+	}
+	
+	public static CustomerAddres getAddress(List<CustomerAddres> addressList) {
+		CustomerAddres address = new CustomerAddres();
+		if (addressList != null && !addressList.isEmpty()) {
+			if (addressList.size() > 1) {
+				NiyoginUtility.sortCustomerAddres(addressList);
+			}
+			address = addressList.get(0);
+		}
+		return address;
+	}
+	
 	/**
 	 * Method to fetch customer phone number.
 	 * 
