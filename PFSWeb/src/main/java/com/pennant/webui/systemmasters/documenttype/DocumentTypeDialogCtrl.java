@@ -62,7 +62,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.DocumentDataMapping;
+
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
@@ -70,6 +70,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
