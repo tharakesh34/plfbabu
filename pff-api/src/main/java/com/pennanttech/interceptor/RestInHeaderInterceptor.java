@@ -25,6 +25,7 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -490,6 +491,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	}
 
 	@Autowired
+	@Qualifier("systemParameterServiceTarget")
 	public void setpFSParameterService(PFSParameterService pFSParameterService) {
 		this.pFSParameterService = pFSParameterService;
 	}
