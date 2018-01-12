@@ -36,7 +36,7 @@ public class InterfaceConstants {
 
 	public static final String	DEFAULT_PAN				= "XXXXX0000X";					//FIXME:Satish, It is mandatory for CRIFF
 
-	public static final String	InterfaceDateFormatter	= "E MMM dd HH:mm:ss Z yyyy";
+	public static final String	InterfaceDateFormatter	= "dd-MM-yyyy";
 	
 	public static final String	CUSTTYPE_SOLEPRO	= "3";
 }
