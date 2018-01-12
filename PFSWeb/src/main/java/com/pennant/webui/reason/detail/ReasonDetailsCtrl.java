@@ -126,9 +126,9 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		Map<String, Object> resonTypesMap = new HashMap<String, Object>();
 		Object dataObject = null;
 
-		String[] resonTypeS = this.reasons.getValue().split(",");
-		for (int i = 0; i < resonTypeS.length; i++) {
-			resonTypesMap.put(resonTypeS[i], null);
+		String[] resonTypes = this.reasons.getValue().split(",");
+		for (int i = 0; i < resonTypes.length; i++) {
+			resonTypesMap.put(resonTypes[i], null);
 		}
 		
 		if (StringUtils.trimToNull(this.reasonCategory.getValue()) != null) {

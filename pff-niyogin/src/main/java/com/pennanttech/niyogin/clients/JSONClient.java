@@ -44,7 +44,8 @@ public class JSONClient {
 		String jsonInString = null;
 		
 		try {
-			jsonInString = mapper.writeValueAsString(requestData);
+			//jsonInString = mapper.writeValueAsString(requestData);
+			jsonInString = "{ \"STG_UNQ_REF_ID\":915,\"APPLICATION_ID\":915,\"address\":{ \"ADDRESS1_HOUSE_NO\":\"272 Radha Krishna Building\",\"ADDRESS1_SOCIETY_NAME\":\",,\",\"ADDRESS1_LANDMARK\":\"Near Ambedkar Chowk\",\"ADDRESS1_CARE_OF\":\"\",\"ADDRESS1_CATEGORY\":\"CURRES\",\"ADDRESS1_CITY\":\"NAGPUR\",\"ADDRESS1_COUNTRY\":\"INDIA\",\"ADDRESS1_DISTRICT\":\"\",\"ADDRESS1_PIN\":\"440022\",\"ADDRESS1_STATE\":\"Maharashtra\"},\"personal\":{ \"FIRST_NAME\":\"Altamash Siddiqui\",\"MIDDLE_NAME\":\"\",\"LAST_NAME\":\"Altamash Siddiqui\",\"DOB\":\"31-07-1988\",\"GENDER\":\"Male\",\"MOBILE\":\"8108362038\",\"NOMINEE_NM\":\"\",\"NOMINEE_REL\":\"\",\"PAN\":\"EHHPS6280L\",\"UID_\":\"EHHPS6280L\"} }";
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}

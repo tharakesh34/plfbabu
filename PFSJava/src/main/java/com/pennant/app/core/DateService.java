@@ -33,7 +33,7 @@ public class DateService extends ServiceHelper {
 
 		//set System Parameter Value
 		if (updatePhase) {
-			SysParamUtil.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_EOD);
+			SysParamUtil.updateParamDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_EOD);
 		}
 		logger.debug(" Leaving ");
 	}
@@ -94,7 +94,7 @@ public class DateService extends ServiceHelper {
 		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_DATE.getCode(), nextBusinessDate.toString());
 		// phase
 		if (updatePhase) {
-			SysParamUtil.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
+			SysParamUtil.updateParamDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
 		}
 		logger.debug(" Leaving ");
 		return true;

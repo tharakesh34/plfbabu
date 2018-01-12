@@ -332,7 +332,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel>  getDataSourceNames(){
 		if(dataSourceNames == null){
 			dataSourceNames = new ArrayList<>(2);
-			dataSourceNames.add(new ValueLabel("pfsDatasource", "PFS DataBase"));
+			dataSourceNames.add(new ValueLabel("dataSource", "PFS DataBase"));
 			dataSourceNames.add(new ValueLabel("auditDatasource", "PFSAudit Database"));
 		}
 		return dataSourceNames;	 
@@ -2140,9 +2140,6 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.NACH_ALLOWED) {
 				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_NACH,Labels.getLabel("label_Mandate_Nach")));
 			}
-			if (ImplementationConstants.PDC_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC,Labels.getLabel("label_Mandate_PDC")));
-			}
 		}
 		return mandateTypeList;
 	}
@@ -2192,6 +2189,9 @@ public class PennantStaticListUtil {
 		if(repayMethodList == null){
 			repayMethodList = new ArrayList<ValueLabel>(3);
 			repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_MANUAL,Labels.getLabel("label_RepayMethod_Manual")));
+			if (ImplementationConstants.PDC_ALLOWED) {
+				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,Labels.getLabel("label_RepayMethod_PDC")));
+			}
 			if (ImplementationConstants.AUTO_ALLOWED) {
 				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO,Labels.getLabel("label_RepayMethod_Casa")));
 			}

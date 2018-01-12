@@ -1,3 +1,12 @@
+pff 4.1.0, 2018-01-09
+---------------------
+Cache enabled for ErrorDetails and SystemParameter service classes.
+
+pff 4.1.0, 2018-01-06
+---------------------
+- Refactoring renamed the application Datasoure and the corresponding TransactionManager(pfsDatasource and pfsTransactionManager) bean Id's to datasource and transactionManager
+- Refactoring removed the ErrorDetail class and used the ErrorDetails on behalf of ErrorDetail.   
+
 pff 4.1.0, 2017-12-22
 ---------------------
 - Merged Reason Category Master code from Base/MLOD to Base/Trunk

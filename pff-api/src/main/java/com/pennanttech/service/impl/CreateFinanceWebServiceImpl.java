@@ -174,7 +174,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
 					String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
 					String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
-					String accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
+					long accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
 					String referralId = financeDetail.getFinScheduleData().getFinanceMain().getReferralId();
 					boolean quickDisb = financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb();
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);

@@ -44,17 +44,15 @@ package com.pennant.app.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
+import com.pennant.backend.service.smtmasters.PFSParameterService;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * A suite of utilities surrounding the use of the system parameters that contain information about the environment for
@@ -62,8 +60,10 @@ import com.pennanttech.pennapps.core.App.Database;
  */
 public class SysParamUtil {
 	private static final Logger logger = Logger.getLogger(SysParamUtil.class);
-	public static String dbQueryConcat = "";
-
+	
+	private static PFSParameterService systemParameterService;
+	private static List<GlobalVariable> globalVariablesList = null;
+	
 	/**
 	 * Enumerates the system parameter codes.
 	 */
@@ -165,57 +165,10 @@ public class SysParamUtil {
 		return Integer.parseInt(getValueAsString(code));
 	}
 
-	private static PFSParameterDAO pFSParameterDAO;
-	private static HashMap<String, PFSParameter> parmDetails = null;
-	private static List<GlobalVariable> globalVariablesList = null;
-
-	/**
-	 * Initialization of <b>SysParamUtil</b> class.
-	 * 
-	 */
-	public static void Init() {
-		parmDetails = null;
-		getParmList();
-		dbQueryConstants();
-	}
-
-
-	/**
-	 * Get the List of System Parameters
-	 * 
-	 * @return HashMap
-	 */
-	public static HashMap<String, PFSParameter> getParmList() {
-		logger.debug("Entering");
-		final List<PFSParameter> pfsParameters = getPFSParameterDAO().getAllPFSParameter();
-		if (pfsParameters != null) {
-			parmDetails = new HashMap<String, PFSParameter>(pfsParameters.size());
-			for (int i = 0; i < pfsParameters.size(); i++) {
-				parmDetails.put(pfsParameters.get(i).getSysParmCode(), pfsParameters.get(i));
-			}
-		}
-		logger.debug("Leaving");
-		return parmDetails;
-	}
-
-	public static void setParmDetails(String code, String value) {
-		logger.debug("Entering");
-		if (parmDetails != null) {
-			PFSParameter pfsParameter = parmDetails.get(code);
-			if (pfsParameter != null) {
-				parmDetails.remove(code);
-				pfsParameter.setSysParmValue(value);
-				parmDetails.put(code, pfsParameter);
-			}
-		}
-		logger.debug("Leaving");
-	}
-	
 	public static void updateParamDetails(String code, String value) {
-		logger.debug("Entering");
-		setParmDetails(code, value);
-		getPFSParameterDAO().update(code, value, "");
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
+		systemParameterService.update(code, value, "");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -227,7 +180,7 @@ public class SysParamUtil {
 		logger.debug("Entering");
 
 		if (globalVariablesList == null) {
-			globalVariablesList = getPFSParameterDAO().getGlobaVariables();
+			globalVariablesList = systemParameterService.getGlobaVariables();
 		}
 		logger.debug("Leaving");
 		return globalVariablesList;
@@ -240,7 +193,6 @@ public class SysParamUtil {
 	 * @return
 	 */
 	public static PFSParameter getSystemParameterObject(String parmCode) {
-		
 		return getParamByID(parmCode);
 	}
 
@@ -269,26 +221,12 @@ public class SysParamUtil {
 		}
 		return object;
 	}
-	
-	private static void dbQueryConstants() {
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
-			dbQueryConcat = "||";
-		} else {
-			dbQueryConcat = "+";
-		}
-	}
-	
-
-	private static PFSParameterDAO getPFSParameterDAO() {
-		return pFSParameterDAO;
-	}
-
-	public void setPFSParameterDAO(PFSParameterDAO pFSParameterDAO) {
-		SysParamUtil.pFSParameterDAO = pFSParameterDAO;
-	}
-	
+			
 	private static PFSParameter getParamByID(String code){
-		return pFSParameterDAO.getPFSParameterById(StringUtils.trimToEmpty(code), "");
+		return systemParameterService.getParameterByCode(StringUtils.trimToEmpty(code));
 	}
-	
+
+	public static void setSystemParameterService(PFSParameterService systemParameterService) {
+		SysParamUtil.systemParameterService = systemParameterService;
+	}	
 }

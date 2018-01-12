@@ -86,7 +86,7 @@ public class BatchMonitor {
 	private BatchMonitor() {
 		jobMonitorContext 	= new ClassPathXmlApplicationContext("launch-context.xml");
 		jobMonitorExplorer = (SimpleJobExplorer) jobMonitorContext.getBean("jobExplorer");
-		dataSource 			= (DataSource)jobMonitorContext.getBean("pfsDatasource");
+		dataSource 			= (DataSource)jobMonitorContext.getBean("dataSource");
 	}
 
 	public static BatchMonitor getInstance() {

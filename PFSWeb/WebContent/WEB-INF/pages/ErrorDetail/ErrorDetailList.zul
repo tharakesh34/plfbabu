@@ -9,9 +9,8 @@
 	<window id="window_ErrorDetailList" apply="${errorDetailListCtrl}"
 		border="none" width="100%">
 
-		<div sclass="z-toolbar" style="padding:0px" height="28px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%" widths="30%,40%,30%">
+		<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<label value="" />
@@ -55,8 +54,7 @@
 			<center border="none">
 				<div>
 					<grid id="searchGrid" sclass="GridLayoutNoBorder"
-						fixedLayout="true"
-						style="border:0px; padding-left:5px; padding-right:5px;">
+						fixedLayout="true">
 						<columns>
 							<column width="15%" />
 							<column width="5%" />

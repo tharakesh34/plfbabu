@@ -480,49 +480,6 @@ public class NiyoginDAOImpl {
 		}
 	}
 
-	/**
-	 * Fetch the customer documents for the specified customer
-	 * 
-	 * @param custId
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return CustomerDocument
-	 */
-	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
-		logger.debug("Entering");
-		CustomerDocument customerDocument = new CustomerDocument();
-		customerDocument.setId(custId);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
-		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
-		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
-		selectSql.append(", DocPurpose, DocUri");
-		if (type.contains("View")) {
-			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
-			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
-			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
-		}
-		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
-		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
-		selectSql.append(", RecordType, WorkflowId");
-		selectSql.append(" FROM CustomerDocuments");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" where CustID = :CustID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-					CustomerDocument.class);
-			
-			return this.namedJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			return Collections.emptyList();
-		}
-	}
 	
 	/**
 	 * Method for get the hold reasons.
@@ -612,28 +569,6 @@ public class NiyoginDAOImpl {
 		return null;
 	}
 
-	/**
-	 * Method for fetch the CustomerTypeCode description for given CustTypeCode.
-	 * 
-	 * @param custtypecode
-	 * @return
-	 */
-	public String getCustTypeDesc(String custTypeCode) {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CUSTTYPEDESC FROM RMTCUSTTYPES ");
-		selectSql.append(" WHERE CUSTTYPECODE= :CUSTTYPECODE");
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("CUSTTYPECODE", custTypeCode);
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug(Literal.LEAVING);
-		try {
-			return namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-		}
-		return null;
-	}
 	
 	/**
 	 * Fetch the Record  LOV Field Details details by key field
@@ -681,5 +616,77 @@ public class NiyoginDAOImpl {
 			return 0;
 		}
 	}
+
+	
+
+	
+	/**
+	 * Fetch the customer documents for the specified customer
+	 * 
+	 * @param custId
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return CustomerDocument
+	 */
+	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setId(custId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
+		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
+		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
+		selectSql.append(", DocPurpose, DocUri");
+		if (type.contains("View")) {
+			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
+			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
+			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
+		}
+		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
+		selectSql.append(", RecordType, WorkflowId");
+		selectSql.append(" FROM CustomerDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" where CustID = :CustID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
+			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+					CustomerDocument.class);
+			
+			return this.namedJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			return Collections.emptyList();
+		}
+	}
+	
+	/**
+	 * Method for fetch the CustomerTypeCode description for given CustTypeCode.
+	 * 
+	 * @param custtypecode
+	 * @return
+	 */
+	public String getCustTypeDesc(String custTypeCode) {
+		logger.debug("Entering");
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT CUSTTYPEDESC FROM RMTCUSTTYPES ");
+		selectSql.append(" WHERE CUSTTYPECODE= :CUSTTYPECODE");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("CUSTTYPECODE", custTypeCode);
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.LEAVING);
+		try {
+			return namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+		}
+		return null;
+	}
+
+
 
 }

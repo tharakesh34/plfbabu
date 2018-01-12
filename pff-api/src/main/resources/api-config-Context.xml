@@ -20,7 +20,7 @@
 	<bean id="serverAuthService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ServerAuthServiceTarget" />
@@ -49,7 +49,7 @@
 	<bean id="userAuthService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="userAuthServiceTarget" />
@@ -110,7 +110,7 @@
 	<bean id="createFinanceController"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="createFinanceControllerTarget" />

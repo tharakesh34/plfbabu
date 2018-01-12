@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennanttech.util.APIConstants;
 
@@ -72,7 +72,7 @@ public class APIErrorHandlerService {
 	 */
 	public static WSReturnStatus getFailedStatus(String errorCode) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(errorCode);
 		if(errorDetail != null) {
 			status.setReturnCode(errorCode);
 			status.setReturnText(errorDetail.getErrorMessage());
@@ -89,7 +89,7 @@ public class APIErrorHandlerService {
 	 */
 	public static WSReturnStatus getFailedStatus(String errorCode, String parameter[]) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(errorCode);
 		status.setReturnCode(errorCode);
 		if(errorDetail != null) {
 			String errorMessage = getErrorMessage(errorDetail.getErrorMessage(), parameter);

@@ -250,7 +250,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
 			valueDate = appDate;
 
-			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("dataSource"),
 					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
 
 			if (trialbal.isBatchExists(selectedDimention)) {
@@ -267,7 +267,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
 
 				if ("S".equals(status.getStatus())) {
-					new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+					new SAPGLProcess((DataSource) SpringUtil.getBean("dataSource"),
 							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
 				}
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {

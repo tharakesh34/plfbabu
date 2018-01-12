@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,6 @@ import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.LegalDeskService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
@@ -40,7 +38,6 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	private static final Logger	logger				= Logger.getLogger(LegalDeskServiceImpl.class);
 	private final String		extConfigFileName	= "legalDesk";
 	private String				serviceUrl;
-	private Map<String, Object>	extendedMap			= null;
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -114,12 +111,10 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			partyAddress = new PartyAddress();
 			partyAddress.setStreet(address.getCustAddrStreet());
 			partyAddress.setLocality(address.getCustAddrLine2());
-			if (city != null) {
-				partyAddress.setCity(city.getPCCityName());
-				partyAddress.setState(city.getLovDescPCProvinceName());
-				partyAddress.setCountry(city.getLovDescPCCountryName());
-			}
+			partyAddress.setCity(city.getPCCityName());
+			partyAddress.setState(city.getLovDescPCProvinceName());
 			partyAddress.setPincode(address.getCustAddrZIP());
+			partyAddress.setCountry(city.getLovDescPCCountryName());
 		}
 		stampPaperData.setFirstPartyAddress(partyAddress);
 		List<FinFeeDetail> feeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
@@ -145,37 +140,11 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		SignersInfo signersInfo = new SignersInfo();
-		if (extendedMap != null) {
-			signersInfo.setLenders(prepareLendersList(extendedMap));
-		}
+		signersInfo.setLenders(null);
 		signersInfo.setBorrowers(prepareBorrowersList(financeDetail));
 		logger.debug(Literal.LEAVING);
 		return signersInfo;
-	}
-
-	/**
-	 * Method for prepare the LenderList
-	 * 
-	 * @param extendedMap
-	 * @return
-	 */
-	private List<SignerDetails> prepareLendersList(Map<String, Object> extendedMap) {
-		logger.debug(Literal.ENTERING);
-		List<SignerDetails> lenderList = new ArrayList<>(6);
-		for (int i = 1; i <= 6; i++) {
-			String lenderName = getStringValue("LENDERSIGNUFNAME" + i) + " " + getStringValue("LENDERSIGNULNAME" + i);
-			if (StringUtils.isNotBlank(lenderName)) {
-				SignerDetails lender = new SignerDetails();
-				lender.setName(lenderName);
-				lender.setEmail(getStringValue("LENDERSIGNUEMAIL" + i));
-				lender.setSeqNumbOfSign(getIntValue("LENDERSIGNUSEQ" + i));
-				lenderList.add(lender);
-			}
-		}
-		logger.debug(Literal.ENTERING);
-		return lenderList;
 	}
 
 	/**
@@ -187,20 +156,19 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	private List<SignerDetails> prepareBorrowersList(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		List<SignerDetails> borrowersList = new ArrayList<>(1);
-		SignerDetails solePropborrower = null;
+
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals(InterfaceConstants.CUSTTYPE_SOLEPRO)) {
-			solePropborrower = new SignerDetails();
-			solePropborrower.setName(customer.getCustShrtName());
-			solePropborrower.setSeqNumbOfSign(1);
-			solePropborrower.setCustID(customer.getCustID());
-			String pan = getPanNumber(customerDetails.getCustomerDocumentsList());
-			solePropborrower.setPan(pan != null ? pan : "");
-
+		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals("3")) {
+			SignerDetails borrower = new SignerDetails();
+			borrower.setName(customer.getCustShrtName());
+			borrower.setSeqNumbOfSign(1);
+			borrower.setCustID(customer.getCustID());
+			borrower.setPan(getPanNumber(customerDetails.getCustomerDocumentsList()));
 			List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
 			NiyoginUtility.sortCustomerEmail(customerEMailList);
-			solePropborrower.setEmail(setCustomerEmail(customerEMailList, solePropborrower));
+			setCustomerEmail(customerEMailList, borrower);
+			borrowersList.add(borrower);
 		}
 
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
@@ -220,19 +188,13 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 				List<CustomerEMail> custEmails = getCustomersEmails(customerIds);
 				NiyoginUtility.sortCustomerEmail(custEmails);
 				for (SignerDetails borrower : borrowersList) {
-					borrower.setEmail(setCustomerEmail(custEmails, borrower));
+					setCustomerEmail(custEmails, borrower);
 					List<CustomerDocument> custDocuments = getCustomersDocuments(borrower.getCustID());
 					if (!custDocuments.isEmpty()) {
-						String pan = getPanNumber(custDocuments);
-						borrower.setPan(pan != null ? pan : "");
-					} else {
-						borrower.setPan("");
+						borrower.setPan(getPanNumber(custDocuments));
 					}
 				}
 			}
-		}
-		if (solePropborrower != null) {
-			borrowersList.add(solePropborrower);
 		}
 		logger.debug(Literal.LEAVING);
 		return borrowersList;
@@ -244,16 +206,14 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @param custEmails
 	 * @param borrower
 	 */
-	private String setCustomerEmail(List<CustomerEMail> custEmails, SignerDetails borrower) {
-		String custEmail = "";
+	private void setCustomerEmail(List<CustomerEMail> custEmails, SignerDetails borrower) {
 		for (CustomerEMail customerEMail : custEmails) {
 			if (customerEMail.getCustID() != borrower.getCustID()) {
 				continue;
 			}
-			custEmail = customerEMail.getCustEMail();
+			borrower.setEmail(customerEMail.getCustEMail());
 			break;
 		}
-		return custEmail;
 	}
 
 	/**
@@ -281,7 +241,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		} else if (StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "C")) {
 			instType = App.getLabel("label_Flat_Convert_Reduce");
 		}
-		formData.setBorrowerPan(null);
+		formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));
 		formData.setSactionAmt(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
 		formData.setIntrestType(instType);
 		formData.setRateOfIntrest(String.valueOf(extendedMap.get("RATE_LEGALDESK")));
@@ -305,19 +265,5 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
-	}
-
-	private String getStringValue(String key) {
-		return Objects.toString(extendedMap.get(key), "");
-	}
-
-	private int getIntValue(String key) {
-		int intValue = 0;
-		try {
-			intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
-		} catch (NumberFormatException e) {
-			logger.error("Exception", e);
-		}
-		return intValue;
 	}
 }

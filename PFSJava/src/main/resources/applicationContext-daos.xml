@@ -13,11 +13,11 @@
 	<!-- ====================================================== -->
 
 	<bean id="jdbcSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<constructor-arg ref="pfsDatasource" />
+		<constructor-arg ref="dataSource" />
 	</bean>
 
 	<bean id="jdbcExtSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<constructor-arg ref="pfsExtDatasource" />
+		<constructor-arg ref="extDatasource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -41,18 +41,6 @@
 		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 
 	<!-- ====================================================== -->
-	<!-- Error Details Configuration -->
-	<!-- ====================================================== -->
-
-	<bean id="ErrorUtil " class="com.pennant.app.util.ErrorUtil">
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
-	</bean>
-
-	<bean id="errorDetailsDAO" class="com.pennant.backend.dao.impl.ErrorDetailsDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
 	<!-- ====================================================== -->
 
@@ -68,7 +56,7 @@
 
 	<bean id="notesDAO" class="com.pennant.backend.dao.impl.NotesDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean name="notesService" class="com.pennant.backend.service.impl.NotesServiceImpl">
@@ -85,13 +73,13 @@
 
 	<bean id="workFlowDetailsDAO" class="com.pennant.backend.dao.impl.WorkFlowDetailsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="workFlowDetailsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="workFlowDetailsServiceTarget" />
@@ -170,7 +158,7 @@
 		scope="prototype">
 		<property name="notificationsService" ref="notificationsService" />
 		<property name="mailUtility" ref="mailUtility" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="reportUtil" ref="reportUtil" />
 	</bean>
 
@@ -227,7 +215,7 @@
 	<bean id="securityUserService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityUserServiceTarget" />
@@ -272,7 +260,7 @@
 	<bean id="securityRoleService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityRoleServiceTarget" />
@@ -307,7 +295,7 @@
 	<bean id="securityGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityGroupServiceTarget" />
@@ -350,7 +338,7 @@
 	<bean id="securityRoleGroupsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityRoleGroupsServiceTarget" />
@@ -382,7 +370,7 @@
 	<bean id="securityGroupRightsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityGroupRightsServiceTarget" />
@@ -411,13 +399,13 @@
 	<bean id="academicDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.AcademicDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="academicService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="academicServiceTarget" />
@@ -444,13 +432,13 @@
 	<bean id="addressTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.AddressTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="addressTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="addressTypeServiceTarget" />
@@ -478,13 +466,13 @@
 	<bean id="blackListReasonCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.BlackListReasonCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="blackListReasonCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="blackListReasonCodeServiceTarget" />
@@ -510,13 +498,13 @@
 
 	<bean id="cityDAO" class="com.pennant.backend.dao.systemmasters.impl.CityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="cityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="cityServiceTarget" />
@@ -544,13 +532,13 @@
 	<bean id="countryDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.CountryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="countryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="countryServiceTarget" />
@@ -577,13 +565,13 @@
 	<bean id="departmentDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.DepartmentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="departmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="departmentServiceTarget" />
@@ -610,13 +598,13 @@
 	<bean id="designationDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.DesignationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="designationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="designationServiceTarget" />
@@ -643,13 +631,13 @@
 	<bean id="dispatchModeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.DispatchModeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="dispatchModeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dispatchModeServiceTarget" />
@@ -676,12 +664,12 @@
 	<bean id="divisionDetailDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.DivisionDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="divisionDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="divisionDetailServiceTarget" />
@@ -709,13 +697,13 @@
 	<bean id="documentTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.DocumentTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="documentTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="documentTypeServiceTarget" />
@@ -742,13 +730,13 @@
 	<bean id="eMailTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.EMailTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="eMailTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="eMailTypeServiceTarget" />
@@ -775,13 +763,13 @@
 	<bean id="notificationsDAO"
 		class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="notificationsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="notificationsServiceTarget" />
@@ -809,13 +797,13 @@
 	<bean id="employerDetailDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.EmployerDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="employerDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="employerDetailServiceTarget" />
@@ -842,13 +830,13 @@
 	<bean id="employmentTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.EmploymentTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="employmentTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="employmentTypeServiceTarget" />
@@ -875,13 +863,13 @@
 	<bean id="empStsCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.EmpStsCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="empStsCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="empStsCodeServiceTarget" />
@@ -908,13 +896,13 @@
 	<bean id="genderDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="genderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="genderServiceTarget" />
@@ -942,13 +930,13 @@
 	<bean id="generalDepartmentDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.GeneralDepartmentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="generalDepartmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="generalDepartmentServiceTarget" />
@@ -974,13 +962,13 @@
 	<bean id="generalDesignationDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.GeneralDesignationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="generalDesignationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="generalDesignationServiceTarget" />
@@ -1007,13 +995,13 @@
 	<bean id="groupStatusCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.GroupStatusCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="groupStatusCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="groupStatusCodeServiceTarget" />
@@ -1040,13 +1028,13 @@
 	<bean id="identityDetailsDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.IdentityDetailsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="identityDetailsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="identityDetailsServiceTarget" />
@@ -1073,13 +1061,13 @@
 	<bean id="incomeTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.IncomeTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="incomeTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="incomeTypeServiceTarget" />
@@ -1106,13 +1094,13 @@
 	<bean id="industryDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.IndustryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="industryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="industryServiceTarget" />
@@ -1139,13 +1127,13 @@
 	<bean id="lovFieldDetailDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.LovFieldDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="lovFieldDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="lovFieldDetailServiceTarget" />
@@ -1172,13 +1160,13 @@
 	<bean id="maritalStatusCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.MaritalStatusCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="maritalStatusCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="maritalStatusCodeServiceTarget" />
@@ -1205,13 +1193,13 @@
 	<bean id="nationalityCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.NationalityCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="nationalityCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="nationalityCodeServiceTarget" />
@@ -1238,13 +1226,13 @@
 	<bean id="phoneTypeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.PhoneTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="phoneTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="phoneTypeServiceTarget" />
@@ -1271,13 +1259,13 @@
 	<bean id="pRelationCodeDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.PRelationCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="pRelationCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="pRelationCodeServiceTarget" />
@@ -1304,13 +1292,13 @@
 	<bean id="professionDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.ProfessionDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="professionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="professionServiceTarget" />
@@ -1337,13 +1325,13 @@
 	<bean id="provinceDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.ProvinceDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="provinceService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="provinceServiceTarget" />
@@ -1373,13 +1361,13 @@
 	<bean id="salutationDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.SalutationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="salutationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="salutationServiceTarget" />
@@ -1406,13 +1394,13 @@
 	<bean id="sectorDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.SectorDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="sectorService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="sectorServiceTarget" />
@@ -1439,13 +1427,13 @@
 	<bean id="segmentDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.SegmentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="segmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="segmentServiceTarget" />
@@ -1472,13 +1460,13 @@
 	<bean id="subSectorDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.SubSectorDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="subSectorService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="subSectorServiceTarget" />
@@ -1505,13 +1493,13 @@
 	<bean id="subSegmentDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.SubSegmentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="subSegmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="subSegmentServiceTarget" />
@@ -1542,13 +1530,13 @@
 	<bean id="agreementDefinitionDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.AgreementDefinitionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="agreementDefinitionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="agreementDefinitionServiceTarget" />
@@ -1575,13 +1563,13 @@
 	<bean id="bankDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BankDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="bankDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="bankDetailServiceTarget" />
@@ -1617,13 +1605,13 @@
 	<bean id="baseRateDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BaseRateDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="baseRateService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="baseRateServiceTarget" />
@@ -1650,13 +1638,13 @@
 	<bean id="baseRateCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BaseRateCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="baseRateCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="baseRateCodeServiceTarget" />
@@ -1683,13 +1671,13 @@
 	<bean id="branchDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="branchService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="branchServiceTarget" />
@@ -1717,13 +1705,13 @@
 	<bean id="corpRelationCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CorpRelationCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="corpRelationCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="corpRelationCodeServiceTarget" />
@@ -1750,13 +1738,13 @@
 	<bean id="currencyDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="currencyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="currencyServiceTarget" />
@@ -1783,13 +1771,13 @@
 	<bean id="customerCategoryDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CustomerCategoryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerCategoryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerCategoryServiceTarget" />
@@ -1816,13 +1804,13 @@
 	<bean id="customerNotesTypeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CustomerNotesTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerNotesTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerNotesTypeServiceTarget" />
@@ -1850,13 +1838,13 @@
 	<bean id="customerStatusCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CustomerStatusCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerStatusCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerStatusCodeServiceTarget" />
@@ -1883,12 +1871,12 @@
 	<bean id="finCreditRevSubCategoryDAO"
 		class="com.pennant.backend.dao.customermasters.impl.FinCreditRevSubCategoryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finCreditRevSubCategoryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finCreditRevSubCategoryServiceTarget" />
@@ -1917,13 +1905,13 @@
 	<bean id="financeApplicationCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.FinanceApplicationCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeApplicationCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeApplicationCodeServiceTarget" />
@@ -1950,13 +1938,13 @@
 	<bean id="interestRateTypeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.InterestRateTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="interestRateTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="interestRateTypeServiceTarget" />
@@ -1983,13 +1971,13 @@
 	<bean id="rejectDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.RejectDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="rejectDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="rejectDetailServiceTarget" />
@@ -2016,13 +2004,13 @@
 	<bean id="relationshipOfficerDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.RelationshipOfficerDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="relationshipOfficerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="relationshipOfficerServiceTarget" />
@@ -2049,13 +2037,13 @@
 	<bean id="salesOfficerDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SalesOfficerDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="salesOfficerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="salesOfficerServiceTarget" />
@@ -2082,13 +2070,13 @@
 	<bean id="splRateDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SplRateDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="splRateService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="splRateServiceTarget" />
@@ -2115,13 +2103,13 @@
 	<bean id="splRateCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SplRateCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="splRateCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="splRateCodeServiceTarget" />
@@ -2148,12 +2136,12 @@
 	<bean id="transactionCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.TransactionCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="transactionCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="transactionCodeServiceTarget" />
@@ -2181,12 +2169,12 @@
 	<bean id="takafulProviderDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.TakafulProviderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="takafulProviderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="takafulProviderServiceTarget" />
@@ -2214,12 +2202,12 @@
 	<bean id="blacklistCustomerDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BlackListCustomerDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="blacklistCustomerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="blacklistCustomerServiceTarget" />
@@ -2247,13 +2235,13 @@
 	<bean id="targetDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.TargetDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="targetDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="targetDetailServiceTarget" />
@@ -2280,13 +2268,13 @@
 	<bean id="policeCaseDAO"
 		class="com.pennant.backend.dao.policecase.impl.PoliceCaseDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="policeCaseService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="policeCaseServiceTarget" />
@@ -2313,12 +2301,12 @@
 	<bean id="otherBankFinanceTypeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.OtherBankFinanceTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="otherBankFinanceTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="otherBankFinanceTypeServiceTarget" />
@@ -2345,13 +2333,13 @@
 	<bean id="returnedChequeDAO"
 		class=" com.pennant.backend.dao.returnedCheques.impl.ReturnedChequeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="returnedChequeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="returnedChequeServiceTarget" />
@@ -2377,12 +2365,12 @@
 	<bean id="vesselDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.VesselDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="vesselDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vesselDetailServiceTarget" />
@@ -2409,12 +2397,12 @@
 	<bean id="flagDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.FlagDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="flagService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="flagServiceTarget" />
@@ -2441,13 +2429,13 @@
 	<bean id="finSuspHoldDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finSuspHoldService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finSuspHoldServiceTarget" />
@@ -2479,13 +2467,13 @@
 
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="accountsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="accountsServiceTarget" />
@@ -2510,7 +2498,7 @@
 	<bean id="accountsHistoryDAO"
 		class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -2522,7 +2510,7 @@
 	<bean id="customerDetailsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerDetailsServiceTarget" />
@@ -2593,7 +2581,7 @@
 	<bean id="coreCustomerDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CoreCustomerDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Customers ============== -->
@@ -2601,13 +2589,13 @@
 	<bean id="customerDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerServiceTarget" />
@@ -2641,13 +2629,13 @@
 	<bean id="customerAddresDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerAddresDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerAddresService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerAddresServiceTarget" />
@@ -2676,13 +2664,13 @@
 	<bean id="customerAdditionalDetailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerAdditionalDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerAdditionalDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerAdditionalDetailServiceTarget" />
@@ -2709,13 +2697,13 @@
 	<bean id="customerBalanceSheetDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerBalanceSheetDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerBalanceSheetService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerBalanceSheetServiceTarget" />
@@ -2742,13 +2730,13 @@
 	<bean id="corporateCustomerDetailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CorporateCustomerDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="corporateCustomerDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="corporateCustomerDetailServiceTarget" />
@@ -2775,19 +2763,19 @@
 	<bean id="commitmentDAO"
 		class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="commitmentMovementDAO"
 		class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="commitmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="commitmentServiceTarget" />
@@ -2832,19 +2820,19 @@
 	<bean id="creditApplicationReviewDAO"
 		class="com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl.CreditApplicationReviewDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="creditReviewSummaryDAO"
 		class="com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="creditApplicationReviewService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="creditApplicationReviewServiceTarget" />
@@ -2887,13 +2875,13 @@
 	<bean id="directorDetailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="directorDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="directorDetailServiceTarget" />
@@ -2921,13 +2909,13 @@
 	<bean id="customerDocumentDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerDocumentDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerDocumentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerDocumentServiceTarget" />
@@ -2957,13 +2945,13 @@
 	<bean id="customerEMailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerEMailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerEMailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerEMailServiceTarget" />
@@ -2990,13 +2978,13 @@
 	<bean id="customerEmploymentDetailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerEmploymentDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerEmploymentDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerEmploymentDetailServiceTarget" />
@@ -3024,13 +3012,13 @@
 	<bean id="customerGroupDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerGroupDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerGroupServiceTarget" />
@@ -3059,13 +3047,13 @@
 	<bean id="customerIncomeDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerIncomeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerIncomeServiceTarget" />
@@ -3093,13 +3081,13 @@
 
 	<bean id="ddaProcessDAO" class="com.pennant.backend.dao.dda.impl.DDAProcessDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="ddaProcessService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ddaProcessServiceTarget" />
@@ -3125,13 +3113,13 @@
 	<bean id="customerIdentityDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerIdentityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerIdentityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerIdentityServiceTarget" />
@@ -3158,13 +3146,13 @@
 	<bean id="customerPhoneNumberDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerPhoneNumberDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerPhoneNumberService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerPhoneNumberServiceTarget" />
@@ -3192,13 +3180,13 @@
 	<bean id="customerPRelationDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerPRelationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerPRelationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerPRelationServiceTarget" />
@@ -3225,13 +3213,13 @@
 	<bean id="customerRatingDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerRatingDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerRatingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerRatingServiceTarget" />
@@ -3258,7 +3246,7 @@
 	<bean id="custEmployeeDetailDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustEmployeeDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -3267,7 +3255,7 @@
 	<bean id="customerBankInfoDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerBankInfoDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Customer Cheque Info Details ============== -->
@@ -3275,7 +3263,7 @@
 	<bean id="customerChequeInfoDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerChequeInfoDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Customer external Liability Details ============== -->
@@ -3283,7 +3271,7 @@
 	<bean id="customerExtLiabilityDAO"
 		class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -3296,13 +3284,13 @@
 	<bean id="accountingSetDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="accountingSetService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="accountingSetServiceTarget" />
@@ -3334,7 +3322,7 @@
 	<bean id="transactionEntryDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Check List Details ============== -->
@@ -3342,19 +3330,19 @@
 	<bean id="checkListDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CheckListDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="checkListDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CheckListDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="checkListService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="checkListServiceTarget" />
@@ -3381,13 +3369,13 @@
 
 	<bean id="dedupParmDAO" class="com.pennant.backend.dao.dedup.impl.DedupParmDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="dedupParmService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dedupParmServiceTarget" />
@@ -3417,13 +3405,13 @@
 
 	<bean id="dedupFieldsDAO" class="com.pennant.backend.dao.dedup.impl.DedupFieldsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="dedupFieldsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dedupFieldsServiceTarget" />
@@ -3449,13 +3437,13 @@
 
 	<bean id="ruleDAO" class="com.pennant.backend.dao.rulefactory.impl.RuleDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="ruleService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ruleServiceTarget" />
@@ -3493,13 +3481,13 @@
 
 	<bean id="mailTemplateDAO" class="com.pennant.backend.dao.mail.impl.MailTemplateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="mailTemplateService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="mailTemplateServiceTarget" />
@@ -3527,19 +3515,19 @@
 	<bean id="overdueChargeDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.OverdueChargeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="overdueChargeDetailDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.OverdueChargeDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="overdueChargeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="overdueChargeServiceTarget" />
@@ -3568,13 +3556,13 @@
 	<bean id="scoringGroupDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.ScoringGroupDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="scoringGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="scoringGroupServiceTarget" />
@@ -3602,13 +3590,13 @@
 	<bean id="scoringMetricsDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.ScoringMetricsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="scoringSlabDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.ScoringSlabDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -3620,13 +3608,13 @@
 	<bean id="accountTypeDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="accountTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="accountTypeServiceTarget" />
@@ -3653,13 +3641,13 @@
 	<bean id="customerTypeDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.CustomerTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="customerTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerTypeServiceTarget" />
@@ -3686,14 +3674,14 @@
 	<bean id="extendedFieldDetailDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.ExtendedFieldDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="auditDataSource" ref="auditDatasource" />
 	</bean>
 
 	<bean id="extendedFieldDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="extendedFieldDetailServiceTarget" />
@@ -3722,13 +3710,13 @@
 	<bean id="financeTypeDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeTypeServiceTarget" />
@@ -3764,31 +3752,31 @@
 	<bean id="finTypeAccountDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finTypeFeesDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypeFeesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finTypeInsuranceDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypeInsuranceDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finTypeAccountingDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finTypePartnerBankDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypePartnerBankDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Step Policy Details ============== -->
@@ -3796,13 +3784,13 @@
 	<bean id="stepPolicyHeaderDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.StepPolicyHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="stepPolicyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="stepPolicyServiceTarget" />
@@ -3832,7 +3820,7 @@
 	<bean id="stepPolicyDetailDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.StepPolicyDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Work Flow Details ============== -->
@@ -3840,13 +3828,13 @@
 	<bean id="financeWorkFlowDAO"
 		class="com.pennant.backend.dao.lmtmasters.impl.FinanceWorkFlowDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeWorkFlowService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeWorkFlowServiceTarget" />
@@ -3875,13 +3863,13 @@
 	<bean id="holidayMasterDAO"
 		class="com.pennant.backend.dao.smtmasters.impl.HolidayMasterDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="holidayMasterService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="holidayMasterServiceTarget" />
@@ -3908,13 +3896,13 @@
 	<bean id="financeReferenceDetailDAO"
 		class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeReferenceDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeReferenceDetailServiceTarget" />
@@ -3943,20 +3931,20 @@
 	<bean id="financeCheckListReferenceDAO"
 		class="com.pennant.backend.dao.lmtmasters.impl.FinanceCheckListReferenceDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Product Details ============== -->
 
 	<bean id="productDAO" class="com.pennant.backend.dao.bmtmasters.impl.ProductDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="productService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="productServiceTarget" />
@@ -3982,13 +3970,12 @@
 	<bean id="productAssetDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.ProductAssetDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ System Parameter Details ============== -->
-	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil"
-		init-method="Init">
-		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil">
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil"
 		init-method="init">
@@ -4000,16 +3987,16 @@
 	<bean id="pFSParameterDAO"
 		class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="pFSParameterService"
+	<bean id="systemParameterService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="pFSParameterServiceTarget" />
+			<ref bean="systemParameterServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -4022,7 +4009,7 @@
 		</property>
 	</bean>
 
-	<bean name="pFSParameterServiceTarget"
+	<bean name="systemParameterServiceTarget"
 		class="com.pennant.backend.service.smtmasters.impl.PFSParameterServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -4033,13 +4020,13 @@
 	<bean id="weekendMasterDAO"
 		class="com.pennant.backend.dao.smtmasters.impl.WeekendMasterDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="weekendMasterService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="weekendMasterServiceTarget" />
@@ -4070,7 +4057,7 @@
 	<bean id="financeDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeDetailServiceTarget" />
@@ -4145,7 +4132,6 @@
 		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
 		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
-		<property name="financeRejectDetailDAO" ref="financeRejectDetailDAO" />
 		<property name="rolledoverFinanceDAO" ref="rolledoverFinanceDAO" />
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="tatDetailDAO" ref="tatDetailDAO" />
@@ -4316,13 +4302,13 @@
 
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeMainService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeMainServiceTarget" />
@@ -4346,7 +4332,7 @@
 	<bean id="finContributorHeaderDAO"
 		class="com.pennant.backend.dao.finance.impl.FinContributorHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Contributors Details -->
@@ -4354,7 +4340,7 @@
 	<bean id="finContributorDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinContributorDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Agreement Details -->
@@ -4362,14 +4348,14 @@
 	<bean id="finAgreementDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinAgreementDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Eligibility Details -->
 
 	<bean id="financeEligibilityDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceEligibilityDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Document Details -->
@@ -4377,7 +4363,7 @@
 	<bean id="documentDetailsDAO"
 		class="com.pennant.backend.dao.documentdetails.impl.DocumentDetailsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Overdue penalty Rate Details -->
@@ -4385,14 +4371,14 @@
 	<bean id="finODPenaltyRateDAO"
 		class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Status Details -->
 
 	<bean id="finStatusDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Log Entry Details -->
@@ -4400,54 +4386,54 @@
 	<bean id="finLogEntryDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Rolledover Finance Details -->
 
 	<bean id="rolledoverFinanceDAO"
 		class="com.pennant.backend.dao.finance.impl.RolledoverFinanceDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Collateral Assignment -->
 	<bean id="collateralAssignmentDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralAssignmentDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- FinAssetTypes -->
 	<bean id="finAssetTypeDAO"
 		class="com.pennant.backend.dao.collateral.impl.FinAssetTypesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Collateral Assignment -->
 	<bean id="finInsurancesDAO"
 		class="com.pennant.backend.dao.insurancedetails.impl.FinInsurancesDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Collateral Assignment -->
 	<bean id="finPlanEmiHolidayDAO"
 		class="com.pennant.backend.dao.finance.impl.FinPlanEmiHolidayDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Writeoff Details ============== -->
 
 	<bean id="financeWriteoffDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceWriteoffDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeWriteoffService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeWriteoffServiceTarget" />
@@ -4503,7 +4489,7 @@
 	<bean id="financeScheduleDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Disbursement Details ============== -->
@@ -4511,7 +4497,7 @@
 	<bean id="financeDisbursementDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Repay Instruction Details ============== -->
@@ -4519,13 +4505,13 @@
 	<bean id="repayInstructionDAO"
 		class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="repayInstructionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="repayInstructionServiceTarget" />
@@ -4552,7 +4538,7 @@
 	<bean id="financeScoreHeaderDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceScoreHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Posting Details ============== -->
@@ -4560,7 +4546,7 @@
 	<bean id="postingsDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 
@@ -4569,7 +4555,7 @@
 	<bean id="finStageAccountingLogDAO"
 		class="com.pennant.backend.dao.finance.impl.FinStageAccountingLogDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance FeeCharges Details ============== -->
@@ -4577,7 +4563,7 @@
 	<bean id="finFeeChargesDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.FinFeeChargesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Fee Schedule Details ============== -->
@@ -4585,7 +4571,7 @@
 	<bean id="finFeeScheduleDetailDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Step Finance Details ============== -->
@@ -4593,14 +4579,14 @@
 	<bean id="financeStepDetailDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.FinanceStepDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Profit Details ============== -->
 
 	<bean id="profitDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Repay Priority Details ============== -->
@@ -4608,13 +4594,13 @@
 	<bean id="financeRepayPriorityDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceRepayPriorityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeRepayPriorityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeRepayPriorityServiceTarget" />
@@ -4642,13 +4628,13 @@
 	<bean id="commodityBrokerDetailDAO"
 		class="com.pennant.backend.dao.finance.commodity.impl.CommodityBrokerDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="commodityBrokerDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="commodityBrokerDetailServiceTarget" />
@@ -4675,13 +4661,13 @@
 	<bean id="commodityDetailDAO"
 		class="com.pennant.backend.dao.finance.commodity.impl.CommodityDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="commodityDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="commodityDetailServiceTarget" />
@@ -4731,13 +4717,13 @@
 	<bean id="interestRateBasisCodeDAO"
 		class="com.pennant.backend.dao.staticparms.impl.InterestRateBasisCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="interestRateBasisCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="interestRateBasisCodeServiceTarget" />
@@ -4764,14 +4750,14 @@
 	<bean id="extendedFieldHeaderDAO"
 		class="com.pennant.backend.dao.staticparms.impl.ExtendedFieldHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="auditDataSource" ref="auditDatasource" />
 	</bean>
 
 	<bean id="extendedFieldHeaderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="extendedFieldHeaderServiceTarget" />
@@ -4798,13 +4784,13 @@
 	<bean id="frequencyDAO"
 		class="com.pennant.backend.dao.staticparms.impl.FrequencyDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="frequencyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="frequencyServiceTarget" />
@@ -4831,13 +4817,13 @@
 	<bean id="languageDAO"
 		class="com.pennant.backend.dao.staticparms.impl.LanguageDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="languageService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="languageServiceTarget" />
@@ -4864,13 +4850,13 @@
 	<bean id="lovFieldCodeDAO"
 		class="com.pennant.backend.dao.staticparms.impl.LovFieldCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="lovFieldCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="lovFieldCodeServiceTarget" />
@@ -4897,13 +4883,13 @@
 	<bean id="scheduleMethodDAO"
 		class="com.pennant.backend.dao.staticparms.impl.ScheduleMethodDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="scheduleMethodService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="scheduleMethodServiceTarget" />
@@ -4934,13 +4920,13 @@
 	<bean id="ratingCodeDAO"
 		class="com.pennant.backend.dao.bmtmasters.impl.RatingCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="ratingCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ratingCodeServiceTarget" />
@@ -4967,13 +4953,13 @@
 	<bean id="ratingTypeDAO"
 		class="com.pennant.backend.dao.bmtmasters.impl.RatingTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="ratingTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ratingTypeServiceTarget" />
@@ -5003,13 +4989,13 @@
 
 	<bean id="courseDAO" class="com.pennant.backend.dao.amtmasters.impl.CourseDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="courseService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="courseServiceTarget" />
@@ -5036,13 +5022,13 @@
 	<bean id="courseTypeDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.CourseTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="courseTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="courseTypeServiceTarget" />
@@ -5069,13 +5055,13 @@
 	<bean id="expenseTypeDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="expenseTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="expenseTypeServiceTarget" />
@@ -5102,13 +5088,13 @@
 	<bean id="vehicleDealerDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.VehicleDealerDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="vehicleDealerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vehicleDealerServiceTarget" />
@@ -5136,13 +5122,13 @@
 	<bean id="vehicleManufacturerDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.VehicleManufacturerDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="vehicleManufacturerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vehicleManufacturerServiceTarget" />
@@ -5169,13 +5155,13 @@
 	<bean id="vehicleModelDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.VehicleModelDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="vehicleModelService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vehicleModelServiceTarget" />
@@ -5202,13 +5188,13 @@
 	<bean id="vehicleVersionDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.VehicleVersionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="vehicleVersionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vehicleVersionServiceTarget" />
@@ -5235,12 +5221,12 @@
 	<bean id="authorizationDAO"
 		class="com.pennant.backend.dao.amtmasters.impl.AuthorizationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="authorizationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="authorizationServiceTarget" />
@@ -5271,7 +5257,7 @@
 	<bean id="finCommodityInventoryDAO"
 		class="com.pennant.backend.dao.lmtmasters.impl.FinCommodityInventoryDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Etihad Credit Bureau Details ============== -->
@@ -5279,13 +5265,13 @@
 	<bean id="etihadCreditBureauDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.EtihadCreditBureauDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="etihadCreditBureauDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="etihadCreditBureauDetailServiceTarget" />
@@ -5312,13 +5298,13 @@
 	<bean id="bundledProductsDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.BundledProductsDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="bundledProductsDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="bundledProductsDetailServiceTarget" />
@@ -5345,13 +5331,13 @@
 	<bean id="finAssetEvaluationDAO"
 		class="com.pennant.backend.dao.finance.impl.FinAssetEvaluationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finAssetEvaluationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finAssetEvaluationServiceTarget" />
@@ -5378,13 +5364,13 @@
 	<bean id="finAdvancePaymentsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinAdvancePaymentsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finAdvancePaymentsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finAdvancePaymentsServiceTarget" />
@@ -5413,19 +5399,19 @@
 	<bean id="finFeeDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinFeeDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finFeeReceiptDAO"
 		class="com.pennant.backend.dao.finance.impl.FinFeeReceiptDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finFeeDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finFeeDetailServiceTarget" />
@@ -5457,13 +5443,13 @@
 	<bean id="finCovenantTypeDAO"
 		class="com.pennant.backend.dao.finance.impl.FinCovenantTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finCovenantTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finCovenantTypeServiceTarget" />
@@ -5495,13 +5481,13 @@
 	<bean id="payOrderIssueHeaderDAO"
 		class="com.pennant.backend.dao.payorderissue.impl.PayOrderIssueHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="payOrderIssueService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="payOrderIssueServiceTarget" />
@@ -5540,7 +5526,7 @@
 	<bean id="manualPaymentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="manualPaymentServiceTarget" />
@@ -5611,7 +5597,7 @@
 	<bean id="receiptService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="receiptServiceTarget" />
@@ -5677,7 +5663,7 @@
 	<bean id="finExcessAmountDAO"
 		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Receipt Header Details ============== -->
@@ -5685,7 +5671,7 @@
 	<bean id="finReceiptHeaderDAO"
 		class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Receipt Detail Details ============== -->
@@ -5693,14 +5679,14 @@
 	<bean id="finReceiptDetailDAO"
 		class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Receipt Allocation Details ============== -->
 
 	<bean id="receiptAllocationDetailDAO"
 		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" >
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Fee Receipt Process Details ============== -->
@@ -5708,7 +5694,7 @@
 	<bean id="feeReceiptService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="feeReceiptServiceTarget" />
@@ -5739,7 +5725,7 @@
 	<bean id="receiptRealizationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="receiptRealizationServiceTarget" />
@@ -5769,7 +5755,7 @@
 	<bean id="receiptCancellationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="receiptCancellationServiceTarget" />
@@ -5817,13 +5803,13 @@
 	<bean id="overdueChargeRecoveryDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.OverdueChargeRecoveryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="overdueChargeRecoveryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="overdueChargeRecoveryServiceTarget" />
@@ -5851,13 +5837,13 @@
 	<bean id="provisionDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.ProvisionDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="provisionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="provisionServiceTarget" />
@@ -5897,13 +5883,13 @@
 	<bean id="provisionMovementDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.ProvisionMovementDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="provisionMovementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="provisionMovementServiceTarget" />
@@ -5929,13 +5915,13 @@
 
 	<bean id="financeSuspHeadDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="suspenseService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="suspenseServiceTarget" />
@@ -5981,7 +5967,7 @@
 	<bean id="financeCancellationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeCancellationServiceTarget" />
@@ -6045,7 +6031,7 @@
 	<bean id="financeMaintenanceService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeMaintenanceServiceTarget" />
@@ -6108,13 +6094,13 @@
 	<bean id="liabilityRequestDAO"
 		class="com.pennant.backend.dao.finance.liability.impl.LiabilityRequestDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="liabilityRequestService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="liabilityRequestServiceTarget" />
@@ -6154,13 +6140,13 @@
 	<bean id="finFlagsHeaderDAO"
 		class="com.pennant.backend.dao.finance.impl.FinFlagsHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeFlagsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeFlagsServiceTarget" />
@@ -6189,14 +6175,14 @@
 	<bean id="finFlagDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinFlagDetailsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Inventory Settlement Details ============== -->
 	<bean id="inventorySettlementDAO"
 		class="com.pennant.backend.dao.inventorysettlement.impl.InventorySettlementDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Repayment Cancellation Details ============== -->
@@ -6204,7 +6190,7 @@
 	<bean id="repaymentCancellationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="repaymentCancellationServiceTarget" />
@@ -6244,13 +6230,13 @@
 
 	<bean id="jVPostingDAO" class="com.pennant.backend.dao.others.impl.JVPostingDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="jVPostingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="jVPostingServiceTarget" />
@@ -6285,7 +6271,7 @@
 	<bean id="jVPostingEntryDAO"
 		class="com.pennant.backend.dao.others.impl.JVPostingEntryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
@@ -6304,13 +6290,13 @@
 
 	<bean id="reportListDAO" class="com.pennant.backend.dao.reports.impl.ReportListDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="reportListService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="reportListServiceTarget" />
@@ -6336,19 +6322,19 @@
 
 	<bean id="reportSearchTemplateDAO"
 		class="com.pennant.backend.dao.reports.impl.ReportSearchTemplateDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="reportConfigurationDAO"
 		class="com.pennant.backend.dao.reports.impl.ReportConfigurationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="reportConfigurationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="reportConfigurationServiceTarget" />
@@ -6377,7 +6363,7 @@
 	<bean id="reportFilterFieldsDAO"
 		class="com.pennant.backend.dao.reports.impl.ReportFilterFieldsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -6401,7 +6387,7 @@
 	<bean id="detailStatisticsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="detailStatisticsServiceTarget" />
@@ -6429,13 +6415,13 @@
 	<bean id="dashboardConfigurationDAO"
 		class="com.pennant.backend.dao.dashboard.impl.DashboardConfigurationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="dashboardConfigurationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dashboardConfigurationServiceTarget" />
@@ -6592,13 +6578,13 @@
 	<bean id="financeRepaymentsDAO"
 		class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finRepayQueueDAO"
 		class="com.pennant.backend.dao.FinRepayQueue.impl.FinRepayQueueDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Overdue Recovery Posting Util ============== -->
@@ -6616,7 +6602,7 @@
 	<bean id="finODDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Provision Calcualtion Util ============== -->
@@ -6691,7 +6677,7 @@
 
 	<bean id="generateAccountNumberDAO"
 		class="com.pennant.backend.dao.util.impl.GenerateAccountNumberDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Reference ID Generation Util ============== -->
@@ -6746,7 +6732,7 @@
 	</bean>
 
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="auditDatasource" ref="auditDatasource" />
 	</bean>
 
@@ -6776,18 +6762,18 @@
 
 	<bean id="offlineUserMessagesBackupDAO"
 		class="com.pennant.backend.dao.messages.impl.OfflineUserMessagesBackupDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="userContactsListDAO"
 		class="com.pennant.backend.dao.messages.impl.UserContactsListDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="messagesService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="messagesServiceTarget" />
@@ -6819,12 +6805,12 @@
 	<bean id="guarantorDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.GuarantorDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="guarantorDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="guarantorDetailServiceTarget" />
@@ -6851,12 +6837,12 @@
 	<bean id="jountAccountDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.JountAccountDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="jointAccountDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="jointAccountDetailServiceTarget" />
@@ -6882,12 +6868,12 @@
 	<bean id="contractorAssetDetailDAO"
 		class="com.pennant.backend.dao.finance.contractor.impl.ContractorAssetDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="contractorAssetDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="contractorAssetDetailServiceTarget" />
@@ -6912,12 +6898,12 @@
 	<bean id="treasuaryFinHeaderDAO"
 		class="com.pennant.backend.dao.finance.impl.TreasuaryFinHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="treasuaryFinanceService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="treasuaryFinanceServiceTarget" />
@@ -6969,7 +6955,7 @@
 	<bean id="indicativeTermDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.IndicativeTermDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Facility Reference Details ============== -->
@@ -6977,13 +6963,13 @@
 	<bean id="facilityReferenceDetailDAO"
 		class="com.pennant.backend.dao.lmtmasters.impl.FacilityReferenceDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="facilityReferenceDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="facilityReferenceDetailServiceTarget" />
@@ -7009,12 +6995,12 @@
 	<!-- Facility Queue -->
 	<bean id="facilityDAO" class="com.pennant.backend.dao.facility.impl.FacilityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="facilityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="facilityServiceTarget" />
@@ -7053,13 +7039,13 @@
 	<bean id="collateralDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Facility Detail -->
 	<bean id="facilityDetailDAO"
 		class="com.pennant.backend.dao.collateral.impl.FacilityDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ BulkRateChangeProcess Details DAO ============== -->
@@ -7067,25 +7053,25 @@
 	<bean id="bulkRateChangeProcessDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.BulkRateChangeProcessDetailsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Bulk Rate Change Header Details ============== -->
 	<bean id="bulkRateChangeProcessDAO"
 		class="com.pennant.backend.dao.finance.impl.BulkRateChangeProcessDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 	<bean id="bulkProcessDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.BulkProcessDetailsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="bulkRateChangeProcessService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="bulkRateChangeProcessServiceTarget" />
@@ -7135,7 +7121,7 @@
 	<bean id="approvalStatusEnquiryDAO"
 		class="com.pennant.backend.dao.approvalstatusenquiry.impl.ApprovalStatusEnquiryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="auditDataSource" ref="auditDatasource" />
 	</bean>
 
@@ -7143,12 +7129,12 @@
 	<bean id="queryDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.QueryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="queryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="queryServiceTarget" />
@@ -7173,19 +7159,19 @@
 	<!-- Finance Dedup Details -->
 	<bean id="financeDedupeDAO"
 		class="com.pennant.backend.dao.findedup.impl.FinanceDedupeDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Queue Assignment Details -->
 
 	<bean id="queueAssignmentDAO" class="com.pennant.backend.dao.impl.QueueAssignmentDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="queueAssignmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="queueAssignmentServiceTarget" />
@@ -7212,12 +7198,12 @@
 
 	<!-- User Activity Log Details -->
 	<bean id="userActivityLogDAO" class="com.pennant.backend.dao.impl.UserActivityLogDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Task Owners Details -->
 	<bean id="taskOwnersDAO" class="com.pennant.backend.dao.impl.TaskOwnersDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Limit Details -->
@@ -7232,13 +7218,13 @@
 	<bean id="limitInterfaceDAO"
 		class="com.pennant.backend.dao.limits.impl.LimitInterfaceDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Closed Facility Details(Use Client provided schema) -->
 	<bean id="closedFacilityDAO"
 		class="com.pennant.backend.dao.limits.impl.ClosedFacilityDAOImpl">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 
 	<bean id="eventManager" class="com.pennant.core.EventManager">
@@ -7251,13 +7237,13 @@
 	<bean id="reinstateFinanceDAO"
 		class="com.pennant.backend.dao.finance.impl.ReinstateFinanceDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="reinstateFinanceService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="reinstateFinanceServiceTarget" />
@@ -7284,26 +7270,26 @@
 	<bean id="customerDedupDAO"
 		class="com.pennant.backend.dao.custdedup.impl.CustomerDedupDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Commodity Inventory Details -->
 	<bean id="commodityInventoryDAO"
 		class="com.pennant.backend.dao.commodity.impl.CommodityInventoryDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Sukuk Bonds -->
 	<bean id="sukukBondDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SukukBondDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="sukukBondService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="sukukBondServiceTarget" />
@@ -7329,12 +7315,12 @@
 	<bean id="sukukBrokerDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SukukBrokerDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="sukukBrokerService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="sukukBrokerServiceTarget" />
@@ -7361,7 +7347,7 @@
 	<bean id="sukukBrokerBondsDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SukukBrokerBondsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -7369,12 +7355,12 @@
 	<bean id="deviationParamDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.DeviationParamDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="deviationParamService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="deviationParamServiceTarget" />
@@ -7401,21 +7387,21 @@
 	<bean id="deviationHeaderDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.DeviationHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Deviation Details -->
 	<bean id="deviationDetailDAO"
 		class="com.pennant.backend.dao.solutionfactory.impl.DeviationDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
 	<bean id="delegationDeviationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="delegationDeviationServiceTarget" />
@@ -7444,13 +7430,13 @@
 	<bean id="deviationDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="deviationDetailsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="deviationDetailsServiceTarget" />
@@ -7483,13 +7469,13 @@
 	<bean id="finCollateralsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinCollateralsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finCollateralService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finCollateralServiceTarget" />
@@ -7514,7 +7500,7 @@
 	<bean id="dealerResponseDAO"
 		class="com.pennant.backend.dao.finance.impl.DealerResponseDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean name="dealerResponseService"
@@ -7526,7 +7512,7 @@
 
 	<bean id="mailLogDAO" class="com.pennant.backend.dao.maillog.impl.MailLogDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ MMAgreement Customer Details ============== -->
@@ -7534,12 +7520,12 @@
 	<bean id="mMAgreementDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.MMAgreementDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="mMAgreementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="mMAgreementServiceTarget" />
@@ -7574,7 +7560,7 @@
 	<bean id="collateralMarkDAO"
 		class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="collateralMarkProcess"
@@ -7582,23 +7568,16 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="collateralMarkDAO" ref="collateralMarkDAO" />
 	</bean>
-
-	<!-- Rejected Finance Detail -->
-	<bean id="financeRejectDetailDAO"
-		class="com.pennant.backend.dao.finance.impl.FinanceRejectDetailDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
+ 
 	<!--============ FinanceMain Extension Details ============== -->
 	<bean id="financeMainExtDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceMainExtDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="financeMainExtService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeMainExtServiceTarget" />
@@ -7625,27 +7604,27 @@
 	<bean id="ddaPaymentInitiateDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentInitiateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 
 	<!-- DDA PaymentResponse DAO Details -->
 	<bean id="ddaPaymentResponseDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentResponseDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 
 	<!-- DDA Representment Details -->
 	<bean id="ddaRepresentmentDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 
 	<bean id="ddaRepresentmentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="ddaRepresentmentServiceTarget" />
@@ -7679,7 +7658,7 @@
 	<bean id="securityUserOperationsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityUserOperationsServiceTarget" />
@@ -7709,13 +7688,13 @@
 	<bean id="securityOperationDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityOperationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="securityOperationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityOperationServiceTarget" />
@@ -7750,7 +7729,7 @@
 	<bean id="securityOperationRolesService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="securityOperationRolesServiceTarget" />
@@ -7783,14 +7762,14 @@
 
 	<bean id="tatDetailDAO" class="com.pennant.backend.dao.impl.TATDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Secondary Account Detail ============== -->
 
 	<bean id="secondaryAccountDAO"
 		class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Handling Instruction Detail ============== -->
@@ -7806,16 +7785,16 @@
 	<!--Customer Limit Details -->
 	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitDetailServiceTarget" />
@@ -7851,7 +7830,7 @@
 	<bean id="limitTransactionDetailDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -7859,12 +7838,12 @@
 	<!--============ Limit Group ============== -->
 	<bean id="limitGroupDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitGroupServiceTarget" />
@@ -7894,23 +7873,23 @@
 	<bean id="limitGroupLinesDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Limit Structure -->
 	<bean id="limitStructureDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitStructureDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitStructureDetailDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitStructureService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitStructureServiceTarget" />
@@ -7948,7 +7927,7 @@
 	<bean id="limitManagement"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitManagementTarget" />
@@ -7979,7 +7958,7 @@
 	<bean id="limitRebuild"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitRebuildServiceTarget" />
@@ -8003,7 +7982,7 @@
 	<bean id="limitReferenceMappingDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -8011,12 +7990,12 @@
 	<bean id="errorDetailDAO"
 		class="com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="errorDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="errorDetailServiceTarget" />
@@ -8043,12 +8022,12 @@
 	<bean id="sysNotificationDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.SysNotificationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="sysNotificationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="sysNotificationServiceTarget" />
@@ -8073,13 +8052,13 @@
 	<bean id="legalExpensesDAO"
 		class="com.pennant.backend.dao.expenses.impl.LegalExpensesDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="legalExpensesService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="legalExpensesServiceTarget" />
@@ -8104,7 +8083,7 @@
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 
 
@@ -8115,13 +8094,13 @@
 	<bean id="agreementFieldsDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.AgreementFieldsDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="agreementFieldsDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="agreementfieldsDetailServiceTarget" />
@@ -8148,11 +8127,11 @@
 	<bean id="documentManagerDAO"
 		class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
@@ -8160,13 +8139,13 @@
 
 	<bean id="eodFailPostingDAO" class="com.pennant.backend.dao.dda.impl.EODFailPostingDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="eodFailPostingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="eodFailPostingServiceTarget" />
@@ -8200,13 +8179,13 @@
 	<bean id="limitRuleDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.LimitRuleDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="limitRuleService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitRuleServiceTarget" />
@@ -8241,7 +8220,7 @@
 	<bean id="limitRuleManagementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitRuleManagementServiceTarget" />
@@ -8270,12 +8249,12 @@
 	<bean id="bankBranchDAO"
 		class="com.pennant.backend.dao.bmtmasters.impl.BankBranchDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="bankBranchService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="bankBranchServiceTarget" />
@@ -8303,22 +8282,22 @@
 	<!-- Mandate -->
 	<bean id="mandateDAO" class="com.pennant.backend.dao.mandate.impl.MandateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="mandateStatusDAO"
 		class="com.pennant.backend.dao.mandate.impl.MandateStatusDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="mandateStatusUpdateDAO"
 		class="com.pennant.backend.dao.mandate.impl.MandateStatusUpdateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="mandateService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="mandateServiceTarget" />
@@ -8347,7 +8326,7 @@
 	<bean id="finMandateService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finMandateServiceTarget" />
@@ -8375,7 +8354,7 @@
 	<bean id="rateChangeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="rateServiceTarget" />
@@ -8400,7 +8379,7 @@
 	<bean id="addRepaymentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="addRepaymentServiceTarget" />
@@ -8424,7 +8403,7 @@
 	<bean id="addTermsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="addTermsServiceTarget" />
@@ -8448,7 +8427,7 @@
 	<bean id="rmvTermsService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="rmvTermsServiceTarget" />
@@ -8473,7 +8452,7 @@
 	<bean id="recalService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="recalServiceTarget" />
@@ -8498,7 +8477,7 @@
 	<bean id="changeProfitService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="changeProfitServiceTarget" />
@@ -8523,7 +8502,7 @@
 	<bean id="addDisbursementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="addDisbursementServiceTarget" />
@@ -8549,7 +8528,7 @@
 	<bean id="reScheduleService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="reScheduleServiceTarget" />
@@ -8573,7 +8552,7 @@
 	<bean id="postponementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="postponementServiceTarget" />
@@ -8597,7 +8576,7 @@
 	<bean id="changeFrequencyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="changeFrequencyServiceTarget" />
@@ -8622,19 +8601,19 @@
 	<bean id="overdraftScheduleDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.OverdraftScheduleDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance Tax Detail -->
 	<bean id="financeTaxDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceTaxDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="financeTaxDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeTaxDetailServiceTarget" />
@@ -8665,12 +8644,12 @@
 	<bean id="collateralStructureDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralStructureDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="collateralStructureService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="collateralStructureServiceTarget" />
@@ -8699,12 +8678,12 @@
 	<bean id="vASConfigurationDAO"
 		class="com.pennant.backend.dao.configuration.impl.VASConfigurationDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="vASConfigurationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vASConfigurationServiceTarget" />
@@ -8732,12 +8711,12 @@
 	<bean id="vASRecordingDAO"
 		class="com.pennant.backend.dao.configuration.impl.VASRecordingDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="vASRecordingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vASRecordingServiceTarget" />
@@ -8788,12 +8767,12 @@
 	<bean id="beneficiaryDAO"
 		class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="beneficiaryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="beneficiaryServiceTarget" />
@@ -8819,12 +8798,12 @@
 	<bean id="collateralSetupDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="collateralSetupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="collateralSetupServiceTarget" />
@@ -8865,32 +8844,32 @@
 	<!-- Collateral ThirdParty details -->
 	<bean id="collateralThirdPartyDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralThirdPartyDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- CoOwner Detail Validation -->
 	<bean id="coOwnerDetailDAO"
 		class="com.pennant.backend.dao.collateral.impl.CoOwnerDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Extended field details -->
 	<bean id="extendedFieldRenderDAO"
 		class="com.pennant.backend.dao.collateral.impl.ExtendedFieldRenderDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- AssetType -->
 	<bean id="assetTypeDAO"
 		class="com.pennant.backend.dao.configuration.impl.AssetTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="assetTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="assetTypeServiceTarget" />
@@ -8919,12 +8898,12 @@
 	<bean id="insuranceTypeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.InsuranceTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="insuranceTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="insuranceTypeServiceTarget" />
@@ -8952,20 +8931,20 @@
 	<bean id="insuranceTypeProviderDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.InsuranceTypeProviderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Finance service Instruction -->
 	<bean id="finServiceInstructionDAO"
 		class="com.pennant.backend.dao.finance.impl.FinServiceInstrutionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="cancelDisbursementService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="cancelDisbursementServiceTarget" />
@@ -8989,18 +8968,18 @@
 	<bean id="commitmentRateDAO"
 		class="com.pennant.backend.dao.commitment.impl.CommitmentRateDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- FeeType -->
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="feeTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="feeTypeServiceTarget" />
@@ -9026,12 +9005,12 @@
 	<bean id="vASProductCategoryDAO"
 		class="com.pennant.backend.dao.vasproduct.impl.VASProductCategoryDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="vASProductCategoryService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vASProductCategoryServiceTarget" />
@@ -9058,12 +9037,12 @@
 	<bean id="vASProductTypeDAO"
 		class="com.pennant.backend.dao.vasproducttype.impl.VASProductTypeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="vASProductTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="vASProductTypeServiceTarget" />
@@ -9090,12 +9069,12 @@
 	<bean id="presentmentReasonCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.PresentmentReasonCodeDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="presentmentReasonCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="presentmentReasonCodeServiceTarget" />
@@ -9122,19 +9101,19 @@
 	<bean id="finTypeVASProductsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinTypeVASProductsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- InsurancePolicy -->
 	<bean id="insurancePolicyDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.InsurancePolicyDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="insurancePolicyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="insurancePolicyServiceTarget" />
@@ -9162,7 +9141,7 @@
 	<bean id="customerBankInfoService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerBankInfoServiceTarget" />
@@ -9189,7 +9168,7 @@
 	<bean id="customerChequeInfoService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerChequeInfoServiceTarget" />
@@ -9215,7 +9194,7 @@
 	<bean id="customerExtLiabilityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="customerExtLiabilityServiceTarget" />
@@ -9247,12 +9226,12 @@
 	<bean id="partnerBankDAO"
 		class="com.pennant.backend.dao.partnerbank.impl.PartnerBankDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="partnerBankService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="partnerBankServiceTarget" />
@@ -9288,7 +9267,7 @@
 	<bean id="finTypeFeesService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finTypeFeesServiceTarget" />
@@ -9313,7 +9292,7 @@
 	<bean id="finTypeInsurancesService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finTypeInsurancesServiceTarget" />
@@ -9338,7 +9317,7 @@
 	<bean id="finTypeAccountingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finTypeAccountingServiceTarget" />
@@ -9363,7 +9342,7 @@
 	<bean id="finTypePartnerBankService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finTypePartnerBankServiceTarget" />
@@ -9389,7 +9368,7 @@
 	<bean id="promotionService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="promotionServiceTarget" />
@@ -9417,20 +9396,20 @@
 	<bean id="promotionDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="financeRateReviewDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Hold EMI -->
 	<bean id="holdEMIService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="holdEMIServiceTarget" />
@@ -9451,12 +9430,12 @@
 	</bean>
 	<!-- EOD -->
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper"
 		abstract="true">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
@@ -9517,7 +9496,7 @@
 	<bean id="accountTypeGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="accountTypeGroupServiceTarget" />
@@ -9542,18 +9521,18 @@
 	<bean id="accountTypeGroupDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.AccountTypeGroupDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- FinanceStatusCode -->
 	<bean id="financeStatusCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.FinanceStatusCodeDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="financeStatusCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="financeStatusCodeServiceTarget" />
@@ -9579,12 +9558,12 @@
 	<bean id="nPABucketConfigurationDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="nPABucketConfigurationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="nPABucketConfigurationServiceTarget" />
@@ -9610,12 +9589,12 @@
 	<bean id="dPDBucketConfigurationDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="dPDBucketConfigurationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dPDBucketConfigurationServiceTarget" />
@@ -9641,12 +9620,12 @@
 	<bean id="dPDBucketDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="dPDBucketService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="dPDBucketServiceTarget" />
@@ -9673,12 +9652,12 @@
 	<bean id="nPABucketDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="nPABucketService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="nPABucketServiceTarget" />
@@ -9705,12 +9684,12 @@
 	<bean id="manualAdviseDAO"
 		class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="manualAdviseService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="manualAdviseServiceTarget" />
@@ -9736,12 +9715,12 @@
 	<bean id="bounceReasonDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.BounceReasonDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="bounceReasonService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="bounceReasonServiceTarget" />
@@ -9767,12 +9746,12 @@
 	<bean id="profitCenterDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.ProfitCenterDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="profitCenterService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="profitCenterServiceTarget" />
@@ -9799,12 +9778,12 @@
 	<bean id="costCenterDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.CostCenterDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="costCenterService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="costCenterServiceTarget" />
@@ -9831,12 +9810,12 @@
 	<bean id="presentmentHeaderDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="presentmentHeaderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="presentmentHeaderServiceTarget" />
@@ -9876,12 +9855,12 @@
 	<bean id="accountMappingDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.AccountMappingDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="accountMappingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="accountMappingServiceTarget" />
@@ -9906,7 +9885,7 @@
 
 	<bean id="presentmentExtractService"
 		class="com.pennanttech.interfacebajaj.fileextract.PresentmentExtractService">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
 
@@ -9944,12 +9923,12 @@
 	<bean id="builderGroupDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.BuilderGroupDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="builderGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="builderGroupServiceTarget" />
@@ -9974,12 +9953,12 @@
 	<!-- Fee Postings -->
 	<bean id="feePostingsDAO" class="com.pennant.backend.dao.fees.impl.FeePostingsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="feePostingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="feePostingServiceTarget" />
@@ -10013,12 +9992,12 @@
 	<bean id="builderCompanyDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.BuilderCompanyDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="builderCompanyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="builderCompanyServiceTarget" />
@@ -10044,12 +10023,12 @@
 	<bean id="builderProjcetDAO"
 		class="com.pennant.backend.dao.systemmasters.impl.BuilderProjcetDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="builderProjcetService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="builderProjcetServiceTarget" />
@@ -10074,12 +10053,12 @@
 	<!-- Locality -->
 	<bean id="localityDAO" class="com.pennant.backend.dao.masters.impl.LocalityDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="localityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="localityServiceTarget" />
@@ -10107,24 +10086,24 @@
 	<bean id="paymentInstructionDAO"
 		class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="paymentDetailDAO"
 		class="com.pennant.backend.dao.payment.impl.PaymentDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="paymentHeaderDAO"
 		class="com.pennant.backend.dao.payment.impl.PaymentHeaderDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="paymentHeaderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="paymentHeaderServiceTarget" />
@@ -10167,12 +10146,12 @@
 	<!-- EODConfig -->
 	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="eODConfigService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="eODConfigServiceTarget" />
@@ -10198,12 +10177,12 @@
 	<bean id="pinCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.PinCodeDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="pinCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="pinCodeServiceTarget" />
@@ -10230,12 +10209,12 @@
 	<bean id="taxDetailDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="taxDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="taxDetailServiceTarget" />
@@ -10263,12 +10242,12 @@
 	<bean id="entityDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.EntityDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="entityService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="entityServiceTarget" />
@@ -10293,12 +10272,12 @@
 	<bean id="finTaxUploadDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinTaxUploadDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finTaxUploadDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finTaxUploadDetailServiceTarget" />
@@ -10328,31 +10307,20 @@
 
    <!-- CIBIL -->
 	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
-
-	<!-- Cache Administartion -->
-
-	<bean id="cacheDAO"
-		class="com.pennant.backend.dao.cacheadministration.impl.CacheDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<bean name="cacheAdministrationService"
-		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
-	<!-- <bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/> -->
 	
 	<bean id="soaReportGenerationDAO"
 		class="com.pennant.backend.dao.reports.impl.SOAReportGenerationDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="soaReportGenerationService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="soaReportGenerationServiceTarget" />
@@ -10377,12 +10345,12 @@
 	<bean id="finMaintainInstructionDAO"
 		class="com.pennant.backend.dao.finance.impl.FinMaintainInstructionDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finCovenantMaintanceService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="finCovenantMaintanceServiceTarget" />
@@ -10409,7 +10377,7 @@
 
 	<bean id="extFieldConfigService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target"> 
 		<ref bean="extFieldConfigServiceTarget" />
@@ -10437,12 +10405,13 @@
 		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
 	</bean>
 	
 	<!-- custom service tasks -->
 <!-- 	<bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target"> 
 		<ref bean="customServiceTaskTarget" />
@@ -10473,7 +10442,7 @@
 	<bean id="shortMessageService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="shortMessageServiceTarget" />
@@ -10490,8 +10459,8 @@
 	<bean id="serviceTaskDAO"
 		class="com.pennant.backend.dao.servicetasklog.impl.ServiceTaskDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
 	<bean id="externalDocumentManager"
@@ -10499,19 +10468,19 @@
 	
 	<!-- for Document parser -->
 	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
-		<constructor-arg ref="pfsDatasource" />
+		<constructor-arg ref="dataSource" />
 	</bean>
 
 	<!-- ReasonCode -->
 	<bean id="reasonCodeDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.ReasonCodeDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="reasonCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="reasonCodeServiceTarget" />
@@ -10530,15 +10499,16 @@
 	<bean name="reasonCodeServiceTarget"
 		class="com.pennant.backend.service.applicationmaster.impl.ReasonCodeServiceImpl">
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
+		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	
 	<!-- ReasonCategory -->
 	<bean id="reasonCategoryDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReasonCategoryDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="reasonCategoryService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
 	   <property name="target"><ref bean="reasonCategoryServiceTarget"/></property>
        <property name="transactionAttributes">
            <props>
@@ -10552,16 +10522,17 @@
    </bean>
 
  	<bean name="reasonCategoryServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ReasonCategoryServiceImpl">
-       <property name="reasonCategoryDAO" ref="reasonCategoryDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+        <property name="reasonCategoryDAO" ref="reasonCategoryDAO" />
+        <property name="reasonCodeDAO" ref="reasonCodeDAO" />
+	    <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
 		<!-- ReasonTypes -->
 	<bean id="reasonTypesDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReasonTypesDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="reasonTypesService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
 	   <property name="target"><ref bean="reasonTypesServiceTarget"/></property>
        <property name="transactionAttributes">
            <props>
@@ -10575,19 +10546,20 @@
    </bean>
 
  	<bean name="reasonTypesServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ReasonTypesServiceImpl">
-       <property name="reasonTypesDAO" ref="reasonTypesDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+        <property name="reasonTypesDAO" ref="reasonTypesDAO" />
+        <property name="reasonCodeDAO" ref="reasonCodeDAO" />
+	    <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	<!-- Licence File Upload -->
 	<bean id="licenceFileDAO"
 		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="licenceFileService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="licenceFileServiceTarget" />
@@ -10610,7 +10582,7 @@
 	<bean id="documentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="documentServiceTarget" />
@@ -10636,13 +10608,13 @@
 	
 	<!-- Reason Detail -->
 	<bean id="reasonDetailDAO" class="com.pennant.backend.dao.reason.deatil.impl.ReasonDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<!-- BatchUploadConfig -->
 	<bean id="batchUploadConfigDAO"
 		class="com.pennant.batchupload.fileprocessor.dao.impl.BatchUploadConfigDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean name="batchUploadConfigService" class="com.pennant.batchupload.fileprocessor.service.impl.BatchUploadConfigServiceImpl">
 		<property name="batchUploadConfigDAO" ref="batchUploadConfigDAO" />
@@ -10651,13 +10623,13 @@
 	<!-- ChequeHeader -->
 	<bean name="chequeHeaderDAO"
 		class="com.pennant.backend.dao.pdc.impl.ChequeHeaderDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="chequeHeaderService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="chequeHeaderServiceTarget" />
@@ -10682,6 +10654,14 @@
 	<!-- CHeque Details -->
 	<bean name="chequeDetailDAO"
 		class="com.pennant.backend.dao.pdc.impl.ChequeDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!--  -->
+	<bean id="cacheAdmin"  class="com.pennanttech.pennapps.core.cache.CacheAdmin">
+		<constructor-arg ref="dataSource" />
+	</bean>
+	<bean id="cacheManager"  class="com.pennanttech.pennapps.core.cache.CacheManager" init-method="start" destroy-method="stop">
+		<constructor-arg ref="cacheAdmin" />
 	</bean>
 </beans>

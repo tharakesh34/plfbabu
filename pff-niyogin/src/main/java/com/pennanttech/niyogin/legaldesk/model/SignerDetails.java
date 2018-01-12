@@ -64,5 +64,4 @@ public class SignerDetails {
 	public void setPan(String pan) {
 		this.pan = pan;
 	}
-
 }

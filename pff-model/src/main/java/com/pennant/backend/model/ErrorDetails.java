@@ -42,27 +42,52 @@
 */
 package com.pennant.backend.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 
-public class ErrorDetails {
-	private String		errorField;
-	private String		errorCode;
-	private String		errorLanguage;
-	private String		errorSeverity;
-	private String		errorMessage;
-	private String		errorExtendedMessage;
-	private String[]	errorParameters;
-	private String[]	errorFieldValues;
-	private boolean		errorOveride	= false;
+import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+
+public class ErrorDetails extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = 1L;
+
+	private String errorCode;
+	private String errorLanguage;
+	private String errorSeverity;
+	private String errorMessage;
+	private String errorExtendedMessage;
+	private boolean newRecord;
+	private ErrorDetails befImage;
+	private LoggedInUser userDetails;
+
+	private String errorField;
+	private String[] errorParameters;
+	private String[] errorFieldValues;
+	private boolean errorOveride = false;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("errorField");
+		excludeFields.add("errorParameters");
+		excludeFields.add("errorFieldValues");
+		excludeFields.add("errorOveride");
+		return excludeFields;
+	}
 
 	public ErrorDetails() {
 		super();
 	}
 
+	public ErrorDetails(String errorCode) {
+		super();
+		this.setId(errorCode);
+	}
+
 	public ErrorDetails(String errorCode, String message, String[] errorParameters) {
 		super();
 		this.errorCode = errorCode;
-		this.errorSeverity = "E";				//PennantConstants.ERR_SEV_ERROR;
+		this.errorSeverity = "E"; //PennantConstants.ERR_SEV_ERROR;
 		this.errorMessage = message;
 		this.errorParameters = errorParameters;
 	}
@@ -70,7 +95,7 @@ public class ErrorDetails {
 	public ErrorDetails(String errorCode, String[] errorParameters) {
 		super();
 		this.errorCode = errorCode;
-		this.errorSeverity = "E";		// PennantConstants.ERR_SEV_ERROR;
+		this.errorSeverity = "E"; // PennantConstants.ERR_SEV_ERROR;
 		this.errorParameters = errorParameters;
 	}
 
@@ -93,12 +118,16 @@ public class ErrorDetails {
 		this.errorFieldValues = errorFieldValues;
 	}
 
-	public String getErrorField() {
-		return errorField;
+	public boolean isNew() {
+		return isNewRecord();
 	}
 
-	public void setErrorField(String errorField) {
-		this.errorField = errorField;
+	public String getId() {
+		return errorCode;
+	}
+
+	public void setId(String id) {
+		this.errorCode = id;
 	}
 
 	public String getErrorCode() {
@@ -139,6 +168,14 @@ public class ErrorDetails {
 
 	public void setErrorExtendedMessage(String errorExtendedMessage) {
 		this.errorExtendedMessage = errorExtendedMessage;
+	}
+
+	public String getErrorField() {
+		return errorField;
+	}
+
+	public void setErrorField(String errorField) {
+		this.errorField = errorField;
 	}
 
 	public String[] getErrorParameters() {
@@ -186,5 +223,29 @@ public class ErrorDetails {
 
 	public void setErrorFieldValues(String[] errorFieldValues) {
 		this.errorFieldValues = errorFieldValues;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public ErrorDetails getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(ErrorDetails befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
 	}
 }

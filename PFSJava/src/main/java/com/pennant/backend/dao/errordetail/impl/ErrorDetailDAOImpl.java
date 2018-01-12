@@ -44,6 +44,10 @@
 package com.pennant.backend.dao.errordetail.impl;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +62,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.errordetail.ErrorDetail;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 
@@ -67,7 +71,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
  * 
  */
 
-public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements ErrorDetailDAO {
+public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetails> implements ErrorDetailDAO {
 
 	private static Logger logger = Logger.getLogger(ErrorDetailDAOImpl.class);
 	
@@ -88,9 +92,9 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 	 * @return ErrorDetail
 	 */
 	@Override
-	public ErrorDetail getErrorDetailById(final String id, String type) {
+	public ErrorDetails getErrorDetailById(final String id, String type) {
 		logger.debug("Entering");
-		ErrorDetail errorDetail = new ErrorDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
 		
 		errorDetail.setId(id);
 		
@@ -103,7 +107,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
+		RowMapper<ErrorDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetails.class);
 		
 		try{
 			errorDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
@@ -137,7 +141,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 	 * 
 	 */
 	@Override
-	public void delete(ErrorDetail errorDetail,String type) {
+	public void delete(ErrorDetails errorDetail,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		
@@ -172,7 +176,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 	 */
 	
 	@Override
-	public String save(ErrorDetail errorDetail,String type) {
+	public String save(ErrorDetails errorDetail,String type) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into ErrorDetails");
@@ -204,7 +208,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 	 */
 	
 	@Override
-	public void update(ErrorDetail errorDetail,String type) {
+	public void update(ErrorDetails errorDetail,String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update ErrorDetails");
@@ -226,6 +230,24 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
+	}
+		
+	@Override
+	public ErrorDetails getErrorDetail(String errorCode) {
+		logger.debug(String.format("Error code: %s", errorCode));
+		
+		String selectListSql = 	"select ErrorCode, ErrorLanguage, ErrorSeverity, ErrorMessage, ErrorExtendedMessage from ErrorDetails where ErrorCode =:ErrorCode"; 
+		logger.debug("selectListSql: " + selectListSql);
+		Map<String,Object> namedParameters = new HashMap<String,Object>();
+		namedParameters.put("ErrorCode", errorCode);
+			
+		RowMapper<ErrorDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetails.class);
+		List<ErrorDetails> errorList = namedParameterJdbcTemplate.query(selectListSql, namedParameters,typeRowMapper);
+		if(errorList==null || errorList.isEmpty()){
+			return null;
+		}
+		
+		return errorList.get(0);
 	}
 	
 }

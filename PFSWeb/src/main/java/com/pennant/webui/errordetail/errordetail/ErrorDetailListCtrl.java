@@ -59,14 +59,14 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.errordetail.ErrorDetail;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.errordetail.errordetail.model.ErrorDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  * ************************************************************<br>
  * 
  */
-public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
+public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ErrorDetailListCtrl.class);
@@ -116,7 +116,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "ErrorDetail";
+		super.moduleCode = "ErrorDetails";
 		super.pageRightName = "ErrorDetailList";
 		super.tableName = "ErrorDetails_AView";
 		super.queueTableName = "ErrorDetails_View";
@@ -188,7 +188,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 		logger.debug("Entering");
 
 		// Create a new entity.
-		ErrorDetail errorDetail = new ErrorDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
 		errorDetail.setNewRecord(true);
 		errorDetail.setWorkflowId(getWorkFlowId());
 
@@ -213,7 +213,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
-		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(id);
+		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(id);
 
 		if (errorDetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -242,7 +242,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 	 * @param errorDetail
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(ErrorDetail errorDetail) {
+	private void doShowDialogPage(ErrorDetails errorDetail) {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
@@ -251,7 +251,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 		arg.put("enqModule", enqiryModule);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetail/ErrorDetailDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

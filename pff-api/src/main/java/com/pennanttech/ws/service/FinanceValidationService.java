@@ -20,6 +20,7 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -41,6 +42,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -71,7 +73,7 @@ public class FinanceValidationService {
 	private RuleDAO ruleDAO;
 	private GeneralDepartmentService generalDepartmentService;
 	private RelationshipOfficerService relationshipOfficerService;
-	
+	private VehicleDealerService vehicleDealerService;
 
 	/**
 	 * Validate the finance detail object.<br>
@@ -881,14 +883,14 @@ public class FinanceValidationService {
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (financeMain != null) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
-					.getApprovedRelationshipOfficerById(financeMain.getAccountsOfficer());
-			if (relationshipOfficer == null) {
+			VehicleDealer vehicleDealer = vehicleDealerService.getVehicleDealerById(financeMain.getAccountsOfficer());
+			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = financeMain.getAccountsOfficer();
+				valueParm[0] = String.valueOf(financeMain.getAccountsOfficer());
 				return getErrorDetails("90501", valueParm);
 			}
-			relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
+			
+			RelationshipOfficer	relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
@@ -1003,4 +1005,9 @@ public class FinanceValidationService {
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
+	@Autowired
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
+	}
+
 }

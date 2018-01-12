@@ -34,6 +34,7 @@ import com.pennanttech.niyogin.experian.model.CAISAccountHistory;
 import com.pennanttech.niyogin.experian.model.CompanyAddress;
 import com.pennanttech.niyogin.experian.model.ConsumerAddress;
 import com.pennanttech.niyogin.experian.model.PersonalDetails;
+import com.pennanttech.niyogin.utility.ExtFieldMapConstants;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -43,30 +44,19 @@ import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianBureauServiceImpl extends NiyoginService implements ExperianBureauService {
-	private static final Logger	logger							= Logger.getLogger(ExperianBureauServiceImpl.class);
+	private static final Logger	logger			= Logger.getLogger(ExperianBureauServiceImpl.class);
 	private String				extConfigFileName;
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	private final String		SUIT_FILED						= "SUITFILED";
-	private final String		WILLFUL_DEFAULTER				= "WILLFULDEFAULTER";
-	private final String		NO_EMI_BOUNCES_IN_3_MONTHS		= "EMI3MONTHS";
-	private final String		NO_EMI_BOUNCES_IN_6_MONTHS		= "EMI6MNTHS";
-	private final String		RESTRUCTURED_LOAN_AND_AMOUNT	= "RESTRUCTUREDLOAN";
-
-	private final String		STATUS							= "STATUS";
-	private final String		WRITEOFF						= "25";
-	private final String		SETTLE							= "23";
-
-	private Date				appDate							= getAppDate();
-
-	private Object				requestObject					= null;
-	private String				serviceUrl						= null;
+	private Date				appDate			= getAppDate();
+	private Object				requestObject	= null;
+	private String				serviceUrl		= null;
 
 	/**
 	 * Method for execute Experian Bureau service<br>
-	 *   - Execute Commercial bureau service for SME and CORP customers<br>.
-	 *   - Execute Consumer service for RETAIL customer.
+	 * - Execute Commercial bureau service for SME and CORP customers<br>.
+	 * - Execute Consumer service for RETAIL customer.
 	 * 
 	 * @param auditHeader
 	 */
@@ -139,7 +129,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 
 		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
-	
 		try {
 
 			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
@@ -175,7 +164,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private BureauCommercial prepareCommercialRequestObj(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
-
 		BureauCommercial commercial = new BureauCommercial();
 		commercial.setApplicationId(customer.getCustID());
 		commercial.setStgUnqRefId(customer.getCustID());
@@ -189,7 +177,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		logger.debug(Literal.LEAVING);
 		return commercial;
-
 	}
 
 	/**
@@ -360,8 +347,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap)
 			throws ParseException {
 		List<BillPayGrid> billPayGridList = null;
-		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
-			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
+		if (extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M) != null) {
+			String jsonEmoBounceResponse = extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M).toString();
 			Object responseObj = getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
 			@SuppressWarnings("unchecked")
 			List<BpayGridResponse> bpayGridResponses = (List<BpayGridResponse>) responseObj;
@@ -369,36 +356,35 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				billPayGridList = prepareBillpayGridList(bpayGridResponses);
 			}
 		} else {
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN_3_MONTHS);
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN_6_MONTHS);
+			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M);
+			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M);
 		}
 
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
-			//TODO:
-			if (entry.getKey().equals(RESTRUCTURED_LOAN_AND_AMOUNT)) {
+			if (entry.getKey().equals(ExtFieldMapConstants.RESTRUCTURED_FLAG)) {
 				extendedFieldMap.put(entry.getKey(), null);
-			} else if (entry.getKey().equals(SUIT_FILED)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.SUIT_FILED_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "1") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(WILLFUL_DEFAULTER)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.WILLFUL_DEFAULTER_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "1") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_3_MONTHS)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M)) {
 
 				if (billPayGridList != null && !billPayGridList.isEmpty()) {
 					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 3);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_6_MONTHS)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M)) {
 
 				if (billPayGridList != null && !billPayGridList.isEmpty()) {
 					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 6);
@@ -425,52 +411,51 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap) throws ParseException {
 
 		List<CAISAccountHistory> caisAccountHistories = null;
-		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS) != null) {
-			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN_3_MONTHS).toString();
+		if (extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M) != null) {
+			String jsonEmiBounceResponse = extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M).toString();
 			Object responseObj = getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		} else {
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN_3_MONTHS);
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN_6_MONTHS);
+			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M);
+			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M);
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
-			//TODO:
-			if (entry.getKey().equals(RESTRUCTURED_LOAN_AND_AMOUNT)) {
+			if (entry.getKey().equals(ExtFieldMapConstants.RESTRUCTURED_FLAG)) {
 				extendedFieldMap.put(entry.getKey(), null);
-			} else if (entry.getKey().equals(SUIT_FILED)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.SUIT_FILED_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "01") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(WILLFUL_DEFAULTER)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.WILLFUL_DEFAULTER_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "02") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_3_MONTHS)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M)) {
 
 				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
 					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 3);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN_6_MONTHS)) {
+			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M)) {
 
 				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
 					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 6);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(STATUS)) {
-				String acc_Status = String.valueOf(extendedFieldMap.get(STATUS));
-				if (StringUtils.equals(acc_Status, WRITEOFF)) {
-					extendedFieldMap.put("EXPBWRUTEOFF", true);
-				} else if (StringUtils.equals(acc_Status, SETTLE)) {
-					extendedFieldMap.put("EXPBSETTLED", true);
+			} else if (entry.getKey().equals(ExtFieldMapConstants.STATUS)) {
+				String acc_Status = String.valueOf(extendedFieldMap.get(ExtFieldMapConstants.STATUS));
+				if (StringUtils.equals(acc_Status, ExtFieldMapConstants.WRITEOFF)) {
+					extendedFieldMap.put(ExtFieldMapConstants.WRITE_OFF_FLAG, true);
+				} else if (StringUtils.equals(acc_Status, ExtFieldMapConstants.SETTLE)) {
+					extendedFieldMap.put(ExtFieldMapConstants.SETTLED_FLAG_FLAG, true);
 				}
 			} else {
 				extendedFieldMap.put(entry.getKey(), entry.getValue());

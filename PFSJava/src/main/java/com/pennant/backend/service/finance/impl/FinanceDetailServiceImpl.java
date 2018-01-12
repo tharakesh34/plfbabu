@@ -73,7 +73,6 @@ import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
-import com.pennant.backend.dao.finance.FinanceRejectDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
@@ -241,7 +240,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LimitInterfaceDAO				limitInterfaceDAO;
 	private DedupParmService				dedupParmService;
 	private DDAControllerService			ddaControllerService;
-	protected FinanceRejectDetailDAO		financeRejectDetailDAO;
 	protected RolledoverFinanceDAO			rolledoverFinanceDAO;
 	private PayOrderIssueHeaderDAO			payOrderIssueHeaderDAO;
 	private TATDetailDAO					tatDetailDAO;
@@ -4835,9 +4833,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (!isWIF && StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			getFinanceMainDAO().saveRejectFinanceDetails(financeMain);
-
-			//Save Finance Rejected Details Data in FinanceRejectDetail Tables
-			getFinanceRejectDetailDAO().saveFinanceRejectedDetailsLog(financeMain);
 		}
 
 		//OverDraft Schedule Details Deletion
@@ -8642,14 +8637,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setDdaControllerService(DDAControllerService ddaControllerService) {
 		this.ddaControllerService = ddaControllerService;
-	}
-
-	public FinanceRejectDetailDAO getFinanceRejectDetailDAO() {
-		return financeRejectDetailDAO;
-	}
-
-	public void setFinanceRejectDetailDAO(FinanceRejectDetailDAO financeRejectDetailDAO) {
-		this.financeRejectDetailDAO = financeRejectDetailDAO;
 	}
 
 	public RolledoverFinanceDAO getRolledoverFinanceDAO() {

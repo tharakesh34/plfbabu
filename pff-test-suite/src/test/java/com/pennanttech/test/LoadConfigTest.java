@@ -14,20 +14,20 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.pennant.backend.dao.impl.ErrorDetailsDAOImpl;
+import com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl;
 import com.pennanttech.util.Dataset;
 
 import jxl.read.biff.BiffException;
 
 public class LoadConfigTest {
-	final String[]				CONFIG_LOCATIONS	= new String[] {
+	final String[] CONFIG_LOCATIONS = new String[] {
 			"../PLFInterface/src/main/resources/applicationContext-core-interface.xml",
 			"../PFSJava/src/main/resources/applicationContext-daos.xml",
 			"../PFSWeb/src/main/resources/applicationContext-db.xml", "/src/test/resources/applicationContext.xml",
 			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml",
 			"../pff-niyogin/src/main/resources/client-interfaces-niyogin-context.xml",
 			"../PFSBatch/src/main/resources/eod-batch-config-service.xml" };
-	static ApplicationContext	context;
+	static ApplicationContext context;
 
 	@BeforeSuite
 	public void setUp() throws BiffException, IOException {
@@ -52,7 +52,7 @@ public class LoadConfigTest {
 	public void testBean() {
 		Object bean = context.getBean("errorDetailsDAO");
 
-		Assert.assertTrue(bean instanceof ErrorDetailsDAOImpl);
+		Assert.assertTrue(bean instanceof ErrorDetailDAOImpl);
 
 		bean = null;
 	}

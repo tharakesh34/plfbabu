@@ -43,6 +43,9 @@
 
 package com.pennant.backend.service.smtmasters;
 
+import java.util.List;
+
+import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 
@@ -53,10 +56,21 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 public interface PFSParameterService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	PFSParameter getPFSParameterById(String id);
+
 	PFSParameter getApprovedPFSParameterById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+		
+	void update(String sysParmCode, String sysParmValue, String type);
+	
+	PFSParameter getParameterByCode(String code);
+	
+	List<GlobalVariable> getGlobaVariables();
 
 }

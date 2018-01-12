@@ -42,20 +42,22 @@
  */
 package com.pennant.backend.service.errordetail;
 
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 
 public interface ErrorDetailService {
 	
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ErrorDetail getErrorDetailById(String id);
+	ErrorDetails getErrorDetailById(String id);
 
-	ErrorDetail getApprovedErrorDetailById(String id);
+	ErrorDetails getApprovedErrorDetailById(String id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	ErrorDetails getErrorDetail(String errorCode);
 }

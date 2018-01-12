@@ -15,6 +15,7 @@ import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.hunter.model.Address;
 import com.pennanttech.niyogin.hunter.model.CustomerBasicDetail;
 import com.pennanttech.niyogin.hunter.model.HunterRequest;
+import com.pennanttech.niyogin.utility.ExtFieldMapConstants;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -60,7 +61,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
 		}
 
-		extendedFieldMap.put("HUNTREQSEND", true);
+		extendedFieldMap.put(ExtFieldMapConstants.HUNTER_REQ_SEND, true);
 
 		try {
 			validatedMap = validateExtendedMapValues(extendedFieldMap);
@@ -76,7 +77,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
-		if ((Boolean) validatedMap.get("HUNTERMATCH")) {
+		if ((Boolean) validatedMap.get(ExtFieldMapConstants.HUNTER_MATCH)) {
 			financeMain.setHunterGo(false);
 		} else {
 			financeMain.setHunterGo(true);

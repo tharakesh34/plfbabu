@@ -172,8 +172,8 @@ import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -3417,25 +3417,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * When record is rejected . <br>
-	 * 
-	 */
-	public void doReject() throws InterruptedException {
-		logger.debug("Entering");
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
-		map.put("financeMainDialogCtrl", this);
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
-					window_ManualPaymentDialog, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
 	}
 
 	/**

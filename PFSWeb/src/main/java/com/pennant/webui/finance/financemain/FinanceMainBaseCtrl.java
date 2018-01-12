@@ -262,6 +262,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
@@ -1023,7 +1024,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
 		this.stepPolicy.setFilters(filter);
 
-		this.accountsOfficer.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
@@ -1559,8 +1560,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendMandateDetailTab(onLoad);
 		}
 
-		//Cheque Details Tab
-		//appendChequeDetailTab(onLoad);//TODO: open when it's completed
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			appendChequeDetailTab(onLoad);
+		}
 
 		// Collateral Detail Tab
 		if (StringUtils.isEmpty(moduleDefiner)
@@ -2794,8 +2796,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		this.accountsOfficer.setValue(aFinanceMain.getAccountsOfficer());
-		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
+		this.accountsOfficer.setValue(StringUtils.trimToEmpty(aFinanceMain.getLovDescAccountsOfficer()));
+		this.accountsOfficer.setDescription(StringUtils.trimToEmpty(aFinanceMain.getLovDescSourceCity()));
+		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
 		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
@@ -7677,6 +7680,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
+	
+	
+	public void onFulfill$accountsOfficer(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = accountsOfficer.getObject();
+		if (dataObject instanceof String) {
+			this.accountsOfficer.setValue(dataObject.toString());
+			this.accountsOfficer.setDescription("");
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.accountsOfficer.setAttribute("DealerId", details.getDealerId());
+			}
+		}
+		logger.debug("Leaving");
+	}
 
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -9426,7 +9446,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setAccountsOfficer(this.accountsOfficer.getValue());
+			this.accountsOfficer.getValidatedValue();
+			Object object = this.accountsOfficer.getAttribute("DealerId");
+			if (object != null) {
+				aFinanceMain.setAccountsOfficer(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setAccountsOfficer(0);
+			}
 			aFinanceMain.setLovDescAccountsOfficer(this.accountsOfficer.setDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -13794,6 +13820,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (getMandateDialogCtrl() != null) {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
+		
+		if (getChequeDetailDialogCtrl() != null) {
+			getChequeDetailDialogCtrl().checkTabDisplay(repymethod, true);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -15244,6 +15274,46 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showError(e);
 				}
 			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void processSave() throws InterruptedException, Exception {
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String prevRecordStatus = financeMain.getRecordStatus();
+		String recordStatus = userAction.getSelectedItem().getValue();
+		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
+				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
+				&& StringUtils.isEmpty(moduleDefiner)) {
+			boolean allow = DisbursementInstCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
+			if (!allow) {
+				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
+				return;
+			}
+		}
+
+		Long captureReasone = null;
+		String taskId = getTaskId(getRole());
+		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		captureReasone = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
+
+		if (captureReasone != null && captureReasone.intValue() != 0) {
+			doFillReasons(captureReasone.intValue());
+		} else {
+			doSave();
+		}
+	}
+	
+	public void doFillReasons(int reason) throws InterruptedException{
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeMainDialogCtrl", this);
+		map.put("reason", reason);
+		try{
+			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", getMainWindow(), map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

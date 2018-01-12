@@ -789,7 +789,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		arg.put("AuditHeader", retAuditHeader);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetail/AuditErrorDetailsList.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ErrorDetail/AuditErrorDetailsList.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);

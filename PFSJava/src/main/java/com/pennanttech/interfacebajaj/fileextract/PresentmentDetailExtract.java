@@ -1,7 +1,6 @@
 package com.pennanttech.interfacebajaj.fileextract;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +9,11 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -44,50 +48,81 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	// Importing the data from file
-	private void importData() {
-		logger.debug(Literal.ENTERING);
+		@SuppressWarnings("resource")
+		private void importData() {
+			logger.debug(Literal.ENTERING);
 
-		String record = null;
-		BufferedReader br = null;
-		int rcdLegth = 0;
-		int lineNumber = 0;
-		MapSqlParameterSource map = null;
-		boolean isError = false;
+			int lineNumber = 0;
+			MapSqlParameterSource map = null;
+			boolean isError = false;
+			Workbook workbook = null;
+			Sheet sheet = null;
+			FileInputStream fis = null;
 
-		try {
-			rcdLegth = 78;
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
+			try {
+				//rcdLegth = 79;
+				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
+				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
+				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
+				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
 
-			// Clearing the data from staging tables
-			clearTables();
-
-			br = new BufferedReader(new FileReader(getFile()));
-			while ((record = br.readLine()) != null) {
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks("Uploading and validating the presentment response.....");
-				if (StringUtils.trimToNull(record) == null) {
-					break;
+				// Clearing the data from staging tables
+				clearTables();
+				
+				fis = new FileInputStream(getFile());
+				
+				if (getFile().toString().toLowerCase().endsWith(".xls")) {
+					workbook = new HSSFWorkbook(fis);
+				} else {
+					workbook = new XSSFWorkbook(fis);
 				}
 
-				lineNumber++;
-				if (record.length() != rcdLegth) {
-					int endLength = rcdLegth + 1;
-					throw new Exception("Record Length less than " + endLength);
+				if (workbook != null) {
+					sheet = workbook.getSheetAt(0);
 				}
 
-				map = new MapSqlParameterSource();
-				map.addValue("BranchCode", getFieldValue(record, 0, 3));
-				map.addValue("AgreementNo", getFieldValue(record, 3, 14));
-				map.addValue("InstalmentNo", getFieldValue(record, 17, 3));
-				map.addValue("BFLReferenceNo", getFieldValue(record, 20, 3));
-				map.addValue("Batchid", getFieldValue(record, 23, 29));
-				map.addValue("AmountCleared", getFieldValue(record, 52, 14));
-				map.addValue("ClearingDate", getDateValue(record, 66, 8));
-				map.addValue("Status", getFieldValue(record, 74, 1));
-				map.addValue("ReasonCode", getFieldValue(record, 75, 3));
+				Row row = null;
+				for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+					lineNumber++;
+					row = sheet.getRow(i);
 
+				try {
+					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < 12)) {
+						throw new Exception("Record is invalid at line :" + lineNumber);
+					}
+
+					if (i == 0) {
+						continue;
+					}
+					
+					StringUtils.trimToNull(String.valueOf(row.getCell(0)));
+					if (row.getCell(0) == null) {
+						break;
+					}
+					
+					map = new MapSqlParameterSource();
+					map.addValue("Name", StringUtils.trimToNull(row.getCell(0).getStringCellValue()));
+					map.addValue("Batchid", StringUtils.trimToNull(row.getCell(1).getStringCellValue()));
+					map.addValue("UMRN No.", String.valueOf(row.getCell(2).getNumericCellValue()));
+					map.addValue("AmountCleared", String.valueOf(row.getCell(3).getNumericCellValue()));
+					map.addValue("ClearingDate", DateUtility.getDate(StringUtils.trimToNull(row.getCell(4).getStringCellValue()), "dd/mm/yyyy"));
+					map.addValue("Account Type", StringUtils.trimToNull(row.getCell(5).getStringCellValue()));
+					map.addValue("BFLReferenceNo", StringUtils.trimToNull(row.getCell(6).getStringCellValue()));
+					map.addValue("Payment Due", DateUtility.getDate(StringUtils.trimToNull(row.getCell(7).getStringCellValue()), "dd/mm/yyyy"));
+					map.addValue("AgreementNo", StringUtils.trimToNull(row.getCell(8).getStringCellValue()));
+					map.addValue("Status", StringUtils.trimToNull(row.getCell(9).getStringCellValue()));
+					map.addValue("ReasonCode", String.valueOf(row.getCell(10).getNumericCellValue()));
+
+					if (row.getPhysicalNumberOfCells()>11) {
+						map.addValue("Failure reason", StringUtils.trimToNull(row.getCell(11).getStringCellValue()));
+					}
+
+					map.addValue("InstalmentNo", ",,,");
+					map.addValue("BranchCode", StringUtils.trimToNull(row.getCell(6).getStringCellValue()));
+
+				} catch (Exception e) {
+					logger.error("Exception {}", e);
+				}
 				// Validate Mandatory fields
 				validateFields(map);
 
@@ -122,11 +157,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
 		} finally {
 			try {
-				if (br != null) {
-					br.close();
+				if (fis != null) {
+					fis.close();
 				}
 				if (!isError) {
-					backUpFile();
+					backUpFile();	
 				}
 			} catch (IOException e) {
 				logger.error("Exception {}", e);

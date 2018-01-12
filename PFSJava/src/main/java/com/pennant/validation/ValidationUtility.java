@@ -15,8 +15,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
@@ -94,7 +94,7 @@ public class ValidationUtility {
 
 	private WSReturnStatus getErrorMesssage(String[] params) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(params[0]);
+		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(params[0]);
 		status.setReturnCode(params[0]);
 		if(errorDetail != null) {
 			status.setReturnText(errorDetail.getErrorMessage());

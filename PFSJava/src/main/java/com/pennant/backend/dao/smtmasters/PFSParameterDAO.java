@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.smtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.GlobalVariable;
@@ -53,13 +54,20 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
  */
 public interface PFSParameterDAO {
 
-	PFSParameter getPFSParameterById(String id,String type);
-	void update(PFSParameter pFSParameter,String type);
-	void delete(PFSParameter pFSParameter,String type);
-	String save(PFSParameter pFSParameter,String type);
-	List<PFSParameter> getAllPFSParameter(); 
+	PFSParameter getPFSParameterById(String id, String type);
+
+	void update(PFSParameter pFSParameter, String type);
+
+	void delete(PFSParameter pFSParameter, String type);
+
+	String save(PFSParameter pFSParameter, String type);
+
+	List<PFSParameter> getAllPFSParameter();
+
 	List<GlobalVariable> getGlobaVariables();
+
 	void updateParmValue(PFSParameter pFSParameter);
+
 	void update(String sysParmCode, String sysParmValue, String type);
 
 }

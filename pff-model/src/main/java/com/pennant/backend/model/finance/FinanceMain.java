@@ -154,11 +154,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String agreeName;
 	private boolean finIsAlwMD;
 	@XmlElement
-	private String accountsOfficer;
+	private long accountsOfficer;
 	@XmlElement
 	private String dsaCode;
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
+	private String lovDescSourceCity;
 	private String lovDescMobileNumber;
 	private String lovDescFinProduct;
 	private String lovDescCustCRCPR;
@@ -2612,11 +2613,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public String getAccountsOfficer() {
+	public long getAccountsOfficer() {
 		return accountsOfficer;
 	}
 
-	public void setAccountsOfficer(String accountsOfficer) {
+	public void setAccountsOfficer(long accountsOfficer) {
 		this.accountsOfficer = accountsOfficer;
 	}
 
@@ -3456,6 +3457,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setBureau(boolean bureau) {
 		this.bureau = bureau;
+	}
+
+	public String getLovDescSourceCity() {
+		return lovDescSourceCity;
+	}
+
+	public void setLovDescSourceCity(String lovDescSourceCity) {
+		this.lovDescSourceCity = lovDescSourceCity;
 	}
 
 }

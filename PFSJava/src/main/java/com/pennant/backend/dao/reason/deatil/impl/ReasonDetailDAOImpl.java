@@ -137,4 +137,21 @@ public class ReasonDetailDAOImpl extends BasisNextidDaoImpl<ReasonHeader> implem
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isreasonCodeExists(long reasonCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reasonid", reasonCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(reasonid)");
+		selectSql.append(" From ReasonDetails ");
+		selectSql.append(" Where reasonid=:reasonid");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
 }

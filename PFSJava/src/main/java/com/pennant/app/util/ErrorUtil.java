@@ -46,26 +46,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.pennant.backend.dao.ErrorDetailsDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
 
 public class ErrorUtil implements Serializable {
-	private static final long		serialVersionUID	= 6700340086746473118L;
-	private static final Logger		logger				= Logger.getLogger(ErrorUtil.class);
-
-	private List<ErrorDetails>		errorDetails		= null;
-	private static ErrorDetailsDAO	errorDetailsDAO;
-
+	private static final long serialVersionUID = 6700340086746473118L;
+	
+	private List<ErrorDetails> errorDetails = null;
+	private static ErrorDetailService errorDetailService;
+	
 	private ErrorUtil() {
 		super();
 	}
@@ -100,44 +93,16 @@ public class ErrorUtil implements Serializable {
 	}
 
 	private static ErrorDetails getErrorDetail(String errorCode) {
-		return errorDetailsDAO.getErrorDetail(errorCode);
+		return errorDetailService.getErrorDetail(errorCode);
 	}
 
-	private static LoadingCache<String, ErrorDetails> errorCache = CacheBuilder.newBuilder()
-			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, ErrorDetails>() {
-				@Override
-				public ErrorDetails load(String errorCode) throws Exception {
-					return getErrorDetail(errorCode);
-				}
-			});
-
-	private static ErrorDetails getError(String errorCode) {
-
-		ErrorDetails errorDetail = null;
-		try {
-			errorDetail = errorCache.get(errorCode);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from cache: ", e);
-			errorDetail = getErrorDetail(errorCode);
-		}
-
-		return errorDetail;
-	}
-
-	// Clear errorCache data.
-	public static void clearErrorCache(String errorCode) {
-		try {
-			errorCache.invalidate(errorCode);
-		} catch (Exception ex) {
-			logger.warn("Error clearing data from errorCache cache: ", ex);
-		}
-	}
-
+	
 	private HashMap<String, ErrorDetails> getErrorsByErrorCodes(String errorLanguage, List<ErrorDetails> errorDetails) {
 		HashMap<String, ErrorDetails> hashMap = new HashMap<String, ErrorDetails>();
 
 		for (ErrorDetails errorDetail : errorDetails) {
-			errorDetail = getError(errorDetail.getErrorCode());
+			//errorDetail = getError(errorDetail.getErrorCode());
+			errorDetail = getErrorDetail(errorDetail.getErrorCode());
 			hashMap.put(StringUtils.trimToEmpty(errorDetail.getErrorCode()), errorDetail);
 		}
 		return hashMap;
@@ -157,16 +122,9 @@ public class ErrorUtil implements Serializable {
 		}
 		return oldDetail;
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
-		ErrorUtil.errorDetailsDAO = errorDetailsDAO;
+	
+	public static void setErrorDetailService(ErrorDetailService errorDetailService) {
+		ErrorUtil.errorDetailService = errorDetailService;
 	}
 
-	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
-		this.errorDetails = errorDetails;
-	}
 }

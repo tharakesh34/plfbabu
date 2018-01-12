@@ -596,7 +596,6 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private List<CoAppElement> prepareCoAppElements(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		List<CoAppElement> coAppElements = new ArrayList<CoAppElement>(1);
-
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 		if (coapplicants != null && !coapplicants.isEmpty()) {
 			List<Long> coApplicantIDs = new ArrayList<Long>(1);
@@ -676,7 +675,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	 * @param consumerRequest
 	 * @param reference
 	 */
-	private void doInterfaceLogging(Object requestObj, String reference) {
+	private void doInterfaceLogging(BreData requestObj, String reference) {
 		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn,
 				status, errorCode, errorDesc, reference);
 		logInterfaceDetails(interfaceLogDetail);

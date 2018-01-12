@@ -8,7 +8,7 @@
 		<version>4.7.6-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
-	
+
 	<groupId>${pff.groupId}</groupId>
 	<artifactId>PFSJava</artifactId>
 	<version>${pff.version}</version>
@@ -85,6 +85,17 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>org.olap4j</groupId>
+					<artifactId>olap4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- JDBC Drivers -->
@@ -126,7 +137,7 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 		</dependency>
-		
+
 		<!-- Miscellaneous -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -208,17 +219,22 @@
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
-		   <dependency>
+		<dependency>
 			<groupId>com.pennanttech.document</groupId>
 			<artifactId>document-parser</artifactId>
 			<version>1.0.5</version>
 			<exclusions>
-			<exclusion>
-				<groupId>org.slf4j</groupId>
-    			<artifactId>log4j-over-slf4j</artifactId>
-			</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>log4j-over-slf4j</artifactId>
+				</exclusion>
 			</exclusions>
-		</dependency> 
+		</dependency>
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-embedded</artifactId>
+			<version>9.0.0.Final</version>
+		</dependency>
 	</dependencies>
 
 	<build>

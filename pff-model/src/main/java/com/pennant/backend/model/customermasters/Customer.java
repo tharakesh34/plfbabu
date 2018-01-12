@@ -140,6 +140,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustDSADeptName;
 	private long custRO1;
 	private String lovDescCustRO1Name;
+	private String lovDescCustRO1City;
 	private String custRO2;
 	private String lovDescCustRO2Name;
 
@@ -1809,5 +1810,13 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustSourceID(String custSourceID) {
 		this.custSourceID = custSourceID;
+	}
+
+	public String getLovDescCustRO1City() {
+		return lovDescCustRO1City;
+	}
+
+	public void setLovDescCustRO1City(String lovDescCustRO1City) {
+		this.lovDescCustRO1City = lovDescCustRO1City;
 	}
 }

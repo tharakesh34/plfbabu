@@ -77,7 +77,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -104,13 +103,14 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul file.
@@ -919,9 +919,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			whereClause.append("(',' ");
 
-			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(QueryUtil.getQueryConcat());
 			whereClause.append(" nextRoleCode ");
-			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(QueryUtil.getQueryConcat());
 			whereClause.append(" ',' LIKE '%,");
 			whereClause.append(role);
 			whereClause.append(",%')");

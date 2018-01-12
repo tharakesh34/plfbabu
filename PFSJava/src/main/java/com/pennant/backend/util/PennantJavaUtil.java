@@ -50,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ApplicationDetails;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.GlobalVariable;
@@ -186,7 +187,6 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -1896,7 +1896,7 @@ public class PennantJavaUtil {
 				new String[] { "LimitStructureDetails", "LimitStructureDetails_AView" }, "MSTGRP1", new String[] {
 						"LimitStructureCode", "StructureName" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
-		ModuleUtil.register("ErrorDetail", new ModuleMapping("ErrorDetail", ErrorDetail.class, new String[] {
+		ModuleUtil.register("ErrorDetails", new ModuleMapping("ErrorDetail", ErrorDetails.class, new String[] {
 				"ErrorDetails", "ErrorDetails_AView" }, masterWF, new String[] { "ErrorCode", "ErrorMessage" }, null, 300));
 		
 		ModuleUtil.register("CollateralAssignment", new ModuleMapping("CollateralAssignment",

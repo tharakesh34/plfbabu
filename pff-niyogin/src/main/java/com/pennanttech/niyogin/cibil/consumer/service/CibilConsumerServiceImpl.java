@@ -131,10 +131,8 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		CibilConsumerRequest cibilConsumerRequest = new CibilConsumerRequest();
-
 		cibilConsumerRequest.setApplicationId(customer.getCustID());
 		cibilConsumerRequest.setStgUniqueRefId(customer.getCustID());
-
 		CibilPersonalDetails personalDetails = new CibilPersonalDetails();
 		if (StringUtils.isNotBlank(customer.getCustFName())) {
 			personalDetails.setFirstName(customer.getCustFName());
@@ -157,11 +155,12 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			personalDetails.setMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList()));
+		} else {
+			personalDetails.setMobile("");
 		}
 		
 		personalDetails.setNomineeName("");
 		personalDetails.setNomineeRelation("");
-		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		if (documentList != null) {
 			String panCard = StringUtils.trimToEmpty((String) getSMTParameter("PAN_DOC_TYPE", String.class));
@@ -175,6 +174,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		if (customerDetails.getAddressList() != null) {
 			CustomerAddres customerAddres = NiyoginUtility.getAddress(customerDetails.getAddressList());
 			cibilConsumerRequest.setAddress(prepareAddress(customerAddres));
+
 		} else {
 			cibilConsumerRequest.setAddress(new CibilConsumerAddress());
 		}
@@ -206,9 +206,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		address.setCareOf("");
 		address.setLandmark(custAddres.getCustAddrStreet());
 		address.setCategory(custAddres.getCustAddrType());
-		
 		City city = getCityDetails(custAddres);
-		
 		if (city != null) {
 			address.setCity(city.getPCCityName());
 			address.setCountry(city.getLovDescPCCountryName());
@@ -217,6 +215,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			address.setState(city.getLovDescPCProvinceName());
 		}
 		
+
 		logger.debug(Literal.ENTERING);
 		return address;
 

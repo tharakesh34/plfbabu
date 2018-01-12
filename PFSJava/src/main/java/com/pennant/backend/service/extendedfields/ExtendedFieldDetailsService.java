@@ -18,6 +18,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -53,6 +54,8 @@ public class ExtendedFieldDetailsService {
 	private ExtendedFieldHeaderDAO			extendedFieldHeaderDAO;
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
+	private AuditHeaderDAO					auditHeaderDAO;
+
 
 	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType, String method) {
 		logger.debug(Literal.ENTERING); 
@@ -1342,7 +1345,7 @@ public class ExtendedFieldDetailsService {
 		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(), 
 				PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails); 
-		//auditHeaderDAO.addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 	}
 	
 	private AuditHeader getAuditHeader(FinanceMain finMain, String tranType) {
@@ -1387,4 +1390,8 @@ public class ExtendedFieldDetailsService {
 		return extendedFieldDetailsValidation;
 	}
 
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+	
 }

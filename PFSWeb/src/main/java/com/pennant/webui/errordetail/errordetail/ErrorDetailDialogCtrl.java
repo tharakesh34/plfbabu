@@ -67,7 +67,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -76,8 +75,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -85,7 +84,7 @@ import com.pennant.webui.util.constraint.PTListValidator;
  * /WEB-INF/pages/ErrorDetail/ErrorDetail/errorDetailDialog.zul file. <br>
  * ************************************************************<br>
  */
-public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
+public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ErrorDetailDialogCtrl.class);
@@ -130,7 +129,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	private boolean 		enqModule=false;
 	
 	// not auto wired vars
-	private ErrorDetail errorDetail; // overhanded per param
+	private ErrorDetails errorDetail; // overhanded per param
 	private transient ErrorDetailListCtrl errorDetailListCtrl; // overhanded per param
 
 	
@@ -180,8 +179,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 			doCheckRights();
 			// READ OVERHANDED params !
 			if (arguments.containsKey("errorDetail")) {
-				this.errorDetail = (ErrorDetail) arguments.get("errorDetail");
-				ErrorDetail befImage =new ErrorDetail();
+				this.errorDetail = (ErrorDetails) arguments.get("errorDetail");
+				ErrorDetails befImage =new ErrorDetails();
 				BeanUtils.copyProperties(this.errorDetail, befImage);
 				this.errorDetail.setBefImage(befImage);
 				
@@ -355,7 +354,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * @param aErrorDetail
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ErrorDetail aErrorDetail) throws InterruptedException {
+	public void doShowDialog(ErrorDetails aErrorDetail) throws InterruptedException {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -467,7 +466,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * @param aErrorDetail
 	 *            ErrorDetail
 	 */
-	public void doWriteBeanToComponents(ErrorDetail aErrorDetail) {
+	public void doWriteBeanToComponents(ErrorDetails aErrorDetail) {
 		logger.debug("Entering") ;
 		this.errorCode.setValue(aErrorDetail.getErrorCode());
 		this.errorLanguage.setValue(aErrorDetail.getErrorLanguage());
@@ -484,7 +483,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * 
 	 * @param aErrorDetail
 	 */
-	public void doWriteComponentsToBean(ErrorDetail aErrorDetail) {
+	public void doWriteComponentsToBean(ErrorDetails aErrorDetail) {
 		logger.debug("Entering") ;
 		doSetLOVValidation();
 		
@@ -627,7 +626,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 */
 	private void doDelete() throws Exception {
 		logger.debug("Entering");	
-		final ErrorDetail aErrorDetail = new ErrorDetail();
+		final ErrorDetails aErrorDetail = new ErrorDetails();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
 		String tranType=PennantConstants.TRAN_WF;
 		
@@ -684,7 +683,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
-		final ErrorDetail aErrorDetail = new ErrorDetail();
+		final ErrorDetails aErrorDetail = new ErrorDetails();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
 		boolean isNew = false;
 		
@@ -756,7 +755,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * 
 	 */
 	
-	private boolean doProcess(ErrorDetail aErrorDetail,String tranType) throws Exception{
+	private boolean doProcess(ErrorDetails aErrorDetail,String tranType) throws Exception{
 		logger.debug("Entering");
 		boolean processCompleted=false;
 		aErrorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -816,7 +815,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		int retValue=PennantConstants.porcessOVERIDE;
 		boolean deleteNotes=false;
 		
-		ErrorDetail aErrorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
+		ErrorDetails aErrorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
 		
 		try {
 			
@@ -858,7 +857,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 					processCompleted=true;
 
 					if(deleteNotes){
-						deleteNotes(getNotes("ErrorDetail",aErrorDetail.getErrorCode(),aErrorDetail.getVersion()),true);
+						deleteNotes(getNotes("ErrorDetails",aErrorDetail.getErrorCode(),aErrorDetail.getVersion()),true);
 					}
 				}
 				
@@ -889,7 +888,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(ErrorDetail aErrorDetail, String tranType){
+	private AuditHeader getAuditHeader(ErrorDetails aErrorDetail, String tranType){
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aErrorDetail.getBefImage(), aErrorDetail);   
 		return new AuditHeader(aErrorDetail.getErrorCode(),null,null,null,auditDetail,aErrorDetail.getUserDetails(),getOverideMap());
 	}
@@ -898,11 +897,11 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public ErrorDetail getErrorDetail() {
+	public ErrorDetails getErrorDetail() {
 		return this.errorDetail;
 	}
 
-	public void setErrorDetail(ErrorDetail errorDetail) {
+	public void setErrorDetail(ErrorDetails errorDetail) {
 		this.errorDetail = errorDetail;
 	}
 

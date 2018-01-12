@@ -50,7 +50,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.ErrorDetailsDAO;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -70,8 +69,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 
 	private WorkFlowDetailsDAO workFlowDetailsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
-	private ErrorDetailsDAO errorDetailsDAO;
-
+	
 	public WorkFlowDetailsServiceImpl() {
 		super();
 	}
@@ -92,13 +90,6 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	}
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
-	
-	public ErrorDetailsDAO getErrorDetailsDAO() {
-		return errorDetailsDAO;
-	}
-	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
-		this.errorDetailsDAO = errorDetailsDAO;
 	}
 	
 	

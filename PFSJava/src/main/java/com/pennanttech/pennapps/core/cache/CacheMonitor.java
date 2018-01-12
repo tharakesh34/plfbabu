@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CacheConfigMonitor.java                             		    		* 	  
+ * FileName    		:  GenericCacheMonitor.java                            		    		* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -41,62 +41,60 @@
  ********************************************************************************************
  */
 
-package com.pennanttech.cache;
+package com.pennanttech.pennapps.core.cache;
 
-import java.math.BigDecimal;
-import java.util.Map;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import com.pennant.backend.service.cacheadministration.CacheAdministrationService;
 
+import com.pennanttech.pennapps.core.resource.Literal;
 
-
-public class CacheConfigMonitor implements Runnable {
-	private static final Logger logger = Logger.getLogger(CacheConfigMonitor.class);
+public class CacheMonitor implements Runnable {
+	private static final Logger log = LogManager.getLogger(CacheMonitor.class);
 	
-	private long sleepTime = 0;
-	private int nodeCount = 0;
-	
-	private CacheAdministrationService cacheAdministrationService;
-
-	
-	public CacheConfigMonitor(CacheAdministrationService cacheAdministrationService) {
-		super();		
-		this.cacheAdministrationService= cacheAdministrationService;
+	private CacheAdmin cacheAdmin;
+			
+	public CacheMonitor(CacheAdmin cacheAdmin) {
+		super();
+		this.cacheAdmin = cacheAdmin;
 	}
 
-	private void monitorConfig() {
-		logger.debug("Entering ");
-		try {
-			
-			//Fetch the Node count and Sleep Timings from 
-			
-			Map<String, Object> cacheParams =this.cacheAdministrationService.getCacheParameters();
-			
-			int count =		((BigDecimal) cacheParams.get("NODE_COUNT")).intValue();
-			this.sleepTime =((BigDecimal) cacheParams.get("CACHE_UPDATE_SLEEP")).longValue();			
-			GenericCacheManager.setCacheVerify(((BigDecimal) cacheParams.get("CACHE_VERIFY_SLEEP")).longValue());
-						
-						
-			while (true) {
-				if (nodeCount!= count){
-					nodeCount= count;
-					GenericCacheManager.setNodeSize(nodeCount);
-				}
-				Thread.sleep(sleepTime);
-
-				cacheParams =this.cacheAdministrationService.getCacheParameters();
-				count =  ((BigDecimal) cacheParams.get("NODE_COUNT")).intValue();
-			}
-			
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		logger.debug("Leaving ");
-	}
 
 	@Override
 	public void run() {
-		monitorConfig();
-	}
+		log.debug(Literal.ENTERING);
 
+		CacheStats stats = CacheManager.getNodeDetails();
+
+		// delete old status data from DB based on the clustered Name , Node
+		try {
+			log.debug(String.format("Deleting the old status of %s Cluster, %s  IP, %s Node", stats.getClusterName(),
+					stats.getClusterIp(), stats.getClusterNode()));
+			this.cacheAdmin.delete(stats.getClusterName(), stats.getClusterIp(), stats.getClusterNode());
+		} catch (Exception e) {
+			log.error("Error while deleting the existing cache details / No records to delete");
+		}
+
+		while (CacheManager.isEnabled()) {
+			CacheManager.verifyCache();
+			stats = CacheManager.getNodeDetails();
+			CacheStats existingCache = cacheAdmin.getCacheStats(stats.getClusterName(), stats.getClusterNode());
+
+			if (existingCache != null) {
+				cacheAdmin.update(stats);
+			} else {
+				cacheAdmin.insert(stats);
+			}
+
+			try {
+				Thread.sleep(CacheManager.getSleepTime());
+			} catch (InterruptedException e) {
+				log.error(Literal.EXCEPTION, e);
+			}
+
+			if (CacheManager.getCacheManager() == null) {
+				return;
+			}
+		}
+
+	}
 }

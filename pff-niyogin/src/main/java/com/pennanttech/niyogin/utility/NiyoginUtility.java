@@ -56,6 +56,7 @@ public class NiyoginUtility {
 	 * @param list
 	 */
 	public static void sortCustomerAddres(List<CustomerAddres> list) {
+
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list, new Comparator<CustomerAddres>() {
 				@Override
@@ -64,66 +65,6 @@ public class NiyoginUtility {
 				}
 			});
 		}
-	}
-	
-	/**
-	 * Method to get the High priority email.
-	 * 
-	 * @param customerEMailList
-	 * @param priority
-	 * @return String EmailId
-	 */
-	public static String getHignPriorityEmail(List<CustomerEMail> customerEMailList, int priority) {
-		for (CustomerEMail customerEMail : customerEMailList) {
-			if (customerEMail.getCustEMailPriority() == priority) {
-				return customerEMail.getCustEMail();
-			}
-		}
-		if (priority > 1) {
-			getHignPriorityEmail(customerEMailList, priority - 1);
-		}
-		return null;
-	}
-
-	
-	/**
-	 * Method to get the High priority PhoneNumeber
-	 * 
-	 * @param customerPhoneNumList
-	 * @param priority
-	 * @return String CustomerPhoneNumber
-	 */
-	public static CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList,
-			int priority) {
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
-				return customerPhoneNumber;
-			}
-		}
-		if (priority > 1) {
-			getHighPriorityPhone(customerPhoneNumList, priority - 1);
-		}
-		return null;
-	}
-
-	/**
-	 * Method to get the High Priority Address.
-	 * 
-	 * @param addressList
-	 * @param priority
-	 * @return CustomerAddres
-	 */
-	public static CustomerAddres getHighPriorityAddress(List<CustomerAddres> addressList, int priority) {
-
-		for (CustomerAddres customerAddres : addressList) {
-			if (customerAddres.getCustAddrPriority() == priority) {
-				return customerAddres;
-			}
-		}
-		if (priority > 1) {
-			getHighPriorityAddress(addressList, priority - 1);
-		}
-		return null;
 	}
 
 	public static String getPhoneNumber(List<CustomerPhoneNumber> phoneList) {

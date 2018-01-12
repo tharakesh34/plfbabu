@@ -11,8 +11,8 @@
 	<import resource="applicationContext-core-interface.xml" />
 
 	<!-- Error Details -->
-	<bean id="errorDetailsDAO" class="com.pennant.backend.dao.impl.ErrorDetailsDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+	<bean id="errorDetailDAO" class="com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- only definition added -->
 	<bean name="errorDetailService" class="com.pennant.backend.service.errordetail.impl.ErrorDetailServiceImpl">
@@ -21,7 +21,10 @@
 	<bean id="basisCodeDAO" abstract="true" class="com.pennant.backend.dao.impl.BasisCodeDAO" />
 	<!-- PFS SMT Parameters -->
 	<bean id="pFSParameterDAO" class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="systemParameterService" class="com.pennant.backend.service.smtmasters.impl.PFSParameterServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 	<!-- Script Engine -->
 	<!-- Script Engine object creation -->
@@ -40,22 +43,22 @@
 	<!-- ====================================================== -->
 	<!-- Finance Type Details -->
 	<bean id="financeTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Main -->
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Schedule Details -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Profit Details -->
 	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!--============ AEAmounts Util ============== -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
@@ -63,39 +66,39 @@
 	</bean>
 	<!-- Repay Instructions -->
 	<bean id="repayInstructionDAO" class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Overdue Details -->
 	<bean id="finODDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Suspense Head -->
 	<bean id="financeSuspHeadDAO" class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Status Details -->
 	<bean id="finStatusDetailDAO" class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Log Entry Details -->
 	<bean id="finLogEntryDetailDAO" class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- ====================================================== -->
 	<!-- Postings Related Generic DAOs -->
 	<!-- ====================================================== -->
 	<!-- Postings -->
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 	<!-- System Parameter Details -->
-	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil" init-method="Init">
-		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil">
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 	<!-- Database backup on EOD -->
 	<bean id="backupDatabase" class="com.pennant.eod.util.BackupDatabase">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Accounting Engine Execution -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution">
@@ -119,13 +122,13 @@
 		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
 	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="financeReferenceDetailDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
@@ -139,13 +142,13 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 	<bean id="finContributorDetailDAO" class="com.pennant.backend.dao.finance.impl.FinContributorDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="commitmentDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="commitmentMovementDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceImpl">
 		<property name="accountDetailProcess" ref="accountDetailProcess" />
@@ -164,7 +167,7 @@
 		<property name="designationDAO" ref="designationDAO" />
 	</bean>
 	<bean id="designationDAO" class="com.pennant.backend.dao.systemmasters.impl.DesignationDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection">
 		<property name="serverName" value="${pffEquation.ServerName}" />
@@ -174,13 +177,13 @@
 	</bean>
 	<!-- Account Details -->
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="accountsHistoryDAO" class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="accountTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Account process Util -->
 	<bean name="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil">
@@ -190,19 +193,19 @@
 	</bean>
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Rule -->
 	<bean id="ruleDAO" class="com.pennant.backend.dao.rulefactory.impl.RuleDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Customer -->
 	<bean id="customerDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Currency -->
 	<bean id="currencyDAO" class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- ====================================================== -->
 	<!-- Job Specific DAOs -->
@@ -215,20 +218,20 @@
 	</bean>
 	<!-- Weekend Master -->
 	<bean id="weekendMasterDAO" class="com.pennant.backend.dao.smtmasters.impl.WeekendMasterDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Holiday Master -->
 	<bean id="holidayMasterDAO" class="com.pennant.backend.dao.smtmasters.impl.HolidayMasterDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- +++++++RATE REVIEWS ROLLOVER ++++++++ -->
 	<!-- Base Rate -->
 	<bean id="baseRateDAO" class="com.pennant.backend.dao.applicationmaster.impl.BaseRateDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Special Rate -->
 	<bean id="splRateDAO" class="com.pennant.backend.dao.applicationmaster.impl.SplRateDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Rate Util -->
 	<bean name="RateUtil" class="com.pennant.app.util.RateUtil">
@@ -238,15 +241,15 @@
 	<!-- +++++++REPAYMENT QUEUING & POSTINGS ++++++++ -->
 	<!-- Repayment Priority -->
 	<bean id="financeRepayPriorityDAO" class="com.pennant.backend.dao.finance.impl.FinanceRepayPriorityDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Repay Queue -->
 	<bean id="finRepayQueueDAO" class="com.pennant.backend.dao.FinRepayQueue.impl.FinRepayQueueDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Finance Repayment -->
 	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Suspense Posting util -->
 	<bean id="suspensePostingUtil" class="com.pennant.app.util.SuspensePostingUtil">
@@ -257,12 +260,12 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 	<bean id="customerStatusCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.CustomerStatusCodeDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- +++++++OVERDUE RECOVERY CALCULATIONS & POSTINGS ++++++++ -->
 	<!-- Overdue Charge Recovery -->
 	<bean id="overdueChargeRecoveryDAO" class="com.pennant.backend.dao.financemanagement.impl.OverdueChargeRecoveryDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Overdue Charge Recovery Posting Util -->
 	<bean id="recoveryPostingsUtil" class="com.pennant.app.util.OverDueRecoveryPostingsUtil">
@@ -275,16 +278,16 @@
 	</bean>
 	<!-- Finance Overdue penalty Rate Details -->
 	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- +++++++PROVISION CALCULATIONS & POSTINGS ++++++++ -->
 	<!-- Provision Details -->
 	<bean id="provisionDAO" class="com.pennant.backend.dao.financemanagement.impl.ProvisionDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Provision Movement Details -->
 	<bean id="provisionMovementDAO" class="com.pennant.backend.dao.financemanagement.impl.ProvisionMovementDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Provision Calculation Util -->
 	<bean id="provisionCalculationUtil" class="com.pennant.app.util.ProvisionCalculationUtil">
@@ -299,21 +302,21 @@
 	<!-- +++++++DISBURSEMENT POSTINGS ++++++++ -->
 	<!-- Finance Disbursement Details -->
 	<bean id="financeDisbursementDAO" class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finCommodityInventoryDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinCommodityInventoryDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 	</bean>
@@ -322,7 +325,7 @@
 	
 	<!-- Audit data Purging -->
 	<bean id="dataPurgingProcess" class="com.pennant.eod.util.DataPurgingProcess">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Purging Process Decider -->
 	<bean id="purgingProcessDecider" class="com.pennant.backend.endofday.limitdecider.PurgingProcessDecider" />
@@ -333,7 +336,7 @@
 		<property name="collateralMarkDAO" ref="collateralMarkDAO" />
 	</bean>
 	<bean id="collateralMarkDAO" class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- DDA Controller Process -->
 	<bean id="ddaControllerService" class="com.pennant.backend.service.dda.DDAControllerService">
@@ -348,23 +351,22 @@
 		<property name="ddaProcessDAO" ref="ddaProcessDAO" />
 	</bean>
 	<bean id="ddaProcessDAO" class="com.pennant.backend.dao.dda.impl.DDAProcessDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="basisNextidDao" abstract="true" p:nextidviewDAO-ref="nextidviewDAO" class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="finSuspHoldDAO" class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="auditDatasource" ref="auditDatasource" />
 	</bean>
 	<!-- DDA Representment Details -->
 	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsExtDatasource" />
+		<property name="dataSource" ref="extDatasource" />
 	</bean>
 	<bean id="ddaRepresentmentService" class="com.pennant.backend.service.ddapayments.impl.DDARepresentmentService">
 		<property name="ddaRepresentmentDAO" ref="ddaRepresentmentDAO" />
@@ -376,13 +378,13 @@
 		<property name="eodFailPostingDAO" ref="eodFailPostingDAO" />
 	</bean>
 	<bean id="eodFailPostingDAO" class="com.pennant.backend.dao.dda.impl.EODFailPostingDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="takafulProviderDAO" class="com.pennant.backend.dao.applicationmaster.impl.TakafulProviderDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData" scope="prototype">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="mailUtility" ref="mailUtility" />
 		<property name="reportUtil" ref="reportUtil" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -393,7 +395,7 @@
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
 	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="mailUtility" class="com.pennant.app.util.MailUtility" scope="prototype">
 		<property name="outgoingHost" value="${mail.outgoingserver.host}" />
@@ -424,20 +426,20 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 	</bean>
 	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- DPDBucketConfiguration -->
 	<bean id="dPDBucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="dPDBucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="nPABucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil" scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
@@ -479,36 +481,36 @@
 	<!--============ Finance Excess Amounts Details ============== -->
 
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Receipt Header Details ============== -->
 
 	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!--============ Finance Receipt Detail Details ============== -->
 
 	<bean id="finReceiptDetailDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finFeeScheduleDetailDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="finInsurancesDAO" class="com.pennant.backend.dao.insurancedetails.impl.FinInsurancesDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- ManualAdvise -->
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean name="limitManagement" class="com.pennant.backend.service.limitservice.impl.LimitManagement">
@@ -523,31 +525,31 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitReferenceMappingDAO" class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitTransactionDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean id="limitStructureDetailDAO"
 		class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 		
 	<bean id="limitRebuild"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
+			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
 			<ref bean="limitRebuildServiceTarget" />
@@ -569,22 +571,22 @@
 	
 	<!-- EODConfig -->
 	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	 <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
   
   	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
 	
     <bean id="cibilReport" class=" com.pennanttech.pff.reports.cibil.CIBILReport" >
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/>
 

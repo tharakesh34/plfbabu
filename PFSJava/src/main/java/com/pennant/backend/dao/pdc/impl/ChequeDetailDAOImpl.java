@@ -250,7 +250,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from CHEQUEDETAIL");
 		sql.append(tableType.getSuffix());
-		sql.append(" where headerID = :headerID ");
+		sql.append(" where chequeDetailsID = :chequeDetailsID ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

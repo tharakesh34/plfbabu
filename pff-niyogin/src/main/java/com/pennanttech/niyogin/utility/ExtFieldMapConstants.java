@@ -38,9 +38,8 @@ public class ExtFieldMapConstants {
 	public static final String	WILLFUL_DEFAULTER_FLAG						= "WILLFULDEFAULTER";
 	public static final String	WRITE_OFF_FLAG								= "EXPBWRUTEOFF";
 	public static final String	SETTLED_FLAG_FLAG							= "EXPBSETTLED";
-	//EXPERIAN2
-	public static final String	NO_EMI_BOUNCES_IN_3_MONTHS					= "EMI3MONTHS";
-	public static final String	NO_EMI_BOUNCES_IN_6_MONTHS					= "EMI6MNTHS";
+	public static final String	NO_EMI_BOUNCES_IN3M							= "EMI3MONTHS";
+	public static final String	NO_EMI_BOUNCES_IN6M							= "EMI6MNTHS";
 	public static final String	STATUS										= "STATUS";
 	public static final String	WRITEOFF									= "25";
 	public static final String	SETTLE										= "23";

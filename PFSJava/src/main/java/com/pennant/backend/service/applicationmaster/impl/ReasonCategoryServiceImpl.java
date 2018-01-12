@@ -45,7 +45,6 @@ package com.pennant.backend.service.applicationmaster.impl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.ReasonCategoryDAO;
@@ -72,7 +71,6 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReasonCategoryDAO reasonCategoryDAO;
-	@Autowired
 	private ReasonCodeDAO reasonCodeDAO;
 
 

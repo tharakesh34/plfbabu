@@ -148,6 +148,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		if (addressList != null && !addressList.isEmpty()) {
 			CustomerAddres customerAddres = NiyoginUtility.getAddress(addressList);
 			experianDedup.setAddress(prepareAddress(customerAddres));
+
 		} else {
 			experianDedup.setAddress(new Address());
 		}
@@ -156,6 +157,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
 			CustomerPhoneNumber custPhoneNumber = NiyoginUtility.getPhone(phoneNumberList);
 			experianDedup.setPhone(preparePhone(custPhoneNumber));
+
 		} else {
 			experianDedup.setPhone(new Phone());
 		}

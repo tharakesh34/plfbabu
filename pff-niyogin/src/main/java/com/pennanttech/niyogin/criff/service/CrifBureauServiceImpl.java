@@ -254,13 +254,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		CriffBureauCommercial commercial = new CriffBureauCommercial();
 		commercial.setStgUnqRefId(customer.getCustID());
 		commercial.setApplicationId(customer.getCustID());
-
 		// prepare applicant details
 		commercial.setApplicant(prepareApplicantDetails(customerDetails));
-
 		// prepare company address details
 		commercial.setCompanyAddress(prepareComapnyAddress(customerDetails.getAddressList()));
-
 		commercial.setCompanyName(customer.getCustShrtName());
 		commercial.setCompanyMobile(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_OFF));
@@ -270,7 +267,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		logger.debug(Literal.LEAVING);
 		return commercial;
 	}
-
 
 	private CriffBureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);

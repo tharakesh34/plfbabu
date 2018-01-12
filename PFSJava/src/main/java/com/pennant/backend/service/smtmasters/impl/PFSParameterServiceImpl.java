@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.smtmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -51,6 +53,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -64,14 +67,13 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class PFSParameterServiceImpl extends GenericService<PFSParameter> implements PFSParameterService {
-
 	private static Logger logger = Logger.getLogger(PFSParameterServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PFSParameterDAO pFSParameterDAO;
 
 	public PFSParameterServiceImpl() {
-		super();
+		super(true);
 	}
 	
 	// ******************************************************//
@@ -130,6 +132,10 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		} else {
 			getPFSParameterDAO().update(pFSParameter, tableType);
 		}
+		
+		if (!pFSParameter.isWorkflow()) {
+			invalidateEntity(pFSParameter.getId());
+		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -163,6 +169,9 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		getPFSParameterDAO().delete(pFSParameter, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		invalidateEntity(pFSParameter.getId());
+		
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
@@ -191,8 +200,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	 *            (String)
 	 * @return PFSParameter
 	 */
-	public PFSParameter getApprovedPFSParameterById(String id) {
-		return getPFSParameterDAO().getPFSParameterById(id, "_AView");
+	public PFSParameter getApprovedPFSParameterById(String code) {
+		return getCachedEntity(code);
 	}
 
 	/**
@@ -254,7 +263,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 			}
 			
 		}
-
+		
+		invalidateEntity(pFSParameter.getId());
 		getPFSParameterDAO().delete(pFSParameter, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -431,6 +441,27 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		}
 		logger.debug("Leaving ");
 		return auditDetail;
+	}
+
+	@Override
+	public void update(String code, String value, String type) {
+		pFSParameterDAO.update(code, value, type);
+		setEntity(code, getEntity(code));
+	}
+
+	@Override
+	public PFSParameter getParameterByCode(String code) {
+		return getCachedEntity(code);
+	}
+
+	@Override
+	public List<GlobalVariable> getGlobaVariables() {
+		return pFSParameterDAO.getGlobaVariables();
+	}
+	
+	@Override
+	protected PFSParameter getEntity(String code) {
+		return pFSParameterDAO.getPFSParameterById(code,"_AView");
 	}
 
 }

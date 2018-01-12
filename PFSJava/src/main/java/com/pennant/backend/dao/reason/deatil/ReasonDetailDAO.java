@@ -9,4 +9,6 @@ public interface ReasonDetailDAO {
 	long save(ReasonHeader reasonHeader);
 
 	List<ReasonDetailsLog>  getReasonDetailsLog(String reference);
+	public boolean isreasonCodeExists(long reasonCode);
+
 }

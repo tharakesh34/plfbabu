@@ -45,7 +45,6 @@ package com.pennant.backend.service.errordetail.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -54,7 +53,6 @@ import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -64,12 +62,15 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>ErrorDetail</b>.<br>
  * 
  */
-public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implements ErrorDetailService {
-	private static final Logger logger = Logger.getLogger(ErrorDetailServiceImpl.class);
-	
-	private AuditHeaderDAO auditHeaderDAO;
-	
+public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> implements ErrorDetailService {
+	private AuditHeaderDAO auditHeaderDAO;	
 	private ErrorDetailDAO errorDetailDAO;
+	
+	
+	public ErrorDetailServiceImpl() {
+		super(true);
+	}
+	
 
 	/**
 	 * @return the auditHeaderDAO
@@ -135,14 +136,14 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 
 		
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
-		logger.debug("Entering");	
+		log.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 		String tableType="";
-		ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
+		ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
 		
 		if (errorDetail.isWorkflow()) {
 			tableType="_Temp";
@@ -153,9 +154,13 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		}else{
 			getErrorDetailDAO().update(errorDetail,tableType);
 		}
-
+		
+		if (!errorDetail.isWorkflow()) {
+			invalidateEntity(errorDetail.getId());
+		}
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		log.debug("Leaving");
 		return auditHeader;
 
 	}
@@ -172,18 +177,21 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		log.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"delete",false);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 		
-		ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
+		ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
 		getErrorDetailDAO().delete(errorDetail,"");
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		
+		invalidateEntity(errorDetail.getId());
+		
+		log.debug("Leaving");
 		return auditHeader;
 	}
 
@@ -196,7 +204,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 */
 	
 	@Override
-	public ErrorDetail getErrorDetailById(String id) {
+	public ErrorDetails getErrorDetailById(String id) {
 		return getErrorDetailDAO().getErrorDetailById(id,"_View");
 	}
 	/**
@@ -206,8 +214,8 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 * @return ErrorDetail
 	 */
 	
-	public ErrorDetail getApprovedErrorDetailById(String id) {
-		return getErrorDetailDAO().getErrorDetailById(id,"_AView");
+	public ErrorDetails getApprovedErrorDetailById(String id) {
+		return getCachedEntity(id);
 	}
 
 	/**
@@ -226,15 +234,15 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		log.debug("Entering");
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
-		ErrorDetail errorDetail = new ErrorDetail();
-		BeanUtils.copyProperties((ErrorDetail) auditHeader.getAuditDetail().getModelData(), errorDetail);
+		ErrorDetails errorDetail = new ErrorDetails();
+		BeanUtils.copyProperties((ErrorDetails) auditHeader.getAuditDetail().getModelData(), errorDetail);
 
 		if (errorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -258,7 +266,9 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 				getErrorDetailDAO().update(errorDetail, "");
 			}
 		}
-
+		
+		invalidateEntity(errorDetail.getId());
+		
 		getErrorDetailDAO().delete(errorDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -266,9 +276,9 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(errorDetail);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+	
+		getAuditHeaderDAO().addAudit(auditHeader);		
+		log.debug("Leaving");
 
 		return auditHeader;
 	}
@@ -284,19 +294,19 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 */
 	
 		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
+			log.debug("Entering");
 			auditHeader = businessValidation(auditHeader,"doApprove",false);
 			if (!auditHeader.isNextProcess()) {
 				return auditHeader;
 			}
 
-			ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
+			ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
 			
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getErrorDetailDAO().delete(errorDetail,"_Temp");
 			
 			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			
 			return auditHeader;
 		}
@@ -314,12 +324,12 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 		
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
-			logger.debug("Entering");
+			log.debug("Entering");
 			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 
@@ -337,17 +347,17 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		 */
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
-			logger.debug("Entering");
+			log.debug("Entering");
 			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-			ErrorDetail errorDetail= (ErrorDetail) auditDetail.getModelData();
+			ErrorDetails errorDetail= (ErrorDetails) auditDetail.getModelData();
 			
-			ErrorDetail tempErrorDetail= null;
+			ErrorDetails tempErrorDetail= null;
 			if (errorDetail.isWorkflow()){
 				tempErrorDetail = getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "_Temp");
 			}
-			ErrorDetail befErrorDetail= getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "");
+			ErrorDetails befErrorDetail= getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "");
 			
-			ErrorDetail oldErrorDetail= errorDetail.getBefImage();
+			ErrorDetails oldErrorDetail= errorDetail.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -407,5 +417,14 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 			return auditDetail;
 		}
-
+	
+	@Override
+	public ErrorDetails getErrorDetail(String errorCode) {
+		return getCachedEntity(errorCode);
+	}
+	
+	@Override
+	protected ErrorDetails getEntity(String code) {
+		return errorDetailDAO.getErrorDetailById(code,"_AView");
+	}
 }

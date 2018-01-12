@@ -9,13 +9,19 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 
@@ -24,19 +30,20 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	private List<Long> idList;
 	private long presentmentId;
 	private boolean isError;
+	private long							processedCount	= 0;
+	protected final static Logger			logger	= LoggerFactory.getLogger(PresentmentRequestProcess.class.getClass());
+	protected NamedParameterJdbcTemplate	parameterJdbcTemplate;
 
 	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList, long presentmentId, boolean isError) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.idList = idList;
 		this.presentmentId = presentmentId;
 		this.isError = isError;
+		parameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	@Override
 	public void processData() {
-		logger.debug("Entering");
-
-		executionStatus.setRemarks("Loading data..");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = getSqlQuery();
@@ -50,22 +57,18 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 
 			@Override
 			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-				logger.debug("Entering");
+				logger.debug(Literal.ENTERING);
 				boolean isBatchFail = false;
 				try {
 					clearTables();
 					
 					while (rs.next()) {
-						executionStatus.setRemarks("processing the record " + ++totalRecords);
 						processedCount++;
 						try {
 							map = mapData(rs);
-							save(map, "PDC_CONSL_EMI_DTL_TEMP", destinationJdbcTemplate);
-							successCount++;
+							save(map);
 						} catch (Exception e) {
 							logger.error("Exception :", e);
-							failedCount++;
-							saveBatchLog(rs.getString("PRESENTMENTID"), "F", e.getMessage());
 							throw e;
 						} finally {
 							map = null;
@@ -75,22 +78,48 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 					logger.error("Exception :", e);
 					isBatchFail = true;
 				} finally {
+					
+					if (!isBatchFail) {
+						try {
+							prepareRequestFile();
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							isBatchFail = true;
+						}
+					}
+					
 					if (isBatchFail) {
 						clearTables();
 					} else {
 						copyDataFromTempToMainTables();
+
 						if (isError) {
-							updatePresentmentHeader(presentmentId, 3, executionStatus.getId(), processedCount);
+							updatePresentmentHeader(presentmentId, 3, processedCount);
 						} else {
-							updatePresentmentHeader(presentmentId, 4, executionStatus.getId(), processedCount);
+							updatePresentmentHeader(presentmentId, 4, processedCount);
 						}
 						updatePresentmentDetails(idList, "A");
 					}
 				}
-				return totalRecords;
+				return presentmentId;
 			}
 		});
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void prepareRequestFile() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			DataEngineExport dataEngine = null;
+			dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+			dataEngine.exportData("PRESENTMENT_REQUEST");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private StringBuilder getSqlQuery() {
@@ -115,6 +144,29 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
 		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
 		return sql;
+	}
+	
+	private void save(MapSqlParameterSource map) {
+		StringBuilder sql = new StringBuilder("insert into PDC_CONSL_EMI_DTL_TEMP");
+		sql.append(" (PR_KEY, BR_CODE, AGREEMENTNO, MICR_CODE, ACC_TYPE, LEDGER_FOLIO, FINWARE_ACNO,");
+		sql.append(" DEST_ACC_HOLDER, PDC_BY_NAME, BANK_NAME, BANK_ADDRESS, EMI_NO, BFL_REF,");
+		sql.append(" BATCHID, CHEQUEAMOUNT, PRESENTATIONDATE, RESUB_FLAG,");
+		sql.append(" UMRN_NO, IFSC_CODE, SPONSER_BANK_CODE, UTILITY_CODE, MANDATE_START_DT,");
+		sql.append(" MANDATE_END_DT, INSTRUMENT_MODE, PRODUCT_CODE, LESSEEID, PICKUP_BATCHID,");
+		sql.append(" TXN_TYPE_CODE, SOURCE_CODE, ENTITY_CODE, POSTING_DATETIME, STATUS)");
+		sql.append("  values(:PR_KEY, :BR_CODE, :AGREEMENTNO, :MICR_CODE, :ACC_TYPE, :LEDGER_FOLIO, :FINWARE_ACNO,");
+		sql.append(" :DEST_ACC_HOLDER, :PDC_BY_NAME, :BANK_NAME, :BANK_ADDRESS, :EMI_NO, :BFL_REF, ");
+		sql.append(" :BATCHID, :CHEQUEAMOUNT, :PRESENTATIONDATE, :RESUB_FLAG,");
+		sql.append(" :UMRN_NO, :IFSC_CODE, :SPONSER_BANK_CODE, :UTILITY_CODE, :MANDATE_START_DT, ");
+		sql.append(" :MANDATE_END_DT, :INSTRUMENT_MODE, :PRODUCT_CODE, :LESSEEID, :PICKUP_BATCHID, ");
+		sql.append(" :TXN_TYPE_CODE, :SOURCE_CODE, :ENTITY_CODE, :POSTING_DATETIME, :STATUS ) ");
+
+		try {
+			parameterJdbcTemplate.update(sql.toString(), map);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
 	}
 
 	@Override
@@ -177,19 +229,18 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		return map;
 	}
 
-	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, long totalRecords) {
+	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long totalRecords) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append( " UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
+		sql.append( " UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("STATUS", manualEcclude);
-		source.addValue("DBSTATUSID", dBStatusId);
 		source.addValue("ID", presentmentId);
 		source.addValue("TOTALRECORDS", totalRecords);
 
@@ -230,7 +281,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	private void clearTables() {
 		logger.debug(Literal.ENTERING);
 
-		destinationJdbcTemplate.update("TRUNCATE TABLE PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
+		parameterJdbcTemplate.update("TRUNCATE TABLE PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -238,7 +289,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	private void copyDataFromTempToMainTables() {
 		logger.debug(Literal.ENTERING);
 
-		destinationJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
+		parameterJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
 	}

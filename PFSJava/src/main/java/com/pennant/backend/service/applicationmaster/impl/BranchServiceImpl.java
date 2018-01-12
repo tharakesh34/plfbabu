@@ -155,7 +155,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		
 		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
@@ -179,7 +179,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -397,7 +397,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		
 		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
@@ -421,7 +421,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
 		}
 		
 		getAuditHeaderDAO().addAudit(auditHeader);

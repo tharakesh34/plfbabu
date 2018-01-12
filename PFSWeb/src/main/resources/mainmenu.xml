@@ -84,7 +84,7 @@
  		<!-- <menuItem id="menu_Item_CorpRelationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeList.zul"  rightName="menuItem_ApplicationMaster_CorpRelationCode"/> -->
 		<menuItem id="menu_Item_Currency" zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"  rightName="menuItem_ApplicationMaster_Currency"/>
 		<menuItem id="menu_Item_Entity" zulNavigation="/WEB-INF/pages/ApplicationMaster/Entity/EntityList.zul" rightName="menuItem_applicationmaster_Entity"/>
-<!-- 		<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetail/ErrorDetailList.zul" rightName="menuItem_ErrorDetail_ErrorDetail" /> -->
+		<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul" rightName="menuItem_ErrorDetail_ErrorDetail" />
 		<menuItem id="menu_Item_FeeType" zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"  rightName=""/>
 		<menuItem id="menu_Item_Flag" zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul" rightName="menuItem_ApplicationMaster_Flags"/>
 		<menuItem id="menu_Item_TaxDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul" rightName="menuItem_applicationmaster_TaxDetail"/>

@@ -83,7 +83,7 @@
 	<!-- ====================================================== -->
 
 	<bean id="errorUtil" class="com.pennant.app.util.ErrorUtil">
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+		<property name="errorDetailService" ref="errorDetailService" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -1750,13 +1750,13 @@
 	<bean id="pFSParameterListCtrl"
 		class="com.pennant.webui.smtmasters.pfsparameter.PFSParameterListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="pFSParameterService" ref="pFSParameterService" />
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 
 	<bean id="pFSParameterDialogCtrl"
 		class="com.pennant.webui.smtmasters.pfsparameter.PFSParameterDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="pFSParameterService" ref="pFSParameterService" />
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 
 	<!--============ Weekend Detail ============== -->
@@ -3579,10 +3579,7 @@
 	<!-- Batch Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
+	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype"/>
 
 	<!-- ====================================================== -->
 	<!-- Dashboard Details Configuration -->
@@ -3617,11 +3614,7 @@
 		class="com.pennant.webui.finance.enquiry.FinApprovalStsInquiryDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
-
-	<bean id="financeRejectDialogCtrl" class="com.pennant.webui.finance.financemain.FinanceRejectCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
-
+	
 	<!-- TreasuaryFinance -->
 
 	<bean id="treasuryFinHeaderListCtrl"
@@ -4211,7 +4204,7 @@
 		parent="basisListCtrl" scope="prototype" />
 			
 	<bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport">
-	<property name="dataSource" ref="pfsDatasource" />
+	<property name="dataSource" ref="dataSource" />
 		  	</bean>
 	
 	<!-- MandateStatusUpload -->
@@ -4847,7 +4840,7 @@
 
 	<!-- Data Engine -->
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
-		<constructor-arg ref="pfsDatasource" />
+		<constructor-arg ref="dataSource" />
 	</bean>
 	
 	 <bean id="dataImportCtrl" class="com.pennanttech.framework.component.dataengine.DataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
@@ -4855,7 +4848,7 @@
 	  </bean>
 	   <!-- <bean id="dataExportCtrl" class="com.pennanttech.framework.component.dataengine.DataExportCtrl"  parent="basisCtrl" scope="prototype" >
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />
-	  	<property name="dataSource" ref="pfsDatasource" />
+	  	<property name="dataSource" ref="dataSource" />
 	  </bean> -->
 	  
 	  <bean id="masterDataExtractionCtrl" class="com.pennanttech.framework.component.dataengine.MasterDataExtractionCtrl"  parent="basisCtrl" scope="prototype" >

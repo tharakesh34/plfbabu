@@ -9,7 +9,7 @@
 		<property name="jndiName" value="jdbc/PFFSEC" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFF" />
 		<property name="lookupOnStartup" value="true" />
@@ -19,7 +19,7 @@
 		<property name="jndiName" value="jdbc/PFFAUDIT" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="extDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFFEXT" />
 		<property name="lookupOnStartup" value="true" />
@@ -32,7 +32,7 @@
 		
 	<bean id="jobExplorer"
 		class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
-		p:dataSource-ref="pfsDatasource" />
+		p:dataSource-ref="dataSource" />
 		
 	<bean id="jobRegistry"
 		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
@@ -48,12 +48,12 @@
 	
 	<bean id="jobRepository"
 		class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean"
-		p:dataSource-ref="pfsDatasource" p:transactionManager-ref="transactionManager" />
+		p:dataSource-ref="dataSource" p:transactionManager-ref="transactionManager" />
 	<!--  p:lobHandler-ref="oracleLobHandler"  -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
 		lazy-init="true">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler"

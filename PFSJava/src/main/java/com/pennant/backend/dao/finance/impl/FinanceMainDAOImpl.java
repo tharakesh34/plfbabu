@@ -228,7 +228,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			selectSql.append(
 					" ,LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, LovDescFinBranchName, ");
 			selectSql.append(
-					" LovDescStepPolicyName, LovDescAccountsOfficer, DSACodeDesc, ReferralIdDesc, DmaCodeDesc, SalesDepartmentDesc ");
+					" LovDescStepPolicyName, LovDescAccountsOfficer, LovDescSourceCity, DSACodeDesc, ReferralIdDesc, DmaCodeDesc, SalesDepartmentDesc ");
 		}
 		selectSql.append(" From FinanceMain");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -301,7 +301,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				selectSql.append(" ReAgeBucket, FinLimitRef, ");
 				selectSql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn,");
 				selectSql.append(
-						" lovDescFinDivision,LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer,DsaCodeDesc,  ");
+						" lovDescFinDivision,LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer, LovDescSourceCity, DsaCodeDesc,  ");
 				selectSql.append("  ReferralIdDesc , DmaCodeDesc , SalesDepartmentDesc, ");
 			}
 		}

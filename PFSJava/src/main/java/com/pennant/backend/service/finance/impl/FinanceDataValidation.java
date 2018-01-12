@@ -44,6 +44,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -85,6 +86,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -144,7 +146,8 @@ public class FinanceDataValidation {
 	private ExtendedFieldDetailsService	extendedFieldDetailsService;
 	private CurrencyDAO					currencyDAO;
 	private DocumentService				documentService;
-
+	private VehicleDealerService        vehicleDealerService;
+	
 	public FinanceDataValidation() {
 		super();
 	}
@@ -998,12 +1001,12 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 			}
 		}
-		if (StringUtils.isNotBlank(finMain.getAccountsOfficer())) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(finMain
+		if (finMain.getAccountsOfficer() != 0) {
+			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
 					.getAccountsOfficer());
-			if (relationshipOfficer == null) {
+			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getAccountsOfficer();
+				valueParm[0] = String.valueOf(finMain.getAccountsOfficer());
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 			}
 		}
@@ -1012,7 +1015,7 @@ public class FinanceDataValidation {
 					.getSalesDepartment());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getAccountsOfficer();
+				valueParm[0] = finMain.getSalesDepartment();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 			}
 		}
@@ -4447,6 +4450,10 @@ public class FinanceDataValidation {
 
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		this.currencyDAO = currencyDAO;
+	}
+	
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
 	}
 
 }

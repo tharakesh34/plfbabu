@@ -117,6 +117,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
@@ -759,12 +760,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
 		this.stepPolicy.setFilters(filter);
 
+		
 		this.accountsOfficer.setMaxlength(8);
 		this.accountsOfficer.setMandatoryStyle(true);
-		this.accountsOfficer.setModuleName("RelationshipOfficer");
-		this.accountsOfficer.setValueColumn("ROfficerCode");
-		this.accountsOfficer.setDescColumn("ROfficerDesc");
-		this.accountsOfficer.setValidateColumns(new String[] { "ROfficerCode" });
+		this.accountsOfficer.setModuleName("SourceOfficer");
+		this.accountsOfficer.setValueColumn("DealerName");
+		this.accountsOfficer.setDescColumn("DealerCity");
+		this.accountsOfficer.setValidateColumns(new String[] { "DealerName" });
+		
 
 		this.dsaCode.setMaxlength(8);
 		this.dsaCode.setMandatoryStyle(true);
@@ -1986,8 +1989,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.row_accountsOfficer.setVisible(false);
 		}
 
-		this.accountsOfficer.setValue(aFinanceMain.getAccountsOfficer());
-		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
+		this.accountsOfficer.setValue(StringUtils.trimToEmpty(aFinanceMain.getLovDescAccountsOfficer()));
+		this.accountsOfficer.setDescription(StringUtils.trimToEmpty(aFinanceMain.getLovDescSourceCity()));
+		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
 		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
@@ -3286,6 +3290,23 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	public void onFulfill$accountsOfficer(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = accountsOfficer.getObject();
+		if (dataObject instanceof String) {
+			this.accountsOfficer.setValue(dataObject.toString());
+			this.accountsOfficer.setDescription("");
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.accountsOfficer.setAttribute("DealerId", details.getDealerId());
+			}
+		}
+		logger.debug("Leaving");
+	}
+
 
 	/*
 	 * onCheck Event For Step Finance Check Box
@@ -4290,8 +4311,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setAccountsOfficer(this.accountsOfficer.getValidatedValue());
-			aFinanceMain.setLovDescAccountsOfficer(this.accountsOfficer.setDescription());
+			this.accountsOfficer.getValidatedValue();
+			Object object = this.accountsOfficer.getAttribute("DealerId");
+			if (object != null) {
+				aFinanceMain.setAccountsOfficer(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setAccountsOfficer(0);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
