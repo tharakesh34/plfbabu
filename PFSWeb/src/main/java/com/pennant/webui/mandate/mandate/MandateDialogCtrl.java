@@ -389,6 +389,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setValueColumn("MandateID");
 		this.mandateRef.setDescColumn("MandateRef");
 		this.mandateRef.setDisplayStyle(2);
+		this.mandateRef.setInputAllowed(false);
 		this.mandateRef.setValidateColumns(new String[] { "MandateID" });
 		addMandateFiletrs(null);
 		this.active.setChecked(true);
@@ -1117,7 +1118,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Mandate Reference
 		try {
 
-			String ref = this.mandateRef.getValidatedValue();
+			String ref = this.mandateRef.getValue();
 			if (fromLoan && this.useExisting.isChecked() && StringUtils.isEmpty(ref)) {
 				throw new WrongValueException(this.mandateRef.getTextbox(), Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_MandateDialog_MandateRef.value") }));

@@ -595,7 +595,7 @@ public class PennantJavaUtil {
 						1} }, 400));
 
 		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
-				"Mandates_AView" }, manadateWF, new String[] { "MandateID","BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
+				"Mandates_AView" }, manadateWF, new String[] { "BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
 		
 		ModuleUtil.register("MandateStatus", new ModuleMapping("MandateStatus", MandateStatus.class, new String[] { "MandatesStatus",
 		"MandatesStatus_View" }, masterWF, new String[] { "MandateID", "Status" }, null, 300));

@@ -1,6 +1,7 @@
 package com.pennanttech.niyogin.dedup.service;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,12 +47,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		ExperianDedup experianDedupRequest = prepareRequestObj(customerDetails, applicantType);
 		try {
 			Map<String, Object> validatedMap = checkDedup(experianDedupRequest, financeMain);
-
-			if (validatedMap != null && validatedMap.isEmpty()) {
-				validatedMap.put("REASONCODEINTERNAL", statusCode);
-				validatedMap.put("REMARKSINTERNAL", App.getLabel("niyogin_No_Data"));
-				validatedMap.put("EXDREQUESTSEND", true);
-			}
 			prepareResponseObj(validatedMap, financeDetail);
 
 			//for CoApplicant
@@ -69,8 +64,6 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			 */
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			financeMain.setDedupMatch(true);
-			setWorkflowDetails(financeMain);
 			doLogError(e, serviceUrl, experianDedupRequest);
 			throw new InterfaceException("9999", e.getMessage());
 		}
@@ -85,34 +78,30 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-
 		reference = financeMain.getFinReference();
 
 		try {
 			extendedFieldMap = post(serviceUrl, experianDedupRequest, extConfigFileName);
-		} catch (InterfaceException e) {
-			financeMain.setDedupMatch(true);
-			setWorkflowDetails(financeMain);
-		}
-
-		if (!financeMain.isDedupMatch()) {
 			extendedFieldMap.put("EXDREQUESTSEND", true);
-			try {
-				validatedMap = validateExtendedMapValues(extendedFieldMap);
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				financeMain.setDedupMatch(true);
-				setWorkflowDetails(financeMain);
-				throw new InterfaceException("9999", e.getMessage());
-			}
-
-			setWorkflowDetails(financeMain);
+			validatedMap = validateExtendedMapValues(extendedFieldMap);
 			financeMain.setDedupMatch((Boolean) validatedMap.get("MATCH"));
-
+			
+			if (financeMain.isDedupMatch()) {
+				setWorkflowDetails(financeMain);
+			}
+			
 			// success case logging
 			doInterfaceLogging(experianDedupRequest, financeMain.getFinReference());
+		} catch (Exception e) {
+			if (validatedMap==null) {
+				validatedMap=new HashMap<>();
+			}
+			validatedMap.put("REASONCODEINTERNAL", statusCode);
+			validatedMap.put("REMARKSINTERNAL", App.getLabel("niyogin_No_Data"));
+			validatedMap.put("EXDREQUESTSEND", true);
+			logger.debug(e);
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 		return validatedMap;
 	}
@@ -235,10 +224,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	 */
 	private void setWorkflowDetails(FinanceMain financeMain) {
 		if (financeMain.isDedupMatch()) {
-			financeMain.setRecordStatus("Saved");
-			financeMain.setUserAction("Save");
+//			financeMain.setRecordStatus("Saved");
+//			financeMain.setUserAction("Save");
 			financeMain.setNextRoleCode(financeMain.getRoleCode());
-			financeMain.setNextTaskId(financeMain.getTaskId());
+			financeMain.setNextTaskId(financeMain.getTaskId()+";");
 		}
 	}
 
