@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.logging.model.InterfaceLogDetail;
-import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.dms.model.DocumentRequest;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -23,7 +22,6 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 
 	private final String		extConfigFileName	= "dms";
 	private String				serviceUrl;
-	private JSONClient			client;
 
 	/**
 	 * Method for Fetch online documents from DMS interface using Reference

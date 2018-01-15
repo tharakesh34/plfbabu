@@ -54,7 +54,7 @@ public abstract class NiyoginService {
 
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
 	private NiyoginDAOImpl		niyoginDAOImpl;
-	private JSONClient			client;
+	protected JSONClient			client;
 	public static final int		LENGTH_ACCOUNT		= 50;
 	public static final int		LENGTH_FREQUENCY	= 5;
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
