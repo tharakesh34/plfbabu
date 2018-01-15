@@ -99,6 +99,9 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			validatedMap.put("REASONCODEINTERNAL", statusCode);
 			validatedMap.put("REMARKSINTERNAL", App.getLabel("niyogin_No_Data"));
 			validatedMap.put("EXDREQUESTSEND", true);
+			
+			financeMain.setDedupMatch(true);
+			setWorkflowDetails(financeMain);
 			logger.debug(e);
 		}
 		

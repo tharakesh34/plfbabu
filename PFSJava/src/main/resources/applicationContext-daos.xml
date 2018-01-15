@@ -10664,4 +10664,9 @@
 	<bean id="cacheManager"  class="com.pennanttech.pennapps.core.cache.CacheManager" init-method="start" destroy-method="stop">
 		<constructor-arg ref="cacheAdmin" />
 	</bean>
+	
+	
+	<bean id="errorUtil" class="com.pennant.app.util.ErrorUtil">
+		<property name="errorDetailService" ref="errorDetailService" />
+	</bean>
 </beans>

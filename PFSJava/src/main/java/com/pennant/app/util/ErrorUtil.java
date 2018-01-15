@@ -123,7 +123,7 @@ public class ErrorUtil implements Serializable {
 		return oldDetail;
 	}
 	
-	public static void setErrorDetailService(ErrorDetailService errorDetailService) {
+	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		ErrorUtil.errorDetailService = errorDetailService;
 	}
 

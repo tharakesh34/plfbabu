@@ -43,7 +43,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -59,11 +58,11 @@ public class CustomerController {
 	HashMap<String, ArrayList<ErrorDetails>>	overideMap;
 	private CustomerService						customerService;
 	private CustomerDetailsService				customerDetailsService;
-	private ErrorDetailService					errorDetailService;
 	private CustomerEmploymentDetailService		customerEmploymentDetailService;
 	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private DocumentManagerDAO					documentManagerDAO;
 	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
+	
 
 	private final String						PROCESS_TYPE_SAVE	= "Save";
 	private final String						PROCESS_TYPE_UPDATE	= "Update";
@@ -1151,14 +1150,6 @@ public class CustomerController {
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
-	}
-
-	public ErrorDetailService getErrorDetailService() {
-		return errorDetailService;
-	}
-
-	public void setErrorDetailService(ErrorDetailService errorDetailService) {
-		this.errorDetailService = errorDetailService;
 	}
 
 	public CustomerDetailsService getCustomerDetailsService() {

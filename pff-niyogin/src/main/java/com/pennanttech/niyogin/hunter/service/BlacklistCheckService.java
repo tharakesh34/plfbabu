@@ -51,7 +51,6 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		// logging fields Data
 		reqSentOn = new Timestamp(System.currentTimeMillis());
-
 		reference = finReference;
 
 		try {
