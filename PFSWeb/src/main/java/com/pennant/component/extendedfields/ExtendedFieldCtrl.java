@@ -81,6 +81,7 @@ public class ExtendedFieldCtrl {
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
 		this.generator.setWindow(window);
+		this.generator.setTopLevelTab(tab);
 		this.tab.setLabel(extendedFieldHeader.getTabHeading());
 
 		// Pre-Validation Checking & Setting Defaults
@@ -134,19 +135,9 @@ public class ExtendedFieldCtrl {
 		}
 
 		Map<String, Object> map = null;
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		try {
-			map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), this.isReadOnly);
-			this.extendedFieldRender.setMapValues(map);
-			this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());
-		} catch (WrongValuesException wves) {
-			WrongValueException[] wvea = wves.getWrongValueExceptions();
-			for (int i = 0; i < wvea.length; i++) {
-				wve.add(wvea[i]);
-			}
-		}
-		// Error Detail
-		showErrorDetails(wve, this.tab);
+		map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), this.isReadOnly);
+		this.extendedFieldRender.setMapValues(map);
+		this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());
 
 		// Post Validations for the Extended fields
 		if (!isReadOnly) {
@@ -213,31 +204,31 @@ public class ExtendedFieldCtrl {
 	 * @param ArrayList<WrongValueException>
 	 *            wve
 	 **/
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug(Literal.ENTERING);
-
-		if (wve.size() > 0) {
-			logger.debug("Throwing occured Errors By using WrongValueException");
-			if (this.parentTab != null) {
-				this.parentTab.setSelected(true);
-			}
-			this.tab.setSelected(true);
-
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = wve.get(i);
-				if (i == 0) {
-					Component comp = wvea[i].getComponent();
-					if (comp instanceof HtmlBasedComponent) {
-						Clients.scrollIntoView(comp);
-					}
-				}
-				logger.debug(wvea[i]);
-			}
-			throw new WrongValuesException(wvea);
-		}
-		logger.debug(Literal.LEAVING);
-	}
+//	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+//		logger.debug(Literal.ENTERING);
+//
+//		if (wve.size() > 0) {
+//			logger.debug("Throwing occured Errors By using WrongValueException");
+//			if (this.parentTab != null) {
+//				this.parentTab.setSelected(true);
+//			}
+//			this.tab.setSelected(true);
+//
+//			WrongValueException[] wvea = new WrongValueException[wve.size()];
+//			for (int i = 0; i < wve.size(); i++) {
+//				wvea[i] = wve.get(i);
+//				if (i == 0) {
+//					Component comp = wvea[i].getComponent();
+//					if (comp instanceof HtmlBasedComponent) {
+//						Clients.scrollIntoView(comp);
+//					}
+//				}
+//				logger.debug(wvea[i]);
+//			}
+//			throw new WrongValuesException(wvea);
+//		}
+//		logger.debug(Literal.LEAVING);
+//	}
 
 	/**
 	 * Method Getting the extended field header details
