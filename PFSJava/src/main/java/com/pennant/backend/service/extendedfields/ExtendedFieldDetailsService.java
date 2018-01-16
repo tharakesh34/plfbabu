@@ -1334,7 +1334,6 @@ public class ExtendedFieldDetailsService {
 
 		if (financeDetail.getExtendedFieldRender() != null) {
 			auditDetailMap.put("LoanExtendedFieldDetails", setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, "saveOrUpdate"));
-			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 
 		if (financeDetail.getExtendedFieldRender() != null) {
