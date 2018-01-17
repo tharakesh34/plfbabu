@@ -1894,7 +1894,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void appendChequeDetailTab(boolean onLoad) {
 		logger.debug("Entering");
 		if (onLoad) {
-			createTab(AssetConstants.UNIQUE_ID_CHEQUE, true);
+			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
 			ChequeHeader chequeHeader = null;
