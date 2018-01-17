@@ -73,6 +73,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -298,7 +299,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					exposure = schedule.getRepayAmount();
 				}
 				
-				if (schedule.isRepayOnSchDate() || schedule.isPftOnSchDate()) {
+				if ((schedule.isRepayOnSchDate() || schedule.isPftOnSchDate()) && !isHoliday(schedule.getBpiOrHoliday())) {
 					if (schedule.getSchDate().compareTo(financeMain.getFinStartDate()) > 0 && firstRepayDate == null) {
 						firstRepayDate = schedule.getSchDate();
 					}
@@ -371,6 +372,17 @@ public class FinMandateServiceImpl implements FinMandateService {
 		}
 	}
 
+	private  boolean isHoliday(String bpiOrHoliday) {
+		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
