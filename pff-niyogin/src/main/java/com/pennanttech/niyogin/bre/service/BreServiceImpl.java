@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -112,7 +113,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		Customer customer = customerDetails.getCustomer();
 		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		BreData breData = new BreData();
-		breData.setCif(customer.getCustCIF());
+		breData.setCif(StringUtils.trimToNull(customer.getCustCIF()));
 		breData.setApplication(prepareApplication(financeDetail));
 		breData.setApplicant(prepareApplicant(financeDetail));
 		breData.setCoApplicant(prepareCoApplicant(financeDetail));
@@ -131,7 +132,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Application application = new Application();
 		application.setDateOfApplication(NiyoginUtility.formatDate(getAppDate(), "yyyy-MM-dd"));
-		application.setApplicationId(finMain.getFinReference());
+		application.setApplicationId(StringUtils.trimToNull(finMain.getFinReference()));
 		application.setBureau(prepareBureau(financeDetail));
 		application.setSocialsc(prepareSocialsc(financeDetail));
 		application.setAppliedLoanAmount(finMain.getFinAmount());
@@ -145,17 +146,17 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		bureau.setLoanType(finMain.getFinType());
+		bureau.setLoanType(StringUtils.trimToNull(finMain.getFinType()));
 		bureau.setAgeOfCustomer(getAgeTillAppDate(customer.getCustDOB()));
 
 		if(extendedMap!=null){
 		bureau.setNoOfBusLoansOpenedL6M(getIntValue(ExtFieldMapConstants.NUMB_OF_BUS_LOANS_OPENED_IN_L6M));
 		//TODO:
-		bureau.setProdIndexHL(bureau.getProdIndexAL());
-		bureau.setProdIndexAL(bureau.getProdIndexAL());
-		bureau.setProdIndexCC(bureau.getProdIndexCC());
-		bureau.setProdIndexBLOD(bureau.getProdIndexBLOD());
-		bureau.setProdIndexCLPTL(bureau.getProdIndexCLPTL());
+		bureau.setProdIndexHL(0);
+		bureau.setProdIndexAL(0);
+		bureau.setProdIndexCC(0);
+		bureau.setProdIndexBLOD(0);
+		bureau.setProdIndexCLPTL(0);
 		
 		bureau.setClsTotDisbAmtL12M(getBigDecimalValue(ExtFieldMapConstants.SUM_OF_DIS_AMT_OF_ALL_CLOSED_LOANS));
 		bureau.setMinPctPaidUnSecL1M(getBigDecimalValue(ExtFieldMapConstants.MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNS_LOANS));
@@ -163,19 +164,19 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		bureau.setAlMaxPctPaidSecL1M(getBigDecimalValue(ExtFieldMapConstants.MAX_PER_OF_AMT_REPAID_ALL_ACTIVE_SEC_LOANS));
 		bureau.setMonSinceL30pOvralL12M(getIntValue(ExtFieldMapConstants.MONTHS_SINCE_30_PLUS_DPD_IN_L12M));
 		//TODO:
-		bureau.setAlWorstAmtOvrdueSecL1M(bureau.getAlWorstAmtOvrdueSecL1M());
-		bureau.setBalDisbAmtRatioL1M(bureau.getBalDisbAmtRatioL1M());
+		bureau.setAlWorstAmtOvrdueSecL1M(BigDecimal.ZERO);
+		bureau.setBalDisbAmtRatioL1M(BigDecimal.ZERO);
 		
 		bureau.setClsTotDisbAmt(getBigDecimalValue(ExtFieldMapConstants.SUM_OF_DIS_AMT_OF_ALL_CLOSED_LOANS));
 		
 		//TODO:
-		bureau.setMaxDelinquencySecL12M(bureau.getMaxDelinquencySecL12M());
-		bureau.setNoOf90DpdActvOvralL12M(bureau.getNoOf90DpdActvOvralL12M());
-		bureau.setNoOf90DpdOverallL12M(bureau.getNoOf90DpdOverallL12M());
-		bureau.setMinLoanamount(bureau.getMinLoanamount());
-		bureau.setMaxLoanamount(bureau.getMaxLoanamount());
-		bureau.setMinTenure(bureau.getMinTenure());
-		bureau.setMaxTenure(bureau.getMaxTenure());
+		bureau.setMaxDelinquencySecL12M(BigDecimal.ZERO);
+		bureau.setNoOf90DpdActvOvralL12M(0);
+		bureau.setNoOf90DpdOverallL12M(0);
+		bureau.setMinLoanamount(BigDecimal.ZERO);
+		bureau.setMaxLoanamount(BigDecimal.ZERO);
+		bureau.setMinTenure(BigDecimal.ZERO);
+		bureau.setMaxTenure(BigDecimal.ZERO);
 		
 		bureau.setNoPrvsLoansAsOfAppDate(getBooleanValue(ExtFieldMapConstants.NO_PREVS_LOANS_AS_OF_APPLICATION_DATE) ? "1" : "0");
 		bureau.setIsApplicant90PlusDpdinL6M(getBooleanValue(ExtFieldMapConstants.IS_APPLICANT_90_PLUS_DPD_IN_L6M) ? "1" : "0");
@@ -188,94 +189,94 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		bureau.setLastUpdateDtInBureau(lstUpdDate==null?"1900-01-01":lstUpdDate);
 		bureau.setNotenoughInfo(getBooleanValue(ExtFieldMapConstants.NOT_ENOUGH_INFO) ? "1" : "0");
 		//TODO:
-		bureau.setLoansTakenPostFinancialyrInBureau(bureau.getLoansTakenPostFinancialyrInBureau());
-		bureau.setCurBusLoanDisbAmt(bureau.getCurBusLoanDisbAmt());
-		bureau.setMaxPctPaidUnSecL1M(bureau.getMaxPctPaidUnSecL1M());
-		bureau.setActTotDisbAmt(bureau.getActTotDisbAmt());
-		bureau.setAlWorstCurBalOverallL1M(bureau.getAlWorstCurBalOverallL1M());
-		bureau.setWorstCurBalOverallL1M(bureau.getWorstCurBalOverallL1M());
-		bureau.setMaxPctPaidOvralL1M(bureau.getMaxPctPaidOvralL1M());
-		bureau.setClPctTotBalHicrL1M(bureau.getClPctTotBalHicrL1M());
-		bureau.setTotDisbAmt(bureau.getTotDisbAmt());
-		bureau.setAlAvgCurBalOverallL1M(bureau.getAlAvgCurBalOverallL1M());
-		bureau.setAlCurBalOvralL1M(bureau.getAlCurBalOvralL1M());
-		bureau.setWorstCurBalSecL1M(bureau.getWorstCurBalSecL1M());
-		bureau.setAvgCurBalSecL1M(bureau.getAvgCurBalSecL1M());
-		bureau.setCurBalSecL1M(bureau.getCurBalSecL1M());
-		bureau.setAlAvgCurBalSecL1M(bureau.getAlAvgCurBalSecL1M());
-		bureau.setAlWorstCurBalSecL1M(bureau.getAlWorstCurBalSecL1M());
-		bureau.setWorstCurBalUnSecL1M(bureau.getWorstCurBalUnSecL1M());
-		bureau.setAvgCurBalOverallL1M(bureau.getAvgCurBalOverallL1M());
-		bureau.setPctTotBalHicrL1M(bureau.getPctTotBalHicrL1M());
-		bureau.setClMaxPctPaidUnSecL1M(bureau.getClMaxPctPaidUnSecL1M());
-		bureau.setClMinPctPaidUnSecL1M(bureau.getClMinPctPaidUnSecL1M());
-		bureau.setAvgCurBalUnSecL1M(bureau.getAvgCurBalUnSecL1M());
-		bureau.setCurBalUnSecL1M(bureau.getCurBalUnSecL1M());
-		bureau.setAlMinPctPaidUnSecL1M(bureau.getAlMinPctPaidUnSecL1M());
-		bureau.setAlPctTotOvdHicrL1M(bureau.getAlPctTotOvdHicrL1M());
-		bureau.setPctTotOvdBalL1M(bureau.getPctTotOvdBalL1M());
-		bureau.setClMinPctPaidOvralL1M(bureau.getClMinPctPaidOvralL1M());
-		bureau.setAlMaxPctPaidUnSecL1M(bureau.getAlMaxPctPaidUnSecL1M());
-		bureau.setAgeOldestPrev(bureau.getAgeOldestPrev());
-		bureau.setAlWorstCurtBalUnSecL1M(bureau.getAlWorstCurtBalUnSecL1M());
-		bureau.setAlMaxPctPaidOvralL1M(bureau.getAlMaxPctPaidOvralL1M());
-		bureau.setAlAvgCurBalUnSecL1M(bureau.getAlAvgCurBalUnSecL1M());
-		bureau.setWorstAmtOvedueUnSecL1M(bureau.getWorstAmtOvedueUnSecL1M());
-		bureau.setAvgAmtOvrdueUnSecL1M(bureau.getAvgAmtOvrdueUnSecL1M());
-		bureau.setCurOverdueUnSecL1M(bureau.getCurOverdueUnSecL1M());
-		bureau.setAlPctTotoVdbalL1M(bureau.getAlPctTotoVdbalL1M());
-		bureau.setClWorPrevBalUnSecL1M(bureau.getClWorPrevBalUnSecL1M());
-		bureau.setAlPctTotBalHicrL1M(bureau.getAlPctTotBalHicrL1M());
-		bureau.setRatioActvTotLoans(bureau.getRatioActvTotLoans());
-		bureau.setClMaxPctPaidovralL1M(bureau.getClMaxPctPaidovralL1M());
-		bureau.setWorstAmtOvrdueOvralL1M(bureau.getWorstAmtOvrdueOvralL1M());
-		bureau.setAvgAmtOvrdueOvralL1M(bureau.getAvgAmtOvrdueOvralL1M());
-		bureau.setCurOverdueOvralL1M(bureau.getCurOverdueOvralL1M());
+		bureau.setLoansTakenPostFinancialyrInBureau(BigDecimal.ZERO);
+		bureau.setCurBusLoanDisbAmt(BigDecimal.ZERO);
+		bureau.setMaxPctPaidUnSecL1M(BigDecimal.ZERO);
+		bureau.setActTotDisbAmt(BigDecimal.ZERO);
+		bureau.setAlWorstCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setWorstCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setMaxPctPaidOvralL1M(BigDecimal.ZERO);
+		bureau.setClPctTotBalHicrL1M(BigDecimal.ZERO);
+		bureau.setTotDisbAmt(BigDecimal.ZERO);
+		bureau.setAlAvgCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setAlCurBalOvralL1M(BigDecimal.ZERO);
+		bureau.setWorstCurBalSecL1M(BigDecimal.ZERO);
+		bureau.setAvgCurBalSecL1M(BigDecimal.ZERO);
+		bureau.setCurBalSecL1M(BigDecimal.ZERO);
+		bureau.setAlAvgCurBalSecL1M(BigDecimal.ZERO);
+		bureau.setAlWorstCurBalSecL1M(BigDecimal.ZERO);
+		bureau.setWorstCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setAvgCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setPctTotBalHicrL1M(BigDecimal.ZERO);
+		bureau.setClMaxPctPaidUnSecL1M(BigDecimal.ZERO);
+		bureau.setClMinPctPaidUnSecL1M(BigDecimal.ZERO);
+		bureau.setAvgCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlMinPctPaidUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlPctTotOvdHicrL1M(BigDecimal.ZERO);
+		bureau.setPctTotOvdBalL1M(BigDecimal.ZERO);
+		bureau.setClMinPctPaidOvralL1M(BigDecimal.ZERO);
+		bureau.setAlMaxPctPaidUnSecL1M(BigDecimal.ZERO);
+		bureau.setAgeOldestPrev(BigDecimal.ZERO);
+		bureau.setAlWorstCurtBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlMaxPctPaidOvralL1M(BigDecimal.ZERO);
+		bureau.setAlAvgCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setWorstAmtOvedueUnSecL1M(BigDecimal.ZERO);
+		bureau.setAvgAmtOvrdueUnSecL1M(BigDecimal.ZERO);
+		bureau.setCurOverdueUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlPctTotoVdbalL1M(BigDecimal.ZERO);
+		bureau.setClWorPrevBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlPctTotBalHicrL1M(BigDecimal.ZERO);
+		bureau.setRatioActvTotLoans(BigDecimal.ZERO);
+		bureau.setClMaxPctPaidovralL1M(BigDecimal.ZERO);
+		bureau.setWorstAmtOvrdueOvralL1M(BigDecimal.ZERO);
+		bureau.setAvgAmtOvrdueOvralL1M(BigDecimal.ZERO);
+		bureau.setCurOverdueOvralL1M(BigDecimal.ZERO);
 	
 		bureau.setMaxUnSecDisbAmtL12M(getBigDecimalValue(ExtFieldMapConstants.MAX_DIS_AMT_ALL_UNSEC_LOANS_L12M));	
 		//TODO
-		bureau.setMaxSecDisbAmtL12M(bureau.getMaxSecDisbAmtL12M());
-		bureau.setMaxUnSecDisbAmtL6M(bureau.getMaxUnSecDisbAmtL6M());
-		bureau.setMinPctPaidOvralL1M(bureau.getMinPctPaidOvralL1M());
-		bureau.setClWorPrevBalOvralL1M(bureau.getClWorPrevBalOvralL1M());
-		bureau.setAlWorstAmtOvedueUnSecL1M(bureau.getAlWorstAmtOvedueUnSecL1M());
-		bureau.setAlAvgAmtOvrdueUnSecL1M(bureau.getAlAvgAmtOvrdueUnSecL1M());
-		bureau.setAlCurOverdueUnSecL1M(bureau.getAlCurOverdueUnSecL1M());
-		bureau.setAlWorstAmtOvrdueOvralL1M(bureau.getAlWorstAmtOvrdueOvralL1M());
-		bureau.setAlAvgAmtOvrdueOvralL1M(bureau.getAlAvgAmtOvrdueOvralL1M());
-		bureau.setAlCurOverdueOvralL1M(bureau.getAlCurOverdueOvralL1M());
-		bureau.setTotPrevLoans(bureau.getTotPrevLoans());
-		bureau.setMaxSecDisbAmtL6M(bureau.getMaxSecDisbAmtL6M());
-		bureau.setAlMinPctPaidOvralL1M(bureau.getAlMinPctPaidOvralL1M());
-		bureau.setClAvgCurBalUnSecL1M(bureau.getClAvgCurBalUnSecL1M());
-		bureau.setClCurBalUnSecL1M(bureau.getClCurBalUnSecL1M());
-		bureau.setAlMinPctPaidSecL1M(bureau.getAlMinPctPaidSecL1M());
-		bureau.setMaxDelinQuencyUnSecL12M(bureau.getMaxDelinQuencyUnSecL12M());
-		bureau.setMinPctPaidSecL1M(bureau.getMinPctPaidSecL1M());
-		bureau.setMaxUnSecDisbAmtL3M(bureau.getMaxUnSecDisbAmtL3M());
-		bureau.setMaxSecDisbAmtL3M(bureau.getMaxSecDisbAmtL3M());
-		bureau.setNoOfActvLoansOnDisbdt(bureau.getNoOfActvLoansOnDisbdt());
-		bureau.setClAvgCurBalOverallL1M(bureau.getClAvgCurBalOverallL1M());
-		bureau.setClCurBalOvralL1M(bureau.getClCurBalOvralL1M());
-		bureau.setNoOfClosedLoansL12M(bureau.getNoOfClosedLoansL12M());
-		bureau.setMaxDelinQuencyOverallL12M(bureau.getMaxDelinQuencyOverallL12M());
-		bureau.setClPctTotOvdBalL1M(bureau.getClPctTotOvdBalL1M());
-		bureau.setMaxPctPaidSecL1M(bureau.getMaxPctPaidSecL1M());
-		bureau.setAgeLattestprev(bureau.getAgeLattestprev());
-		bureau.setMonSinceL30pOvralL6M(bureau.getMonSinceL30pOvralL6M());
-		bureau.setClWorstCurBalUnSecL1M(bureau.getClWorstCurBalUnSecL1M());
-		bureau.setNoOfClosedLoansL6M(bureau.getNoOfClosedLoansL6M());
-		bureau.setNoOf30DpdOverallL12M(bureau.getNoOf30DpdOverallL12M());
-		bureau.setMaxUnSecDisbAmtL1M(bureau.getMaxUnSecDisbAmtL1M());
-		bureau.setMaxDelinQuencyOverallL6M(bureau.getMaxDelinQuencyOverallL6M());
-		bureau.setNoOf30DpdOverallL6M(bureau.getNoOf30DpdOverallL6M());
-		bureau.setClWorstCurBalOverallL1M(bureau.getClWorstCurBalOverallL1M());
-		bureau.setScore(bureau.getScore());
-		bureau.setAssetClassification(bureau.getAssetClassification());
+		bureau.setMaxSecDisbAmtL12M(BigDecimal.ZERO);
+		bureau.setMaxUnSecDisbAmtL6M(BigDecimal.ZERO);
+		bureau.setMinPctPaidOvralL1M(BigDecimal.ZERO);
+		bureau.setClWorPrevBalOvralL1M(BigDecimal.ZERO);
+		bureau.setAlWorstAmtOvedueUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlAvgAmtOvrdueUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlCurOverdueUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlWorstAmtOvrdueOvralL1M(BigDecimal.ZERO);
+		bureau.setAlAvgAmtOvrdueOvralL1M(BigDecimal.ZERO);
+		bureau.setAlCurOverdueOvralL1M(BigDecimal.ZERO);
+		bureau.setTotPrevLoans(BigDecimal.ZERO);
+		bureau.setMaxSecDisbAmtL6M(BigDecimal.ZERO);
+		bureau.setAlMinPctPaidOvralL1M(BigDecimal.ZERO);
+		bureau.setClAvgCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setClCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setAlMinPctPaidSecL1M(BigDecimal.ZERO);
+		bureau.setMaxDelinQuencyUnSecL12M(BigDecimal.ZERO);
+		bureau.setMinPctPaidSecL1M(BigDecimal.ZERO);
+		bureau.setMaxUnSecDisbAmtL3M(BigDecimal.ZERO);
+		bureau.setMaxSecDisbAmtL3M(BigDecimal.ZERO);
+		bureau.setNoOfActvLoansOnDisbdt(BigDecimal.ZERO);
+		bureau.setClAvgCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setClCurBalOvralL1M(BigDecimal.ZERO);
+		bureau.setNoOfClosedLoansL12M(BigDecimal.ZERO);
+		bureau.setMaxDelinQuencyOverallL12M(BigDecimal.ZERO);
+		bureau.setClPctTotOvdBalL1M(BigDecimal.ZERO);
+		bureau.setMaxPctPaidSecL1M(BigDecimal.ZERO);
+		bureau.setAgeLattestprev(BigDecimal.ZERO);
+		bureau.setMonSinceL30pOvralL6M(BigDecimal.ZERO);
+		bureau.setClWorstCurBalUnSecL1M(BigDecimal.ZERO);
+		bureau.setNoOfClosedLoansL6M(BigDecimal.ZERO);
+		bureau.setNoOf30DpdOverallL12M(BigDecimal.ZERO);
+		bureau.setMaxUnSecDisbAmtL1M(BigDecimal.ZERO);
+		bureau.setMaxDelinQuencyOverallL6M(BigDecimal.ZERO);
+		bureau.setNoOf30DpdOverallL6M(BigDecimal.ZERO);
+		bureau.setClWorstCurBalOverallL1M(BigDecimal.ZERO);
+		bureau.setScore(BigDecimal.ZERO);
+		bureau.setAssetClassification(BigDecimal.ZERO);
 
 		bureau.setTotalEnquiries(getIntValue(ExtFieldMapConstants.NO_OF_ENQUIRES));
 		//TODO:
-		bureau.setLiveTradelines(bureau.getLiveTradelines());
+		bureau.setLiveTradelines(BigDecimal.ZERO);
 		
 		bureau.setRestructuredFlag(getBooleanValue(ExtFieldMapConstants.RESTRUCTURED_FLAG) ? "1" : "0");
 		bureau.setSfFlag(getBooleanValue(ExtFieldMapConstants.SUIT_FILED_FLAG) ? "1" : "0");
@@ -318,31 +319,32 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		DeMogs deMogs = new DeMogs();
 		//TODO:
 		deMogs.setDateOfInc(NiyoginUtility.formatDate(customer.getCustDOB(), "yyyy-MM-dd"));
-		deMogs.setTypeOfIndustry(customer.getCustIndustry());
+		deMogs.setTypeOfIndustry(StringUtils.trimToNull(customer.getCustIndustry()));
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
 			CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
-			deMogs.setRegisteredOffcPincode(address.getCustAddrZIP());
+			deMogs.setRegisteredOffcPincode(StringUtils.trimToNull(address.getCustAddrZIP()));
 			//TODO:
-			deMogs.setOperationalOffcPincode(address.getCustAddrZIP());
-			deMogs.setZipCode(address.getCustAddrZIP());
+			deMogs.setOperationalOffcPincode(StringUtils.trimToNull(address.getCustAddrZIP()));
+			deMogs.setZipCode(StringUtils.trimToNull(address.getCustAddrZIP()));
 		}
 		//TODO:
-		deMogs.setGstin("");
-		deMogs.setCategoryOfApplicant(customer.getCustTypeCode());
+		deMogs.setGstin(null);
+		deMogs.setCategoryOfApplicant(StringUtils.trimToNull(customer.getCustTypeCode()));
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		deMogs.setPanNumber(getPanNumber(documentList));
+		deMogs.setPanNumber(StringUtils.trimToNull(getPanNumber(documentList)));
 		if(extendedMap!=null){
 			deMogs.setResidenceTypeOfMDorPROPTRYorMNGNGPARTNER(getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));	
 		}
-		deMogs.setMobileNumber(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
-				InterfaceConstants.PHONE_TYPE_OFF));
+		String phoneNumber = NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+				InterfaceConstants.PHONE_TYPE_OFF);
+		deMogs.setMobileNumber(StringUtils.trimToNull(phoneNumber));
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		if (emailList != null && !emailList.isEmpty()) {
-			deMogs.setEmail(NiyoginUtility.getEmail(emailList));
+			deMogs.setEmail(StringUtils.trimToNull(NiyoginUtility.getEmail(emailList)));
 		}
-		deMogs.setApplicantAdhaar(getPanNumber(documentList));//FIXME
-		deMogs.setUdyogadhaar(" ");
+		deMogs.setApplicantAdhaar(StringUtils.trimToNull(getPanNumber(documentList)));//FIXME
+		deMogs.setUdyogadhaar(null);
 		deMogs.setYrsAtCurResidencePROPorMPorMDetc(getIntValue(ExtFieldMapConstants.YR_CURRENT_RESIDENCE_CUSTOMER));
 		logger.debug(Literal.LEAVING);
 		return deMogs;
@@ -491,7 +493,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 			business.setBusPremisesOwnership(getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));			
 		}
 		//TODO:
-		business.setOrgType(" ");
+		business.setOrgType(null);
 		business.setNumbOfOwnersOrShareholdingPattern(business.getNumbOfOwnersOrShareholdingPattern());
 		business.setOperationalBusinessVintage(BigDecimal.ZERO);
 		logger.debug(Literal.LEAVING);
@@ -516,17 +518,17 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		perfios.setAmtOfDebtTransactions(prepareAmtOfDebtTransactions());
 		perfios.setNoOfCashDeposits(prepareNoOfCashDeposits());
 		perfios.setAmtOfCashDeposit(prepareAmtOfCashDeposit());
-		perfios.setIntOdCc(perfios.getIntOdCc());
+		perfios.setIntOdCc(0);
 		
 		perfios.setNoOfEmiBounce(getIntValue(ExtFieldMapConstants.EMI_BOUNCES_L6M));
 		//TODO:
-		perfios.setNoOfCashWithdrawls(perfios.getNoOfCashWithdrawls());
+		perfios.setNoOfCashWithdrawls(0);
 		perfios.setAmtOfCashWithdrawls(BigDecimal.ZERO);
 		perfios.setNoOfChequeDeposits(0);
 		perfios.setAmtOfChequeDeposits(BigDecimal.ZERO);
-		perfios.setTotNoOfChequeIssues(perfios.getTotNoOfChequeIssues());
+		perfios.setTotNoOfChequeIssues(0);
 		perfios.setTotAmtOfChequeIssues(BigDecimal.ZERO);
-		perfios.setTotalnoOfoutwardchequebounces(perfios.getTotalnoOfoutwardchequebounces());
+		perfios.setTotalnoOfoutwardchequebounces(0);
 		perfios.setMinOdBalance(BigDecimal.ZERO);
 		perfios.setMaxOdBalance(BigDecimal.ZERO);
 		
@@ -621,22 +623,22 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		Customer customer=customerDetails.getCustomer();
 		codeMogs.setDob(NiyoginUtility.formatDate(customer.getCustDOB(), "yyyy-MM-dd"));
 		//TODO:
-		codeMogs.setMinAge(codeMogs.getMinAge());
-		codeMogs.setMaxAge(codeMogs.getMaxAge());
-		codeMogs.setAuthority(" ");
+		codeMogs.setMinAge(0);
+		codeMogs.setMaxAge(0);
+		codeMogs.setAuthority(null);
 		
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
 			CustomerAddres curAddress = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_CURRES);
-			codeMogs.setCurrentResidencePincode(curAddress.getCustAddrZIP());
+			codeMogs.setCurrentResidencePincode(StringUtils.trimToNull(curAddress.getCustAddrZIP()));
 			CustomerAddres perAddress = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PERNMENT);
-			codeMogs.setPermanentResidencePincode(perAddress.getCustAddrZIP());
+			codeMogs.setPermanentResidencePincode(StringUtils.trimToNull(perAddress.getCustAddrZIP()));
 		}
 		//TODO:
-		codeMogs.setRelOfScndaryCoAppWithPrimaryCoApp(" ");
+		codeMogs.setRelOfScndaryCoAppWithPrimaryCoApp(null);
 		
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
-		codeMogs.setCoAppPanNumber(getPanNumber(documentList));
+		codeMogs.setCoAppPanNumber(StringUtils.trimToNull(getPanNumber(documentList)));
 		//TODO:
 		codeMogs.setSalToPartnerOrDirector(BigDecimal.ZERO);
 		logger.debug(Literal.LEAVING);
@@ -646,9 +648,9 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private CoAppBureau prepareCoAppBureau(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		CoAppBureau coAppBureau=new CoAppBureau();
-		coAppBureau.setCoAppscore(" ");
+		coAppBureau.setCoAppscore(null);
 		coAppBureau.setNoOfTimes30inL6M(coAppBureau.getNoOfTimes30inL6M());
-		coAppBureau.setCoAppAssetClassification(" ");
+		coAppBureau.setCoAppAssetClassification(null);
 		logger.debug(Literal.LEAVING);
 		return coAppBureau;
 	}
@@ -682,7 +684,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	}
 	
 	private String getStringValue(String key) {
-		return Objects.toString(extendedMap.get(key), "");
+		return Objects.toString(extendedMap.get(key), null);
 	}
 
 	private int getIntValue(String key) {
