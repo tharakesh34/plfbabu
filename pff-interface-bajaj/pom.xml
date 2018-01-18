@@ -9,7 +9,10 @@
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface-bajaj</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<cxf.version>3.1.8</cxf.version>

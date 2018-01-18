@@ -9,7 +9,9 @@
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface</artifactId>
+	<version>${pff.version}</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
