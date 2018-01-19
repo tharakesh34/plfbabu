@@ -1080,7 +1080,7 @@ public class FinanceDataDefaulting {
 				Mandate mandate = financeDetail.getMandate();
 				mandate.setStartDate(mandate.getStartDate() == null ? finMain.getFinStartDate(): mandate.getStartDate());
 				if(!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
-					mandate.setExpiryDate(DateUtility.addMonths(finMain.getMaturityDate(), 1));
+					mandate.setExpiryDate(DateUtility.addDays(finMain.getMaturityDate(), 1));
 				}
 				
 			}
