@@ -2,6 +2,7 @@ package com.pennanttech.pff;
 
 public class InterfaceConstants {
 	public static final String	SUCCESS_CODE			= "0000";
+	public static final String	ERROR_CODE				= "9999";
 	public static final String	STATUS_FAILED			= "FAILED";
 	public static final String	STATUS_SUCCESS			= "SUCCESS";
 	public static final String	INTFACE_ERROR_CD		= "99999";
@@ -39,4 +40,13 @@ public class InterfaceConstants {
 	public static final String	InterfaceDateFormatter	= "dd-MM-yyyy";
 	
 	public static final String	CUSTTYPE_SOLEPRO	= "3";
+	
+	public static final String method_externalDedup = "executeExperianDedup";
+	public static final String method_hunter = "executeHunter";
+	public static final String method_Experian_Bureau = "executeBureau";
+	public static final String method_Crif_Bureau = "executeCrif";
+	public static final String method_Cibil_Bureau = "executeCibilConsumer";
+	public static final String method_LegalDesk = "executeLegalDesk";
+	public static final String method_HoldFinance = "executeHold";
+	public static final String method_bre = "executeBRE";	
 }
