@@ -45,10 +45,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 					detail.setDocUri(Objects.toString(extendedFieldMap.get("DOWNLOADURL"), ""));
 					detail.setDocName(Objects.toString(extendedFieldMap.get("DOCNAME"), ""));
 					detail.setPassword(Objects.toString(extendedFieldMap.get("DOCPASSWORD"), ""));
-				} else {
-					throw new InterfaceException("9999", String.valueOf(extendedFieldMap.get("ERRORMESSAGE")));
-
-				}
+				} 
 			}
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception e) {

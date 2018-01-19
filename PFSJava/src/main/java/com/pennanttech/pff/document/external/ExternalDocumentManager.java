@@ -54,7 +54,7 @@ public class ExternalDocumentManager {
 
 	public AMedia getDocumentMedia(String fileName, String docRefId, String reference) {
 		DocumentDetails detail = getExternalDocument(fileName, docRefId, reference);
-		if (detail != null) {
+		if (detail != null && detail.getDocImage()!=null) {
 			AMedia amedia = new AMedia(detail.getDocName(), null, null, detail.getDocImage());
 			return amedia;
 		} else {
