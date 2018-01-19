@@ -20,15 +20,19 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.rmtmasters.PromotionService;
@@ -44,6 +48,7 @@ public class FinanceDataDefaulting {
 	private BranchDAO			branchDAO;
 	private PromotionService	promotionService;
 	private CurrencyDAO			currencyDAO;
+	private FinanceMainDAO		financeMainDAO;
 
 
 	public FinanceDataDefaulting() {
@@ -1057,6 +1062,31 @@ public class FinanceDataDefaulting {
 
 	}
 
+	/**
+	 * 
+	 * @param financeDetail
+	 */
+	public void doFinanceDetailDefaulting(FinanceDetail financeDetail) {
+		if(financeDetail != null) {
+			String finReference = financeDetail.getFinReference();
+			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
+			if(financeDetail.getAdvancePaymentsList() != null) {
+				for(FinAdvancePayments payment:financeDetail.getAdvancePaymentsList()) {
+					payment.setLLDate(payment.getLlDate() == null ? finMain.getFinStartDate(): payment.getLlDate());
+				}
+			}
+			
+			if(financeDetail.getMandate() != null) {
+				Mandate mandate = financeDetail.getMandate();
+				mandate.setStartDate(mandate.getStartDate() == null ? finMain.getFinStartDate(): mandate.getStartDate());
+				if(!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
+					mandate.setExpiryDate(DateUtility.addMonths(finMain.getMaturityDate(), 1));
+				}
+				
+			}
+		}
+	}
+	
 	/*
 	 * ################################################################################################################
 	 * DEFAULT SETTER GETTER METHODS
@@ -1088,5 +1118,9 @@ public class FinanceDataDefaulting {
 
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		this.currencyDAO = currencyDAO;
+	}
+	
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 }

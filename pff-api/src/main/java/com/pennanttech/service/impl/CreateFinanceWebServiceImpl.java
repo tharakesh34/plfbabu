@@ -408,6 +408,9 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
+		// set default values
+		financeDataDefaulting.doFinanceDetailDefaulting(financeDetail);
+		
 		//validate FinanceDetail Validations
 		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN,
 				financeDetail, true);

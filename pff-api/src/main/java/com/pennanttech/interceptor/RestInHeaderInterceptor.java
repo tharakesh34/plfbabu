@@ -78,7 +78,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	private ServerAuthService serverAuthService;
 	private ErrorDetailService errorDetailService;
 	private UserService userService;
-	private PFSParameterService pFSParameterService;
+	@Autowired
+	private PFSParameterService systemParameterService;
 	private APILogDetailDAO		aPILogDetailDAO;
 
 
@@ -201,7 +202,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				String userLogin = authenticate(userName, password, authDetails);
 				 // valid user
 					String Token = RandomStringUtils.random(8, true, true);
-					PFSParameter pFSParameter = getpFSParameterService().getApprovedPFSParameterById(
+					PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById(
 							"WS_TOKENEXPPERIOD");
 					if (pFSParameter != null) {
 						if (pFSParameter.getSysParmValue() != null) {
@@ -408,7 +409,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				this.setContext(userLoginDetails, authDetails);
 			}
 			if (expiry.getTime() <= userAuthDetail.getExpiry().getTime()) {
-				PFSParameter pFSParameter = getpFSParameterService().getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
+				PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
 				if (pFSParameter.getSysParmValue() != null) {
 					TOKEN_EXPIRY = Long.valueOf(pFSParameter.getSysParmValue());
 				}
@@ -484,16 +485,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	public PFSParameterService getpFSParameterService() {
-		return pFSParameterService;
-	}
-
-	@Autowired
-	@Qualifier("systemParameterServiceTarget")
-	public void setpFSParameterService(PFSParameterService pFSParameterService) {
-		this.pFSParameterService = pFSParameterService;
 	}
 
 	@Bean

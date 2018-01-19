@@ -4237,6 +4237,7 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="promotionService" ref="promotionService" />
 		<property name="currencyDAO" ref="currencyDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- Eligibility Details -->

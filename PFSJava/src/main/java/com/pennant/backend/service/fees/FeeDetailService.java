@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
@@ -436,6 +437,11 @@ public class FeeDetailService {
 				executionMap.put("totalPayment", finServiceInst.getAmount());
 				BigDecimal remPartPaymentAmt = PennantApplicationUtil.formateAmount(finServiceInst.getRemPartPayAmt(), formatter);
 				executionMap.put("partialPaymentAmount", remPartPaymentAmt);
+			}
+			
+			if (finMain != null && finMain.getFinStartDate() != null) {
+				int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), finMain.getFinStartDate());
+				executionMap.put("finAgetilldate", finAge);
 			}
 
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
