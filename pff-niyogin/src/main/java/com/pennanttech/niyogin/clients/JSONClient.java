@@ -28,10 +28,20 @@ public class JSONClient {
 
 	private final static String	AUTHORIZATION	= "Authorization";
 	
-	public String post(String url, Object requestData) throws Exception {
+	public String post(String url, String jsonInString) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		WebClient client = getClient(StringUtils.trimToEmpty(url));
+		logger.debug("Json Request String " + jsonInString);
+		Response response = client.post(jsonInString);
+		jsonInString=response.readEntity(String.class);
+		logger.debug("Json Response String " + jsonInString);
+		logger.debug(Literal.LEAVING);
+		return jsonInString;
+	}
+
+
+	public String getRequestString(Object requestData) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -48,11 +58,6 @@ public class JSONClient {
 		} catch (Exception e) {
 			logger.error("Exception in jason request string" + e);
 		}
-		logger.debug("Json Request String " + jsonInString);
-		Response response = client.post(jsonInString);
-		jsonInString=response.readEntity(String.class);
-		logger.debug("Json Response String " + jsonInString);
-		logger.debug(Literal.LEAVING);
 		return jsonInString;
 	}
 

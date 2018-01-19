@@ -36,7 +36,8 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		reference = StringUtils.isEmpty(sourceReference) ? "DOCUMENT" : sourceReference;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, dmsRequest);
+			String	reuestString = client.getRequestString(dmsRequest);
+			jsonResponse = client.post(serviceUrl, reuestString);
 			Map<String, Object> extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 			// error validation on Response status
 			if (extendedFieldMap.get("ERRORMESSAGE") == null) {
@@ -45,7 +46,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 					detail.setDocUri(Objects.toString(extendedFieldMap.get("DOWNLOADURL"), ""));
 					detail.setDocName(Objects.toString(extendedFieldMap.get("DOCNAME"), ""));
 					detail.setPassword(Objects.toString(extendedFieldMap.get("DOCPASSWORD"), ""));
-				} 
+				}
 			}
 			logger.info("Response : " + jsonResponse);
 		} catch (Exception e) {

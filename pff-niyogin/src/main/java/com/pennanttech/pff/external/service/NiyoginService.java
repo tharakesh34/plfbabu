@@ -89,7 +89,9 @@ public abstract class NiyoginService {
 
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, requestObject);
+			
+			String reuestString = client.getRequestString(requestObject);
+			jsonResponse = client.post(serviceUrl, reuestString);
 			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
 			// error validation on Response status
 			statusCode = Objects.toString(extendedFieldMap.get(statusCodeKey));
@@ -136,12 +138,13 @@ public abstract class NiyoginService {
 	 * @param extConfigFileName
 	 * @return extendedMappedValues
 	 */
+	@Deprecated
 	protected Map<String, Object> getExtendedMapValues(String jsonResponse, String extConfigFileName) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> extendedFieldMap = new HashMap<>(1);
 		Properties properties = new Properties();
-		InputStream inputStream = this.getClass().getResourceAsStream("/" + extConfigFileName + ".properties");
+		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName + ".properties");
 		try {
 			properties.load(inputStream);
 		} catch (IOException ioException) {
@@ -162,6 +165,41 @@ public abstract class NiyoginService {
 		}
 		logger.debug(Literal.LEAVING);
 
+		return extendedFieldMap;
+	}
+	/**
+	 * Method for load the properties file, then iterate the keys of that file and map to jsonResponse.
+	 * 
+	 * @param jsonResponse
+	 * @param extConfigFileName
+	 * @return extendedMappedValues
+	 */
+	protected Map<String, Object> getPropValueFromResp(String jsonResponse, String extConfigFileName) {
+		logger.debug(Literal.ENTERING);
+		
+		Map<String, Object> extendedFieldMap = new HashMap<>(1);
+		Properties properties = new Properties();
+		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName );
+		try {
+			properties.load(inputStream);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+		Enumeration<?> e = properties.propertyNames();
+		//Configuration conf = Configuration.defaultConfiguration();
+		//conf = conf.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+		while (e.hasMoreElements()) {
+			String key = (String) e.nextElement();
+			Object value = null;
+			try {
+				value = JsonPath.read(jsonResponse, properties.getProperty(key));
+			} catch (PathNotFoundException pathNotFoundException) {
+				value = null;
+			}
+			extendedFieldMap.put(key, value);
+		}
+		logger.debug(Literal.LEAVING);
+		
 		return extendedFieldMap;
 	}
 
@@ -838,5 +876,40 @@ public abstract class NiyoginService {
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}
+///--------------------------------
+	
+	private String				ERRORCODE			= "$.errorCode";
+	private String				ERRORMESSAGE		= "$.message";
+	private String				STATUSCODE			= "$.statusCode";
+	
+	public String getval(Object object) {
+		return Objects.toString(object, "");
+	}
 
+	public String getErrorCode(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, ERRORCODE), "");
+	}
+
+	public String getErrorMessage(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
+	}
+	
+	
+	public Object getValueFromResponse(String jsonResponse, String keypath) {
+		Object value = null;
+		try {
+			value = JsonPath.read(jsonResponse, keypath);
+		} catch (PathNotFoundException pathNotFoundException) {
+			value = null;
+		}
+		return value;
+	}
+	
+	public String getTrimmedMessage(String errorDesc) {
+		if (errorDesc != null && errorDesc.length() > 149) {
+			errorDesc = errorDesc.substring(0, 143);
+		}
+		return errorDesc;
+	}
+	
 }

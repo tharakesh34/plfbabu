@@ -88,10 +88,51 @@ public class ExtFieldMapConstants {
 	public static final String	SAL_PARTNER_OR_DIRECTOR						= null;
 	public static final String	MAX_WORK_EXPERIENCE							= "MAXWORKEXP";
 	public static final String	EXISTING_LOAN_OBLIGATION					= "EXTLOANOBLIGATION";
-
+	public static final String	PURPOSE_OF_LOAN								= "LOANPURPOSE";
+	
 	//HUNTER
 	public static final String	HUNTER_REQ_SEND								= "HUNTREQSEND";
 	public static final String	HUNTER_MATCH								= "HUNTERMATCH";
+	public static final String	HUNTER_RSN_CODE								= "REASONCODEHUNTER";
+	public static final String	HUNTER_REMARKS								= "REMARKSHUNTER";
+
+	//CIBIL
+	public static final String	CIBIL_REQ_SEND								= "CIBILREQSEND";
+	public static final String	CIBIL_RSN_CODE								= "REASONCODECIBIL";
+	public static final String	CIBIL_REMARKS								= "REMARKSCIBIL";
+
+	//LEGALDESK
+	public static final String	LEGALDESK_REQ_SEND							= "LEGALDESKREQSEND";
+	public static final String	LEGALDESK_RSN_CODE							= "REASONCODELEGALDESK";
+	public static final String	LEGALDESK_REMARKS							= "REMARKSLEGALDESK";
+
+	//HOLD FINANCE
+	public static final String	HOLD_FIN_REQ_SEND							= "HOLDFINREQSEND";
+	public static final String	HOLD_FIN_RSN_CODE							= "REASONCODEHOLDFIN";
+	public static final String	HOLD_FIN_REMARKS							= "REMARKSHOLDFIN";
+
+	//EXPERIAN BUREAU
+	public static final String	EXP_BUREAU_REQ_SEND							= "EXPBUREAUREQSEND";
+	public static final String	EXP_BUREAU_RSN_CODE							= "REASONCODE";
+	public static final String	EXP_BUREAU_REMARKS							= "REMARKSEXPERIANBEA";
+
+	//DMS
+	public static final String	DMS_DOCSOURCE								= "DOCSOURCE";
+	public static final String	DMS_DOWNLOADURL								= "DOWNLOADURL";
+	public static final String	DMS_DOCNAME									= "DOCNAME";
+	public static final String	DMS_DOCPASSWORD								= "DOCPASSWORD";
+	
+	//CRIFF BUREAU
+	public static final String	CRIFF_REQ_SEND								= "CRIFFREQSEND";
+	public static final String	CRIFF_RSN_CODE								= "REASONCODECRIF";
+	public static final String	CRIFF_REMARKS								= "REMARKSCRIF";
+	
+	//BRE
+	public static final String	BRE_REQ_SEND								= "BREREQSEND";
+	public static final String	BRE_RSN_CODE								= "REASONCODEBRE";
+	public static final String	BRE_REMARKS									= "REMARKSBRE";
+		
+
 
 	//CAM(Experian BRE)
 	public static final String	POST_FUNDING_DSCR							= "POSTFUNDINGDSCREXP";
