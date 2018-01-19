@@ -1073,7 +1073,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		filters[0] = new Filter("RuleModule", "FEES", Filter.OP_EQUAL);
 		filters[1] = new Filter("RuleEvent", this.finEvent.getValue(), Filter.OP_EQUAL);
 		filters[2] = new Filter("FeeTypeID", readIDValueFromExtCombobox(this.feeType), Filter.OP_EQUAL);
-		filters[3] = new Filter("Active", "1", Filter.OP_EQUAL);
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.ruleCode.setFilters(filters);
 	}
 	

@@ -2283,6 +2283,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 				}
 				
+				if (finMain!=null && finMain.getFinStartDate()!=null) {
+					int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), finMain.getFinStartDate());
+					executionMap.put("finAgetilldate", finAge);
+				}
 				if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference()) && StringUtils.isNotBlank(moduleDefiner)) {
 					FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finMain.getFinReference());
 					if (finProfitDetail != null) {
