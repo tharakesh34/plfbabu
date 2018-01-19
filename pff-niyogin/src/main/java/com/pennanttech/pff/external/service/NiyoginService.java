@@ -84,6 +84,7 @@ public abstract class NiyoginService {
 	 * @param extConfigFileName
 	 * @return
 	 */
+	@Deprecated
 	protected Map<String, Object> post(String serviceUrl, Object requestObject, String extConfigFileName) {
 		Map<String, Object> extendedFieldMap = null;
 
