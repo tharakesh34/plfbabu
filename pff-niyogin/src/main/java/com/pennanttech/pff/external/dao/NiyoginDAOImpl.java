@@ -326,7 +326,7 @@ public class NiyoginDAOImpl {
 	 * @return extendedFieldDetailList
 	 * @throws Exception
 	 */
-	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) throws Exception {
+	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames){
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -348,8 +348,8 @@ public class NiyoginDAOImpl {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			throw new InterfaceException("9999", "Unable to Retrive  the ExtendedFieldDetail.");
 		}
+		return null;
 	}
 
 	/**
