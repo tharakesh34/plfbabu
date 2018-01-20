@@ -56,7 +56,7 @@ import com.pennanttech.pff.external.service.NiyoginService;
 public class BreServiceImpl extends NiyoginService implements BreService {
 	private static final Logger	logger				= Logger.getLogger(BreServiceImpl.class);
 
-	private final String		extConfigFileName	= "bre";
+	private final String		extConfigFileName	= "bre.properties";
 	private String				serviceUrl;
 	private Map<String, Object>	extendedMap			= null;
 
