@@ -41,11 +41,13 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	private String				COAPPLICANT			= "C";
 
 	//Experian Dedup
-	public static final String	REQ_SEND			= "EXDREQUESTSEND";
-	public static final String	RSN_CODE			= "REASONCODEINTERNAL";
-	public static final String	REMARKS				= "REMARKSINTERNAL";
-	public static final String	MATCH				= "MATCH";
+	public static final String	REQ_SEND			= "REQSENDEXPDUDP";
+	public static final String	STATUSCODE			= "STATUSEXPDUDP";
+	public static final String	RSN_CODE			= "REASONEXPDUDP";
+	public static final String	REMARKS				= "REMARKSEXPDUDP";
+
 	//Form Fields
+	public static final String	MATCH				= "MATCH";
 	public static final String	FORM_FLDS_FACEBOOK	= "FBID";
 	public static final String	FORM_FLDS_LINKEDIN	= "LINKEDID";
 	public static final String	FORM_FLDS_TWITTER	= "TWITTERID";
@@ -108,6 +110,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 			//add status 
 
 			if (StringUtils.isEmpty(errorCode)) {

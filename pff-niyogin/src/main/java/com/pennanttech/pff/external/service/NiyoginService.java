@@ -53,17 +53,15 @@ public abstract class NiyoginService {
 
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
 	private NiyoginDAOImpl		niyoginDAOImpl;
-	protected JSONClient			client;
+	protected JSONClient		client;
 	public static final int		LENGTH_ACCOUNT		= 50;
 	public static final int		LENGTH_FREQUENCY	= 5;
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String	DELIMITER_COMMA		= ",";
 
-	
 	private String				ERRORCODE			= "$.errorCode";
 	private String				ERRORMESSAGE		= "$.message";
 	private String				STATUSCODE			= "$.statusCode";
-	
 
 	public String				reference;
 
@@ -92,10 +90,10 @@ public abstract class NiyoginService {
 	 */
 	protected Map<String, Object> getPropValueFromResp(String jsonResponse, String extConfigFileName) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Map<String, Object> extendedFieldMap = new HashMap<>(1);
 		Properties properties = new Properties();
-		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName );
+		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName);
 		try {
 			properties.load(inputStream);
 		} catch (IOException ioException) {
@@ -115,7 +113,7 @@ public abstract class NiyoginService {
 			extendedFieldMap.put(key, value);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return extendedFieldMap;
 	}
 
@@ -452,7 +450,6 @@ public abstract class NiyoginService {
 		return validatedMap;
 	}
 
-
 	/**
 	 * Method for prepare the Extended Field details map according to the given response.
 	 * 
@@ -481,7 +478,6 @@ public abstract class NiyoginService {
 			logger.error("Exception", e);
 		}
 	}
-
 
 	/**
 	 * 
@@ -532,7 +528,6 @@ public abstract class NiyoginService {
 		}
 		return detail;
 	}
-
 
 	/**
 	 * Method for get the appDate
@@ -745,7 +740,7 @@ public abstract class NiyoginService {
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}
-	
+
 	public String getval(Object object) {
 		return Objects.toString(object, "");
 	}
@@ -757,11 +752,11 @@ public abstract class NiyoginService {
 	public String getErrorMessage(String jsonResponse) {
 		return Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
 	}
-	
+
 	public String getStatusCode(String jsonResponse) {
 		return Objects.toString(getValueFromResponse(jsonResponse, STATUSCODE), "");
 	}
-	
+
 	public Object getValueFromResponse(String jsonResponse, String keypath) {
 		Object value = null;
 		try {
@@ -771,14 +766,14 @@ public abstract class NiyoginService {
 		}
 		return value;
 	}
-	
+
 	public String getTrimmedMessage(String errorDesc) {
 		if (errorDesc != null && errorDesc.length() > 149) {
 			errorDesc = errorDesc.substring(0, 143);
 		}
 		return errorDesc;
 	}
-	
+
 	public String getWriteException(Exception e) {
 		String errorDesc;
 		StringWriter writer = new StringWriter();
@@ -787,5 +782,4 @@ public abstract class NiyoginService {
 		return errorDesc;
 	}
 
-	
 }

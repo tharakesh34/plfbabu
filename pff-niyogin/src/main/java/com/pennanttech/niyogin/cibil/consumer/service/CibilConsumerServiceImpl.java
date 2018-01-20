@@ -36,11 +36,11 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	private final String		extConfigFileName	= "cibilConsumer.properties";
 	private String				serviceUrl;
 
-	//TODO: THESE FIELDS ARE ADDED IN EXTENDEDFIELDS
 	//CIBIL
-	public static final String	REQ_SEND			= "";
-	public static final String	RSN_CODE			= "";
-	public static final String	REMARKS				= "";
+	public static final String	REQ_SEND			= "REQSENDCIBIL";
+	public static final String	STATUSCODE			= "STATUSCIBIL";
+	public static final String	RSN_CODE			= "REASONCIBIL";
+	public static final String	REMARKS				= "REMARKSCIBIL";
 
 	/**
 	 * Method for get the CibilConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -96,6 +96,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -156,6 +157,10 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 				errorDesc = getErrorMessage(jsonResponse);
 
 				doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+
+				appplicationdata.put(RSN_CODE, errorCode);
+				appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+				appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 				if (StringUtils.isEmpty(errorCode)) {
 					//read values from response and load it to extended map

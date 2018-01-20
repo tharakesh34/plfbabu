@@ -30,9 +30,11 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	private String				serviceUrl;
 
 	//Hunter
-	public static final String	REQ_SEND			= "HUNTREQSEND";
-	public static final String	RSN_CODE			= "REASONCODEHUNTER";
-	public static final String	REMARKS				= "REMARKSHUNTER";
+	public static final String	REQ_SEND			= "REQSENDEXPHNTR";
+	public static final String	STATUSCODE			= "STATUSEXPHNTR";
+	public static final String	RSN_CODE			= "REASONEXPHNTR";
+	public static final String	REMARKS				= "REMARKSEXPHNTR";
+
 	public static final String	MATCH				= "HUNTERMATCH";
 
 	/**
@@ -68,6 +70,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);

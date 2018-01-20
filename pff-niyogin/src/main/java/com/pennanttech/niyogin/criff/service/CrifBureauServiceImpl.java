@@ -56,11 +56,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private String				commercialUrl;
 
 	//Experian Bureau
-	//TODO:
-	public static final String	REQ_SEND												= "";
-	public static final String	RSN_CODE												= "REASONCODECRIF";
+	public static final String	REQ_SEND												= "REQSENDCRIF";
+	public static final String	STATUSCODE												= "STATUSCRIF";
+	public static final String	RSN_CODE												= "REASONCRIF";
 	public static final String	REMARKS													= "REMARKSCRIF";
-	public static final String	STATUSCODE												= "";
 
 	public static final String	OLDEST_LOANDISBURSED_DT									= "OLDESTLOANDISBUR";
 	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT								= "NOPREVIOUSLOANS";
@@ -165,20 +164,18 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-		String statusCode = null;
 		try {
 			reuestString = client.getRequestString(commercial);
 			jsonResponse = client.post(commercialUrl, reuestString);
 			//check response for error
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
-			statusCode = getStatusCode(jsonResponse);
 
 			doInterfaceLogging(reference, commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
 
-			appplicationdata.put(STATUSCODE, statusCode);
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -237,6 +234,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map

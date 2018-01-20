@@ -61,9 +61,10 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private Map<String, Object>	extendedMap			= null;
 
 	//BRE
-	public static final String	REQ_SEND			= "BREREQSEND";
-	public static final String	RSN_CODE			= "REASONCODEBRE";
-	public static final String	REMARKS				= "REMARKSBRE";
+	public static final String	REQ_SEND			= "REQSENDEXPBRE";
+	public static final String	STATUSCODE			= "STATUSEXPBRE";
+	public static final String	RSN_CODE			= "REASONEXPBRE";
+	public static final String	REMARKS				= "REMARKSEXPBRE";
 
 	/***
 	 * Method for get the BRE details of the Customer and set these details to ExtendedFieldDetails.
@@ -98,6 +99,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map

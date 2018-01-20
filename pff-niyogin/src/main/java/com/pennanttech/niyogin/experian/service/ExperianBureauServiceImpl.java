@@ -52,11 +52,10 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private String				commercialUrl;
 
 	//Experian Bureau
-	//TODO:
-	public static final String	REQ_SEND					= "";
-	public static final String	RSN_CODE					= "REASONCODE";
-	public static final String	REMARKS						= "REMARKSEXPERIANBEA";
-	public static final String	STATUSCODE					= "";
+	public static final String	REQ_SEND					= "REQSENDEXPBURU";
+	public static final String	STATUSCODE					= "STATUSEXPBURU";
+	public static final String	RSN_CODE					= "REASONEXPBURU";
+	public static final String	REMARKS						= "REMARKSEXPBURU";
 
 	public static final String	NO_OF_ENQUIRES				= "NOOFENQUIRES";
 	public static final String	RESTRUCTURED_FLAG			= "RESTRUCTUREDLOAN";
@@ -121,7 +120,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		Map<String, Object> appplicationdata = null;
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
 			appplicationdata = executeBureauForSME(financeDetail, customerDetails);
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
 			appplicationdata = executeBureauForINDV(financeDetail, customerDetails);
 		}
 		logger.debug(Literal.LEAVING);
@@ -148,20 +148,18 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-		String statusCode = null;
 		try {
 			reuestString = client.getRequestString(commercial);
 			jsonResponse = client.post(commercialUrl, reuestString);
 			//check response for error
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
-			statusCode = getStatusCode(jsonResponse);
 
-			doInterfaceLogging(reference,commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
-			
-			appplicationdata.put(STATUSCODE, statusCode);
+			doInterfaceLogging(reference, commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
+
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -175,7 +173,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference,commercialUrl, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, commercialUrl, reuestString, jsonResponse, errorDesc);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, errorDesc);
@@ -213,10 +211,11 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, consumerUrl,reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, consumerUrl, reuestString, jsonResponse, errorCode, errorDesc);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -230,7 +229,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, consumerUrl,reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, consumerUrl, reuestString, jsonResponse, errorDesc);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, errorDesc);
@@ -305,9 +304,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		Address personalAddress = new Address();
 		String houseNo;
 		if (StringUtils.isNotBlank(address.getCustAddrHNbr())) {
-			houseNo = address.getCustAddrHNbr(); 
+			houseNo = address.getCustAddrHNbr();
 		} else {
-			houseNo = Objects.toString(address.getCustFlatNbr(),"");
+			houseNo = Objects.toString(address.getCustFlatNbr(), "");
 		}
 		personalAddress.setHouseNo(houseNo);
 		personalAddress.setLandmark(address.getCustAddrStreet());
@@ -332,16 +331,16 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		CompanyAddress companyAddress = new CompanyAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 		City city = getCityDetails(address);
-		
+
 		StringBuilder stringBuilder = new StringBuilder();
 		if (StringUtils.isNotBlank(address.getCustAddrType())) {
 			stringBuilder.append(address.getCustAddrType());
 		}
-		if (StringUtils.isNotBlank(address.getCustAddrHNbr() )) {
+		if (StringUtils.isNotBlank(address.getCustAddrHNbr())) {
 			if (StringUtils.isNotBlank(stringBuilder)) {
 				stringBuilder.append(",");
 			}
-			stringBuilder.append(address.getCustAddrHNbr() );
+			stringBuilder.append(address.getCustAddrHNbr());
 		}
 		if (StringUtils.isNotBlank(address.getCustAddrStreet())) {
 			if (StringUtils.isNotBlank(stringBuilder)) {
@@ -426,7 +425,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		if (address.getCustAddrHNbr() != null) {
 			houseNo = address.getCustAddrHNbr();
 		} else {
-			houseNo = Objects.toString(address.getCustFlatNbr(),"");
+			houseNo = Objects.toString(address.getCustFlatNbr(), "");
 		}
 
 		consumerAddress.setHouseNo(houseNo);
@@ -584,7 +583,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * 
 	 * @param bpayGridResponseList
 	 * @return
-	 * @throws ParseExceptionString 
+	 * @throws ParseExceptionString
 	 */
 	private List<BillPayGrid> prepareBillpayGridList(List<BpayGridResponse> bpayGridResponseList)
 			throws ParseException {
@@ -703,8 +702,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param errorCode
 	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(String reference,String serviceUrl , String requets, String response, String errorCode,
-			String errorDesc) {
+	private void doInterfaceLogging(String reference, String serviceUrl, String requets, String response,
+			String errorCode, String errorDesc) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -735,7 +734,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param errorCode
 	 * @param errorDesc
 	 */
-	private void doExceptioLogging(String reference,String serviceUrl ,String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String serviceUrl, String requets, String response,
+			String errorDesc) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
