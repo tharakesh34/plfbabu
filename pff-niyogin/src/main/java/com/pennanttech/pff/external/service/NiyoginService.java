@@ -43,7 +43,6 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.holdfinance.model.HoldReason;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
@@ -60,64 +59,16 @@ public abstract class NiyoginService {
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String	DELIMITER_COMMA		= ",";
 
-	public String				status				= InterfaceConstants.STATUS_SUCCESS;
-	public String				errorCode			= null;
-	public String				errorDesc			= null;
-	public String				jsonResponse		= null;
-	public Timestamp			reqSentOn			= null;
-	public String				statusCode			= null;
-	public String				errorCodeKey		= "ERRORCODE";
-	public String				errorDescKey		= "ERRORMESSAGE";
-	public String				statusCodeKey		= "STATUSCODE";
+	
+	private String				ERRORCODE			= "$.errorCode";
+	private String				ERRORMESSAGE		= "$.message";
+	private String				STATUSCODE			= "$.statusCode";
+	
 
 	public String				reference;
 
 	public NiyoginService() {
 		super();
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param serviceUrl
-	 * @param requestObject
-	 * @param extConfigFileName
-	 * @return
-	 */
-	@Deprecated
-	protected Map<String, Object> post(String serviceUrl, Object requestObject, String extConfigFileName) {
-		Map<String, Object> extendedFieldMap = null;
-
-		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			
-			String reuestString = client.getRequestString(requestObject);
-			jsonResponse = client.post(serviceUrl, reuestString);
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-			// error validation on Response status
-			statusCode = Objects.toString(extendedFieldMap.get(statusCodeKey));
-			if (extendedFieldMap.get(errorCodeKey) != null) {
-				errorCode = Objects.toString(extendedFieldMap.get(errorCodeKey));
-				errorDesc = Objects.toString(extendedFieldMap.get(errorDescKey));
-				throw new InterfaceException(errorCode, errorDesc);
-			} else {
-				extendedFieldMap.remove(errorCodeKey);
-				extendedFieldMap.remove(errorDescKey);
-			}
-			//extendedFieldMap.put("jsonResponse", jsonResponse);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObject, jsonResponse,
-					reqSentOn, status, errorCode, errorDesc, reference);
-			logInterfaceDetails(interfaceLogDetail);
-			throw new InterfaceException("9999", e.getMessage());
-		}
-		return extendedFieldMap;
 	}
 
 	/**
@@ -132,42 +83,6 @@ public abstract class NiyoginService {
 		return client.getResponseObject(jsonResponse, responseClass, isList);
 	}
 
-	/**
-	 * Method for load the properties file, then iterate the keys of that file and map to jsonResponse.
-	 * 
-	 * @param jsonResponse
-	 * @param extConfigFileName
-	 * @return extendedMappedValues
-	 */
-	@Deprecated
-	protected Map<String, Object> getExtendedMapValues(String jsonResponse, String extConfigFileName) {
-		logger.debug(Literal.ENTERING);
-
-		Map<String, Object> extendedFieldMap = new HashMap<>(1);
-		Properties properties = new Properties();
-		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName + ".properties");
-		try {
-			properties.load(inputStream);
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
-		}
-		Enumeration<?> e = properties.propertyNames();
-		//Configuration conf = Configuration.defaultConfiguration();
-		//conf = conf.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
-		while (e.hasMoreElements()) {
-			String key = (String) e.nextElement();
-			Object value = null;
-			try {
-				value = JsonPath.read(jsonResponse, properties.getProperty(key));
-			} catch (PathNotFoundException pathNotFoundException) {
-				value = null;
-			}
-			extendedFieldMap.put(key, value);
-		}
-		logger.debug(Literal.LEAVING);
-
-		return extendedFieldMap;
-	}
 	/**
 	 * Method for load the properties file, then iterate the keys of that file and map to jsonResponse.
 	 * 
@@ -565,16 +480,8 @@ public abstract class NiyoginService {
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
-		doClearInterfaceLogDetails();
 	}
 
-	private void doClearInterfaceLogDetails() {
-		this.status = InterfaceConstants.STATUS_SUCCESS;
-		this.errorCode = null;
-		this.errorDesc = null;
-		this.jsonResponse = null;
-		this.reqSentOn = null;
-	}
 
 	/**
 	 * 
@@ -626,27 +533,6 @@ public abstract class NiyoginService {
 		return detail;
 	}
 
-	/**
-	 * Method for log the Exception details
-	 * 
-	 * @param e
-	 * @param serviceUrl
-	 * @param requestObject
-	 */
-	protected void doLogError(Exception e, String serviceUrl, Object requestObject) {
-		logger.debug(Literal.ENTERING);
-
-		status = "FAILED";
-		errorCode = "9999";
-		StringWriter writer = new StringWriter();
-		e.printStackTrace(new PrintWriter(writer));
-		errorDesc = writer.toString();
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObject, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
-
-		logger.debug(Literal.LEAVING);
-	}
 
 	/**
 	 * Method for get the appDate
@@ -859,11 +745,6 @@ public abstract class NiyoginService {
 	public void setClient(JSONClient client) {
 		this.client = client;
 	}
-///--------------------------------
-	
-	private String				ERRORCODE			= "$.errorCode";
-	private String				ERRORMESSAGE		= "$.message";
-	private String				STATUSCODE			= "$.statusCode";
 	
 	public String getval(Object object) {
 		return Objects.toString(object, "");
