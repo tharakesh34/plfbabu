@@ -812,8 +812,8 @@ public abstract class NiyoginService {
 		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
 	}
 
-	protected String getLovFieldDetailByCode(String fieldCode, String fieldCodeValue) {
-		return niyoginDAOImpl.getLovFieldDetailByCode(fieldCode, fieldCodeValue, "");
+	protected String getLovFieldDetailByCode(String fieldCodeValue) {
+		return niyoginDAOImpl.getLovFieldDetailByCode(fieldCodeValue, "");
 	}
 
 	/**
@@ -863,7 +863,6 @@ public abstract class NiyoginService {
 	
 	private String				ERRORCODE			= "$.errorCode";
 	private String				ERRORMESSAGE		= "$.message";
-	private String				STATUSCODE			= "$.statusCode";
 	
 	public String getval(Object object) {
 		return Objects.toString(object, "");
@@ -876,7 +875,6 @@ public abstract class NiyoginService {
 	public String getErrorMessage(String jsonResponse) {
 		return Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
 	}
-	
 	
 	public Object getValueFromResponse(String jsonResponse, String keypath) {
 		Object value = null;
@@ -894,5 +892,14 @@ public abstract class NiyoginService {
 		}
 		return errorDesc;
 	}
+	
+	public String getWriteException(Exception e) {
+		String errorDesc;
+		StringWriter writer = new StringWriter();
+		e.printStackTrace(new PrintWriter(writer));
+		errorDesc = writer.toString();
+		return errorDesc;
+	}
+
 	
 }

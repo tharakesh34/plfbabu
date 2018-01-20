@@ -2,6 +2,7 @@ package com.pennanttech.niyogin.legaldesk.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.legaldesk.model.FormData;
 import com.pennanttech.niyogin.legaldesk.model.LegalDeskRequest;
 import com.pennanttech.niyogin.legaldesk.model.PartyAddress;
@@ -31,13 +33,17 @@ import com.pennanttech.niyogin.utility.NiyoginUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.LegalDeskService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskService {
-	private static final Logger	logger				= Logger.getLogger(LegalDeskServiceImpl.class);
-	private final String		extConfigFileName	= "legalDesk";
+	private static final Logger	logger					= Logger.getLogger(LegalDeskServiceImpl.class);
+	private final String		extConfigFileName		= "legalDesk.properties";
 	private String				serviceUrl;
+
+	//Form Fields
+	public static final String	FORM_FLDS_LOANPURPOSE	= "LOANPURPOSE";
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -49,24 +55,38 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	public AuditHeader executeLegalDesk(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		Map<String, Object> appplicationdata = new HashMap<>();
 		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail);
-		Map<String, Object> validatedMap = null;
-		Map<String, Object> extendedFieldMap = null;
-		// logging fields Data
-		reqSentOn = new Timestamp(System.currentTimeMillis());
-		reference = finReference;
 
-		extendedFieldMap = post(serviceUrl, legalDeskRequest, extConfigFileName);
+		//send request and log
+		String reference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
 
 		try {
-			validatedMap = validateExtendedMapValues(extendedFieldMap);
+			reuestString = client.getRequestString(legalDeskRequest);
+			jsonResponse = client.post(serviceUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			if (StringUtils.isEmpty(errorCode)) {
+				//read values from response and load it to extended map
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				//add to final
+				appplicationdata.putAll(mapvalidData);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, legalDeskRequest);
-			throw new InterfaceException("9999", e.getMessage());
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
 		}
-		prepareResponseObj(validatedMap, financeDetail);
+		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -159,7 +179,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals("3")) {
+		if (StringUtils.trimToEmpty(customer.getCustTypeCode()).equals(InterfaceConstants.CUSTTYPE_SOLEPRO)) {
 			SignerDetails borrower = new SignerDetails();
 			borrower.setName(customer.getCustShrtName());
 			borrower.setSeqNumbOfSign(1);
@@ -229,7 +249,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		String valueDesc = "";
 		if (extendedMap != null) {
-			valueDesc = getLovFieldDetailByCode("PUR_LOAN", String.valueOf(extendedMap.get("LOANPURPOSE")));
+			valueDesc = getLovFieldDetailByCode(String.valueOf(extendedMap.get(FORM_FLDS_LOANPURPOSE)));
 		}
 		formData.setPurposeOfLoan(valueDesc);
 		formData.setTenure(NiyoginUtility.getMonthsBetween(finMain.getFinStartDate(), finMain.getMaturityDate()));
@@ -261,6 +281,67 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setLoanType(finMain.getFinType());
 		logger.debug(Literal.LEAVING);
 		return formData;
+	}
+
+	/**
+	 * Method for prepare Success logging
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setServiceUrl(String serviceUrl) {

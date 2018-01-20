@@ -578,11 +578,11 @@ public class NiyoginDAOImpl {
 	 * 			""/_Temp/_View          
 	 * @return LovFieldDetail
 	 */
-	public String getLovFieldDetailByCode(String fieldCode, String fieldCodeValue, String type) {
+	public String getLovFieldDetailByCode(String fieldCodeValue, String type) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("FieldCode", fieldCode);
+		paramMap.addValue("FieldCode", "PUR_LOAN");
 		paramMap.addValue("FieldCodeValue", fieldCodeValue);
 		
 		StringBuilder selectSql = new StringBuilder("Select valueDesc " );

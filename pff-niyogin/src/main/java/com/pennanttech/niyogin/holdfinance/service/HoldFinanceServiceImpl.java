@@ -2,9 +2,11 @@ package com.pennanttech.niyogin.holdfinance.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -18,13 +20,14 @@ import com.pennanttech.niyogin.holdfinance.model.HoldFinanceRequest;
 import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.HoldFinanceService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanceService {
 
 	private static final Logger	logger				= Logger.getLogger(HoldFinanceServiceImpl.class);
-	private String				extConfigFileName	= "holdFinance";
+	private String				extConfigFileName	= "holdFinance.properties";
 	private String				serviceUrl;
 
 	/**
@@ -37,37 +40,42 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String finReference = financeMain.getFinReference();
-		if (financeDetail.getReasonHeader()==null) {
+
+		if (financeDetail.getReasonHeader() == null) {
 			return auditHeader;
 		}
 		HoldFinanceRequest holdFinanceRequest = prepareRequestObj(financeDetail);
-		Map<String, Object> validatedMap = null;
-		Map<String, Object> extendedFieldMap = null;
-
-		// logging fields Data
-		reqSentOn = new Timestamp(System.currentTimeMillis());
-		reference = finReference;
-
-		try {
-			extendedFieldMap = post(serviceUrl, holdFinanceRequest, extConfigFileName);
-		} catch (InterfaceException e) {
-			throw new InterfaceException(e.getErrorCode(), e.getErrorMessage());
-		}
+		Map<String, Object> appplicationdata = new HashMap<>();
+		//send request and log
+		String reference = financeMain.getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
 
 		try {
-			validatedMap = validateExtendedMapValues(extendedFieldMap);
+			reuestString = client.getRequestString(holdFinanceRequest);
+			jsonResponse = client.post(serviceUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			if (StringUtils.isEmpty(errorCode)) {
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				appplicationdata.putAll(mapvalidData);
+			}
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, holdFinanceRequest);
-			throw new InterfaceException("9999", e.getMessage());
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
 		}
-
-		// success case logging
-		doInterfaceLogging(holdFinanceRequest, finReference);
-		prepareResponseObj(validatedMap, financeDetail);
+		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
-		return null;
+		return auditHeader;
 	}
 
 	/**
@@ -91,7 +99,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 
 		if (detailsList != null && !detailsList.isEmpty()) {
 			List<Long> idList = new ArrayList<>();
-			for(ReasonDetails detail: detailsList) {
+			for (ReasonDetails detail : detailsList) {
 				idList.add(detail.getReasonId());
 			}
 			holdReasons = getholdReasonsById(idList);
@@ -106,15 +114,64 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param holdFinanceRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(HoldFinanceRequest holdFinanceRequest, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, holdFinanceRequest, jsonResponse,
-				reqSentOn, status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
+	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setServiceUrl(String serviceUrl) {

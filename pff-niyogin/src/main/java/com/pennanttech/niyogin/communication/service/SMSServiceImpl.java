@@ -11,11 +11,12 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Sms;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.SMSService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class SMSServiceImpl extends NiyoginService implements SMSService {
-	private static final Logger	logger			= Logger.getLogger(SMSServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(SMSServiceImpl.class);
 
 	private JSONClient			client;
 	private String				serviceUrl;
@@ -28,20 +29,20 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	 * 
 	 */
 	@Override
-	public void sendSms(List<MailTemplate> smsList,String finReference) throws InterfaceException {
+	public void sendSms(List<MailTemplate> smsList, String finReference) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		if (smsList!=null && !smsList.isEmpty()) {
+		if (smsList != null && !smsList.isEmpty()) {
 			for (MailTemplate mailTemplate : smsList) {
 				List<String> listnumbers = mailTemplate.getLovDescMobileNumbers();
-				if (listnumbers!=null && !listnumbers.isEmpty()) {
+				if (listnumbers != null && !listnumbers.isEmpty()) {
 					for (String string : listnumbers) {
-						send(string, mailTemplate.getLovDescSMSContent(),finReference);
+						send(string, mailTemplate.getLovDescSMSContent(), finReference);
 					}
 				}
-			}	
+			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -55,21 +56,23 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 		logger.debug(Literal.ENTERING);
 		Sms smsRequest = prepareRequest(mobileNo, content);
 		// logging fields Data
-		reqSentOn = new Timestamp(System.currentTimeMillis());
-		reference=finReference;
+		// logging fields Data
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
-			String reuestString = client.getRequestString(smsRequest);
+			reuestString = client.getRequestString(smsRequest);
 			jsonResponse = client.post(serviceUrl, reuestString);
-			logger.info("Response : " + jsonResponse.toString());
+			doInterfaceLogging(finReference, reuestString, jsonResponse, errorCode, errorDesc);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, smsRequest);
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(finReference, reuestString, jsonResponse, errorDesc);
 			throw new InterfaceException("9999", e.getMessage());
 		}
-		// success case logging
-		doInterfaceLogging(smsRequest, finReference);
-				
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -100,14 +103,63 @@ public class SMSServiceImpl extends NiyoginService implements SMSService {
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param smsRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(Sms smsRequest, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, smsRequest, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
+	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 }

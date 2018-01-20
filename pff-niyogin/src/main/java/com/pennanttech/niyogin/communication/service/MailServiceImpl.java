@@ -12,11 +12,12 @@ import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class MailServiceImpl extends NiyoginService implements MailService {
-	private static final Logger	logger			= Logger.getLogger(MailServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(MailServiceImpl.class);
 
 	private JSONClient			client;
 	private String				serviceUrl;
@@ -50,40 +51,37 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 */
 	private void send(MailTemplate template, String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String[] emailId = template.getLovDescMailId();
 		String subject = template.getEmailSubject();
 		String body = template.getLovDescFormattedContent();
-		
-		if (emailId==null || StringUtils.isEmpty(body)) {
+
+		if (emailId == null || StringUtils.isEmpty(body)) {
 			return;
 		}
-		
+
 		//FIXME
 		for (String string : emailId) {
 			//String.join(",", emailId)
 			Email emailRequest = prepareRequest(string, subject, body);
 			// logging fields Data
-			reqSentOn = new Timestamp(System.currentTimeMillis());
-			reference = finReference;
+			String errorCode = null;
+			String errorDesc = null;
+			String reuestString = null;
+			String jsonResponse = null;
 			try {
 				logger.debug("ServiceURL : " + serviceUrl);
-				String reuestString = client.getRequestString(emailRequest);
+				reuestString = client.getRequestString(emailRequest);
 				jsonResponse = client.post(serviceUrl, reuestString);
-				logger.info("Response : " + jsonResponse.toString());
+				doInterfaceLogging(finReference, reuestString, jsonResponse, errorCode, errorDesc);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
-				doLogError(e, serviceUrl, emailRequest);
+				errorDesc = getWriteException(e);
+				errorDesc = getTrimmedMessage(errorDesc);
+				doExceptioLogging(finReference, reuestString, jsonResponse, errorDesc);
 				throw new InterfaceException("9999", e.getMessage());
 			}
-
-			// success case logging
-			doInterfaceLogging(emailRequest, reference);
 		}
-		
-		
-
-				
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -117,14 +115,63 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param emailRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(Email emailRequest, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, emailRequest, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
+	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 }

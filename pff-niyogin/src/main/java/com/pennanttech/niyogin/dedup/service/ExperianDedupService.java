@@ -1,7 +1,5 @@
 package com.pennanttech.niyogin.dedup.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,9 +41,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	private String				COAPPLICANT			= "C";
 
 	//Experian Dedup
-	public static final String	EXP_DEDUP_REQ_SEND	= "EXDREQUESTSEND";
-	public static final String	EXP_DEDUP_RSN_CODE	= "REASONCODEINTERNAL";
-	public static final String	EXP_DEDUP_REMARKS	= "REMARKSINTERNAL";
+	public static final String	REQ_SEND			= "EXDREQUESTSEND";
+	public static final String	RSN_CODE			= "REASONCODEINTERNAL";
+	public static final String	REMARKS				= "REMARKSINTERNAL";
+	public static final String	MATCH				= "MATCH";
 	//Form Fields
 	public static final String	FORM_FLDS_FACEBOOK	= "FBID";
 	public static final String	FORM_FLDS_LINKEDIN	= "LINKEDID";
@@ -75,6 +74,12 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		return auditHeader;
 	}
 
+	/**
+	 * Method for process the Internal Dedup details of Applicant.
+	 * 
+	 * @param financeDetail
+	 * @param customerDetails
+	 */
 	private void processCustomer(FinanceDetail financeDetail, CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		//for Applicant
@@ -101,10 +106,9 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 
 			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
 
-			appplicationdata.put(EXP_DEDUP_RSN_CODE, errorCode);
-			appplicationdata.put(EXP_DEDUP_REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
 			//add status 
-			
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -113,7 +117,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 				//add to final
 				appplicationdata.putAll(mapvalidData);
 
-				financeMain.setDedupMatch((Boolean) appplicationdata.get("MATCH"));
+				financeMain.setDedupMatch((Boolean) appplicationdata.get(MATCH));
 				if (financeMain.isDedupMatch()) {
 					setWorkflowDetails(financeMain);
 				}
@@ -128,25 +132,22 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			financeMain.setDedupMatch(true);
 			setWorkflowDetails(financeMain);
 
-			appplicationdata.put(EXP_DEDUP_RSN_CODE, errorCode);
-			appplicationdata.put(EXP_DEDUP_REMARKS, errorDesc);
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
 		}
-		appplicationdata.put(EXP_DEDUP_REQ_SEND, true);
+		appplicationdata.put(REQ_SEND, true);
 		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String getWriteException(Exception e) {
-		String errorDesc;
-		StringWriter writer = new StringWriter();
-		e.printStackTrace(new PrintWriter(writer));
-		errorDesc = writer.toString();
-		return errorDesc;
-	}
-
+	/**
+	 * Method for process the Internal Dedup details of Co_Applicant's.
+	 * 
+	 * @param financeDetail
+	 */
 	private void processCoApplicant(FinanceDetail financeDetail) {
-		//for Applicant
-
+		//for Co_Applicant
+		logger.debug(Literal.ENTERING);
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
 
 		if (coapplicants == null || coapplicants.isEmpty()) {
@@ -199,7 +200,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			}
 
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void prepareRequestObj(CustomerDetails customerDetails, ExperianDedup experianDedup,
@@ -258,12 +259,25 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		logger.debug(Literal.ENTERING);
 		Address address = new Address();
 
-		String addrLines = customerAddres.getCustAddrType() + "," + customerAddres.getCustAddrHNbr() + ","
-				+ customerAddres.getCustAddrStreet();
-
-		address.setAddressLine1(addrLines);
-		address.setAddressLine2(addrLines);
-		address.setAddressLine3(addrLines);
+		StringBuilder stringBuilder = new StringBuilder();
+		if (StringUtils.isNotBlank(customerAddres.getCustAddrType())) {
+			stringBuilder.append(customerAddres.getCustAddrType());
+		}
+		if (StringUtils.isNotBlank(customerAddres.getCustAddrHNbr())) {
+			if (StringUtils.isNotBlank(stringBuilder)) {
+				stringBuilder.append(",");
+			}
+			stringBuilder.append(customerAddres.getCustAddrHNbr());
+		}
+		if (StringUtils.isNotBlank(customerAddres.getCustAddrStreet())) {
+			if (StringUtils.isNotBlank(stringBuilder)) {
+				stringBuilder.append(",");
+			}
+			stringBuilder.append(customerAddres.getCustAddrHNbr());
+		}
+		address.setAddressLine1(stringBuilder.toString());
+		address.setAddressLine2(stringBuilder.toString());
+		address.setAddressLine3(stringBuilder.toString());
 		address.setLandmark(customerAddres.getCustAddrStreet());
 
 		City city = getCityDetails(customerAddres);
@@ -294,13 +308,17 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param experianDedupRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
 			String errorDesc) {
+		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
 		String[] values = serviceUrl.split("/");
@@ -318,15 +336,20 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		}
 
 		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for failure logging.
 	 * 
-	 * @param experianDedupRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
 	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
 		String[] values = serviceUrl.split("/");
@@ -342,6 +365,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		iLogDetail.setErrorDesc(errorDesc);
 
 		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
