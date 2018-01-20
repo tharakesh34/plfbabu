@@ -22,6 +22,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -37,7 +38,6 @@ import com.pennanttech.niyogin.criff.model.PaymentHistory;
 import com.pennanttech.niyogin.criff.model.PersonalAddress;
 import com.pennanttech.niyogin.criff.model.TradeLine;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -46,71 +46,79 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger								= Logger.getLogger(CrifBureauServiceImpl.class);
-	private String				extConfigFileName;
+	private static final Logger	logger													= Logger
+			.getLogger(CrifBureauServiceImpl.class);
+
+	private final String		commercialConfigFileName								= "crifBureauCommercial.properties";
+	private final String		consumerConfigFileName									= "crifBureauConsumer.properties";
+
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	private String				OLDEST_LOANDISBURSED_DATE											= "OLDESTLOANDISBUR";
-	private String				NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE							= "NOPREVIOUSLOANS";
-	private String				IS_APPLICANT_90_PLUS_DPD_IN_LAST_SIX_MONTHS							= "ISAPPLICANT90DP";
-	private String				IS_APPLICANT_SUBSTANDARD_IN_LAST_SIX_MONTHS							= "ISAPPLICANTSUBST";
-	private String				IS_APPLICANT_REPORTED_AS_LOSS_IN_LAST_SIX_MONTHS					= "ISAPPLICANTREPOR";
-	private String				IS_APPLICANT_DOUBTFUL_IN_LAST_SIX_MONTHS							= "ISAPPLICANTDOUBT";
-	private String				IS_APPLICANT_MENTIONED_AS_SMA										= "ISAPPMENTSMA";
-	private String				LAST_UPDATE_DATE_IN_BUREAU											= "LASTUPDATEDATE";
-	private String				NOT_ENOUGH_INFO														= "NOTENOUGHINFO";
-	private String				MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACTIVE_SECURED_LOANS				= "MAXPEROFAMTREPAID";
-	private String				SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS							= "SUMOFDISBURSEDAMT";
-	private String				MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_THE_LAST_12_MONTHS	= "MAXIMUMDISBURSED";
-	private String				MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS						= "MINIMUMPEROFAMT";
-	private String				MONTHS_SINCE_30_PLUS_DPD_IN_THE_LAST_12_MONTHS						= "MNTHSIN30DPDINALAS";
-	private String				NUMBER_OF_BUSINESS_LOANS_OPENED_IN_LAST_6_MONTHS					= "NOOFBUSILOANS";
-	private String				RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS					= "RATIOOFOVRDUEDIS";
-	private String				COMBINATION_OF_PREVIOUS_LOANS_TAKEN									= "AMBOFPRVSLOANS";
-	private String				PRODUCT_INDEX														= "PROINDEXDETAILSHT";
+	//Experian Bureau
+	//TODO:
+	public static final String	REQ_SEND												= "";
+	public static final String	RSN_CODE												= "REASONCODECRIF";
+	public static final String	REMARKS													= "REMARKSCRIF";
+	public static final String	STATUSCODE												= "";
 
-	private Date				appDate																= getAppDate();
-	private String				pincode																= null;
+	public static final String	OLDEST_LOANDISBURSED_DT									= "OLDESTLOANDISBUR";
+	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT								= "NOPREVIOUSLOANS";
+	public static final String	IS_APP_SUBSTANDARD_IN_L6M								= "ISAPPLICANTSUBST";
+	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M							= "ISAPPLICANTREPOR";
+	public static final String	IS_APP_DOUBTFUL_IN_L6M									= "ISAPPLICANTDOUBT";
+	public static final String	IS_APP_MENTIONED_AS_SMA									= "ISAPPMENTSMA";
+	public static final String	IS_APP_90PLUS_DPD_IN_L6M								= "ISAPPLICANT90DP";
+	public static final String	LAST_UPDATE_DT_IN_BUREAU								= "LASTUPDATEDATE";
+	public static final String	NOT_ENOUGH_INFO											= "NOTENOUGHINFO";
+	public static final String	COMB_OF_PREVS_LOANS_TAKEN								= "AMBOFPRVSLOANS";
+	public static final String	PRODUCT_INDEX											= "PROINDEXDETAILSHT";
+	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS				= "SUMOFDISBURSEDAMT";
+	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS		= "RATIOOFOVRDUEDIS";
+	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M							= "NOOFBUSILOANS";
+	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS			= "MAXPEROFAMTREPAID";
+	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "MAXIMUMDISBURSED";
+	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS			= "MINIMUMPEROFAMT";
+	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN						= "AMBOFPRVSLOANS";
+	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "MNTHSIN30DPDINALAS";
 
-	private Object				requestObject														= null;
-	private String				serviceUrl															= null;
+	private Date				appDate													= getAppDate();
+	private String				pincode													= null;
 
+	/**
+	 * Method for execute CRIFF Bureau service<br>
+	 * - Execute Commercial bureau service for SME and CORP customers<br>
+	 * - Execute Consumer service for RETAIL customer.
+	 * 
+	 * @param auditHeader
+	 */
 	@Override
 	public AuditHeader executeCriffBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		Map<String, Object> validatedExtendedMap = new HashMap<>();
-		reqSentOn = new Timestamp(System.currentTimeMillis());
 
-		//validate the map with configuration
-		validatedExtendedMap = executeBureau(financeDetail, customerDetails);
-		
-		if (validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
-			validatedExtendedMap.put("REASONCODECRIF", statusCode);
-			validatedExtendedMap.put("REMARKSCRIF", App.getLabel("niyogin_No_Data"));
-		}
-		
-		prepareResponseObj(validatedExtendedMap, financeDetail);
-		
-		// Execute Bureau for co-applicants
+		//process the Applicant.
+		Map<String, Object> appplicationdata = null;
+		appplicationdata = executeBureau(financeDetail, customerDetails);
+		prepareResponseObj(appplicationdata, financeDetail);
+
+		//process Co_Applicant's
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
-		if (coapplicants != null && !coapplicants.isEmpty()) {
-			List<Long> coApplicantIDs = new ArrayList<Long>(1);
-			for (JointAccountDetail coApplicant : coapplicants) {
-				long custId = getCustomerId(coApplicant.getCustCIF());
-				coApplicantIDs.add(custId);
-			}
-			//TODO: Need solution for display co-applicant extended details
-			Map<String, Object> extendedFieldMapForCoApp = new HashMap<>();
-			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
-			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
-				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
-			}
+		if (coapplicants == null || coapplicants.isEmpty()) {
+			return auditHeader;
 		}
-		
+		List<Long> coApplicantIDs = new ArrayList<Long>(1);
+		for (JointAccountDetail coApplicant : coapplicants) {
+			coApplicantIDs.add(coApplicant.getCustID());
+		}
+
+		List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
+		for (CustomerDetails coAppCustomerDetail : coApplicantCustomers) {
+			executeBureau(financeDetail, coAppCustomerDetail);
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -123,50 +131,138 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @return
 	 * @throws ParseException
 	 */
-	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails)
-			throws ParseException {
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		Map<String, Object> extendedFieldMap = null;
-		Map<String, Object> validatedExtendedMap = null;
+	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails) {
 
-		reference = finReference;
-
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> appplicationdata = null;
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-			serviceUrl = commercialUrl;
-			extConfigFileName = "crifBureauCommercial";
-			requestObject = commercial;
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-			serviceUrl = consumerUrl;
-			extConfigFileName = "crifBureauConsumer";
-			requestObject = consumer;
+			appplicationdata = executeBureauForSME(financeDetail, customerDetails);
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
+				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+			appplicationdata = executeBureauForINDV(financeDetail, customerDetails);
 		}
+		logger.debug(Literal.LEAVING);
+		return appplicationdata;
+	}
 
-		//for Straight forwardFields It works
-		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
-
+	/**
+	 * Method for Execute the Experian Bureau For SME Customer
+	 * 
+	 * @param financeDetail
+	 * @param customerDetails
+	 * @return
+	 */
+	private Map<String, Object> executeBureauForSME(FinanceDetail financeDetail, CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
+		//for Applicant
+		//prepare request object
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Map<String, Object> appplicationdata = new HashMap<>();
+		CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
+		//send request and log
+		String reference = financeMain.getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
+		String statusCode = null;
 		try {
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_SME)) {
+			reuestString = client.getRequestString(commercial);
+			jsonResponse = client.post(commercialUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+			statusCode = getStatusCode(jsonResponse);
+
+			doInterfaceLogging(reference, commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
+
+			appplicationdata.put(STATUSCODE, statusCode);
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+
+			if (StringUtils.isEmpty(errorCode)) {
+				//read values from response and load it to extended map
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, commercialConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				//process the response map
 				Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 				CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
-				extendedFieldMap = prepareCommercialExtendedMap(commercialResponse, extendedFieldMap);
-			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-				Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
-				CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
-				extendedFieldMap = prepareConsumerExtendedMap(consumerResponse, extendedFieldMap);
+				//process the response
+				prepareCommercialExtendedMap(commercialResponse, mapvalidData);
+				appplicationdata.putAll(mapvalidData);
 			}
-			validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, requestObject);
-			throw new InterfaceException("9999", e.getMessage());
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference, commercialUrl, reuestString, jsonResponse, errorDesc);
+
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
 		}
-		
-		// success case logging
-		doInterfaceLogging(requestObject, finReference);
-				
-		return validatedExtendedMap;
+		appplicationdata.put(REQ_SEND, true);
+
+		logger.debug(Literal.LEAVING);
+		return appplicationdata;
+	}
+
+	/**
+	 * Method for Execute the Experian Bureau for Individual Customer.
+	 * 
+	 * @param financeDetail
+	 * @param customerDetails
+	 * @return
+	 */
+	private Map<String, Object> executeBureauForINDV(FinanceDetail financeDetail, CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
+		//for Applicant
+		//prepare request object
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Map<String, Object> appplicationdata = new HashMap<>();
+		CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
+		//send request and log
+		String reference = financeMain.getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
+		try {
+			reuestString = client.getRequestString(consumer);
+			jsonResponse = client.post(consumerUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+
+			doInterfaceLogging(reference, consumerUrl, reuestString, jsonResponse, errorCode, errorDesc);
+
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+
+			if (StringUtils.isEmpty(errorCode)) {
+				//read values from response and load it to extended map
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, consumerConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				//process the response map
+				Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
+				CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
+				//process the response
+				prepareConsumerExtendedMap(consumerResponse, mapvalidData);
+				appplicationdata.putAll(mapvalidData);
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference, consumerUrl, reuestString, jsonResponse, errorDesc);
+
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
+		}
+		appplicationdata.put(REQ_SEND, true);
+
+		logger.debug(Literal.LEAVING);
+		return appplicationdata;
+
 	}
 
 	/**
@@ -188,14 +284,14 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			Collections.sort(tradlineList, new SanctionDareComparator());
 			//for oldest loan disbursed date
 			Date disbursedDate = tradlineList.get(tradlineList.size() - 1).getSanctionDate();
-			extendedFieldMap.put(OLDEST_LOANDISBURSED_DATE, disbursedDate);
+			extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, disbursedDate);
 
 			List<String> paymentList = new ArrayList<>();
 			BigDecimal closedloanDisbursAmt = BigDecimal.ZERO;
 
 			for (TradeLine tradeline : tradlineList) {
 				if (!tradeline.getCreditFacilityStatus().equalsIgnoreCase("Closed")) {
-					extendedFieldMap.put(NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE, true);
+					extendedFieldMap.put(NO_PREVS_LOANS_AS_OF_APP_DT, true);
 				}
 
 				paymentList.add(tradeline.getPaymentHistory());
@@ -225,7 +321,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
 
 			//for number of business loans opened in last 6 months
-			extendedFieldMap.put(NUMBER_OF_BUSINESS_LOANS_OPENED_IN_LAST_6_MONTHS, noBusLoanOpened);
+			extendedFieldMap.put(NUMB_OF_BUS_LOANS_OPENED_IN_L6M, noBusLoanOpened);
 
 			// calculte payment history details
 			setPaymentHistoryDetails(extendedFieldMap, paymentList);
@@ -234,7 +330,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			Collections.sort(tradlineList, new LastReportedDateComparator());
 			Date lastUpdatedDate = tradlineList.get(0).getLastReportedDate();
 			//long months = getMonthsBetween(lastUpdatedDate, appDate);
-			extendedFieldMap.put(LAST_UPDATE_DATE_IN_BUREAU, lastUpdatedDate);
+			extendedFieldMap.put(LAST_UPDATE_DT_IN_BUREAU, lastUpdatedDate);
 		}
 
 		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
@@ -338,7 +434,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		companyAddress.setAddress1(addressLines);
 		companyAddress.setAddress2(addressLines);
 		companyAddress.setAddress3(addressLines);
-		
+
 		if (city != null) {
 			companyAddress.setCity(city.getPCCityName());
 			companyAddress.setCountry(city.getLovDescPCCountryName());
@@ -370,7 +466,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		//for oldest loan disbursed date
 		Date disbursedDate = loanDetailsList.get(loanDetailsList.size() - 1).getDisbursedDate();
-		extendedFieldMap.put(OLDEST_LOANDISBURSED_DATE, disbursedDate);
+		extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, disbursedDate);
 
 		List<String> paymentList = new ArrayList<>(1);
 		BigDecimal maxPerOfAmtRepaidOnSL = BigDecimal.ZERO;
@@ -390,7 +486,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		for (LoanDetail loanDetail : loanDetailsList) {
 			//for no previous loans as of application date
 			if (!loanDetail.getAccountStatus().equalsIgnoreCase("Closed")) {
-				extendedFieldMap.put(NO_PREVIOUS_LOANS_AS_OF_APPLICATION_DATE, true);
+				extendedFieldMap.put(NO_PREVS_LOANS_AS_OF_APP_DT, true);
 			}
 
 			//for max amount repaid across all active secured_loans
@@ -444,13 +540,13 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		//for  maxPerOfAmtRepaidOnSL
 		maxPerOfAmtRepaidOnSL = maxPerOfAmtRepaidOnSL.multiply(new BigDecimal(100));
-		extendedFieldMap.put(MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACTIVE_SECURED_LOANS, maxPerOfAmtRepaidOnSL);
+		extendedFieldMap.put(MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, maxPerOfAmtRepaidOnSL);
 
 		//Sum of disbursed Amount of all closed loans
 		extendedFieldMap.put(SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, closedloanDisbursAmt);
 
 		//Maximum disbursed Amount across all unsecured loans in the last 12 months
-		extendedFieldMap.put(MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_THE_LAST_12_MONTHS, maxDsbursmentAmt);
+		extendedFieldMap.put(MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, maxDsbursmentAmt);
 
 		//for  minPerOfAmtRepaidOnSL
 		minPerOfAmtRepaidOnSL = minPerOfAmtRepaidOnSL.multiply(new BigDecimal(100));
@@ -460,7 +556,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		extendedFieldMap.put(COMBINATION_OF_PREVIOUS_LOANS_TAKEN, sb.toString());
 
 		//Number of business loans opened in last 6 months
-		extendedFieldMap.put(NUMBER_OF_BUSINESS_LOANS_OPENED_IN_LAST_6_MONTHS, noBusLoanOpened);
+		extendedFieldMap.put(NUMB_OF_BUS_LOANS_OPENED_IN_L6M, noBusLoanOpened);
 
 		//Ratio of Overdue and Disbursement amount for all loans
 		BigDecimal ratioOfOverdue = BigDecimal.ZERO;
@@ -477,7 +573,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		Date lastUpdatedDate = loanDetailsList.get(0).getInfoAsOn();
 		long months = NiyoginUtility.getMonthsBetween(lastUpdatedDate, appDate);
 		if (months > 36) {
-			extendedFieldMap.put(LAST_UPDATE_DATE_IN_BUREAU, lastUpdatedDate);
+			extendedFieldMap.put(LAST_UPDATE_DT_IN_BUREAU, lastUpdatedDate);
 		}
 
 		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
@@ -494,21 +590,21 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 6) {
 				try {
 					if (Long.valueOf(paymentHistory.getDpd()) >= 90) {
-						extendedFieldMap.put(IS_APPLICANT_90_PLUS_DPD_IN_LAST_SIX_MONTHS, true);
+						extendedFieldMap.put(IS_APP_90PLUS_DPD_IN_L6M, true);
 					}
 				} catch (Exception e) {
 					//In case of DPD = XXX
 				}
 				if (StringUtils.equals(paymentHistory.getType(), "SUB")) {
-					extendedFieldMap.put(IS_APPLICANT_SUBSTANDARD_IN_LAST_SIX_MONTHS, true);
+					extendedFieldMap.put(IS_APP_SUBSTANDARD_IN_L6M, true);
 				}
 
 				if (StringUtils.equals(paymentHistory.getType(), "LOS")) {
-					extendedFieldMap.put(IS_APPLICANT_REPORTED_AS_LOSS_IN_LAST_SIX_MONTHS, true);
+					extendedFieldMap.put(IS_APP_REPORTED_AS_LOSS_IN_L6M, true);
 
 				}
 				if (StringUtils.equals(paymentHistory.getType(), "DBT")) {
-					extendedFieldMap.put(IS_APPLICANT_DOUBTFUL_IN_LAST_SIX_MONTHS, true);
+					extendedFieldMap.put(IS_APP_DOUBTFUL_IN_L6M, true);
 				}
 			}
 
@@ -521,7 +617,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 
 			if (StringUtils.equalsIgnoreCase(paymentHistory.getType(), "SMA")) {
-				extendedFieldMap.put(IS_APPLICANT_MENTIONED_AS_SMA, true);
+				extendedFieldMap.put(IS_APP_MENTIONED_AS_SMA, true);
 			}
 		}
 
@@ -546,7 +642,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		}
 		if (startDate != null) {
 			long dpdMonths = NiyoginUtility.getMonthsBetween(getAppDate(), startDate);
-			extendedFieldMap.put(MONTHS_SINCE_30_PLUS_DPD_IN_THE_LAST_12_MONTHS, dpdMonths);
+			extendedFieldMap.put(MONTHS_SINCE_30_PLUS_DPD_IN_L12M, dpdMonths);
 		}
 	}
 
@@ -625,15 +721,65 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param consumerRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(Object requestObj, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
+	private void doInterfaceLogging(String reference, String serviceUrl, String requets, String response,
+			String errorCode, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference, String serviceUrl, String requets, String response,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setConsumerUrl(String consumerUrl) {

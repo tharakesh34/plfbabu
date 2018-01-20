@@ -863,6 +863,7 @@ public abstract class NiyoginService {
 	
 	private String				ERRORCODE			= "$.errorCode";
 	private String				ERRORMESSAGE		= "$.message";
+	private String				STATUSCODE			= "$.statusCode";
 	
 	public String getval(Object object) {
 		return Objects.toString(object, "");
@@ -874,6 +875,10 @@ public abstract class NiyoginService {
 
 	public String getErrorMessage(String jsonResponse) {
 		return Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
+	}
+	
+	public String getStatusCode(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, STATUSCODE), "");
 	}
 	
 	public Object getValueFromResponse(String jsonResponse, String keypath) {

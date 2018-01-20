@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -21,6 +22,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -34,9 +36,7 @@ import com.pennanttech.niyogin.experian.model.CAISAccountHistory;
 import com.pennanttech.niyogin.experian.model.CompanyAddress;
 import com.pennanttech.niyogin.experian.model.ConsumerAddress;
 import com.pennanttech.niyogin.experian.model.PersonalDetails;
-import com.pennanttech.niyogin.utility.ExtFieldMapConstants;
 import com.pennanttech.niyogin.utility.NiyoginUtility;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -44,18 +44,37 @@ import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianBureauServiceImpl extends NiyoginService implements ExperianBureauService {
-	private static final Logger	logger			= Logger.getLogger(ExperianBureauServiceImpl.class);
-	private String				extConfigFileName;
+	private static final Logger	logger						= Logger.getLogger(ExperianBureauServiceImpl.class);
+
+	private final String		commercialConfigFileName	= "experianBureauCommercial.properties";
+	private final String		consumerConfigFileName		= "experianBureauConsumer.properties";
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	private Date				appDate			= getAppDate();
-	private Object				requestObject	= null;
-	private String				serviceUrl		= null;
+	//Experian Bureau
+	//TODO:
+	public static final String	REQ_SEND					= "";
+	public static final String	RSN_CODE					= "REASONCODE";
+	public static final String	REMARKS						= "REMARKSEXPERIANBEA";
+	public static final String	STATUSCODE					= "";
+
+	public static final String	NO_OF_ENQUIRES				= "NOOFENQUIRES";
+	public static final String	RESTRUCTURED_FLAG			= "RESTRUCTUREDLOAN";
+	public static final String	SUIT_FILED_FLAG				= "SUITFILED";
+	public static final String	WILLFUL_DEFAULTER_FLAG		= "WILLFULDEFAULTER";
+	public static final String	WRITE_OFF_FLAG				= "EXPBWRUTEOFF";
+	public static final String	SETTLED_FLAG_FLAG			= "EXPBSETTLED";
+	public static final String	NO_EMI_BOUNCES_IN3M			= "EMI3MONTHS";
+	public static final String	NO_EMI_BOUNCES_IN6M			= "EMI6MNTHS";
+	public static final String	STATUS						= "STATUS";
+	public static final String	WRITEOFF					= "25";
+	public static final String	SETTLE						= "23";
+
+	private Date				appDate						= getAppDate();
 
 	/**
 	 * Method for execute Experian Bureau service<br>
-	 * - Execute Commercial bureau service for SME and CORP customers<br>.
+	 * - Execute Commercial bureau service for SME and CORP customers<br>
 	 * - Execute Consumer service for RETAIL customer.
 	 * 
 	 * @param auditHeader
@@ -66,34 +85,26 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		Map<String, Object> validatedExtendedMap = new HashMap<>();
-		reqSentOn = new Timestamp(System.currentTimeMillis());
 
-		//validate the map with configuration
-		validatedExtendedMap = executeBureau(financeDetail, customerDetails);
+		//process the Applicant.
+		Map<String, Object> appplicationdata = null;
+		appplicationdata = executeBureau(financeDetail, customerDetails);
+		prepareResponseObj(appplicationdata, financeDetail);
 
-		if(validatedExtendedMap != null && validatedExtendedMap.isEmpty()) {
-			validatedExtendedMap.put("REASONCODE", statusCode);
-			validatedExtendedMap.put("REMARKSEXPERIANBEA", App.getLabel("niyogin_No_Data"));
-		}
-		prepareResponseObj(validatedExtendedMap, financeDetail);
-		
-		// Execute Bureau for co-applicants
+		//process Co_Applicant's
 		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
-		if (coapplicants != null && !coapplicants.isEmpty()) {
-			List<Long> coApplicantIDs = new ArrayList<Long>(1);
-			for (JointAccountDetail coApplicant : coapplicants) {
-				long custId = getCustomerId(coApplicant.getCustCIF());
-				coApplicantIDs.add(custId);
-			}
-			//TODO: Need solution for display co-applicant extended details
-			Map<String, Object> extendedFieldMapForCoApp = new HashMap<>();
-			List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
-			for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
-				extendedFieldMapForCoApp.putAll(executeBureau(financeDetail, coAppCustomerDetails));
-			}
+		if (coapplicants == null || coapplicants.isEmpty()) {
+			return auditHeader;
+		}
+		List<Long> coApplicantIDs = new ArrayList<Long>(1);
+		for (JointAccountDetail coApplicant : coapplicants) {
+			coApplicantIDs.add(coApplicant.getCustID());
 		}
 
+		List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
+		for (CustomerDetails coAppCustomerDetail : coApplicantCustomers) {
+			executeBureau(financeDetail, coAppCustomerDetail);
+		}
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -104,55 +115,130 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param financeDetail
 	 * @param customerDetails
 	 * @return
-	 * @throws ParseException
 	 */
-	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails)
-			throws ParseException {
+	private Map<String, Object> executeBureau(FinanceDetail financeDetail, CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		Map<String, Object> extendedFieldMap = null;
-		Map<String, Object> validatedExtendedMap = null;
-
-		reference = finReference;
-
+		Map<String, Object> appplicationdata = null;
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), InterfaceConstants.PFF_CUSTCTG_SME)) {
-			BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-			serviceUrl = commercialUrl;
-			extConfigFileName = "experianBureauCommercial";
-			requestObject = commercial;
-		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-				InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-			BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-			serviceUrl = consumerUrl;
-			extConfigFileName = "experianBureauConsumer";
-			requestObject = consumer;
+			appplicationdata = executeBureauForSME(financeDetail, customerDetails);
+		} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),InterfaceConstants.PFF_CUSTCTG_INDIV)) {
+			appplicationdata = executeBureauForINDV(financeDetail, customerDetails);
 		}
+		logger.debug(Literal.LEAVING);
+		return appplicationdata;
+	}
 
-		extendedFieldMap = post(serviceUrl, requestObject, extConfigFileName);
+	/**
+	 * Method for Execute the Experian Bureau For SME Customer
+	 * 
+	 * @param financeDetail
+	 * @param customerDetails
+	 * @return
+	 */
+	private Map<String, Object> executeBureauForSME(FinanceDetail financeDetail, CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
+		//for Applicant
+		//prepare request object
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Map<String, Object> appplicationdata = new HashMap<>();
+		BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
+		//send request and log
+		String reference = financeMain.getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
+		String statusCode = null;
 		try {
+			reuestString = client.getRequestString(commercial);
+			jsonResponse = client.post(commercialUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+			statusCode = getStatusCode(jsonResponse);
 
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_SME)) {
-				extendedFieldMap = prepareCommercialExtendedMap(extendedFieldMap);
-			} else if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					InterfaceConstants.PFF_CUSTCTG_INDIV)) {
-				extendedFieldMap = prepareConsumerExtendedMap(extendedFieldMap);
+			doInterfaceLogging(reference,commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
+			
+			appplicationdata.put(STATUSCODE, statusCode);
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+
+			if (StringUtils.isEmpty(errorCode)) {
+				//read values from response and load it to extended map
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, commercialConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				//process the response map
+				prepareCommercialExtendedMap(mapvalidData);
+				appplicationdata.putAll(mapvalidData);
 			}
-
-			//validate the map with configuration
-			validatedExtendedMap = validateExtendedMapValues(extendedFieldMap);
-
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			doLogError(e, serviceUrl, requestObject);
-			throw new InterfaceException("9999", e.getMessage());
-		}
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference,commercialUrl, reuestString, jsonResponse, errorDesc);
 
-		// success case logging
-		doInterfaceLogging(requestObject, finReference);
-				
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
+		}
+		appplicationdata.put(REQ_SEND, true);
+
 		logger.debug(Literal.LEAVING);
-		return validatedExtendedMap;
+		return appplicationdata;
+	}
+
+	/**
+	 * Method for Execute the Experian Bureau for Individual Customer.
+	 * 
+	 * @param financeDetail
+	 * @param customerDetails
+	 * @return
+	 */
+	private Map<String, Object> executeBureauForINDV(FinanceDetail financeDetail, CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
+		//for Applicant
+		//prepare request object
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Map<String, Object> appplicationdata = new HashMap<>();
+		BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
+		//send request and log
+		String reference = financeMain.getFinReference();
+		String errorCode = null;
+		String errorDesc = null;
+		String reuestString = null;
+		String jsonResponse = null;
+		try {
+			reuestString = client.getRequestString(consumer);
+			jsonResponse = client.post(consumerUrl, reuestString);
+			//check response for error
+			errorCode = getErrorCode(jsonResponse);
+			errorDesc = getErrorMessage(jsonResponse);
+
+			doInterfaceLogging(reference, consumerUrl,reuestString, jsonResponse, errorCode, errorDesc);
+
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+
+			if (StringUtils.isEmpty(errorCode)) {
+				//read values from response and load it to extended map
+				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, consumerConfigFileName);
+				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
+				//process the response map
+				prepareConsumerExtendedMap(mapvalidData);
+				appplicationdata.putAll(mapvalidData);
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			errorDesc = getWriteException(e);
+			errorDesc = getTrimmedMessage(errorDesc);
+			doExceptioLogging(reference, consumerUrl,reuestString, jsonResponse, errorDesc);
+
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
+		}
+		appplicationdata.put(REQ_SEND, true);
+
+		logger.debug(Literal.LEAVING);
+		return appplicationdata;
 	}
 
 	/**
@@ -186,6 +272,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private Applicant prepareApplicant(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		Applicant applicant = new Applicant();
 		applicant.setFirstName(customer.getCustShrtName());
@@ -199,6 +286,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 		applicant.setMaritalStatus(InterfaceConstants.PFF_MARITAL_STATUS);
 		applicant.setAddress(preparePersonalAddress(customerDetails.getAddressList()));
+		logger.debug(Literal.LEAVING);
 		return applicant;
 	}
 
@@ -209,16 +297,17 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private Address preparePersonalAddress(List<CustomerAddres> addressList) {
+		logger.debug(Literal.ENTERING);
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
 		City city = getCityDetails(address);
 
 		Address personalAddress = new Address();
 		String houseNo;
-		if (address.getCustAddrHNbr() != null) {
-			houseNo = address.getCustAddrHNbr();
+		if (StringUtils.isNotBlank(address.getCustAddrHNbr())) {
+			houseNo = address.getCustAddrHNbr(); 
 		} else {
-			houseNo = address.getCustFlatNbr();
+			houseNo = Objects.toString(address.getCustFlatNbr(),"");
 		}
 		personalAddress.setHouseNo(houseNo);
 		personalAddress.setLandmark(address.getCustAddrStreet());
@@ -228,6 +317,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			personalAddress.setPin(address.getCustAddrZIP());
 			personalAddress.setState(city.getLovDescPCProvinceName());
 		}
+		logger.debug(Literal.LEAVING);
 		return personalAddress;
 	}
 
@@ -238,15 +328,31 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private CompanyAddress prepareCompanyAddress(List<CustomerAddres> addressList) {
+		logger.debug(Literal.ENTERING);
 		CompanyAddress companyAddress = new CompanyAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
 		City city = getCityDetails(address);
-		String addrLines = address.getCustAddrType() + "," + address.getCustAddrHNbr() + ","
-				+ address.getCustAddrStreet();
-		companyAddress.setAddressLine1(addrLines);
-		companyAddress.setAddressLine2(addrLines);
-		companyAddress.setAddressLine3(addrLines);
 		
+		StringBuilder stringBuilder = new StringBuilder();
+		if (StringUtils.isNotBlank(address.getCustAddrType())) {
+			stringBuilder.append(address.getCustAddrType());
+		}
+		if (StringUtils.isNotBlank(address.getCustAddrHNbr() )) {
+			if (StringUtils.isNotBlank(stringBuilder)) {
+				stringBuilder.append(",");
+			}
+			stringBuilder.append(address.getCustAddrHNbr() );
+		}
+		if (StringUtils.isNotBlank(address.getCustAddrStreet())) {
+			if (StringUtils.isNotBlank(stringBuilder)) {
+				stringBuilder.append(",");
+			}
+			stringBuilder.append(address.getCustAddrStreet());
+		}
+		companyAddress.setAddressLine1(stringBuilder.toString());
+		companyAddress.setAddressLine2(stringBuilder.toString());
+		companyAddress.setAddressLine3(stringBuilder.toString());
+
 		if (city != null) {
 			companyAddress.setCity(city.getPCCityName());
 			companyAddress.setCountry(city.getLovDescPCCountryName());
@@ -255,6 +361,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 		companyAddress.setDistrict(StringUtils.isNotBlank(address.getCustDistrict()) ? address.getCustDistrict()
 				: InterfaceConstants.DEFAULT_DIST);
+		logger.debug(Literal.LEAVING);
 		return companyAddress;
 	}
 
@@ -265,6 +372,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private BureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		BureauConsumer bureauConsumer = new BureauConsumer();
 		Customer customer = customerDetails.getCustomer();
 		bureauConsumer.setStgUnqRefId(customer.getCustID());
@@ -284,6 +392,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private PersonalDetails prepareConsumerPersonalDetails(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		PersonalDetails personalDetails = new PersonalDetails();
 		Customer customer = customerDetails.getCustomer();
 
@@ -296,7 +405,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		personalDetails.setPan(getPanNumber(documentList));
 		personalDetails.setUid_(getPanNumber(documentList));//FIXME
-
+		logger.debug(Literal.LEAVING);
 		return personalDetails;
 	}
 
@@ -307,6 +416,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 */
 	private ConsumerAddress prepareConsumerAddress(List<CustomerAddres> addressList) {
+		logger.debug(Literal.ENTERING);
 		ConsumerAddress consumerAddress = new ConsumerAddress();
 		CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PER);
 
@@ -316,14 +426,14 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		if (address.getCustAddrHNbr() != null) {
 			houseNo = address.getCustAddrHNbr();
 		} else {
-			houseNo = address.getCustFlatNbr();
+			houseNo = Objects.toString(address.getCustFlatNbr(),"");
 		}
 
 		consumerAddress.setHouseNo(houseNo);
 		consumerAddress.setLandmark(address.getCustAddrStreet());
 		consumerAddress.setCareOf(StringUtils.isNotBlank(address.getCustAddrLine3()) ? address.getCustAddrLine3()
 				: InterfaceConstants.DEFAULT_CAREOF);
-		
+
 		if (city != null) {
 			consumerAddress.setCity(city.getPCCityName());
 			consumerAddress.setCountry(city.getLovDescPCCountryName());
@@ -334,6 +444,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				: InterfaceConstants.DEFAULT_DIST);
 		consumerAddress.setSubDistrict(StringUtils.isNotBlank(address.getCustAddrLine4()) ? address.getCustAddrLine4()
 				: InterfaceConstants.DEFAULT_SUBDIST);
+		logger.debug(Literal.LEAVING);
 		return consumerAddress;
 	}
 
@@ -346,9 +457,10 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap)
 			throws ParseException {
+		logger.debug(Literal.ENTERING);
 		List<BillPayGrid> billPayGridList = null;
-		if (extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M) != null) {
-			String jsonEmoBounceResponse = extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M).toString();
+		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN3M) != null) {
+			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN3M).toString();
 			Object responseObj = getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
 			@SuppressWarnings("unchecked")
 			List<BpayGridResponse> bpayGridResponses = (List<BpayGridResponse>) responseObj;
@@ -356,35 +468,35 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				billPayGridList = prepareBillpayGridList(bpayGridResponses);
 			}
 		} else {
-			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M);
-			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M);
+			extendedFieldMap.remove(NO_EMI_BOUNCES_IN3M);
+			extendedFieldMap.remove(NO_EMI_BOUNCES_IN6M);
 		}
 
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
-			if (entry.getKey().equals(ExtFieldMapConstants.RESTRUCTURED_FLAG)) {
+			if (entry.getKey().equals(RESTRUCTURED_FLAG)) {
 				extendedFieldMap.put(entry.getKey(), null);
-			} else if (entry.getKey().equals(ExtFieldMapConstants.SUIT_FILED_FLAG)) {
+			} else if (entry.getKey().equals(SUIT_FILED_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "1") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.WILLFUL_DEFAULTER_FLAG)) {
+			} else if (entry.getKey().equals(WILLFUL_DEFAULTER_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "1") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M)) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN3M)) {
 
 				if (billPayGridList != null && !billPayGridList.isEmpty()) {
 					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 3);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M)) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN6M)) {
 
 				if (billPayGridList != null && !billPayGridList.isEmpty()) {
 					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 6);
@@ -396,7 +508,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 
 			}
 		}
-
+		logger.debug(Literal.LEAVING);
 		return extendedFieldMap;
 	}
 
@@ -409,59 +521,60 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap) throws ParseException {
-
+		logger.debug(Literal.ENTERING);
 		List<CAISAccountHistory> caisAccountHistories = null;
-		if (extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M) != null) {
-			String jsonEmiBounceResponse = extendedFieldMap.get(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M).toString();
+		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN3M) != null) {
+			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN3M).toString();
 			Object responseObj = getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
 		} else {
-			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M);
-			extendedFieldMap.remove(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M);
+			extendedFieldMap.remove(NO_EMI_BOUNCES_IN3M);
+			extendedFieldMap.remove(NO_EMI_BOUNCES_IN6M);
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
-			if (entry.getKey().equals(ExtFieldMapConstants.RESTRUCTURED_FLAG)) {
+			if (entry.getKey().equals(RESTRUCTURED_FLAG)) {
 				extendedFieldMap.put(entry.getKey(), null);
-			} else if (entry.getKey().equals(ExtFieldMapConstants.SUIT_FILED_FLAG)) {
+			} else if (entry.getKey().equals(SUIT_FILED_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "01") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.WILLFUL_DEFAULTER_FLAG)) {
+			} else if (entry.getKey().equals(WILLFUL_DEFAULTER_FLAG)) {
 
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "02") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN3M)) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN3M)) {
 
 				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
 					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 3);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.NO_EMI_BOUNCES_IN6M)) {
+			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN6M)) {
 
 				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
 					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 6);
 					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
-			} else if (entry.getKey().equals(ExtFieldMapConstants.STATUS)) {
-				String acc_Status = String.valueOf(extendedFieldMap.get(ExtFieldMapConstants.STATUS));
-				if (StringUtils.equals(acc_Status, ExtFieldMapConstants.WRITEOFF)) {
-					extendedFieldMap.put(ExtFieldMapConstants.WRITE_OFF_FLAG, true);
-				} else if (StringUtils.equals(acc_Status, ExtFieldMapConstants.SETTLE)) {
-					extendedFieldMap.put(ExtFieldMapConstants.SETTLED_FLAG_FLAG, true);
+			} else if (entry.getKey().equals(STATUS)) {
+				String acc_Status = String.valueOf(extendedFieldMap.get(STATUS));
+				if (StringUtils.equals(acc_Status, WRITEOFF)) {
+					extendedFieldMap.put(WRITE_OFF_FLAG, true);
+				} else if (StringUtils.equals(acc_Status, SETTLE)) {
+					extendedFieldMap.put(SETTLED_FLAG_FLAG, true);
 				}
 			} else {
 				extendedFieldMap.put(entry.getKey(), entry.getValue());
 			}
 
 		}
+		logger.debug(Literal.LEAVING);
 		return extendedFieldMap;
 
 	}
@@ -471,10 +584,11 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * 
 	 * @param bpayGridResponseList
 	 * @return
-	 * @throws ParseException
+	 * @throws ParseExceptionString 
 	 */
 	private List<BillPayGrid> prepareBillpayGridList(List<BpayGridResponse> bpayGridResponseList)
 			throws ParseException {
+		logger.debug(Literal.ENTERING);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		List<BillPayGrid> billPayGridList = new ArrayList<BillPayGrid>(1);
 		for (BpayGridResponse bpayGridRes : bpayGridResponseList) {
@@ -483,7 +597,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			bpayGrid.setAssetClassification(bpayGridRes.getAssetClassification());
 			billPayGridList.add(bpayGrid);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return billPayGridList;
 	}
 
@@ -498,6 +612,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	private boolean isCommercialEMIBouncesInLastMonths(List<BillPayGrid> billPayGridList, int numbOfMnths)
 			throws ParseException {
+		logger.debug(Literal.ENTERING);
 		Collections.sort(billPayGridList, new BpayGridResponseComparator());
 
 		for (int i = 0; i < billPayGridList.size(); i++) {
@@ -508,6 +623,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 						|| assestClasification.equals("S")) {
 					continue;
 				} else {
+					logger.debug(Literal.LEAVING);
 					return true;
 				}
 			} else {
@@ -515,6 +631,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			}
 
 		}
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
@@ -529,6 +646,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 */
 	private boolean isConsumerEMIBouncesInLastMonths(List<CAISAccountHistory> caisAccountHistories, int numbOfMnths)
 			throws ParseException {
+		logger.debug(Literal.ENTERING);
 		Collections.sort(caisAccountHistories, new CAISAccountHistoryComparator());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		for (int i = 0; i < caisAccountHistories.size(); i++) {
@@ -540,6 +658,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 						|| assestClasification.equals("S")) {
 					continue;
 				} else {
+					logger.debug(Literal.LEAVING);
 					return true;
 				}
 			} else {
@@ -547,6 +666,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			}
 
 		}
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
@@ -575,15 +695,64 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	}
 
 	/**
-	 * Method for prepare data and logging
+	 * Method for prepare Success logging
 	 * 
-	 * @param consumerRequest
 	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
 	 */
-	private void doInterfaceLogging(Object requestObj, String reference) {
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObj, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
+	private void doInterfaceLogging(String reference,String serviceUrl , String requets, String response, String errorCode,
+			String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_SUCCESS);
+		iLogDetail.setErrorCode(errorCode);
+		if (errorDesc != null && errorDesc.length() > 200) {
+			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
+		}
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for failure logging.
+	 * 
+	 * @param reference
+	 * @param requets
+	 * @param response
+	 * @param errorCode
+	 * @param errorDesc
+	 */
+	private void doExceptioLogging(String reference,String serviceUrl ,String requets, String response, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
+		iLogDetail.setReference(reference);
+		String[] values = serviceUrl.split("/");
+		iLogDetail.setServiceName(values[values.length - 1]);
+		iLogDetail.setEndPoint(serviceUrl);
+		iLogDetail.setRequest(requets);
+		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+
+		iLogDetail.setResponse(response);
+		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setStatus(InterfaceConstants.STATUS_FAILED);
+		iLogDetail.setErrorCode(InterfaceConstants.ERROR_CODE);
+		iLogDetail.setErrorDesc(errorDesc);
+
+		logInterfaceDetails(iLogDetail);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setConsumerUrl(String consumerUrl) {
