@@ -342,6 +342,8 @@ public class FinanceConstants {
 	// Fee Status Details
 	public static final String	FEE_STATUS_CANCEL				= "C";
 	
-	
-
+	//GST
+	// Fee Type Tax
+	public static final String FEE_TAXCOMPONENT_INCLUSIVE 		= "I"; 					// Inclusive
+	public static final String FEE_TAXCOMPONENT_EXCLUSIVE 		= "E"; 					// Exclusive
 }

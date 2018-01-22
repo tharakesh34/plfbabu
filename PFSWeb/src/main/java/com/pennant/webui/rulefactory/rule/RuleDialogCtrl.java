@@ -506,6 +506,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_BOUNCE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
+			
+		case RuleConstants.MODULE_GSTRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
 		}
 
 		// Window Title
@@ -603,6 +607,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aRule);
+			
+			if (RuleConstants.MODULE_GSTRULE.equals(this.rule.getRuleModule())) {
+				this.btnDelete.setVisible(false);
+			}
 
 			// FIXME Temporary Not Visible
 			this.btnSimulation.setVisible(false);

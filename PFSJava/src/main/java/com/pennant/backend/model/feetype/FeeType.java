@@ -72,6 +72,9 @@ private static final long serialVersionUID = 1L;
 	private FeeType befImage;
 	private  LoggedInUser userDetails;
 	private String hostFeeTypeCode;
+	//GST fields
+	private boolean taxApplicable;
+	private String	taxComponent;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -209,6 +212,19 @@ private static final long serialVersionUID = 1L;
 	public void setHostFeeTypeCode(String hostFeeTypeCode) {
 		this.hostFeeTypeCode = hostFeeTypeCode;
 	}
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
 
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
 
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
+	}
 }

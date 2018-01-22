@@ -98,7 +98,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		feeType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId,");
+		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId, TaxComponent, TaxApplicable,");
 		if(type.contains("View")){
 			selectSql.append(" AccountSetCode, AccountSetCodeName," );
 		}
@@ -166,10 +166,10 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into FeeTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active,");
+		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode)");
 		sql.append(" values(");
-		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active,");
+		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode)");
 		
 		// Get the identity sequence number.
@@ -199,7 +199,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		sql.append(tableType.getSuffix());
 		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
-		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId,");
+		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
 		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode");
 		sql.append(" where FeeTypeID =:FeeTypeID");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
@@ -270,7 +270,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		feeType.setFeeTypeCode(feeTypeCode);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId,HostFeeTypeCode");
+		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, TaxComponent, TaxApplicable");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(" Where FeeTypeCode =:FeeTypeCode");
 

@@ -620,6 +620,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean dedupMatch;
 	private boolean hunterGo = true;
 	private boolean bureau;
+	
+	//GST Columns Added
+	private BigDecimal recalCGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalIGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalUGSTFee = BigDecimal.ZERO;
+
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -737,6 +744,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("dedupMatch");
 		excludeFields.add("hunterGo");
 		excludeFields.add("bureau");
+
+		//GST
+		excludeFields.add("recalCGSTFee");
+		excludeFields.add("recalIGSTFee");
+		excludeFields.add("recalSGSTFee");
+		excludeFields.add("recalUGSTFee");
 
 		return excludeFields;
 	}
@@ -3465,6 +3478,40 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setLovDescSourceCity(String lovDescSourceCity) {
 		this.lovDescSourceCity = lovDescSourceCity;
+	}
+
+	//GST
+	
+	public BigDecimal getRecalIGSTFee() {
+		return recalIGSTFee;
+	}
+
+	public void setRecalIGSTFee(BigDecimal recalIGSTFee) {
+		this.recalIGSTFee = recalIGSTFee;
+	}
+
+	public BigDecimal getRecalCGSTFee() {
+		return recalCGSTFee;
+	}
+
+	public void setRecalCGSTFee(BigDecimal recalCGSTFee) {
+		this.recalCGSTFee = recalCGSTFee;
+	}
+
+	public BigDecimal getRecalSGSTFee() {
+		return recalSGSTFee;
+	}
+
+	public void setRecalSGSTFee(BigDecimal recalSGSTFee) {
+		this.recalSGSTFee = recalSGSTFee;
+	}
+
+	public BigDecimal getRecalUGSTFee() {
+		return recalUGSTFee;
+	}
+
+	public void setRecalUGSTFee(BigDecimal recalUGSTFee) {
+		this.recalUGSTFee = recalUGSTFee;
 	}
 
 }

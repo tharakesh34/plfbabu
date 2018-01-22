@@ -138,6 +138,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference, Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" , PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST");
+		selectSql.append("	, TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST " );
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",FeeTypeCode,FeeTypeDesc ");
 		}
@@ -176,6 +179,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status, " );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" , PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST");
+		selectSql.append("	, TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST " );
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
@@ -196,7 +202,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	}
 	
 	@Override
-	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference,boolean isWIF, String type, String finEvent) {
+	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference, boolean isWIF, String type, String finEvent) {
 		logger.debug("Entering");
 		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
@@ -208,6 +214,10 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" , PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST");
+		selectSql.append("	, TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST " );
+		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
@@ -241,6 +251,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" , PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST");
+		selectSql.append("	, TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST " );
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
@@ -275,9 +288,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		finFeeDetail.setFinReference(reference);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference,Status " );
+		selectSql.append(" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference, Status" );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,FeeTypeCode, FeeTypeDesc ");
+			selectSql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent ");
 		}
 		selectSql.append(" From FinFeeDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -375,13 +388,18 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		insertSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
 		insertSql.append(" PostDate,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		insertSql.append(" , PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST");
+		insertSql.append("	, TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST) " );
+
 		insertSql.append(" Values( :FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder, :CalculatedAmount, :ActualAmount,");
 		insertSql.append(" :WaivedAmount, :PaidAmount, :FeeScheduleMethod, :Terms, :RemainingFee, :PaymentRef, :CalculationType,:VasReference,:Status,");
 		insertSql.append(" :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc, :AlwModifyFee, :AlwModifyFeeSchdMthd,");
 		insertSql.append(" :PostDate,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId,");
+		insertSql.append(" :PaidAmountOriginal, :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal, :RemainingFeeGST,");
+		insertSql.append(" :TaxApplicable, :TaxComponent, :ActualAmountOriginal, :ActualAmountGST)");
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
@@ -424,6 +442,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append("  RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" ,PaidAmountOriginal = :PaidAmountOriginal,PaidAmountGST = :PaidAmountGST,NetAmountOriginal = :NetAmountOriginal, NetAmountGST = :NetAmountGST,NetAmount = :NetAmount, RemainingFeeOriginal = :RemainingFeeOriginal, RemainingFeeGST = :RemainingFeeGST,");
+		updateSql.append("	TaxApplicable = :TaxApplicable, TaxComponent = :TaxComponent, ActualAmountOriginal = :ActualAmountOriginal, ActualAmountGST = :ActualAmountGST");
+
 		updateSql.append("  Where FeeID = :FeeID ");
 		
 		/*if (!type.endsWith("_Temp")){
@@ -586,9 +607,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" SELECT FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount, ActualAmount," );
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
+		selectSql.append(" PaidAmountOriginal, PaidAmountGST,NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal, RemainingFeeGST,");
+		selectSql.append(" TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST " );
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",FeeTypeCode,FeeTypeDesc ");
+			selectSql.append(", FeeTypeCode, FeeTypeDesc ");
 		}
 		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");

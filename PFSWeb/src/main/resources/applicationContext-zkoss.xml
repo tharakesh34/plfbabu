@@ -2629,6 +2629,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 
 	<bean id="feePaymentDetailDialogCtrl"

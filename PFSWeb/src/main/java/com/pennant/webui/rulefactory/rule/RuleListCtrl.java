@@ -184,6 +184,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName="InsuranceRule";
 		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_BOUNCE)){
 			this.ruleModuleName="BOUNCE";
+		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_GSTRULE)){
+			this.ruleModuleName="GSTRULE";
 		}
 
 		// Set the page level components.
@@ -209,6 +211,11 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		doRenderPage();
 
 		search();
+		
+		// GST Rules only
+		if (StringUtils.equalsIgnoreCase(this.ruleModule.getValue(), RuleConstants.MODULE_GSTRULE)) {
+			this.button_RuleList_NewRule.setVisible(false);
+		}
 	}
 
 	/**
@@ -257,6 +264,11 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			aRule.setRuleEvent("RSCORE");
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
+		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) {	//GST Rules
+			aRule.setRuleEvent("IGST");				//Open any one of this rule Event
+			//aRule.setRuleEvent("CGST");
+			//aRule.setRuleEvent("SGST");
+			//aRule.setRuleEvent("UGST");
 		}
 
 		// Display the dialog page.

@@ -570,6 +570,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		return getRuleDAO().getRuleByID(ruleID, type);
 	}
 	
+	@Override
+	public List<Rule> getGSTRuleDetails(String ruleModule, String type) {
+		return getRuleDAO().getGSTRuleDetails(ruleModule,"");
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

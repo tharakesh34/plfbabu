@@ -219,6 +219,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> disbStatusList;
 	private static ArrayList<ValueLabel> chequeTypesList;
 	
+	private static ArrayList<ValueLabel> feeTaxTypes;	//GST FeeTaxTypes
+	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {
@@ -2952,6 +2954,16 @@ public class PennantStaticListUtil {
 			}
 		}
 		return chequeTypesList;
+	}
+	
+	//GST Fee Tax Types
+	public static ArrayList<ValueLabel> getFeeTaxTypes() {
+		if(feeTaxTypes==null){
+			feeTaxTypes = new ArrayList<ValueLabel>(2);
+			feeTaxTypes.add(new ValueLabel(String.valueOf(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE), Labels.getLabel("label_FeeTypeDialog_Inclusive")));
+			feeTaxTypes.add(new ValueLabel(String.valueOf(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE), Labels.getLabel("label_FeeTypeDialog_Exclusive")));
+		}
+		return feeTaxTypes;
 	}
 }
 

@@ -514,4 +514,15 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		return auditDetail;
 	}
 	
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
+	
+		return this.branchDAO.getBrachDetailsByBranchCode(finBranches);
+	}
+
+	@Override
+	public boolean getUnionTerrotory (String cpProvince) {
+	
+		return this.branchDAO.getUnionTerrotory(cpProvince);
+	}
 }

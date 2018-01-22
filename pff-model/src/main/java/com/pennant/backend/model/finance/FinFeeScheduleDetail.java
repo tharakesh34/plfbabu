@@ -66,15 +66,26 @@ public class FinFeeScheduleDetail {
 	
 	private String feeTypeCode;
 	
-	
+	//GST fields
+	private BigDecimal iGST = BigDecimal.ZERO;
+	private BigDecimal uGST = BigDecimal.ZERO;
+	private BigDecimal cGST = BigDecimal.ZERO;
+	private BigDecimal sGST = BigDecimal.ZERO;
+	private BigDecimal tGST = BigDecimal.ZERO;
+	private String feeTypeDesc;	// used in SOA report generation
+
 	public FinFeeScheduleDetail() {
 		super();
 	}
 	
 	public Set<String> getExcludeFields() {
+		
 		Set<String> excludeFields = new HashSet<String>();
+		
 		excludeFields.add("finReference");
 		excludeFields.add("feeTypeCode");
+		excludeFields.add("feeTypeDesc");
+		
 		return excludeFields;
 	}
 	
@@ -147,6 +158,54 @@ public class FinFeeScheduleDetail {
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
 	}
+
+	public BigDecimal getIGST() {
+		return iGST;
+	}
+
+	public void setIGST(BigDecimal iGST) {
+		this.iGST = iGST;
+	}
+
+	public BigDecimal getUGST() {
+		return uGST;
+	}
+
+	public void setUGST(BigDecimal uGST) {
+		this.uGST = uGST;
+	}
+
+	public BigDecimal getCGST() {
+		return cGST;
+	}
+
+	public void setCGST(BigDecimal cGST) {
+		this.cGST = cGST;
+	}
+
+	public BigDecimal getSGST() {
+		return sGST;
+	}
+
+	public void setSGST(BigDecimal sGST) {
+		this.sGST = sGST;
+	}
+
+	public BigDecimal getTGST() {
+		return tGST;
+	}
+
+	public void setTGST(BigDecimal tGST) {
+		this.tGST = tGST;
+	}
 	
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
+	}
+
 }
 

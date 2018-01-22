@@ -52,6 +52,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
@@ -2971,4 +2972,36 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug(Literal.LEAVING);
 		return mandateId;
 	}
+	
+
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode(List<String> finBranches) {
+		logger.debug(Literal.ENTERING);
+	
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finBranches", finBranches);
+	
+		List<Branch> finFeeDetailsList = null;
+	
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select BranchCode, BRANCHPROVINCE from RMTBRANCHES");
+		sql.append(" WHERE BranchCode in (:finBranches)");
+	
+		logger.trace(Literal.SQL + sql.toString());
+		
+		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+	
+		try {
+			finFeeDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finFeeDetailsList = new ArrayList<Branch>();
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	
+		return finFeeDetailsList;
+	}
+
 }

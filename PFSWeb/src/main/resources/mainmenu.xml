@@ -224,6 +224,8 @@
 		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_Notifications"/> -->
 		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_RulesFactory_Query"/>
 		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
+		<!-- GST Rules -->
+		<menuItem id="menu_Item_GSTRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/GstRuleList.zul"  rightName="menuItem_RulesFactory_BounceRule"/>
 	</menu>
 	
 	<!-- Solution Factory -->

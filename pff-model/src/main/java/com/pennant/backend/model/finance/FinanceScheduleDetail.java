@@ -157,7 +157,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean repayComplete = false;
 	private ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-
+	
+	//GST
+	private BigDecimal feeTax = BigDecimal.ZERO;
+	private BigDecimal subventionAmount = BigDecimal.ZERO;
+	
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();
 		this.schDate = schDate;
@@ -861,5 +865,24 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	public void setPartialPaidAmt(BigDecimal partialPaidAmt) {
 		this.partialPaidAmt = partialPaidAmt;
 	}
+	
+	//GST
+	public BigDecimal getFeeTax() {
+		return feeTax;
+	}
+
+	public void setFeeTax(BigDecimal feeTax) {
+		this.feeTax = feeTax;
+	}
+
+	public BigDecimal getSubventionAmount() {
+		return subventionAmount;
+	}
+
+	public void setSubventionAmount(BigDecimal subventionAmount) {
+		this.subventionAmount = subventionAmount;
+	}
+
+
 
 }

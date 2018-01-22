@@ -78,16 +78,36 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private String finEvent;
 	private long feeTypeID = Long.MIN_VALUE;
 	private BigDecimal calculatedAmount = BigDecimal.ZERO;
+
+	//Actual Amount
 	@XmlElement(name = "feeAmount")
 	private BigDecimal actualAmount = BigDecimal.ZERO;
+	private BigDecimal actualAmountOriginal = BigDecimal.ZERO;
+	private BigDecimal actualAmountGST = BigDecimal.ZERO;
+		
 	@XmlElement(name = "waiverAmount")
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	
+	//Paid Amounts
+	private BigDecimal paidAmountOriginal = BigDecimal.ZERO;
+	private BigDecimal paidAmountGST = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal paidAmount = BigDecimal.ZERO;
+	
+	//Net Amounts
+	private BigDecimal netAmountOriginal = BigDecimal.ZERO;
+	private BigDecimal netAmountGST = BigDecimal.ZERO;
+	private BigDecimal netAmount = BigDecimal.ZERO;
+		
 	@XmlElement(name= "scheduleTerms")
 	private int terms = 0;
+	
+	//Remaining Fees
+	private BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
+	private BigDecimal remainingFeeGST = BigDecimal.ZERO;
 	@XmlElement(name= "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
+	
 	@XmlElement
 	private String feeCategory;
 	private String paymentRef;
@@ -126,6 +146,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	
 	private List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<FinFeeScheduleDetail>(1);
 	
+	private FinTaxDetails finTaxDetails = new FinTaxDetails();
+	private boolean taxApplicable;
+	private String taxComponent;
+	private BigDecimal feeAmz;
+	private BigDecimal igst = BigDecimal.ZERO;
+	private BigDecimal ugst = BigDecimal.ZERO;
+	private BigDecimal sgst = BigDecimal.ZERO;
+	private BigDecimal cgst = BigDecimal.ZERO;
 
 	public FinFeeDetail() {
 		super();
@@ -141,7 +169,9 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public Set<String> getExcludeFields() {
+		
 		Set<String> excludeFields = new HashSet<String>();
+		
 		excludeFields.add("finEventDesc");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
@@ -150,6 +180,13 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("validateFinFeeDetail");
 		excludeFields.add("feeCategory");
 		excludeFields.add("schdDate");
+		
+		excludeFields.add("finTaxDetails");
+		excludeFields.add("igst");
+		excludeFields.add("ugst");
+		excludeFields.add("sgst");
+		excludeFields.add("cgst");
+		
 		return excludeFields;
 	}
 	
@@ -446,6 +483,142 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+	
+	public FinTaxDetails getFinTaxDetails() {
+		return finTaxDetails;
+	}
+
+	public void setFinTaxDetails(FinTaxDetails finTaxDetails) {
+		this.finTaxDetails = finTaxDetails;
+	}
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
+	}
+
+	public BigDecimal getFeeAmz() {
+		return feeAmz;
+	}
+
+	public void setFeeAmz(BigDecimal feeAmz) {
+		this.feeAmz = feeAmz;
+	}
+
+	public BigDecimal getIgst() {
+		return igst;
+	}
+
+	public void setIgst(BigDecimal igst) {
+		this.igst = igst;
+	}
+
+	public BigDecimal getActualAmountOriginal() {
+		return actualAmountOriginal;
+	}
+
+	public void setActualAmountOriginal(BigDecimal actualAmountOriginal) {
+		this.actualAmountOriginal = actualAmountOriginal;
+	}
+
+	public BigDecimal getActualAmountGST() {
+		return actualAmountGST;
+	}
+
+	public void setActualAmountGST(BigDecimal actualAmountGST) {
+		this.actualAmountGST = actualAmountGST;
+	}
+
+	public BigDecimal getPaidAmountOriginal() {
+		return paidAmountOriginal;
+	}
+
+	public void setPaidAmountOriginal(BigDecimal paidAmountOriginal) {
+		this.paidAmountOriginal = paidAmountOriginal;
+	}
+
+	public BigDecimal getPaidAmountGST() {
+		return paidAmountGST;
+	}
+
+	public void setPaidAmountGST(BigDecimal paidAmountGST) {
+		this.paidAmountGST = paidAmountGST;
+	}
+
+	public BigDecimal getNetAmountOriginal() {
+		return netAmountOriginal;
+	}
+
+	public void setNetAmountOriginal(BigDecimal netAmountOriginal) {
+		this.netAmountOriginal = netAmountOriginal;
+	}
+
+	public BigDecimal getNetAmountGST() {
+		return netAmountGST;
+	}
+
+	public void setNetAmountGST(BigDecimal netAmountGST) {
+		this.netAmountGST = netAmountGST;
+	}
+
+	public BigDecimal getNetAmount() {
+		return netAmount;
+	}
+
+	public void setNetAmount(BigDecimal netAmount) {
+		this.netAmount = netAmount;
+	}
+
+	public BigDecimal getRemainingFeeOriginal() {
+		return remainingFeeOriginal;
+	}
+
+	public void setRemainingFeeOriginal(BigDecimal remainingFeeOriginal) {
+		this.remainingFeeOriginal = remainingFeeOriginal;
+	}
+
+	public BigDecimal getRemainingFeeGST() {
+		return remainingFeeGST;
+	}
+
+	public void setRemainingFeeGST(BigDecimal remainingFeeGST) {
+		this.remainingFeeGST = remainingFeeGST;
+	}
+
+	public BigDecimal getUgst() {
+		return ugst;
+	}
+
+	public void setUgst(BigDecimal ugst) {
+		this.ugst = ugst;
+	}
+
+	public BigDecimal getSgst() {
+		return sgst;
+	}
+
+	public void setSgst(BigDecimal sgst) {
+		this.sgst = sgst;
+	}
+
+	public BigDecimal getCgst() {
+		return cgst;
+	}
+
+	public void setCgst(BigDecimal cgst) {
+		this.cgst = cgst;
 	}
 
 }

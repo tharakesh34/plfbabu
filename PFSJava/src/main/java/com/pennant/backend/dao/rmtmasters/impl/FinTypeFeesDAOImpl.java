@@ -129,7 +129,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		if (type.contains("View")) {
-			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
@@ -169,7 +169,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		if (type.contains("View")) {
-			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
@@ -206,7 +206,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		if (type.contains("View")) {
-			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
@@ -258,7 +258,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		if (type.contains("View")) {
-			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
@@ -456,7 +456,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		mapSqlParameterSource.addValue("FinType", finTypes);
 		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, Active, FeeTypeCode");
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, Active, FeeTypeCode, TaxApplicable, TaxComponent");
 		selectSql.append(" FROM FinTypeFees_AView");
 		selectSql.append(" Where FinType IN (:FinType) AND FinEvent = :FinEvent AND ModuleId = :ModuleId");
 		

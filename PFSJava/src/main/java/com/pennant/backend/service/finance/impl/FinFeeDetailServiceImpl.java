@@ -62,6 +62,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
+import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -74,6 +75,7 @@ import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -100,6 +102,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+	
+	private FinTaxDetailsDAO finTaxDetailsDAO;
 
 	public FinFeeDetailServiceImpl() {
 		super();
@@ -157,6 +161,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				finFeeDetail.setFinFeeScheduleDetailList(getFinFeeScheduleDetailDAO().getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
+				finFeeDetail.setFinTaxDetails(getFinTaxDetailsDAO().getFinTaxByFeeID(finFeeDetail.getFeeID(), type));
 			}
 		}
 		logger.debug("Leaving");
@@ -171,6 +176,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				finFeeDetail.setFinFeeScheduleDetailList(getFinFeeScheduleDetailDAO().getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
+				finFeeDetail.setFinTaxDetails(getFinTaxDetailsDAO().getFinTaxByFeeID(finFeeDetail.getFeeID(), type));
 			}
 		}
 		logger.debug("Leaving");
@@ -228,6 +234,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				approveRec = isApproveRcd;
 				String rcdType = "";
 				String recordStatus = "";
+				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
 
 				if (StringUtils.isEmpty(tableType) || StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
 					approveRec = true;
@@ -280,7 +287,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					}
 					
 					finFeeDetail.setFeeID(getFinFeeDetailDAO().save(finFeeDetail, isWIF, tableType));
+					finTaxDetails.setFeeID(finFeeDetail.getFeeID());
 					
+					getFinTaxDetailsDAO().save(finTaxDetails, tableType);
+
 					if(!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
 						for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
 							finFeeSchDetail.setFeeID(finFeeDetail.getFeeID());
@@ -291,6 +301,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				if (updateRecord) {
 					getFinFeeDetailDAO().update(finFeeDetail, isWIF, tableType);
+					
+					if (finTaxDetails.getFinTaxID() != 0 && finTaxDetails.getFinTaxID() != Long.MIN_VALUE) {
+						getFinTaxDetailsDAO().update(finTaxDetails, tableType);
+					}
+					
 					getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
 					if(!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
 						for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
@@ -301,6 +316,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 				if (deleteRecord) {
+					getFinTaxDetailsDAO().deleteByFeeID(finFeeDetail.getFeeID(), tableType);
 					getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
 					getFinFeeDetailDAO().delete(finFeeDetail, isWIF, tableType);
 				}
@@ -962,6 +978,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
+	
+	public FinTaxDetailsDAO getFinTaxDetailsDAO() {
+		return finTaxDetailsDAO;
+	}
 
-
+	public void setFinTaxDetailsDAO(FinTaxDetailsDAO finTaxDetailsDAO) {
+		this.finTaxDetailsDAO = finTaxDetailsDAO;
+	}
 }

@@ -79,4 +79,7 @@ public interface RuleDAO {
 	
 	List<String> getAEAmountCodesList(String event);
 	List<Rule> getSubHeadRuleList(List<String> subHeadRuleList);
+	//GST
+	List<Rule> getGSTRuleDetails(String ruleModule, String type);
+
   }

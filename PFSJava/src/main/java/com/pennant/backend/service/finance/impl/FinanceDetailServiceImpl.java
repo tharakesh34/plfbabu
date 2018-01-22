@@ -98,6 +98,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -9037,6 +9038,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			reasonHeader.setLogTime(financeMain.getLastMntOn());
 			this.reasonDetailDAO.save(reasonHeader);
 		}
+	}
+	
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
+	
+		return getFinanceMainDAO().getBrachDetailsByBranchCode(finBranches);
 	}
 	 
 	public ReasonDetailDAO getReasonDetailDAO() {

@@ -220,6 +220,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
 	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
 	protected Listheader listheader_ScheduleDetailDialog_SchFee;
+	protected Listheader listheader_ScheduleDetailDialog_SchTax;  //GST
 	protected Listheader listheader_ScheduleDetailDialog_SupplementRent;
 	protected Listheader listheader_ScheduleDetailDialog_IncreasedCost;
 	protected Listheader listheader_ScheduleDetailDialog_SchAdvProfit;
@@ -396,6 +397,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		listheader_ScheduleDetailDialog_ScheduleEvent.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
 		listheader_ScheduleDetailDialog_CalProfit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
 		listheader_ScheduleDetailDialog_SchFee.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchFee"));
+		listheader_ScheduleDetailDialog_SchTax.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchTax"));
 		listheader_ScheduleDetailDialog_SupplementRent.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SupplementRent"));
 		listheader_ScheduleDetailDialog_IncreasedCost.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_IncreasedCost"));
 		listheader_ScheduleDetailDialog_SchProfit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
@@ -1298,8 +1300,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		if (isSchdFee) {
 			this.listheader_ScheduleDetailDialog_SchFee.setVisible(true);
+			this.listheader_ScheduleDetailDialog_SchTax.setVisible(true);
 		} else {
 			this.listheader_ScheduleDetailDialog_SchFee.setVisible(false);
+			this.listheader_ScheduleDetailDialog_SchTax.setVisible(false);
 		}
 		
 		setFinScheduleData(aFinSchData);

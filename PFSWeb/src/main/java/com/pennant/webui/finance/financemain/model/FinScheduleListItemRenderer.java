@@ -230,7 +230,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				count = 3;
 
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_AccrueAmount.label"),
-						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
+						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, accrueValue, BigDecimal.ZERO,false, false,  true, false, false, "#1D883C", "",0, null,false, false);
 				count = 1;
 			}
@@ -245,7 +245,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			isRpyBaseRate = false;
 			doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalPftSch.label"),
 					aFinanceMain.getTotalProfit().subtract(aFinanceMain.getTotalGracePft()),
-					BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+					BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 					BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 			count = 3;
 
@@ -253,7 +253,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			if(BigDecimal.ZERO.compareTo(totalAdvPft) < 0){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalAdvPftSch.label"),
 						totalAdvPft.subtract(aFinanceMain.getTotalGracePft()),
-						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
+						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 
 				totalRebate = aFinanceMain.getTotalProfit().subtract(aFinanceMain.getTotalGracePft()).subtract(totalAdvPft);
@@ -273,42 +273,42 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if(grcDays > 0 && aFinanceMain.getTotalGracePft().compareTo(BigDecimal.ZERO) > 0){
 					showGrossPft = true;
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalGrcPftSch.label"),
-							aFinanceMain.getTotalGracePft(),BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,	BigDecimal.ZERO,
+							aFinanceMain.getTotalGracePft(),BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,	BigDecimal.ZERO,
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 				}
 			}
 			if(aFinanceMain.getTotalCpz().compareTo(BigDecimal.ZERO) != 0){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalCpz.label"),
-						aFinanceMain.getTotalCpz(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+						aFinanceMain.getTotalCpz(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false,false);
 			}
 
 			if(showGrossPft){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalGrossPft.label", ""),
-						aFinanceMain.getTotalGrossPft(), BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+						aFinanceMain.getTotalGrossPft(), BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 			}
 
 			doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalRepayAmt.label", ""),
-					aFinanceMain.getTotalRepayAmt(),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+					aFinanceMain.getTotalRepayAmt(),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 					BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 
 			if(BigDecimal.ZERO.compareTo(totalAdvPft) != 0){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalAdvRepayAmt.label", ""),
 						aFinanceMain.getTotalRepayAmt().subtract(aFinanceMain.getTotalProfit().subtract(
-								aFinanceMain.getTotalGracePft())).add(totalAdvPft),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+								aFinanceMain.getTotalGracePft())).add(totalAdvPft),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 			}
 
 			if(aFinanceMain.isAllowGrcPeriod() && grcDays > 0){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalGrcDays.label", ""),
-						new BigDecimal(grcDays),BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+						new BigDecimal(grcDays),BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",15, null,false, false);
 			}
 
 			doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalDays.label", ""),
 					new BigDecimal(DateUtility.getDaysBetween(aFinanceMain.getFinStartDate(), 
-							aFinanceMain.getMaturityDate())),BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+							aFinanceMain.getMaturityDate())),BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 					BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",15, null,false, false);
 
 		} else {
@@ -425,7 +425,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 										getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate()) == 0){
 							count = 2;
 						}
-						doFillListBox(getFinanceScheduleDetail(), count,label, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+						doFillListBox(getFinanceScheduleDetail(), count,label, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,  
 								BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(), BigDecimal.ZERO,BigDecimal.ZERO, closingBalance, false, false,
 								false, false, false, "", "",0, null,false, true);
 						count = 1;
@@ -490,7 +490,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,
 						getFinanceScheduleDetail().getProfitCalc(),getFinanceScheduleDetail().getSuplRent(),getFinanceScheduleDetail().getIncrCost(),
-						getFinanceScheduleDetail().getFeeSchd(),getFinanceScheduleDetail().getTDSAmount() == null ? BigDecimal.ZERO :getFinanceScheduleDetail().getTDSAmount() , 
+						getFinanceScheduleDetail().getFeeSchd(),getFinanceScheduleDetail().getFeeTax(),getFinanceScheduleDetail().getTDSAmount() == null ? BigDecimal.ZERO :getFinanceScheduleDetail().getTDSAmount() ,  
 								getFinanceScheduleDetail().getAdvProfit(), getFinanceScheduleDetail().getProfitSchd(), 
 								getFinanceScheduleDetail().getPrincipalSchd(),getFinanceScheduleDetail().getAdvRepayAmount().add(getFinanceScheduleDetail().getFeeSchd()),
 								getFinanceScheduleDetail().getRepayAmount().add(getFinanceScheduleDetail().getFeeSchd()).add(
@@ -510,7 +510,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0 &&
 						getFinanceScheduleDetail().getClosingBalance().compareTo(BigDecimal.ZERO) != 0){
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
-							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
 							getFinanceScheduleDetail().getClosingBalance(),false, false, false,
 							false, false, "","",0, null,false, false);
@@ -534,7 +534,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if(DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0){
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+" (Seq : "+curDisb.getDisbSeq()+")",
-								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
 										getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 												getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
@@ -556,7 +556,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					BigDecimal chargeAmt = getFinanceScheduleDetail().getFeeChargeAmt().add(getFinanceScheduleDetail().getInsuranceAmt());
 
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_downPayment.label"),
-							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO ,BigDecimal.ZERO , BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO , BigDecimal.ZERO, BigDecimal.ZERO , BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 							getFinanceScheduleDetail().getDownPaymentAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(chargeAmt),isEditable, isRate, 
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 				}
@@ -578,8 +578,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal actFeeCharge = finFeeDetail.getRemainingFee();
 							if(actFeeCharge.compareTo(BigDecimal.ZERO) >= 0){
 
+								//TODO:GST should be add
 								doFillListBox(getFinanceScheduleDetail(), count, StringUtils.isEmpty(finFeeDetail.getFeeTypeDesc()) ? finFeeDetail.getVasReference() :finFeeDetail.getFeeTypeDesc() ,
-										BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actFeeCharge, actFeeCharge,
+										BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actFeeCharge, actFeeCharge,
 										getFinanceScheduleDetail().getClosingBalance().subtract(feeChargeAmt).subtract(insuranceAmt).add(actFeeCharge),
 										false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217","color_Disbursement",0, null,true,false);
 
@@ -603,7 +604,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							if(actInsuranceAmt.compareTo(BigDecimal.ZERO) > 0){
 
 								doFillListBox(getFinanceScheduleDetail(), count, insurance.getInsuranceTypeDesc() +"("+insurance.getInsReference()+")",BigDecimal.ZERO,BigDecimal.ZERO,
-										BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actInsuranceAmt, actInsuranceAmt,
+										BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actInsuranceAmt, actInsuranceAmt,
 										getFinanceScheduleDetail().getClosingBalance().subtract(insuranceAmt).add(actInsuranceAmt),
 										false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217","color_Disbursement",0, null,true, false);
 
@@ -633,7 +634,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								} else {
 									remarks =remarks+ disbursement.getDisbRemarks() + " " + PennantAppUtil.amountFormate(disbursement.getDisbAmount(),format);
 								}
-								doFillListBox(getFinanceScheduleDetail(), 2, remarks, BigDecimal.ZERO,BigDecimal.ZERO ,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, 
+								doFillListBox(getFinanceScheduleDetail(), 2, remarks, BigDecimal.ZERO,BigDecimal.ZERO ,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,  
 										BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,  false, false, false, false, false, "", "", 2, null,false, false);
 							}
 
@@ -651,7 +652,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					if(getFinanceScheduleDetail().getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
-								getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+								getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO ,  
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
 								getFinanceScheduleDetail().getClosingBalance(),false, false, false,
 								false, false, "","",0, null,false, false);
@@ -700,7 +701,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					doFillListBox(getFinanceScheduleDetail(), count, label,	getFinanceScheduleDetail().getProfitCalc(),
-							getFinanceScheduleDetail().getSuplRent(),getFinanceScheduleDetail().getIncrCost(),getFinanceScheduleDetail().getFeeSchd(),
+							getFinanceScheduleDetail().getSuplRent(),getFinanceScheduleDetail().getIncrCost(),getFinanceScheduleDetail().getFeeSchd(),getFinanceScheduleDetail().getFeeTax(),
 							getFinanceScheduleDetail().getTDSAmount() == null ? BigDecimal.ZERO :getFinanceScheduleDetail().getTDSAmount(),
 									getFinanceScheduleDetail().getAdvProfit(), getFinanceScheduleDetail().getProfitSchd(), getFinanceScheduleDetail().getPrincipalSchd(),
 									getFinanceScheduleDetail().getAdvRepayAmount().add(getFinanceScheduleDetail().getFeeSchd()),
@@ -719,7 +720,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				String emiHold = "listcell_EMIHold_label";
 				doFillListBox(getFinanceScheduleDetail(), count,Labels.getLabel(emiHold, 
 						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getDefSchdDate())}),
-						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
 						false, false, false, "","",0, null,false, false);
 
@@ -748,7 +749,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,
-						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
+						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
 						BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getClosingBalance(),isEditable, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false, false);
 				count = 2;
@@ -767,7 +768,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				for (int i = 0; i < getFinanceRepayments().size(); i++) {
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_AmountPaid.label", 
 							new String[]{DateUtility.formatToLongDate(getFinanceRepayments().get(i).getFinPostDate())}),
-							BigDecimal.ZERO,getFinanceRepayments().get(i).getSchdInsPaid(),getFinanceRepayments().get(i).getSchdIncrCostPaid(),getFinanceRepayments().get(i).getSchdFeePaid(),
+							BigDecimal.ZERO,getFinanceRepayments().get(i).getSchdInsPaid(),getFinanceRepayments().get(i).getSchdIncrCostPaid(),getFinanceRepayments().get(i).getSchdFeePaid(),BigDecimal.ZERO,
 							getFinanceRepayments().get(i).getFinSchdTdsPaid(), BigDecimal.ZERO, getFinanceRepayments().get(i).getFinSchdPftPaid(),getFinanceRepayments().get(i).getFinSchdPriPaid(), BigDecimal.ZERO,
 							getFinanceRepayments().get(i).getFinSchdPftPaid().add(getFinanceRepayments().get(i).getFinSchdPriPaid()).add(
 									getFinanceRepayments().get(i).getSchdFeePaid()).add(getFinanceRepayments().get(i).getSchdInsPaid()).add(getFinanceRepayments().get(i).getSchdIncrCostPaid()),
@@ -783,7 +784,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if(recoverys.get(i).getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_PenaltyPaid.label", 
 								new String[]{DateUtility.formatToLongDate(recoverys.get(i).getMovementDate())}),BigDecimal.ZERO,BigDecimal.ZERO ,
-								BigDecimal.ZERO,BigDecimal.ZERO ,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, recoverys.get(i).getPenaltyPaid(),
+								BigDecimal.ZERO,BigDecimal.ZERO ,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, recoverys.get(i).getPenaltyPaid(),
 								BigDecimal.ZERO,false, isRate,  false, isGrcBaseRate, isRpyBaseRate, "#FF0000", "color_RepaymentOverdue",0, null,false, false);
 					}
 					count = 2;
@@ -796,7 +797,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					getFinanceScheduleDetail().getWriteoffProfit().compareTo(BigDecimal.ZERO) > 0){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_Writeoff.label"),
 						BigDecimal.ZERO, getFinanceScheduleDetail().getWriteoffSuplRent() , getFinanceScheduleDetail().getWriteoffIncrCost(),
-						getFinanceScheduleDetail().getWriteoffSchFee() ,BigDecimal.ZERO,BigDecimal.ZERO,
+						getFinanceScheduleDetail().getWriteoffSchFee() ,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						getFinanceScheduleDetail().getWriteoffProfit(),getFinanceScheduleDetail().getWriteoffPrincipal(), 
 						BigDecimal.ZERO,getFinanceScheduleDetail().getWriteoffProfit().add(getFinanceScheduleDetail().getWriteoffPrincipal().add(
 								getFinanceScheduleDetail().getWriteoffSchFee())),
@@ -810,8 +811,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 			BigDecimal totalSchd = getFinanceScheduleDetail().getProfitSchd().add(getFinanceScheduleDetail().getPrincipalSchd()).add(getFinanceScheduleDetail().getFeeSchd());
 
 			if(totalPaid.compareTo(BigDecimal.ZERO) > 0 && totalSchd.compareTo(totalPaid) > 0){
+				//TODO:GST should be added
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_UnpaidAmount.label"),BigDecimal.ZERO,
-						BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getFeeSchd().subtract(getFinanceScheduleDetail().getSchdFeePaid()),
+						BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getFeeSchd().subtract(getFinanceScheduleDetail().getSchdFeePaid()),BigDecimal.ZERO,
 						getFinanceScheduleDetail().getTDSAmount().subtract(getFinanceScheduleDetail().getTDSPaid()),BigDecimal.ZERO,
 						getFinanceScheduleDetail().getProfitSchd().subtract(getFinanceScheduleDetail().getSchdPftPaid()), 
 						getFinanceScheduleDetail().getPrincipalSchd().subtract(getFinanceScheduleDetail().getSchdPriPaid()),
@@ -857,7 +859,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 									label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 								}
 								doFillListBox(getFinanceScheduleDetail(), count, label,
-										getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+										getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO ,  
 										BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
 										getFinanceScheduleDetail().getClosingBalance(),false, false, showZeroEndBal,
 										isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
@@ -868,14 +870,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					}else if(getFinanceScheduleDetail().isCalOnIndRate()){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_reviewIndRate.label"),
-								getFinanceScheduleDetail().getCalculatedRate(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getCalculatedRate(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, isEditable, isRate,
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false, false);
 
 						//Event Description Details
 						doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel("label_listcell_IndRateAdded_label", 
 								new String[]{String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}),
-								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, false,
+								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, false,
 								false, false, false, false, "","",5, null,false, false);
 
 						count = 2;
@@ -906,7 +908,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 
 							doFillListBox(getFinanceScheduleDetail(), count, label,
-									getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+									getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO ,  
 									BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
 									getFinanceScheduleDetail().getClosingBalance(),false, false, showZeroEndBal,
 									isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
@@ -917,7 +919,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
 
 							doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_flatRate.label"),
-									getFinanceScheduleDetail().getActRate(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+									getFinanceScheduleDetail().getActRate(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 									BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
 									showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false, false);
 
@@ -925,14 +927,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 							doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel(flatRateConvert, 
 									new String[]{String.valueOf(PennantApplicationUtil.formatRate(prvSchDetail.getActRate().doubleValue(),PennantConstants.rateFormate)),
 											String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getActRate().doubleValue(),PennantConstants.rateFormate))}),
-									BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, 
+									BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, 
 									BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false,false, false, false, false, "","",5, null,false,false);
 							flatRateConvert = "listcell_flatRateConvertChangeAdded_label";
 							count = 2;
 						}
 
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_reviewRate.label"),
-								getFinanceScheduleDetail().getCalculatedRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getCalculatedRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, isEditable, isRate,
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false, false);
 						count = 2;
@@ -941,13 +943,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 						doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel(flatRateConvert, 
 								new String[]{String.valueOf(PennantApplicationUtil.formatRate(prvSchDetail.getCalculatedRate().doubleValue(),PennantConstants.rateFormate)),
 										String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}),
-								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, 
+								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,  
 								BigDecimal.ZERO, BigDecimal.ZERO, false, false, false, false, false, "","",5, null,false, false);
 
 						if(showAdvRate){
 							//Advised profit rate
 							doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_advisedProfitRate.label"),
-									getFinanceScheduleDetail().getAdvCalRate(), BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+									getFinanceScheduleDetail().getAdvCalRate(), BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 									BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, isEditable, isRate, 
 									showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",3, null,false, false);
 
@@ -964,7 +966,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(showAdvRate){
 				//Advised profit rate
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_advisedProfitRate.label"),
-						getFinanceScheduleDetail().getAdvCalRate(),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+						getFinanceScheduleDetail().getAdvCalRate(),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, true, 
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",3, null,false,false);
 
@@ -993,9 +995,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}else{
 						closingBal = getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getCpzAmount());
 					}
-
+					//TODO: GST should be added
 					doFillListBox(getFinanceScheduleDetail(), count, label,	getFinanceScheduleDetail().getProfitCalc(),
-							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 							BigDecimal.ZERO,BigDecimal.ZERO,closingBal,isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", colorClass,0, null,false, false);
 					count = 2;
 				}
@@ -1013,14 +1015,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				if(getFinanceScheduleDetail().isCalOnIndRate()){
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_reviewIndRate.label"),
-							getFinanceScheduleDetail().getCalculatedRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+							getFinanceScheduleDetail().getCalculatedRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585", "color_ReviewRate",0, null,false, false);
 
 					//Event Description Details
 					doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel("label_listcell_IndRateAdded_label", 
 							new String[]{String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}),
-							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,  
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,false,
 							false, false, false, false, "","",5, null,false,false);
 
@@ -1035,14 +1037,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 					BigDecimal rate = getFinanceScheduleDetail().getCalculatedRate();
 					if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_flatRate.label"),
-								getFinanceScheduleDetail().getActRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getActRate(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,false, isRate,
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false, false);
 
 						//Event Description Details
 						doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel(flatRateConvert, 
 								new String[]{String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getActRate().doubleValue(),PennantConstants.rateFormate))}),
-								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
+								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO,false,
 								false, false, false, false, "","",5, null,false, false);
 
@@ -1051,7 +1053,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("listcell_reviewRate.label"),
-							getFinanceScheduleDetail().getCalculatedRate(), BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+							getFinanceScheduleDetail().getCalculatedRate(),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,isEditable, isRate, 
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false,false);
 					count = 2;
@@ -1060,14 +1062,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 					doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel(flatRateConvert, 
 							new String[]{String.valueOf(PennantApplicationUtil.formatRate(rate.doubleValue(),PennantConstants.rateFormate)), 
 									String.valueOf(PennantApplicationUtil.formatRate(getFinanceScheduleDetail().getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}),
-							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, 
+							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,  
 							BigDecimal.ZERO, BigDecimal.ZERO,false,
 							false, false, false, false, "","",5, null,false,false);
 
 					//Advised profit rate
 					if(showAdvRate){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_advisedProfitRate.label"),
-								getFinanceScheduleDetail().getAdvCalRate(), BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getAdvCalRate(), BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, isEditable, isRate, 
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",3, null,false, false);
 					}
@@ -1087,7 +1089,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel("label_listcell_EarlyPaidDetailsAdded_label", 
 						new String[]{PennantAppUtil.amountFormate(getFinanceScheduleDetail().getEarlyPaid(),format),
 								PennantAppUtil.amountFormate(getFinanceScheduleDetail().getEarlyPaidBal(),format)}),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
-						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,false,
+						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,false,
 						false, false, false, false, "","",2, null,false,false);
 
 			}else if(getFinanceScheduleDetail().getEarlyPaidBal().compareTo(BigDecimal.ZERO) > 0 ){
@@ -1095,7 +1097,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				//Event Description Details
 				doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel("label_listcell_EarlyPayBalDetailsAdded_label", 
 						new String[]{PennantAppUtil.amountFormate(
-								getFinanceScheduleDetail().getEarlyPaidBal(),format)}),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getEarlyPaidBal(),format)}),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false,
 						false, false, false, false, "","",2, null,false, false);
 			}
@@ -1104,7 +1106,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			if (getFinanceScheduleDetail().isRolloverOnSchDate()) {
 
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_Rollover.label"),
-						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
+						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
 						getFinanceScheduleDetail().getRolloverAmount(), BigDecimal.ZERO,BigDecimal.ZERO, 
 						BigDecimal.ZERO,false, false, true,false, false, "","",0, null,false, false);
 			}
@@ -1134,7 +1136,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 	 * @param fillType (int) 1-Days, 2-Description Line
 	 */
 	public void doFillListBox(FinanceScheduleDetail data, int count, String eventName, BigDecimal pftAmount, BigDecimal suplRent,
-			BigDecimal incrCost,BigDecimal feeAmount,BigDecimal tdsAmount, BigDecimal schdlAdvPft, BigDecimal schdlPft, BigDecimal cpzAmount, 
+			BigDecimal incrCost,BigDecimal feeAmount,BigDecimal gstAmount,BigDecimal tdsAmount, BigDecimal schdlAdvPft, BigDecimal schdlPft, BigDecimal cpzAmount, 
 			BigDecimal totalAdvAmount, BigDecimal totalAmount, BigDecimal endBal,boolean isEditable, boolean isRate,  boolean showZeroEndBal, 
 			boolean isGrcBaseRate, boolean isRpyBaseRate, String bgColor, String lcColor, int fillType, Date progClaimDate, boolean isFee, boolean isDropLine) {
 		listitem = new Listitem();
@@ -1315,7 +1317,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		listitem.appendChild(lc);
 
 		// Amounts array
-		BigDecimal amountlist[] = { pftAmount, suplRent, incrCost, feeAmount,tdsAmount, schdlAdvPft, schdlPft,
+		BigDecimal amountlist[] = { pftAmount, suplRent, incrCost, feeAmount,gstAmount,tdsAmount, schdlAdvPft, schdlPft,
 				cpzAmount, totalAdvAmount,schdlPft.subtract(schdlAdvPft),totalAmount, endBal,limitDrop,availableLimit,odLimit};
 
 		if(fillType == 1){

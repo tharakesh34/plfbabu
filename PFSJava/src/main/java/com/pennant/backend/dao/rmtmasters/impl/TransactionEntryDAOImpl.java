@@ -248,7 +248,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule,ChargeType, FeeCode , OpenNewFinAc," );
 		selectSql.append(" PostToSys, DerivedTranOrder  ");
 		selectSql.append(" From RMTTransactionEntry");
-		selectSql.append(" Where AccountSetid =:AccountSetid");
+		selectSql.append(" Where AccountSetid =:AccountSetid Order by TransOrder");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);

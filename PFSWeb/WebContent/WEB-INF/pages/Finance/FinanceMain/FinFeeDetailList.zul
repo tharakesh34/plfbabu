@@ -19,51 +19,82 @@
 					<groupbox style="border:none;">
 						<caption label="${c:l('gp_FeesDetails')}">
 						</caption>
-						<listbox id="listBoxFeeDetail"
-							fixedLayout="false" span="true"
-							emptyMessage="${c:l('listbox.emptyMessage')}" 
-							multiple="false" ca:data-scrollable="true" sizedByContent="true">
-							<listhead sizable="false">
+						<listbox id="listBoxFeeDetail"    width = "100%"  style="overflow:auto;">  
+							<listhead sizable="true">
 								<listheader
 									id="listheader_FeeDetailList_FeeType"
 									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "150px" />
 								<listheader
 									id="listheader_FeeDetailList_CalculatedAmount"
 									label="${c:l('listheader_FeeDetailList_CalculatedAmount.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
 								<listheader
 									id="listheader_FeeDetailList_ActualAmount"
 									label="${c:l('listheader_FeeDetailList_ActualAmount.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
 								<listheader
 									id="listheader_FeeDetailList_WaivedAmount"
 									label="${c:l('listheader_FeeDetailList_WaivedAmount.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_NetFeeAmount"
+									label="${c:l('listheader_FeeDetailList_NetFeeAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_NetFeeGSTAmount"
+									label="${c:l('listheader_FeeDetailList_NetFeeGSTAmount.label')}"
+									sort="false"  style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_TotalNetFeeAmount"
+									label="${c:l('listheader_FeeDetailList_TotalNetFeeAmount.label')}"
+									sort="false"  style="font-size: 11px;" width = "100px"/>
+									
 								<listheader
 									id="listheader_FeeDetailList_PaidAmount"
 									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
+								<listheader
+									id="listheader_FeeDetailList_PaidGST"
+									label="${c:l('listheader_FeeDetailList_PaidGST.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_TotalPaidAmount"
+									label="${c:l('listheader_FeeDetailList_TotalPaidAmount.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>
+									
 								<listheader
 									id="listheader_FeeDetailList_RemainingFee"
 									label="${c:l('listheader_FeeDetailList_RemainingFee.label')}"
-									sort="false" hflex="min" />	
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+									
+								<listheader
+									id="listheader_FeeDetailList_RemainingGST"
+									label="${c:l('listheader_FeeDetailList_RemainingGST.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+								<listheader
+									id="listheader_FeeDetailList_TotalRemaining"
+									label="${c:l('listheader_FeeDetailList_TotalRemaining.label')}"
+									sort="false" style="font-size: 11px;" width = "100px"/>	
+																		
 								<listheader
 									id="listheader_FeeDetailList_PaymentRef"
 									label="${c:l('listheader_FeeDetailList_PaymentRef.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
 								<listheader
 									id="listheader_FeeDetailList_FeeScheduleMethod"
 									label="${c:l('listheader_FeeDetailList_FeeScheduleMethod.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "150px"/>
 								<listheader
 									id="listheader_FeeDetailList_Terms"
 									label="${c:l('listheader_FeeDetailList_Terms.label')}"
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
 								<listheader
 									id="listheader_FeeDetailList_Adjust"
 									label="${c:l('listheader_FeeDetailList_Adjustments.label')}" 
-									sort="false" hflex="min" />
+									sort="false" style="font-size: 11px;" width = "100px"/>
 							</listhead>
 						</listbox>
 					</groupbox>

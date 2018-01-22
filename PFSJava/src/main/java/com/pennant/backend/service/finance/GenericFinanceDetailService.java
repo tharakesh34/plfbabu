@@ -76,6 +76,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -1355,22 +1356,63 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
 				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
+				
+				//GST Added
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmountOriginal());
+				//Calculated Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				
+				//Paid Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+	
+				//Net Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
 
 				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
 				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", BigDecimal.ZERO);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", 0);
 				}
 
-				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
+				if (StringUtils.equals(feeRule.getFeeToFinance(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
+
 				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", BigDecimal.ZERO);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", 0);
 				}
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
@@ -1438,6 +1480,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
+		
+		String fromBranch = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+ 		String toBranch = auditHeader.getAuditBranchCode();
+		
+		List<String> brachesList = new ArrayList<>();
+		brachesList.add(fromBranch);
+		brachesList.add(toBranch);
+		
+		//GST Added
+		List<Branch> braches = getFinanceMainDAO().getBrachDetailsByBranchCode(brachesList);
+		
+		for(Branch brach : braches) {
+			if (StringUtils.equals(fromBranch, brach.getBranchCode())) {
+				dataMap.put("fromState", brach.getBranchProvince());
+			} 
+			
+			if (StringUtils.equals(toBranch, brach.getBranchCode())) {
+				dataMap.put("toState", brach.getBranchProvince());
+			} 
+		}
+
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
