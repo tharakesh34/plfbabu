@@ -334,7 +334,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		} else {
 			PartnerBankModes partnerBankModes = (PartnerBankModes) dataObject;
 			if (partnerBankModes != null) {
-				this.partnerBankID.setValue(String.valueOf(partnerBankModes.getPartnerBankId()));
+				this.partnerBankID.setValue(String.valueOf(partnerBankModes.getPartnerBankCode()));
 				this.partnerBankID.setDescription(partnerBankModes.getPartnerBankName());
 			}
 		}

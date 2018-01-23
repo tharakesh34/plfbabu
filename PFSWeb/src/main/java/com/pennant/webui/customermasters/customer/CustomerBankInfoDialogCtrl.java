@@ -266,7 +266,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		filter[0] = new Filter("FieldCode", "ACC_TYPE", Filter.OP_EQUAL);
 		this.accountType.setFilters(filter);
 		
-		this.accountNumber.setMaxlength(50);
+		this.accountNumber.setMaxlength(20);
 		this.accountType.setMaxlength(8);
 		
 		if (StringUtils.isNotBlank(this.customerBankInfo.getBankCode())) {

@@ -587,7 +587,7 @@ public class PennantJavaUtil {
 		"ReasonCategory_AView" }, masterWF, new String[] {"Code","Description"},null, 600));
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
-				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",
+				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] {"AggCode",
 						"AggName" }, null, 450));
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
 				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
@@ -608,7 +608,7 @@ public class PennantJavaUtil {
 				new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
-			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {  "PartnerBankId", "PartnerBankCode", "PartnerBankName"  },
+			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {"PartnerBankCode", "PartnerBankName"  },
 			null, 300));
 		
 		ModuleUtil.register("FinTypePartnerBank", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class, new String[] { "FinTypePartnerBanks",
@@ -903,7 +903,7 @@ public class PennantJavaUtil {
 			"FinFeeDetail", "FinFeeDetail_AView" }, null, new String[] {"FinReference","FinEvent" }, null, 600));
 
 		ModuleUtil.register("Rule", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
-				limitconfigWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
+				limitconfigWF, new String[] {"RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail", new ModuleMapping("CorpScoreGroupDetail",
 				CorpScoreGroupDetail.class, new String[] { "CorpScoringGroupDetail", "CorpScoringGroupDetail" }, null,
@@ -914,7 +914,7 @@ public class PennantJavaUtil {
 						"NFRuleDesc", "MaxScore" }, null, 300));
 
 		ModuleUtil.register("ScoringGroup", new ModuleMapping("ScoringGroup", ScoringGroup.class, new String[] {
-				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupId",
+				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupCode",
 				"ScoreGroupName" }, null, 350));
 
 		ModuleUtil.register("ScoringSlab", new ModuleMapping("ScoringSlab", ScoringSlab.class, new String[] {
