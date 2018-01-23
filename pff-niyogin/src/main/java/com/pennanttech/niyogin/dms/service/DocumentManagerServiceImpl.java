@@ -50,7 +50,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 
 			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
 
-			if (StringUtils.isNotEmpty(errorDesc)) {
+			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
 				if (mapdata.get("DOCSOURCE") != null) {
