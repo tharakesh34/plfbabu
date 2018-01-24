@@ -108,6 +108,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -1746,7 +1747,7 @@ public class FinanceDataValidation {
 				//validate names
 				String accHolderName = mandate.getAccHolderName();
 				if (StringUtils.isNotBlank(accHolderName)) {
-					if (!(accHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
+					if (!(accHolderName.matches(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME)))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "AccHolderName";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
@@ -1754,7 +1755,7 @@ public class FinanceDataValidation {
 				}
 				String jointAccHolderName = mandate.getJointAccHolderName();
 				if (StringUtils.isNotBlank(jointAccHolderName)) {
-					if (!(jointAccHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
+					if (!(jointAccHolderName.matches(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME)))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "JointAccHolderName";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
