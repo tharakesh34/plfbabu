@@ -112,7 +112,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.administration.securityuser.changepassword.ChangePasswordModel;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.security.ldap.LdapContext;
@@ -120,6 +119,8 @@ import com.pennanttech.framework.security.ldap.UserAttributes;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -253,6 +254,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(false);
 			this.rowSecurityUserDialogUsrPwd.setVisible(false);
 			doShowDialog(getSecurityUser());
+			//
+			doSetAuthType(securityUser.getUserType());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_SecurityUserDialog.onClose();
@@ -820,6 +823,19 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Leaving ");
 	}
 
+	/**
+	 * @param usrLogin
+	 * authType disable when double click on ADMIN_MAKER or ADMIN_APPROVER 
+	 */
+	private void doSetAuthType(String userType){
+		if(StringUtils.contains(userType, UserType.ADMIN.name())){
+			this.authType.setDisabled(true);
+			this.btnDelete.setVisible(false);
+		}else{
+			this.authType.setDisabled(false);
+			this.btnDelete.setVisible(true);
+		}
+	}
 	/**
 	 * Opens the Dialog window modal.
 	 * 

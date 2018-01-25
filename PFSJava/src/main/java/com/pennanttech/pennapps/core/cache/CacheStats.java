@@ -21,6 +21,7 @@ public class CacheStats {
 	private String clusterName;
 	private int clusterSize = 0;
 	private String clusterNode;
+	private String currentNode;
 	private String clusterIp;
 	private String clusterMembers;
 	private int cacheCount;
@@ -32,6 +33,8 @@ public class CacheStats {
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private String cacheNamesDet;
+	private long verifySleepTime;
+	private long updateSleepTime;
 
 	private List<String> cacheNames = new ArrayList<String>();
 
@@ -207,5 +210,29 @@ public class CacheStats {
 		buffer.append(isActive());
 
 		return buffer.toString();
+	}
+
+	public String getCurrentNode() {
+		return currentNode;
+	}
+
+	public void setCurrentNode(String currentNode) {
+		this.currentNode = currentNode;
+	}
+
+	public long getVerifySleepTime() {
+		return verifySleepTime;
+	}
+
+	public void setVerifySleepTime(long verifySleepTime) {
+		this.verifySleepTime = verifySleepTime;
+	}
+
+	public long getUpdateSleepTime() {
+		return updateSleepTime;
+	}
+
+	public void setUpdateSleepTime(long updateSleepTime) {
+		this.updateSleepTime = updateSleepTime;
 	}
 }

@@ -619,10 +619,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIssueDateMand.setDisabled(true);
 		this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
-		this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+		this.docIsPasswordProtected.setDisabled(true);
 		this.mappingRef.setButtonDisabled(true);
 		if(getDocumentType().isDocIsPdfExtRequired()){
-			//this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
 			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
 			}
 		
@@ -970,9 +970,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.mappingRef.setMandatoryStyle(true);
 		}else{
 			this.mappingRef.setMandatoryStyle(false);
+			this.docIsPasswordProtected.setChecked(docIsPdfExtRequired.isChecked());
 		}
-		//this.docIsPasswordProtected.setChecked(getDocumentType().isDocIsPasswordProtected());
-//		/this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
+        this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setButtonDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setConstraint("");
 		this.mappingRef.setErrorMessage("");

@@ -338,6 +338,7 @@
 		<menuItem id="menu_Item_PasswordResetUser"
 			zulNavigation="/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordList.zul?moduleType=PSWDRST"
 			rightName="menuItem_Administration_UserpasswordReset" />
+		<menuItem id="menu_Item_CacheMonitor" zulNavigation="/WEB-INF/pages/Cache/CacheNodesList.zul" rightName="menuItem_Cache_CacheMonitor"/>
 	</menu>
 	
 	<!-- Static Parameter Menu Tree -->

@@ -360,6 +360,7 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.util.ClassUtil;
@@ -2058,6 +2059,9 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("ChequeDetail", new ModuleMapping("ChequeDetail", ChequeDetail.class, new String[] { "CHEQUEDETAIL",
 		"CHEQUEDETAIL_AView" }, masterWF, new String[] {"HeaderID","BankBranchID","AccountNo","ChequeSerialNo","ChequeDate","ChequeCcy","Status"},null, 600));
+		
+		ModuleUtil.register("CacheStats", new ModuleMapping("CacheStats", CacheStats.class, new String[] { "CACHE_PARAMETERS",
+		"CACHE_PARAMETERS" }, null, new String[] {""},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

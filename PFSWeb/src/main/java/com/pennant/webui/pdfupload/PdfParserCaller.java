@@ -42,10 +42,11 @@ public class PdfParserCaller {
 		if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
 			customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 		}
-		
+		if(customerDocument.getCustDocImage() != null){
 			 parserResult = documentParser.getValueByTypeNYear(customerDocument.getCustDocImage(),
 					customerDocument.getCustDocName(), customerDocument.getPdfPassWord(),
 					customerDocument.getPdfMappingRef(), null);
+		}
 		logger.debug("Leaving");
 		return parserResult;
 	}

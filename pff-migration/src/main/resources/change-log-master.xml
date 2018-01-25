@@ -89,5 +89,6 @@
 	<include file="change-logs/change-log-Base-version1.xml" /> -->
 	<include file="change-logs/change-log-pdc.xml"/>
 	<include file="change-logs/change-log-Base-version2.xml" />
-	
+	<include file="change-logs/change-log-4.7.4.xml" />
+	<include file="change-logs/change-log-GST.xml" />
 </databaseChangeLog>

@@ -50,4 +50,5 @@ public class SMTParameterConstants {
 	public static final String	ROUND_LASTSCHD		= "ROUND_LASTSCHD";
 	public static final String	KYC_PRIORITY		= "DEFAULT_KYC_PRIORITY";
 	public static final String	ID_PANCARD			= "PAN_DOC_TYPE";
+	public static final String	DEFAULT_KYC_PRIORITY = "DEFAULT_KYC_PRIORITY";
 }

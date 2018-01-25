@@ -203,5 +203,23 @@ public class CacheAdmin  {
 		log.debug(Literal.LEAVING);
 		return map;
 	}
+	
+	public void updateParameters(CacheStats cacheStats){
+		log.debug(Literal.ENTERING);
 
+		int recordCount = 0;
+		StringBuilder sql = new StringBuilder("update cache_parameters ");
+		sql.append(" Set NODE_COUNT  =:NodeCount, CACHE_VERIFY_SLEEP  =:VerifySleepTime, CACHE_UPDATE_SLEEP =:UpdateSleepTime,");
+		sql.append(" Last_Mnt_By =:LastMntBy, Last_Mnt_On =:LastMntOn ");
+		
+
+		log.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		log.debug(Literal.LEAVING);
+	}
 }

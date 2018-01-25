@@ -4696,7 +4696,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setCustID(getCustomerDetails().getCustID());
 		customerAddres.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerAddres.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerAddres.setCustAddrPriority(Integer.parseInt(priority));
 		}
@@ -4796,7 +4796,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerPhoneNumber.setPhoneCustID(getCustomerDetails().getCustID());
 		customerPhoneNumber.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerPhoneNumber.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
 		}
@@ -4881,7 +4881,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerEMail.setCustID(getCustomerDetails().getCustID());
 		customerEMail.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerEMail.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_PRIORITY);
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
 		if(StringUtils.isNotBlank(priority)){
 		customerEMail.setCustEMailPriority(Integer.parseInt(priority));
 		}

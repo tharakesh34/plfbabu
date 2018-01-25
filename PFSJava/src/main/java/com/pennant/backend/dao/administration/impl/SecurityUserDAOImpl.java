@@ -129,7 +129,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
 		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries, UsrDesg, AuthType," );
+		selectSql.append(" UsrInvldLoginTries, UsrDesg, AuthType, UserType," );
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescUsrDftAppCode , lovDescUsrDftAppCodeName , " );
 			selectSql.append(" lovDescUsrDeptCodeName ,lovDescUsrBranchCodeName,LovDescUsrLanguage,");

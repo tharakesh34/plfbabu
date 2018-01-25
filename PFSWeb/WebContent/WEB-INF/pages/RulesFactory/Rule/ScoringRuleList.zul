@@ -67,23 +67,13 @@
 							<rows>
 								<row>
 									<label
-										id="label_RuleSearch_RuleModule"
-										value="${c:l('label_RuleSearch_RuleModule.value')}" />
-									<listbox
-										id="sortOperator_ruleModule" width="43px" mold="select"
-										rows="1" />
-									<textbox id="RuleModule"
-										width="150px" maxlength="50" />
-
-									<label
 										id="label_RuleSearch_RuleCode"
 										value="${c:l('label_RuleSearch_RuleCode.value')}" />
 									<listbox id="sortOperator_ruleCode"
 										width="43px" mold="select" rows="1" />
 									<uppercasebox id="ruleCode"
 										width="100px" maxlength="8" />
-								</row>
-								<row>
+
 									<label
 										id="label_RuleSearch_RuleCodeDesc"
 										value="${c:l('label_RuleSearch_RuleCodeDesc.value')}" />
@@ -94,7 +84,9 @@
 										width="200px" maxlength="50" />
 
 									<label value="" />
+
 								</row>
+								
 								<row id="row_AlwWorkflow">
 									<label
 										id="label_RuleSearch_RecordStatus"

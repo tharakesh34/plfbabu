@@ -357,7 +357,7 @@ WHERE     NOT EXISTS
 			 LimitParams T8 ON T1.RuleCode = T8.QueryCode
 		</createView>
 	</changeSet>
-	<changeSet id="14" author="Jayant">
+	<changeSet id="14" author="Jayant" dbms="postgresql">
 		<sql>
 			DROP VIEW reasons_view cascade;
 			DROP VIEW reasons_aview cascade;

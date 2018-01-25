@@ -578,6 +578,12 @@
 	<changeSet id="45" author="suresh.s" dbms="postgresql">
 		<createSequence sequenceName="SEQCHEQUEDETAIL" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
 	</changeSet>
+	<changeSet id="44" author="suresh.s" dbms="oracle">
+		<createSequence sequenceName="SEQCHEQUEHEADER" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
+	<changeSet id="45" author="suresh.s" dbms="oracle">
+		<createSequence sequenceName="SEQCHEQUEDETAIL" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
 	<!--altered columns Active and status data types   -->
 	<changeSet id="46" author="suresh.s">
 		<modifyDataType tableName="CHEQUEHEADER" columnName="Active"
@@ -610,7 +616,7 @@
 		<createView viewName="CHEQUEHEADER_AView" replaceIfExists="true">
 	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
 				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-	FROM    	CHEQUEHEADER AS T1 
+	FROM    	CHEQUEHEADER  T1 
 	</createView>
 	</changeSet>
 
@@ -618,12 +624,12 @@
 		<createView viewName="CHEQUEHEADER_View" replaceIfExists="true">
 	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
 				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-	FROM    	CHEQUEHEADER_Temp AS T1 
+	FROM    	CHEQUEHEADER_Temp  T1 
 	UNION ALL
 	
 	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
 				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-	FROM    	CHEQUEHEADER AS T1 
+	FROM    	CHEQUEHEADER  T1 
 	WHERE     NOT EXISTS (SELECT 1 FROM CHEQUEHEADER_TEMP WHERE HeaderID = T1.HeaderID)
 	</createView>
 	</changeSet>

@@ -34,7 +34,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="Haritha">
+	<changeSet id="1" author="Haritha" dbms="postgresql">
 			    <sql>
 						drop view AdtReasonTypes_View cascade;
 						drop view AdtReasonCategory_View cascade;
@@ -104,6 +104,16 @@
     
     </changeSet>
 
+
+<changeSet id="8" author="Prakash">
+	<sql>
+	  update AdtFinancemain set accountsofficer=0;
+	</sql>
+</changeSet>
+
+<changeSet id="9" author="Prakash">
+    <modifyDataType tableName="AdtFinancemain" columnName="accountsofficer" newDataType="bigint"/>
+</changeSet>
 
 
 </databaseChangeLog>

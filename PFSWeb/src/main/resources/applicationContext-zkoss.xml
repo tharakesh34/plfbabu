@@ -4990,4 +4990,13 @@
 	<!--============ Reason Details ============== -->
 	<bean id="reasonDetailsCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsCtrl" parent="basisCtrl" scope="prototype"/>
 	<bean id="reasonDetailsLogDialogCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsLogDialogCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<!-- ============ CacheAdministrator ============ -->
+	<bean id="cacheNodesListCtrl" class="com.pennanttech.pennapps.core.cache.CacheNodesListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="cacheAdmin" ref="cacheAdmin" />
+	</bean>
+	
+	<bean id="cacheParameterDialogCtrl" class="com.pennanttech.pennapps.core.cache.CacheParameterDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="cacheAdmin" ref="cacheAdmin" />
+	</bean>
 </beans>

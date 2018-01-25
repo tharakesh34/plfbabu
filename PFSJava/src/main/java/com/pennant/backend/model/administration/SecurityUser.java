@@ -96,6 +96,7 @@ public class SecurityUser extends AbstractWorkflowEntity implements Entity {
 	private String usrDesg; 
 	private String lovDescUsrDesg; 
 	private String authType; 
+	private String userType; 
 	private List<SecurityUserDivBranch> securityUserDivBranchList;
 	private List<SecurityUserOperations> securityUserOperationsList;
 	
@@ -449,6 +450,10 @@ public class SecurityUser extends AbstractWorkflowEntity implements Entity {
 	public void setLastFailLoginOn(Timestamp lastFailLoginOn) {
 		this.lastFailLoginOn = lastFailLoginOn;
 	}
-
-	
+	public String getUserType() {
+		return userType;
+	}
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 }
