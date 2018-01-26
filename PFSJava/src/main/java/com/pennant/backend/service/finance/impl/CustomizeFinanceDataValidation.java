@@ -445,23 +445,21 @@ public class CustomizeFinanceDataValidation {
 			}
 			
 			if (StringUtils.isNotBlank(mandate.getDocumentName())) {
-				String docName = mandate.getDocumentName();
-				//document Name Extension validation
-				if (docName.endsWith(".jpg") || docName.endsWith(".jpeg") || docName.endsWith(".png")
-						|| docName.endsWith(".pdf")) {
+				String docName = mandate.getDocumentName().toLowerCase();
+
+				// document name is only extension
+				if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Document Name";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				}
+
+				// document Name Extension validation
+				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
+						&& !docName.endsWith(".pdf")) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "Document Extension available ext are:JPG,PNG,PDF ";
+					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90122", valueParm)));
-				} else if (!docName.contains(".")) {
-					//Uploaded document {0} extension should be required.
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90291", valueParm)));
-				} else {
-					//TODO: uploaded document {0} is not supported
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90407", valueParm)));
 				}
 			}
 		}
