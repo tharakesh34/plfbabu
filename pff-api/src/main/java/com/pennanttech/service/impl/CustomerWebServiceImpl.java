@@ -1,6 +1,8 @@
 package com.pennanttech.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -2018,28 +2020,48 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+
 	private CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
 		logger.debug("Entering");
 		String mobileNumber = "";
+		String mailId = "";
 		Customer customer = customerDetails.getCustomer();
-		if (customerDetails.getCustomerPhoneNumList() != null) {
-			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
-				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
-					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-					break;
-				}
-			}
-		}
-		
-		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
-		if (customerDocumentsList != null) {
-			for (CustomerDocument curCustDocument : customerDocumentsList) {
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
-						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-					}
-			}
-		}		
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		List<CustomerEMail> mailIdList = customerDetails.getCustomerEMailList();
 
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			if (phoneNumberList.size() > 1) {
+				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+					@Override
+					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+					}
+				});
+			}
+			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+		}
+
+		if (mailIdList != null && !mailIdList.isEmpty()) {
+			if (mailIdList.size() > 1) {
+				//mailIdList.sort((m1, m2) -> m2.getCustEMailPriority() - m1.getCustEMailPriority());
+				Collections.sort(mailIdList, new Comparator<CustomerEMail>() {
+					@Override
+					public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+						return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+					}
+				});
+			}
+			CustomerEMail custMail = mailIdList.get(0);
+			mailId = custMail.getCustEMail();
+		}
+
+		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
+		String panNumber = PennantApplicationUtil.getPanNumber(customerDocumentsList);
+		if (StringUtils.isNotBlank(panNumber)) {
+			customerDetails.getCustomer().setCustCRCPR(panNumber);
+		}
 		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setCustFName(customer.getCustFName());
 		customerDedup.setCustLName(customer.getCustLName());
@@ -2054,10 +2076,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		customerDedup.setCustPassportNo(customer.getCustPassportNo());
 		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
 		customerDedup.setCustVisaNum(customer.getCustVisaNum());
-		customerDedup.setMobileNumber(mobileNumber);
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
-		customerDedup.setCustEMail(customer.getEmailID());
+		customerDedup.setMobileNumber(mobileNumber);
+		customerDedup.setCustEMail(mailId);
 
 		logger.debug("Leaving");
 		return customerDedup;
