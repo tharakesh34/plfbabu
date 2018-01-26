@@ -596,6 +596,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setNextRoleCode(financeMain.getNextRoleCode());
 			jointAccDetail.setTaskId(financeMain.getTaskId());
 			jointAccDetail.setNextTaskId(financeMain.getNextTaskId());
+
+			Customer coApplicant = customerDetailsService.getCustomerByCIF(jointAccDetail.getCustCIF());
+			if (coApplicant != null) {
+				jointAccDetail.setCustID(coApplicant.getCustID());
+			}
 		}
 
 		// guarantor details
