@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.customermasters.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -54,6 +55,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
@@ -598,9 +600,33 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 			
+			Date appStartDate = DateUtility.getAppDate();
+			Date endDate = DateUtility.addDays(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), -1);
+			Date startDate = null;
 			if (customerDocument.getCustDocIssuedOn() != null && customer != null) {
-				if (customerDocument.getCustDocIssuedOn().before(customer.getCustDOB())) {
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90321", "", null), "EN");
+				startDate = DateUtility.addDays(appStartDate, -1);
+				if (customerDocument.getCustDocIssuedOn().before(customer.getCustDOB())
+						|| customerDocument.getCustDocIssuedOn().after(startDate)) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "custDocIssuedOn";
+					valueParm[1] = DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+
+			// {CustDocExpDate} should after {appStartDate} and before {endDate}.
+			if (customerDocument.getCustDocExpDate() != null && customer != null) {
+				startDate = DateUtility.addDays(appStartDate, 1);
+				if (customerDocument.getCustDocExpDate().before(startDate)
+						|| customerDocument.getCustDocExpDate().after(endDate)) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "custDocExpDate";
+					valueParm[1] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.formatDate(endDate, PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
