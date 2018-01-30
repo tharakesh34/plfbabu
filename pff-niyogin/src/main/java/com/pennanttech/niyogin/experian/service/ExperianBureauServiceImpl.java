@@ -51,6 +51,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	private String				consumerUrl;
 	private String				commercialUrl;
 
+	private String				CONSUMER_CAIS_HIST			= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
+	private String				COMMERCIAL_BPAYGRID			= "$.data.COMMCRED.BPAYGRID";
+
 	//Experian Bureau
 	public static final String	REQ_SEND					= "REQSENDEXPBURU";
 	public static final String	STATUSCODE					= "STATUSEXPBURU";
@@ -166,7 +169,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, commercialConfigFileName);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
 				//process the response map
-				prepareCommercialExtendedMap(mapvalidData);
+				prepareCommercialExtendedMap(mapvalidData,jsonResponse);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -222,7 +225,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, consumerConfigFileName);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
 				//process the response map
-				prepareConsumerExtendedMap(mapvalidData);
+				prepareConsumerExtendedMap(mapvalidData,jsonResponse);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -454,21 +457,29 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @return
 	 * @throws ParseException
 	 */
-	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap)
+	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse)
 			throws ParseException {
 		logger.debug(Literal.ENTERING);
+
 		List<BillPayGrid> billPayGridList = null;
-		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN3M) != null) {
-			String jsonEmoBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN3M).toString();
-			Object responseObj = getResponseObject(jsonEmoBounceResponse, BpayGridResponse.class, true);
+		String jsonEmiBounceResponse = Objects.toString(getValueFromResponse(jsonResponse, COMMERCIAL_BPAYGRID), "");
+		extendedFieldMap.put(NO_EMI_BOUNCES_IN3M, true);
+		extendedFieldMap.put(NO_EMI_BOUNCES_IN6M, true);
+		if (!StringUtils.isEmpty(jsonEmiBounceResponse)) {
+			jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN3M).toString();
+			Object responseObj = getResponseObject(jsonEmiBounceResponse, BpayGridResponse.class, true);
 			@SuppressWarnings("unchecked")
 			List<BpayGridResponse> bpayGridResponses = (List<BpayGridResponse>) responseObj;
 			if (bpayGridResponses != null && !bpayGridResponses.isEmpty()) {
 				billPayGridList = prepareBillpayGridList(bpayGridResponses);
 			}
-		} else {
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN3M);
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN6M);
+			if (billPayGridList != null && !billPayGridList.isEmpty()) {
+				boolean isEmiBounceInL3M = isCommercialEMIBouncesInLastMonths(billPayGridList, 3);
+				extendedFieldMap.put(NO_EMI_BOUNCES_IN3M, isEmiBounceInL3M);
+				boolean isEmiBounceInL6M = isCommercialEMIBouncesInLastMonths(billPayGridList, 6);
+				extendedFieldMap.put(NO_EMI_BOUNCES_IN6M, isEmiBounceInL6M);
+			}
+
 		}
 
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
@@ -486,20 +497,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				if (entry.getValue() != null) {
 					boolean value = StringUtils.equals(entry.getValue().toString(), "1") ? true : false;
 					extendedFieldMap.put(entry.getKey(), value);
-				}
-
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN3M)) {
-
-				if (billPayGridList != null && !billPayGridList.isEmpty()) {
-					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 3);
-					extendedFieldMap.put(entry.getKey(), isEmiBounce);
-				}
-
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN6M)) {
-
-				if (billPayGridList != null && !billPayGridList.isEmpty()) {
-					boolean isEmiBounce = isCommercialEMIBouncesInLastMonths(billPayGridList, 6);
-					extendedFieldMap.put(entry.getKey(), isEmiBounce);
 				}
 
 			} else {
@@ -519,16 +516,23 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @throws ParseException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap) throws ParseException {
+	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse)
+			throws ParseException {
 		logger.debug(Literal.ENTERING);
 		List<CAISAccountHistory> caisAccountHistories = null;
-		if (extendedFieldMap.get(NO_EMI_BOUNCES_IN3M) != null) {
-			String jsonEmiBounceResponse = extendedFieldMap.get(NO_EMI_BOUNCES_IN3M).toString();
+		String jsonEmiBounceResponse = Objects.toString(getValueFromResponse(jsonResponse, CONSUMER_CAIS_HIST), "");
+		extendedFieldMap.put(NO_EMI_BOUNCES_IN3M, true);
+		extendedFieldMap.put(NO_EMI_BOUNCES_IN6M, true);
+		if (!StringUtils.isEmpty(jsonEmiBounceResponse)) {
 			Object responseObj = getResponseObject(jsonEmiBounceResponse, CAISAccountHistory.class, true);
 			caisAccountHistories = (List<CAISAccountHistory>) responseObj;
-		} else {
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN3M);
-			extendedFieldMap.remove(NO_EMI_BOUNCES_IN6M);
+			if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
+				boolean isEmiBounceInL3M = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 3);
+				extendedFieldMap.put(NO_EMI_BOUNCES_IN3M, isEmiBounceInL3M);
+				boolean isEmiBounceInL6M = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 6);
+				extendedFieldMap.put(NO_EMI_BOUNCES_IN3M, isEmiBounceInL6M);
+			}
+
 		}
 		for (Entry<String, Object> entry : extendedFieldMap.entrySet()) {
 			if (entry.getKey().equals(RESTRUCTURED_FLAG)) {
@@ -547,20 +551,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 					extendedFieldMap.put(entry.getKey(), value);
 				}
 
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN3M)) {
-
-				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
-					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 3);
-					extendedFieldMap.put(entry.getKey(), isEmiBounce);
-				}
-
-			} else if (entry.getKey().equals(NO_EMI_BOUNCES_IN6M)) {
-
-				if (caisAccountHistories != null && !caisAccountHistories.isEmpty()) {
-					boolean isEmiBounce = isConsumerEMIBouncesInLastMonths(caisAccountHistories, 6);
-					extendedFieldMap.put(entry.getKey(), isEmiBounce);
-				}
-
 			} else if (entry.getKey().equals(STATUS)) {
 				String acc_Status = String.valueOf(extendedFieldMap.get(STATUS));
 				if (StringUtils.equals(acc_Status, WRITEOFF)) {
@@ -571,7 +561,6 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			} else {
 				extendedFieldMap.put(entry.getKey(), entry.getValue());
 			}
-
 		}
 		logger.debug(Literal.LEAVING);
 		return extendedFieldMap;
