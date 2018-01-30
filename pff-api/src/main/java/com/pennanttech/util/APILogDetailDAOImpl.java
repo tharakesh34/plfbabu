@@ -20,9 +20,9 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 	public APILogDetailDAOImpl() {
 		super();
 	}
+
 	/**
-	 * This method insert new Records into APILoGDetails  
-	 * save aPILogDetail
+	 * This method insert new Records into APILoGDetails save aPILogDetail
 	 * 
 	 * @param APILogDetail
 	 *            (aPILogDetail)
@@ -34,12 +34,12 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 	public void saveLogDetails(APILogDetail aPILogDetail) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into APILOGDETAILS");
+		StringBuilder insertSql = new StringBuilder("Insert Into PLFAPILOGDETAILS");
 
-		insertSql.append("( Reference , EndPoint, Method, Type, ServiceName, \"Authorization\", ClientIP, ValueDate,");
-		insertSql.append("PayLoad, ResponseCode, ErrorDesc )");
-		insertSql.append(" Values(:Reference, :EndPoint, :Method, :Type, :ServiceName, :Authorization, :ClientIP,");
-		insertSql.append(" :ValueDate, :PayLoad, :ResponseCode, :ErrorDesc)");
+		insertSql.append("( cxfID , serviceName, reference, endPoint, method, authKey, clientIP, request,");
+		insertSql.append("response, receivedOn, responseGiven, statusCode, error )");
+		insertSql.append(" Values(:cxfID , :serviceName, :reference, :endPoint, :method, :authKey, :clientIP,");
+		insertSql.append(" :request, :response, :receivedOn, :responseGiven, :statusCode, :error)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPILogDetail);
 		logger.trace(Literal.SQL + insertSql.toString());
 		try {

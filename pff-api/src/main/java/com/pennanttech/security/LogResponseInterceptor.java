@@ -1,6 +1,8 @@
 package com.pennanttech.security;
 
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.Fault;
@@ -15,10 +17,12 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.pennant.app.util.APIHeader;
-import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.util.APILogDetailDAO;
-import com.pennanttech.util.TypeConstants;
 import com.pennanttech.ws.log.model.APILogDetail;
 
 /**
@@ -118,20 +122,37 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				// ignore
 			}
 			message.setContent(OutputStream.class, origStream);
-			APILogDetail apiLogDetail= new APILogDetail();
-			apiLogDetail.setReference(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
-			apiLogDetail.setResponseCode(String.valueOf(buffer.getResponseCode()));
-			apiLogDetail.setPayLoad(String.valueOf(buffer.getPayload()));
-			if(PhaseInterceptorChain.getCurrentMessage().getExchange().containsKey(APIHeader.API_EXCEPTION_KEY)) {
-				String exception = (String) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_EXCEPTION_KEY);
-				if(exception.length() > 1990) {
-					exception = exception.substring(0, 1990);
-				}
-				apiLogDetail.setErrorDesc(exception);		
+			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+			if (apiLogDetail != null) {
+				apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
+				apiLogDetail.setStatusCode(getStatusCode(String.valueOf(buffer.getPayload())));
+				apiLogDetail.setResponse(String.valueOf(buffer.getPayload()));
+				aPILogDetailDAO.saveLogDetails(apiLogDetail);
 			}
-			apiLogDetail.setValueDate(DateUtil.getSysDate());
-			apiLogDetail.setType(TypeConstants.RESPONSE.get());
-			aPILogDetailDAO.saveLogDetails(apiLogDetail);
+		}
+
+		/**
+		 * Method for get the Statuscode of the gives response.
+		 * 
+		 * @param responseString
+		 * @return
+		 */
+		private String getStatusCode(String responseString) {
+			Object value = null;
+			String keypath1 = "$.returnStatus.returnCode";
+			String keypath2 = "$.returnCode";
+			Configuration conf = Configuration.defaultConfiguration();
+			Configuration conf2 = conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
+			try {
+				value = JsonPath.using(conf2).parse(responseString).read(keypath1);
+				if (value == null) {
+					value = JsonPath.read(responseString, keypath2);
+				}
+			} catch (PathNotFoundException pathNotFoundException) {
+				value = null;
+				LOG.error("Exceptio in getStatusCode", pathNotFoundException);
+			}
+			return Objects.toString(value, "");
 		}
 
 		private LoggingMessage setupBuffer(Message message) {

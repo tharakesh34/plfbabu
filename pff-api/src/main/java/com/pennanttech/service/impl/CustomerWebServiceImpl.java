@@ -213,6 +213,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
+			// for logging purpose
+			APIErrorHandlerService.logReference(custCIF);
 			response = customerController.getCustomerDetails(customer.getCustID());
 		} else {
 			response = new CustomerDetails();
@@ -244,7 +246,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
-
+			// for logging purpose
+			APIErrorHandlerService.logReference(custCIF);
 			// call delete customer service
 			response = customerController.deleteCustomerById(customer.getCustID());
 		} else {
@@ -279,6 +282,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
+			// for logging purpose
+			APIErrorHandlerService.logReference(custCIF);
 			response = customerController.getCustomerPersonalInfo(customer.getCustID());
 		} else {
 			response = new CustomerDetails();
@@ -524,6 +529,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerEmploymentDetail = new CustomerEmploymentDetail();
 				customerEmploymentDetail.setCustID(customer.getCustID());
 				customerEmploymentDetail.setCustEmpId(employmentDetail.getEmployementId());
+				// for logging purpose
+				APIErrorHandlerService.logReference(employmentDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -718,6 +725,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerPhoneNumber = new CustomerPhoneNumber();
 				customerPhoneNumber.setPhoneCustID(customer.getCustID());
 				customerPhoneNumber.setPhoneTypeCode(custPhoneNumber.getPhoneTypeCode());
+				// for logging purpose
+				APIErrorHandlerService.logReference(custPhoneNumber.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -906,6 +915,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerAddres = new CustomerAddres();
 				customerAddres.setCustID(customer.getCustID());
 				customerAddres.setCustAddrType(custAddress.getAddrType());
+				// for logging purpose
+				APIErrorHandlerService.logReference(custAddress.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1094,6 +1105,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerEMaial = new CustomerEMail();
 				customerEMaial.setCustID(customer.getCustID());
 				customerEMaial.setCustEMailTypeCode(custEMail.getCustEMailTypeCode());
+				// for logging purpose
+				APIErrorHandlerService.logReference(custEMail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1285,6 +1298,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerIncome.setCustIncomeType(customerIncomeDetail.getCustIncomeType());
 				customerIncome.setCategory(customerIncomeDetail.getCategory());
 				customerIncome.setIncomeExpense(customerIncomeDetail.getIncomeExpense());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1476,6 +1491,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerBankInfo = new CustomerBankInfo();
 				customerBankInfo.setCustID(customerDetails.getCustID());
 				customerBankInfo.setBankId(customerBankInfoDetail.getBankId());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1634,6 +1651,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerChequeInfo = new CustomerChequeInfo();
 				customerChequeInfo.setCustID(customerDetails.getCustID());
 				customerChequeInfo.setChequeSeq(customerChequeInfoDetail.getChequeSeq());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1826,6 +1845,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerExtLiability = new CustomerExtLiability();
 				customerExtLiability.setCustID(customerDetails.getCustID());
 				customerExtLiability.setLiabilitySeq(customerExtLiabilityDetail.getLiabilitySeq());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerExtLiabilityDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2001,6 +2022,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				customerDocument = new CustomerDocument();
 				customerDocument.setCustID(customer.getCustID());
 				customerDocument.setCustDocCategory(customerDocumentDetail.getCustDocCategory());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;

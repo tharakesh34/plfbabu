@@ -77,7 +77,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerPhoneNumbers(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -102,9 +103,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails CustomerPhoneNumber = new CustomerDetails();
-			CustomerPhoneNumber.setCustomer(null);
-			CustomerPhoneNumber.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -122,6 +123,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus addCustomerPhoneNumber(CustomerPhoneNumber customerPhoneNumber, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response=null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -170,6 +173,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerPhoneNumber(CustomerPhoneNumber customerPhoneNumber, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = new WSReturnStatus();
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -264,7 +269,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerAddresses(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -286,9 +292,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails CustomerPhoneNumber = new CustomerDetails();
-			CustomerPhoneNumber.setCustomer(null);
-			CustomerPhoneNumber.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -304,6 +310,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus addCustomerAddress(CustomerAddres customerAddress, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = new WSReturnStatus();
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -352,6 +360,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerAddress(CustomerAddres customerAddres, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response =null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -442,7 +452,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerEmails(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -464,9 +475,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails CustomerEmail = new CustomerDetails();
-			CustomerEmail.setCustomer(null);
-			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -482,6 +493,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus addCustomerEmail(CustomerEMail customerEMail, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -528,6 +541,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerEmail(CustomerEMail customerEMail, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response =null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -617,7 +632,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerIncomes(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -639,9 +655,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails CustomerEmail = new CustomerDetails();
-			CustomerEmail.setCustomer(null);
-			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -657,6 +673,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus addCustomerIncome(CustomerIncome customerIncome, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -702,6 +720,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerIncome(CustomerIncome customerIncome, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -787,7 +807,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerBankingInformation(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -809,9 +830,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails customerBankInfo = new CustomerDetails();
-			customerBankInfo.setCustomer(null);
-			customerBankInfo.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -828,6 +849,8 @@ public class CustomerDetailsController {
 
 	public CustomerBankInfoDetail addCustomerBankingInformation(CustomerBankInfo customerBankInfo, String cif) {
 		CustomerBankInfoDetail response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		logger.debug("Entering");
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -867,8 +890,8 @@ public class CustomerDetailsController {
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerBankInfoDetail customerBankInfoDetail = new CustomerBankInfoDetail();
-			customerBankInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerBankInfoDetail();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -886,6 +909,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerBankingInformation(CustomerBankInfo customerBankInfo, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -976,7 +1001,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerAccountBehaviour(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -1019,6 +1045,8 @@ public class CustomerDetailsController {
 
 		logger.debug("Entering");
 		CustomerChequeInfoDetail response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
@@ -1070,6 +1098,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerAccountBehaviour(CustomerChequeInfo customerChequeInfo, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -1164,6 +1194,8 @@ public class CustomerDetailsController {
 
 		logger.debug("Entering");
 		CustomerExtLiabilityDetail response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
@@ -1201,7 +1233,6 @@ public class CustomerDetailsController {
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerExtLiabilityDetail();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
 		}
 
 		logger.debug("Leaving");
@@ -1218,6 +1249,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiability customerExtLiability, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -1310,7 +1343,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerExternalLiabilities(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -1331,9 +1365,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails customerBankInfo = new CustomerDetails();
-			customerBankInfo.setCustomer(null);
-			customerBankInfo.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -1348,7 +1382,8 @@ public class CustomerDetailsController {
 	 */
 	public CustomerDetails getCustomerDocuments(String cif) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
@@ -1373,9 +1408,9 @@ public class CustomerDetailsController {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			CustomerDetails CustomerEmail = new CustomerDetails();
-			CustomerEmail.setCustomer(null);
-			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
@@ -1397,6 +1432,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus addCustomerDocument(CustomerDocument customerDocument, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language
@@ -1449,6 +1486,8 @@ public class CustomerDetailsController {
 	public WSReturnStatus updateCustomerDocument(CustomerDocument customerDocument, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		try{
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 		// user language

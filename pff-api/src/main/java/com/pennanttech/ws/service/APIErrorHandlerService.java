@@ -13,6 +13,7 @@ import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.log.model.APILogDetail;
 
 @Service("apiErrorHandlerService")
 public class APIErrorHandlerService {
@@ -127,7 +128,24 @@ public class APIErrorHandlerService {
 		StringWriter writer = new StringWriter();
 		exception.printStackTrace(new PrintWriter(writer));
 		String errorMessage = writer.toString();
-		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_EXCEPTION_KEY, errorMessage);
+		APILogDetail logDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		if (errorMessage.length() > 1990) {
+			errorMessage = errorMessage.substring(0, 1990);
+		}
+		logDetail.setError(errorMessage);
+	}
+
+	/**
+	 * Method for log the reference.
+	 * 
+	 * @param reference
+	 */
+	//TODO: Need to move Method
+	public static void logReference(String reference) {
+		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		if (apiLogDetail != null) {
+			apiLogDetail.setReference(reference);
+		}
 	}
 	
 	@Autowired

@@ -1,7 +1,9 @@
 package com.pennanttech.security;
 
 import java.io.InputStream;
+import java.sql.Timestamp;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Fault;
@@ -13,8 +15,6 @@ import org.apache.cxf.phase.Phase;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.util.TypeConstants;
 import com.pennanttech.ws.log.model.APILogDetail;
 
 /**
@@ -101,15 +101,38 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 				throw new Fault(e);
 			}
 		}
-		APILogDetail apiLogDetail= new APILogDetail();
-		apiLogDetail.setReference(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
-		apiLogDetail.setEndPoint(String.valueOf(buffer.getAddress()));
-		apiLogDetail.setMethod(String.valueOf(buffer.getHttpMethod()));
-		apiLogDetail.setPayLoad(String.valueOf(buffer.getPayload()));
-		apiLogDetail.setValueDate(DateUtil.getSysDate());
-		apiLogDetail.setType(TypeConstants.REQUEST.get());
+		APILogDetail apiLogDetail = new APILogDetail();
+		apiLogDetail.setCxfID(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
+		String endPoint = StringUtils.trimToEmpty(String.valueOf(buffer.getAddress()).replaceAll(",", ""));
+		String method = StringUtils.trimToEmpty(httpMethod);
+		apiLogDetail.setServiceName(getServiceName(endPoint, method));
+		apiLogDetail.setEndPoint(endPoint);
+		apiLogDetail.setMethod(method);
+		apiLogDetail.setReceivedOn(new Timestamp(System.currentTimeMillis()));
+		apiLogDetail.setRequest(String.valueOf(buffer.getPayload()));
 		message.getExchange().put(APIHeader.API_LOG_KEY, apiLogDetail);
 		log.info(buffer.toString());
+	}
+
+	/**
+	 * Method for get the Service name of the given endpoint.
+	 * 
+	 * @param endPoint
+	 * @param method
+	 * @return
+	 */
+	private String getServiceName(String endPoint, String method) {
+		String serviceName = "";
+		String[] values = endPoint.split("/");
+		if (StringUtils.equalsIgnoreCase(method, "DELETE") || StringUtils.equalsIgnoreCase(method, "GET")) {
+			if (values.length >= 2) {
+				serviceName = values[values.length - 2];
+			}
+		} else {
+			serviceName = values[values.length - 1];
+
+		}
+		return serviceName;
 	}
 
 	@Override

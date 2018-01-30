@@ -360,6 +360,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				response = getFinanceDetailResponse(auditHeader);
 				response.setStp(false);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				// for logging purpose
+				APIErrorHandlerService.logReference(finReference);
 
 				logger.debug("Leaving");
 				return response;
@@ -1015,7 +1017,8 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceDetail getFinanceDetails(String finReference) {
 		logger.debug("Enetring");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
 		FinanceDetail financeDetail = null;
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", 
@@ -1047,7 +1050,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	 */
 	public FinanceDetail getFinInquiryDetails(String finReference) {
 		logger.debug("Enetring");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
 		FinanceDetail financeDetail = null;
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
@@ -1142,6 +1146,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	 */
 	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType) {
 		logger.debug("Entering");
+		// for logging purpose
+		APIErrorHandlerService.logReference(reference);
 		try {
 			FinanceInquiry financeInquiry = new FinanceInquiry();
 			List<FinanceMain> financeMainList = null;
@@ -1266,6 +1272,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	 */
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeDetail.getFinReference());
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		TableType tableType = TableType.MAIN_TAB;
 		if (finMain.isWorkflow()) {

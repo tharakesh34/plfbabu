@@ -25,7 +25,6 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,7 +46,6 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.auth.model.ServerAuthentication;
 import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;
@@ -80,7 +78,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	private UserService userService;
 	@Autowired
 	private PFSParameterService systemParameterService;
-	private APILogDetailDAO		aPILogDetailDAO;
 
 
 	/*
@@ -226,18 +223,16 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				getErrorDetails("92001");
 			}
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			APILogDetail logDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
-			if (logDetail != null) {
+			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+			if (apiLogDetail != null) {
 				if (StringUtils.isNotBlank(authCredentials)) {
-					logDetail.setAuthorization(authCredentials);
+					apiLogDetail.setAuthKey(authCredentials);
 				} else {
-					if(reqHeaderDetails != null)
-					logDetail.setAuthorization(reqHeaderDetails.getSecurityInfo());
+					if (reqHeaderDetails != null)
+						apiLogDetail.setAuthKey(reqHeaderDetails.getSecurityInfo());
 				}
-				if(reqHeaderDetails != null)
-				logDetail.setServiceName(reqHeaderDetails.getServiceName());
-				logDetail.setClientIP(reqHeaderDetails.getIpAddress());
-				aPILogDetailDAO.saveLogDetails(logDetail);
+				if (reqHeaderDetails != null)
+					apiLogDetail.setClientIP(reqHeaderDetails.getIpAddress());
 			}
 
 			logger.debug("Leaving");
@@ -252,16 +247,15 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			
 		} catch (Fault e) { // any validation errors from application
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			APILogDetail logDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
-			if (logDetail != null) {
+			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+			if (apiLogDetail != null) {
 				if (StringUtils.isNotBlank(authCredentials)) {
-					logDetail.setAuthorization(authCredentials);
+					apiLogDetail.setAuthKey(authCredentials);
 				} else {
-					if(reqHeaderDetails != null)
-					logDetail.setAuthorization(reqHeaderDetails.getSecurityInfo());
+					if (reqHeaderDetails != null)
+						apiLogDetail.setAuthKey(reqHeaderDetails.getSecurityInfo());
 				}
-				logDetail.setClientIP(IP_ADDRESS);
-				aPILogDetailDAO.saveLogDetails(logDetail);
+				apiLogDetail.setClientIP(IP_ADDRESS);
 			}
 			logger.error("Exception:", e);
 			throw e;
@@ -489,10 +483,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-	    return new BCryptPasswordEncoder();
-	}
-	@Autowired
-	public void setaPILogDetailDAO(APILogDetailDAO aPILogDetailDAO) {
-		this.aPILogDetailDAO = aPILogDetailDAO;
+		return new BCryptPasswordEncoder();
 	}
 }
