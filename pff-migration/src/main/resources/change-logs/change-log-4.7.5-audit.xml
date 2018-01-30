@@ -23,7 +23,7 @@
 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
-			Set search_path = plf,public,pg_catalog;
+			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
 
