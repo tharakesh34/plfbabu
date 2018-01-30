@@ -27,5 +27,69 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="01" author="Ganesh.p">
+		<createTable tableName="plfapilogdetails">
+			<column name="SeqID" type="bigint" autoIncrement="true"
+				startWith="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="cxfID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="serviceName" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="reference" type="nvarchar(20)" />
+
+			<column name="method" type="nvarchar(10)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="endPoint" type="nvarchar(300)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="authKey" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="clientIP" type="nvarchar(50)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="request" type="nvarchar(2000)" />
+			<column name="Response" type="nvarchar(2000)" />
+
+			<column name="receivedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="responseGiven" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="statusCode" type="nvarchar(10)" />
+			<column name="error" type="nvarchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="02" author="Ganesh.p" dbms="postgresql">
+		<modifyDataType tableName="plfapilogdetails"
+			columnName="request" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="03" author="Ganesh.p" dbms="postgresql">
+		<modifyDataType tableName="plfapilogdetails"
+			columnName="response" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="04" author="Ganesh.p" dbms="postgresql">
+		<modifyDataType tableName="plfapilogdetails"
+			columnName="error" newDataType="citext" />
+	</changeSet>	
+
 
 </databaseChangeLog>
