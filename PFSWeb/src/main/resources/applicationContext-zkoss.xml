@@ -1923,7 +1923,15 @@
 	<bean id="chequeDetailDialogCtrl"
 		class="com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="bankDetailService" ref="bankDetailService"/>
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
+	</bean>
+	
+	<!-- ChequeHeader -->
+	<bean id="chequeHeaderListCtrl" class="com.pennant.webui.pdc.chequeheader.ChequeHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
 	<bean id="istisnaDisbursementDialogCtrl"

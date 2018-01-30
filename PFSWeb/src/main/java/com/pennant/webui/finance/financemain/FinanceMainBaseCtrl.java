@@ -1914,7 +1914,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("ccyFormatter",
 					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 			map.put("chequeHeader", chequeHeader);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChequeDetailDialog.zul",
+			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_CHEQUE), map);
 		}
 		logger.debug("Leaving");
@@ -5976,7 +5976,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
-			chequeDetailDialogCtrl.doSave(aFinanceDetail,getFinanceMain().getFinReference());
+			chequeDetailDialogCtrl.doSave_PDC(aFinanceDetail, getFinanceMain().getFinReference());
 		}
 		
 		// Tax Detail

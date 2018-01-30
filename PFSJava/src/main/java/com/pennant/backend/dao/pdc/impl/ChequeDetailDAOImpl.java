@@ -143,7 +143,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 	}
 	
 	@Override
-	public boolean isDuplicateKey(int chequeDetailsID,long bankBranchID,String accountNo,String chequeSerialNo, String tableType) {
+	public boolean isDuplicateKey(long chequeDetailsID,long bankBranchID,String accountNo,int chequeSerialNo, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -151,10 +151,10 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		String whereClause = "bankBranchID = :bankBranchID AND accountNo = :accountNo AND chequeSerialNo = :chequeSerialNo AND chequeDetailsID != :chequeDetailsID";
 
 		switch (tableType) {
-		case "":
+		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("CHEQUEDETAIL", whereClause);
 			break;
-		case "_Temp":
+		case TEMP_TAB:
 			sql = QueryUtil.getCountQuery("CHEQUEDETAIL_Temp", whereClause);
 			break;
 		default:

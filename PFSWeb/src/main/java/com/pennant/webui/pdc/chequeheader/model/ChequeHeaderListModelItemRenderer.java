@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ChequeDetailDAO.java                                                   * 	  
+ * FileName    		:  ChequeHeaderListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -40,28 +40,54 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-package com.pennant.backend.dao.pdc;
+package com.pennant.webui.pdc.chequeheader.model;
 
-import java.util.List;
+import java.io.Serializable;
 
-import com.pennant.backend.model.finance.ChequeDetail;
-import com.pennanttech.pff.core.TableType;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 
-public interface ChequeDetailDAO {
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
-	ChequeDetail getChequeDetail(long headerID, String type);
 
-	boolean isDuplicateKey(long chequeDetailsID, long bankBranchID, String accountNo, int chequeSerialNo,
-			TableType tableType);
+/**
+ * Item renderer for listitems in the listbox.
+ * 
+ */
+public class ChequeHeaderListModelItemRenderer implements ListitemRenderer<ChequeHeader>, Serializable {
 
-	void delete(ChequeDetail chequeDetail, TableType tableType);
+	private static final long serialVersionUID = 1L;
 
-	String save(ChequeDetail chequeDetail, TableType tableType);
+	public ChequeHeaderListModelItemRenderer() {
+		super();
+	}
 
-	void update(ChequeDetail chequeDetail, TableType tableType);
+	
+	@Override
+	public void render(Listitem item, ChequeHeader chequeHeader, int count) throws Exception {
 
-	List<ChequeDetail> getChequeDetailList(long headerID, String type);
-
-	void deleteByCheqID(final long headerID, String type);
-
+		Listcell lc;
+	  	lc = new Listcell(chequeHeader.getFinReference());
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.getlabelDesc(chequeHeader.getChequeType(), PennantStaticListUtil.getChequeTypes()));
+	  	lc.setParent(item);
+	  	lc = new Listcell(PennantApplicationUtil.formateInt(chequeHeader.getNoOfCheques()));
+	  	lc.setParent(item);
+	    lc = new Listcell(String.valueOf(PennantAppUtil.formateAmount(chequeHeader.getTotalAmount(), CurrencyUtil.getFormat("INR"))));
+		lc.setParent(item);
+	  	lc = new Listcell(chequeHeader.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(chequeHeader.getRecordType()));
+		lc.setParent(item);
+		item.setAttribute("headerID", chequeHeader.getHeaderID());
+		
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onChequeHeaderItemDoubleClicked");
+	}
 }

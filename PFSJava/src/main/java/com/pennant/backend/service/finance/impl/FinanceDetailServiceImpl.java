@@ -183,8 +183,8 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.service.finance.ChequeHeaderService;
 import com.pennant.backend.service.finance.CustomServiceTask;
+import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -253,7 +253,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private FlagDetailValidation			flagDetailValidation;
 	private FinFlagDetailsDAO				finFlagDetailsDAO;
-	private ChequeHeaderService 			chequeHeaderService;
+	private FinChequeHeaderService 			finChequeHeaderService;
 	private FinTypeInsuranceDAO				finTypeInsuranceDAO;
 	private VASRecordingDAO					vasRecordingDAO;
 	private FinTypeFeesDAO					finTypeFeesDAO;
@@ -526,7 +526,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Cheque Header and Cheque Details getting
-		financeDetail.setChequeHeader(getChequeHeaderService().getChequeHeader(finReference));
+		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
 
 		logger.debug("Leaving");
 		return financeDetail;
@@ -1950,7 +1950,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (financeDetail.getChequeHeader() != null) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
-			getChequeHeaderService().saveOrUpdate(auditHeader,tableType);
+			finChequeHeaderService.saveOrUpdate(auditHeader, tableType);
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
 					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}
@@ -2780,7 +2780,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Cheque details
 			if (financeDetail.getChequeHeader() != null) {
 				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
-				getChequeHeaderService().delete(auditHeader);
+				finChequeHeaderService.delete(auditHeader);
 				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
 						.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 			}
@@ -3449,7 +3449,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			if (financeDetail.getChequeHeader() != null) {
 				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
-				getChequeHeaderService().doApprove(auditHeader,TableType.MAIN_TAB);
+				finChequeHeaderService.doApprove(auditHeader);
 				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 						financeDetail.getChequeHeader().getBefImage(),
 						financeDetail.getChequeHeader()));
@@ -4038,8 +4038,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		default:
 			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {
-				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
-				if(taskExecuted) {
+				//boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
+				if(true) {
 					return auditHeader;
 				}
 			}
@@ -4908,7 +4908,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Cheque Details
 		if (financeDetail.getChequeHeader() != null){
 			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
-			getChequeHeaderService().doReject(auditHeader);
+			finChequeHeaderService.doReject(auditHeader);
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
 					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}
@@ -9053,12 +9053,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
 	}
-
-	public ChequeHeaderService getChequeHeaderService() {
-		return chequeHeaderService;
-	}
-
-	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
-		this.chequeHeaderService = chequeHeaderService;
+	
+	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
+		this.finChequeHeaderService = finChequeHeaderService;
 	}
 }

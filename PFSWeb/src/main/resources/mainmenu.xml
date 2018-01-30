@@ -281,6 +281,7 @@
 		<!-- <menuItem id="menu_Item_DealFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/DealFinanceList.zul"  rightName="menuItem_Finance_InvestmentFinanceDeals"/> -->
 		<menuItem id="menu_Item_NewFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination"  rightName="menuItem_Finance_FinanceMain" />
 		<menuItem id="menu_Item_PaymentOrderIssue" zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul"   rightName="menuItem_Finance_PaymentOrderIssue"/>
+		<menuItem id="menu_Item_ChequeHeader" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul" rightName="menuItem_pdc_ChequeHeader"/>
 
 		<!-- <menuItem id="menu_Item_FinancePreApproval" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinancePreApprovalList.zul?requestSource=PreApproval"  rightName="menuItem_Finance_FinancePreApproval" /> -->
 		<!-- <menuItem id="menu_Item_NewTreasuaryFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul"  rightName="menuItem_Finance_InvestmentFinance" /> -->  
@@ -448,6 +449,7 @@
 		<menuItem id="menu_Item_CollateralEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"  rightName="menuItem_Enquiry_CollateralSetup"/>
 		 <!--<menuItem id="menu_Item_PaymentOrderAuthEnquiry" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul?enqiryModule=Y" rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
 		<menuItem id="menu_Item_PayOrderIssueEnquiry" zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul?enqiryModule=Y" rightName="menu_Item_PayOrderIssueEnquiry"/>
+		<!-- <menuItem id="menu_Item_ChequeHeaderEnquiry" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderEnquiryList.zul?enqiryModule=Y" rightName="menuItem_pdc_ChequeHeaderEnquiry"/> -->
 		<menuItem id="menu_Item_FinanceApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinApproval"/>
 		<!--<menuItem id="menu_Item_FacilityApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FacilityApprovalStsInquiryList.zul" rightName="menuItem_Enquiry_FacilityApproval"/>-->
 		<menuItem id="menu_Item_WIFFinanceMain" zulNavigation="/WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainList.zul"  rightName="menuItem_Enquiry_WIFFinanceMain"/>
