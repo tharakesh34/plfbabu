@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  ErrorDetails.java													*                           
+ * FileName    		:  ErrorDetail.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -49,73 +49,73 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-public class ErrorDetails extends AbstractWorkflowEntity {
+public class ErrorDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private String errorCode;
-	private String errorLanguage;
-	private String errorSeverity;
-	private String errorMessage;
-	private String errorExtendedMessage;
+	private String code;
+	private String language;
+	private String severity;
+	private String message;
+	private String extendedMessage;
 	private boolean newRecord;
-	private ErrorDetails befImage;
+	private ErrorDetail befImage;
 	private LoggedInUser userDetails;
 
-	private String errorField;
-	private String[] errorParameters;
-	private String[] errorFieldValues;
-	private boolean errorOveride = false;
+	private String field;
+	private String[] parameters;
+	private String[] fieldValues;
+	private boolean overide = false;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("errorField");
-		excludeFields.add("errorParameters");
-		excludeFields.add("errorFieldValues");
-		excludeFields.add("errorOveride");
+		excludeFields.add("field");
+		excludeFields.add("parameters");
+		excludeFields.add("fieldValues");
+		excludeFields.add("overide");
 		return excludeFields;
 	}
 
-	public ErrorDetails() {
+	public ErrorDetail() {
 		super();
 	}
 
-	public ErrorDetails(String errorCode) {
+	public ErrorDetail(String code) {
 		super();
-		this.setId(errorCode);
+		this.setId(code);
 	}
 
-	public ErrorDetails(String errorCode, String message, String[] errorParameters) {
+	public ErrorDetail(String code, String message, String[] parameters) {
 		super();
-		this.errorCode = errorCode;
-		this.errorSeverity = "E"; //PennantConstants.ERR_SEV_ERROR;
-		this.errorMessage = message;
-		this.errorParameters = errorParameters;
+		this.code = code;
+		this.severity = "E"; // PennantConstants.ERR_SEV_ERROR;
+		this.message = message;
+		this.parameters = parameters;
 	}
 
-	public ErrorDetails(String errorCode, String[] errorParameters) {
+	public ErrorDetail(String code, String[] parameters) {
 		super();
-		this.errorCode = errorCode;
-		this.errorSeverity = "E"; // PennantConstants.ERR_SEV_ERROR;
-		this.errorParameters = errorParameters;
+		this.code = code;
+		this.severity = "E"; // PennantConstants.ERR_SEV_ERROR;
+		this.parameters = parameters;
 	}
 
-	public ErrorDetails(String errorField, String errorCode, String[] errorParameters, String[] errorFieldValues) {
+	public ErrorDetail(String field, String code, String[] parameters, String[] fieldValues) {
 		super();
-		this.errorField = errorField;
-		this.errorCode = errorCode;
-		this.errorParameters = errorParameters;
-		this.errorFieldValues = errorFieldValues;
+		this.field = field;
+		this.code = code;
+		this.parameters = parameters;
+		this.fieldValues = fieldValues;
 	}
 
-	public ErrorDetails(String errorField, String errorCode, String severity, String message, String[] errorParameters,
-			String[] errorFieldValues) {
+	public ErrorDetail(String field, String code, String severity, String message, String[] parameters,
+			String[] fieldValues) {
 		super();
-		this.errorField = errorField;
-		this.errorCode = errorCode;
-		this.errorSeverity = severity;
-		this.errorMessage = message;
-		this.errorParameters = errorParameters;
-		this.errorFieldValues = errorFieldValues;
+		this.field = field;
+		this.code = code;
+		this.severity = severity;
+		this.message = message;
+		this.parameters = parameters;
+		this.fieldValues = fieldValues;
 	}
 
 	public boolean isNew() {
@@ -123,81 +123,81 @@ public class ErrorDetails extends AbstractWorkflowEntity {
 	}
 
 	public String getId() {
-		return errorCode;
+		return code;
 	}
 
 	public void setId(String id) {
-		this.errorCode = id;
+		this.code = id;
 	}
 
-	public String getErrorCode() {
-		return errorCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public String getErrorLanguage() {
-		return errorLanguage;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setErrorLanguage(String errorLanguage) {
-		this.errorLanguage = errorLanguage;
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
-	public String getErrorSeverity() {
-		return errorSeverity;
+	public String getSeverity() {
+		return severity;
 	}
 
-	public void setErrorSeverity(String errorSeverity) {
-		this.errorSeverity = errorSeverity;
+	public void setSeverity(String severity) {
+		this.severity = severity;
 	}
 
-	public String getErrorMessage() {
-		return errorMessage;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
-	public String getErrorExtendedMessage() {
-		return errorExtendedMessage;
+	public String getExtendedMessage() {
+		return extendedMessage;
 	}
 
-	public void setErrorExtendedMessage(String errorExtendedMessage) {
-		this.errorExtendedMessage = errorExtendedMessage;
+	public void setExtendedMessage(String extendedMessage) {
+		this.extendedMessage = extendedMessage;
 	}
 
-	public String getErrorField() {
-		return errorField;
+	public String getField() {
+		return field;
 	}
 
-	public void setErrorField(String errorField) {
-		this.errorField = errorField;
+	public void setField(String field) {
+		this.field = field;
 	}
 
-	public String[] getErrorParameters() {
-		return errorParameters;
+	public String[] getParameters() {
+		return parameters;
 	}
 
-	public void setErrorParameters(String[] errorParameters) {
-		this.errorParameters = errorParameters;
+	public void setParameters(String[] parameters) {
+		this.parameters = parameters;
 	}
 
 	public String getError(String[] parameters) {
-		this.errorParameters = parameters;
+		this.parameters = parameters;
 		return getError();
 	}
 
 	public String getError() {
-		String error = StringUtils.trimToEmpty(this.errorMessage);
+		String error = StringUtils.trimToEmpty(this.message);
 
-		if (this.errorParameters != null) {
+		if (this.parameters != null) {
 
-			for (int i = 0; i < errorParameters.length; i++) {
-				String parameter = StringUtils.trimToEmpty(errorParameters[i]);
+			for (int i = 0; i < parameters.length; i++) {
+				String parameter = StringUtils.trimToEmpty(parameters[i]);
 				error = error.replace("{" + (i) + "}", parameter);
 			}
 		}
@@ -209,20 +209,20 @@ public class ErrorDetails extends AbstractWorkflowEntity {
 		return error;
 	}
 
-	public boolean isErrorOveride() {
-		return errorOveride;
+	public boolean isOveride() {
+		return overide;
 	}
 
-	public void setErrorOveride(boolean errorOveride) {
-		this.errorOveride = errorOveride;
+	public void setOveride(boolean overide) {
+		this.overide = overide;
 	}
 
-	public String[] getErrorFieldValues() {
-		return errorFieldValues;
+	public String[] getFieldValues() {
+		return fieldValues;
 	}
 
-	public void setErrorFieldValues(String[] errorFieldValues) {
-		this.errorFieldValues = errorFieldValues;
+	public void setFieldValues(String[] fieldValues) {
+		this.fieldValues = fieldValues;
 	}
 
 	public boolean isNewRecord() {
@@ -233,11 +233,11 @@ public class ErrorDetails extends AbstractWorkflowEntity {
 		this.newRecord = newRecord;
 	}
 
-	public ErrorDetails getBefImage() {
+	public ErrorDetail getBefImage() {
 		return befImage;
 	}
 
-	public void setBefImage(ErrorDetails befImage) {
+	public void setBefImage(ErrorDetail befImage) {
 		this.befImage = befImage;
 	}
 

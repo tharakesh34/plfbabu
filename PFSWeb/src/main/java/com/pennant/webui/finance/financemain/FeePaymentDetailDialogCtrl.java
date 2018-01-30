@@ -63,7 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeePaymentDetail;
@@ -790,7 +790,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 				if(StringUtils.equals(afeePaymentDetail.getPaymentReference(), loanDetail.getPaymentReference())){ // Both Current and Existing list rating same
 
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 

@@ -52,7 +52,7 @@ import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
@@ -149,7 +149,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 	private AuditDetail  validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering ");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		String[] errPrmRecordExisted= new String[4];
 		/*if already record exist with same RoleeId and GrpId add error detail*/
@@ -160,7 +160,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 			.getRoleGroupsByRoleAndGrpId(rolesGroups.getRoleID()
 					, rolesGroups.getGrpID());
 			if(rolesGroups!=null){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
 			}		
 		}
 		/*if already record delete with same RoleeId and GrpId add error detail*/
@@ -169,7 +169,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 			.getRoleGroupsByRoleAndGrpId(rolesGroups.getRoleID()
 					, rolesGroups.getGrpID());
 			if(rolesGroups==null){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
 			}		
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));	

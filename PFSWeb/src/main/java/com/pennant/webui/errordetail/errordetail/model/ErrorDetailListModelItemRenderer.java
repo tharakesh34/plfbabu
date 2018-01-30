@@ -50,7 +50,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
@@ -58,24 +58,24 @@ import com.pennant.backend.util.PennantStaticListUtil;
  * Item renderer for listitems in the listbox.
  * 
  */
-public class ErrorDetailListModelItemRenderer implements ListitemRenderer<ErrorDetails>, Serializable {
+public class ErrorDetailListModelItemRenderer implements ListitemRenderer<ErrorDetail>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, ErrorDetails errorDetail, int count) throws Exception {
+	public void render(Listitem item, ErrorDetail errorDetail, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(errorDetail.getErrorCode());
+		lc = new Listcell(errorDetail.getCode());
 		lc.setParent(item);
-		lc = new Listcell(errorDetail.getErrorLanguage());
+		lc = new Listcell(errorDetail.getLanguage());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(errorDetail.getErrorSeverity(),
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(errorDetail.getSeverity(),
 				PennantStaticListUtil.getSysParamType()));
 		lc.setParent(item);
-		lc = new Listcell(errorDetail.getErrorMessage());
+		lc = new Listcell(errorDetail.getMessage());
 		lc.setParent(item);
-		lc = new Listcell(errorDetail.getErrorExtendedMessage());
+		lc = new Listcell(errorDetail.getExtendedMessage());
 		lc.setParent(item);
 		lc = new Listcell(errorDetail.getRecordStatus());
 		lc.setParent(item);

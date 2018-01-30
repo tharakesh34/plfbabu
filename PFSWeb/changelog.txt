@@ -1,3 +1,9 @@
+pff 4.1.0, 2018-01-26
+---------------------
+-- Refactoring Rename bean ErrorDetails from ErrorDetails to ErrorDetail.
+-- Refactoring Remove the prefix Error from the ErrorDetail properties.
+-- Refactoring Alter columns in tables and view's including audit.
+
 pff 4.1.0, 2018-01-09
 ---------------------
 Cache enabled for ErrorDetails and SystemParameter service classes.

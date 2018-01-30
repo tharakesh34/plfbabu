@@ -34,7 +34,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.channeldetails.APIChannel;
@@ -297,7 +297,7 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering ");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		APIChannel apiChannel = (APIChannel) auditDetail.getModelData();
 		APIChannel tempChannelDetails = null;
 		if (apiChannel.isWorkflow()) {
@@ -315,18 +315,18 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 
 			if (!apiChannel.isWorkflow()) {// With out Work flow only new records
 				if (befChannelDetails != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,valueParm));
 				}
 			} else { // with work flow
 				if (apiChannel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befChannelDetails != null || tempChannelDetails != null) { // if records already exists in the
 																					// main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm,
 								valueParm));
 					}
 				} else {
 					if (befChannelDetails == null || tempChannelDetails != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -337,23 +337,23 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 			if (!apiChannel.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befChannelDetails == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,valueParm));
 				}else{
 
 					if (oldChannelDetails != null && !oldChannelDetails.getLastMntOn().equals(befChannelDetails.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempChannelDetails == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
 				}
 				if (tempChannelDetails != null && oldChannelDetails != null && !oldChannelDetails.getLastMntOn().equals(tempChannelDetails.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
 				}
 			}
 		}

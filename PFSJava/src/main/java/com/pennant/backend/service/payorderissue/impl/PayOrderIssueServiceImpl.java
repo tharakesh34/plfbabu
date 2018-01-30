@@ -62,7 +62,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -318,7 +318,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			posted=false;
 		}
 		if (!posted) {
-			auditHeader.setErrorDetails(new ErrorDetails("0000", "Postigs Failed", null));
+			auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
 			return auditHeader;
 		}
 
@@ -465,7 +465,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		PayOrderIssueHeader payOrderIssueHeader = (PayOrderIssueHeader) auditDetail.getModelData();
 
 		PayOrderIssueHeader tempPayOrderIssueHeader = null;
@@ -487,19 +487,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only new records
 				if (befPayOrderIssueHeader != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 
 				}
 			} else { // with work flow
 				if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befPayOrderIssueHeader != null || tempPayOrderIssueHeader != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPayOrderIssueHeader == null || tempPayOrderIssueHeader != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -510,17 +510,17 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (!payOrderIssueHeader.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befPayOrderIssueHeader == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldPayOrderIssueHeader != null
 							&& !oldPayOrderIssueHeader.getLastMntOn().equals(befPayOrderIssueHeader.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -528,13 +528,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			} else {
 
 				if (tempPayOrderIssueHeader == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempPayOrderIssueHeader != null && oldPayOrderIssueHeader != null
 						&& !oldPayOrderIssueHeader.getLastMntOn().equals(tempPayOrderIssueHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}

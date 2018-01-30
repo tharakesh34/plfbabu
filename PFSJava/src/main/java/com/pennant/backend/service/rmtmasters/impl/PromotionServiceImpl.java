@@ -53,7 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -604,17 +604,17 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	}
 
 
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Promotion promotion = (Promotion) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 
 		if (promotion.getAuditDetailMap().get("FinTypeFees") != null) {
 			auditDetails = promotion.getAuditDetailMap().get("FinTypeFees");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -625,7 +625,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.getAuditDetailMap().get("FinTypeInsurance") != null) {
 			auditDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -636,7 +636,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.getAuditDetailMap().get("FinTypeAccounting") != null) {
 			auditDetails = promotion.getAuditDetailMap().get("FinTypeAccounting");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -662,7 +662,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Promotion promotion = (Promotion) auditDetail.getModelData();
 
 		Promotion tempPromotion = null;
@@ -681,16 +681,16 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.isNew()) { // for New record or new record into work flow
 			if (!promotion.isWorkflow()) {// With out Work flow only new records
 				if (befPromotion != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (PennantConstants.RECORD_TYPE_NEW.equals(promotion.getRecordType())) { // if records type is new
 					if (befPromotion != null || tempPromotion != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPromotion == null || tempPromotion != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -699,25 +699,25 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 			if (!promotion.isWorkflow()) { // With out Work flow for update and delete
 				if (befPromotion == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldPromotion != null && !oldPromotion.getLastMntOn().equals(befPromotion.getLastMntOn())) {
 						if (PennantConstants.TRAN_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail
 								.getAuditTranType()))) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempPromotion == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempPromotion != null && oldPromotion != null
 						&& !oldPromotion.getLastMntOn().equals(tempPromotion.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

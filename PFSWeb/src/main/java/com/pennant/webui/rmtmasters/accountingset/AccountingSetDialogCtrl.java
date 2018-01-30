@@ -79,7 +79,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -144,7 +144,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	// ServiceDAOs / Domain Classes
 	private transient AccountingSetService accountingSetService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private List<TransactionEntry> transactionEntryList = new ArrayList<TransactionEntry>();
 	private PagedListWrapper<TransactionEntry> TransactionEntryPagedListWrapper;
 	int listRows;
@@ -980,7 +980,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccountingSetDialog, auditHeader);
 						return processCompleted;
@@ -1198,7 +1198,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_AccountingSetDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1284,10 +1284,10 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		return this.accountingSetListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
@@ -1344,7 +1344,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 	
 	private boolean validateFintypeFees(List<String> feeCodeTransactionList,Map<String,List<FinTypeFees>> finTypeFeeMap){
-		List<ErrorDetails> feeErrorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
 		for (String feeCode : feeCodeTransactionList) {
 			String finTypes = "";
 			for (String finType : finTypeFeeMap.keySet()) {
@@ -1373,7 +1373,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
 				valueParm[1] = finTypes;
 				errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
-				feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
+				feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
 						(PennantConstants.KEY_FIELD, "WFEE04", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 			}
 		}
@@ -1382,8 +1382,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			String warningMsg = "";
 			int errorCount = 0;
 			int warningCount = 0;
-			for (ErrorDetails errorDetail : feeErrorDetails) {
-				if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+			for (ErrorDetail errorDetail : feeErrorDetails) {
+				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
 					errorCount++;
 					if(StringUtils.isEmpty(errorMsg)){
 						errorMsg = errorCount+")"+errorDetail.getError();
@@ -1413,7 +1413,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 	
 	private boolean validateAccountingFees(List<String> feeCodeTransactionList,Map<String,List<FinTypeFees>> finTypeFeeMap){
-		List<ErrorDetails> feeErrorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
 		
 		Map<String,String> finTypeFeeCodeMap = new HashMap<String,String>();		
 		
@@ -1447,7 +1447,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
 					valueParm[1] = finTypeFeeCodeMap.get(finTypeFeeCode);
 					errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
-					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
+					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
 							(PennantConstants.KEY_FIELD, "WFEE05", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 
 				}
@@ -1458,8 +1458,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			String warningMsg = "";
 			int errorCount = 0;
 			int warningCount = 0;
-			for (ErrorDetails errorDetail : feeErrorDetails) {
-				if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+			for (ErrorDetail errorDetail : feeErrorDetails) {
+				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
 					errorCount++;
 					if(StringUtils.isEmpty(errorMsg)){
 						errorMsg = errorCount+")"+errorDetail.getError();

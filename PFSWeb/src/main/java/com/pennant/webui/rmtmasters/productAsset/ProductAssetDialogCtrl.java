@@ -62,7 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
@@ -107,7 +107,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	
 	// ServiceDAOs / Domain Classes
 	private transient ProductService productService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private boolean newRecord = false;
 	private boolean newProduct = false;
@@ -758,7 +758,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 					if(aProductAsset.isNew()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -845,7 +845,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private void showMessage(Exception e){
 		AuditHeader auditHeader= new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_ProductAssetDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -887,10 +887,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productAsset = productAsset;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -30,7 +30,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -313,7 +313,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 				}
 				if (duplicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;
@@ -482,7 +482,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail( new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD,
 								"41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
@@ -594,7 +594,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(
 					this.window_ExtendedFieldCaptureDialog, auditHeader);

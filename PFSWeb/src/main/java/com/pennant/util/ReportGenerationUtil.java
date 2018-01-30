@@ -61,7 +61,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -102,7 +102,7 @@ public class ReportGenerationUtil implements Serializable {
         	} catch (JRException e) {
         		logger.error("Exception: ", e);
 				MessageUtil.showError("Template does not exist.");
-        		ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+        		ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
         	}
         }
 

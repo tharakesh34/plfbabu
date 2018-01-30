@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -363,7 +363,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 					+ dPDBucketConfiguration.getProductCode();
 			parameters[1] = PennantJavaUtil.getLabel("label_BucketID") + ": " + dPDBucketConfiguration.getBucketID();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		
 		if (!StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL) && StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -379,7 +379,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
 				errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + ":" + valueParm[1];
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015",
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015",
 						errParm, valueParm), usrLanguage));
 			}
 		}

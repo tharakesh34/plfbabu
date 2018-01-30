@@ -55,7 +55,7 @@ import com.pennant.backend.dao.applicationmaster.InsuranceTypeDAO;
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeProviderDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -527,15 +527,15 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 		return auditHeader;
 	}
 
-	private List<ErrorDetails> validateChild(AuditHeader auditHeader, String usrLanguage, String method) {
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+	private List<ErrorDetail> validateChild(AuditHeader auditHeader, String usrLanguage, String method) {
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		InsuranceType insuranceType = (InsuranceType) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 		//INsurance TypeProvider
 		if (insuranceType.getAuditDetailMap().get("InsuranceTypeProvider") != null) {
 			auditDetails = insuranceType.getAuditDetailMap().get("InsuranceTypeProvider");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = validationInsuranceTypeProvider(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = validationInsuranceTypeProvider(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -652,7 +652,7 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 	private AuditDetail validationInsuranceTypeProvider(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		InsuranceTypeProvider insuranceTypeProvider = (InsuranceTypeProvider) auditDetail.getModelData();
 
 		InsuranceTypeProvider tempInsuranceTypeProvider = null;
@@ -677,17 +677,17 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 			if (!insuranceTypeProvider.isWorkflow()) {// With out Work flow only new records  
 				if (befInsuranceTypeProvider != null) { // Record Already Exists in the table then error  
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (insuranceTypeProvider.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befInsuranceTypeProvider != null || tempInsuranceTypeProvider != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
 								valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befInsuranceTypeProvider == null || tempInsuranceTypeProvider != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -698,16 +698,16 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 				if (befInsuranceTypeProvider == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldInsuranceTypeProvider != null
 							&& !oldInsuranceTypeProvider.getLastMntOn().equals(befInsuranceTypeProvider.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
@@ -716,13 +716,13 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 				if (tempInsuranceTypeProvider == null) { // if records not exists in the Work flow table 
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempInsuranceTypeProvider != null && oldInsuranceTypeProvider != null
 						&& !oldInsuranceTypeProvider.getLastMntOn().equals(tempInsuranceTypeProvider.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -748,7 +748,7 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		InsuranceType insuranceType = (InsuranceType) auditDetail.getModelData();
 
 		InsuranceType tempInsuranceType = null;
@@ -769,17 +769,17 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 			if (!insuranceType.isWorkflow()) {// With out Work flow only new records  
 				if (befInsuranceType != null) { // Record Already Exists in the table then error  
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (insuranceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befInsuranceType != null || tempInsuranceType != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
 								valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befInsuranceType == null || tempInsuranceType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -790,16 +790,16 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 				if (befInsuranceType == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldInsuranceType != null
 							&& !oldInsuranceType.getLastMntOn().equals(befInsuranceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
@@ -808,13 +808,13 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 
 				if (tempInsuranceType == null) { // if records not exists in the Work flow table 
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempInsuranceType != null && oldInsuranceType != null
 						&& !oldInsuranceType.getLastMntOn().equals(tempInsuranceType.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -830,7 +830,7 @@ public class InsuranceTypeServiceImpl extends GenericService<InsuranceType> impl
 				parms[1][0] = insuranceType.getInsuranceType();
 				parms[0][0] = PennantJavaUtil.getLabel("label_TakafulProviderDialog_TakafulCode.value") + ":"
 						+ parms[1][0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"41006", parms[0], parms[1]), usrLanguage));
 
 			}

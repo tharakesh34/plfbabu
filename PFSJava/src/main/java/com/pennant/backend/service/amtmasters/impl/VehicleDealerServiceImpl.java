@@ -52,7 +52,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -331,7 +331,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 */
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		VehicleDealer vehicleDealer= (VehicleDealer) auditDetail.getModelData();
 
 		VehicleDealer tempVehicleDealer= null;
@@ -358,7 +358,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				if (befVehicleDealer != null) { // Record Already Exists in the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -370,13 +370,13 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 						// exists in the
 						// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41001", errParm, valueParm),usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befVehicleDealer == null || tempVehicleDealer != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41005", errParm, valueParm),usrLanguage));
 					}
 				}
@@ -391,7 +391,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				if (befVehicleDealer == null) { // if records not exists in the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldVehicleDealer != null
@@ -401,12 +401,12 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(
+									.getErrorDetail(new ErrorDetail(
 											PennantConstants.KEY_FIELD,
 											"41003", errParm, valueParm),usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(
+									.getErrorDetail(new ErrorDetail(
 											PennantConstants.KEY_FIELD,
 											"41004", errParm, valueParm),usrLanguage));
 						}
@@ -417,14 +417,14 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				if (tempVehicleDealer == null) { // if records not exists in the
 					// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempVehicleDealer != null && oldVehicleDealer != null
 						&& !oldVehicleDealer.getLastMntOn().equals(
 								tempVehicleDealer.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
 				}
 				
 			}
@@ -440,7 +440,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 			errParmvendor[0]=PennantJavaUtil.getLabel("label_DealerType")+":"+valueParmvendor[0];
 			errParmvendor[1]=PennantJavaUtil.getLabel("label_DealerName")+":"+valueParmvendor[1];
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					"41018", errParmvendor, valueParmvendor), usrLanguage));
 		}
 		if (StringUtils.trimToEmpty(vehicleDealer.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -451,7 +451,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				valueParmvcust[0]=String.valueOf(vehicleDealer.getDealerName());
 				errParmcust[0]=PennantJavaUtil.getLabel("label_DealerName")+":"+valueParmvcust[0];
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParmcust, valueParmvcust), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParmcust, valueParmvcust), usrLanguage));
 			}
 		}
 	

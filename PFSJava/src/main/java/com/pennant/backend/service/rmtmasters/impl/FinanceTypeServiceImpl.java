@@ -61,7 +61,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -615,7 +615,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		FinanceType financeType = (FinanceType) auditDetail.getModelData();
 		FinanceType tempFinanceType = null;
@@ -637,16 +637,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.isNew()) { // for New record or new record into work flow
 			if (!financeType.isWorkflow()) {// With out Work flow only new records
 				if (befFinanceType != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinanceType != null || tempFinanceType != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceType == null || tempFinanceType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -654,31 +654,31 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!financeType.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinanceType == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldFinanceType != null
 							&& !oldFinanceType.getLastMntOn().equals(befFinanceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempFinanceType == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempFinanceType != null && oldFinanceType != null
 						&& !oldFinanceType.getLastMntOn().equals(tempFinanceType.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 		// To Check Whether the finance type is active or not
 		if (!financeType.isFinIsActive()) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "81004", errParm, null));// warning
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81004", errParm, null));// warning
 		}
 		
 		/*if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) {
@@ -936,17 +936,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return auditDetails;
 	}
 
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 		
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 		// FinTypeAccount
 		if (financeType.getAuditDetailMap().get("FinTypeCustAccount") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeCustAccount");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = validationFinTypeCustAccounts(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = validationFinTypeCustAccounts(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -957,7 +957,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.getAuditDetailMap().get("FinTypeFees") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeFees");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -968,7 +968,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.getAuditDetailMap().get("FinTypeInsurance") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -979,7 +979,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.getAuditDetailMap().get("FinTypeAccounting") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeAccounting");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -990,7 +990,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.getAuditDetailMap().get("FinTypePartnerBank") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.finTypePartnerBankService.validation(auditDetail, usrLanguage, method)
+				List<ErrorDetail> details = this.finTypePartnerBankService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -1160,7 +1160,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private AuditDetail validationFinTypeCustAccounts(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinTypeAccount finTypeAccount = (FinTypeAccount) auditDetail.getModelData();
 		FinTypeAccount tempFinTypeAccount = null;
 
@@ -1181,16 +1181,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (finTypeAccount.isNew()) { // for New record or new record into work flow
 			if (!finTypeAccount.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypeAccount != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinTypeAccount != null || tempFinTypeAccount != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinTypeAccount == null || tempFinTypeAccount != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -1198,26 +1198,26 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!finTypeAccount.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinTypeAccount == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldFinTypeAccountReference != null
 							&& !oldFinTypeAccountReference.getLastMntOn().equals(befFinTypeAccount.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempFinTypeAccount == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempFinTypeAccount != null && oldFinTypeAccountReference != null
 						&& !oldFinTypeAccountReference.getLastMntOn().equals(tempFinTypeAccount.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

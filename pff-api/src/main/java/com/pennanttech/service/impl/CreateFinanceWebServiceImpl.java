@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -109,10 +109,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 			if (financeDetailRes != null) {
 				if (financeDetailRes.getFinScheduleData() != null) {
-					for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+					for (ErrorDetail errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 								errorDetails.getError()));
 						return response;
 					}
@@ -238,10 +238,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 			if (financeDetailRes != null) {
 				if (financeDetailRes.getFinScheduleData() != null) {
-					for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+					for (ErrorDetail errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 								errorDetails.getError()));
 						return response;
 					}
@@ -425,10 +425,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	}
 	
 	private FinanceDetail getErrorMessage(FinScheduleData financeSchdData) {
-		for (ErrorDetails erroDetail : financeSchdData.getErrorDetails()) {
+		for (ErrorDetail erroDetail : financeSchdData.getErrorDetails()) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getErrorCode(),
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getCode(),
 					erroDetail.getError()));
 			return response;
 		}

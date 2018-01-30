@@ -53,7 +53,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.financemanagement.FinSuspHoldDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
@@ -350,7 +350,7 @@ public class FinSuspHoldServiceImpl extends
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,	String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		FinSuspHold finSuspHold = (FinSuspHold) auditDetail.getModelData();
 		FinSuspHold tempFinSuspHold = null;
@@ -372,7 +372,7 @@ public class FinSuspHoldServiceImpl extends
 				if (befFinSuspHold != null) { // Record Already
 					// Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 
@@ -381,11 +381,11 @@ public class FinSuspHoldServiceImpl extends
 					if (befFinSuspHold != null || tempFinSuspHold != null) { // if
 						  						// records already exists
 							 					// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinSuspHold == null || tempFinSuspHold != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -398,15 +398,15 @@ public class FinSuspHoldServiceImpl extends
 				if (befFinSuspHold == null) { // if records not
 					// exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 					if (oldFinSuspHold != null
 							&& !oldFinSuspHold.getLastMntOn().equals(befFinSuspHold.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
 						}
 					}
 				}
@@ -416,19 +416,19 @@ public class FinSuspHoldServiceImpl extends
 				if (tempFinSuspHold == null) { // if records not
 					// exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 
 				if (tempFinSuspHold != null && oldFinSuspHold != null
 						&& !oldFinSuspHold.getLastMntOn().equals(tempFinSuspHold.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 			}
 		}
 		
 		FinSuspHold finSuspHoldTemp = getFinSuspHoldDAO().getFinSuspHoldByDetails(finSuspHold, "_View");
 		if(finSuspHoldTemp != null && finSuspHoldTemp.getId() != finSuspHold.getId()){
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014",new String[]{getValidationMsg(finSuspHold)}, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014",new String[]{getValidationMsg(finSuspHold)}, null));
 		}
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

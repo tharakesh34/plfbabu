@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.staticparms.InterestRateBasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
@@ -337,7 +337,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditDetail.getModelData();
 		InterestRateBasisCode tempInterestRateBasisCode = null;
@@ -365,19 +365,19 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			if (!interestRateBasisCode.isWorkflow()) {// With out Work flow only new records
 				if (befInterestRateBasisCode != null) { // Record Already Exists in the table then error
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 
 				if (interestRateBasisCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befInterestRateBasisCode != null
 							|| tempInterestRateBasisCode != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befInterestRateBasisCode == null
 							|| tempInterestRateBasisCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
 					}
 				}
 			}
@@ -388,7 +388,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 
 				if (befInterestRateBasisCode == null) { // if records not exists in the main table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 					if (oldInterestRateBasisCode != null
 							&& !oldInterestRateBasisCode.getLastMntOn()
@@ -396,22 +396,22 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempInterestRateBasisCode == null) { // if records not exists in the Work flow table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempInterestRateBasisCode != null
 						&& oldInterestRateBasisCode != null
 						&& !oldInterestRateBasisCode.getLastMntOn().equals(tempInterestRateBasisCode.getLastMntOn())) {
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 			}
 		}

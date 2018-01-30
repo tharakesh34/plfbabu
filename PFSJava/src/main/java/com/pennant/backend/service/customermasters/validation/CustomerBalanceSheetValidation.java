@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerBalanceSheetDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
@@ -57,7 +57,7 @@ public class CustomerBalanceSheetValidation {
 		
 	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		CustomerBalanceSheet customerBalanceSheet= (CustomerBalanceSheet) auditDetail.getModelData();
 		
 		CustomerBalanceSheet tempCustomerBalanceSheet= null;
@@ -84,20 +84,20 @@ public class CustomerBalanceSheetValidation {
 			if (!customerBalanceSheet.isWorkflow()){// With out Work flow only new records  
 				if (befCustomerBalanceSheet !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
 									errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCustomerBalanceSheet !=null || tempCustomerBalanceSheet!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
 										errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCustomerBalanceSheet ==null || tempCustomerBalanceSheet!=null ){
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 										errParm,valueParm), usrLanguage));
 					}
 				}
@@ -108,7 +108,7 @@ public class CustomerBalanceSheetValidation {
 			
 				if (befCustomerBalanceSheet ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
 					if (oldCustomerBalanceSheet!=null && !oldCustomerBalanceSheet.getLastMntOn().equals(
@@ -116,11 +116,11 @@ public class CustomerBalanceSheetValidation {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", 
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", 
 											errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", 
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", 
 											errParm,valueParm), usrLanguage));
 						}
 					}
@@ -129,14 +129,14 @@ public class CustomerBalanceSheetValidation {
 			
 				if (tempCustomerBalanceSheet==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 				
 				if (tempCustomerBalanceSheet!=null && oldCustomerBalanceSheet!=null && !oldCustomerBalanceSheet.getLastMntOn().equals(
 						tempCustomerBalanceSheet.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 			}

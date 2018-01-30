@@ -53,7 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -332,7 +332,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	@Override
 	public AuditDetail doValidations(CustomerEMail customerEMail,String method) {
 			AuditDetail auditDetail = new AuditDetail();
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 
 		if (StringUtils.equals(method, "Create")) {
 			List<CustomerEMail> prvCustomerEmailList = customerEMailDAO
@@ -343,7 +343,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 						String[] valueParm = new String[2];
 						valueParm[0] = "Priority";
 						valueParm[1] = String.valueOf(customerEMail.getCustEMailPriority());
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90288", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -351,7 +351,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 						String[] valueParm = new String[2];
 						valueParm[0] = "CustEMailType";
 						valueParm[1] = customerEMail.getCustEMailTypeCode();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -361,7 +361,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 					String[] valueParm = new String[2];
 					valueParm[0] = "Email Details";
 					valueParm[1] = "Email";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -380,7 +380,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 								String[] valueParm = new String[2];
 								valueParm[0] = "Email Details";
 								valueParm[1] = "Email should not update";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
@@ -390,7 +390,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(customerEMail.getCustEMailPriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90288", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -404,14 +404,14 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 				String[] valueParm = new String[2];
 				valueParm[0] = "EMailType";
 				valueParm[1] = customerEMail.getCustEMailTypeCode();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 			if(!(customerEMail.getCustEMailPriority()>=1 && customerEMail.getCustEMailPriority()<=5)){
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(customerEMail.getCustEMailPriority());
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90110", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90110", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 				
@@ -421,7 +421,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 				if(!validRegex){
 					String[] valueParm = new String[1];
 					valueParm[0] = customerEMail.getCustEMail();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90237", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			return auditDetail;

@@ -37,7 +37,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -280,10 +280,10 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		ServiceExceptionDetails serviceExceptionDetails = new ServiceExceptionDetails();
 		serviceExceptionDetails.setFaultCode(errorCode);
 		// serviceExceptionDetails.setFaultMessage(errorDetailService.getErrorDetailById(errorCode).getErrorMessage());
-		ErrorDetails erroDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetail erroDetail = errorDetailService.getErrorDetailById(errorCode);
 		
 		if (erroDetail != null) {
-			serviceExceptionDetails.setFaultMessage(erroDetail.getErrorMessage());
+			serviceExceptionDetails.setFaultMessage(erroDetail.getMessage());
 		}
 		
 		// Get the error details from authentication and throw the Fault details

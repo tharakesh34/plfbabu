@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.applicationmaster.ReasonTypesDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -366,7 +366,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonTypes.getCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		// If ReasonTypes Code is already utilized in ReasonCode
 				if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, reasonTypes.getRecordType())) {
@@ -376,7 +376,7 @@ public class ReasonTypesServiceImpl extends GenericService<ReasonTypes> implemen
 						String[] parameters = new String[2];
 						parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonTypes.getCode();
 
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 					}
 				}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

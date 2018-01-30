@@ -66,7 +66,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -334,7 +334,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser>  {
 		logger.debug("Entering ");
 		AuditHeader auditHeader= new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails("",error.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail("",error.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_ChangePasswordDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

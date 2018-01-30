@@ -13,7 +13,7 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -187,10 +187,10 @@ public class LimitServiceController {
 			AuditHeader header = limitDetailService.doApprove(auditHeader, false);
 
 			if (header.getErrorMessage() != null && !header.getErrorMessage().isEmpty()) {
-				for (ErrorDetails errorDetail : header.getErrorMessage()) {
+				for (ErrorDetail errorDetail : header.getErrorMessage()) {
 					response = new LimitHeader();
-					String errorCode = errorDetail.getErrorCode();
-					String errorMessage = errorDetail.getErrorMessage();
+					String errorCode = errorDetail.getCode();
+					String errorMessage = errorDetail.getMessage();
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorCode, errorMessage));
 				}
 			} else {
@@ -235,9 +235,9 @@ public class LimitServiceController {
 			AuditHeader header = limitDetailService.doApprove(auditHeader, false);
 
 			if (header.getErrorMessage() != null && !header.getErrorMessage().isEmpty()) {
-				for (ErrorDetails errorDetail : header.getErrorMessage()) {
-					String errorCode = errorDetail.getErrorCode();
-					String errorMessage = errorDetail.getErrorMessage();
+				for (ErrorDetail errorDetail : header.getErrorMessage()) {
+					String errorCode = errorDetail.getCode();
+					String errorMessage = errorDetail.getMessage();
 					returnStatus = APIErrorHandlerService.getFailedStatus(errorCode, errorMessage);
 				}
 			} else {
@@ -296,7 +296,7 @@ public class LimitServiceController {
 		if (financeDetail.getReturnStatus() != null) {
 			return financeDetail.getReturnStatus();
 		}
-		List<ErrorDetails> errorDetails = null;
+		List<ErrorDetail> errorDetails = null;
 		try {
 			// process limits
 			errorDetails = limitManagement.processLoanLimitOrgination(financeDetail, false, lmtTransType,false);
@@ -306,8 +306,8 @@ public class LimitServiceController {
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		if (errorDetails != null && !errorDetails.isEmpty()) {
-			for (ErrorDetails errorDetail : errorDetails) {
-				String errorCode = errorDetail.getErrorCode();
+			for (ErrorDetail errorDetail : errorDetails) {
+				String errorCode = errorDetail.getCode();
 				String errorMessage = errorDetail.getError();
 				return APIErrorHandlerService.getFailedStatus(errorCode, errorMessage);
 			}

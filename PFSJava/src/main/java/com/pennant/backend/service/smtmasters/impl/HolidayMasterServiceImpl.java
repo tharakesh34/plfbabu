@@ -53,7 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
@@ -317,7 +317,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering ");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		HolidayMaster holidayMaster = (HolidayMaster) auditDetail.getModelData();
 		HolidayMaster tempHolidayMaster = null;
@@ -348,7 +348,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 				// records
 				if (befHolidayMaster != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else {
 				// with work flow
@@ -362,12 +362,12 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 						// already exists
 						// in the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befHolidayMaster == null || tempHolidayMaster != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 
@@ -380,16 +380,16 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 
 				if (befHolidayMaster == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldHolidayMaster != null
 							&& !oldHolidayMaster.getLastMntOn().equals(befHolidayMaster.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									null));
 						}
 					}
@@ -398,12 +398,12 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 			} else {
 				if (tempHolidayMaster == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempHolidayMaster != null && oldHolidayMaster != null
 						&& !oldHolidayMaster.getLastMntOn().equals(tempHolidayMaster.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}

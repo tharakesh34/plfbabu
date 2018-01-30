@@ -70,7 +70,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.model.administration.SecurityUserOperationRoles;
@@ -718,7 +718,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QueueAssignmentDialog, auditHeader);
 						return processCompleted;
@@ -909,7 +909,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_QueueAssignmentDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

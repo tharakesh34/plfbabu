@@ -8,7 +8,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -78,18 +78,18 @@ public class CustomerEMailValidation {
 
 			if (!customerEMail.isWorkflow()){// With out Work flow only new records  
 				if (befCustomerEMail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
 							errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCustomerEMail !=null || tempCustomerEMail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCustomerEMail ==null || tempCustomerEMail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -98,17 +98,17 @@ public class CustomerEMailValidation {
 			if (!customerEMail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befCustomerEMail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldCustomerEMail!=null && !oldCustomerEMail.getLastMntOn().equals(
 							befCustomerEMail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",
 									errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",
 									errParm,null));
 						}
 					}
@@ -116,11 +116,11 @@ public class CustomerEMailValidation {
 			}else{
 
 				if (tempCustomerEMail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempCustomerEMail!=null  && oldCustomerEMail!=null && !oldCustomerEMail.getLastMntOn().equals(tempCustomerEMail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}
@@ -144,10 +144,10 @@ public class CustomerEMailValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(CustomerEMail customerEMail){
+	public ErrorDetail  screenValidations(CustomerEMail customerEMail){
 
 		if(StringUtils.isBlank(customerEMail.getCustEMail())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("EmailDetails"),
 					Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"),
 					Labels.getLabel("listheader_CustEMailTypeCode.label"),

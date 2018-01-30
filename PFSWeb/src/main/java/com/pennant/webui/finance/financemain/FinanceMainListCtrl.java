@@ -77,7 +77,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -467,7 +467,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String[] valueParm = new String[1];
 			valueParm[0] = aFinanceMain.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			logger.debug("Leaving " + event.toString());

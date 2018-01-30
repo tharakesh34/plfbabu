@@ -48,7 +48,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -358,7 +358,7 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_BounceCode") + ": " + bounceReason.getBounceCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 			if (bounceReason.isNew() && bounceReasonDAO.isDuplicateReturnCode(bounceReason.getBounceID(), bounceReason.getReturnCode(),
@@ -367,7 +367,7 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_ReturnCode") + ": " + bounceReason.getReturnCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

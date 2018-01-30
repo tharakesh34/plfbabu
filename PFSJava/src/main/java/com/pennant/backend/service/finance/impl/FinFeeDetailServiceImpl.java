@@ -67,7 +67,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -769,7 +769,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 							valueParm[0] = feeTypeDesc;
 							errParm[0] = valueParm[0];
 							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "65019", errParm, valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "65019", errParm, valueParm), usrLanguage));
 							break;
 						} else if (finFeeDetail.getPaidAmount().compareTo(totalPaidAmount) != 0) {
 							String[] errParm = new String[2];
@@ -778,7 +778,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 							errParm[0] = ":" + valueParm[0];
 							errParm[1] = ":" + valueParm[0];
 							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "65018", errParm, valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "65018", errParm, valueParm), usrLanguage));
 							break;
 						}
 					}
@@ -793,7 +793,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	
 	private AuditDetail validateFinFeeDetail(AuditDetail auditDetail,String usrLanguage,String method, boolean isWIF){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FinFeeDetail finFeeDetail = (FinFeeDetail) auditDetail.getModelData();
 		FinFeeDetail tempFinFinDetail= null;
 		if (finFeeDetail.isWorkflow()){
@@ -811,16 +811,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			if (!finFeeDetail.isWorkflow()){// With out Work flow only new records  
 				if (befFinFeeDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (finFeeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinFeeDetail != null || tempFinFinDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFinFeeDetail ==null || tempFinFinDetail!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -829,24 +829,24 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if (!finFeeDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befFinFeeDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldFinFeeDetail!=null && !oldFinFeeDetail.getLastMntOn().equals(befFinFeeDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempFinFinDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (tempFinFinDetail!=null && oldFinFeeDetail!=null && !oldFinFeeDetail.getLastMntOn().equals(tempFinFinDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}
@@ -862,7 +862,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private AuditDetail validateFinFeeReceipts(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinFeeReceipt finFeeReceipt = (FinFeeReceipt) auditDetail.getModelData();
 		FinFeeReceipt tempFinFeeReceipt = null;
 
@@ -881,19 +881,19 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (finFeeReceipt.isNew()) { // for New record or new record into work flow
 			if (!finFeeReceipt.isWorkflow()) {// With out Work flow only new records
 				if (befFinFeeReceipt != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finFeeReceipt.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinFeeReceipt != null || tempFinFeeReceipt != null) { // if records already exists in the
 																					// main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinFeeReceipt == null || tempFinFeeReceipt != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -902,29 +902,29 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!finFeeReceipt.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinFeeReceipt == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinFeeReceipt != null
 							&& !oldFinFeeReceipt.getLastMntOn().equals(befFinFeeReceipt.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
 			} else {
 				if (tempFinFeeReceipt == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 				if (tempFinFeeReceipt != null && oldFinFeeReceipt != null
 						&& !oldFinFeeReceipt.getLastMntOn().equals(tempFinFeeReceipt.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}

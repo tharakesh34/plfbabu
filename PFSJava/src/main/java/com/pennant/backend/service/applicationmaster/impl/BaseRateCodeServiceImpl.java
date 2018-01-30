@@ -49,7 +49,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateCodeDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BaseRateCodeDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -343,7 +343,7 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BRType") + ": " + baseRateCode.getBRType();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -11,7 +11,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -144,19 +144,19 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 		if (documentDetail.isNew()) { // for New record or new record into work flow
 			if (!documentDetail.isWorkflow()) {// With out Work flow only new
 				if (befCustomerDocument != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (documentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCustomerDocument != null || tempDocumentDetail != null) {
 						//if records already exists in the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerDocument == null || tempDocumentDetail != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -165,7 +165,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			// out work flow)
 			if (!documentDetail.isWorkflow()) { // With out Work flow for update and delete
 				if (befCustomerDocument == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
 				if (befCustomerDocument != null && oldDocumentDetail != null
@@ -173,19 +173,19 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 					} else {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 					}
 				}
 			} else {
 				if (tempDocumentDetail == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempDocumentDetail != null && oldDocumentDetail != null
 						&& !oldDocumentDetail.getLastMntOn().equals(tempDocumentDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -204,13 +204,13 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 	 * Method for validate Finance document details
 	 * 
 	 * @param financeDetail
-	 * @return List<ErrorDetails>
+	 * @return List<ErrorDetail>
 	 */
 	@Override
-	public List<ErrorDetails> validateFinanceDocuments(FinanceDetail financeDetail) {
+	public List<ErrorDetail> validateFinanceDocuments(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		// validate document details
 		List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
 
@@ -220,13 +220,13 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				if (docType == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = detail.getDocCategory();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90401", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
 					return errorDetails;
 				} else {
 					if(docType.isDocIsCustDoc()) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90408", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90408", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -239,7 +239,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 								PennantConstants.XMLDateFormat);
 						valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(detail.getCustDocIssuedOn(),
 								PennantConstants.XMLDateFormat);
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("65030", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -251,26 +251,26 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "docContent";
 							valueParm[1] = "docRefId";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90123", valueParm)));
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
 						}
 					}
 					if (detail.getDocImage() != null || StringUtils.isNotBlank(detail.getDocUri())) {
 						if( StringUtils.isBlank(detail.getDocName())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "docName";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						}
 					}
 					if (StringUtils.isBlank(detail.getDoctype())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "docFormat";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					} else if(!StringUtils.equalsIgnoreCase(detail.getDoctype(), "jpg") 
 							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "png")
 							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "pdf")) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "docFormat, Available formats are jpg,png,PDF";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90122", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
 					}
 
 					//TODO: Need to add password protected field in documentdetails

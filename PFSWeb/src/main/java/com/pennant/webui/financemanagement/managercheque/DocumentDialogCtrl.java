@@ -73,7 +73,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -939,7 +939,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
@@ -1025,7 +1025,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinDocumentDetailDialog,
 					auditHeader);

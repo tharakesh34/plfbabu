@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -51,7 +51,7 @@ public class FinGuarantorDetailValidation {
 
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
 		GuarantorDetail tempGuarantorDetail = null;
 		if (guarantorDetail.isWorkflow()) {
@@ -74,19 +74,19 @@ public class FinGuarantorDetailValidation {
 
 			if (!guarantorDetail.isWorkflow()&&StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 						        usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 						        usrLanguage));
 					}
@@ -105,11 +105,11 @@ public class FinGuarantorDetailValidation {
 					                befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 							        usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 							        usrLanguage));
 						}
@@ -118,7 +118,7 @@ public class FinGuarantorDetailValidation {
 			} else {
 
 				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
@@ -126,7 +126,7 @@ public class FinGuarantorDetailValidation {
 				        && oldGuarantorDetail != null
 				        && !oldGuarantorDetail.getLastMntOn().equals(
 				                tempGuarantorDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -136,7 +136,7 @@ public class FinGuarantorDetailValidation {
 			boolean guarantorExists = getFinanceTaxDetailDAO()
 					.isReferenceExists(guarantorDetail.getFinReference(),guarantorDetail.getGuarantorCIF());
 			if (guarantorExists) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
 			}
 		}
 

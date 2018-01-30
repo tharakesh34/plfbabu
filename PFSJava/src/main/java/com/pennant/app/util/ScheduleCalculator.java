@@ -52,7 +52,7 @@ import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -914,24 +914,24 @@ public class ScheduleCalculator {
 		// TODO: PV: Correct Error Code
 		if (!finMain.isPlanEMIHAlw()) {
 			finScheduleData.setErrorDetail(
-					new ErrorDetails("SCH37", "Loan Does not allow Planned EMI's", new String[] { " " }));
+					new ErrorDetail("SCH37", "Loan Does not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;
 		}
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 			finScheduleData.setErrorDetail(
-					new ErrorDetails("SCH37", "Product Category not allow Planned EMI's", new String[] { " " }));
+					new ErrorDetail("SCH37", "Product Category not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;
 		}
 
 		if (finMain.isStepFinance()) {
 			finScheduleData.setErrorDetail(
-					new ErrorDetails("SCH37", "Step Loans does not allow Planned EMI's", new String[] { " " }));
+					new ErrorDetail("SCH37", "Step Loans does not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;
 		}
 
 		if (finMain.isFinIsAlwMD()) {
-			finScheduleData.setErrorDetail(new ErrorDetails("SCH37",
+			finScheduleData.setErrorDetail(new ErrorDetail("SCH37",
 					"Multi Disbursement Loans does not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;
 		}
@@ -1086,7 +1086,7 @@ public class ScheduleCalculator {
 		// Current Schedule Date is after current business date
 		if (evtFromDate.before(curBussniessDate)) {
 			// Through Error
-			finScheduleData.setErrorDetail(new ErrorDetails("SCH36",
+			finScheduleData.setErrorDetail(new ErrorDetail("SCH36",
 					"REQUETSED DELETED TERMS DATE IS BEFORE CURRENT BUSINESS DATE. DELETION OF TERMS NOT POSSIBLE",
 					new String[] { " " }));
 			logger.warn(
@@ -1108,7 +1108,7 @@ public class ScheduleCalculator {
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					// Through Error
-					finScheduleData.setErrorDetail(new ErrorDetails("SCH34",
+					finScheduleData.setErrorDetail(new ErrorDetail("SCH34",
 							"NO UNPAID SCHEDULE DATES FOUNDS BEFORE REQUESTED DELETE TERMS DATE. DELETION OF TERMS NOT POSSIBLE",
 							new String[] { " " }));
 					logger.warn(
@@ -2219,7 +2219,7 @@ public class ScheduleCalculator {
 
 		if (nextSchdDate.after(lastDateLimit)) {
 			// Through Error
-			finScheduleData.setErrorDetail(new ErrorDetails("SCH30",
+			finScheduleData.setErrorDetail(new ErrorDetail("SCH30",
 					"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
 					new String[] { " " }));
 			return finScheduleData;
@@ -3903,7 +3903,7 @@ public class ScheduleCalculator {
 		if (newSchdDate.after(lastDateLimit)) {
 			// Through Error
 			finScheduleData.setErrorDetail(
-					new ErrorDetails("SCH30", "ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));
+					new ErrorDetail("SCH30", "ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));
 			return finScheduleData;
 		}
 
@@ -5541,7 +5541,7 @@ public class ScheduleCalculator {
 				}
 
 				if (curSchd == null) {
-					finScheduleData.setErrorDetail(new ErrorDetails("SCH38",
+					finScheduleData.setErrorDetail(new ErrorDetail("SCH38",
 							"Insurance Schedule details mismatch with Payment Schedule.", new String[] { " " }));
 					break;
 				}

@@ -66,7 +66,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
@@ -1264,7 +1264,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels
 										.getLabel("InvalidWorkFlowMethod"),
 								null));
@@ -1414,7 +1414,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_AccountTypeDialog,
 					auditHeader);

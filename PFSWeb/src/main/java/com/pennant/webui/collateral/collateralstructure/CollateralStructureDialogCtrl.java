@@ -85,7 +85,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.JavaScriptBuilder;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralStructure;
@@ -1549,7 +1549,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(this.window_CollateralStructureDialog,auditHeader);
 						return processCompleted;
 					}

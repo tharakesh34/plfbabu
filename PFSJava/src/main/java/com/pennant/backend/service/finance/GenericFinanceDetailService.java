@@ -73,7 +73,7 @@ import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -1614,8 +1614,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			newStageAcEntries = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
 					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
 			logger.debug("Leaving");
@@ -1636,8 +1636,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			list.addAll(aeEvent.getReturnDataSet());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
 					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
 		}
@@ -1682,7 +1682,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		 * "Y");
 		 */
 		if (list != null && list.size() > 0) {
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 			for (int i = 0; i < list.size(); i++) {
 				ReturnDataSet set = list.get(i);
 				set.setLinkedTranId(linkedTranId);
@@ -1690,7 +1690,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				set.getPostStatus();
 				if (!("0000".equals(set.getErrorId()) || StringUtils.isEmpty(set.getErrorId()))) {
 					set.setErrorMsg("Stage Accounting is Failed");
-					errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set.getErrorMsg(),
+					errorDetails.add(new ErrorDetail(set.getAccountType(), set.getErrorId(), "E", set.getErrorMsg(),
 							new String[] {}, new String[] {}));
 				}
 			}

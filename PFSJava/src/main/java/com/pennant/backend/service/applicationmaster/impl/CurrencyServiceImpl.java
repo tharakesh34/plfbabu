@@ -50,7 +50,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -350,7 +350,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			parameters[1] = PennantJavaUtil.getLabel("label_CcyNumber") + ": " + currency.getCcyNumber();
 			parameters[2] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ": " + currency.getCcySwiftCode();
 			
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		
 		boolean isEnableWorkFlow ;
@@ -364,10 +364,10 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			
 			if(getCurrencyDAO().getUniqueCurrencyByID(currency,true,false)){
 				parm[0] = PennantJavaUtil.getLabel("label_CcyNumber") + ":"+ currency.getCcyNumber();
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",parm,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",parm,null));
 			}else if(getCurrencyDAO().getUniqueCurrencyByID(currency,false,true)){
 				parm[0] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ":"+ currency.getCcySwiftCode();
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",parm,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",parm,null));
 			}
 			
 		}

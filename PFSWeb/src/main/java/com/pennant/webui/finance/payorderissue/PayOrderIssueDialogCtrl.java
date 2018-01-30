@@ -78,7 +78,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -123,7 +123,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	// ServiceDAOs / Domain Classes
 	private transient PayOrderIssueService				payOrderIssueService;
-	private HashMap<String, ArrayList<ErrorDetails>>	overideMap				= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>>	overideMap				= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	// NEEDED for the ReUse in the SearchWindow
 
@@ -425,11 +425,11 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		disbursementInstCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
 		disbursementInstCtrl.setDocumentDetails(aPayOrderIssueHeader.getDocumentDetails());
-		List<ErrorDetails> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
+		List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
 				aPayOrderIssueHeader.isLoanApproved());
 		valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 		if (valid != null && !valid.isEmpty()) {
-			for (ErrorDetails errorDetails : valid) {
+			for (ErrorDetail errorDetails : valid) {
 				wve.add(new WrongValueException(this.label_AdvancePayments_Title, errorDetails.getError()));
 			}
 
@@ -839,7 +839,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_PayOrderIssueDialog, auditHeader);
 						return processCompleted;
@@ -954,7 +954,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_PayOrderIssueDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1146,11 +1146,11 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		this.payOrderIssueListCtrl = payOrderIssueListCtrl;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

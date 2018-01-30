@@ -63,7 +63,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -84,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * /WEB-INF/pages/ErrorDetail/ErrorDetail/errorDetailDialog.zul file. <br>
  * ************************************************************<br>
  */
-public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
+public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ErrorDetailDialogCtrl.class);
@@ -129,7 +129,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	private boolean 		enqModule=false;
 	
 	// not auto wired vars
-	private ErrorDetails errorDetail; // overhanded per param
+	private ErrorDetail errorDetail; // overhanded per param
 	private transient ErrorDetailListCtrl errorDetailListCtrl; // overhanded per param
 
 	
@@ -179,8 +179,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 			doCheckRights();
 			// READ OVERHANDED params !
 			if (arguments.containsKey("errorDetail")) {
-				this.errorDetail = (ErrorDetails) arguments.get("errorDetail");
-				ErrorDetails befImage =new ErrorDetails();
+				this.errorDetail = (ErrorDetail) arguments.get("errorDetail");
+				ErrorDetail befImage =new ErrorDetail();
 				BeanUtils.copyProperties(this.errorDetail, befImage);
 				this.errorDetail.setBefImage(befImage);
 				
@@ -354,7 +354,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 * @param aErrorDetail
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ErrorDetails aErrorDetail) throws InterruptedException {
+	public void doShowDialog(ErrorDetail aErrorDetail) throws InterruptedException {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -466,13 +466,13 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 * @param aErrorDetail
 	 *            ErrorDetail
 	 */
-	public void doWriteBeanToComponents(ErrorDetails aErrorDetail) {
+	public void doWriteBeanToComponents(ErrorDetail aErrorDetail) {
 		logger.debug("Entering") ;
-		this.errorCode.setValue(aErrorDetail.getErrorCode());
-		this.errorLanguage.setValue(aErrorDetail.getErrorLanguage());
-		fillComboBox(this.errorSeverity, aErrorDetail.getErrorSeverity(), listErrorSeverity,"");
-		this.errorMessage.setValue(aErrorDetail.getErrorMessage());
-		this.errorExtendedMessage.setValue(aErrorDetail.getErrorExtendedMessage());
+		this.errorCode.setValue(aErrorDetail.getCode());
+		this.errorLanguage.setValue(aErrorDetail.getLanguage());
+		fillComboBox(this.errorSeverity, aErrorDetail.getSeverity(), listErrorSeverity,"");
+		this.errorMessage.setValue(aErrorDetail.getMessage());
+		this.errorExtendedMessage.setValue(aErrorDetail.getExtendedMessage());
 	
 		this.recordStatus.setValue(aErrorDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -483,7 +483,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 * 
 	 * @param aErrorDetail
 	 */
-	public void doWriteComponentsToBean(ErrorDetails aErrorDetail) {
+	public void doWriteComponentsToBean(ErrorDetail aErrorDetail) {
 		logger.debug("Entering") ;
 		doSetLOVValidation();
 		
@@ -491,13 +491,13 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 		
 		//Error Code
 		try {
-		    aErrorDetail.setErrorCode(this.errorCode.getValue());
+		    aErrorDetail.setCode(this.errorCode.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Error Language
 		try {
-		    aErrorDetail.setErrorLanguage(this.errorLanguage.getValue());
+		    aErrorDetail.setLanguage(this.errorLanguage.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -508,22 +508,22 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 				strErrorSeverity = this.errorSeverity.getSelectedItem().getValue().toString();
 			}
 			if(strErrorSeverity!= null && !PennantConstants.List_Select.equals(strErrorSeverity)){
-				aErrorDetail.setErrorSeverity(strErrorSeverity);	
+				aErrorDetail.setSeverity(strErrorSeverity);	
 			}else{
-				aErrorDetail.setErrorSeverity(null);
+				aErrorDetail.setSeverity(null);
 			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Error Message
 		try {
-		    aErrorDetail.setErrorMessage(this.errorMessage.getValue());
+		    aErrorDetail.setMessage(this.errorMessage.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Error Extended Message
 		try {
-		    aErrorDetail.setErrorExtendedMessage(this.errorExtendedMessage.getValue());
+		    aErrorDetail.setExtendedMessage(this.errorExtendedMessage.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -626,12 +626,12 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 */
 	private void doDelete() throws Exception {
 		logger.debug("Entering");	
-		final ErrorDetails aErrorDetail = new ErrorDetails();
+		final ErrorDetail aErrorDetail = new ErrorDetail();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aErrorDetail.getErrorCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aErrorDetail.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aErrorDetail.getRecordType())){
 				aErrorDetail.setVersion(aErrorDetail.getVersion()+1);
@@ -683,7 +683,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
-		final ErrorDetails aErrorDetail = new ErrorDetails();
+		final ErrorDetail aErrorDetail = new ErrorDetail();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
 		boolean isNew = false;
 		
@@ -755,7 +755,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 * 
 	 */
 	
-	private boolean doProcess(ErrorDetails aErrorDetail,String tranType) throws Exception{
+	private boolean doProcess(ErrorDetail aErrorDetail,String tranType) throws Exception{
 		logger.debug("Entering");
 		boolean processCompleted=false;
 		aErrorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -815,7 +815,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 		int retValue=PennantConstants.porcessOVERIDE;
 		boolean deleteNotes=false;
 		
-		ErrorDetails aErrorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
+		ErrorDetail aErrorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
 		
 		try {
 			
@@ -844,7 +844,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 						}
 
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ErrorDetailDialog, auditHeader);
 						return processCompleted; 
 					}
@@ -857,7 +857,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 					processCompleted=true;
 
 					if(deleteNotes){
-						deleteNotes(getNotes("ErrorDetails",aErrorDetail.getErrorCode(),aErrorDetail.getVersion()),true);
+						deleteNotes(getNotes("ErrorDetails",aErrorDetail.getCode(),aErrorDetail.getVersion()),true);
 					}
 				}
 				
@@ -888,20 +888,20 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(ErrorDetails aErrorDetail, String tranType){
+	private AuditHeader getAuditHeader(ErrorDetail aErrorDetail, String tranType){
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aErrorDetail.getBefImage(), aErrorDetail);   
-		return new AuditHeader(aErrorDetail.getErrorCode(),null,null,null,auditDetail,aErrorDetail.getUserDetails(),getOverideMap());
+		return new AuditHeader(aErrorDetail.getCode(),null,null,null,auditDetail,aErrorDetail.getUserDetails(),getOverideMap());
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public ErrorDetails getErrorDetail() {
+	public ErrorDetail getErrorDetail() {
 		return this.errorDetail;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetail) {
+	public void setErrorDetail(ErrorDetail errorDetail) {
 		this.errorDetail = errorDetail;
 	}
 
@@ -930,7 +930,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetails> {
 	}
 	@Override
 	protected String getReference() {
-		return String.valueOf(this.errorDetail.getErrorCode());
+		return String.valueOf(this.errorDetail.getCode());
 	}
 
 }

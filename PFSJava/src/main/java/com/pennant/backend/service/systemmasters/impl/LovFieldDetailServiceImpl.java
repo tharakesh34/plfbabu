@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -353,13 +353,13 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 
 			parameters[0] = PennantJavaUtil.getLabel("label_FieldCode")+":"+lovFieldDetail.getFieldCode();
 			parameters[1] = PennantJavaUtil.getLabel("label_FieldCodeValue")+":"+lovFieldDetail.getFieldCodeValue();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
 		}
 		
 		if (lovFieldDetail.isSystemDefault()) {
 			int count = getLovFieldDetailDAO().getSystemDefaultCount(lovFieldDetail.getFieldCode(),lovFieldDetail.getFieldCodeValue());
 			if (count > 0) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41010",
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41010",
 				        new String[]{PennantJavaUtil.getLabel("label_FieldCodeId")+":"+lovFieldDetail.getFieldCodeValue()}, null));
 			}
         }

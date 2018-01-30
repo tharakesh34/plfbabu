@@ -57,7 +57,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -369,10 +369,10 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 			IncomeType incomeType = getIncomeTypeDAO().getIncomeTypeById(customerIncome.getCustIncomeType(),
 					customerIncome.getIncomeExpense(), customerIncome.getCategory(), "_AView");
 			if (incomeType == null) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[2];
 				valueParm[0] = customerIncome.getLovDescCustCIF();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90113", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90113", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
 
@@ -389,17 +389,17 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		// validate Master code with PLF system masters
 		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
 			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 
 		logger.debug("Leaving");

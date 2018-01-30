@@ -64,7 +64,7 @@ import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
@@ -398,7 +398,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		Rule rule = (Rule) auditDetail.getModelData();
 		Rule tempRule = null;
@@ -425,7 +425,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 			if (!rule.isWorkflow()) {// With out Work flow only new records
 				if (befRule != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 				if (rule.getRecordType().equals(
@@ -434,11 +434,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 					if (befRule != null || tempRule != null) { //if records 
 						// already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befRule == null || tempRule != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
 					}
 				}
 			}
@@ -450,13 +450,13 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 				if (befRule == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 					if (oldRule != null && !oldRule.getLastMntOn().equals(befRule.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
 						}
 					}
 				}
@@ -464,11 +464,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 				if (tempRule == null) { // if records not exists in the Work
 					// flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempRule != null && oldRule != null && !oldRule.getLastMntOn().equals(tempRule.getLastMntOn())) {
 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 			}
 		}
@@ -513,7 +513,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				break;
 			}
 			if (count != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
 		

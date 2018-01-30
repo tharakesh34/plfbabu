@@ -56,7 +56,7 @@ import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -495,14 +495,14 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			}
 		}
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		
 		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
 			auditDetailMap.put("TaxDetail", setTaxDetailsData(province, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("TaxDetail"));
 			for (AuditDetail auditDetail : auditDetailMap.get("TaxDetail")) {
 				auditDetail = this.taxDetailService.validation(auditDetail, auditHeader.getUsrLanguage());
-				List<ErrorDetails> details = auditDetail.getErrorDetails();
+				List<ErrorDetail> details = auditDetail.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -678,7 +678,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 			parameters[0] = PennantJavaUtil.getLabel("label_CPCountry") + ":"+ province.getCPCountry();
 			parameters[1] = PennantJavaUtil.getLabel("label_CPProvince") + ":"+ province.getCPProvince();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		
 		// Duplicate State Code
@@ -689,12 +689,12 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_TaxStateCode") + ":"+ province.getTaxStateCode();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 		}
 		if (province.isSystemDefault()) {
 			String dftCPProvince = getProvinceDAO().getSystemDefaultCount(province.getCPProvince());
 			if (StringUtils.isNotEmpty(dftCPProvince)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
 				        new String[]{dftCPProvince,PennantJavaUtil.getLabel("Province")}, null));
 			}
         }
@@ -707,7 +707,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				valueParm[0] = province.getCPProvince();
 				errParm[0] = PennantJavaUtil.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + valueParm[0];
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
 		

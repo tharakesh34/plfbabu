@@ -51,7 +51,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.model.BuilderTable;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dedup.DedupFields;
@@ -358,7 +358,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			if (!dedupFields.isWorkflow()) {// With out Work flow only new records
 				if (befDedupFields != null) { // Record Already Exists in the
 												// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					
 				}
 			} else { // with work flow
@@ -366,16 +366,16 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befDedupFields != null) { // if records already exists
 													// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDedupFields == null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 				if (tempDedupFields != null) { // if records already exists in
 												// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		} else {
@@ -384,7 +384,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			if (!dedupFields.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befDedupFields == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 
 				} else {
 					if (oldDedupFields != null
@@ -393,9 +393,9 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 
 						}
 					}
@@ -404,14 +404,14 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 
 				if (tempDedupFields == null) { // if records not exists in the
 												// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 
 				if (tempDedupFields != null && oldDedupFields != null
 						&& !oldDedupFields.getLastMntOn().equals(
 								tempDedupFields.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 			}

@@ -24,7 +24,7 @@ import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -127,10 +127,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		AuditDetail auditDetail = rateChangeService.doValidations(finServiceInstruction);
 
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 
 				return financeDetail;
@@ -139,12 +139,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -193,22 +193,22 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = addRepaymentService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -256,10 +256,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = postponementService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
@@ -267,12 +267,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_DEFRPY;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -323,10 +323,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = addTermsService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
@@ -334,12 +334,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -398,22 +398,22 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = rmvTermsService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -463,10 +463,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		AuditDetail auditDetail = recalService.doValidations(finServiceInstruction);
 
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 
 				return financeDetail;
@@ -474,12 +474,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -529,22 +529,22 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = changeProfitService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -612,22 +612,22 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
 		}
 		// validate fees
 		financeDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_ADDDBSN);
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -676,22 +676,22 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = changeFrequencyService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return financeDetail;
 			}
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -740,10 +740,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = reScheduleService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 
 				return financeDetail;
@@ -751,12 +751,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
+			for (ErrorDetail errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
 						errorDetails.getError()));
 				return financeDetail;
 			}
@@ -1035,16 +1035,16 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		AuditDetail auditDetail = receiptService.doValidations(finServiceInstruction, moduleDefiner);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				status = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				status = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				return status;
 			}
 		}
 		// validate fees
-		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
-				status = APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(), errorDetails.getError());
+			for (ErrorDetail errorDetails : errors) {
+				status = APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError());
 				return status;
 			}
 		}
@@ -1227,9 +1227,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @param eventCode
 	 * @return
 	 */
-	private List<ErrorDetails> doProcessServiceFees(FinServiceInstruction finSrvcInst, String eventCode) {
+	private List<ErrorDetail> doProcessServiceFees(FinServiceInstruction finSrvcInst, String eventCode) {
 		logger.debug("Entering");
-		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		if(StringUtils.equals(finSrvcInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			if(finSrvcInst.getFinFeeDetails() != null && !finSrvcInst.getFinFeeDetails().isEmpty()) {
 				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);

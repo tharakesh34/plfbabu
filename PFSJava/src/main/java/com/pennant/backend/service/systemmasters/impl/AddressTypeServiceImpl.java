@@ -51,7 +51,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.AddressType;
@@ -358,13 +358,13 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 				&& addressTypeDAO.isDuplicateKey(code, addressType.isWorkflow() ? TableType.BOTH_TAB
 						: TableType.MAIN_TAB)) {
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		
 		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, addressType.getRecordType())){
 			int count =customerAddresDAO.getcustAddressCount(addressType.getAddrTypeCode());
 			if(count>0){
-				auditDetail.setErrorDetail(new ErrorDetails("90290", null));
+				auditDetail.setErrorDetail(new ErrorDetail("90290", null));
 			}
 		}
 

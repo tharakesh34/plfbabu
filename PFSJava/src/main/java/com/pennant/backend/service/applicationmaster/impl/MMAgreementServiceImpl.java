@@ -8,7 +8,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.MMAgreementDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -311,16 +311,16 @@ public class MMAgreementServiceImpl extends GenericService<MMAgreement> implemen
 			if (!aMMAgreement.isWorkflow()) {// With out Work flow only new records
 				if (befMMAgreement != null) { // Record Already Exists in the table 
 										// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,null));
 				}
 			} else { // with work flow
 				// if records type is new
 				if (befMMAgreement != null || tempMMAgreement != null) { // if records already exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, null));
 				} else { // if records not exists in the Main flow table
 					if (befMMAgreement == null || tempMMAgreement != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -330,7 +330,7 @@ public class MMAgreementServiceImpl extends GenericService<MMAgreement> implemen
 			if (!aMMAgreement.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befMMAgreement == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldMMAgreement != null
@@ -338,9 +338,9 @@ public class MMAgreementServiceImpl extends GenericService<MMAgreement> implemen
 									befMMAgreement.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
@@ -348,13 +348,13 @@ public class MMAgreementServiceImpl extends GenericService<MMAgreement> implemen
 			} else {
 
 				if (tempMMAgreement == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempMMAgreement != null && oldMMAgreement != null
 						&& !oldMMAgreement.getLastMntOn().equals(
 								tempMMAgreement.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}

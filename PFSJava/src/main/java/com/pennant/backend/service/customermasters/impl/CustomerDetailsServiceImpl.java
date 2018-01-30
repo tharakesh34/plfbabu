@@ -55,7 +55,7 @@ import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
@@ -1477,7 +1477,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				AuditDetail auditDetail = new AuditDetail();
 				if (StringUtils.equals(customerDedup.getSourceSystem(),
 						PennantConstants.CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT)) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99012", null)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99012", null)));
 					auditDetails.add(auditDetail);
 				}
 			}
@@ -1601,8 +1601,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					validateMasterCode("SourceOfficer", String.valueOf(customerDetails.getPrimaryRelationOfficer())));
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getCode())) {
 					return auditDetail;
 				}
 			}
@@ -1619,8 +1619,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getCode())) {
 					return auditDetail;
 				}
 			}
@@ -1630,14 +1630,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditDetail = validateCustomerDetails(auditDetail, customerDetails);
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getCode())) {
 					return auditDetail;
 				}
 			}
 		}
 		// validate ExtendedFieldDetails
-		List<ErrorDetails> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
+		List<ErrorDetail> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
 				customerDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
 				customerDetails.getCustCtgCode());
 		auditDetail.getErrorDetails().addAll(errorDetails);		
@@ -1672,22 +1672,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					}
 					if (empDetail.getCustEmpTo() != null) {
 						if (empDetail.getCustEmpFrom().compareTo(empDetail.getCustEmpTo()) > 0) {
-							ErrorDetails errorDetail = new ErrorDetails();
+							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
 							valueParm[0] = "employment startDate:" + DateUtility.formatDate(empDetail.getCustEmpFrom(),
 									PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:"
 									+ DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
 						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil
 								.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
-							ErrorDetails errorDetail = new ErrorDetails();
+							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
 							valueParm[0] = "employment endDate:"
 									+ DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90319", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
 					} else {
@@ -1697,20 +1697,20 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							&& empDetail.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1
 							|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE")
 									.compareTo(empDetail.getCustEmpFrom()) >= 0) {
-						ErrorDetails errorDetail = new ErrorDetails();
+						ErrorDetail errorDetail = new ErrorDetail();
 						String[] valueParm = new String[2];
 						valueParm[0] = "employment startDate:"
 								+ DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90319", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
 					if (empDetail.getCustEmpFrom() != null && customerDetails.getCustomer() != null) {
 						if (empDetail.getCustEmpFrom().before(customerDetails.getCustomer().getCustDOB())) {
-							ErrorDetails errorDetail = new ErrorDetails();
+							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[1];
 							valueParm[0] = "employment startDate";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90334", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90334", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1724,7 +1724,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "employment";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 
 		}
@@ -1734,7 +1734,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (custAddress != null) {
 			boolean isAddressPrority = false;
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("AddressType", adress.getCustAddrType()));
 				auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
@@ -1746,7 +1746,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						String[] valueParm = new String[2];
 						valueParm[0] = adress.getCustAddrCountry();
 						valueParm[1] = adress.getCustAddrZIP();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} else {
 						adress.setCustAddrCountry(pincode.getpCCountry());
@@ -1760,7 +1760,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						String[] valueParm = new String[2];
 						valueParm[0] = adress.getCustAddrProvince();
 						valueParm[1] = adress.getCustAddrZIP();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} else {
 						adress.setCustAddrProvince(pincode.getpCProvince());
@@ -1772,7 +1772,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						String[] valueParm = new String[2];
 						valueParm[0] = adress.getCustAddrCity();
 						valueParm[1] = adress.getCustAddrZIP();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 
 					} else {
@@ -1786,14 +1786,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						valueParm[0] = "pinCode";
 						valueParm[1] = "2 digits";
 						valueParm[2] = "7 digits";
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}
 				if (!(adress.getCustAddrPriority() >= 1 && adress.getCustAddrPriority() <= 5)) {
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(adress.getCustAddrPriority());
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90114", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90114", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (adress.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
@@ -1808,7 +1808,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(adress.getCustAddrPriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1819,7 +1819,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "AddressType";
 							valueParm[1] = aAdress.getCustAddrType();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1831,16 +1831,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Address Details";
 				valueParm[1] = "Address";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 		} else {
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[2];
 			valueParm[0] = "Address Details";
 			valueParm[1] = "Address";
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
@@ -1849,7 +1849,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<CustomerPhoneNumber> custPhones = customerDetails.getCustomerPhoneNumList();
 		if (custPhones != null) {
 			boolean isPhonePrority = false;
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerPhoneNumber custPhoneDetail : custPhones) {
 				// Validate Phone number
 				String mobileNumber = custPhoneDetail.getPhoneNumber();
@@ -1860,7 +1860,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						if (!(mobileNumber.matches(regex))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = regex;
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90346", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90346", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1869,7 +1869,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "PhoneNumber lenght";
 							valueParm[1] = "20";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90220", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1880,7 +1880,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if (!(custPhoneDetail.getPhoneTypePriority() >= 1 && custPhoneDetail.getPhoneTypePriority() <= 5)) {
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(custPhoneDetail.getPhoneTypePriority());
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90115", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90115", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (custPhoneDetail.getPhoneTypePriority() == Integer
@@ -1896,7 +1896,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(aPhones.getPhoneTypePriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90287", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1907,7 +1907,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "PhoneType";
 							valueParm[1] = aPhones.getPhoneTypeCode();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1918,16 +1918,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Phone Details";
 				valueParm[1] = "Phone";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 		} else {
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[2];
 			valueParm[0] = "Phone Details";
 			valueParm[1] = "Phone";
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
@@ -1936,13 +1936,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
 		if (custEmails != null) {
 			boolean isEmailPrority = false;
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerEMail custEmail : custEmails) {
 				auditDetail.setErrorDetail(validateMasterCode("EMailType", custEmail.getCustEMailTypeCode()));
 				if (!(custEmail.getCustEMailPriority() >= 1 && custEmail.getCustEMailPriority() <= 5)) {
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(custEmail.getCustEMailPriority());
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90110", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90110", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				boolean validRegex = EmailValidator.getInstance().isValid(custEmail.getCustEMail());
@@ -1950,7 +1950,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if (!validRegex) {
 					String[] valueParm = new String[1];
 					valueParm[0] = custEmail.getCustEMail();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90237", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (custEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
@@ -1965,7 +1965,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(acustEmail.getCustEMailPriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90288", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1976,7 +1976,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "EmailType";
 							valueParm[1] = acustEmail.getCustEMailTypeCode();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -1987,7 +1987,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Email Details";
 				valueParm[1] = "Email";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -2006,10 +2006,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				IncomeType incomeType = incomeTypeDAO.getIncomeTypeById(custIncome.getCustIncomeType(),
 						custIncome.getIncomeExpense(), custIncome.getCategory(), "_AView");
 				if (incomeType == null) {
-					ErrorDetails errorDetail = new ErrorDetails();
+					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[2];
 					valueParm[0] = custIncome.getLovDescCustCIF();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90113", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90113", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -2020,7 +2020,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "customerIncome";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 				return auditDetail;
 			}
 
@@ -2051,7 +2051,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// customer bank info details
 		List<CustomerBankInfo> custBankDetails = customerDetails.getCustomerBankInfoList();
 		if (custBankDetails != null) {
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerBankInfo custBankInfo : custBankDetails) {
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", custBankInfo.getBankName()));
 
@@ -2062,7 +2062,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					String[] valueParm = new String[2];
 					valueParm[0] = "Acctype";
 					valueParm[1] = custBankInfo.getAccountType();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				// validate AccNumber length
@@ -2089,13 +2089,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (CustomerExtLiability customerExtLiability : customerExtLiabilityList) {
 				if (customerExtLiability.getFinDate().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil
 						.getValueAsDate("APP_DFT_START_DATE").compareTo(customerExtLiability.getFinDate()) >= 0) {
-					ErrorDetails errorDetail = new ErrorDetails();
+					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[3];
 					valueParm[0] = "FinDate";
 					valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 							PennantConstants.XMLDateFormat);
 					valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 
@@ -2125,27 +2125,27 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(customer.getCustFName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "firstName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustLName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "lastName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "salutation";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustGenderCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "gender";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustMaritalSts())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "maritalStatus";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 
 			auditDetail.setErrorDetail(validateMasterCode("Salutation", customer.getCustSalutationCode()));
@@ -2157,37 +2157,37 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "firstName";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustLName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "lastName";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustMName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "middleName";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "salutation";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustMotherMaiden())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "motherName";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			/*
 			 * if (StringUtils.isNotBlank(customer.getCustNationality())) {
@@ -2200,19 +2200,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "gender";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (StringUtils.isNotBlank(customer.getCustMaritalSts())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "maritalStatus";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 			if (customer.getNoOfDependents() > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "numofDependents ";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 		}
 		auditDetail.setErrorDetail(validateMasterCode("CustomerType", customer.getCustTypeCode()));
@@ -2224,7 +2224,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String[] valueParm = new String[2];
 			valueParm[0] = customer.getCustTypeCode();
 			valueParm[1] = customer.getCustCtgCode();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90108", "", valueParm), "EN"));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90108", "", valueParm), "EN"));
 		}
 
 		auditDetail.setErrorDetail(validateMasterCode("Sector", customer.getCustSector()));
@@ -2274,10 +2274,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustDSA());
 			if (matcher.matches() == false) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[1];
 				valueParm[0] = "saleAgent";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
@@ -2289,22 +2289,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustStaffID());
 			if (matcher.matches() == false) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[1];
 				valueParm[0] = "staffID";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
 			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
 			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
 
@@ -2321,10 +2321,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetails validateMasterCode(String moduleName, String fieldValue) {
+	private ErrorDetail validateMasterCode(String moduleName, String fieldValue) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
 		if (moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
@@ -2339,7 +2339,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];
 				valueParm[1] = fieldValue;
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
 			}
 		}
 
@@ -2347,10 +2347,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return errorDetail;
 	}
 
-	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
 		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
@@ -2358,7 +2358,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
 			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 
 		logger.debug("Leaving");
@@ -2636,7 +2636,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
 				errorParm[1] = status.getReturnText();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
+						new ErrorDetail(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
 						auditHeader.getUsrLanguage()));
 				auditDetail.setErrorDetails(
 						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
@@ -2649,7 +2649,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		} catch (InterfaceException e) {
 			errorParm[1] = e.getMessage();
 			auditDetail.setErrorDetail(
-					ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "99014", errorParm, null),
 							auditHeader.getUsrLanguage()));
 			auditDetail.setErrorDetails(
 					ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
@@ -2888,7 +2888,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		CustomerDetails customerDetails = (CustomerDetails) auditDetail.getModelData();
 		Customer customer = customerDetails.getCustomer();
@@ -2915,7 +2915,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (!customer.isWorkflow()) {// With out Work flow only new records
 				if (befCustomer != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
@@ -2929,12 +2929,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 																		// in
 						// the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomer == null || tempCustomer != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -2946,17 +2946,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 				if (befCustomer == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
 					if (oldCustomer != null && !oldCustomer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -2965,12 +2965,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 				if (tempCustomer == null) { // if records not exists in the Work
 					// flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempCustomer != null && oldCustomer != null
 						&& !oldCustomer.getLastMntOn().equals(tempCustomer.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
@@ -2978,14 +2978,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (customerDAO.isDuplicateCif(customer.getCustID(), customer.getCustCIF())) {
 			errParm[1] = "";
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 		}
 
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customer.getRecordType())) {
 			boolean financeExistForCustomer = getCustomerDAO().financeExistForCustomer(customer.getId(), "_View");
 			if (financeExistForCustomer) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
 		}
 		
@@ -3001,7 +3001,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 
 				auditDetail
-						.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
+						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 			}
 		}
 		// customer dedup validation
@@ -3009,7 +3009,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (CustomerDedup customerDedup : customerDetails.getCustomerDedupList()) {
 				if (StringUtils.equals(customerDedup.getSourceSystem(),
 						PennantConstants.CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT)) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99012", null)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99012", null)));
 				}
 			}
 		}

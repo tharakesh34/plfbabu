@@ -60,7 +60,7 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -830,7 +830,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		DedupParm dedupParm = (DedupParm) auditDetail.getModelData();
 
 		DedupParm tempDedupParm = null;
@@ -854,7 +854,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			if (!dedupParm.isWorkflow()) {// With out Work flow only new records
 				if (befDedupParm != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 				}
 			} else { // with work flow
 				if (dedupParm.getRecordType().equals(
@@ -862,11 +862,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					// is new
 					if (befDedupParm != null || tempDedupParm != null) { // if records already exists in
 						// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDedupParm == null || tempDedupParm != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -878,7 +878,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 				if (befDedupParm == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
 					if (oldDedupParm != null
 							&& !oldDedupParm.getLastMntOn().equals(
@@ -886,22 +886,22 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
 			} else {
 
 				if (tempDedupParm == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempDedupParm != null && oldDedupParm != null
 						&& !oldDedupParm.getLastMntOn().equals(
 								tempDedupParm.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}

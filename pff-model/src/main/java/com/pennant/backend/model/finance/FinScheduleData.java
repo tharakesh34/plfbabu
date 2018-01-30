@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -100,7 +100,7 @@ public class FinScheduleData {
 
 	@XmlElement(name="repayInstruction")
 	private List<RepayInstruction> repayInstructions = new ArrayList<RepayInstruction>(1);
-	private List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>(1);
+	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>(1);
 	@XmlElement(name="summary")
 	private FinanceSummary financeSummary;
 	private List<FeeRule> feeRules = new ArrayList<FeeRule>(1);
@@ -216,18 +216,18 @@ public class FinScheduleData {
 		this.repayInstructions = repayInstructions;
 	}
 
-	public List<ErrorDetails> getErrorDetails() {
+	public List<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
-	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
+	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetail) {
+	public void setErrorDetail(ErrorDetail errorDetail) {
 
 		if(errorDetail!=null){
 			if (errorDetails == null) {
-				errorDetails = new ArrayList<ErrorDetails>();
+				errorDetails = new ArrayList<ErrorDetail>();
 			}
 			this.errorDetails.add(errorDetail);
 		}
@@ -281,7 +281,7 @@ public class FinScheduleData {
 		this.financeMain = financeMain;
 	}
 
-	public void setErrorDetails(List<ErrorDetails> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 

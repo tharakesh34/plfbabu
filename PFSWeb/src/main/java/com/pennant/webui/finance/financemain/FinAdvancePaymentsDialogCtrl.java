@@ -77,7 +77,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1504,9 +1504,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Leaving");
 	}
 
-	private ArrayList<ErrorDetails> validate(List<FinAdvancePayments> list, FinAdvancePayments advancePayments) {
+	private ArrayList<ErrorDetail> validate(List<FinAdvancePayments> list, FinAdvancePayments advancePayments) {
 
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		if (list != null && !list.isEmpty()) {
 			String validateAcNumber = StringUtils.trimToEmpty(advancePayments.getBeneficiaryAccNo());
 			if (StringUtils.isEmpty(validateAcNumber)) {
@@ -1537,7 +1537,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			listAdvance = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
-		ArrayList<ErrorDetails> erroe = validate(listAdvance, afinAdvancePayments);
+		ArrayList<ErrorDetail> erroe = validate(listAdvance, afinAdvancePayments);
 		if (!erroe.isEmpty()) {
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(erroe, getUserWorkspace().getUserLanguage()));
 			return auditHeader;
@@ -1551,7 +1551,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}

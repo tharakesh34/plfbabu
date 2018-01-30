@@ -45,7 +45,7 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -64,7 +64,7 @@ public interface FinAdvancePaymentsService {
 	void Update(long paymentId, long linkedTranId);
 	int getMaxPaymentSeq(String finReference);
 	int getFinAdvCountByRef(String finReference, String type);
-	List<ErrorDetails> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
+	List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
 			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
 	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 	

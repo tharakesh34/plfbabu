@@ -10557,34 +10557,7 @@
         <property name="reasonCodeDAO" ref="reasonCodeDAO" />
 	    <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
-	<!-- Licence File Upload -->
-	<bean id="licenceFileDAO"
-		class="com.pennant.backend.dao.licencefile.impl.LicenceFileDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	<bean id="licenceFileService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="licenceFileServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean name="licenceFileServiceTarget" class="com.pennant.backend.service.licencefile.impl.LicenceFileServiceImpl">
-		<property name="licenceFileDAO" ref="licenceFileDAO" />
-	</bean>
-	
+		
 	<!-- Finance documents -->
 	<bean id="documentService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

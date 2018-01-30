@@ -67,7 +67,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -937,7 +937,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					if (customerEMail.getCustEMailPriority() == aCustomerEMail.getCustEMailPriority()) {
 						valueParm[1]=this.custEMailPriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_CustEMailPriority") + ":"+valueParm[1];
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;
@@ -954,7 +954,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
@@ -1162,7 +1162,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels
 										.getLabel("InvalidWorkFlowMethod"),
 								null));
@@ -1298,7 +1298,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerEMailDialog,
 					auditHeader);

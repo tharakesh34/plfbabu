@@ -81,7 +81,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -137,7 +137,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private FinanceReference financeReference;
 
@@ -917,7 +917,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	
 	private boolean validateFees(Map<String,String> sourceFeeMap,Map<String,String>  destFeeMap,boolean isFinTypeFeesValidate){
 
-		List<ErrorDetails> feeErrorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
 
 		for (String finEvent : sourceFeeMap.keySet()) {
 			String sourceFeeCodes = sourceFeeMap.get(finEvent);
@@ -937,7 +937,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 					valueParm[1] = missedFees;
 					errParm[1] = PennantJavaUtil.getLabel("FeeTypes") + ":" + valueParm[1];
 					errParm[2] = PennantJavaUtil.getLabel("FinanceType_label");
-					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
+					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
 							(PennantConstants.KEY_FIELD, "WFEE06", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 				}else{
 					String[] errParm = new String[3];
@@ -947,7 +947,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 					errParm[1] = PennantJavaUtil.getLabel("FinanceType_label");
 					valueParm[2] = missedFees;
 					errParm[2] = PennantJavaUtil.getLabel("FeeTypes") + ":" + valueParm[2];
-					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
+					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
 							(PennantConstants.KEY_FIELD, "WFEE07", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
 				}
 			}
@@ -957,8 +957,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			String warningMsg = "";
 			int errorCount = 0;
 			int warningCount = 0;
-			for (ErrorDetails errorDetail : feeErrorDetails) {
-				if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+			for (ErrorDetail errorDetail : feeErrorDetails) {
+				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
 					errorCount++;
 					if(StringUtils.isEmpty(errorMsg)){
 						errorMsg = errorCount+")"+errorDetail.getError();
@@ -1252,7 +1252,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceReferenceDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1332,7 +1332,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinanceReferenceDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1366,11 +1366,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

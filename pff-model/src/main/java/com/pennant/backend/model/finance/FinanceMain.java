@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -575,7 +575,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private long mandateID = 0;
 
 	private BigDecimal refundAmount = BigDecimal.ZERO;
-	private List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 	private Map<String, String> lovDescNextUsersRolesMap = null;
 
 	private List<SecondaryAccount> secondaryAccount = new ArrayList<SecondaryAccount>();
@@ -2245,7 +2245,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	/**
 	 * @return the errorDetails
 	 */
-	public List<ErrorDetails> getErrorDetails() {
+	public List<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
 
@@ -2253,14 +2253,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	 * @param errorDetails
 	 *            the errorDetails to set
 	 */
-	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
+	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetail) {
+	public void setErrorDetail(ErrorDetail errorDetail) {
 
 		if (errorDetails == null) {
-			errorDetails = new ArrayList<ErrorDetails>();
+			errorDetails = new ArrayList<ErrorDetail>();
 		}
 
 		this.errorDetails.add(errorDetail);
@@ -3137,7 +3137,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.validateMain = validateMain;
 	}
 
-	public void setErrorDetails(List<ErrorDetails> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 

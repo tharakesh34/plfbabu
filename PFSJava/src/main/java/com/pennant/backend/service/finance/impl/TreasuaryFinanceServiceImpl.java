@@ -58,7 +58,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.TreasuaryFinHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -616,7 +616,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());	
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());	
 		
 	/*	if(auditDetail.getModelData() instanceof InvestmentFinHeader) {
 			return auditDetail;
@@ -644,16 +644,16 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 			if (!treasuaryFinance.isWorkflow()){// With out Work flow only new records  
 				if (befTreasuaryFinance !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (treasuaryFinance.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befTreasuaryFinance !=null || tempTreasuaryFinance!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befTreasuaryFinance ==null || tempTreasuaryFinance!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -662,24 +662,24 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			if (!treasuaryFinance.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befTreasuaryFinance ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldTreasuaryFinance!=null && !oldTreasuaryFinance.getLastMntOn().equals(befTreasuaryFinance.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempTreasuaryFinance==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				
 				if (oldTreasuaryFinance!=null && !oldTreasuaryFinance.getLastMntOn().equals(tempTreasuaryFinance.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}
@@ -964,11 +964,11 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	 * @return
 	 */
 	@Override
-	public ErrorDetails treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage){
+	public ErrorDetail treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage){
 		logger.debug("Entering");
 
 		if (investmentFinHeader.getMaturityDate().before(investmentFinHeader.getStartDate())) {
-			return	ErrorUtil.getErrorDetail(new ErrorDetails("StartDate","S0015", 
+			return	ErrorUtil.getErrorDetail(new ErrorDetail("StartDate","S0015", 
 					new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
 					Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value")},
 					new String[] {}), usrLanguage);
@@ -988,7 +988,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	 * @return
 	 */
 	@Override
-	public ErrorDetails investmentDealValidations(FinanceDetail aFinanceDetail, InvestmentFinHeader investmentFinHeader , String usrLanguage){
+	public ErrorDetail investmentDealValidations(FinanceDetail aFinanceDetail, InvestmentFinHeader investmentFinHeader , String usrLanguage){
 		logger.debug("Entering");
 
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1039,7 +1039,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		availbleAmount = availbleAmount.add(financeMain.getFinAmount());
 		if(investmentFinHeader.getTotPrincipalAmt() != null && financeMain.getFinAmount() != null){
 			if (availbleAmount.compareTo(investmentFinHeader.getTotPrincipalAmt()) > 0) {
-				return	ErrorUtil.getErrorDetail(new ErrorDetails("FinAmount","30568", 
+				return	ErrorUtil.getErrorDetail(new ErrorDetail("FinAmount","30568", 
 						new String[] {Labels.getLabel("label_InvestmentDealDialog_PrincipalAmt.value"),
 						Labels.getLabel("label_InvestmentDealDialog_TotPrncpl.value")},
 						new String[] {}),usrLanguage);	
@@ -1315,7 +1315,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	 */
 	private AuditDetail dealValidation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -1337,16 +1337,16 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 			if (!financeMain.isWorkflow()){// With out Work flow only new records  
 				if (befFinanceMain !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinanceMain !=null || tempFinanceMain!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFinanceMain ==null || tempFinanceMain!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -1355,24 +1355,24 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			if (!financeMain.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befFinanceMain ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempFinanceMain==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}

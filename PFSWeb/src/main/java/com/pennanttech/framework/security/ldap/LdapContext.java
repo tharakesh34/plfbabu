@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -146,7 +146,7 @@ public class LdapContext {
 		} else {
 			String[] parameters = new String[1];
 			parameters[0] = username;
-			throw  new InterfaceException(LDAP64, ErrorUtil.getErrorDetail(new ErrorDetails("LDAP64", parameters)).getError());
+			throw  new InterfaceException(LDAP64, ErrorUtil.getErrorDetail(new ErrorDetail("LDAP64", parameters)).getError());
 		}
 	}
 	

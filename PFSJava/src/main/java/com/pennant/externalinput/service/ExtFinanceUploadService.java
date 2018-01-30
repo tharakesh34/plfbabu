@@ -44,7 +44,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.RequestDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -178,7 +178,7 @@ public class ExtFinanceUploadService {
 		disbursementDetails.setDisbDate(getFinMain().getFinStartDate());
 		disbursementDetails.setDisbAmount(getFinMain().getFinAmount());
 		finScheduleData.getDisbursementDetails().add(disbursementDetails);
-		finScheduleData.setErrorDetails(new ArrayList<ErrorDetails>());
+		finScheduleData.setErrorDetails(new ArrayList<ErrorDetail>());
 		finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 
 		// Step Policy Details
@@ -258,7 +258,7 @@ public class ExtFinanceUploadService {
 
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 		AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 		getFinanceDetailService().doApprove(auditHeader, false);
 
 		logger.debug("Leaving");
@@ -485,7 +485,7 @@ public class ExtFinanceUploadService {
 		if (extFinData.getFinReference() == null) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Finance Reference", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Finance Reference", "" }), userLangauge).getError());
 			return extFinData;
 		}
 
@@ -493,7 +493,7 @@ public class ExtFinanceUploadService {
 		if (getFinanceDetailService().isFinReferenceExits(extFinData.getFinReference(), "", false)) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("30506", "", new String[] { "Finance Reference", extFinData.getFinReference() }),
+					new ErrorDetail("30506", "", new String[] { "Finance Reference", extFinData.getFinReference() }),
 					userLangauge).getError());
 			return extFinData;
 		}
@@ -512,7 +512,7 @@ public class ExtFinanceUploadService {
 			if (customer == null) {
 				extFinData.setRecordStatus("E");
 				extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-						new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
+						new ErrorDetail("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
 						userLangauge).getError());
 				return extFinData;
 			}
@@ -525,7 +525,7 @@ public class ExtFinanceUploadService {
 			logger.warn("Exception: ", e);
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
+					new ErrorDetail("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
 					userLangauge).getError());
 			return extFinData;
 		}
@@ -808,7 +808,7 @@ public class ExtFinanceUploadService {
 		disbursementDetails.setDisbDate(getFinMain().getFinStartDate());
 		disbursementDetails.setDisbAmount(getFinMain().getFinAmount());
 		finScheduleData.getDisbursementDetails().add(disbursementDetails);
-		finScheduleData.setErrorDetails(new ArrayList<ErrorDetails>());
+		finScheduleData.setErrorDetails(new ArrayList<ErrorDetail>());
 		finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 
 		// Step Policy Details
@@ -891,7 +891,7 @@ public class ExtFinanceUploadService {
 
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 		AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 		getFinanceDetailService().doApprove(auditHeader, false);
 
 		logger.debug("Leaving");
@@ -913,7 +913,7 @@ public class ExtFinanceUploadService {
 		if (extFinData.getFinReference() == null) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Finance Reference", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Finance Reference", "" }), userLangauge).getError());
 			return extFinData;
 		}
 
@@ -922,7 +922,7 @@ public class ExtFinanceUploadService {
 				&& getFinanceDetailService().isFinReferenceExits(extFinData.getFinReference(), "", false)) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("30506", "", new String[] { "Finance Reference", extFinData.getFinReference() }),
+					new ErrorDetail("30506", "", new String[] { "Finance Reference", extFinData.getFinReference() }),
 					userLangauge).getError());
 			return extFinData;
 		}
@@ -942,7 +942,7 @@ public class ExtFinanceUploadService {
 				if (customer == null) {
 					extFinData.setRecordStatus("E");
 					extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-							new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
+							new ErrorDetail("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
 							userLangauge).getError());
 					return extFinData;
 				}
@@ -958,7 +958,7 @@ public class ExtFinanceUploadService {
 			logger.warn("Exception: ", e);
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
+					new ErrorDetail("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
 					userLangauge).getError());
 			return extFinData;
 		}

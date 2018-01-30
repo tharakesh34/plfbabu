@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.FinanceApplicationCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -362,7 +362,7 @@ public class FinanceApplicationCodeServiceImpl extends
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		FinanceApplicationCode financeApplicationCode = (FinanceApplicationCode) auditDetail
 				.getModelData();
@@ -396,7 +396,7 @@ public class FinanceApplicationCodeServiceImpl extends
 					// Exists in the
 					// table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -409,14 +409,14 @@ public class FinanceApplicationCodeServiceImpl extends
 							|| tempFinanceApplicationCode != null) { // if
 						  						// records already exists
 							 					// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceApplicationCode == null
 							|| tempFinanceApplicationCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -432,7 +432,7 @@ public class FinanceApplicationCodeServiceImpl extends
 					// exists in the
 					// main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -443,11 +443,11 @@ public class FinanceApplicationCodeServiceImpl extends
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -460,7 +460,7 @@ public class FinanceApplicationCodeServiceImpl extends
 					// exists in the
 					// Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -470,7 +470,7 @@ public class FinanceApplicationCodeServiceImpl extends
 						&& !oldFinanceApplicationCode.getLastMntOn().equals(
 								tempFinanceApplicationCode.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

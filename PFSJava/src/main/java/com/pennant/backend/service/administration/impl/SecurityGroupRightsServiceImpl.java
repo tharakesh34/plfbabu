@@ -52,7 +52,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -169,7 +169,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 	private AuditDetail  validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		String[] errPrmRecordExisted= new String[4];
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityGroupRights asecGrouprights=(SecurityGroupRights) auditDetail.getModelData();
 		errPrmRecordExisted[0]=asecGrouprights.getLovDescGrpCode();
 		//check if record exist with same GrpID and RightId 
@@ -179,7 +179,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 				asecGrouprights =getSecurityGroupRightsDAO().getGroupRightsByGrpAndRightIds(asecGrouprights.getGrpID()
 						, asecGrouprights.getRightID());
 				if(asecGrouprights!=null){
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
 				}		
 			}
 		}
@@ -188,7 +188,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 				asecGrouprights =getSecurityGroupRightsDAO().getGroupRightsByGrpAndRightIds(asecGrouprights.getGrpID()
 						, asecGrouprights.getRightID());
 				if(asecGrouprights==null){
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errPrmRecordExisted,null));
 				}		
 			}
 		}

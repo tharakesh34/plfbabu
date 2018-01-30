@@ -48,7 +48,7 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -78,7 +78,7 @@ public class ErrorControl {
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 
 				for (int i = 0; i < auditHeader.getErrorMessage().size(); i++) {
-					ErrorDetails errorDetail = auditHeader.getErrorMessage().get(i);
+					ErrorDetail errorDetail = auditHeader.getErrorMessage().get(i);
 					showDetails(errorDetail);
 					this.returnCode = PennantConstants.porcessCANCEL;
 					break;
@@ -87,10 +87,10 @@ public class ErrorControl {
 			} else if (!auditHeader.isOveride() && auditHeader.getOverideMessage() != null
 					&& auditHeader.getOverideMessage().size() > 0) {
 				int selectedBtn = PennantConstants.porcessCONTINUE;
-				HashMap<String, ArrayList<ErrorDetails>> overideMap = auditHeader.getOverideMap();
+				HashMap<String, ArrayList<ErrorDetail>> overideMap = auditHeader.getOverideMap();
 
 				for (int i = 0; i < auditHeader.getOverideMessage().size(); i++) {
-					ErrorDetails overideDetail = auditHeader.getOverideMessage().get(i);
+					ErrorDetail overideDetail = auditHeader.getOverideMessage().get(i);
 
 					if (!isOverride(overideMap, overideDetail)) {
 						selectedBtn = showDetails(overideDetail);
@@ -110,7 +110,7 @@ public class ErrorControl {
 			} else if (auditHeader.getInfoMessage() != null && auditHeader.getInfoMessage().size() > 0) {
 
 				for (int i = 0; i < auditHeader.getInfoMessage().size(); i++) {
-					ErrorDetails infoDetail = auditHeader.getInfoMessage().get(i);
+					ErrorDetail infoDetail = auditHeader.getInfoMessage().get(i);
 					showDetails(infoDetail);
 				}
 			}
@@ -120,10 +120,10 @@ public class ErrorControl {
 		setAuditHeader(auditHeader);
 	}
 
-	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
-		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
+	private int showDetails(ErrorDetail errorDetail) throws InterruptedException {
+		if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 			return MessageUtil.showError(errorDetail, MessageUtil.ABORT);
-		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
+		} else if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
 			return MessageUtil.confirm(errorDetail, MessageUtil.CANCEL | MessageUtil.OVERIDE);
 		} else {
 			return MessageUtil.showMessage(errorDetail);
@@ -134,34 +134,34 @@ public class ErrorControl {
 		return returnCode;
 	}
 
-	private HashMap<String, ArrayList<ErrorDetails>> setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap,
-			ErrorDetails errorDetail) {
+	private HashMap<String, ArrayList<ErrorDetail>> setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap,
+			ErrorDetail errorDetail) {
 
-		if (StringUtils.isNotBlank(errorDetail.getErrorField())) {
+		if (StringUtils.isNotBlank(errorDetail.getField())) {
 
-			ArrayList<ErrorDetails> errorDetails = null;
+			ArrayList<ErrorDetail> errorDetails = null;
 
-			if (overideMap.containsKey(errorDetail.getErrorField())) {
-				errorDetails = overideMap.get(errorDetail.getErrorField());
+			if (overideMap.containsKey(errorDetail.getField())) {
+				errorDetails = overideMap.get(errorDetail.getField());
 
 				for (int i = 0; i < errorDetails.size(); i++) {
-					if (errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())) {
+					if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
 						errorDetails.remove(i);
 						break;
 					}
 				}
 
-				overideMap.remove(errorDetail.getErrorField());
+				overideMap.remove(errorDetail.getField());
 
 			} else {
-				errorDetails = new ArrayList<ErrorDetails>();
+				errorDetails = new ArrayList<ErrorDetail>();
 
 			}
 
-			errorDetail.setErrorOveride(true);
+			errorDetail.setOveride(true);
 			errorDetails.add(errorDetail);
 
-			overideMap.put(errorDetail.getErrorField(), errorDetails);
+			overideMap.put(errorDetail.getField(), errorDetails);
 
 		}
 		return overideMap;
@@ -175,16 +175,16 @@ public class ErrorControl {
 		this.auditHeader = auditHeader;
 	}
 
-	private boolean isOverride(HashMap<String, ArrayList<ErrorDetails>> overideMap, ErrorDetails errorDetail) {
+	private boolean isOverride(HashMap<String, ArrayList<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
 
-		if (overideMap.containsKey(errorDetail.getErrorField())) {
+		if (overideMap.containsKey(errorDetail.getField())) {
 
-			ArrayList<ErrorDetails> errorDetails = overideMap.get(errorDetail.getErrorField());
+			ArrayList<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
 
 			for (int i = 0; i < errorDetails.size(); i++) {
 
-				if (errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())) {
-					return errorDetails.get(i).isErrorOveride();
+				if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
+					return errorDetails.get(i).isOveride();
 				}
 			}
 

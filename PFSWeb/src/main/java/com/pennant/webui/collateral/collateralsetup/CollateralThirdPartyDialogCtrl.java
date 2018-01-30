@@ -23,7 +23,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
@@ -474,7 +474,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CollateralThirdPartyDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -576,7 +576,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 							collateralThirdParty.getCustomerId());
 
 					if (exist) {
-						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("90338", null)));
+						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("90338", null)));
 						return;
 					}
 				}
@@ -755,7 +755,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 
 		// Checks whether custCIF is same as actual custCIF
 		if (StringUtils.trimToNull(primaryCustCif).equals(acollateralThirdParty.getCustCIF())) {
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",
 					errParm, valueParm), getUserWorkspace().getUserLanguage()));
 		}
 
@@ -770,7 +770,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				}
 				if (duplicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;

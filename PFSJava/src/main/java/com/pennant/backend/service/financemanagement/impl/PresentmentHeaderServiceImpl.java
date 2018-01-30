@@ -63,7 +63,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -598,18 +598,18 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private String getErrorMsg(AuditHeader auditHeader) {
 		String msg = "";
 		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
-			for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
 				return msg = msg.concat(errorDetail.getError());
 			}
 		}
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				return msg = msg.concat(errorDetail.getError());
 			}
 		}
 
 		if (auditHeader.getAuditDetail().getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+			for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
 				return msg = msg.concat(errorDetail.getError());
 			}
 		}
@@ -620,7 +620,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, repayData);
 		return new AuditHeader(repayData.getFinReference(), null, null, null, auditDetail,
 				repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {

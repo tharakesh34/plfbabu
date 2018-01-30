@@ -8,7 +8,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.DirectorDetail;
@@ -56,7 +56,7 @@ public class CustomerDirectorValidation {
 		
 	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		DirectorDetail directorDetail= (DirectorDetail) auditDetail.getModelData();
 
 		DirectorDetail tempDirectorDetail= null;
@@ -90,20 +90,20 @@ public class CustomerDirectorValidation {
 			if (!directorDetail.isWorkflow()){// With out Work flow only new records  
 				if (befDirectorDetail !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
 									errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (directorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befDirectorDetail !=null || tempDirectorDetail!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001",
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001",
 										errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befDirectorDetail ==null || tempDirectorDetail!=null ){
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 										errParm,valueParm), usrLanguage));
 					}
 				}
@@ -114,7 +114,7 @@ public class CustomerDirectorValidation {
 
 				if (befDirectorDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
 					if (oldDirectorDetail!=null && !oldDirectorDetail.getLastMntOn().equals(
@@ -122,11 +122,11 @@ public class CustomerDirectorValidation {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", 
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", 
 											errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", 
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", 
 											errParm,valueParm), usrLanguage));
 						}
 					}
@@ -135,14 +135,14 @@ public class CustomerDirectorValidation {
 
 				if (tempDirectorDetail==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 
 				if (tempDirectorDetail != null && oldDirectorDetail!=null && !oldDirectorDetail.getLastMntOn().equals(
 						tempDirectorDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 			}
@@ -166,7 +166,7 @@ public class CustomerDirectorValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(DirectorDetail directorDetail){
+	public ErrorDetail  screenValidations(DirectorDetail directorDetail){
 		
 		String shareHolderName = "";
         if(StringUtils.isNotBlank(directorDetail.getShortName())){
@@ -177,7 +177,7 @@ public class CustomerDirectorValidation {
 		if(StringUtils.isBlank(directorDetail.getShortName()) && 
 				StringUtils.isBlank(directorDetail.getFirstName()) && 
 				StringUtils.isBlank(directorDetail.getLastName())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DirectorDetails"),
 					Labels.getLabel("label_DirectorDetailDialog_ShortName.value"),
 					Labels.getLabel("listheader_ShortName.label"),
@@ -185,7 +185,7 @@ public class CustomerDirectorValidation {
 					new String[] {});	
 		}	
 		if(directorDetail.getSharePerc() == null){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DirectorDetails"),
 					Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),
 					Labels.getLabel("listheader_ShortName.label"),
@@ -194,7 +194,7 @@ public class CustomerDirectorValidation {
 		}
 		
 		if(StringUtils.isBlank(directorDetail.getCustAddrCountry())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DirectorDetails"),
 					Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value"),
 					Labels.getLabel("listheader_ShortName.label"),

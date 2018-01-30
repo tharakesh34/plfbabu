@@ -59,7 +59,7 @@ import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityOperationRoles;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
@@ -179,7 +179,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean online) {
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityUser secUser = (SecurityUser) auditDetail.getModelData();
 
 		SecurityUser tempSecurityUser = null;
@@ -202,7 +202,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 				if (befSecurityUser != null) { // Record Already Exists in the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (secUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
@@ -216,13 +216,13 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 																				// main
 																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSecurityUser == null || tempSecurityUser != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 								usrLanguage));
 					}
 				}
@@ -236,18 +236,18 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 				if (befSecurityUser == null) { // if records not exists in the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldSecurityUser != null
 							&& !oldSecurityUser.getLastMntOn().equals(befSecurityUser.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
 					}
@@ -257,13 +257,13 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 				if (tempSecurityUser == null) { // if records not exists in the
 													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldSecurityUser != null
 						&& !oldSecurityUser.getLastMntOn().equals(tempSecurityUser.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

@@ -59,7 +59,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -784,7 +784,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
 								Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(this.window_InterestRateTypeDialog,auditHeader);
 						return processCompleted;
@@ -849,7 +849,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_InterestRateTypeDialog,auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

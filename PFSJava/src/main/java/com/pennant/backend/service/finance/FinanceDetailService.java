@@ -51,7 +51,7 @@ import java.util.Set;
 
 import org.jaxen.JaxenException;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -133,7 +133,7 @@ public interface FinanceDetailService {
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
 	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
-	List<ErrorDetails> getDiscrepancies(FinanceDetail financeDetail);
+	List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
 	List<FeeRule> getApprovedFeeRules(String finReference,String finEvent,  boolean isWIF);
 	List<CustomerIncome> prepareIncomeDetails();
 	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer ,String finCcy) throws IllegalAccessException, InvocationTargetException;

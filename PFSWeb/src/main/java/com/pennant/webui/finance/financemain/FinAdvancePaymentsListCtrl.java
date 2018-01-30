@@ -64,7 +64,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -360,7 +360,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 						validate=false;
 					}
 					
-					List<ErrorDetails> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
+					List<ErrorDetail> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 
 					valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 
@@ -369,7 +369,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 						if (parentTab != null) {
 							parentTab.setSelected(true);
 						}
-						for (ErrorDetails errorDetails : valid) {
+						for (ErrorDetail errorDetails : valid) {
 							MessageUtil.showError(errorDetails.getError());
 						}
 

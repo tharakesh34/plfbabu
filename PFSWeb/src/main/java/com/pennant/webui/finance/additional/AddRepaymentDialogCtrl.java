@@ -69,7 +69,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.financeservice.AddRepaymentService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -745,7 +745,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					.equals(CalculationConstants.SCH_SPECIFIER_GRACE)) {
 				if (!showMessage(
 						ErrorUtil.getErrorDetail(
-								new ErrorDetails("scheduleMethod", "65002", new String[] {},
+								new ErrorDetail("scheduleMethod", "65002", new String[] {},
 										new String[] { finServiceInstruction.getSchdMethod() }),
 								getUserWorkspace().getUserLanguage()).getError(), Labels.getLabel("message.Overide"))) {
 					return;

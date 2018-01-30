@@ -49,7 +49,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 
 public class FrequencyDetails implements Serializable {
     
@@ -62,7 +62,7 @@ public class FrequencyDetails implements Serializable {
 	private int terms;
 	private String  frequencyDescription;
 	private Date  nextFrequencyDate;
-	private ErrorDetails errorDetails;
+	private ErrorDetail errorDetails;
 	private List<Calendar> scheduleList;
 	
 	public FrequencyDetails(){
@@ -132,10 +132,10 @@ public class FrequencyDetails implements Serializable {
 		this.nextFrequencyDate = nextFrequencyDate;
 	}
 
-	public ErrorDetails getErrorDetails() {
+	public ErrorDetail getErrorDetails() {
 		return errorDetails;
 	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
+	public void setErrorDetails(ErrorDetail errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 

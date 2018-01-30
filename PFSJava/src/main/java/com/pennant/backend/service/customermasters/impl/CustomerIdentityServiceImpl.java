@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerIdentityDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
@@ -321,7 +321,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		CustomerIdentity customerIdentity= (CustomerIdentity)auditDetail.getModelData();
 		CustomerIdentity tempCustomerIdentity= null;
@@ -350,7 +350,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 													// records
 				if (befCustomerIdentity != null) { // Record Already Exists in
 													// the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
@@ -362,14 +362,14 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 																// already
 																// exists in the
 																// main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerIdentity == null
 							|| tempCustomerIdentity != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -384,7 +384,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 				if (befCustomerIdentity == null) { // if records not exists in
 													// the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -394,11 +394,11 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -408,7 +408,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 				if (tempCustomerIdentity == null) { // if records not exists in
 													// the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -417,7 +417,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 						&& !oldCustomerIdentity.getLastMntOn().equals(
 								tempCustomerIdentity.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -98,9 +98,9 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
 
 			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 					response = new VASRecording();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}

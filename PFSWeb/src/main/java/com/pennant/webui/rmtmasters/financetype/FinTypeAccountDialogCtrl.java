@@ -73,7 +73,7 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -123,7 +123,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	
 	// ServiceDAOs / Domain Classes
 	private transient AccountInterfaceService accountInterfaceService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	protected List<ValueLabel> eventList = PennantStaticListUtil.getAccountEventsList();
 	private String userRole="";
@@ -735,7 +735,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 				if (finTypeAccount.getFinCcy().equals(aFinTypeAccount.getFinCcy()) && finTypeAccount.getEvent().equals(aFinTypeAccount.getEvent())) {
 					// Both Current and Existing list rating same
 					if (aFinTypeAccount.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -1079,7 +1079,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinTypeAccountDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1115,11 +1115,11 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		}
 	}
 	
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

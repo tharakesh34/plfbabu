@@ -111,7 +111,7 @@ import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1240,7 +1240,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
 				if (curDisb.getDisbDate().compareTo(actualMaturity) >= 0) {
-					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("30577", null)));
 					Events.sendEvent(Events.ON_CLICK, this.btnChangeRepay, null);
 					logger.debug("Leaving");
 					return;
@@ -2472,7 +2472,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ManualPaymentDialog, auditHeader);
 						return processCompleted;

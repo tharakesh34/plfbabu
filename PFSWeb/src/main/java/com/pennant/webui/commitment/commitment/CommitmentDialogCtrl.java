@@ -115,7 +115,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1583,15 +1583,15 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					 */
 				}
 
-				ErrorDetails errorDetails = null;
+				ErrorDetail errorDetails = null;
 				if (this.cmtAmount.getActualValue().compareTo(this.cmtUtilizedAmount.getValue()) < 0) {
 					BigDecimal percentage = this.cmtUtilizedAmount.getValue().subtract(this.cmtAmount.getActualValue()).multiply(BigDecimal.valueOf(100))
 							.divide(this.cmtAmount.getActualValue(), RoundingMode.HALF_DOWN);
 
 					if (percentage.compareTo(BigDecimal.valueOf(20)) <= 0) {
-						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60101", new String[] { percentage.toString() }, null), "");
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60101", new String[] { percentage.toString() }, null), "");
 					} else {
-						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60102", new String[] { percentage.toString() }, null), "");
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60102", new String[] { percentage.toString() }, null), "");
 					}
 
 					if (errorDetails != null) {
@@ -2914,7 +2914,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 						// ErrorDetails(PennantConstants.ERR_9999,
 						// Labels.getLabel("InvalidWorkFlowMethod"),
 						// null,PennantConstants.ERR_SEV_ERROR));
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null, null));
 
 						retValue = ErrorControl.showErrorControl(this.window_CommitmentDialog, auditHeader);

@@ -96,7 +96,7 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
@@ -1043,7 +1043,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VASRecordingDialog, auditHeader);
 						return processCompleted;
@@ -1099,7 +1099,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 					if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}

@@ -15,7 +15,7 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -70,9 +70,9 @@ public class MandateController {
 		auditHeader = mandateService.doApprove(auditHeader);
 		
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new Mandate();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 			}
 		} else {
@@ -153,8 +153,8 @@ public class MandateController {
 		auditHeader = mandateService.doApprove(auditHeader);
 		
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 			}
 		} else {
 
@@ -198,8 +198,8 @@ public class MandateController {
 		
 		auditHeader = mandateService.doApprove(auditHeader);
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 			}
 		} else {
 
@@ -346,7 +346,7 @@ public class MandateController {
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), String.valueOf(aMandate.getMandateID()), null,
-				null, auditDetail, aMandate.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, aMandate.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public MandateService getMandateService() {

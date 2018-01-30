@@ -21,7 +21,7 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -219,7 +219,7 @@ public class SummaryDetailService {
 									|| DateUtility.compare(financeMain.getGrcPeriodEndDate(), schDetail.getSchDate()) >= 0) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "holidayDate";
-								finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111",
+								finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111",
 										valueParm)));
 								return;
 							}
@@ -235,7 +235,7 @@ public class SummaryDetailService {
 						String[] valueParm = new String[2];
 						valueParm[0] = "Planned EMI Holidays";
 						valueParm[1] = String.valueOf(finScheduleData.getFinanceMain().getPlanEMIHMaxPerYear())+ " per Year";
-						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
+						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 						return;
 					}
 				}
@@ -245,14 +245,14 @@ public class SummaryDetailService {
 						FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "holidayDate";
-			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
+			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			return;
 		}
 		if (!alwEMIHoliday && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 						FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = DateUtility.formatDate(lockPeriodDate, PennantConstants.XMLDateFormat);
-			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
+			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			return;
 		}
 

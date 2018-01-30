@@ -78,7 +78,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -141,7 +141,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 
 	// ServiceDAOs / Domain Classes
 	private transient CheckListService checkListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 	private List<CheckListDetail> chekListDetailsList=new ArrayList<CheckListDetail>();
 	private PagedListWrapper<CheckListDetail> chkListDetailPagedListWrapper;
 	int listRows;
@@ -954,7 +954,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 							deleteNotes=true;
 						}
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CheckListDialog, auditHeader);
 						return processCompleted; 
 					}
@@ -1010,7 +1010,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	private void showMessage(Exception e){
 		AuditHeader auditHeader= new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_CheckListDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1199,10 +1199,10 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		return this.checkListListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

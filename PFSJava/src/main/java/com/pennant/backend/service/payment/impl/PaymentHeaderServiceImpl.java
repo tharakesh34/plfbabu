@@ -61,7 +61,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -525,10 +525,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return auditHeader;
 	}
 	
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 	
@@ -536,7 +536,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (paymentHeader.getAuditDetailMap().get("PaymentDetails") != null) {
 			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.paymentDetailService.validation(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details = this.paymentDetailService.validation(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -547,7 +547,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (paymentHeader.getAuditDetailMap().get("PaymentInstruction") != null) {
 			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}

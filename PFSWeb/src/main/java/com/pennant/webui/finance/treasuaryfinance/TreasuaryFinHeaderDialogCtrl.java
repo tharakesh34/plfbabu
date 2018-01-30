@@ -88,7 +88,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -172,7 +172,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	private transient TreasuaryFinanceService treasuaryFinanceService;
 	private FinanceDetail financeDetail = null; 
 	private List<ValueLabel> listProfitDaysBasis = PennantStaticListUtil.getProfitDaysBasis(); 
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private BigDecimal totalPrincipalAmt = BigDecimal.ZERO;
 	private BigDecimal principalAmt = BigDecimal.ZERO;
@@ -1067,7 +1067,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		financeDetail = new FinanceDetail();
 		doWriteComponentsToBean(getInvestmentFinHeader(), false);
 
-		ErrorDetails errorDetail = null;
+		ErrorDetail errorDetail = null;
 		errorDetail = getTreasuaryFinanceService().treasuryFinHeaderDialogValidations(getInvestmentFinHeader(),  getUserWorkspace().getUserLanguage());
 
 		if (errorDetail != null) {
@@ -1341,7 +1341,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doConfirm)) {
 						auditHeader = getTreasuaryFinanceService().doConfirm(auditHeader);
 					}else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels .getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels .getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl( this.window_TreasuaryFinHeaderDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1447,10 +1447,10 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	}
 
 	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

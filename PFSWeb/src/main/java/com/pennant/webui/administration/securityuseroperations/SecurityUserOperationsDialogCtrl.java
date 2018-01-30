@@ -70,7 +70,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityOperationRoles;
@@ -763,7 +763,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 						}
 
 					} else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.win_SecurityUserOperationsDialog, auditHeader);
 						return processCompleted; 
 					}

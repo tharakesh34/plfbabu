@@ -48,7 +48,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -359,7 +359,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entity.getEntityCode();
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 			}
 
 			// Check the unique keys.
@@ -369,7 +369,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + entity.getPANNumber();
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

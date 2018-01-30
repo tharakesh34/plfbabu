@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.staticparms.ScheduleMethodDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
@@ -339,7 +339,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		ScheduleMethod scheduleMethod = (ScheduleMethod) auditDetail.getModelData();
 		ScheduleMethod tempScheduleMethod = null;
@@ -363,16 +363,16 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 			if (!scheduleMethod.isWorkflow()) {// With out Work flow only new records
 				if (befScheduleMethod != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD,"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (scheduleMethod.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befScheduleMethod != null || tempScheduleMethod != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", errParm, valueParm),usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", errParm, valueParm),usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befScheduleMethod == null || tempScheduleMethod != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm),usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm, valueParm),usrLanguage));
 					}
 				}
 			}
@@ -381,15 +381,15 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 			if (!scheduleMethod.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befScheduleMethod == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldScheduleMethod != null
 							&& !oldScheduleMethod.getLastMntOn().equals(befScheduleMethod.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
 						}
 					}
 				}
@@ -397,13 +397,13 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 
 				if (tempScheduleMethod == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
 			}
 
 				if (tempScheduleMethod != null && oldScheduleMethod != null
 						&& !oldScheduleMethod.getLastMntOn().equals(tempScheduleMethod.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

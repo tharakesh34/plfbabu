@@ -71,4 +71,5 @@
 	<include file="change-logs/change-log-4.7.3-audit.xml" />
 	<include file="change-logs/change-log-4.7.4-audit.xml" />
 	<include file="change-logs/change-log-GST-audit.xml" />
+	<include file="change-logs/refactor/change-log-errordetail-audit.xml" />
 </databaseChangeLog>

@@ -52,7 +52,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerGroup;
@@ -371,7 +371,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 				// records
 				if (befCustomerGroup != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 				if (customerGroup.getRecordType().equals(
@@ -379,11 +379,11 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 					// is new
 					if (befCustomerGroup != null || tempCustomerGroup != null) { // if records already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerGroup == null || tempCustomerGroup != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -395,14 +395,14 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 
 				if (befCustomerGroup == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}else {
 					if (oldCustomerGroup != null
 							&& !oldCustomerGroup.getLastMntOn().equals(befCustomerGroup.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -411,12 +411,12 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 
 				if (tempCustomerGroup == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempCustomerGroup != null && oldCustomerGroup != null && !oldCustomerGroup.getLastMntOn().equals(
 						tempCustomerGroup.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -429,13 +429,13 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(),
 					"_View");
 			if (limitHeader != null) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			} else {
 
 				// Customer
 				boolean isCustExists = getCustomerDAO().customerExistingCustGrp(customerGroup.getCustGrpID(), "_View");
 				if (isCustExists) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 				}
 			}
 

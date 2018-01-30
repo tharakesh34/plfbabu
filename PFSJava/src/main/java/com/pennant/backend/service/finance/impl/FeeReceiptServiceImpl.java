@@ -19,7 +19,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -268,7 +268,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
 				AccountEventConstants.ACCEVENT_FEEPAY);
 		if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65015", null, null)));
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -362,7 +362,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditDetail.getModelData();
 
 		FinReceiptHeader tempReceiptHeader = null;
@@ -382,7 +382,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -390,12 +390,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 					// records type is new
 					if (beFinReceiptHeader != null || tempReceiptHeader != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beFinReceiptHeader == null || tempReceiptHeader != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -408,16 +408,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 				if (beFinReceiptHeader == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldReceiptHeader != null && !oldReceiptHeader.getLastMntOn().equals(beFinReceiptHeader.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -426,13 +426,13 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 				if (tempReceiptHeader == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempReceiptHeader != null && oldReceiptHeader != null
 						&& !oldReceiptHeader.getLastMntOn().equals(tempReceiptHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -443,7 +443,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 				!PennantConstants.RCD_STATUS_REJECTED.equals(receiptHeader.getRecordStatus()) &&
 				!PennantConstants.RCD_STATUS_CANCELLED.equals(receiptHeader.getRecordStatus())) {
 			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose(),receiptHeader.getReceiptID())) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
 			}
 		}
 

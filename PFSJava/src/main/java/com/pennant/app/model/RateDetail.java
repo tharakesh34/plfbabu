@@ -46,7 +46,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 
 public class RateDetail implements Serializable {
 
@@ -62,7 +62,7 @@ public class RateDetail implements Serializable {
 	private BigDecimal margin = BigDecimal.ZERO;
 	private BigDecimal netRefRateDeposit = BigDecimal.ZERO;
 	private BigDecimal netRefRateLoan = BigDecimal.ZERO;
-	private ErrorDetails errorDetails = null;
+	private ErrorDetail errorDetails = null;
 
 	public RateDetail() {
 		super();
@@ -147,10 +147,10 @@ public class RateDetail implements Serializable {
 		this.netRefRateLoan = netRefRateLoan;
 	}
 
-	public ErrorDetails getErrorDetails() {
+	public ErrorDetail getErrorDetails() {
 		return errorDetails;
 	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
+	public void setErrorDetails(ErrorDetail errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 }

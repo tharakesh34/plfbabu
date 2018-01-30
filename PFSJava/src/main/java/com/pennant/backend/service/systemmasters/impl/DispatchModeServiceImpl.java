@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DispatchModeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DispatchMode;
@@ -344,7 +344,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		DispatchMode dispatchMode = (DispatchMode) auditDetail.getModelData();
 		DispatchMode tempDispatchMode = null;
@@ -373,7 +373,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 				if (befDispatchMode != null) { // Record Already Exists in the
 					// table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -384,13 +384,13 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 					if (befDispatchMode != null || tempDispatchMode != null) { // if
 															// records already exists
 															// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDispatchMode == null || tempDispatchMode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -405,7 +405,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 				if (befDispatchMode == null) { // if records not exists in the
 					// main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -415,11 +415,11 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -430,7 +430,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 				if (tempDispatchMode == null) { // if records not exists in the
 					// Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -439,7 +439,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 						&& !oldDispatchMode.getLastMntOn().equals(
 								tempDispatchMode.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

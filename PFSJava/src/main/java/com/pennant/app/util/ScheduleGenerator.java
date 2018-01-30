@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.model.FrequencyDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -915,13 +915,13 @@ public class ScheduleGenerator {
 	 * @return
 	 */
 
-	private static ErrorDetails validateFinanceMain(FinanceMain financeMain,
+	private static ErrorDetail validateFinanceMain(FinanceMain financeMain,
 			List<FinanceDisbursement> financeDisbursements, boolean isOverdraft) {
 		logger.debug("Entering");
 
 		String[] errorParm2 = new String[2];
 
-		ErrorDetails errorDetails = null;
+		ErrorDetail errorDetails = null;
 		if (financeMain == null) {
 			logger.warn("Schedule Error: on condition --->  financeMain == null");
 			return getErrorDetail("Schedule", "", new String[] { " " }, new String[] { " " });
@@ -974,12 +974,12 @@ public class ScheduleGenerator {
 		return errorDetails;
 	}
 
-	private static ErrorDetails validateFrqAndDates(FinanceMain financeMain) {
+	private static ErrorDetail validateFrqAndDates(FinanceMain financeMain) {
 		logger.debug("Entering");
 
 		String[] errorParm2 = new String[2];
 
-		ErrorDetails errorDetails = null;
+		ErrorDetail errorDetails = null;
 		if (financeMain == null) {
 			logger.warn("Schedule Error: on condition --->  financeMain == null");
 			return getErrorDetail("Schedule", "", new String[] { " " }, new String[] { " " });
@@ -1151,11 +1151,11 @@ public class ScheduleGenerator {
 		return errorDetails;
 	}
 
-	private static ErrorDetails getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
-		ErrorDetails errorDetail = ErrorUtil.getErrorDetail(
-				new ErrorDetails(errorField, errorCode, errParm, valueParm), SessionUserDetails.getUserLanguage());
+	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(
+				new ErrorDetail(errorField, errorCode, errParm, valueParm), SessionUserDetails.getUserLanguage());
 
-		logger.warn("Schedule Error: on condition --->  " + errorDetail.getErrorCode() + "-" + errorDetail.getError());
+		logger.warn("Schedule Error: on condition --->  " + errorDetail.getCode() + "-" + errorDetail.getError());
 		return errorDetail;
 	}
 

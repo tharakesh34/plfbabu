@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -144,7 +144,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public AuditDetail doValidations(CustomerBankInfo customerBankInfo) {
 
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
@@ -152,7 +152,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			String[] valueParm = new String[2];
 			valueParm[0] = "BankCode";
 			valueParm[1] = customerBankInfo.getBankName();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}
@@ -162,7 +162,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Acctype";
 			valueParm[1] = customerBankInfo.getAccountType();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
 		

@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.errordetail.errordetail.model.ErrorDetailListModelItemRenderer;
@@ -74,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ************************************************************<br>
  * 
  */
-public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
+public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ErrorDetailListCtrl.class);
@@ -116,7 +116,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "ErrorDetails";
+		super.moduleCode = "ErrorDetail";
 		super.pageRightName = "ErrorDetailList";
 		super.tableName = "ErrorDetails_AView";
 		super.queueTableName = "ErrorDetails_View";
@@ -141,15 +141,14 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 
 		fillComboBox(this.errorSeverity, "", PennantStaticListUtil.getSysParamType(), "");
 
-		registerField("errorCode", listheader_ErrorCode, SortOrder.ASC, errorCode, sortOperator_ErrorCode,
+		registerField("Code", listheader_ErrorCode, SortOrder.ASC, errorCode, sortOperator_ErrorCode, Operators.STRING);
+		registerField("Language", listheader_ErrorLanguage, SortOrder.NONE, errorLanguage, sortOperator_ErrorLanguage,
 				Operators.STRING);
-		registerField("errorLanguage", listheader_ErrorLanguage, SortOrder.NONE, errorLanguage,
-				sortOperator_ErrorLanguage, Operators.STRING);
-		registerField("errorSeverity", listheader_ErrorSeverity, SortOrder.NONE, errorSeverity,
-				sortOperator_ErrorSeverity, Operators.SIMPLE_NUMARIC);
-		registerField("errorMessage", listheader_ErrorMessage, SortOrder.NONE, errorMessage, sortOperator_ErrorMessage,
+		registerField("Severity", listheader_ErrorSeverity, SortOrder.NONE, errorSeverity, sortOperator_ErrorSeverity,
+				Operators.SIMPLE_NUMARIC);
+		registerField("Message", listheader_ErrorMessage, SortOrder.NONE, errorMessage, sortOperator_ErrorMessage,
 				Operators.STRING);
-		registerField("errorExtendedMessage", listheader_ErrorExtendedMessage, SortOrder.NONE, errorExtendedMessage,
+		registerField("ExtendedMessage", listheader_ErrorExtendedMessage, SortOrder.NONE, errorExtendedMessage,
 				sortOperator_ErrorExtendedMessage, Operators.STRING);
 
 		// Render the page and display the data.
@@ -188,7 +187,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 		logger.debug("Entering");
 
 		// Create a new entity.
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		errorDetail.setNewRecord(true);
 		errorDetail.setWorkflowId(getWorkFlowId());
 
@@ -213,7 +212,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
-		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(id);
+		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(id);
 
 		if (errorDetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -242,7 +241,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetails> {
 	 * @param errorDetail
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(ErrorDetails errorDetail) {
+	private void doShowDialogPage(ErrorDetail errorDetail) {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();

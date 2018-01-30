@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -364,7 +364,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + nPABucket.getBucketCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 		if (StringUtils.trimToEmpty(nPABucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -374,7 +374,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 
 				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + nPABucket.getBucketCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
 

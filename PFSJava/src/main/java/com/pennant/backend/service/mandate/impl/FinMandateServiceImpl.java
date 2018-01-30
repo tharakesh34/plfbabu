@@ -61,7 +61,7 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -325,7 +325,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
+						new ErrorDetail(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
 				
 			}
 
@@ -338,7 +338,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value");
 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
 				}
 
 				if (financeMain.isFinRepayPftOnFrq()) {
@@ -350,7 +350,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 						errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayPftFrq.value");
 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
 
 					}
 				}
@@ -366,7 +366,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
 
 				auditDetail.setErrorDetail(ErrorUtil
-						.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
 			}
 
 		}
@@ -400,7 +400,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					errParmMan[1] = valueParmMan[1];
 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
 				}
 				
 				if (mandate.getBankBranchID() != 0) {
@@ -417,7 +417,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 						errParmBranch[0] = valueParmBranch[0];
 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "65016", errParmBranch, valueParmBranch),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "65016", errParmBranch, valueParmBranch),
 								""));
 
 					} else if (StringUtils.equals(mandateType, MandateConstants.TYPE_ECS) && bankBranch.isNach()) {
@@ -428,7 +428,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 						errParmBranch[0] = valueParmBranch[0];
 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "65017", errParmBranch, valueParmBranch),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "65017", errParmBranch, valueParmBranch),
 								""));
 					}
 				}

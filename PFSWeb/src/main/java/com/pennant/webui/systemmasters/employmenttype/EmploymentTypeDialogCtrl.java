@@ -57,7 +57,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.EmploymentType;
@@ -783,7 +783,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 							deleteNotes=true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_EmploymentTypeDialog, auditHeader);
 						logger.debug("Leaving");
@@ -847,7 +847,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_EmploymentTypeDialog,
 					auditHeader);
 		} catch (Exception exp) {

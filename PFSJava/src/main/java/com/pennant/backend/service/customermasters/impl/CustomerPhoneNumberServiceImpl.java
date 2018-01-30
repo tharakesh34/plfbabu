@@ -52,7 +52,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -375,7 +375,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	@Override
 	public AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber,String method) {
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		//Validate Phone number
 		String mobileNumber= customerPhoneNumber.getPhoneNumber();
 		if(StringUtils.equals(method, "Create")){
@@ -387,7 +387,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				String[] valueParm = new String[2];
 				valueParm[0] = "Priority";
 				valueParm[1] = String.valueOf(customerPhoneNumber.getPhoneTypePriority());
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90287", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -395,7 +395,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				String[] valueParm = new String[2];
 				valueParm[0] = "PhoneType";
 				valueParm[1] = customerPhoneNumber.getPhoneTypeCode();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -405,7 +405,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				String[] valueParm = new String[2];
 				valueParm[0] = "Phone Details";
 				valueParm[1] = "Phone";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -423,7 +423,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 								String[] valueParm = new String[2];
 								valueParm[0] = "Phone Details";
 								valueParm[1] = "Phone should not update";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
@@ -433,7 +433,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(customerPhoneNumber.getPhoneTypePriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90287", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;	
 						}
@@ -448,7 +448,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				if (!(mobileNumber.matches(regex))){
 					String[] valueParm = new String[2];
 					valueParm[0] = regex;
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90346", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90346", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;	
 				}
@@ -462,14 +462,14 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 			String[] valueParm = new String[2];
 			valueParm[0] = "PhoneType";
 			valueParm[1] = customerPhoneNumber.getPhoneTypeCode();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}
 		if(!(customerPhoneNumber.getPhoneTypePriority()>=1 && customerPhoneNumber.getPhoneTypePriority()<=5)){
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(customerPhoneNumber.getPhoneTypePriority());
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90115", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90115", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}

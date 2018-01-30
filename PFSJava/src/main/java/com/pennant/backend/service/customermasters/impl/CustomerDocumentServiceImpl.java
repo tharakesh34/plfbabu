@@ -60,7 +60,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -387,7 +387,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		if(customerDocument !=null){
 			if (customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null) {
 				if (customerDocument.getCustDocIssuedOn().compareTo(customerDocument.getCustDocExpDate()) > 0) {
@@ -396,7 +396,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
 							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -407,7 +407,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (docType == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocument.getCustDocCategory();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90401", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -418,21 +418,21 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						String[] valueParm = new String[2];
 						valueParm[0] = "docContent";
 						valueParm[1] = "docRefId";
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90123", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} 
 				}
 				if(StringUtils.isBlank(customerDocument.getCustDocName())){
 					String[] valueParm = new String[2];
 					valueParm[0] = "docName";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
 				if(StringUtils.isBlank(customerDocument.getCustDocType())){
 					String[] valueParm = new String[2];
 					valueParm[0] = "docFormat";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -443,7 +443,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				if (StringUtils.isBlank(customerDocument.getCustDocType())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "docFormat";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -454,7 +454,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (StringUtils.isBlank(customerDocument.getCustDocIssuedCountry())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "CustDocIssuedCountry";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -463,7 +463,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				String[] valueParm = new String[2];
 				valueParm[0] = "custDocIssuedCountry";
 				valueParm[1] = customerDocument.getCustDocIssuedCountry();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
 
@@ -473,7 +473,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocTitle";
 					valueParm[1] = docType.getDocTypeCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
@@ -485,7 +485,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocTitle";
 					valueParm[1] = docType.getDocTypeCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
@@ -499,7 +499,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
 					if(!matcher.matches()){
 						String[] valueParm = new String[0];
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -511,7 +511,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocIssuedAuth";
 					valueParm[1] = docType.getDocTypeCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -522,7 +522,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocIssuedOn";
 					valueParm[1] = docType.getDocTypeCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -533,7 +533,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					String[] valueParm = new String[2];
 					valueParm[0] = "CustDocExpDate";
 					valueParm[1] = docType.getDocTypeCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -544,7 +544,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				String[] valueParm = new String[2];
 				valueParm[0] = "custDocIssuedCountry";
 				valueParm[1] = customerDocument.getCustDocIssuedCountry();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -552,7 +552,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (StringUtils.isBlank(customerDocument.getCustDocName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Document Name";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -565,7 +565,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = customerDocument.getCustDocType();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -577,7 +577,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						String[] valueParm = new String[2];
 						valueParm[0] = "document type: " + customerDocument.getCustDocName();
 						valueParm[1] = customerDocument.getCustDocType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}
@@ -586,7 +586,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Document Name";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 
@@ -595,7 +595,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						&& !docName.endsWith(".pdf")) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -611,7 +611,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					valueParm[0] = "custDocIssuedOn";
 					valueParm[1] = DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 					valueParm[2] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -626,7 +626,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					valueParm[0] = "custDocExpDate";
 					valueParm[1] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
 					valueParm[2] = DateUtility.formatDate(endDate, PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -636,7 +636,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				if (StringUtils.isBlank(customerDocument.getPdfPassWord())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "docPassword";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}

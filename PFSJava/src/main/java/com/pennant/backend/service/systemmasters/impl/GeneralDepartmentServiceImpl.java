@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.GeneralDepartmentDAO;
 import com.pennant.backend.dao.systemmasters.impl.GeneralDepartmentDAOImpl;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
@@ -359,7 +359,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 			
 
 			parameters[0] = PennantJavaUtil.getLabel("label_GenDepartment") + ":"+ generalDepartment.getGenDepartment();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

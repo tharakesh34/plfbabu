@@ -21,7 +21,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ReScheduleService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -165,7 +165,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (DateUtility.compare(recalToDate, lastDateLimit) > 0) {
 				// Through Error
 				finScheduleData
-				.setErrorDetail(new ErrorDetails("SCH30",
+				.setErrorDetail(new ErrorDetail("SCH30",
 						"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
 						new String[] { " " }));
 				return finScheduleData;
@@ -214,7 +214,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (DateUtility.compare(recalToDate, lastDateLimit) > 0) {
 				// Through Error
 				finScheduleData
-				.setErrorDetail(new ErrorDetails("SCH30",
+				.setErrorDetail(new ErrorDetail("SCH30",
 						"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
 						new String[] { " " }));
 				return finScheduleData;
@@ -255,7 +255,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				disbMaturityCrossed = true;
 				String[] valueParm = new String[1];
 				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
-				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30575", "", valueParm), "EN"));
+				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
 				break;
 			}
 			
@@ -596,7 +596,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		if(fromDate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FromDate";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
@@ -604,7 +604,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
 			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 		
@@ -623,14 +623,14 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if(!isValidFromDate) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 				return auditDetail;
 			}
 		}
 		if(finServiceInstruction.getNextRepayDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "NextRepayDate";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 		// validate Next payment date with finStart date and maturity date
@@ -638,7 +638,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			String[] valueParm = new String[2];
 			valueParm[0] = "Next RepayDate";
 			valueParm[1] = "From Date:"+DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm), lang));
 			return auditDetail;
 		}
 
@@ -651,22 +651,22 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91116", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91116", "", valueParm), lang));
 		}
 
 		// validate repay frequency code
-		ErrorDetails errorDetail = FrequencyUtil.validateFrequency(finServiceInstruction.getRepayFrq());
-		if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+		ErrorDetail errorDetail = FrequencyUtil.validateFrequency(finServiceInstruction.getRepayFrq());
+		if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finServiceInstruction.getRepayFrq();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90207", "", valueParm), lang));
 		}
 
 		// terms
 		if (finServiceInstruction.getTerms() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Terms";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 		}
 
 		logger.debug("Leaving");
@@ -688,7 +688,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = label;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
 				return auditDetail;
 			}
 			return null;

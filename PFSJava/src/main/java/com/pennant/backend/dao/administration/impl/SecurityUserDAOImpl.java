@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -236,14 +236,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError ("41003",securityUser.getUsrLogin() , 
+				ErrorDetail errorDetails= getError ("41003",securityUser.getUsrLogin() , 
 						securityUser.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails= getError ("41006",securityUser.getUsrLogin() ,
+			ErrorDetail errorDetails= getError ("41006",securityUser.getUsrLogin() ,
 					securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
@@ -339,7 +339,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
+			ErrorDetail errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -368,18 +368,18 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
+			ErrorDetail errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String userLogin, String userLanguage){
+	private ErrorDetail  getError(String errorId, String userLogin, String userLanguage){
 		String[][] parms= new String[2][1]; 
 		parms[1][0] = userLogin;
 		parms[0][0] = PennantJavaUtil.getLabel("label_UsrLogin")+":" +parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+		return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 	
 	/**
@@ -459,7 +459,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getLanguage());
+			ErrorDetail errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -485,14 +485,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
+				ErrorDetail errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
 						securityUserDivBranch.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUserDivBranch.getUsrID()) ,
+			ErrorDetail errorDetails= getError ("41006",String.valueOf(securityUserDivBranch.getUsrID()) ,
 					securityUserDivBranch.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
@@ -547,14 +547,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
+				ErrorDetail errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
 						securityUser.getUserDetails().getLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUser.getUsrID()) ,
+			ErrorDetail errorDetails= getError ("41006",String.valueOf(securityUser.getUsrID()) ,
 					securityUser.getUserDetails().getLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};

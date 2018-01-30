@@ -68,7 +68,7 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -172,7 +172,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FeePostings feePostings = (FeePostings) auditDetail.getModelData();
 
 		FeePostings tempfeePostings = null;
@@ -192,18 +192,18 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			if (!feePostings.isWorkflow()) {// With out Work flow only new records
 				if (befFeePostings != null) { // Record Already Exists in the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
 					if (befFeePostings != null || tempfeePostings != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFeePostings == null || tempfeePostings != null) {
 						auditDetail.setErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -212,30 +212,30 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			if (!feePostings.isWorkflow()) { // With out Work flow for update and delete
 				if (befFeePostings == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldfeePostings != null
 							&& !oldfeePostings.getLastMntOn().equals(befFeePostings.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempfeePostings == null) { // if records not exists in the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempfeePostings != null && oldfeePostings != null
 						&& !oldfeePostings.getLastMntOn().equals(tempfeePostings.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -416,8 +416,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+			ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
 					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
 		}
@@ -465,16 +465,16 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	@Override
 	public AuditDetail doValidations(FeePostings feePostings) {
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		if(StringUtils.isBlank(feePostings.getCif()) && StringUtils.isBlank(feePostings.getFinReference())
 				&& StringUtils.isBlank(feePostings.getCollateralRef()) && feePostings.getLimitId() <= 0) {
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90292", "", null));
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90292", "", null));
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		} else {
 			boolean isMultiValues = getPostingAgainst(feePostings);
 			if(isMultiValues) {
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90293", "", null));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90293", "", null));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -491,7 +491,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
 						valueParm[1] = "Customer: "+customer.getCustBaseCcy();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(customer.getCustBaseCcy());
 					}
@@ -499,7 +499,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = feePostings.getCif();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90101", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -514,7 +514,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
 						valueParm[1] = "Loan: "+financeMain.getFinCcy();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 						return auditDetail;
 					} else {
 						feePostings.setCurrency(financeMain.getFinCcy());
@@ -523,7 +523,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = feePostings.getFinReference();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90201", "", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90201", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -538,7 +538,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
 						valueParm[1] = "Limit: "+limitHeader.getLimitCcy();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(limitHeader.getLimitCcy());
 					}
@@ -546,7 +546,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(feePostings.getLimitId());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90807", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90807", "", valueParm)));
 				return auditDetail;
 			}
 			break;
@@ -560,7 +560,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
 						valueParm[1] = "Collateral: "+collateralSetup.getCollateralCcy();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(collateralSetup.getCollateralCcy());
 					}
@@ -568,7 +568,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = feePostings.getCollateralRef();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90906", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -590,7 +590,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				valueParm[0] = "Value Date";
 				valueParm[1] = DateUtility.formatToLongDate(minReqPostingDate);
 				valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
 		
@@ -599,7 +599,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			String[] valueParm = new String[2];
 			valueParm[0] = "PartnerBank";
 			valueParm[1] = String.valueOf(feePostings.getPartnerBankId());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90295", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90295", "", valueParm)));
 		} else {
 			feePostings.setPartnerBankAc(partnerBank.getAccountNo());
 			feePostings.setPartnerBankAcType(partnerBank.getAcType());
@@ -611,7 +611,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			String[] valueParm = new String[2];
 			valueParm[0] = "Fee";
 			valueParm[1] = feePostings.getFeeTyeCode();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90295", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90295", "", valueParm)));
 		} else {
 			feePostings.setAccountSetId(String.valueOf(feeType.getAccountSetId()));
 		}

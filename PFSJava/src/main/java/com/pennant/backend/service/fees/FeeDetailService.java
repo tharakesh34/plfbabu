@@ -19,7 +19,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -226,7 +226,7 @@ public class FeeDetailService {
 	}
 	
 	private void validateFeeConfig(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
 			if (!finFeeDetail.isAlwModifyFee() && finFeeDetail.getActualAmount().compareTo(calcAmount) != 0) {
@@ -234,7 +234,7 @@ public class FeeDetailService {
 				valueParm[0] = "Fee amount";
 				valueParm[1] = "Actual fee amount:" + String.valueOf(calcAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return;	
 			}
@@ -243,7 +243,7 @@ public class FeeDetailService {
 				valueParm[0] = "Paid amount";
 				valueParm[1] = "Actual amount:" + String.valueOf(calcAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
@@ -254,7 +254,7 @@ public class FeeDetailService {
 				valueParm[0] = "Waiver amount";
 				valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
@@ -266,7 +266,7 @@ public class FeeDetailService {
 					valueParm[0] = "Sum of waiver and paid amounts";
 					valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
 					valueParm[2] = finFeeDetail.getFeeTypeCode();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90268", valueParm)));
 					finScheduleData.setErrorDetails(errorDetails);
 				}
 			}
@@ -276,7 +276,7 @@ public class FeeDetailService {
 				valueParm[0] = "Sum of waiver and paid amounts";
 				valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 		}

@@ -18,7 +18,7 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -55,7 +55,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class CustomerController {
 	private final Logger						logger				= Logger.getLogger(CustomerController.class);
 
-	HashMap<String, ArrayList<ErrorDetails>>	overideMap;
+	HashMap<String, ArrayList<ErrorDetail>>	overideMap;
 	private CustomerService						customerService;
 	private CustomerDetailsService				customerDetailsService;
 	private CustomerEmploymentDetailService		customerEmploymentDetailService;
@@ -90,9 +90,9 @@ public class CustomerController {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerDetails();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
@@ -133,8 +133,8 @@ public class CustomerController {
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
 		} catch (Exception e) {
@@ -628,7 +628,7 @@ public class CustomerController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
 				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -642,7 +642,7 @@ public class CustomerController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
 				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -725,8 +725,8 @@ public class CustomerController {
 				auditHeader = customerDetailsService.delete(auditHeader);
 
 				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-						response = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+						response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError());
 					}
 				} else {
@@ -929,8 +929,8 @@ public class CustomerController {
 		auditHeader = customerService.doApprove(auditHeader);
 		WSReturnStatus response = new WSReturnStatus();
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 			}
 		} else {
 			response = APIErrorHandlerService.getSuccessStatus();
@@ -1014,9 +1014,9 @@ public class CustomerController {
 
 		
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new EmploymentDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 			}
 		} else {
@@ -1070,8 +1070,8 @@ public class CustomerController {
 
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -1111,8 +1111,8 @@ public class CustomerController {
 			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -1141,7 +1141,7 @@ public class CustomerController {
 	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
 		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null,
-				null, auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public CustomerService getCustomerService() {

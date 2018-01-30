@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -107,8 +107,8 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 		AuditDetail auditDetail = financeFlagsService.doValidations(financeFlag);
 
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 

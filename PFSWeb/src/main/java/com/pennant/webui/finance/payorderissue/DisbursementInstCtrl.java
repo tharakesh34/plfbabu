@@ -66,7 +66,7 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -168,15 +168,15 @@ public class DisbursementInstCtrl {
 	 * @param netFinAmount
 	 * @return
 	 */
-	public List<ErrorDetails> validateOrgFinAdvancePayment(List<FinAdvancePayments> list, boolean validate) {
+	public List<ErrorDetail> validateOrgFinAdvancePayment(List<FinAdvancePayments> list, boolean validate) {
 		logger.debug(" Entering ");
 
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		if (list == null || list.isEmpty()) {
 			if (!validate) {
 				return errorList;
 			}
-			ErrorDetails error = new ErrorDetails("60403", null);
+			ErrorDetail error = new ErrorDetail("60403", null);
 			errorList.add(error);
 			return errorList;
 		}
@@ -188,9 +188,9 @@ public class DisbursementInstCtrl {
 
 	}
 
-	public List<ErrorDetails> validateFinAdvancePayment(List<FinAdvancePayments> list, boolean loanApproved) {
+	public List<ErrorDetail> validateFinAdvancePayment(List<FinAdvancePayments> list, boolean loanApproved) {
 		logger.debug(" Entering ");
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		errorList.addAll(validate(list, loanApproved));
 		return errorList;
 
@@ -492,7 +492,7 @@ public class DisbursementInstCtrl {
 		return true;
 	}
 
-	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
+	private List<ErrorDetail> validate(List<FinAdvancePayments> list, boolean loanApproved) {
 		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursements, financeMain, loanApproved);
 	}
 

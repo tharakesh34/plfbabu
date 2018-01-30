@@ -61,7 +61,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -809,7 +809,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RatingCodeDialog, auditHeader);
 						return processCompleted;
@@ -894,7 +894,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			System.out.println(e);
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_RatingCodeDialog,  auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

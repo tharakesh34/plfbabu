@@ -17,7 +17,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
@@ -87,7 +87,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-		List<ErrorDetails> errors = new ArrayList<>();
+		List<ErrorDetail> errors = new ArrayList<>();
 		boolean taskExecuted = true;
 		boolean executed = getServiceTaskStatus(serviceTask, afinanceMain.getFinReference());
 		if(executed) {
@@ -248,8 +248,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		// checking for whether service task executed successfully or not
 		if (auditHeader.getErrorMessage() != null && !auditHeader.getErrorMessage().isEmpty()) {
 			serviceTaskDetail.setStatus("Failed");
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				serviceTaskDetail.setRemarks(errorDetail.getErrorCode()+":"+errorDetail.getErrorMessage());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				serviceTaskDetail.setRemarks(errorDetail.getCode()+":"+errorDetail.getMessage());
 			}
 		}
 		serviceTaskDetail.setStatus("Success");
@@ -384,9 +384,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 * @param afinanceDetail
 	 * @return
 	 */
-	private List<ErrorDetails> sendDDARequest(FinanceDetail afinanceDetail) {
+	private List<ErrorDetail> sendDDARequest(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetails> errors = new ArrayList<>();
+		List<ErrorDetail> errors = new ArrayList<>();
 		String finRepayMethod = afinanceDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
 		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_AUTODDA)) {
 			try {
@@ -397,7 +397,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					getDdaControllerService().doDDARequestProcess(afinanceDetail, ahaDpEnable);
 				}
 			} catch (InterfaceException e) {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails(e.getErrorCode(), e.getErrorMessage(), null)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail(e.getErrorCode(), e.getErrorMessage(), null)));
 			}
 		}
 
@@ -433,16 +433,16 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 * @param afinanceDetail
 	 * @return
 	 */
-	private List<ErrorDetails> doFundsAvailConfirmed(FinanceDetail afinanceDetail) {
+	private List<ErrorDetail> doFundsAvailConfirmed(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetails> errors = new ArrayList<>();
+		List<ErrorDetail> errors = new ArrayList<>();
 		String nextRoleCode = StringUtils.trimToEmpty(afinanceDetail.getFinScheduleData().getFinanceMain()
 				.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
 
 		if (nextRoleCodes.length > 1) {
 			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("9999", Labels.getLabel("message.Conformation_Check"), null)));
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("message.Conformation_Check"), null)));
 		} else {
 			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
 		}
@@ -457,9 +457,9 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 * @param afinanceDetail
 	 * @return
 	 */
-	private List<ErrorDetails> checkDDAResponse(FinanceDetail afinanceDetail) {
+	private List<ErrorDetail> checkDDAResponse(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetails> errors = new ArrayList<>();
+		List<ErrorDetail> errors = new ArrayList<>();
 		FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
 			try {
@@ -475,7 +475,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					//processCompleted = true;//FIXME:change the condition
 				}
 			} catch (InterfaceException pfe) {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails(pfe.getErrorCode(), pfe.getErrorMessage(), null)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail(pfe.getErrorCode(), pfe.getErrorMessage(), null)));
 			}
 		}
 
@@ -525,18 +525,18 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private List<ErrorDetails> doCollateralMark(List<FinCollaterals> list) {
+	private List<ErrorDetail> doCollateralMark(List<FinCollaterals> list) {
 		logger.debug(Literal.ENTERING);
 
-		List<ErrorDetails> errors = new ArrayList<>();
+		List<ErrorDetail> errors = new ArrayList<>();
 		if (list != null && !list.isEmpty()) {
 			CollateralMark collateralMarkRply = getCollateralMarkProcess().markCollateral(list);
 			if (collateralMarkRply != null) {
 				if (!StringUtils.equals(collateralMarkRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("9999", collateralMarkRply.getReturnText(), null)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", collateralMarkRply.getReturnText(), null)));
 				}
 			} else {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("9999", Labels.getLabel("COLLATERAL_MARK_FAILED"), null)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("COLLATERAL_MARK_FAILED"), null)));
 			}
 		}
 		logger.debug(Literal.LEAVING);

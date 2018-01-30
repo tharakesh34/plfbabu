@@ -10,7 +10,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.webui.util.GFCBaseCtrl;
 
@@ -56,10 +56,10 @@ public class AuditErrorDetailsListCtrl extends GFCBaseCtrl<AuditHeader> {
 		this.listBoxErrorDetails.getItems().clear();
 		if (auditHeader != null) {
 
-			for (ErrorDetails errorDetails : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetails : auditHeader.getErrorMessage()) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(errorDetails.getErrorCode());
+				lc = new Listcell(errorDetails.getCode());
 				lc.setParent(item);
 				lc = new Listcell(errorDetails.getError());
 				lc.setParent(item);

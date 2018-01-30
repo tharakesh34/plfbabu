@@ -56,7 +56,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.reports.ReportFilterFieldsDAO;
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -370,7 +370,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 
 			if (!reportConfiguration.isWorkflow()) {// With out Work flow only new records
 				if (befReportConfiguration != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,null));
 				}
 			} else { // with work flow
 				if (reportConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -378,12 +378,12 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 																								// exists in the main
 																								// table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befReportConfiguration == null || tempReportConfiguration != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -393,7 +393,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			if (!reportConfiguration.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befReportConfiguration == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldReportConfiguration != null
@@ -401,9 +401,9 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 									befReportConfiguration.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
@@ -411,13 +411,13 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			} else {
 
 				if (tempReportConfiguration == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempReportConfiguration != null && oldReportConfiguration != null
 						&& !oldReportConfiguration.getLastMntOn().equals(
 								tempReportConfiguration.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}

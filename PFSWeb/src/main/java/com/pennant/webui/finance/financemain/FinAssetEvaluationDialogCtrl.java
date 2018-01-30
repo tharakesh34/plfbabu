@@ -70,7 +70,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
@@ -148,7 +148,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	
 	// ServiceDAOs / Domain Classes
 	private transient FinAssetEvaluationService finAssetEvaluationService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
@@ -1406,7 +1406,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_FinAssetEvaluationDialog, auditHeader);
@@ -1470,7 +1470,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinAssetEvaluationDialog, auditHeader);
 		} catch (Exception exp) {
@@ -1557,10 +1557,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	}
 
 	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 	public boolean isNewFinance() {

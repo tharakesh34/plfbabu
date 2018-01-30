@@ -50,7 +50,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
@@ -62,7 +62,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>ErrorDetail</b>.<br>
  * 
  */
-public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> implements ErrorDetailService {
+public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implements ErrorDetailService {
 	private AuditHeaderDAO auditHeaderDAO;	
 	private ErrorDetailDAO errorDetailDAO;
 	
@@ -143,7 +143,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 			return auditHeader;
 		}
 		String tableType="";
-		ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
+		ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
 		
 		if (errorDetail.isWorkflow()) {
 			tableType="_Temp";
@@ -184,7 +184,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 			return auditHeader;
 		}
 		
-		ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
+		ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
 		getErrorDetailDAO().delete(errorDetail,"");
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -204,7 +204,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 	 */
 	
 	@Override
-	public ErrorDetails getErrorDetailById(String id) {
+	public ErrorDetail getErrorDetailById(String id) {
 		return getErrorDetailDAO().getErrorDetailById(id,"_View");
 	}
 	/**
@@ -214,7 +214,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 	 * @return ErrorDetail
 	 */
 	
-	public ErrorDetails getApprovedErrorDetailById(String id) {
+	public ErrorDetail getApprovedErrorDetailById(String id) {
 		return getCachedEntity(id);
 	}
 
@@ -241,8 +241,8 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 			return auditHeader;
 		}
 
-		ErrorDetails errorDetail = new ErrorDetails();
-		BeanUtils.copyProperties((ErrorDetails) auditHeader.getAuditDetail().getModelData(), errorDetail);
+		ErrorDetail errorDetail = new ErrorDetail();
+		BeanUtils.copyProperties((ErrorDetail) auditHeader.getAuditDetail().getModelData(), errorDetail);
 
 		if (errorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -300,7 +300,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 				return auditHeader;
 			}
 
-			ErrorDetails errorDetail = (ErrorDetails) auditHeader.getAuditDetail().getModelData();
+			ErrorDetail errorDetail = (ErrorDetail) auditHeader.getAuditDetail().getModelData();
 			
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getErrorDetailDAO().delete(errorDetail,"_Temp");
@@ -348,16 +348,16 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
 			log.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-			ErrorDetails errorDetail= (ErrorDetails) auditDetail.getModelData();
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
+			ErrorDetail errorDetail= (ErrorDetail) auditDetail.getModelData();
 			
-			ErrorDetails tempErrorDetail= null;
+			ErrorDetail tempErrorDetail= null;
 			if (errorDetail.isWorkflow()){
 				tempErrorDetail = getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "_Temp");
 			}
-			ErrorDetails befErrorDetail= getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "");
+			ErrorDetail befErrorDetail= getErrorDetailDAO().getErrorDetailById(errorDetail.getId(), "");
 			
-			ErrorDetails oldErrorDetail= errorDetail.getBefImage();
+			ErrorDetail oldErrorDetail= errorDetail.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -369,16 +369,16 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 				
 				if (!errorDetail.isWorkflow()){// With out Work flow only new records  
 					if (befErrorDetail !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (errorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befErrorDetail !=null || tempErrorDetail!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befErrorDetail ==null || tempErrorDetail!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -387,24 +387,24 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 				if (!errorDetail.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befErrorDetail ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldErrorDetail!=null && !oldErrorDetail.getLastMntOn().equals(befErrorDetail.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempErrorDetail==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempErrorDetail!=null  && oldErrorDetail!=null && !oldErrorDetail.getLastMntOn().equals(tempErrorDetail.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -419,12 +419,12 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetails> impleme
 		}
 	
 	@Override
-	public ErrorDetails getErrorDetail(String errorCode) {
+	public ErrorDetail getErrorDetail(String errorCode) {
 		return getCachedEntity(errorCode);
 	}
 	
 	@Override
-	protected ErrorDetails getEntity(String code) {
+	protected ErrorDetail getEntity(String code) {
 		return errorDetailDAO.getErrorDetailById(code,"_AView");
 	}
 }

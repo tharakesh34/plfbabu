@@ -57,7 +57,7 @@ import com.pennant.backend.dao.finance.FinCollateralsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -386,7 +386,7 @@ public class BankDetailServiceImpl extends
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		if (!bankDetail.isActive()) {
 			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
@@ -400,7 +400,7 @@ public class BankDetailServiceImpl extends
 				String[] parameters = new String[1];
 				parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41017", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41017", parameters, null));
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -52,7 +52,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.NotesService;
@@ -188,7 +188,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	protected West										menuWest;
 	protected Groupbox									groupboxMenu;
-	private HashMap<String, ArrayList<ErrorDetails>>	overideMap		= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>>	overideMap		= new HashMap<String, ArrayList<ErrorDetail>>();
 	private String										reaOnlyStyle	= "#F2F2F2";
 	private String										generalStyle	= "#FFFFFF";
 
@@ -563,11 +563,11 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

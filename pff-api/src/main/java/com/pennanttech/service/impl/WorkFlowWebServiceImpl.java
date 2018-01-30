@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -43,10 +43,10 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		workFlowDetails.setWorkflowId(0);
 		workFlowDetails.setLastMntBy(userDetails.getUserId());
 		workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create); // validating object
-			for(ErrorDetails errDetail : errorDetails) {// returning in case of exception
+			List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create); // validating object
+			for(ErrorDetail errDetail : errorDetails) {// returning in case of exception
 				WSReturnStatus status = new WSReturnStatus();
-				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnCode(errDetail.getCode());
 				status.setReturnText(errDetail.getError());
 				response.setReturnStatus(status);
 				return response;
@@ -59,7 +59,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
 			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
 			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
-					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
 			workFlowDetails = (WorkFlowDetails) auditHeader.getAuditDetail().getModelData();
@@ -82,11 +82,11 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			workFlowDetails.setLastMntBy(userDetails.getUserId());
 			workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			workFlowDetails.setWorkFlowId(workFlowDetails.getWorkFlowDesignId());
-			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Update);
+			List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Update);
 
-			for(ErrorDetails errDetail : errorDetails) {
+			for(ErrorDetail errDetail : errorDetails) {
 				WSReturnStatus status = new WSReturnStatus();
-				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnCode(errDetail.getCode());
 				status.setReturnText(errDetail.getError());
 				response.setReturnStatus(status);
 				return response;
@@ -100,7 +100,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			workFlowDetails.setVersion(workFlowDetailsService.getWorkFlowDetailsVersionByID(workFlowDetails.getWorkflowId()));
 			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
 			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
-					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
 			doEmptyResponseObject(response);
 			response.setWorkFlowDesignId(((WorkFlowDetails) auditHeader.getAuditDetail().getModelData()).getId());
@@ -119,10 +119,10 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
 			if(StringUtils.isNotBlank(workFlowId))
 			workFlowDetails.setWorkflowId(Long.valueOf(workFlowId));
-			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Get);
-			for(ErrorDetails errDetail : errorDetails) {
+			List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Get);
+			for(ErrorDetail errDetail : errorDetails) {
 				WSReturnStatus status = new WSReturnStatus();
-				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnCode(errDetail.getCode());
 				status.setReturnText(errDetail.getError());
 				workFlowDetails.setReturnStatus(status);
 				return workFlowDetails;

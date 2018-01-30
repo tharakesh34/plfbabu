@@ -62,7 +62,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -111,7 +111,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	// ServiceDAOs / Domain Classes
 	private transient QuestionService questionService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private List<ValueLabel> listCorrectAnswer = null;
 
@@ -851,7 +851,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(this.window_QuestionDialog, auditHeader);
 						return processCompleted;
@@ -938,7 +938,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_QuestionDialog,
 					auditHeader);
@@ -1013,10 +1013,10 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		this.pagedListService = pagedListService;
 	}
 	
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

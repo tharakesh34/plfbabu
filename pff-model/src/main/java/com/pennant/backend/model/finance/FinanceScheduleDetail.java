@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -156,7 +156,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	private LoggedInUser userDetails;
 	private boolean repayComplete = false;
-	private ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+	private ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 	
 	//GST
 	private BigDecimal feeTax = BigDecimal.ZERO;
@@ -576,11 +576,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public ArrayList<ErrorDetails> getErrorDetails() {
+	public ArrayList<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
 
-	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
+	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 

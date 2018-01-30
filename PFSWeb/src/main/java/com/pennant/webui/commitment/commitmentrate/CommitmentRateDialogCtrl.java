@@ -70,7 +70,7 @@ import com.pennant.RateBox;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1007,7 +1007,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 				if (aCommitmentRate.getCmtRvwFrq().equals(commitmentRate.getCmtRvwFrq())) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 

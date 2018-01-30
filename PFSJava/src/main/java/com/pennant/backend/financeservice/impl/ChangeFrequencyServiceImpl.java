@@ -18,7 +18,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -169,7 +169,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				disbMaturityCrossed = true;
 				String[] valueParm = new String[1];
 				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
-				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30575", "", valueParm), "EN"));
+				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
 				break;
 			}
 			
@@ -335,11 +335,11 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		// validate newFrq
 		if (StringUtils.isNotBlank(newRepayFrq)) {
-			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(newRepayFrq);
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(newRepayFrq);
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = frqday;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91123", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm), lang));
 			}
 		}
 
@@ -348,7 +348,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		if(fromDate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FromDate";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 
@@ -357,7 +357,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
 			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 		
@@ -367,7 +367,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			valueParm[0] = "From date";
 			valueParm[1] = "finance start date:"+DateUtility.formatToShortDate(financeMain.getFinStartDate());
 			valueParm[2] = "maturity date:"+DateUtility.formatToShortDate(financeMain.getMaturityDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
 
@@ -386,7 +386,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			if(!isValidFromDate) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}
 		logger.debug("Leaving");
@@ -408,7 +408,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
 			String[] valueParm = new String[1];
 			valueParm[0] = label;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
 			return auditDetail;
 		}
 		return null;

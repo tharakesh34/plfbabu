@@ -65,7 +65,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -897,7 +897,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels
 										.getLabel("InvalidWorkFlowMethod"),
 								null));

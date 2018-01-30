@@ -78,7 +78,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -624,7 +624,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ChequeDetailDialog, auditHeader);
 						return processCompleted;
@@ -1371,7 +1371,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<ChequeDetail> oldList = chequeHeader.getChequeDetailList();
 
 		if (listbox.getItems().isEmpty()) {
-			wve.add(new WrongValueException(listbox, Labels.getLabel("ChequeDetailDialog_Generate_Mand")));
+			wve.add(new WrongValueException(noOfCheques, Labels.getLabel("ChequeDetailDialog_Generate_Mand")));
 		}
 		for (Listitem listitem : listbox.getItems()) {
 			List<Listcell> list = listitem.getChildren();

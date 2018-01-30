@@ -42,7 +42,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -419,7 +419,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditDetail.getModelData();
 
 		FinReceiptHeader tempReceiptHeader = null;
@@ -441,7 +441,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -449,12 +449,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					// records type is new
 					if (beFinReceiptHeader != null || tempReceiptHeader != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beFinReceiptHeader == null || tempReceiptHeader != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -467,17 +467,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				if (beFinReceiptHeader == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldReceiptHeader != null
 							&& !oldReceiptHeader.getLastMntOn().equals(beFinReceiptHeader.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -486,13 +486,13 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				if (tempReceiptHeader == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempReceiptHeader != null && oldReceiptHeader != null
 						&& !oldReceiptHeader.getLastMntOn().equals(tempReceiptHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -503,11 +503,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			String finReference = receiptHeader.getReference();
 			boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
 			if (!rcdAvailable) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", null),usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null),usrLanguage));
 			}
 			boolean rcdAssigned = getFinFeeReceiptDAO().isFinFeeReceiptAllocated(receiptHeader.getReceiptID(), "_View");
 			if (rcdAssigned) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60210", null),usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60210", null),usrLanguage));
 			}
 		}
 
@@ -643,10 +643,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		String finReference = receiptHeader.getReference();
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 		if (!financeMain.isFinIsActive()) {
-			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60204", "", null),
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60204", "", null),
 					PennantConstants.default_Language);
 			// Not Allowed for Inactive Finances
-			return errorDetail.getErrorMessage();
+			return errorDetail.getMessage();
 		}
 
 		boolean isRcdFound = false;
@@ -678,9 +678,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference,
 							receiptDetail.getLogKey());
 					if (list != null && !list.isEmpty()) {
-						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null),
+						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60206", "", null),
 								PennantConstants.default_Language);
-						return errorDetail.getErrorMessage();
+						return errorDetail.getMessage();
 					}
 				}
 
@@ -705,9 +705,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 						// Update Reserve Amount in FinExcessAmount
 						if (excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0) {
-							ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60205", "", null),
+							ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
 									PennantConstants.default_Language);
-							return errorDetail.getErrorMessage();
+							return errorDetail.getMessage();
 						}
 						
 						// Posting Reversal Case Program Calling in Equation
@@ -754,9 +754,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				if(receiptDetail.getLogKey() != 0 && receiptDetail.getLogKey() != Long.MIN_VALUE){
 					FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(receiptDetail.getLogKey());
 					if (detail == null) {
-						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null),
+						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60207", "", null),
 								PennantConstants.default_Language);
-						return errorDetail.getErrorMessage();
+						return errorDetail.getMessage();
 					}
 					logKey = detail.getLogKey();
 					detail.setReversalCompleted(true);
@@ -1012,9 +1012,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 
 		if (!isRcdFound) {
-			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60208", "", null),
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60208", "", null),
 					PennantConstants.default_Language);
-			return errorDetail.getErrorMessage();
+			return errorDetail.getMessage();
 		} else {
 
 			if (receiptHeader.getManualAdvise() != null) {

@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.ProfitCenterDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -362,7 +362,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_ProfitCenterCode") + ": " + profitCenter.getProfitCenterCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 			if (StringUtils.trimToEmpty(profitCenter.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -372,7 +372,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 
 					parameters[0] = PennantJavaUtil.getLabel("label_ProfitCenterCode") + ": " + profitCenter.getProfitCenterCode();
 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 				}
 			}
 			

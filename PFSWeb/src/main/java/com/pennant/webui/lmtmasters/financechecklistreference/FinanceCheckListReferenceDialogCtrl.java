@@ -79,7 +79,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -735,7 +735,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 						((Tab) panel.getParent().getParent().getParent().getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_CHECKLIST))).setSelected(true);
 					}
 					MessageUtil.showError(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30701", errParm, valueParm),
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30701", errParm, valueParm),
 									usrLanguage)
 							.getError());
 					return false;

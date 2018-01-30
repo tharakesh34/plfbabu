@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -60,9 +60,9 @@ public class BeneficiaryController {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = beneficiaryService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new Beneficiary();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					reqHeaderDetails.setReturnCode(response.getReturnStatus().getReturnCode());
 					reqHeaderDetails.setReturnDesc(response.getReturnStatus().getReturnText());
@@ -146,8 +146,8 @@ public class BeneficiaryController {
 			 auditHeader = beneficiaryService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -188,8 +188,8 @@ public class BeneficiaryController {
 			auditHeader = beneficiaryService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -252,7 +252,7 @@ public class BeneficiaryController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBeneficiary.getBefImage(), aBeneficiary);
 		return new AuditHeader(String.valueOf(aBeneficiary.getBeneficiaryId()), String.valueOf(aBeneficiary
 				.getBeneficiaryId()), null, null, auditDetail, aBeneficiary.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**

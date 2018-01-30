@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -122,8 +122,8 @@ public class VASController {
 			auditHeader = vASRecordingService.doApprove(auditHeader);
 			response = new VASRecording();
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -172,8 +172,8 @@ public class VASController {
 			auditHeader = vASRecordingService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -230,7 +230,7 @@ public class VASController {
 	private AuditHeader getAuditHeader(VASRecording aVASRecording, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVASRecording.getBefImage(), aVASRecording);
 		return new AuditHeader(String.valueOf(aVASRecording.getId()), String.valueOf(aVASRecording.getId()), null,
-				null, auditDetail, aVASRecording.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, aVASRecording.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public void setvASRecordingService(VASRecordingService vASRecordingService) {

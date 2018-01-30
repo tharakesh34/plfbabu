@@ -55,7 +55,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -443,13 +443,13 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		return auditHeader;
 	}
 
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		AccountMapping accountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
-		List<ErrorDetails> details = null;
+		List<ErrorDetail> details = null;
 
 		if (accountMapping.getAuditDetailMap().get("AccountMapping") != null) {
 			auditDetails = accountMapping.getAuditDetailMap().get("AccountMapping");
@@ -604,7 +604,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		AccountMapping accountMapping = (AccountMapping) auditDetail.getModelData();
 
 		AccountMapping tempAccountMapping = null;
@@ -625,19 +625,19 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 
 			if (!accountMapping.isWorkflow()) {// With out Work flow only new records
 				if (befAccountMapping != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in the main
 																						// table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAccountMapping == null || tempAccountMapping != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -648,27 +648,27 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 			if (!accountMapping.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befAccountMapping == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldAccountMapping != null
 							&& !oldAccountMapping.getLastMntOn().equals(befAccountMapping.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
 							auditDetail.setErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempAccountMapping == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempAccountMapping != null && oldAccountMapping != null
 						&& !oldAccountMapping.getLastMntOn().equals(tempAccountMapping.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}

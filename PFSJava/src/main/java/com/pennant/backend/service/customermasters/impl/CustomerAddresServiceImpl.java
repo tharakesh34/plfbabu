@@ -55,7 +55,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -356,7 +356,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	@Override
 	public AuditDetail doValidations(CustomerAddres customerAddres,String method) {
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		if (StringUtils.equals(method, "Create")) {
 			List<CustomerAddres> prvCustomerAddrList = customerAddresDAO
@@ -367,7 +367,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 						String[] valueParm = new String[2];
 						valueParm[0] = "Priority";
 						valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -375,7 +375,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 						String[] valueParm = new String[2];
 						valueParm[0] = "AddressType";
 						valueParm[1] = customerAddres.getCustAddrType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -385,7 +385,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 					String[] valueParm = new String[2];
 					valueParm[0] = "Address Details";
 					valueParm[1] = "Address";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -404,7 +404,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 								String[] valueParm = new String[2];
 								valueParm[0] = "Address Details";
 								valueParm[1] = "Address should not update";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
@@ -414,7 +414,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -429,36 +429,36 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			String[] valueParm = new String[2];
 			valueParm[0] = "AddrType";
 			valueParm[1] = customerAddres.getCustAddrType();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
 		Province province = provinceDAO.getProvinceById(customerAddres.getCustAddrCountry(),
 				customerAddres.getCustAddrProvince(), "");
 		if (province == null) {
-			 errorDetail = new ErrorDetails();
+			 errorDetail = new ErrorDetail();
 			String[] valueParm = new String[2];
 			valueParm[0] = customerAddres.getCustAddrProvince();
 			valueParm[1] = customerAddres.getCustAddrCountry();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
 		City city = cityDAO.getCityById(customerAddres.getCustAddrCountry(), customerAddres.getCustAddrProvince(),
 				customerAddres.getCustAddrCity(), "");
 		if (city == null) {
-			errorDetail = new ErrorDetails();
+			errorDetail = new ErrorDetail();
 			String[] valueParm = new String[2];
 			valueParm[0] = customerAddres.getCustAddrCity();
 			valueParm[1] = customerAddres.getCustAddrProvince();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
 		if(!(customerAddres.getCustAddrPriority()>=1 && customerAddres.getCustAddrPriority()<=5)){
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(customerAddres.getCustAddrPriority());
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90114", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90114", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 			
@@ -469,7 +469,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 				valueParm[0] = "pinCode";
 				valueParm[1] = "2 digits";
 				valueParm[2] = "7 digits";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			}
 		}

@@ -56,7 +56,7 @@ import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralStructure;
@@ -577,7 +577,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		CollateralStructure collateralStructure = (CollateralStructure) auditDetail.getModelData();
 
 		CollateralStructure tempCollateralStructure = null;
@@ -598,17 +598,17 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			if (!collateralStructure.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateralStructure != null) { // Record Already Exists in the table then error  
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (collateralStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCollateralStructure != null || tempCollateralStructure != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
 								valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCollateralStructure == null || tempCollateralStructure != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -619,16 +619,16 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 				if (befCollateralStructure == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldCollateralStructure != null
 							&& !oldCollateralStructure.getLastMntOn().equals(befCollateralStructure.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
@@ -637,13 +637,13 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 				if (tempCollateralStructure == null) { // if records not exists in the Work flow table 
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (oldCollateralStructure != null && tempCollateralStructure!=null 
 						&& !oldCollateralStructure.getLastMntOn().equals(tempCollateralStructure.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -652,7 +652,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, collateralStructure.getRecordType())){
 			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(collateralStructure.getCollateralType(), PennantConstants.WORFLOW_MODULE_COLLATERAL);
 			if(workflowExists){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 			}
 		}
 

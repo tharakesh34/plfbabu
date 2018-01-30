@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -80,7 +80,7 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	private String				lovDescNextRoleCode	= "";
 	private Object				lovDescAuditRef;
 
-	private List<ErrorDetails>	errors				= new ArrayList<>();
+	private List<ErrorDetail>	errors				= new ArrayList<>();
 
 	public AuditDetail() {
 		super();
@@ -157,7 +157,7 @@ public class AuditDetail implements java.io.Serializable, Entity {
 			BeanUtils.copyProperties(this.lovDescAuditRef, auditDetail.lovDescAuditRef);
 		}
 		if (errors != null) {
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 			BeanUtils.copyProperties(errors, auditDetail.errors);
 		}
 		return auditDetail;
@@ -242,11 +242,11 @@ public class AuditDetail implements java.io.Serializable, Entity {
 		this.auditValue = auditValue;
 	}
 
-	public List<ErrorDetails> getErrorDetails() {
+	public List<ErrorDetail> getErrorDetails() {
 		return errors;
 	}
 
-	public void setErrorDetails(List<ErrorDetails> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errors = errorDetails;
 	}
 
@@ -290,7 +290,7 @@ public class AuditDetail implements java.io.Serializable, Entity {
 		this.lovDescNextRoleCode = lovDescNextRoleCode;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetails) {
+	public void setErrorDetail(ErrorDetail errorDetails) {
 		if (errorDetails == null) {
 			return;
 		}
@@ -303,7 +303,7 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	}
 
 	public void setErrorDetail(long errorCode) {
-		setErrorDetail(new ErrorDetails("Key", String.valueOf(errorCode), null, null));
+		setErrorDetail(new ErrorDetail("Key", String.valueOf(errorCode), null, null));
 	}
 
 	public void setLovDescAuditRef(Object lovDescAuditRef) {

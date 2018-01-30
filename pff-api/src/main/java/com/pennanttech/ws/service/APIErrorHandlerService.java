@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennanttech.util.APIConstants;
@@ -72,10 +72,10 @@ public class APIErrorHandlerService {
 	 */
 	public static WSReturnStatus getFailedStatus(String errorCode) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
 		if(errorDetail != null) {
 			status.setReturnCode(errorCode);
-			status.setReturnText(errorDetail.getErrorMessage());
+			status.setReturnText(errorDetail.getMessage());
 		}
 		return status;
 	}
@@ -89,10 +89,10 @@ public class APIErrorHandlerService {
 	 */
 	public static WSReturnStatus getFailedStatus(String errorCode, String parameter[]) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetails errorDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
 		status.setReturnCode(errorCode);
 		if(errorDetail != null) {
-			String errorMessage = getErrorMessage(errorDetail.getErrorMessage(), parameter);
+			String errorMessage = getErrorMessage(errorDetail.getMessage(), parameter);
 			status.setReturnText(errorMessage);
 		} else {
 			String errorMessage = "";

@@ -55,7 +55,7 @@ import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -384,7 +384,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		
 		ReinstateFinance reinstateFinance = (ReinstateFinance) auditDetail.getModelData();
 
@@ -416,11 +416,11 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 																// is new
 					if (tempReinstateFinance != null) { // if records already exists in
 												// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (tempReinstateFinance != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -430,13 +430,13 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 			if (reinstateFinance.isWorkflow()) { // With out Work flow for update and
 
 				if (tempReinstateFinance == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 				
 				if ( tempReinstateFinance != null &&  oldReinstateFinance != null
 						&& !oldReinstateFinance.getLastMntOn().equals(
 								tempReinstateFinance.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}

@@ -50,7 +50,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Salutation;
@@ -334,13 +334,13 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		if (salutation.isSystemDefault()) {
 			String dftSalutationCode = getSalutationDAO().getSystemDefaultCount(salutation.getSalutationCode());
 			if (StringUtils.isNotEmpty(dftSalutationCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501", new String[] {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501", new String[] {
 						dftSalutationCode, PennantJavaUtil.getLabel("Salutation") }, null));
 			}
 		}

@@ -42,17 +42,17 @@
  */
 package com.pennant.backend.dao.errordetail;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 
 public interface ErrorDetailDAO {
 
-	ErrorDetails getErrorDetailById(String id, String type);
+	ErrorDetail getErrorDetailById(String id, String type);
 
-	void update(ErrorDetails errorDetail, String type);
+	void update(ErrorDetail errorDetail, String type);
 
-	void delete(ErrorDetails errorDetail, String type);
+	void delete(ErrorDetail errorDetail, String type);
 
-	String save(ErrorDetails errorDetail, String type);
+	String save(ErrorDetail errorDetail, String type);
 	
-	ErrorDetails getErrorDetail(String errorCode);
+	ErrorDetail getErrorDetail(String errorCode);
 }

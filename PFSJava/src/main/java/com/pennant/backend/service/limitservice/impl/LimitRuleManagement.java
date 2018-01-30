@@ -19,7 +19,7 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.dao.rulefactory.impl.LimitRuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitDetails;
@@ -160,10 +160,10 @@ public class LimitRuleManagement {
 		logger.debug("Leaving");
 	}
 
-	public ArrayList<ErrorDetails> maintainLimitDetails() {
+	public ArrayList<ErrorDetail> maintainLimitDetails() {
 		logger.debug("Entering");
 
-		ArrayList<ErrorDetails> errorDetails=new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
 		getLimitTransactionDetailDAO().deleteAllRuleTransactions("");
 		processLimitRuleTransactions(RuleConstants.EVENT_BANK);				
 		updateRuleBasedLimits();

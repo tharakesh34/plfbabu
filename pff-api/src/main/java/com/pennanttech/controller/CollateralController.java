@@ -23,7 +23,7 @@ import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -120,9 +120,9 @@ public class CollateralController {
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CollateralSetup();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -186,8 +186,8 @@ public class CollateralController {
 			auditHeader = collateralSetupService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
 		} catch (NumberFormatException nfe) {
@@ -230,8 +230,8 @@ public class CollateralController {
 				// call delete method
 				auditHeader = collateralSetupService.delete(auditHeader);
 				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-						return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+					for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+						return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 					}
 				}
 			}
@@ -584,7 +584,7 @@ public class CollateralController {
 	private AuditHeader getAuditHeader(CollateralSetup collateralSetup, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, collateralSetup.getBefImage(), collateralSetup);
 		return new AuditHeader(collateralSetup.getCollateralRef(), collateralSetup.getCollateralRef(), null, null,
-				auditDetail, collateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				auditDetail, collateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {

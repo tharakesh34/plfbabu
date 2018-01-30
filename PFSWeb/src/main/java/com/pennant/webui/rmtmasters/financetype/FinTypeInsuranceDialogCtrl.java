@@ -24,7 +24,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -711,7 +711,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinTypeInsurnaceDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -742,7 +742,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 						&& finTypeInsurance.getPolicyType().equals(aFinTypeInsurance.getPolicyType())) {
 					// Both Current and Existing list rating same
 					if (aFinTypeInsurance.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;
