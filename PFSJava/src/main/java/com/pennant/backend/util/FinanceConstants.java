@@ -131,6 +131,7 @@ public class FinanceConstants {
 	public static final String	REPAYMTH_AUTO					= "CASA";
 	public static final String	REPAYMTH_AUTODDA				= "DDA";
 	public static final String	REPAYMTH_MANUAL					= "MANUAL";
+	public static final String	REPAYMTH_PDC					= "PDC";
 
 	// Finance Reference Generation Constants
 	public static final String	REF_DIVISION_RETAIL				= "PB";
@@ -341,6 +342,8 @@ public class FinanceConstants {
 	// Fee Status Details
 	public static final String	FEE_STATUS_CANCEL				= "C";
 	
-	
-
+	//GST
+	// Fee Type Tax
+	public static final String FEE_TAXCOMPONENT_INCLUSIVE 		= "I"; 					// Inclusive
+	public static final String FEE_TAXCOMPONENT_EXCLUSIVE 		= "E"; 					// Exclusive
 }

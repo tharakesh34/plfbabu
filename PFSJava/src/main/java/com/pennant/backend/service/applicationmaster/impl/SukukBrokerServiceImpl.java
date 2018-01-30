@@ -54,7 +54,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.SukukBrokerBondsDAO;
 import com.pennant.backend.dao.applicationmaster.SukukBrokerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
 import com.pennant.backend.model.applicationmasters.SukukBrokerBonds;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -389,7 +389,7 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			SukukBroker sukukBroker= (SukukBroker) auditDetail.getModelData();
 			
 			SukukBroker tempSukukBroker= null;
@@ -410,16 +410,16 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 				
 				if (!sukukBroker.isWorkflow()){// With out Work flow only new records  
 					if (befSukukBroker !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (sukukBroker.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befSukukBroker !=null || tempSukukBroker!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befSukukBroker ==null || tempSukukBroker!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -428,24 +428,24 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 				if (!sukukBroker.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befSukukBroker ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldSukukBroker!=null && !oldSukukBroker.getLastMntOn().equals(befSukukBroker.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempSukukBroker==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempSukukBroker!=null  && oldSukukBroker!=null && !oldSukukBroker.getLastMntOn().equals(tempSukukBroker.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -561,17 +561,17 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 
 					if (!sukukBrokerBonds.isWorkflow()){// With out Work flow only new records  
 						if (beftransactionEntry !=null){	// Record Already Exists in the table then error  
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,null));
 						}	
 					}else{ // with work flow
 
 						if (sukukBrokerBonds.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 							if (beftransactionEntry !=null || tempFeeTier!=null ){ // if records already exists in the main table
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,null));
 							}
 						}else{ // if records not exists in the Main flow table
 							if (beftransactionEntry ==null || tempFeeTier!=null ){
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 							}
 						}
 					}
@@ -580,14 +580,14 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 					if (!sukukBrokerBonds.isWorkflow()){	// With out Work flow for update and delete
 
 						if (beftransactionEntry ==null){ // if records not exists in the main table
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 						}else{
 
 							if (oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(beftransactionEntry.getLastMntOn())){
 								if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-									auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+									auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 								}else{
-									auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+									auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 								}
 							}
 						}
@@ -595,11 +595,11 @@ public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implemen
 					}else{
 
 						if (tempFeeTier==null ){ // if records not exists in the Work flow table 
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 						}
 
 						if (tempFeeTier!=null  && oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(tempFeeTier.getLastMntOn())){ 
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 						}
 
 					}

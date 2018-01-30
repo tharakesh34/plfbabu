@@ -59,6 +59,7 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -76,7 +77,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -93,6 +93,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
+import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
@@ -110,7 +111,7 @@ import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -158,7 +159,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -172,8 +172,8 @@ import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -296,7 +296,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Tab											summaryDetailsTab;
 	protected Tab											repaymentDetailsTab;
 	protected Tab											effectiveScheduleTab;
-	private Div												graphDivTabDiv;
 	private BigDecimal										financeAmount;
 
 	//Buttons
@@ -348,7 +347,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 																										.getPaymentApportionment();
 
 	private MailUtil										mailUtil;
-
+	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	/**
 	 * default constructor.<br>
 	 */
@@ -1241,7 +1240,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
 				if (curDisb.getDisbDate().compareTo(actualMaturity) >= 0) {
-					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("30577", null)));
 					Events.sendEvent(Events.ON_CLICK, this.btnChangeRepay, null);
 					logger.debug("Leaving");
 					return;
@@ -2473,7 +2472,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ManualPaymentDialog, auditHeader);
 						return processCompleted;
@@ -3064,7 +3063,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Tab tab = new Tab("Dashboard");
 			tab.setId("dashboardTab");
 			tabsIndexCenter.appendChild(tab);
-
+			ComponentsCtrl.applyForward(tab, "onSelect=onSelectDashboardTab");
+			
 			tabpanel = new Tabpanel();
 			tabpanel.setId("graphTabPanel");
 			tabpanel.setStyle("overflow:auto;");
@@ -3080,10 +3080,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		graphDivTabDiv = new Div();
-		graphDivTabDiv.setHeight("100%");
-		graphDivTabDiv.setStyle("overflow:auto;");
-		tabpanel.appendChild(graphDivTabDiv);
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		logger.debug("Leaving ");
 	}
@@ -3097,7 +3093,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		ChartDetail chartDetail = new ChartDetail();
-		ChartUtil chartUtil = new ChartUtil();
 
 		//For Finance Vs Amounts Chart z
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
@@ -3111,19 +3106,17 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Pie"));
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_3D"));
 		aDashboardConfiguration.setMultiSeries(false);
-		chartsConfig.setRemarks("pieRadius='90' startingAngle='310'"
-				+ "formatNumberScale='0'enableRotation='1'  forceDecimals='1'  decimals='" + formatter + "'");
+		chartsConfig.setRemarks(ChartType.PIE3D.getRemarks()+" decimals='" + formatter + "'");
 		String chartStrXML = chartsConfig.getChartXML();
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_FinanceVsAmounts");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("Pie3D.swf");
-		chartDetail.setChartHeight("160");
+		chartDetail.setChartType(ChartType.PIE3D.toString());
+		chartDetail.setChartHeight("180");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("200px");
 		chartDetail.setiFrameWidth("95%");
-
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
 
 		//For Repayments Chart 
 		chartsConfig = new ChartsConfig("Payments", "", "", "");
@@ -3133,21 +3126,19 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_2D"));
 		aDashboardConfiguration.setMultiSeries(true);
 		chartsConfig
-				.setRemarks("labelDisplay='ROTATE' formatNumberScale='0'"
-						+ "rotateValues='0' startingAngle='310' showValues='0' forceDecimals='1' skipOverlapLabels='0'  decimals='"
-						+ formatter + "'");
+				.setRemarks(ChartType.MSLINE.getRemarks()+" decimals='"+ formatter + "'");
 		chartStrXML = chartsConfig.getSeriesChartXML(aDashboardConfiguration.getRenderAs());
 
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_Repayments");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("MSLine.swf");
+		chartDetail.setChartType(ChartType.MSLINE.toString());
 		chartDetail.setChartHeight("270");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("320px");
 		chartDetail.setiFrameWidth("95%");
-
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
+	
 		logger.debug("Leaving ");
 	}
 
@@ -3429,25 +3420,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * When record is rejected . <br>
-	 * 
-	 */
-	public void doReject() throws InterruptedException {
-		logger.debug("Entering");
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
-		map.put("financeMainDialogCtrl", this);
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
-					window_ManualPaymentDialog, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Method to Update Reject Finance Details
 	 */
 	public void updateFinanceMain(FinanceMain financeMain) {
@@ -3456,6 +3428,24 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 
 	}
+	
+	/** new code to display chart by skipping jsps code start */
+	public void onSelectDashboardTab(Event event) throws InterruptedException {
+		logger.debug("Entering");
+		for (ChartDetail chartDetail : chartDetailList) {
+			String strXML = chartDetail.getStrXML();
+			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
+			strXML = StringEscapeUtils.escapeJavaScript(strXML);
+			chartDetail.setStrXML(strXML);
+
+			Executions.createComponents("/Charts/Chart.zul",
+					(Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
+					Collections.singletonMap("chartDetail", chartDetail));
+		}
+		chartDetailList =  new ArrayList<ChartDetail>(); // Resetting 
+		logger.debug("Leaving");
+	}
+	/** new code to display chart by skipping jsps code end */
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

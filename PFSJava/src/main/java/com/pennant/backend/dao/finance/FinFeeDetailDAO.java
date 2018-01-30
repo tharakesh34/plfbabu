@@ -44,7 +44,6 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinanceSummary;
 
 
 public interface FinFeeDetailDAO {

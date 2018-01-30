@@ -4,12 +4,12 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>4.1.0-SNAPSHOT</version>
+	<version>4.7.11-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
-		<pff.version>4.1.0-SNAPSHOT</pff.version>
+		<pff.version>4.7.11-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
 		<spring.version>4.0.5.RELEASE</spring.version>
@@ -18,8 +18,8 @@
 		<spring.ws.version>2.1.0.RELEASE</spring.ws.version>
 		<spring.web.version>3.0.5</spring.web.version>
 		<zk.version>8.0.4</zk.version>
-		<atlantic.version>8.0.0</atlantic.version>
-		<jasperreports.version>4.5.0</jasperreports.version>
+		<atlantic.version>8.0.4.1</atlantic.version>
+		<jasperreports.version>6.5.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
 	</properties>
 
@@ -50,6 +50,7 @@
 		<module>../PFSWeb</module>
 		<module>../pff-api</module>
 		<module>../pff-niyogin</module>
+		<module>../pff-test-suite</module>
 	</modules>
 
 	<dependencyManagement>
@@ -100,7 +101,7 @@
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
-				<version>1.6</version>
+				<version>1.4.0</version>
 			</dependency>			
 			<!-- Spring Framework -->
 			<dependency>

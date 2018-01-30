@@ -61,18 +61,19 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 public class ReportGenerationUtil implements Serializable {
     private static final long serialVersionUID = 7293149519883033383L;
@@ -101,7 +102,7 @@ public class ReportGenerationUtil implements Serializable {
         	} catch (JRException e) {
         		logger.error("Exception: ", e);
 				MessageUtil.showError("Template does not exist.");
-        		ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+        		ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
         	}
         }
 
@@ -163,17 +164,19 @@ public class ReportGenerationUtil implements Serializable {
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				String printfileName = JasperFillManager.fillReportToFile(reportSrc, parameters, mainDS);
 				JRXlsExporter excelExporter = new JRXlsExporter();
-
-				excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
-				excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);  
-				excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);  
-				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE); 
-				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE); 
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,Boolean.FALSE);  
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER,Boolean.FALSE);       
-				excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN,Boolean.TRUE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
-				excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+				excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
+				AbstractXlsReportConfiguration configuration=new AbstractXlsReportConfiguration();
+				configuration.setDetectCellType(true);
+				configuration.setWhitePageBackground(false);
+				configuration.setRemoveEmptySpaceBetweenColumns(true);
+				configuration.setRemoveEmptySpaceBetweenRows(true);
+				configuration.setIgnoreGraphics(false);
+				configuration.setIgnoreCellBorder(false);
+				configuration.setCollapseRowSpan(true);
+				configuration.setImageBorderFixEnabled(false);
+				SimpleOutputStreamExporterOutput outputStreamExporterOutput=new SimpleOutputStreamExporterOutput(outputStream);
+				excelExporter.setExporterOutput(outputStreamExporterOutput);
+				excelExporter.setConfiguration(configuration);
 				excelExporter.exportReport();
 				Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 			}else{

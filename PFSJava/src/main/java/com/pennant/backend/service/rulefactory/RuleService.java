@@ -76,4 +76,6 @@ public interface RuleService {
 	List<String> getAEAmountCodesList(String event);
 	Rule getRuleById(long ruleID, String type);
 	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);
+	
+	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 }

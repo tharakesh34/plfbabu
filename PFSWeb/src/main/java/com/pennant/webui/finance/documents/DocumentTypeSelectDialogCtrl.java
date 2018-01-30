@@ -252,7 +252,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setValueColumn("DocTypeCode");
 		this.docCategory.setDescColumn("DocTypeDesc");
 		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
-		this.docCategory.setFilters(new Filter[]{new Filter("DocIsCustDoc","0",Filter.OP_EQUAL)});
+		this.docCategory.setFilters(new Filter[]{new Filter("DocIsCustDoc",0,Filter.OP_EQUAL)});
 		
 		
 		logger.debug("Leaving ");
@@ -394,7 +394,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				customerDocument.setLovDescCustDocCategory(doctype.getDocTypeDesc());
 				
 				Filter[] countrysystemDefault=new Filter[1];
-				countrysystemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+				countrysystemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
 				Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
 
 				if (countryObj!=null) {

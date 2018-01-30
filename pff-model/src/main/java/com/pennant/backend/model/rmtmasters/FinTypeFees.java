@@ -98,6 +98,10 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	
 	private LoggedInUser userDetails;
 	
+	//GST
+	private boolean taxApplicable;
+	private String	taxComponent;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -116,6 +120,9 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		excludeFields.add("feeTypeDesc");
 		excludeFields.add("finEventDesc");
 		excludeFields.add("ruleDesc");
+		excludeFields.add("taxApplicable");
+		excludeFields.add("taxComponent");
+		
 		return excludeFields;
 	}
 	//Getter and Setter methods
@@ -304,6 +311,22 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setModuleId(int moduleId) {
 		this.moduleId = moduleId;
+	}
+	
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
 	}
 }
 

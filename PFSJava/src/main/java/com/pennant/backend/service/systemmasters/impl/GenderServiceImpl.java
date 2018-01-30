@@ -51,7 +51,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Gender;
@@ -364,13 +364,13 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 				String[] parameters = new String[1];
 				parameters[0] = PennantJavaUtil.getLabel("label_GenderCode") + ": " + code;
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 			if (gender.isSystemDefault()) {
 				String dftGenderCode = getGenderDAO().getSystemDefaultCount(gender.getGenderCode());
 				if (StringUtils.isNotEmpty(dftGenderCode)) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
 					        new String[]{dftGenderCode,PennantJavaUtil.getLabel("Gender")}, null));
 				}
 	        }

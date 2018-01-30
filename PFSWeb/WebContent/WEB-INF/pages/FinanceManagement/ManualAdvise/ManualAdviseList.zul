@@ -14,7 +14,7 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />	
 					<!-- SEARCH AREA -->
-					<toolbar align="center" style="toolbar-center">
+					<toolbar align="center" sclass="toolbar-center">
 						<button  id="button_ManualAdviseList_ManualAdviseSearch" label="${c:l('label_Filter')}"
 							autodisable="button_ManualAdviseList_ManualAdviseSearch,print,button_ManualAdviseList_NewManualAdvise,btnRefresh,help"
 							tooltiptext="${c:l('button_ManualAdviseList_ManualAdviseSearch.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -24,7 +24,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="button_ManualAdviseList_NewManualAdvise" label="${c:l('label_New')}"
 							autodisable="button_ManualAdviseList_ManualAdviseSearch,print,button_ManualAdviseList_NewManualAdvise,btnRefresh,help"
 							tooltiptext="${c:l('button_ManualAdviseList_NewManualAdvise.tooltiptext')}" sclass="z-toolbarbutton" />

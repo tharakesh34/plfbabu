@@ -13,7 +13,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -404,8 +404,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		// validate periodicity
 		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getPeriodicity();
 				return getErrorDetails("90207", valueParm);

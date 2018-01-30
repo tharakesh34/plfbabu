@@ -59,7 +59,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -795,7 +795,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SalutationDialog, auditHeader);
 						return processCompleted;
@@ -857,7 +857,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_SalutationDialog,	auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -893,7 +893,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	
 	public void setGenderSystemDefault(){
 		Filter[] systemDefault=new Filter[1];
-		systemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
+		systemDefault[0]=new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object genderdef=	PennantAppUtil.getSystemDefault("Gender","", systemDefault);
 		if (genderdef!=null) {
 			sysDefaultgender=(Gender) genderdef;

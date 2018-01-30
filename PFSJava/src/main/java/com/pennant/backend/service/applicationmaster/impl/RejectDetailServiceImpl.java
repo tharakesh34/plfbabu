@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -342,7 +342,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 
 			parameters[0] = PennantJavaUtil.getLabel("label_RejectCode") + ": " + rejectDetail.getRejectCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

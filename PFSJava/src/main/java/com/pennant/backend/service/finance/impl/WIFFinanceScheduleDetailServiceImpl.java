@@ -51,7 +51,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.WIFFinanceScheduleDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -312,7 +312,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			FinanceScheduleDetail wIFFinanceScheduleDetail= (FinanceScheduleDetail) auditDetail.getModelData();
 			
 			FinanceScheduleDetail tempWIFFinanceScheduleDetail= null;
@@ -333,16 +333,16 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 				
 				if (!wIFFinanceScheduleDetail.isWorkflow()){// With out Work flow only new records  
 					if (befWIFFinanceScheduleDetail !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befWIFFinanceScheduleDetail !=null || tempWIFFinanceScheduleDetail!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befWIFFinanceScheduleDetail ==null || tempWIFFinanceScheduleDetail!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -351,24 +351,24 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 				if (!wIFFinanceScheduleDetail.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befWIFFinanceScheduleDetail ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldWIFFinanceScheduleDetail!=null && !oldWIFFinanceScheduleDetail.getLastMntOn().equals(befWIFFinanceScheduleDetail.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempWIFFinanceScheduleDetail==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempWIFFinanceScheduleDetail!=null && oldWIFFinanceScheduleDetail!=null && !oldWIFFinanceScheduleDetail.getLastMntOn().equals(tempWIFFinanceScheduleDetail.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}

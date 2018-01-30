@@ -21,6 +21,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 
 public class MandateResponseServiceImpl extends BajajService implements MandateResponseService {
 	private final Logger	logger	= Logger.getLogger(getClass());
+	private static final String MANDATE_POSITIVE_REPSONE = "ACTIVE";
 
 	public MandateResponseServiceImpl() {
 		super();
@@ -241,8 +242,8 @@ public class MandateResponseServiceImpl extends BajajService implements MandateR
 		sql.append("  Where MANDATEID = :MANDATEID");
 
 		paramMap.addValue("MANDATEID", respmandate.getMandateID());
-
-		if ("Y".equals(respmandate.getStatus())) {
+		
+		if (!MANDATE_POSITIVE_REPSONE.equalsIgnoreCase(respmandate.getStatus())) {
 			paramMap.addValue("STATUS", "REJECTED");
 			paramMap.addValue("MANDATEREF", null);
 		} else {

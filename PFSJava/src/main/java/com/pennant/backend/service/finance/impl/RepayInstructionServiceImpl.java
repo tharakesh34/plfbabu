@@ -51,7 +51,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.RepayInstruction;
@@ -311,7 +311,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean isWIF){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			RepayInstruction repayInstruction= (RepayInstruction) auditDetail.getModelData();
 			
 			RepayInstruction tempRepayInstruction= null;
@@ -332,16 +332,16 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 				
 				if (!repayInstruction.isWorkflow()){// With out Work flow only new records  
 					if (befRepayInstruction !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (repayInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befRepayInstruction !=null || tempRepayInstruction!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befRepayInstruction ==null || tempRepayInstruction!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -350,24 +350,24 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 				if (!repayInstruction.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befRepayInstruction ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldRepayInstruction!=null && !oldRepayInstruction.getLastMntOn().equals(befRepayInstruction.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempRepayInstruction==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempRepayInstruction!=null && oldRepayInstruction!=null && !oldRepayInstruction.getLastMntOn().equals(tempRepayInstruction.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}

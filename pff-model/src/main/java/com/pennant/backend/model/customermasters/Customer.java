@@ -138,8 +138,9 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "saleAgentDept")
 	private String custDSADept;
 	private String lovDescCustDSADeptName;
-	private String custRO1;
+	private long custRO1;
 	private String lovDescCustRO1Name;
+	private String lovDescCustRO1City;
 	private String custRO2;
 	private String lovDescCustRO2Name;
 
@@ -630,11 +631,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.lovDescCustDSADeptName = lovDescCustDSADeptName;
 	}
 
-	public String getCustRO1() {
+	public long getCustRO1() {
 		return custRO1;
 	}
 
-	public void setCustRO1(String custRO1) {
+	public void setCustRO1(long custRO1) {
 		this.custRO1 = custRO1;
 	}
 
@@ -1802,7 +1803,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setLovDescRequestStage(String lovDescRequestStage) {
 		this.lovDescRequestStage = lovDescRequestStage;
 	}
-
+	
 	public String getCustSourceID() {
 		return custSourceID;
 	}
@@ -1811,4 +1812,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.custSourceID = custSourceID;
 	}
 
+	public String getLovDescCustRO1City() {
+		return lovDescCustRO1City;
+	}
+
+	public void setLovDescCustRO1City(String lovDescCustRO1City) {
+		this.lovDescCustRO1City = lovDescCustRO1City;
+	}
 }

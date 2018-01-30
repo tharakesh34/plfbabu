@@ -67,7 +67,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmasters.SukukBrokerBonds;
 import com.pennant.backend.service.PagedListService;
@@ -813,7 +813,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 					sukukBrokerBonds.getBrokerCode().equals(aSukukBrokerBonds.getBrokerCode())) {
 				// Both Current and Existing list rating same
 				if (aSukukBrokerBonds.isNew()) {
-					ErrorDetails details=ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, null), getUserWorkspace().getUserLanguage());
+					ErrorDetail details=ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, null), getUserWorkspace().getUserLanguage());
 					MessageUtil.showError(details.getError());
 					return null;
 				}

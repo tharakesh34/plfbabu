@@ -77,7 +77,7 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -856,7 +856,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Entering");
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, headerDetails);
 
-		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null, auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null, auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 		doApprove(auditHeader,false);
 		logger.debug("Leaving");
 	}
@@ -1004,7 +1004,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (headerDetails.getCustomerId() == 0) {
 			headerDetails.setRecordStatus("E");
 			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Customer", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Customer", "" }), userLangauge).getError());
 			return headerDetails;
 		}
 
@@ -1014,7 +1014,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 			headerDetails.setRecordStatus("E");
 			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("30506", "", new String[] { "Customer", String.valueOf(headerDetails.getCustomerId()) }),
+					new ErrorDetail("30506", "", new String[] { "Customer", String.valueOf(headerDetails.getCustomerId()) }),
 					userLangauge).getError());
 
 			return headerDetails;
@@ -1023,21 +1023,21 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (headerDetails.getResponsibleBranch()==null || StringUtils.isEmpty(headerDetails.getResponsibleBranch()) ) {
 			headerDetails.setRecordStatus("E");
 			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Branch", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Branch", "" }), userLangauge).getError());
 			return headerDetails;
 		}
 
 		if (headerDetails.getLimitCcy()==null || StringUtils.isEmpty(headerDetails.getLimitCcy())) {
 			headerDetails.setRecordStatus("E");
 			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Currency", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Currency", "" }), userLangauge).getError());
 			return headerDetails;
 		}
 
 		if (headerDetails.getLimitStructureCode() ==null || StringUtils.isEmpty(headerDetails.getLimitStructureCode())) {
 			headerDetails.setRecordStatus("E");
 			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetails("41002", "", new String[] { "Limit Structure Code", "" }), userLangauge).getError());
+					new ErrorDetail("41002", "", new String[] { "Limit Structure Code", "" }), userLangauge).getError());
 			return headerDetails;
 		}
 
@@ -1062,7 +1062,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		LimitHeader limitDetail= (LimitHeader) auditDetail.getModelData();
 
 		LimitHeader tempLimitDetail= null;
@@ -1083,16 +1083,16 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 			if (!limitDetail.isWorkflow()){// With out Work flow only new records  
 				if (befLimitDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (limitDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befLimitDetail !=null || tempLimitDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befLimitDetail ==null || tempLimitDetail!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -1101,23 +1101,23 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (!limitDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befLimitDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldLimitDetail!=null && !oldLimitDetail.getLastMntOn().equals(befLimitDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempLimitDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}		
 				else if (oldLimitDetail!=null && !oldLimitDetail.getLastMntOn().equals(tempLimitDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}
@@ -1157,11 +1157,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @param aLimitHeader
 	 * @return
 	 */
-	private List<ErrorDetails> validateLimitSetup(LimitHeader aLimitHeader) {
+	private List<ErrorDetail> validateLimitSetup(LimitHeader aLimitHeader) {
 		logger.debug(" Entering ");
 
 		String totalGrpCode = "";
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		HashMap<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<LimitDetails> limitDetails = aLimitHeader.getCustomerLimitDetailsList();
 
@@ -1199,7 +1199,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					}
 					String[] valueParm = new String[1];
 					valueParm[0] = message;
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("60315", "", valueParm), "EN"));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("60315", "", valueParm), "EN"));
 				}
 			}
 		}
@@ -1232,7 +1232,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (total.compareTo(maxofGroups) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Total"+"("+totalGrpCode+")";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("60315", "", valueParm), "EN"));
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("60315", "", valueParm), "EN"));
 		}
 
 		logger.debug(" Leaving ");
@@ -1281,7 +1281,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (count <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(limitHeader.getHeaderId());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90807", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90807", "", valueParm)));
 			}
 		}
 
@@ -1291,7 +1291,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Review date(" + DateUtility.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
 				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+ ")";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
 			}
 		}
 		Calendar cal = Calendar.getInstance();
@@ -1304,7 +1304,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[0] = "Review date";
 				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(nextYear);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
 
@@ -1315,7 +1315,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[0] = "Limit expiry date";
 				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
 		// validate Customer and customer group
@@ -1327,7 +1327,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90101", "", valueParm)));
 			} else {
 				if (!limitHeader.isNew()) {
 					int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(),
@@ -1335,7 +1335,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					if (count <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "Cif :" + custCIF + " And LimitId: " + limitHeader.getHeaderId();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90266", "", valueParm)));
 					}
 				}
 
@@ -1344,7 +1344,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custCIF;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90806", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90806", "", valueParm)));
 					}
 				}
 			}
@@ -1357,7 +1357,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (customerGroup == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custGrpCode;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90107", "", valueParm)));
 				return auditDetail;
 			} else {
 				if (!limitHeader.isNew()) {
@@ -1366,7 +1366,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					if (count <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "customerGroup :" + custGrpCode + " And LimitId: " + limitHeader.getHeaderId();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90266", "", valueParm)));
 					}
 				}
 				if (limitHeader.isNew()) {
@@ -1375,7 +1375,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custGrpCode;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90805", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90805", "", valueParm)));
 					}
 				} 
 			}
@@ -1387,7 +1387,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (recordCount <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = structureCode;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90801", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90801", "", valueParm)));
 		}
 
 		// validate currency code
@@ -1397,7 +1397,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Limit Currency";
 				valueParm[1] = limitHeader.getLimitCcy();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 			}
 		}
 
@@ -1412,7 +1412,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				} else {
 					String[] valueParm = new String[1];
 					valueParm[0] = limitHeader.getLimitStructureCode();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90811", "", valueParm)));
 					return auditDetail;
 				}
 				// validate structureDetailId from LimitDetails
@@ -1420,7 +1420,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(structureId);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90803", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90803", "", valueParm)));
 				}
 				if (detail.getExpiryDate() != null) {
 					if (detail.getExpiryDate().before(DateUtility.getAppDate())
@@ -1429,7 +1429,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						valueParm[0] = "Limit expiry date";
 						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;
 					}
 					if (detail.getExpiryDate() != null && lineMaxExpDate != null) {
@@ -1442,7 +1442,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					String[] valueParm = new String[2];
 					valueParm[0] = "limitSanctioned";
 					valueParm[1] = "Zero";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90205", "", valueParm)));
 					return auditDetail;
 				}
 				// validate limit check method
@@ -1450,7 +1450,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						&& !StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_RESERVED)) {
 					String[] valueParm = new String[1];
 					valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL + "," + LimitConstants.LIMIT_CHECK_RESERVED;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90809", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90809", "", valueParm)));
 				}
 			}
 			if (limitHeader.getLimitExpiryDate() != null) {
@@ -1458,7 +1458,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					String[] valueParm = new String[2];
 					valueParm[0] = "Limit expiry date";
 					valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 				}
 			}
 		}
@@ -1486,15 +1486,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				if (!limitStrFound) {
 					String[] valueParm = new String[1];
 					valueParm[0] = limitHeader.getLimitStructureCode();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90811", "", valueParm)));
 					return auditDetail;
 				}
 			}
 		}
 
 		// validate groups and line amounts
-		List<ErrorDetails> errorDetails = validateLimitSetup(limitHeader);
-		for (ErrorDetails error : errorDetails) {
+		List<ErrorDetail> errorDetails = validateLimitSetup(limitHeader);
+		for (ErrorDetail error : errorDetails) {
 			auditDetail.setErrorDetail(error);
 		}
 

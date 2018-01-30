@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  BeneficiaryServiceImpl.java                                                   * 	  
+ * FileName    		:  BeneficiaryServiceImpl.java                                         	* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -31,10 +31,10 @@
  ********************************************************************************************
  * 01-12-2016       PENNANT	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-10-2017       Sriram	                 0.2          PSD Ticket ID : 124632            *                                                                           * 
+ *                                                        Dependency validation on Account  * 
+ *                                                        Number And Branch changed to      * 
+ *                                                        Account Number And CustCIF        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -336,7 +336,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Beneficiary beneficiary = (Beneficiary) auditDetail.getModelData();
 
 		Beneficiary tempBeneficiary = null;
@@ -359,18 +359,18 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 			if (!beneficiary.isWorkflow()) {// With out Work flow only new records
 				if (befBeneficiary != null) { // Record Already Exists in the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (beneficiary.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befBeneficiary != null || tempBeneficiary != null) { // if records already exists in the main
 																				// table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
 								valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befBeneficiary == null || tempBeneficiary != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -381,15 +381,15 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 
 				if (befBeneficiary == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldBeneficiary != null && !oldBeneficiary.getLastMntOn().equals(befBeneficiary.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
@@ -398,20 +398,54 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 
 				if (tempBeneficiary == null) { // if records not exists in the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempBeneficiary != null && oldBeneficiary != null && !oldBeneficiary.getLastMntOn().equals(tempBeneficiary.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
+		
+		//### 31-10-2017 -Ticket ID: 124632 - Start
+		if (!StringUtils.equals(method, PennantConstants.method_doReject)
+				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {
 
-		int count = getBeneficiaryDAO().getBeneficiaryByAccNo(beneficiary.getAccNumber(),beneficiary.getBankBranchID(), beneficiary.getBeneficiaryId(), "_View");
-		if (count != 0) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+			int countDuplicates = getBeneficiaryDAO().getBeneficiaryByAccNo(beneficiary, "_View");
+
+			if (countDuplicates > 0) {
+				String[] errParm1 = new String[3];
+				String[] valueParm1 = new String[3];
+				valueParm1[0] = beneficiary.getAccNumber();
+				valueParm1[1] = beneficiary.getiFSC();
+				valueParm1[2] = beneficiary.getCustCIF();
+
+				errParm1[0] = PennantJavaUtil.getLabel("label_AccNumber") + " : " + valueParm1[0];
+				errParm1[1] = PennantJavaUtil.getLabel("label_BeneficiaryDialog_BankBranchID.value") + " : " + valueParm1[1];
+				errParm1[2] = PennantJavaUtil.getLabel("label_CustCIF") + " : " + valueParm1[2];
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41021", errParm1, valueParm1));
+			}
 		}
+		//### 31-10-2017 -END
+		
+		if (beneficiary.isDefaultBeneficiary() && !StringUtils.equals(method, PennantConstants.method_doReject)
+				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {
+
+			int countDuplicates = getBeneficiaryDAO().getDefaultsBeneficiary(beneficiary.getCustID(), beneficiary.getBeneficiaryId(), "_View");
+
+			if (countDuplicates > 0) {
+				String[] errParm2 = new String[1];
+				String[] valueParm2 = new String[1];
+				valueParm2[0] = beneficiary.getCustCIF();
+				
+				errParm2[0] = PennantJavaUtil.getLabel("label_CustCIF") + " : " + valueParm2[0];
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41010", errParm2, valueParm2));
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !beneficiary.isWorkflow()) {

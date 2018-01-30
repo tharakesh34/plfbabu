@@ -64,7 +64,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -114,7 +114,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	protected Button  btnSearchFinScoringCode;
 	protected Button  btnSearchNFScoringCode;
 
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 	private transient ScoringGroup scoringGroup =null;
 	private ScoringGroupDialogCtrl scoringGroupDialogCtrl;
 	private List<ScoringMetrics>   scoringMetricsList;
@@ -896,7 +896,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 					/*if same ScoringSlab added twice set error detail*/
 					if(aScoringMetrics.isNew()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm)
+								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm)
 								, getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
@@ -965,7 +965,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ScoringMetricsDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1026,10 +1026,10 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		this.scoringMetrics = scoringMetrics;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

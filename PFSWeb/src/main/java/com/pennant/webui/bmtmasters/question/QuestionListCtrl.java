@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.bmtmasters.Question;
 import com.pennant.backend.service.bmtmasters.QuestionService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -220,7 +220,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 				valueParm[0]=String.valueOf(aQuestion.getId());
 				errParm[0]=PennantJavaUtil.getLabel("label_QuestionId")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){

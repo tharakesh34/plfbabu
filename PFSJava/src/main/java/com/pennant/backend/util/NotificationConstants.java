@@ -19,6 +19,7 @@ public class NotificationConstants {
 	public static final String TEMPLATE_FOR_PO 						= "PO";
 	public static final String TEMPLATE_FOR_TAT 					= "TA";
 	public static final String TEMPLATE_FOR_LIMIT 					= "LT";
+	public static final String	TEMPLATE_FOR_SP				        = "SP";
 	
 	// Module Code for Notification to maintain parameters
 	public static final String MAIL_MODULE_FIN 						= "FIN";

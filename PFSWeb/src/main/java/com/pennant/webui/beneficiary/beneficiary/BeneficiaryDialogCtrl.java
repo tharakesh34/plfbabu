@@ -53,11 +53,12 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -100,6 +101,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	private transient BeneficiaryService beneficiaryService;
 	private transient BankDetailService	bankDetailService;
 
+	private Checkbox beneficiaryActive;
+	private Checkbox defaultBeneficiary;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -376,6 +380,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.phoneNumber.setValue(beneficiary.getPhoneNumber());
 		this.email.setValue(beneficiary.getEmail());
 		this.recordStatus.setValue(beneficiary.getRecordStatus());
+	
+		this.beneficiaryActive.setChecked(beneficiary.isBeneficiaryActive());
+		this.defaultBeneficiary.setChecked(beneficiary.isDefaultBeneficiary());
+		
 		logger.debug("Leaving");
 	}
 
@@ -390,11 +398,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		// Cust I D
+		// Cust ID
 		try {
 			this.custID.getValidatedValue();
 			String custid = String.valueOf(this.custID.getAttribute("custID"));
 			aBeneficiary.setCustID(Long.valueOf((custid)));
+			aBeneficiary.setCustCIF(this.custID.getValue()); // Customer CIF
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -402,6 +411,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		try {
 			this.bankBranchID.getValidatedValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
+			
+			aBeneficiary.setiFSC(this.bankBranchID.getValue());
 			if (obj != null) {
 				aBeneficiary.setBankBranchID(Long.valueOf(String.valueOf(obj)));
 			}
@@ -432,7 +443,18 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		//Beneficiary Active
+		try {
+			aBeneficiary.setBeneficiaryActive(this.beneficiaryActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Beneficiary Default
+		try {
+			aBeneficiary.setDefaultBeneficiary(this.defaultBeneficiary.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -635,7 +657,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_AccHolderName"), this.accHolderName);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_PhoneNumber"), this.phoneNumber);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Email"), this.email);
-
+		readOnlyComponent(isReadOnly("BeneficiaryDialog_Active"), this.beneficiaryActive);
+		readOnlyComponent(isReadOnly("BeneficiaryDialog_DefaultBeneficiary"), this.defaultBeneficiary);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -662,7 +686,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(true, this.accHolderName);
 		readOnlyComponent(true, this.phoneNumber);
 		readOnlyComponent(true, this.email);
-
+		readOnlyComponent(true, this.beneficiaryActive);
+		readOnlyComponent(true, this.defaultBeneficiary);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -872,7 +897,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BeneficiaryDialog, auditHeader);
 						return processCompleted;

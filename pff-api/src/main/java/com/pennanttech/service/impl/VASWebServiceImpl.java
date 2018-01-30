@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -98,9 +98,9 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
 
 			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 					response = new VASRecording();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
@@ -142,6 +142,18 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				if (StringUtils.isNotBlank(vasRecording.getProductCode())
 						&& !StringUtils.equals(vasRecording.getProductCode(), vasDetails.getProductCode())) {
 					validConfig = false;
+				}
+				if (StringUtils.equals("Loan", vasRecording.getPostingAgainst())) {
+					vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+				}
+				if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
+						|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst())
+						|| StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "postingAgainst";
+					valueParm[1] = vasRecording.getPostingAgainst();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90224", valueParm);
+					return returnStatus;
 				}
 				if (StringUtils.isNotBlank(vasRecording.getPostingAgainst())
 						&& !StringUtils.equals(vasRecording.getPostingAgainst(), vasDetails.getPostingAgainst())) {
@@ -224,6 +236,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 					return response;
 
 				} else {
+					response = new VASRecording();
 					String[] valueParm = new String[1];
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90267", valueParm));
 					return response;

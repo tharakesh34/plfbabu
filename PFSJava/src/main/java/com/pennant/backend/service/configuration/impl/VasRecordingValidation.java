@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.util.PennantConstants;
@@ -52,7 +52,7 @@ public class VasRecordingValidation {
 
 	protected AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		VASRecording vASRecording = (VASRecording) auditDetail.getModelData();
 
 		VASRecording tempVASRecording = null;
@@ -71,16 +71,16 @@ public class VasRecordingValidation {
 		if (vASRecording.isNew()) { // for New record or new record into work flow
 			if (!vASRecording.isWorkflow()) {// With out Work flow only new records  
 				if (befVASRecording != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befVASRecording != null || tempVASRecording != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befVASRecording == null || tempVASRecording != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -88,22 +88,22 @@ public class VasRecordingValidation {
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!vASRecording.isWorkflow()) { // With out Work flow for update and delete
 				if (befVASRecording == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldVasRecording != null 	&& !oldVasRecording.getLastMntOn().equals(befVASRecording.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempVASRecording == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 				if (tempVASRecording != null && oldVasRecording != null && !oldVasRecording.getLastMntOn().equals(tempVASRecording.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

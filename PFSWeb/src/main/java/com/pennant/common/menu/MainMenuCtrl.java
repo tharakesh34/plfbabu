@@ -118,7 +118,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		boolean navigateToDefaultPage = false;
 
 		if (args.containsKey("HomePageDisplayed")) {
-			navigateToDefaultPage = (String) args.get("HomePageDisplayed") == "NO" ? true : false;
+			navigateToDefaultPage = "NO".equals((String) args.get("HomePageDisplayed")) ? true : false;
 		}
 
 		// Create the menu.
@@ -276,6 +276,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj);
+		return this == obj;
 	}
 }

@@ -57,9 +57,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennant.backend.dao.ErrorDetailsDAO;
 import com.pennant.backend.dao.NextidviewDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants.SeqTables;
 import com.pennanttech.pennapps.core.App;
 
@@ -67,8 +65,7 @@ public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 	private static Logger logger = Logger.getLogger(NextIdViewSQLServerDaoImpl.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private NamedParameterJdbcTemplate namedExtParameterJdbcTemplate;
-	private ErrorDetailsDAO errorDetailsDAO;
-
+	
 	public NextIdViewSQLServerDaoImpl() {
 		super();
 	}
@@ -246,19 +243,5 @@ public class NextIdViewSQLServerDaoImpl implements NextidviewDAO {
 	public void setExtDataSource(DataSource dataSource) {
 		this.namedExtParameterJdbcTemplate = new NamedParameterJdbcTemplate(
 				dataSource);
-	}
-
-	public ErrorDetails getErrorDetail(String errorId, String errorLanguage,
-			String[] parameters) {
-		return getErrorDetailsDAO().getErrorDetail(errorId, errorLanguage,
-				parameters);
-	}
-
-	public ErrorDetailsDAO getErrorDetailsDAO() {
-		return errorDetailsDAO;
-	}
-
-	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
-		this.errorDetailsDAO = errorDetailsDAO;
 	}
 }

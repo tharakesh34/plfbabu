@@ -38,7 +38,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -367,7 +367,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				valueParm[0]=aOverdueChargeRecovery.getId();
 				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){

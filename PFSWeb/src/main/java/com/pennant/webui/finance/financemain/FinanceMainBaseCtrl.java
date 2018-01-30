@@ -147,11 +147,13 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -161,6 +163,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -168,6 +171,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -210,6 +214,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -258,6 +263,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
@@ -720,6 +726,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient Object								childWindowDialogCtrl;
 	private transient CustomerDialogCtrl					customerDialogCtrl;
 	private transient DisbursementDetailDialogCtrl			disbursementDetailDialogCtrl;
+	private transient ChequeDetailDialogCtrl				chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl				deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl						mandateDialogCtrl;
 	private transient FinanceTaxDetailDialogCtrl			financeTaxDetailDialogCtrl;
@@ -839,12 +846,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	private boolean											isBranchanged;
+	private String 											branchSwiftCode;
 
 	//Extended fields
 	private ExtendedFieldCtrl								extendedFieldCtrl		= null;
 	//for pdf extraction
 	private PdfParserCaller                                 pdfParserCaller;
 	private String										    pdfExtTabPanelId;
+	private VehicleDealerService                            vehicleDealerService;
 
 	/**
 	 * default constructor.<br>
@@ -1016,7 +1025,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
 		this.stepPolicy.setFilters(filter);
 
-		this.accountsOfficer.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
@@ -1480,7 +1489,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//Fee Details Tab Addition
 			appendFeeDetailTab(onLoad);
 		}
-
+		
 		//Advance Payment Detail Tab Addition
 		if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())))
@@ -1552,6 +1561,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendMandateDetailTab(onLoad);
 		}
 
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			appendChequeDetailTab(onLoad);
+		}
+
 		// Collateral Detail Tab
 		if (StringUtils.isEmpty(moduleDefiner)
 				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
@@ -1597,10 +1610,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
-
 		// Extended Field Details
-		appendExtendedFieldDetails(aFinanceDetail);
-
+		if (StringUtils.isEmpty(moduleDefiner)){
+			appendExtendedFieldDetails(aFinanceDetail);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1872,6 +1885,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DisbursementDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DISBURSMENT), getDefaultArguments());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Disbursement Details Data in finance
+	 */
+	private void appendChequeDetailTab(boolean onLoad) {
+		logger.debug("Entering");
+		if (onLoad) {
+			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
+		} else {
+			final HashMap<String, Object> map = getDefaultArguments();
+			ChequeHeader chequeHeader = null;
+			if(getFinanceMain().isNew() || financeDetail.getChequeHeader()==null){
+				chequeHeader = new ChequeHeader();
+				chequeHeader.setNewRecord(true);
+			}else{
+				chequeHeader = financeDetail.getChequeHeader();
+			}
+			map.put("roleCode", getRole());
+			map.put("financeMainDialogCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", getFinanceDetail());
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_CHEQUE));
+			map.put("fromLoan", true);
+			map.put("ccyFormatter",
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+			map.put("chequeHeader", chequeHeader);
+			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_CHEQUE), map);
 		}
 		logger.debug("Leaving");
 	}
@@ -2483,6 +2527,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		case AssetConstants.UNIQUE_ID_FEE:
 			finFeeDetailListCtrl.doSetLabels(getFinBasicDetails());
 			break;
+		case AssetConstants.UNIQUE_ID_CHEQUE:
+			chequeDetailDialogCtrl.doSetLabels(getFinBasicDetails());
+			break;
 		case AssetConstants.UNIQUE_ID_COVENANTTYPE:
 			finCovenantTypeListCtrl.doSetLabels(getFinBasicDetails());
 			break;
@@ -2750,8 +2797,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		this.accountsOfficer.setValue(aFinanceMain.getAccountsOfficer());
-		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
+		this.accountsOfficer.setValue(StringUtils.trimToEmpty(aFinanceMain.getLovDescAccountsOfficer()));
+		this.accountsOfficer.setDescription(StringUtils.trimToEmpty(aFinanceMain.getLovDescSourceCity()));
+		this.accountsOfficer.setAttribute("DealerId", aFinanceMain.getAccountsOfficer());
 
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
 		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
@@ -3591,7 +3639,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_secondaryAccount.setVisible(false);
 			}
 		}
-				
 		logger.debug("Leaving");
 	}
 
@@ -5436,7 +5483,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
 					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
-					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+					|| this.userAction.getSelectedItem().getLabel().contains("Hold")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
@@ -5837,18 +5885,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(this.custCIF.getValue())) {
 			aFinanceDetail.setStageAccountingList(null);
 		} else {
+			
 			//Finance Accounting Details Tab
-			if (accountingDetailDialogCtrl != null && !isOverdraft) {
+			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !isOverdraft) {
+
 				// check if accounting rules executed or not
-				if (!recSave && !accountingDetailDialogCtrl.isAccountingsExecuted()) {
+				if (accountingDetailDialogCtrl == null || !accountingDetailDialogCtrl.isAccountingsExecuted()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
-				}
-				if (!recSave
-						&& accountingDetailDialogCtrl.getDisbCrSum().compareTo(
-								accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
-					return;
+				} else {
+
+					if (accountingDetailDialogCtrl.getDisbCrSum()
+							.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+						return;
+					}
 				}
 			}
 
@@ -5920,6 +5971,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
 		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
 			mandateDialogCtrl.doSave_Mandate(aFinanceDetail, mandateTab, recSave);
+		}
+		
+		//PDC
+		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
+		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
+			chequeDetailDialogCtrl.doSave_PDC(aFinanceDetail, getFinanceMain().getFinReference());
 		}
 		
 		// Tax Detail
@@ -6034,98 +6091,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-					List<String> templateTyeList = new ArrayList<String>();
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
-					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
-
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
-							aFinanceMain.getFinType(),
-							StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner,
-							getRole(), templateTyeList);
-
-					templateTyeList = null;
-					if (!referenceIdList.isEmpty()) {
-
-						boolean isCustomerNotificationExists = false;
-						List<Long> notificationIdlist = new ArrayList<Long>();
-						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
-								isCustomerNotificationExists = true;
-							}
-						}
-
-						// Mail ID details preparation
-						Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
-						List<String> custMailIdList = new ArrayList<String>();
-						// Customer Email Preparation
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
-
-							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
-							
-							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList.add(customerEMail.getCustEMail());
-							}
-							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
-							}
-						}
-						
-						HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail
-								.getFinScheduleData().getFinanceMain());						
-						
-						if (isExtMailService()) {
-							try {
-								List<MailTemplate> templates = getMailUtil().getMailDetails(notificationIdlist,
-										fieldsAndValues, aFinanceDetail.getDocumentDetailsList(), mailIDMap);								
-								// send mail to external service
-								getMailTemplateService().sendMail(custMailIdList, templates);
-							} catch (IOException e) {
-								logger.error("Unable to read or process freemarker configuration or template :" + e);
-							} catch (TemplateException e) {
-								logger.error("Problem initializing freemarker or rendering template :" + e);
-							}
-						}else{
-							
-							try {				
-								getMailUtil().sendMail(notificationIdlist, fieldsAndValues,
-										aFinanceDetail.getDocumentDetailsList(), mailIDMap, null);
-							} catch (Exception e) {
-								logger.warn("Exception: ", e);
-							}
-							
-						}
-						
-						//Customer mobile numbers logic start
-						Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
-						List<String> custPhoneNoList = new ArrayList<String>();
-						List<CustomerPhoneNumber> phoneNoList=new ArrayList<CustomerPhoneNumber>();
-						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null
-								&& !aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
-							
-							phoneNoList = aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList();
-							
-							for (CustomerPhoneNumber customerPhoneNumber : phoneNoList) {
-								custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
-							}
-							if (!custPhoneNoList.isEmpty()) {
-								mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
-							}
-						}
-						//Customer mobile numbers logic	end						
-						if (isExtSMSService()) {
-							List<String> smsList = getSmsUtil().getSMSContent(notificationIdlist, fieldsAndValues,mobileNoMap);
-							
-							// send SMS to external service
-							getShortMessageService().sendMessage(phoneNoList, smsList);
-						}
-						
-					}
-
+					processNotifications(aFinanceDetail, aFinanceMain);
 				}
 
 				// User Notifications Message/Alert
@@ -6254,9 +6220,129 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getPreparedMailData(FinanceMain main) {
+	private void processNotifications(FinanceDetail aFinanceDetail, FinanceMain aFinanceMain)
+			throws IOException, TemplateException {
+		List<String> templateTyeList = new ArrayList<String>();
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
+		templateTyeList.add(NotificationConstants.TEMPLATE_FOR_SP);
+
+		String finType = aFinanceMain.getFinType();
+		String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
+		List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(finType, finEvent,
+				getRole(), templateTyeList);
+
+		templateTyeList = null;
+		if (!referenceIdList.isEmpty()) {
+			
+			FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+			CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
+			String finReference = financeMain.getFinReference();
+			List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
+			List<CustomerPhoneNumber> customerPhoneNumList = customerDetails.getCustomerPhoneNumList();
+			List<DocumentDetails> docDetailsList = aFinanceDetail.getDocumentDetailsList();
+			
+			VehicleDealer vehicleDealer = null;
+			boolean isCustomerNotificationExists = false;
+			boolean isSourcingPartnerNotificationExists = false;
+			List<Long> notifyIdlist = new ArrayList<Long>();
+
+			for (ValueLabel valueLabel : referenceIdList) {
+				notifyIdlist.add(Long.valueOf(valueLabel.getValue()));
+				if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
+					isCustomerNotificationExists = true;
+				} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(valueLabel.getLabel())) {
+					isSourcingPartnerNotificationExists = true;
+				}
+			}
+
+			// Mail ID details preparation
+			Map<String, List<String>> mailIDMap = new HashMap<String, List<String>>();
+			//Customer mobile numbers logic start
+			Map<String, List<String>> mobileNoMap = new HashMap<String, List<String>>();
+
+			// Customer Email Preparation
+			if (isCustomerNotificationExists) {
+				
+				if (customerEMailList != null && !customerEMailList.isEmpty()) {
+					List<String> mailIdList = mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN);
+					if (mailIdList == null) {
+						mailIdList = new ArrayList<String>();
+						mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, mailIdList);
+					}
+
+					for (CustomerEMail customerEMail : customerEMailList) {
+						mailIDMap.get(NotificationConstants.TEMPLATE_FOR_CN).add(customerEMail.getCustEMail());
+					}
+				}
+				if (customerPhoneNumList != null && !customerPhoneNumList.isEmpty()) {
+					List<String> custPhoneNoList = new ArrayList<String>();
+					for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
+						custPhoneNoList.add(customerPhoneNumber.getPhoneNumber());
+					}
+					if (!custPhoneNoList.isEmpty()) {
+						mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_CN, custPhoneNoList);
+					}
+				}
+			}
+
+			// vehicleDealer Email Preparation
+			if (isSourcingPartnerNotificationExists) {
+				List<String> mailIdList = new ArrayList<String>();
+				List<String> dealerPhoneNoList = new ArrayList<String>();
+				long vehicleDealerid = getFinanceDetail().getCustomerDetails().getCustomer().getCustRO1();
+				vehicleDealer = getVehicleDealerService().getApprovedVehicleDealerById(vehicleDealerid);
+				if (vehicleDealer != null) {
+					mailIdList.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
+					dealerPhoneNoList.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
+				}
+				if (!mailIdList.isEmpty()) {
+					mailIDMap.put(NotificationConstants.TEMPLATE_FOR_SP, mailIdList);
+				}
+
+				if (!dealerPhoneNoList.isEmpty()) {
+					mobileNoMap.put(NotificationConstants.TEMPLATE_FOR_SP, dealerPhoneNoList);
+				}
+
+			}
+
+			HashMap<String, Object> fieldsAndValues = getPreparedMailData(aFinanceDetail, vehicleDealer);
+			
+			if (isExtMailService()) {
+				try {
+					List<MailTemplate> templates = getMailUtil().getMailDetails(notifyIdlist, fieldsAndValues,
+							docDetailsList, mailIDMap);
+					// send mail to external service
+					getMailTemplateService().sendMail(templates, finReference);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+
+			} else {
+				try {
+					getMailUtil().sendMail(notifyIdlist, fieldsAndValues, docDetailsList,
+							mailIDMap, null);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+
+			}
+
+			// Customer mobile numbers logic end						
+			if (isExtSMSService()) {
+				List<MailTemplate> smsList = getSmsUtil().getSMSContent(notifyIdlist, fieldsAndValues,
+						mobileNoMap);
+				// send SMS to external service
+				getShortMessageService().sendMessage(smsList, finReference);
+			}
+		}
+	}
+
+	public HashMap<String, Object> getPreparedMailData(FinanceDetail aFinanceDetail, VehicleDealer vehicleDealer) {
 		logger.debug("Entering");
 
+		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
 		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
 
@@ -6268,7 +6354,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 
-		return main.getDeclaredFieldValues();
+		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
+		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
+		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
+		if (vehicleDealer != null) {
+			declaredFieldValues.putAll(vehicleDealer.getDeclaredFieldValues());
+		}
+
+		return declaredFieldValues;
 	}
 
 	private boolean primaryValidations() {
@@ -6686,7 +6779,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 
 			if (afinanceMain.getMaturityDate() != null && afinanceMain.getMaturityDate().compareTo(appEndDate) > 0) {
-				auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+				auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 						Labels.getLabel("Label_Exceed"), null));
 				ErrorControl.showErrorControl(getMainWindow(), auditHeader);
 				return processCompleted;
@@ -7557,8 +7650,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			SecurityUserDivBranch branch = (SecurityUserDivBranch) this.finBranch.getObject();
 			if (branch != null) {
 				this.finBranch.setValue(branch.getUserBranch(),branch.getUserBranchDesc());
-				getFinanceDetail().getCustomerDetails().getCustomer()
-						.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
+				branchSwiftCode=branch.getBranchSwiftBrnCde();
 			}
 		}
 		isBranchanged = true;
@@ -7587,6 +7679,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		logger.debug("Leaving");
+	}
+	
+	
+	public void onFulfill$accountsOfficer(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = accountsOfficer.getObject();
+		if (dataObject instanceof String) {
+			this.accountsOfficer.setValue(dataObject.toString());
+			this.accountsOfficer.setDescription("");
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.accountsOfficer.setAttribute("DealerId", details.getDealerId());
+			}
+		}
 		logger.debug("Leaving");
 	}
 
@@ -8276,7 +8385,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
-			ArrayList<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+			ArrayList<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 
 			//FinanceMain Details Tab ---> 1. Basic Details
 
@@ -8284,10 +8393,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.finCcy.isReadonly()) {
 
 				if (StringUtils.isEmpty(this.finCcy.getValue())) {
-					errorList.add(new ErrorDetails("finCcy", "30504", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetail("finCcy", "30504", new String[] {}, new String[] {}));
 				} else if (!this.finCcy.getValue().equals(financeType.getFinCcy())) {
 
-					errorList.add(new ErrorDetails("finCcy", "65001", new String[] { this.finCcy.getValue(),
+					errorList.add(new ErrorDetail("finCcy", "65001", new String[] { this.finCcy.getValue(),
 							financeType.getFinCcy() }, new String[] { this.finCcy.getValue() }));
 				}
 			}
@@ -8296,10 +8405,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.cbScheduleMethod.isReadonly()) {
 
 				if (getComboboxValue(this.cbScheduleMethod).equals(PennantConstants.List_Select)) {
-					errorList.add(new ErrorDetails("scheduleMethod", "90189", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetail("scheduleMethod", "90189", new String[] {}, new String[] {}));
 				} else if (!getComboboxValue(this.cbScheduleMethod).equals(financeType.getFinSchdMthd())) {
 
-					errorList.add(new ErrorDetails("scheduleMethod", "65002", new String[] {
+					errorList.add(new ErrorDetail("scheduleMethod", "65002", new String[] {
 							getComboboxValue(this.cbScheduleMethod),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod() },
 							new String[] { getComboboxValue(this.cbScheduleMethod) }));
@@ -8309,10 +8418,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// validate finance profit days basis
 			if (!this.cbProfitDaysBasis.isReadonly()) {
 				if (getComboboxValue(this.cbProfitDaysBasis).equals(PennantConstants.List_Select)) {
-					errorList.add(new ErrorDetails("profitDaysBasis", "30505", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetail("profitDaysBasis", "30505", new String[] {}, new String[] {}));
 				} else if (!getComboboxValue(this.cbProfitDaysBasis).equals(financeType.getFinDaysCalType())) {
 
-					errorList.add(new ErrorDetails("profitDaysBasis", "65003", new String[] {
+					errorList.add(new ErrorDetail("profitDaysBasis", "65003", new String[] {
 							getComboboxValue(this.cbProfitDaysBasis),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getProfitDaysBasis() },
 							new String[] { getComboboxValue(this.cbProfitDaysBasis) }));
@@ -8323,7 +8432,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.finReference.isReadonly() && StringUtils.isNotBlank(this.finReference.getValue())) {
 				if (getFinanceDetailService().isFinReferenceExits(this.finReference.getValue(), "_View", false)) {
 
-					errorList.add(new ErrorDetails("finReference", "30506",
+					errorList.add(new ErrorDetail("finReference", "30506",
 							new String[] { Labels.getLabel("label_FinanceMainDialog_FinReference.value"),
 									this.finReference.getValue() }, new String[] {}));
 				}
@@ -8333,7 +8442,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
 						CalculationConstants.SCHMTHD_PFT)) {
-					errorList.add(new ErrorDetails("StepFinance", "30552", new String[] { Labels
+					errorList.add(new ErrorDetail("StepFinance", "30552", new String[] { Labels
 							.getLabel("label_ScheduleMethod_CalculatedProfit") }, new String[] {}));
 				}
 
@@ -8341,7 +8450,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						FinanceConstants.STEPTYPE_PRIBAL)
 						&& StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
 								CalculationConstants.SCHMTHD_EQUAL)) {
-					errorList.add(new ErrorDetails("StepFinance", "30555", new String[] { Labels
+					errorList.add(new ErrorDetail("StepFinance", "30555", new String[] { Labels
 							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}
 
@@ -8350,7 +8459,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
 						if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
 								CalculationConstants.RATE_BASIS_F)) {
-							errorList.add(new ErrorDetails("StepFinance", "30553", new String[] { Labels
+							errorList.add(new ErrorDetail("StepFinance", "30553", new String[] { Labels
 									.getLabel("label_Flat") }, new String[] {}));
 						}
 
@@ -8360,7 +8469,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									CalculationConstants.SCHMTHD_EQUAL)
 									&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
 											CalculationConstants.RATE_BASIS_R)) {
-								errorList.add(new ErrorDetails("StepFinance", "30554",
+								errorList.add(new ErrorDetail("StepFinance", "30554",
 										new String[] { Labels.getLabel("label_ScheduleMethod_Equal"),
 												Labels.getLabel("label_Reduce") }, new String[] {}));
 							}
@@ -8375,7 +8484,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				
 				//both step and EMI holiday not allowed
 				if (getFinanceDetail().getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
-					errorList.add(new ErrorDetails("30573", null));
+					errorList.add(new ErrorDetail("30573", null));
 				}	
 			}
 
@@ -8388,7 +8497,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& this.finStartDate.getValue() != null) {
 
 					if (this.gracePeriodEndDate_two.getValue().before(this.finStartDate.getValue())) {
-						errorList.add(new ErrorDetails("gracePeriodEndDate", "30518", new String[] {
+						errorList.add(new ErrorDetail("gracePeriodEndDate", "30518", new String[] {
 								PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.finStartDate.getValue(), "") }, new String[] {}));
 					}
@@ -8398,7 +8507,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Date curBussDate = DateUtility.getAppDate();
 					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
 						errorList
-								.add(new ErrorDetails("gracePeriodEndDate", "30569", new String[] {
+								.add(new ErrorDetail("gracePeriodEndDate", "30569", new String[] {
 										Labels.getLabel("label_IjarahFinanceMainDialog_GracePeriodEndDate.value"),
 										PennantAppUtil.formateDate(DateUtility.addDays(curBussDate, 1), "") },
 										new String[] {}));
@@ -8408,11 +8517,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.cbGrcSchdMthd.isReadonly() && this.allowGrcRepay.isChecked()) {
 
 					if (getComboboxValue(this.cbGrcSchdMthd).equals(PennantConstants.List_Select)) {
-						errorList.add(new ErrorDetails("scheduleMethod", "90189", new String[] {}, new String[] {}));
+						errorList.add(new ErrorDetail("scheduleMethod", "90189", new String[] {}, new String[] {}));
 
 					} else if (!getComboboxValue(this.cbGrcSchdMthd).equals(financeType.getFinGrcSchdMthd())) {
 
-						errorList.add(new ErrorDetails("scheduleMethod", "65002", new String[] {
+						errorList.add(new ErrorDetail("scheduleMethod", "65002", new String[] {
 								getComboboxValue(this.cbGrcSchdMthd),
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcSchdMthd() },
 								new String[] { getComboboxValue(this.cbGrcSchdMthd) }));
@@ -8421,13 +8530,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// validate finance profit rate
 				if (!this.graceRate.isBaseReadonly() && StringUtils.isEmpty(this.graceRate.getBaseValue())) {
-					errorList.add(new ErrorDetails("graceBaseRate", "30513", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetail("graceBaseRate", "30513", new String[] {}, new String[] {}));
 				}
 
 				// validate selected profit date is matching to profit frequency or not
 				if (!this.gracePftFrq.validateFrquency(this.nextGrcPftDate_two.getValue(),
 						this.gracePeriodEndDate.getValue())) {
-					errorList.add(new ErrorDetails("nextGrcPftDate_two", "65004", new String[] {
+					errorList.add(new ErrorDetail("nextGrcPftDate_two", "65004", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NextGrcPftDate.value"),
 							Labels.getLabel("label_FinanceMainDialog_GracePftFrq.value"),
 							Labels.getLabel("finGracePeriodDetails") }, new String[] {
@@ -8438,14 +8547,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					if (this.nextGrcPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
 
-						errorList.add(new ErrorDetails("nextGrcPftDate_two", "90161", new String[] {
+						errorList.add(new ErrorDetail("nextGrcPftDate_two", "90161", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") },
 								new String[] {}));
 					}
 
 					if (this.nextGrcPftDate_two.getValue().before(this.finStartDate.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcPftDate_two", "90162", new String[] {
+						errorList.add(new ErrorDetail("nextGrcPftDate_two", "90162", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.finStartDate.getValue(), "") }, new String[] {}));
 					}
@@ -8455,7 +8564,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// frequency or not
 				if (!this.gracePftRvwFrq.validateFrquency(this.nextGrcPftRvwDate_two.getValue(),
 						this.gracePeriodEndDate.getValue())) {
-					errorList.add(new ErrorDetails("nextGrcPftRvwDate_two", "65004", new String[] {
+					errorList.add(new ErrorDetail("nextGrcPftRvwDate_two", "65004", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NextGrcPftRvwDate.value"),
 							Labels.getLabel("label_FinanceMainDialog_GracePftRvwFrq.value"),
 							Labels.getLabel("finGracePeriodDetails") }, new String[] {
@@ -8465,14 +8574,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.nextGrcPftRvwDate.isReadonly() && this.nextGrcPftRvwDate_two.getValue() != null) {
 
 					if (this.nextGrcPftRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcPftRvwDate_two", "30520", new String[] {
+						errorList.add(new ErrorDetail("nextGrcPftRvwDate_two", "30520", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcPftRvwDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") },
 								new String[] {}));
 					}
 
 					if (this.nextGrcPftRvwDate_two.getValue().before(this.finStartDate.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcPftRvwDate_two", "30530", new String[] {
+						errorList.add(new ErrorDetail("nextGrcPftRvwDate_two", "30530", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcPftRvwDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.finStartDate.getValue(), "") }, new String[] {}));
 					}
@@ -8482,7 +8591,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// frequency or not
 				if (!this.graceCpzFrq.validateFrquency(this.nextGrcCpzDate_two.getValue(),
 						this.gracePeriodEndDate.getValue())) {
-					errorList.add(new ErrorDetails("nextGrcCpzDate_two", "65004", new String[] {
+					errorList.add(new ErrorDetail("nextGrcCpzDate_two", "65004", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NextGrcCpzDate.value"),
 							Labels.getLabel("label_FinanceMainDialog_GraceCpzFrq.value"),
 							Labels.getLabel("finGracePeriodDetails") }, new String[] {
@@ -8492,20 +8601,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.nextGrcCpzDate.isReadonly() && this.nextGrcCpzDate_two.getValue() != null) {
 
 					if (this.nextGrcCpzDate_two.getValue().before(this.nextGrcPftDate_two.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcCpzDate_two","30526", new String[] {
+						errorList.add(new ErrorDetail("nextGrcCpzDate_two","30526", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") }, new String[] {}));
 					}
 
 					if (this.nextGrcCpzDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcCpzDate_two", "30521", new String[] {
+						errorList.add(new ErrorDetail("nextGrcCpzDate_two", "30521", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") },
 								new String[] {}));
 					}
 
 					if (this.nextGrcCpzDate_two.getValue().before(this.finStartDate.getValue())) {
-						errorList.add(new ErrorDetails("nextGrcCpzDate_two", "30531", new String[] {
+						errorList.add(new ErrorDetail("nextGrcCpzDate_two", "30531", new String[] {
 								PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.finStartDate.getValue(), "") }, new String[] {}));
 					}
@@ -8517,18 +8626,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
 				int maxalwdyears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS") * 12;
 				if (tenor > maxalwdyears) {
-					errorList.add(new ErrorDetails("odyearlyTerms", "30578", new String[] {
+					errorList.add(new ErrorDetail("odyearlyTerms", "30578", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_ODTenor.value"),
 							String.valueOf(SysParamUtil.getValueAsInt("MAX_FIN_YEARS")) }, null));
 				}
 			}
 			if (!this.repayRate.isBaseReadonly() && StringUtils.isEmpty(this.repayRate.getBaseValue())) {
-				errorList.add(new ErrorDetails("repayBaseRate", "30513", new String[] {}, null));
+				errorList.add(new ErrorDetail("repayBaseRate", "30513", new String[] {}, null));
 			}
 
 			if (this.row_RpyAdvBaseRate.isVisible() && !this.rpyAdvRate.isBaseReadonly()
 					&& this.repayRate.getEffRateValue().compareTo(this.rpyAdvRate.getEffRateValue()) < 0) {
-				errorList.add(new ErrorDetails("rpyAdvBaseRate", "30551", new String[] {
+				errorList.add(new ErrorDetail("rpyAdvBaseRate", "30551", new String[] {
 						Labels.getLabel("label_FinanceMainDialog_RpyAdvPftRate.value"),
 						Labels.getLabel("label_FinanceMainDialog_ProfitRate.value") }, null));
 			}
@@ -8536,7 +8645,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// validate selected repayments date is matching to repayments
 			// frequency or not
 			if (!this.repayFrq.validateFrquency(this.nextRepayDate_two.getValue(), this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetails("nextRepayDate_two", "65004", new String[] {
+				errorList.add(new ErrorDetail("nextRepayDate_two", "65004", new String[] {
 						Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
 						Labels.getLabel("label_FinanceMainDialog_RepayFrq.value"),
 						Labels.getLabel("finRepaymentDetails") }, new String[] {
@@ -8550,13 +8659,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (this.allowGrace.isChecked()) {
 						errorCode = "30522";
 					}
-					errorList.add(new ErrorDetails("nextRepayDate_two", errorCode, new String[] {
+					errorList.add(new ErrorDetail("nextRepayDate_two", errorCode, new String[] {
 							PennantAppUtil.formateDate(this.nextRepayDate_two.getValue(), ""),
 							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
 				if (this.rpyPftFrqRow.isVisible()
 						&& this.nextRepayDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
-					errorList.add(new ErrorDetails("nextRepayDate_two", "30534", new String[] {
+					errorList.add(new ErrorDetail("nextRepayDate_two", "30534", new String[] {
 							PennantAppUtil.formateDate(this.nextRepayDate_two.getValue(), ""),
 							PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") }, new String[] {}));
 				}
@@ -8569,7 +8678,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				if (!this.repayPftFrq.validateFrquency(this.nextRepayPftDate_two.getValue(),
 						this.gracePeriodEndDate.getValue())) {
-					errorList.add(new ErrorDetails("nextRepayPftDate_two", "65004", new String[] {
+					errorList.add(new ErrorDetail("nextRepayPftDate_two", "65004", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"),
 							Labels.getLabel("label_FinanceMainDialog_RepayPftFrq.value"),
 							Labels.getLabel("WIFinRepaymentDetails") }, new String[] {
@@ -8578,7 +8687,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (!this.nextRepayPftDate.isReadonly() && this.nextRepayPftDate_two.getValue() != null) {
 					if (!this.nextRepayPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-						errorList.add(new ErrorDetails("nextRepayPftDate_two", "30523", new String[] {
+						errorList.add(new ErrorDetail("nextRepayPftDate_two", "30523", new String[] {
 								PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), ""),
 								PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") },
 								new String[] {}));
@@ -8590,7 +8699,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// review frequency or not
 			if (!this.repayRvwFrq.validateFrquency(this.nextRepayRvwDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetails("nextRepayRvwDate_two", "65004", new String[] {
+				errorList.add(new ErrorDetail("nextRepayRvwDate_two", "65004", new String[] {
 						Labels.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"),
 						Labels.getLabel("label_FinanceMainDialog_RepayRvwFrq.value"),
 						Labels.getLabel("finRepaymentDetails") }, new String[] {
@@ -8599,7 +8708,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (!this.nextRepayRvwDate.isReadonly() && this.nextRepayRvwDate_two.getValue() != null) {
 				if (!this.nextRepayRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-					errorList.add(new ErrorDetails("nextRepayRvwDate_two", "30524", new String[] {
+					errorList.add(new ErrorDetail("nextRepayRvwDate_two", "30524", new String[] {
 							PennantAppUtil.formateDate(this.nextRepayRvwDate_two.getValue(), ""),
 							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
@@ -8609,7 +8718,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// capital frequency or not
 			if (!this.repayCpzFrq.validateFrquency(this.nextRepayCpzDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetails("nextRepayCpzDate_two", "65004", new String[] {
+				errorList.add(new ErrorDetail("nextRepayCpzDate_two", "65004", new String[] {
 						Labels.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"),
 						Labels.getLabel("label_FinanceMainDialog_RepayCpzFrq.value"),
 						Labels.getLabel("finRepaymentDetails") }, new String[] {
@@ -8619,7 +8728,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.nextRepayCpzDate.isReadonly() && this.nextRepayCpzDate_two.getValue() != null) {
 
 				if (!this.nextRepayCpzDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-					errorList.add(new ErrorDetails("nextRepayCpzDate_two", "30525", new String[] {
+					errorList.add(new ErrorDetail("nextRepayCpzDate_two", "30525", new String[] {
 							PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
 							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
@@ -8627,7 +8736,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.nextRepayPftDate_two.getValue() != null) {
 					if (this.nextRepayCpzDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
 						errorList
-								.add(new ErrorDetails("nextRepayCpzDate_two", "30528", new String[] {
+								.add(new ErrorDetail("nextRepayCpzDate_two", "30528", new String[] {
 										PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
 										PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
 										new String[] {}));
@@ -8639,7 +8748,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// frequency or not
 			if (!this.rolloverFrq.validateFrquency(this.nextRollOverDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetails("nextRolloverDate_two", "65004", new String[] {
+				errorList.add(new ErrorDetail("nextRolloverDate_two", "65004", new String[] {
 						Labels.getLabel("label_FinanceMainDialog_NextRolloverDate.value"),
 						Labels.getLabel("label_FinanceMainDialog_RolloverFrq.value"),
 						Labels.getLabel("finRepaymentDetails") }, new String[] {
@@ -8653,7 +8762,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (this.allowGrace.isChecked()) {
 						errorCode = "30522";
 					}
-					errorList.add(new ErrorDetails("nextRolloverDate_two", errorCode, new String[] {
+					errorList.add(new ErrorDetail("nextRolloverDate_two", errorCode, new String[] {
 							PennantAppUtil.formateDate(this.nextRollOverDate_two.getValue(), ""),
 							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
@@ -8696,7 +8805,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.numberOfTerms.isReadonly() && this.numberOfTerms.intValue() != 0 && !singleTermFinance
 					&& !this.manualSchedule.isChecked()) {
 				if (this.numberOfTerms.intValue() >= 1 && this.maturityDate.getValue() != null) {
-					errorList.add(new ErrorDetails("numberOfTerms", "30511", new String[] {
+					errorList.add(new ErrorDetail("numberOfTerms", "30511", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"),
 							Labels.getLabel("label_FinanceMainDialog_MaturityDate.value") }, new String[] {}));
 				}
@@ -8704,7 +8813,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (!this.maturityDate.isReadonly() && !singleTermFinance && !this.manualSchedule.isChecked()) {
 				if (this.maturityDate.getValue() != null && (this.numberOfTerms.intValue() >= 1) && !singleTermFinance) {
-					errorList.add(new ErrorDetails("maturityDate", "30511", new String[] {
+					errorList.add(new ErrorDetail("maturityDate", "30511", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"),
 							Labels.getLabel("label_FinanceMainDialog_MaturityDate.value") }, new String[] {}));
 				}
@@ -8712,13 +8821,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (this.maturityDate_two.getValue() != null) {
 				if (this.maturityDate_two.getValue().compareTo(appEndDate) > 0) {
-					errorList.add(new ErrorDetails("maturityDate", "30510", new String[] {
+					errorList.add(new ErrorDetail("maturityDate", "30510", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_MaturityDate.value"),
 							PennantAppUtil.formateDate(this.appEndDate, "") }, new String[] {}));
 				}
 				if (!this.nextRepayDate.isReadonly()) {
 					if (this.maturityDate_two.getValue().before(this.nextRepayDate_two.getValue())) {
-						errorList.add(new ErrorDetails("maturityDate", "30527", new String[] {
+						errorList.add(new ErrorDetail("maturityDate", "30527", new String[] {
 								PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
 								Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
 								PennantAppUtil.formateDate(this.nextRepayDate_two.getValue(), "") }, new String[] {}));
@@ -8728,7 +8837,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.nextRepayPftDate.isReadonly()) {
 					if (this.maturityDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
 						errorList
-								.add(new ErrorDetails("maturityDate", "30527", new String[] {
+								.add(new ErrorDetail("maturityDate", "30527", new String[] {
 										PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
 										Labels.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"),
 										PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
@@ -8739,7 +8848,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.nextRepayCpzDate.isReadonly()) {
 					if (this.maturityDate_two.getValue().before(this.nextRepayCpzDate_two.getValue())) {
 						errorList
-								.add(new ErrorDetails("maturityDate", "30527", new String[] {
+								.add(new ErrorDetail("maturityDate", "30527", new String[] {
 										PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
 										Labels.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"),
 										PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), "") },
@@ -8751,10 +8860,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// validate finance grace profit days basis
 			if (!this.grcPftDaysBasis.isDisabled() && this.gb_gracePeriodDetails.isVisible()) {
 				if (getComboboxValue(this.grcPftDaysBasis).equals(PennantConstants.List_Select)) {
-					errorList.add(new ErrorDetails("grcPftDaysBasis", "30505", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetail("grcPftDaysBasis", "30505", new String[] {}, new String[] {}));
 				} else if (!getComboboxValue(this.grcPftDaysBasis).equals(financeType.getFinDaysCalType())) {
 
-					errorList.add(new ErrorDetails("grcPftDaysBasis", "65003", new String[] {
+					errorList.add(new ErrorDetail("grcPftDaysBasis", "65003", new String[] {
 							getComboboxValue(this.grcPftDaysBasis),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcProfitDaysBasis() },
 							new String[] { getComboboxValue(this.grcPftDaysBasis) }));
@@ -8765,7 +8874,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(),
 						this.repayFrq.getValue());
 				if (StringUtils.isNotBlank(errorCode)) {
-					errorList.add(new ErrorDetails("Frequency", "30539", new String[] {
+					errorList.add(new ErrorDetail("Frequency", "30539", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_RepayPftFrq.value"),
 							Labels.getLabel("label_FinanceMainDialog_RepayFrq.value") }, new String[] {}));
 				}
@@ -8773,7 +8882,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()
 					&& this.downPayBank.getActualValue().compareTo(BigDecimal.ZERO) <= 0) {
-				errorList.add(new ErrorDetails("Frequency", "30543", new String[] {}, new String[] {}));
+				errorList.add(new ErrorDetail("Frequency", "30543", new String[] {}, new String[] {}));
 			}
 
 			// BPI Validations
@@ -8796,7 +8905,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						PennantConstants.dateFormat));
 
 				if (DateUtility.compare(bpiDate, frqDate) >= 0) {
-					errorList.add(new ErrorDetails("30571", null));
+					errorList.add(new ErrorDetail("30571", null));
 
 				}
 			}
@@ -8805,7 +8914,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.alwPlannedEmiHoliday.isChecked()) {
 				String rpyFrq = getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayFrq();
 				if (!StringUtils.equals(String.valueOf(rpyFrq.charAt(0)), FrequencyCodeTypes.FRQ_MONTHLY)) {
-					errorList.add(new ErrorDetails("30572", null));
+					errorList.add(new ErrorDetail("30572", null));
 				}
 			}
 
@@ -8818,7 +8927,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(finInsurance.getInsuranceFrq())) {
 						String insFrqDay = FrequencyUtil.getFrequencyDay(finInsurance.getInsuranceFrq());
 						if (!StringUtils.equals(repayFrqDay, insFrqDay)) {
-							errorList.add(new ErrorDetails("InsuranceFrq", "30545", new String[] { finInsurance
+							errorList.add(new ErrorDetail("InsuranceFrq", "30545", new String[] { finInsurance
 									.getInsuranceType() }, new String[] {}));
 							break;
 						}
@@ -9031,7 +9140,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetLOVValidation();
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
-		aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
+		if(isBranchanged){
+			aFinanceMain.setSwiftBranchCode(branchSwiftCode);			
+		}else{
+			aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
+		}
+		
 		Date financeDate = null;
 
 		try {
@@ -9333,7 +9447,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setAccountsOfficer(this.accountsOfficer.getValue());
+			this.accountsOfficer.getValidatedValue();
+			Object object = this.accountsOfficer.getAttribute("DealerId");
+			if (object != null) {
+				aFinanceMain.setAccountsOfficer(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setAccountsOfficer(0);
+			}
 			aFinanceMain.setLovDescAccountsOfficer(this.accountsOfficer.setDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -11118,6 +11238,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 
 		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
+		
+		//GST Added
+		String fromBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		if (fromBranch == null) {
+			fromBranch = getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch();
+		}
+		String toBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		
+		List<String> brachesList = new ArrayList<>();
+		brachesList.add(fromBranch);
+		brachesList.add(toBranch);
+		
+		List<Branch> braches = getFinanceDetailService().getBrachDetailsByBranchCode(brachesList);
+		
+		for(Branch brach : braches) {
+			if (StringUtils.equals(fromBranch, brach.getBranchCode())) {
+				dataMap.put("fromState", brach.getBranchProvince());
+			} 
+			
+			if (StringUtils.equals(toBranch, brach.getBranchCode())) {
+				dataMap.put("toState", brach.getBranchProvince());
+			} 
+		}
+		
 		aeEvent.getAeAmountCodes().getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 		
@@ -11240,28 +11384,69 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
 				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmountOriginal());
+				
+				//GST Added
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
+				//Calculated Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				
+				//Paid Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+	
+				//Net Amount 
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
 
 				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFeeOriginal());
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
 				} else {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", 0);
 				}
 
 				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFeeOriginal());
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
 				} else {
 					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
+					//GST Added
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", 0);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", 0);
 				}
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFeeOriginal());	//GST Change
 				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFeeOriginal()); //GST Change
 				}
 
 				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
@@ -13701,6 +13886,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (getMandateDialogCtrl() != null) {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
+		
+		if (getChequeDetailDialogCtrl() != null) {
+			getChequeDetailDialogCtrl().checkTabDisplay(repymethod, true);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -14753,7 +14942,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			OverdraftScheduleDetail curODSchd = odSchdList.get(i);
 			if (DateUtility.compare(curODSchd.getDroplineDate(), finScheduleData.getFinanceMain().getMaturityDate()) >= 0) {
 				if (curODSchd.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0) {
-					finScheduleData.setErrorDetail(new ErrorDetails("30575", new String[] {}));
+					finScheduleData.setErrorDetail(new ErrorDetail("30575", new String[] {}));
 					break;
 				}
 			}
@@ -14878,7 +15067,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				contributorDetailsDialogCtrl.doSaveContributorsDetail(getFinanceDetail(),
 						getTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR));
 			}
-			validFinScheduleData.setErrorDetails(new ArrayList<ErrorDetails>());
+			validFinScheduleData.setErrorDetails(new ArrayList<ErrorDetail>());
 
 			if (this.manualSchedule.isChecked()) {
 				//Schedule tab Selection After Schedule Re-modified
@@ -15151,6 +15340,46 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showError(e);
 				}
 			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void processSave() throws InterruptedException, Exception {
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String prevRecordStatus = financeMain.getRecordStatus();
+		String recordStatus = userAction.getSelectedItem().getValue();
+		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
+				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
+				&& StringUtils.isEmpty(moduleDefiner)) {
+			boolean allow = DisbursementInstCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
+			if (!allow) {
+				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
+				return;
+			}
+		}
+
+		Long captureReasone = null;
+		String taskId = getTaskId(getRole());
+		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		captureReasone = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
+
+		if (captureReasone != null && captureReasone.intValue() != 0) {
+			doFillReasons(captureReasone.intValue());
+		} else {
+			doSave();
+		}
+	}
+	
+	public void doFillReasons(int reason) throws InterruptedException{
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeMainDialogCtrl", this);
+		map.put("reason", reason);
+		try{
+			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", getMainWindow(), map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -15966,4 +16195,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
 	
+	public VehicleDealerService getVehicleDealerService() {
+		return vehicleDealerService;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	public ChequeDetailDialogCtrl getChequeDetailDialogCtrl() {
+		return chequeDetailDialogCtrl;
+	}
+
+	public void setChequeDetailDialogCtrl(ChequeDetailDialogCtrl chequeDetailDialogCtrl) {
+		this.chequeDetailDialogCtrl = chequeDetailDialogCtrl;
+	}
 }

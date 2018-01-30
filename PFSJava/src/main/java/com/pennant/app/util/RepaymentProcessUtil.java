@@ -420,24 +420,103 @@ public class RepaymentProcessUtil {
 
 		boolean feesExecuted = false;
 		boolean executePftChg = true;
-		for (int i = 0; i < receiptDetailList.size(); i++) {
+		
+		boolean payableLoopProcess = false;
+		Map<String, BigDecimal> extDataMap = new HashMap<>();
+		BigDecimal totPayable = BigDecimal.ZERO;
+		int rcptSize = receiptDetailList.size();
+		List<RepayScheduleDetail> repaySchdList = null;
+		for (int rcpt = 0; rcpt < receiptDetailList.size(); rcpt++) {
 			
-			FinReceiptDetail receiptDetail = receiptDetailList.get(i);
+			FinReceiptDetail receiptDetail = receiptDetailList.get(rcpt);
 
 			// Repay Header list process individually based on List existence
 			List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
 
-			if (i != 0) {
+			if (rcpt != 0) {
 				postDate = getPostDate(postingDate);
+			}
+			
+			if(!payableLoopProcess && !StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				extDataMap = new HashMap<>();
+				totPayable = BigDecimal.ZERO;
+			}
+			
+			totPayable = totPayable.add(receiptDetail.getAmount());
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				extDataMap.put("PA_ReceiptAmount", totPayable);
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
+			}else{
+				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
+			}
+			
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				//extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
 			}
 
 			boolean rpyProcessed = false;
-			for (int j = 0; j < repayHeaderList.size(); j++) {
+			int rcptHSize = receiptDetail.getRepayHeaders().size();
+			for (int rcph = 0; rcph < repayHeaderList.size(); rcph++) {
 				
 				FinanceProfitDetail pftDetailTemp = new FinanceProfitDetail();
 				BeanUtils.copyProperties(profitDetail, pftDetailTemp);
 
-				FinRepayHeader repayHeader = repayHeaderList.get(j);
+				FinRepayHeader repayHeader = repayHeaderList.get(rcph);
+				
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
+							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
+							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+						
+						if(rcptHSize > rcph+1){
+							
+							FinRepayHeader nxtRcpH = receiptDetail.getRepayHeaders().get(rcph+1);
+							if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
+									StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, nxtRcpH.getFinEvent()) ||
+									StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, nxtRcpH.getFinEvent())){
+								if(StringUtils.equals(nxtRcpH.getFinEvent(), repayHeader.getFinEvent())){
+									payableLoopProcess = true;
+								}else{
+									payableLoopProcess = false;
+								}
+							}else{
+								payableLoopProcess = false;
+							}
+						}else{
+							if(rcptSize > rcpt+1){
+								FinReceiptDetail nxtRcp = receiptDetailList.get(rcpt+1);
+								if(StringUtils.equals(nxtRcp.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+									if(nxtRcp.getRepayHeaders() != null && !nxtRcp.getRepayHeaders().isEmpty()){
+										FinRepayHeader nxtRcpH = nxtRcp.getRepayHeaders().get(0);
+										if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, nxtRcpH.getFinEvent()) || 
+												StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, nxtRcpH.getFinEvent()) ||
+												StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, nxtRcpH.getFinEvent())){
+											if(StringUtils.equals(nxtRcpH.getFinEvent(), repayHeader.getFinEvent())){
+												payableLoopProcess = true;
+											}else{
+												payableLoopProcess = false;
+											}
+										}else{
+											payableLoopProcess = false;
+										}
+									}else{
+										payableLoopProcess = false;
+									}
+								}else{
+									payableLoopProcess = false;
+								}
+							}else{
+								payableLoopProcess = false;
+							}
+						}
+					}else{
+						payableLoopProcess = false;
+					}
+				}
+				
 				if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
 						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
 						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
@@ -541,9 +620,20 @@ public class RepaymentProcessUtil {
 
 					continue;
 				}
+				
+				if(repaySchdList == null){
+					repaySchdList = repayHeader.getRepayScheduleDetails();
+				}else{
+					repaySchdList.addAll(repayHeader.getRepayScheduleDetails());
+				}
+				
+				// If Payable Continue for All Advises
+				if(payableLoopProcess){
+					continue;
+				}
 
 				//Create log entry for Action for Schedule Modification
-				if (i != 0 && !rpyProcessed) {
+				if (rcpt != 0 && !rpyProcessed) {
 					entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finReference);
 					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
@@ -568,9 +658,8 @@ public class RepaymentProcessUtil {
 				
 				String accEvent = getEventCode(repayHeader.getFinEvent());
 				rpyProcessed = true;
-				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, (executeFeesNow ? finFeeDetailList : null), pftDetailTemp, repaySchdList,
-						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg);
+						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg,extDataMap);
 				
 				if(StringUtils.equals(accEvent, AccountEventConstants.ACCEVENT_EARLYPAY)){
 					executePftChg = false;
@@ -592,6 +681,7 @@ public class RepaymentProcessUtil {
 				repayHeader.setValueDate(postDate);
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
+				repaySchdList = null;
 			}
 			
 			// Manual Advise Postings
@@ -601,7 +691,7 @@ public class RepaymentProcessUtil {
 			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
-			receiptDetailList.get(i).setLogKey(logKey);
+			receiptDetailList.get(rcpt).setLogKey(logKey);
 		}
 		logger.debug("Leaving");
 		return scheduleDetails;
@@ -1173,7 +1263,7 @@ public class RepaymentProcessUtil {
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
-			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch, boolean pftChgAccReq) throws IllegalAccessException,
+			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch, boolean pftChgAccReq, Map<String, BigDecimal> extDataMap) throws IllegalAccessException,
 			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1203,18 +1293,18 @@ public class RepaymentProcessUtil {
 
 					// Total Repayments Calculation for Principal, Profit 
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(
-							repaySchdList.get(i).getPrincipalSchdPayNow()));
+							repaySchdList.get(i).getPrincipalSchdPayNow()).subtract(repaySchdList.get(i).getPriSchdWaivedNow()));
 					rpyQueueHeader
-							.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
+							.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()).subtract(repaySchdList.get(i).getPftSchdWaivedNow()));
 					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(repaySchdList.get(i).getTdsSchdPayNow()));
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(
 							repaySchdList.get(i).getLatePftSchdPayNow()));
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
-					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
+					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(repaySchdList.get(i).getSchdFeePayNow()).subtract(repaySchdList.get(i).getSchdFeeWaivedNow()));
 					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(
-							repaySchdList.get(i).getSchdInsPayNow()));
+							repaySchdList.get(i).getSchdInsPayNow()).subtract(repaySchdList.get(i).getSchdInsWaivedNow()));
 					rpyQueueHeader.setSuplRent(rpyQueueHeader.getSuplRent().add(
 							repaySchdList.get(i).getSchdSuplRentPayNow()));
 					rpyQueueHeader.setIncrCost(rpyQueueHeader.getIncrCost().add(
@@ -1245,6 +1335,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 			rpyQueueHeader.setPftChgAccReq(pftChgAccReq);
+			rpyQueueHeader.setExtDataMap(extDataMap);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
 					rpyQueueHeader, eventCode, valuedate,postDate);

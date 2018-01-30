@@ -53,6 +53,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zkoss.spring.SpringUtil;
@@ -88,7 +89,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -111,11 +112,15 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.administration.securityuser.changepassword.ChangePasswordModel;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.framework.security.ldap.LdapContext;
+import com.pennanttech.framework.security.ldap.UserAttributes;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -184,6 +189,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
 	protected boolean newRecord = false;
 	protected Datebox UsrAcExpDt;
+	private boolean ldapUser = false;
+	
+	@Autowired
+	private LdapContext ldapContext;
 
 	/**
 	 * default constructor.<br>
@@ -245,6 +254,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(false);
 			this.rowSecurityUserDialogUsrPwd.setVisible(false);
 			doShowDialog(getSecurityUser());
+			//
+			doSetAuthType(securityUser.getUserType());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_SecurityUserDialog.onClose();
@@ -272,7 +283,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
 		this.usrLName.setMaxlength(50);
-		this.usrMobile.setMaxlength(10);
+	//	this.usrMobile.setMaxlength(10);
 		this.usrEmail.setMaxlength(50);
 
 		this.usrLanguage.setMaxlength(4);
@@ -338,10 +349,53 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving ");
+	}
+
+	
+	public void onChange$usrLogin(Event event) throws Exception {
+		setUserDetails();
+	}
+
+	private void setUserDetails() throws Exception {
+		try {
+			ldapUser = false;
+			if (authType.getValue().equals("Internal") && StringUtils.isNotBlank(usrLogin.getValue())) {
+								
+				Map<String, String> details = ldapContext.getUserDetail(usrLogin.getValue());
+				if (StringUtils.isBlank(usrEmail.getValue())) {
+					usrEmail.setValue(details.get(UserAttributes.EMAIL.getAttribute()));
+				}
+				if (StringUtils.isBlank(usrMobile.getValue())) {
+					usrMobile.setValue(details.get(UserAttributes.MOBILE.getAttribute()));
+				}
+				if (StringUtils.isBlank(usrFName.getValue())) {
+					usrFName.setValue(details.get(UserAttributes.FIRST_NAME.getAttribute()));
+				}
+				if (StringUtils.isBlank(usrMName.getValue())) {
+					usrMName.setValue(details.get(UserAttributes.MIDDLE_NAME.getAttribute()));
+				}
+				if (StringUtils.isBlank(usrLName.getValue())) {
+					usrLName.setValue(details.get(UserAttributes.LAST_NAME.getAttribute()));
+				}
+			}
+			ldapUser = true;
+		} catch (InterfaceException e) {
+			if (e.getErrorCode().equals(LdapContext.LDAP81)) {
+				ldapUser = true;
+				logger.warn(e.getMessage());
+			} else if (e.getErrorCode().equals(LdapContext.LDAP64)) {
+				ldapUser = false;
+				throw new WrongValueException(this.usrLogin, "User not found in active directory");
+			} else {
+				MessageUtil.showError(e);
+				ldapUser = false;
+			}
+
+		}
 	}
 
 	/**
@@ -483,6 +537,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public void onChange$authType(Event event) throws Exception {
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
 		setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
+		this.usrLogin.setErrorMessage("");
+		setUserDetails();
+		
+		
 	}
 
 	/**
@@ -509,8 +567,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aSecurityUser
+	 * @throws Exception 
 	 */
-	public void doWriteComponentsToBean(SecurityUser aSecurityUser) {
+	public void doWriteComponentsToBean(SecurityUser aSecurityUser) throws Exception {
 		logger.debug("Entering ");
 
 		doSetLOVValidation();
@@ -733,7 +792,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		
+		if (!ldapUser && getSecurityUser().isNew()) {
+			 wve.add(new WrongValueException(this.usrLogin, "User not found in active directory"));
+		} else {
+			this.usrLogin.setErrorMessage("");
+			this.usrLogin.setConstraint("");
+		}
+	
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (wve.size() > 0) {
@@ -756,6 +823,19 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Leaving ");
 	}
 
+	/**
+	 * @param usrLogin
+	 * authType disable when double click on ADMIN_MAKER or ADMIN_APPROVER 
+	 */
+	private void doSetAuthType(String userType){
+		if(StringUtils.contains(userType, UserType.ADMIN.name())){
+			this.authType.setDisabled(true);
+			this.btnDelete.setVisible(false);
+		}else{
+			this.authType.setDisabled(false);
+			this.btnDelete.setVisible(true);
+		}
+	}
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -1159,10 +1239,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 	/**
 	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() throws Exception {
 		logger.debug("Entering ");
 		final SecurityUser aSecurityUser = new SecurityUser();
 		BeanUtils.copyProperties(getSecurityUser(), aSecurityUser);
@@ -1361,7 +1440,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SecurityUserDialog, auditHeader);
 						return processCompleted;
@@ -1546,7 +1625,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_SecurityUserDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

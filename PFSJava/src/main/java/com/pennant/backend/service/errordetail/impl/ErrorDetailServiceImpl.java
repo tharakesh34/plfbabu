@@ -45,16 +45,14 @@ package com.pennant.backend.service.errordetail.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -65,11 +63,14 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implements ErrorDetailService {
-	private static final Logger logger = Logger.getLogger(ErrorDetailServiceImpl.class);
-	
-	private AuditHeaderDAO auditHeaderDAO;
-	
+	private AuditHeaderDAO auditHeaderDAO;	
 	private ErrorDetailDAO errorDetailDAO;
+	
+	
+	public ErrorDetailServiceImpl() {
+		super(true);
+	}
+	
 
 	/**
 	 * @return the auditHeaderDAO
@@ -135,10 +136,10 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 
 		
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
-		logger.debug("Entering");	
+		log.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 		String tableType="";
@@ -153,9 +154,13 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		}else{
 			getErrorDetailDAO().update(errorDetail,tableType);
 		}
-
+		
+		if (!errorDetail.isWorkflow()) {
+			invalidateEntity(errorDetail.getId());
+		}
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		log.debug("Leaving");
 		return auditHeader;
 
 	}
@@ -172,10 +177,10 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		log.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"delete",false);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 		
@@ -183,7 +188,10 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		getErrorDetailDAO().delete(errorDetail,"");
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		
+		invalidateEntity(errorDetail.getId());
+		
+		log.debug("Leaving");
 		return auditHeader;
 	}
 
@@ -207,7 +215,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 */
 	
 	public ErrorDetail getApprovedErrorDetailById(String id) {
-		return getErrorDetailDAO().getErrorDetailById(id,"_AView");
+		return getCachedEntity(id);
 	}
 
 	/**
@@ -226,7 +234,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		log.debug("Entering");
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
@@ -258,7 +266,9 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 				getErrorDetailDAO().update(errorDetail, "");
 			}
 		}
-
+		
+		invalidateEntity(errorDetail.getId());
+		
 		getErrorDetailDAO().delete(errorDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -266,9 +276,9 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(errorDetail);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+	
+		getAuditHeaderDAO().addAudit(auditHeader);		
+		log.debug("Leaving");
 
 		return auditHeader;
 	}
@@ -284,7 +294,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	 */
 	
 		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
+			log.debug("Entering");
 			auditHeader = businessValidation(auditHeader,"doApprove",false);
 			if (!auditHeader.isNextProcess()) {
 				return auditHeader;
@@ -296,7 +306,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 			getErrorDetailDAO().delete(errorDetail,"_Temp");
 			
 			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			
 			return auditHeader;
 		}
@@ -314,12 +324,12 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 		
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
-			logger.debug("Entering");
+			log.debug("Entering");
 			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
-			logger.debug("Leaving");
+			log.debug("Leaving");
 			return auditHeader;
 		}
 
@@ -337,8 +347,8 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		 */
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
-			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			log.debug("Entering");
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			ErrorDetail errorDetail= (ErrorDetail) auditDetail.getModelData();
 			
 			ErrorDetail tempErrorDetail= null;
@@ -359,16 +369,16 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 				
 				if (!errorDetail.isWorkflow()){// With out Work flow only new records  
 					if (befErrorDetail !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (errorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befErrorDetail !=null || tempErrorDetail!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befErrorDetail ==null || tempErrorDetail!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -377,24 +387,24 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 				if (!errorDetail.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befErrorDetail ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldErrorDetail!=null && !oldErrorDetail.getLastMntOn().equals(befErrorDetail.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempErrorDetail==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempErrorDetail!=null  && oldErrorDetail!=null && !oldErrorDetail.getLastMntOn().equals(tempErrorDetail.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -407,5 +417,14 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 
 			return auditDetail;
 		}
-
+	
+	@Override
+	public ErrorDetail getErrorDetail(String errorCode) {
+		return getCachedEntity(errorCode);
+	}
+	
+	@Override
+	protected ErrorDetail getEntity(String code) {
+		return errorDetailDAO.getErrorDetailById(code,"_AView");
+	}
 }

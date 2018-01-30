@@ -78,4 +78,6 @@ public interface CurrencyDAO extends BasicCrudDao<Currency> {
 	List<Currency> getCurrencyList(List<String> asList);
 
 	Currency getCurrency(String ccy);
+
+	boolean isExistsCurrencyCode(String ccy);
 }

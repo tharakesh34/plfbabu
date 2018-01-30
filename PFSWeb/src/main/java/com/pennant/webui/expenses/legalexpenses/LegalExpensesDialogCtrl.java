@@ -72,7 +72,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1089,7 +1089,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 
 					}else{
 						
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_LegalExpensesDialog, auditHeader);
 						return processCompleted; 
 					}

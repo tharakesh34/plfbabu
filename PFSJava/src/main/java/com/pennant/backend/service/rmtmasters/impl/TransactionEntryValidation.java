@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -77,17 +77,17 @@ public class TransactionEntryValidation {
 
 			if (!transactionEntry.isWorkflow()){// With out Work flow only new records  
 				if (beftransactionEntry !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (transactionEntry.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (beftransactionEntry !=null || tempFeeTier!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (beftransactionEntry ==null || tempFeeTier!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -96,14 +96,14 @@ public class TransactionEntryValidation {
 			if (!transactionEntry.isWorkflow()){	// With out Work flow for update and delete
 
 				if (beftransactionEntry ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(beftransactionEntry.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
@@ -111,11 +111,11 @@ public class TransactionEntryValidation {
 			}else{
 
 				if (tempFeeTier==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempFeeTier!=null  && oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(tempFeeTier.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}

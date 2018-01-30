@@ -53,6 +53,8 @@ public class FinReceiptDetail implements Entity {
 	private String						reference;					// only for Fees
 	private String						feeTypeDesc;
 	private boolean 					noReserve;
+	private String						fundingAcCode;
+	private String						feeTypeCode;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
@@ -360,6 +362,22 @@ public class FinReceiptDetail implements Entity {
 
 	public void setNoReserve(boolean noReserve) {
 		this.noReserve = noReserve;
+	}
+	
+	public String getFundingAcCode() {
+		return fundingAcCode;
+	}
+
+	public void setFundingAcCode(String fundingAcCode) {
+		this.fundingAcCode = fundingAcCode;
+	}
+	
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 }

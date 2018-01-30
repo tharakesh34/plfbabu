@@ -74,7 +74,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -804,7 +804,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.win_SecRoleGroupsDialog,
 					auditHeader);

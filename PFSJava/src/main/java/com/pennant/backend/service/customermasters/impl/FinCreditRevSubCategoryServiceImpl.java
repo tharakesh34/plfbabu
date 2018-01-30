@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -341,7 +341,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			FinCreditRevSubCategory finCreditRevSubCategory= (FinCreditRevSubCategory) auditDetail.getModelData();
 			
 			FinCreditRevSubCategory tempFinCreditRevSubCategory= null;
@@ -362,16 +362,16 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 				
 				if (!finCreditRevSubCategory.isWorkflow()){// With out Work flow only new records  
 					if (befFinCreditRevSubCategory !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (finCreditRevSubCategory.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befFinCreditRevSubCategory !=null || tempFinCreditRevSubCategory!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befFinCreditRevSubCategory ==null || tempFinCreditRevSubCategory!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -380,24 +380,24 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 				if (!finCreditRevSubCategory.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befFinCreditRevSubCategory ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldFinCreditRevSubCategory!=null && !oldFinCreditRevSubCategory.getLastMntOn().equals(befFinCreditRevSubCategory.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempFinCreditRevSubCategory==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempFinCreditRevSubCategory!=null && oldFinCreditRevSubCategory!=null && !oldFinCreditRevSubCategory.getLastMntOn().equals(tempFinCreditRevSubCategory.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}

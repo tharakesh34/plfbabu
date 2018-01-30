@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.bmtmasters.ScoringType;
 import com.pennant.backend.service.bmtmasters.ScoringTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -217,8 +217,8 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 				valueParm[0]=aScoringType.getId();
 				errParm[0]=PennantJavaUtil.getLabel("label_ScoType")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm),
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm),
 						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}else{

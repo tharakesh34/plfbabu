@@ -73,7 +73,6 @@ import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
-import com.pennant.backend.dao.finance.FinanceRejectDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
@@ -91,7 +90,7 @@ import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
@@ -99,6 +98,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -118,6 +118,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -183,6 +184,7 @@ import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CustomServiceTask;
+import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -205,7 +207,6 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -240,7 +241,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LimitInterfaceDAO				limitInterfaceDAO;
 	private DedupParmService				dedupParmService;
 	private DDAControllerService			ddaControllerService;
-	protected FinanceRejectDetailDAO		financeRejectDetailDAO;
 	protected RolledoverFinanceDAO			rolledoverFinanceDAO;
 	private PayOrderIssueHeaderDAO			payOrderIssueHeaderDAO;
 	private TATDetailDAO					tatDetailDAO;
@@ -253,6 +253,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 	private FlagDetailValidation			flagDetailValidation;
 	private FinFlagDetailsDAO				finFlagDetailsDAO;
+	private FinChequeHeaderService 			finChequeHeaderService;
 	private FinTypeInsuranceDAO				finTypeInsuranceDAO;
 	private VASRecordingDAO					vasRecordingDAO;
 	private FinTypeFeesDAO					finTypeFeesDAO;
@@ -460,7 +461,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_TView"));
 			}
 		}
-
+		
 		//Contract Asset Details
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ISTISNA, financeDetail.getFinScheduleData().getFinanceType()
 				.getProductCategory())) {
@@ -523,6 +524,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setFinanceCollaterals(getFinCollateralService()
 					.getFinCollateralsByRef(finReference, "_TView"));
 		}
+
+		//Cheque Header and Cheque Details getting
+		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
 
 		logger.debug("Leaving");
 		return financeDetail;
@@ -1941,6 +1945,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 		}
+		
+		// Save Cheque Header Details
+		//=======================================
+		if (financeDetail.getChequeHeader() != null) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			finChequeHeaderService.saveOrUpdate(auditHeader, tableType);
+			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+		}
 
 		// Save schedule details
 		//=======================================
@@ -2263,10 +2276,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeDetail.getFinScheduleData().getFinFeeDetailActualList(), tableType.getSuffix(),
 					auditHeader.getAuditTranType(), isWIF));
 		}
-
+		
 		// Finance Fee Receipts
 		//=======================================
-		if (!isWIF && financeDetail.getFinScheduleData().getFinFeeReceipts() != null
+		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
 				&& !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 			for(FinFeeReceipt finFeeReceipt : financeDetail.getFinScheduleData().getFinFeeReceipts()) {
 				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
@@ -2422,7 +2435,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditDetails;
 
 	}
-
+	
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
 	 * 
@@ -2763,6 +2776,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinAssetTypeDAO().deleteByReference(financeMain.getFinReference(), "");
 				auditDetails.addAll(details);
 			}
+			
+			// Cheque details
+			if (financeDetail.getChequeHeader() != null) {
+				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+				finChequeHeaderService.delete(auditHeader);
+				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+						.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+			}
 
 			// AssetType Extended field Details
 			if (financeDetail.getExtendedFieldRenderList() != null
@@ -2956,14 +2977,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							.getRolledoverFinanceHeader().getPaymentAccount());
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					logger.debug("Exception: ", e);
-					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-					errorDetails.add(new ErrorDetails("RolledOver", PennantConstants.ERR_UNDEF, "E", e.getMessage(),
+					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+					errorDetails.add(new ErrorDetail("RolledOver", PennantConstants.ERR_UNDEF, "E", e.getMessage(),
 							new String[] {}, new String[] {}));
 					auditHeader.setErrorList(errorDetails);
 				} catch (InterfaceException e) {
 					logger.debug("Exception: ", e);
-					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-					errorDetails.add(new ErrorDetails(e.getErrorCode(), PennantConstants.ERR_UNDEF, "E", e
+					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+					errorDetails.add(new ErrorDetail(e.getErrorCode(), PennantConstants.ERR_UNDEF, "E", e
 							.getErrorMessage(), new String[] {}, new String[] {}));
 					auditHeader.setErrorList(errorDetails);
 				}
@@ -3262,7 +3283,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						auditDetails.addAll(details);
 					}
 				}
-
+				
 				// Save Rolledover Finance Details
 				// =======================================
 				if (financeDetail.getRolledoverFinanceHeader() != null) {
@@ -3424,6 +3445,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			}
 
+			// Save Cheque Header Details
+			// =======================================
+			if (financeDetail.getChequeHeader() != null) {
+				String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+				finChequeHeaderService.doApprove(auditHeader);
+				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+						financeDetail.getChequeHeader().getBefImage(),
+						financeDetail.getChequeHeader()));
+			}
+			
 			// set Customer Details Audit
 			if (financeDetail.getCustomerDetails() != null
 					&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
@@ -3562,7 +3593,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					details = processingFinFlagDetailList(details, "");
 					auditDetails.addAll(details);
 				}
-
+				
 				// AssetType Extended field Details
 				if (financeDetail.getExtendedFieldRenderList() != null
 						&& financeDetail.getExtendedFieldRenderList().size() > 0) {
@@ -3891,11 +3922,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	
 	/**
 	 * Method for execute workflow service tasks.
+	 * @throws Exception 
 	 * 
 	 */
 	@Override
 	public AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, 
-			WorkflowEngine engine) throws AppException, JaxenException {
+			WorkflowEngine engine) throws Exception {
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
@@ -3958,11 +3990,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param usrAction
 	 * @param engine
 	 * @return
-	 * @throws InterfaceException
-	 * @throws JaxenException
+	 * @throws Exception 
 	 */
 	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task, String role, String usrAction,
-			WorkflowEngine engine) throws InterfaceException, JaxenException {
+			WorkflowEngine engine) throws Exception {
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -4007,8 +4038,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		default:
 			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {
-				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
-				if(taskExecuted) {
+				//boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
+				if(true) {
 					return auditHeader;
 				}
 			}
@@ -4120,7 +4151,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
 				errorParm[1] = status.getReturnText();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
+						new ErrorDetail(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
 						auditHeader.getUsrLanguage()));
 				auditDetail.setErrorDetails(
 						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
@@ -4133,7 +4164,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} catch (InterfaceException e) {
 			errorParm[1] = e.getMessage();
 			auditDetail.setErrorDetail(
-					ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "99014", errorParm, null),
 							auditHeader.getUsrLanguage()));
 			auditDetail.setErrorDetails(
 					ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
@@ -4803,9 +4834,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (!isWIF && StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			getFinanceMainDAO().saveRejectFinanceDetails(financeMain);
-
-			//Save Finance Rejected Details Data in FinanceRejectDetail Tables
-			getFinanceRejectDetailDAO().saveFinanceRejectedDetailsLog(financeMain);
 		}
 
 		//OverDraft Schedule Details Deletion
@@ -4877,6 +4905,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
+		// Cheque Details
+		if (financeDetail.getChequeHeader() != null){
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			finChequeHeaderService.doReject(auditHeader);
+			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
+					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
+		}
+
 		// Delete Tax Details
 		if (financeDetail.getTaxDetail() != null) {
 			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
@@ -5052,7 +5088,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(extendedFieldDetailsService.delete(details, AssetConstants.EXTENDEDFIELDS_MODULE,
 						financeMain.getFinReference(), "_Temp"));
 			}
-
+			
 			// Vas Recording Details details Prasad
 			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
 					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
@@ -5303,7 +5339,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							
 							if (!idExist) {	//if Co-Applicant is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-										new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
+										new ErrorDetail(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
 							}
 						} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
 							for (GuarantorDetail guarantorDetail : gurantorsDetailList) {
@@ -5322,7 +5358,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							
 							if (!idExist) {	//if Guarantor is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-										new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
+										new ErrorDetail(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
 							}
 						} 
 					}
@@ -5508,7 +5544,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						String[] valueParm = new String[1];
 						errParm[0] = "";
 						valueParm[0] = "";
-						auditDet.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65026", errParm, valueParm));
+						auditDet.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65026", errParm, valueParm));
 						auditDet.setErrorDetails(ErrorUtil.getErrorDetails(auditDet.getErrorDetails(), usrLanguage));
 
 						auditDetails.add(auditDet);
@@ -5518,7 +5554,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		}
 		
-		if (!isWIF && StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			// Finance Fee Receipts
 			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
 				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
@@ -5588,7 +5624,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 			if (eodProgressCount > 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"60203", errParm, valueParm), usrLanguage));
 			}
 		}
@@ -5631,7 +5667,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 								+ valueParmCollateral[0];
 						errParmCollateral[1] = PennantJavaUtil.getLabel("label_FinanceAmount") + ":"
 								+ valueParmCollateral[1];
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "65012", errParmCollateral, valueParmCollateral),
 								usrLanguage));
 					}
@@ -5689,7 +5725,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					errParmInsurance[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParmInsurace[0];
 					errParmInsurance[1] = PennantJavaUtil.getLabel("label_InsurancePolicy") + ":"
 							+ valueParmInsurace[1];
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"91132", errParmInsurance, valueParmInsurace), usrLanguage));
 				}
 			}
@@ -5738,7 +5774,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetailMap.put("FinFlagsDetail", setFinFlagAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
 		}
-
+		
 		if (!financeDetail.isExtSource()) {
 
 			//Finance Contribution Details
@@ -5949,7 +5985,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-
+	
 	/**
 	 * Method for Rate changes for IJARAH Finances by Applying Actual rates
 	 * 
@@ -5998,7 +6034,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(),
 					financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
-					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			//Changed Finance Save in Database
 			saveOrUpdate(auditHeader, false);
@@ -6050,7 +6086,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(),
 					financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
-					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			//Changed Finance Save in Database
 			saveOrUpdate(auditHeader, false);
@@ -6323,7 +6359,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving ");
 		return auditList;
 	}
-
+	
 	/**
 	 * Method to get Schedule related data.
 	 * 
@@ -6727,7 +6763,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return header;
 	}
-
+	
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy) {
@@ -6782,7 +6818,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		try {
 			list = getCustLimitIntefaceService().fetchLimitDetails(custLimit);
 		} catch (Exception e) {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, e.getMessage(), null));
 			logger.debug("Exception: ", e);
 			logger.debug("Leaving");
 			return auditHeader;
@@ -6797,7 +6833,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
 
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-					new ErrorDetails("Limit", "41002", errParm, valueParm), finDetails.getUserDetails()
+					new ErrorDetail("Limit", "41002", errParm, valueParm), finDetails.getUserDetails()
 							.getLanguage()));
 			logger.debug("Leaving");
 			return auditHeader;
@@ -6813,7 +6849,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					valueParm[1] = financeMain.getLovDescCustCIF();
 					errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
 
-					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", "41002", errParm,
+					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("Limit", "41002", errParm,
 							valueParm), finDetails.getUserDetails().getLanguage()));
 
 					return auditHeader;
@@ -6848,7 +6884,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							errorCode = "65006";
 						}
 
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", errorCode,
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("Limit", errorCode,
 								errParm, valueParm), finDetails.getUserDetails().getLanguage()));
 						logger.debug("Leaving");
 						return auditHeader;
@@ -6918,20 +6954,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeMain;
 	}
 
-	public List<ErrorDetails> getDiscrepancies(FinanceDetail financeDetail) {
+	public List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 
 		long oDDays = getFinODDetailsDAO().checkCustPastDue(
 				financeDetail.getFinScheduleData().getFinanceMain().getCustID());
 		int allowedDays = SysParamUtil.getValueAsInt("MAX_ALLOW_ODDAYS");
 		if (oDDays > 0) {
 			if (oDDays <= allowedDays) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60201",
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60201",
 						new String[] { String.valueOf(oDDays) }, null), ""));
 			} else {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60202",
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60202",
 						new String[] { String.valueOf(oDDays) }, null), ""));
 			}
 		}
@@ -6980,13 +7016,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (StringUtils.isEmpty(limit.getLimitCategory())) {
 					if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60304",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60304",
 								new String[] { limitType }, null), ""));
 					} else if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60307",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60307",
 								new String[] { limitType }, null), ""));
 					} else {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60301",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60301",
 								null, null), ""));
 					}
 					continue;
@@ -6995,13 +7031,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (limit.getLimitExpiry() != null && limit.getLimitExpiry().compareTo(curBussDate) < 0) {
 
 					if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60305",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60305",
 								new String[] { limitType, limit.getLimitCategoryDesc() }, null), ""));
 					} else if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60308",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60308",
 								new String[] { limitType, limit.getLimitCategoryDesc() }, null), ""));
 					} else {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60302",
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60302",
 								new String[] { limit.getLimitCategoryDesc() }, null), ""));
 					}
 					logger.debug("Leaving");
@@ -7035,19 +7071,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					if (StringUtils.isNotEmpty(limit.getCustCountry())) {
 						errorDetails.add(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "60309", new String[] {
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60309", new String[] {
 										excessPerc.toString(),
 										PennantApplicationUtil.amountFormate(excessAmount, formatter), limitType,
 										limit.getLimitCategoryDesc() }, null), ""));
 					} else if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
 						errorDetails.add(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "60306", new String[] {
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60306", new String[] {
 										excessPerc.toString(),
 										PennantApplicationUtil.amountFormate(excessAmount, formatter), limitType,
 										limit.getLimitCategoryDesc() }, null), ""));
 					} else {
 						errorDetails.add(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "60303", new String[] {
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60303", new String[] {
 										excessPerc.toString(),
 										PennantApplicationUtil.amountFormate(excessAmount, formatter),
 										limit.getLimitCategoryDesc() }, null), ""));
@@ -8228,7 +8264,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (validateReserve) {
 
 					if ("".equals(moduleType) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleType)) {
-						List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(
+						List<ErrorDetail> errorDetails = getLimitManagement().processLoanLimitOrgination(
 								financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK,validateOnly);
 						if (!errorDetails.isEmpty()) {
 							aAuditHeader.setErrorList(errorDetails);
@@ -8236,7 +8272,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					} else if (moduleType.equals(FinanceConstants.FINSER_EVENT_ADDDISB)
 							&& !prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 						if (finmain.getFinAssetValue().compareTo(finmain.getFinCurrAssetValue()) == 0) {
-							List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(
+							List<ErrorDetail> errorDetails = getLimitManagement().processLoanDisbursments(
 									financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK,validateOnly);
 							if (!errorDetails.isEmpty()) {
 								aAuditHeader.setErrorList(errorDetails);
@@ -8269,7 +8305,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				} else {
 					transType = LimitConstants.APPROVE;
 				}
-				List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(financeDetail,
+				List<ErrorDetail> errorDetails = getLimitManagement().processLoanLimitOrgination(financeDetail,
 						aAuditHeader.isOveride(), transType,validateOnly);
 				if (!errorDetails.isEmpty()) {
 					aAuditHeader.setErrorList(errorDetails);
@@ -8277,7 +8313,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else {
 
 				if (moduleType.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
-					List<ErrorDetails> errorDetails = getLimitManagement().processLimitIncrease(financeDetail,
+					List<ErrorDetail> errorDetails = getLimitManagement().processLimitIncrease(financeDetail,
 							aAuditHeader.isOveride(),validateOnly);
 					if (!errorDetails.isEmpty()) {
 						aAuditHeader.setErrorList(errorDetails);
@@ -8293,7 +8329,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 
 					if (!StringUtils.isBlank(tranType)) {
-						List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(financeDetail,
+						List<ErrorDetail> errorDetails = getLimitManagement().processLoanDisbursments(financeDetail,
 								aAuditHeader.isOveride(), tranType,validateOnly);
 						if (!errorDetails.isEmpty()) {
 							aAuditHeader.setErrorList(errorDetails);
@@ -8446,16 +8482,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
 
 		return financeDetail;
-	}
-
-	/**
-	 * Method for execute check score service task
-	 * 
-	 */
-	public AuditHeader doCheckScore(AuditHeader auditHeader) {
-		FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		tFinanceDetail.getFinScheduleData().getFinanceMain().setScore(tFinanceDetail.getScore());
-		return auditHeader;
 	}
 	
 	// ******************************************************//
@@ -8612,14 +8638,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setDdaControllerService(DDAControllerService ddaControllerService) {
 		this.ddaControllerService = ddaControllerService;
-	}
-
-	public FinanceRejectDetailDAO getFinanceRejectDetailDAO() {
-		return financeRejectDetailDAO;
-	}
-
-	public void setFinanceRejectDetailDAO(FinanceRejectDetailDAO financeRejectDetailDAO) {
-		this.financeRejectDetailDAO = financeRejectDetailDAO;
 	}
 
 	public RolledoverFinanceDAO getRolledoverFinanceDAO() {
@@ -8835,7 +8853,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType) {
-
 		if (financeMain == null) {
 			WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceMain");
 			financeMain = new FinanceMain();
@@ -8993,7 +9010,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType) {
 		//overdue Penalty Details
-		if(finODPenaltyRate == null){
+		if (finODPenaltyRate == null) {
 			finODPenaltyRate = new FinODPenaltyRate();
 		}
 		finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
@@ -9022,6 +9039,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			this.reasonDetailDAO.save(reasonHeader);
 		}
 	}
+	
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
+	
+		return getFinanceMainDAO().getBrachDetailsByBranchCode(finBranches);
+	}
 	 
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
@@ -9029,5 +9052,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
+	}
+	
+	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
+		this.finChequeHeaderService = finChequeHeaderService;
 	}
 }

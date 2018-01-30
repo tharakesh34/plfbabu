@@ -59,7 +59,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -294,7 +294,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			// For Mandate deletion is not required , so make it as inActive
-			getMandateDAO().updateActive(mandate.getMandateID(), false);
+			getMandateDAO().updateActive(mandate.getMandateID(),MandateConstants.STATUS_CANCEL, false);
+			
+			MandateStatus mandateStatus = new MandateStatus();
+			mandateStatus.setMandateID(mandate.getMandateID());
+			mandateStatus.setStatus(MandateConstants.STATUS_CANCEL);
+			mandateStatus.setReason(mandate.getReason());
+			mandateStatus.setChangeDate(mandate.getInputDate());
+			getMandateStatusDAO().save(mandateStatus, "");
 
 		} else {
 			mandate.setRoleCode("");
@@ -309,13 +316,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_NEW);
 			}
 			
-			MandateStatus mandateStatus = new MandateStatus();
-			mandateStatus.setMandateID(mandate.getMandateID());
-			mandateStatus.setStatus(mandate.getStatus());
-			mandateStatus.setReason(mandate.getReason());
-			mandateStatus.setChangeDate(mandate.getInputDate());
-			getMandateStatusDAO().save(mandateStatus, "");
-
 			getDocument(mandate);
 
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -327,6 +327,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setRecordType("");
 				getMandateDAO().update(mandate, "");
 			}
+
+			MandateStatus mandateStatus = new MandateStatus();
+			mandateStatus.setMandateID(mandate.getMandateID());
+			mandateStatus.setStatus(mandate.getStatus());
+			mandateStatus.setReason(mandate.getReason());
+			mandateStatus.setChangeDate(mandate.getInputDate());
+			
+			getMandateStatusDAO().save(mandateStatus, "");
+
 		}
 
 		if(!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
@@ -413,7 +422,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Mandate mandate = (Mandate) auditDetail.getModelData();
 
 		Mandate tempMandate = null;
@@ -433,16 +442,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			if (!mandate.isWorkflow()) {// With out Work flow only new records  
 				if (befMandate != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befMandate != null || tempMandate != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table				
 					if (befMandate == null || tempMandate != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -451,31 +460,31 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (!mandate.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befMandate == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldMandate != null && !oldMandate.getLastMntOn().equals(befMandate.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempMandate == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempMandate != null && oldMandate != null && !oldMandate.getLastMntOn().equals(tempMandate.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 		if (StringUtils.trimToEmpty(mandate.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			int count = financeMainDAO.getFinanceCountByMandateId(mandate.getMandateID());
 			if (count != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

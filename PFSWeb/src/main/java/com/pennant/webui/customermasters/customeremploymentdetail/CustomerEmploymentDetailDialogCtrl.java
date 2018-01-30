@@ -69,7 +69,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -274,7 +274,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.custEmpName.setDisplayStyle(3);
         this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
-		this.custEmpName.setValueColumn("EmpName");
+		this.custEmpName.setValueColumn("EmployerId");
 		this.custEmpName.setDescColumn("EmpCity");
 		this.custEmpName.setValidateColumns(new String[] { "EmpName" });
 		
@@ -1069,7 +1069,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 
 					if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
@@ -1242,7 +1242,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 							deleteNotes = true;
 						}
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_CustomerEmploymentDetailDialog, auditHeader);
@@ -1350,7 +1350,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerEmploymentDetailDialog, auditHeader);
 		} catch (Exception exp) {

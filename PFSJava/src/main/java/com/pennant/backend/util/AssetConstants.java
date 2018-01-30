@@ -52,6 +52,7 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_STEPDETAILS 	    = "STEPDET";
 	public static final String 	UNIQUE_ID_CONTRIBUTOR 	    = "CONTRBTR";
 	public static final String 	UNIQUE_ID_DISBURSMENT 	    = "DISBURSMENT";
+	public static final String 	UNIQUE_ID_CHEQUE 	    	= "CHEQUE";
 	public static final String 	UNIQUE_ID_FEES 	            = "FEES";
 	public static final String 	UNIQUE_ID_FEE 	            = "FEE";
 	public static final String 	UNIQUE_ID_ADVANCEPAYMENTS 	= "ADVNCEPAY";

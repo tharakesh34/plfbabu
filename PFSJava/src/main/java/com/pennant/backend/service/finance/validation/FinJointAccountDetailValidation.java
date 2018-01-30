@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -60,7 +60,7 @@ public class FinJointAccountDetailValidation {
 
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditDetail.getModelData();
 		JointAccountDetail tempJountAccountDetail = null;
 		if (jountAccountDetail.isWorkflow()) {
@@ -83,19 +83,19 @@ public class FinJointAccountDetailValidation {
 
 			if (!jountAccountDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befJountAccountDetail != null && !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, jountAccountDetail.getRecordType()) ) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (jountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befJountAccountDetail != null || tempJountAccountDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 						        usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befJountAccountDetail == null || tempJountAccountDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 						        usrLanguage));
 					}
@@ -113,11 +113,11 @@ public class FinJointAccountDetailValidation {
 					        && (!oldJountAccountDetail.getLastMntOn().equals(befJountAccountDetail.getLastMntOn()))) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 							        usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 							        usrLanguage));
 						}
@@ -126,7 +126,7 @@ public class FinJointAccountDetailValidation {
 			} else {
 
 				if (tempJountAccountDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
@@ -134,7 +134,7 @@ public class FinJointAccountDetailValidation {
 				        && oldJountAccountDetail != null
 				        && !oldJountAccountDetail.getLastMntOn().equals(
 				                tempJountAccountDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -145,7 +145,7 @@ public class FinJointAccountDetailValidation {
 			boolean coApplicantExists = getFinanceTaxDetailDAO()
 					.isReferenceExists(jountAccountDetail.getFinReference(),jountAccountDetail.getCustCIF());
 			if (coApplicantExists) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
 			}
 		}
 

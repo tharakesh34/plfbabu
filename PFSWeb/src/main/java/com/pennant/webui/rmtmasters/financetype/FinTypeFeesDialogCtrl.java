@@ -67,7 +67,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -518,24 +518,25 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			if(this.percentage.isVisible()){
-				if(this.percentage.intValue() == 0){
-					throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MINVALUE",
-							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "0" }));
+		 try {
+				if (this.percentage.isVisible()) {
+					BigDecimal percentageValue = this.percentage.getValue();
+					
+					if (percentageValue == null || percentageValue.compareTo(BigDecimal.ZERO) == 0) {
+						throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MINVALUE",
+								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "0" }));
+					} else if (percentageValue.compareTo(BigDecimal.ZERO) != 1) {
+						throw new WrongValueException(this.percentage, Labels.getLabel("FIELD_NO_NEGATIVE",
+								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value") }));
+					} else if (percentageValue.compareTo(new BigDecimal(100)) > 0) {
+						throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MAXVALUE_EQ",
+								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "100" }));
+					}
 				}
-				if(this.percentage.getValue().compareTo(BigDecimal.ZERO) != 1){
-					throw new WrongValueException(this.percentage, Labels.getLabel("FIELD_NO_NEGATIVE",
-							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value") }));
-				}else if((this.percentage.getValue()).compareTo(new BigDecimal(100)) > 0){
-					throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"),"100" }));
-				}
+				aFinTypeFees.setPercentage(new BigDecimal(PennantApplicationUtil.formatRate(this.percentage.getValue().doubleValue(),2)));
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
-			aFinTypeFees.setPercentage(new BigDecimal(PennantApplicationUtil.formatRate(this.percentage.getValue().doubleValue(),2)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		try {
 			if(!this.maxWaiver.isReadonly() && this.maxWaiver.getValue() != null){
 				if(this.maxWaiver.getValue().compareTo(BigDecimal.ZERO) < 0){
@@ -937,7 +938,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 						&& finTypeFees.isOriginationFee() == aFinTypeFees.isOriginationFee()) {
 					// Both Current and Existing list rating same
 					if (aFinTypeFees.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (tranType == PennantConstants.TRAN_DEL) {
@@ -1072,7 +1073,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		filters[0] = new Filter("RuleModule", "FEES", Filter.OP_EQUAL);
 		filters[1] = new Filter("RuleEvent", this.finEvent.getValue(), Filter.OP_EQUAL);
 		filters[2] = new Filter("FeeTypeID", readIDValueFromExtCombobox(this.feeType), Filter.OP_EQUAL);
-		filters[3] = new Filter("Active", "1", Filter.OP_EQUAL);
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.ruleCode.setFilters(filters);
 	}
 	
@@ -1192,7 +1193,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinTypeFeesDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

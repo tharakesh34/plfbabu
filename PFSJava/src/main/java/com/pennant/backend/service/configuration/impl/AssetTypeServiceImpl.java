@@ -55,7 +55,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.configuration.AssetTypeDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.AssetType;
@@ -564,7 +564,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		AssetType aAssetType= (AssetType) auditDetail.getModelData();
 
 		AssetType tempAssetType= null;
@@ -585,16 +585,16 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 			if (!aAssetType.isWorkflow()){// With out Work flow only new records  
 				if (befAssetType !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (aAssetType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befAssetType !=null || tempAssetType!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befAssetType ==null || tempAssetType!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -603,24 +603,24 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			if (!aAssetType.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befAssetType ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldAssetType!=null && !oldAssetType.getLastMntOn().equals(befAssetType.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 
 				if (tempAssetType==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 
 				if (tempAssetType!=null  && oldAssetType!=null && !oldAssetType.getLastMntOn().equals(tempAssetType.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}
@@ -629,7 +629,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		// Asset type is in used.
 		if (PennantConstants.RECORD_TYPE_DEL.equals(aAssetType.getRecordType())) {
 			if (getAssetTypeDAO().getAssignedAssets(aAssetType.getAssetType()) > 0) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 			}
 		}
 		

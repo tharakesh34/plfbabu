@@ -31,7 +31,7 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -152,10 +152,10 @@ public class FinanceDetailController extends SummaryDetailService {
 				doProcessPlanEMIHDays(finScheduleData);
 				
 				if (finScheduleData.getErrorDetails() != null) {
-					for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {
+					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 						FinScheduleData response = new FinScheduleData();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError()));
 						return response;
 					}
@@ -164,7 +164,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 				AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 				AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null,
-						null, null, auditDetail, financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+						null, null, auditDetail, financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 				//get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 				//set the headerDetails to AuditHeader
@@ -174,29 +174,29 @@ public class FinanceDetailController extends SummaryDetailService {
 
 				FinScheduleData response = null;
 				if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
-					for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+					for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
 						response = new FinScheduleData();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError()));
 						return response;
 					}
 				}
 				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+					for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 						response = new FinScheduleData();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError()));
 						return response;
 					}
 				}
 				
 				if (auditHeader.getAuditDetail().getErrorDetails() != null) {
-					for (ErrorDetails errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+					for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
 						response = new FinScheduleData();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError()));
 						return response;
 					}

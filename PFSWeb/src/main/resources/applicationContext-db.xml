@@ -18,7 +18,7 @@
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
@@ -29,12 +29,6 @@
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	<tx:advice id="finOneServiceTxAdvice" transaction-manager="finOneTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
 	<!-- ====================================================== -->
 	<!--         Define Aspect pointcuts and advisors           -->
 	<!--               for the transaction scopes.              -->
@@ -52,17 +46,15 @@
 		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="guiServiceMethods" />
 		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
 		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />
-		<aop:advisor advice-ref="finOneServiceTxAdvice" pointcut-ref="serviceMethods" />
-	
+		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />	
 	</aop:config> 
 
 	<!-- ====================================================== -->
 	<!--             Define the transaction manager             -->
 	<!-- ====================================================== -->
-	<bean id="pfsTransactionManager"
+	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="secTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -72,11 +64,7 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="auditDatasource" />
 	</bean>
-	<bean id="finOneTransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="finOneDatasource" />
-	</bean>
-	
+		
 	<!-- ====================================================== -->
 	<!-- Define the property placeholder configurer -->
 	<!-- ====================================================== -->

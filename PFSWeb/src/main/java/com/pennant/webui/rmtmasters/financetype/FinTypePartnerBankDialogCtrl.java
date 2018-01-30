@@ -61,7 +61,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -74,8 +74,8 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -182,9 +182,9 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		logger.debug(Literal.ENTERING);
 
 		this.partnerBankID.setModuleName("PartnerBankModes");
-		this.partnerBankID.setValueColumn("PartnerBankId");
+		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
-		this.partnerBankID.setValidateColumns(new String[] {"PartnerBankId", "PartnerBankName"});
+		this.partnerBankID.setValidateColumns(new String[] {"PartnerBankCode"});
 		this.partnerBankID.setMandatoryStyle(true);
 
 		setStatusDetails();
@@ -334,8 +334,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		} else {
 			PartnerBankModes partnerBankModes = (PartnerBankModes) dataObject;
 			if (partnerBankModes != null) {
-				this.partnerBankID.setValue(String.valueOf(partnerBankModes.getPartnerBankId()));
-				this.partnerBankID.setDescription(partnerBankModes.getPartnerBankName());
+				this.partnerBankID.setAttribute("PartnerBankId",partnerBankModes.getPartnerBankId());
 			}
 		}
 
@@ -360,9 +359,12 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		setPartnerBankProperties();
 		
 		if (!aFinTypePartnerBank.isNew()) {
-			this.partnerBankID.setObject(new PartnerBankModes(aFinTypePartnerBank.getPartnerBankID()));
-			this.partnerBankID.setValue(String.valueOf(aFinTypePartnerBank.getPartnerBankID()));
-			this.partnerBankID.setDescription(aFinTypePartnerBank.getPartnerBankName());
+
+			this.partnerBankID.setValue(StringUtils.trimToEmpty(aFinTypePartnerBank.getPartnerBankCode()),
+					StringUtils.trimToEmpty(aFinTypePartnerBank.getPartnerBankName()));
+			this.partnerBankID.setAttribute("PartnerBankId", aFinTypePartnerBank.getPartnerBankID());
+
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -407,9 +409,20 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		}
 		// Partner Bank ID
 		try {
-			PartnerBankModes partnerBankModes = (PartnerBankModes) this.partnerBankID.getObject();
-			aFinTypePartnerBank.setPartnerBankID(partnerBankModes.getPartnerBankId());
-			aFinTypePartnerBank.setPartnerBankName(this.partnerBankID.getDescription());
+			
+			aFinTypePartnerBank.setPartnerBankName((this.partnerBankID.getDescription()));
+			aFinTypePartnerBank.setPartnerBankCode(this.partnerBankID.getValue());
+			this.partnerBankID.getValidatedValue();
+			Object object = this.partnerBankID.getAttribute("PartnerBankId");
+			
+			if (object!=null) {
+				aFinTypePartnerBank.setPartnerBankID(Long.parseLong(object.toString()));
+				
+			}else{
+				aFinTypePartnerBank.setPartnerBankID(0);
+			}
+			
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -469,9 +482,11 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
-
-		this.partnerBankID.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value"), null, true, true));
-	
+		boolean isMandValidate = true;
+		
+			this.partnerBankID.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value"),
+					null, isMandValidate ? this.partnerBankID.isMandatory() : false, true));
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -533,7 +548,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinTypePartnerBank.getPartnerBankID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinTypePartnerBank.getPartnerBankCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinTypePartnerBank.getRecordType())){
 				aFinTypePartnerBank.setVersion(aFinTypePartnerBank.getVersion()+1);
@@ -769,7 +784,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinTypePartnerBankDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -784,7 +799,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
-		valueParm[0] = String.valueOf(aFinTypePartnerBank.getPartnerBankID());
+		valueParm[0] = String.valueOf(aFinTypePartnerBank.getPartnerBankCode());
 		valueParm[1] = aFinTypePartnerBank.getPaymentMode();
 		valueParm[2] = aFinTypePartnerBank.getPurpose();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value") + ":" + valueParm[0];
@@ -802,7 +817,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 						&& StringUtils.equals(finTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
 					// Both Current and Existing list rating same
 					if (aFinTypePartnerBank.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;

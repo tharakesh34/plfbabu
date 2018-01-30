@@ -55,7 +55,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -346,55 +346,68 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	@Override
 	public AuditDetail doValidations(CustomerEmploymentDetail custEmpDetails,Customer customer) {
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		if (custEmpDetails != null) {
-			auditDetail.setErrorDetail(validateMasterCode("EmployerDetail", "EmployerId", String.valueOf(custEmpDetails.getCustEmpName())));
-			auditDetail.setErrorDetail(validateMasterCode("RMTEmpTypes", "EmpType", custEmpDetails.getCustEmpType()));
-			auditDetail.setErrorDetail(validateMasterCode("RMTGenDesignations", "Gendesignation", custEmpDetails.getCustEmpDesg()));
-			if (custEmpDetails.getCustEmpDept() != null) {
-				auditDetail.setErrorDetail(validateMasterCode("RMTGenDepartments", "GenDepartment",	custEmpDetails.getCustEmpDept()));
-			}
-			if (custEmpDetails.getCustEmpTo() != null) {
-				if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) > 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
-							PennantConstants.XMLDateFormat);
-					valueParm[1] = "employment endDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpTo(), 
-							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}	
-				if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 ||
-						SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "employment endDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
-							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
+			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				auditDetail.setErrorDetail(validateMasterCode("EmployerDetail", "EmployerId",
+						String.valueOf(custEmpDetails.getCustEmpName())));
+				auditDetail
+						.setErrorDetail(validateMasterCode("RMTEmpTypes", "EmpType", custEmpDetails.getCustEmpType()));
+				auditDetail.setErrorDetail(
+						validateMasterCode("RMTGenDesignations", "Gendesignation", custEmpDetails.getCustEmpDesg()));
+				if (custEmpDetails.getCustEmpDept() != null) {
+					auditDetail.setErrorDetail(
+							validateMasterCode("RMTGenDepartments", "GenDepartment", custEmpDetails.getCustEmpDept()));
 				}
-			} else {
-				custEmpDetails.setCurrentEmployer(true);
-			}
-			
-			if (custEmpDetails.getCustEmpFrom() != null && custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 
-					|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {
-				
-				String[] valueParm = new String[2];
-				valueParm[0] = "employment startDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(),
-						PennantConstants.XMLDateFormat);
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-			}
-			if (custEmpDetails.getCustEmpFrom() != null && customer.getCustDOB() != null) {
-					if(custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())){
+				if (custEmpDetails.getCustEmpTo() != null) {
+					if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) > 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
+						valueParm[0] = "employment startDate:" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(),
 								PennantConstants.XMLDateFormat);
-						valueParm[1] = "Cust DOB:"+ DateUtility.formatDate(customer.getCustDOB(), 
-								PennantConstants.XMLDateFormat);
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+						valueParm[1] = "employment endDate:"
+								+ DateUtility.formatDate(custEmpDetails.getCustEmpTo(), PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
+					if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil
+							.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "employment endDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(),
+								PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90319", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				} else {
+					custEmpDetails.setCurrentEmployer(true);
+				}
+
+				if (custEmpDetails.getCustEmpFrom() != null
+						&& custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1
+						|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE")
+								.compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = "employment startDate"
+							+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90319", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				if (custEmpDetails.getCustEmpFrom() != null && customer.getCustDOB() != null) {
+					if (custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "employment startDate:" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(),
+								PennantConstants.XMLDateFormat);
+						valueParm[1] = "Cust DOB:"
+								+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "employment";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
 		}
 		return auditDetail;
@@ -408,10 +421,10 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
 		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
@@ -419,7 +432,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
 			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 
 		logger.debug("Leaving");

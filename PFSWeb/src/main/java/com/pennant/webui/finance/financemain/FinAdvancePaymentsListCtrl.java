@@ -63,7 +63,9 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ErrorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -111,7 +113,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private List<FinanceDisbursement>	financeDisbursement;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	String moduleDefiner = "";
-
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -358,7 +360,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 						validate=false;
 					}
 					
-					List<ErrorDetails> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
+					List<ErrorDetail> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 
 					valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 
@@ -367,7 +369,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 						if (parentTab != null) {
 							parentTab.setSelected(true);
 						}
-						for (ErrorDetails errorDetails : valid) {
+						for (ErrorDetail errorDetails : valid) {
 							MessageUtil.showError(errorDetails.getError());
 						}
 
@@ -413,6 +415,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan, getFinAdvancePaymentsList());
 
 		logger.debug("Leaving" + event.toString());
@@ -425,6 +428,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		disbursementInstCtrl.onDoubleClick(this, this.financeMainDialogCtrl, ModuleType_Loan, isEnquiry);
 
 		logger.debug("Leaving" + event.toString());
@@ -462,6 +466,26 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		} catch (Exception e) {
 			logger.debug(e);
 		}
+
+	}
+	
+	private DocumentDetails getDisbursmentDoc() throws Exception {
+		logger.debug("Entering");
+
+		if (financeMainDialogCtrl != null) {
+			DocumentDetailDialogCtrl documentDetailDialogCtrl = (DocumentDetailDialogCtrl) financeMainDialogCtrl
+					.getClass().getMethod("getDocumentDetailDialogCtrl").invoke(financeMainDialogCtrl);
+
+			String document = SysParamUtil.getValueAsString("DISB_DOC");
+
+			for (DocumentDetails details : documentDetailDialogCtrl.getDocumentDetailsList()) {
+				if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
+					return details;
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return null;
 
 	}
 

@@ -211,11 +211,15 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
+	private static ArrayList<ValueLabel> monthEndList;
 	private static ArrayList<ValueLabel> configTypes;
 	private static ArrayList<ValueLabel> paymentTypeList;
 	private static ArrayList<ValueLabel> disbursmentParty;
 	private static ArrayList<ValueLabel> disbursmentStatus;
 	private static ArrayList<ValueLabel> disbStatusList;
+	private static ArrayList<ValueLabel> chequeTypesList;
+	
+	private static ArrayList<ValueLabel> feeTaxTypes;	//GST FeeTaxTypes
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -330,7 +334,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel>  getDataSourceNames(){
 		if(dataSourceNames == null){
 			dataSourceNames = new ArrayList<>(2);
-			dataSourceNames.add(new ValueLabel("pfsDatasource", "PFS DataBase"));
+			dataSourceNames.add(new ValueLabel("dataSource", "PFS DataBase"));
 			dataSourceNames.add(new ValueLabel("auditDatasource", "PFSAudit Database"));
 		}
 		return dataSourceNames;	 
@@ -807,14 +811,15 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getEarlyPayEffectOn() {
 
 		if(schCalOnList == null){
-			schCalOnList = new ArrayList<ValueLabel>(5);
-			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
+			schCalOnList = new ArrayList<ValueLabel>(6);
+			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("label_No_Effect")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("label_Adjust_To_Maturity")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("label_Recalculate_Schedule")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_PRIHLD, Labels.getLabel("label_Principal_Holiday")));
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("lable_Profit_Intact")));
-				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("lable_Recalculate_Intact")));
+				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("label_Profit_Intact")));
+				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("label_Recalculate_Intact")));
 			}
 		}
 		return schCalOnList;
@@ -1003,6 +1008,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("S", Labels.getLabel("label_Supplier")));
 			dealerType.add(new ValueLabel("DSA", Labels.getLabel("label_DSA")));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
+			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
 		}
 		return dealerType;
 	}
@@ -1258,6 +1264,7 @@ public class PennantStaticListUtil {
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PO, Labels.getLabel("label_MailTemplateDialog_POAuthNotification")));
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT, Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
 //			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT, Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
+			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP, Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
 		}
 		return templateForList;
 	}
@@ -2173,6 +2180,8 @@ public class PennantStaticListUtil {
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD,Labels.getLabel("label_Mandate_HOLD")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE,Labels.getLabel("label_Mandate_RELEASE")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN,Labels.getLabel("label_Mandate_FINANCE")));
+			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL,Labels.getLabel("label_Mandate_CANCEL")));
+
 		}
 		return statusTypeList;
 	}
@@ -2182,6 +2191,9 @@ public class PennantStaticListUtil {
 		if(repayMethodList == null){
 			repayMethodList = new ArrayList<ValueLabel>(3);
 			repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_MANUAL,Labels.getLabel("label_RepayMethod_Manual")));
+			if (ImplementationConstants.PDC_ALLOWED) {
+				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,Labels.getLabel("label_RepayMethod_PDC")));
+			}
 			if (ImplementationConstants.AUTO_ALLOWED) {
 				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO,Labels.getLabel("label_RepayMethod_Casa")));
 			}
@@ -2723,8 +2735,8 @@ public class PennantStaticListUtil {
 
 		if (authTypes == null) {
 			authTypes = new ArrayList<ValueLabel>(3);
-			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeExteranal.value")));
-			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeInternal.value")));
+			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), "External "));
+			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), "Internal"));
 		}
 		return authTypes;
 	}
@@ -2813,15 +2825,7 @@ public class PennantStaticListUtil {
 		}
 		return accountMapping;
 	}
-	
-	public static ArrayList<ValueLabel> getConfigNames() {
-		
-		if(gstMapping == null){
-			gstMapping = new ArrayList<ValueLabel>(1);
-			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS", Labels.getLabel("label_DataExtraction_GSTDnld")));
-		}
-		return gstMapping;
-	}
+
 	
 	public static ArrayList<ValueLabel> getMonthList() {
 		
@@ -2868,7 +2872,7 @@ public class PennantStaticListUtil {
 		}
 		return monthEndList;
 	}
-	
+
 	public static ArrayList<ValueLabel> getDisbursmentParty() {
 
 		if(disbursmentParty == null){
@@ -2929,6 +2933,37 @@ public class PennantStaticListUtil {
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_LOAN, Labels.getLabel("label_ExtendedFieldModule_Loan.value")));
 		}
 		return configTypes;
+	}
+
+	public static ArrayList<ValueLabel> getConfigNames() {
+		
+		if(gstMapping == null){
+			gstMapping = new ArrayList<ValueLabel>(1);
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS_TRANASCTION", Labels.getLabel("label_DataExtraction_GSTDownLoad_Transaction")));
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS_SUMMARY", Labels.getLabel("label_DataExtraction_GSTDownLoad_Summary")));
+		}
+		return gstMapping;
+	}
+
+	public static ArrayList<ValueLabel> getChequeTypes() {
+		if (chequeTypesList == null) {
+			chequeTypesList = new ArrayList<ValueLabel>(3);
+			chequeTypesList.add(new ValueLabel("PDC", "PDC"));
+			if(!ImplementationConstants.CLIENT_NFL) {
+				chequeTypesList.add(new ValueLabel("UDC", "UDC"));
+			}
+		}
+		return chequeTypesList;
+	}
+	
+	//GST Fee Tax Types
+	public static ArrayList<ValueLabel> getFeeTaxTypes() {
+		if(feeTaxTypes==null){
+			feeTaxTypes = new ArrayList<ValueLabel>(2);
+			feeTaxTypes.add(new ValueLabel(String.valueOf(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE), Labels.getLabel("label_FeeTypeDialog_Inclusive")));
+			feeTaxTypes.add(new ValueLabel(String.valueOf(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE), Labels.getLabel("label_FeeTypeDialog_Exclusive")));
+		}
+		return feeTaxTypes;
 	}
 }
 

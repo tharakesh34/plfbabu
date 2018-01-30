@@ -59,7 +59,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -99,7 +99,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 
 	// ServiceDAOs / Domain Classes
 	private transient LovFieldDetailService lovFieldDetailService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -791,7 +791,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 						}
 
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),
 								null));
 						retValue = ErrorControl.showErrorControl(this.window_LovFieldDetailDialog,
@@ -861,7 +861,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private void showMessage(Exception e){
 		AuditHeader auditHeader= new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,
 					e.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_LovFieldDetailDialog, auditHeader);
 		} catch (Exception exp) {
@@ -906,10 +906,10 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		return this.lovFieldDetailListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

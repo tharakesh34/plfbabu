@@ -49,8 +49,7 @@
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
 								sclass="toolbar-center">
-								<label id="label_windowTitle"
-									value="Reason Details Enquiry " sclass="label-heading" />
+								<label value="${c:l('window_ReasonDetailsLOgDialog.title')}" sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
@@ -80,53 +79,29 @@
 							</columns>
 							<rows>
 								<row id="row1">
-									<label
-										id="label_FinApprovalStsInquiryDialog_FinReference"
-										value="${c:l('label_FinApprovalStsInquiryDialog_FinReference.label')}" />
-									<textbox id="finReference"
-										width="200px" maxlength="20" />
-									<label
-										id="label_FinApprovalStsInquiryDialog_FinBranch"
-										value="${c:l('label_FinApprovalStsInquiryDialog_FinBranch.label')}" />
-									<textbox id="finBranch"
-										width="200px" maxlength="19" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_FinReference.label')}" />
+									<textbox id="finReference" width="200px" maxlength="20" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_FinBranch.label')}" />
+									<textbox id="finBranch" width="200px" maxlength="19" />
 								</row>
 								<row>
-									<label
-										id="label_FinApprovalStsInquiryDialog_CustCIF"
-										value="${c:l('label_FinApprovalStsInquiryDialog_CustCIF.value')}" />
-									<textbox id="custCIF" width="200px"
-										maxlength="19" />
-									<label
-										id="label_FinApprovalStsInquiryDialog_CustShrtName"
-										value="${c:l('label_FinApprovalStsInquiryDialog_CustShrtName.value')}" />
-									<textbox id="custShrtName"
-										width="200px" maxlength="50" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_CustCIF.value')}" />
+									<textbox id="custCIF" width="200px" maxlength="19" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_CustShrtName.value')}" />
+									<textbox id="custShrtName" width="200px" maxlength="50" />
 								</row>
 								<row>
-									<label
-										id="label_FinApprovalStsInquiryDialog_CustDocType"
-										value="${c:l('label_FinApprovalStsInquiryDialog_CustDocType.value')}" />
-									<textbox id="custDocType"
-										width="200px" maxlength="50" />
-									<label
-										id="label_FinApprovalStsInquiryDialog_EmailID"
-										value="${c:l('label_FinApprovalStsInquiryDialog_EmailID.value')}" />
-									<textbox id="emailID" width="200px"
-										maxlength="50" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_CustDocType.value')}" />
+									<textbox id="custDocType" width="200px" maxlength="50" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_EmailID.value')}" />
+									<textbox id="emailID" width="200px" maxlength="50" />
 
 								</row>
-								<row id="rowFinance">
-									<label
-										id="label_FinApprovalStsInquiryDialog_CustID"
-										value="${c:l('label_FinApprovalStsInquiryDialog_CustID.value')}" />
-									<textbox id="custID" width="200px"
-										maxlength="19" />
-									<label
-										id="label_FinApprovalStsInquiryDialog_MobileNo"
-										value="${c:l('label_FinApprovalStsInquiryDialog_MobileNo.value')}" />
-									<textbox id="mobileNo" width="200px"
-										maxlength="50" />
+								<row>
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_CustID.value')}" />
+									<textbox id="custID" width="200px" maxlength="19" />
+									<label value="${c:l('label_FinApprovalStsInquiryDialog_MobileNo.value')}" />
+									<textbox id="mobileNo" width="200px" maxlength="50" />
 								</row>
 
 								<row spans="4">
@@ -139,20 +114,22 @@
 										tooltiptext="${c:l('listbox.tooltiptext4')}" width="99%"
 										height="200px">
 										<listhead sizable="true">
-											<listheader label="Date"
+											<listheader label="${c:l('listheader_ReasonDetailsLog_Date.label')}"
 												hflex="min" />
-											<listheader
-												label="Role Code" hflex="min" />
-											<listheader label="User"
+											<listheader label="${c:l('listheader_ReasonDetailsLog_Time.label')}"
 												hflex="min" />
-											<listheader label="Module"
+											<listheader label="${c:l('listheader_ReasonDetailsLog_Rolecode.label')}"
+												  hflex="min" />
+											<listheader label="${c:l('listheader_ReasonDetailsLog_User.label')}"
 												hflex="min" />
-											<listheader label="Activity"
+											<listheader  label="${c:l('listheader_ReasonDetailsLog_Module.label')}"
 												hflex="min" />
-											<listheader
-												label="Reason Code" hflex="min" />
-											<listheader
-												label="Reason Decription" hflex="min" />
+											<listheader  label="${c:l('listheader_ReasonDetailsLog_Activity.label')}"
+												hflex="min" />
+											<listheader label="${c:l('listheader_ReasonDetailsLog_ReasonCode.label')}"
+												  hflex="min" />
+											<listheader label="${c:l('listheader_ReasonDetailsLog_ReasonDecription.label')}"
+												 hflex="min" />
 										</listhead>
 									</listbox>
 								</row>

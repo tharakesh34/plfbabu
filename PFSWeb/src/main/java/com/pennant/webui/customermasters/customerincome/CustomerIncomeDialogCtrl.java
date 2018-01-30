@@ -69,7 +69,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -898,7 +898,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 						(aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))){ // Both Current and Existing list rating same
 
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1078,7 +1078,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerIncomeDialog, auditHeader);
 						return processCompleted;
@@ -1209,7 +1209,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerIncomeDialog,auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

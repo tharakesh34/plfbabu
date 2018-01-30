@@ -44,9 +44,11 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -64,25 +66,32 @@ import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.backend.model.amtmasters.Authorization;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.search.Filter;
+import com.pennant.search.Search;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.TemplateEngine;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -123,6 +132,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private List<FinanceReferenceDetail> agreementList = null;
 	boolean isFinanceProcess = false;
 	private String							moduleName;
+	@Autowired
+	private JdbcSearchSupport jdbcSearchSupport;
 	
 	/**
 	 * default constructor.<br>
@@ -417,8 +428,11 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						TemplateEngine engine = new TemplateEngine(aggPath);
 						engine.setTemplate(templateName);
 						engine.loadTemplate();
+						
 						engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(), getUserWorkspace().getUserDetails()));
-
+						
+						setExtendedDetails(detail, engine);
+						
 						if(StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)){
 							reportName=finReference + "_" +aggName +PennantConstants.DOC_TYPE_PDF_EXT;
 							engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
@@ -474,7 +488,82 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+	
 
+
+	/**
+	 * To get the description form extended combobox in Extended details
+	 * @param detail
+	 * @return
+	 */
+	private void setExtendedDetails(FinanceDetail detail, TemplateEngine engine) {
+		logger.debug(" Entering ");
+		try {
+			ExtendedFieldHeader header = detail.getExtendedFieldHeader();
+			List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
+			Map<String, Object> extendedData = detail.getExtendedFieldRender().getMapValues();
+
+			//extended fields in merge
+			String[] keys = extendedData.keySet().toArray(new String[extendedData.size()]);
+			Object[] values = extendedData.values().toArray(new Object[extendedData.size()]);
+			engine.mergeFields(keys, values);
+
+			Map<String, String> map = new HashMap<>();
+
+			//extended fields description in merge
+			for (ExtendedFieldDetail extFieldDetail : list) {
+				if (extFieldDetail.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO)) {
+
+					try {
+						ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(extFieldDetail.getFieldList());
+						Search search = new Search();
+						search.setSearchClass(moduleMapping.getModuleClass());
+						List<Filter> filters = new ArrayList<>();
+						if (moduleMapping.getLovFilters() != null) {
+							Object[][] condArray = moduleMapping.getLovFilters();
+							Filter filter1;
+							for (int i = 0; i < condArray.length; i++) {
+								String property = (String) condArray[i][0];
+								Object value = condArray[i][2];
+								int filtertype = Integer.parseInt((String) condArray[i][1]);
+								filter1 = new Filter(property, value, filtertype);
+								filters.add(filter1);
+							}
+						}
+
+						if (moduleMapping.getLovFields() != null) {
+							String[] condArray = moduleMapping.getLovFields();
+							Filter filter1;
+							String fieldName = extFieldDetail.getFieldName();
+							filter1 = new Filter((String) condArray[0], extendedData.get(fieldName), Filter.OP_EQUAL);
+							filters.add(filter1);
+							search.setFilters(filters);
+							List<Object> result = jdbcSearchSupport.search(search);
+							for (Object object2 : result) {
+								String descMethod = "get" + condArray[1];
+								String desc = object2.getClass().getMethod(descMethod).invoke(object2).toString();
+								map.put(fieldName + "_Desc", StringUtils.trimToEmpty(desc));
+							}
+						}
+					} catch (Exception e) {
+						logger.error(e);
+					}
+				}
+			}
+
+			if (!map.isEmpty()) {
+				String[] desckeys = map.keySet().toArray(new String[map.size()]);
+				Object[] descvalues = map.values().toArray(new String[map.size()]);
+				engine.mergeFields(desckeys, descvalues);
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(" Leaving ");
+	}
+	
+	
 	/**
 	 * Method for validate DDA Registration request details
 	 * 

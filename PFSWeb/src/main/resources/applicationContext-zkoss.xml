@@ -39,7 +39,7 @@
 		<property name="dashboardConfigurationService" ref="dashboardConfigurationService" />
 	</bean>
 
-	<bean id="chartwindowCtrl" class="com.pennant.webui.index.ChartCtrl"
+	<bean id="chartsimulatorwindowCtrl" class="com.pennant.webui.index.ChartSimulatorCtrl"
 		parent="basisCtrl" scope="prototype" />
 
 	<!-- ====================================================== -->
@@ -83,7 +83,7 @@
 	<!-- ====================================================== -->
 
 	<bean id="errorUtil" class="com.pennant.app.util.ErrorUtil">
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+		<property name="errorDetailService" ref="errorDetailService" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -1579,7 +1579,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="extendedFieldDetailService" ref="extendedFieldDetailService" />
 	</bean>
-	
+
 	<bean id="extendedFieldDialogCtrl"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -1750,13 +1750,13 @@
 	<bean id="pFSParameterListCtrl"
 		class="com.pennant.webui.smtmasters.pfsparameter.PFSParameterListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="pFSParameterService" ref="pFSParameterService" />
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 
 	<bean id="pFSParameterDialogCtrl"
 		class="com.pennant.webui.smtmasters.pfsparameter.PFSParameterDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="pFSParameterService" ref="pFSParameterService" />
+		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
 
 	<!--============ Weekend Detail ============== -->
@@ -1843,6 +1843,7 @@
 		<property name="shortMessageService" ref="shortMessageService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
@@ -1918,6 +1919,20 @@
 	<bean id="disbursementDetailDialogCtrl"
 		class="com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="chequeDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
+	</bean>
+	
+	<!-- ChequeHeader -->
+	<bean id="chequeHeaderListCtrl" class="com.pennant.webui.pdc.chequeheader.ChequeHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+	</bean>
 
 	<bean id="istisnaDisbursementDialogCtrl"
 		class="com.pennant.webui.finance.billing.IstisnaDisbursementDetailDialogCtrl"
@@ -2622,6 +2637,7 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 
 	<bean id="feePaymentDetailDialogCtrl"
@@ -3572,10 +3588,7 @@
 	<!-- Batch Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
+	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype"/>
 
 	<!-- ====================================================== -->
 	<!-- Dashboard Details Configuration -->
@@ -3610,11 +3623,7 @@
 		class="com.pennant.webui.finance.enquiry.FinApprovalStsInquiryDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
-
-	<bean id="financeRejectDialogCtrl" class="com.pennant.webui.finance.financemain.FinanceRejectCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
-
+	
 	<!-- TreasuaryFinance -->
 
 	<bean id="treasuryFinHeaderListCtrl"
@@ -4204,7 +4213,7 @@
 		parent="basisListCtrl" scope="prototype" />
 			
 	<bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport">
-	<property name="dataSource" ref="pfsDatasource" />
+	<property name="dataSource" ref="dataSource" />
 		  	</bean>
 	
 	<!-- MandateStatusUpload -->
@@ -4576,6 +4585,11 @@
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="eventManager" ref="eventManager" />
 	</bean>
+	<bean id="selectManualAdviseFinReferenceDialogCtrl"
+		class="com.pennant.webui.financemanagement.selectmanualadvise.SelectManualAdviseFinReferenceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="manualAdviseService" ref="manualAdviseService" />
+	</bean>
 
 	<!-- FinanceStatusCode -->
 	<bean id="financeStatusCodeListCtrl"
@@ -4735,7 +4749,6 @@
 		class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl"
 		scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 
@@ -4807,7 +4820,7 @@
 		<property name="paymentHeaderService" ref="paymentHeaderService"/>
 		<property name="eventManager" ref="eventManager" />
 		<property name="accountingSetService" ref="accountingSetService" />
-		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!-- SelectPaymentHeaderDialogCtrl --> 
@@ -4833,10 +4846,10 @@
 	<bean id="pinCodeDialogCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="pinCodeService" ref="pinCodeService"/>
 	</bean>
-	
+
 	<!-- Data Engine -->
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
-		<constructor-arg ref="pfsDatasource" />
+		<constructor-arg ref="dataSource" />
 	</bean>
 	
 	 <bean id="dataImportCtrl" class="com.pennanttech.framework.component.dataengine.DataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
@@ -4844,7 +4857,7 @@
 	  </bean>
 	   <!-- <bean id="dataExportCtrl" class="com.pennanttech.framework.component.dataengine.DataExportCtrl"  parent="basisCtrl" scope="prototype" >
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />
-	  	<property name="dataSource" ref="pfsDatasource" />
+	  	<property name="dataSource" ref="dataSource" />
 	  </bean> -->
 	  
 	  <bean id="masterDataExtractionCtrl" class="com.pennanttech.framework.component.dataengine.MasterDataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
@@ -4942,7 +4955,7 @@
 	<bean id="dataExtractionListCtrl"
 		class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl" scope="prototype">
 	</bean>
-
+	
 	<!--  Extended Fields Configuration -->
 	<bean id="extFieldConfigListCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="extFieldConfigService" ref="extFieldConfigService" />
@@ -4970,7 +4983,9 @@
 	</bean>
 	
 <!-- External File Upload -->
-	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="externalUploadListCtrl" class="com.pennant.webui.externalupload.ExternalUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	<property name="batchUploadConfigService" ref="batchUploadConfigService" />
+	</bean>
 	
 	<!-- External File Upload  -->
 	<bean id="pdfUploadListCtrl" class="com.pennant.webui.pdfupload.PdfUploadListCtrl" parent="basisListCtrl" scope="prototype">
@@ -4983,4 +4998,13 @@
 	<!--============ Reason Details ============== -->
 	<bean id="reasonDetailsCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsCtrl" parent="basisCtrl" scope="prototype"/>
 	<bean id="reasonDetailsLogDialogCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsLogDialogCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	<!-- ============ CacheAdministrator ============ -->
+	<bean id="cacheNodesListCtrl" class="com.pennanttech.pennapps.core.cache.CacheNodesListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="cacheAdmin" ref="cacheAdmin" />
+	</bean>
+	
+	<bean id="cacheParameterDialogCtrl" class="com.pennanttech.pennapps.core.cache.CacheParameterDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="cacheAdmin" ref="cacheAdmin" />
+	</bean>
 </beans>

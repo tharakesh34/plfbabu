@@ -59,9 +59,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
@@ -618,10 +619,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIssueDateMand.setDisabled(true);
 		this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
-		this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+		this.docIsPasswordProtected.setDisabled(true);
 		this.mappingRef.setButtonDisabled(true);
 		if(getDocumentType().isDocIsPdfExtRequired()){
-			//this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
+			this.docIsPasswordProtected.setDisabled(isReadOnly("DocumentTypeDialog_docIsPasswordProtected"));
 			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
 			}
 		
@@ -886,7 +887,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DocumentTypeDialog, auditHeader);
 						return processCompleted;
@@ -946,7 +947,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_DocumentTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -969,9 +970,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.mappingRef.setMandatoryStyle(true);
 		}else{
 			this.mappingRef.setMandatoryStyle(false);
+			this.docIsPasswordProtected.setChecked(docIsPdfExtRequired.isChecked());
 		}
-		//this.docIsPasswordProtected.setChecked(getDocumentType().isDocIsPasswordProtected());
-//		/this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
+        this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setButtonDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setConstraint("");
 		this.mappingRef.setErrorMessage("");

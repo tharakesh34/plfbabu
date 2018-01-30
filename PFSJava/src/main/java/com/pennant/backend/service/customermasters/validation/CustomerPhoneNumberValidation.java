@@ -8,7 +8,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -77,19 +77,19 @@ public class CustomerPhoneNumberValidation {
 
 		if (!customerPhoneNumber.isWorkflow()){// With out Work flow only new records  
 			if (befCustomerPhoneNumber !=null){	// Record Already Exists in the table then error  
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41001",errParm, null));
 			}	
 		}else{ // with work flow
 
 			if (customerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 				if (befCustomerPhoneNumber !=null || tempCustomerPhoneNumber!=null ){ // if records already exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			}else{ // if records not exists in the Main flow table
 				if (befCustomerPhoneNumber ==null || tempCustomerPhoneNumber!=null ){
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			}
@@ -99,7 +99,7 @@ public class CustomerPhoneNumberValidation {
 		if (!customerPhoneNumber.isWorkflow()){	// With out Work flow for update and delete
 
 			if (befCustomerPhoneNumber ==null){ // if records not exists in the main table
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41002",errParm, null));
 			}else{
 
@@ -107,10 +107,10 @@ public class CustomerPhoneNumberValidation {
 						befCustomerPhoneNumber.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 							PennantConstants.TRAN_DEL)){
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41003",errParm, null));	
 					}else{
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001",errParm, null));
 					}
 				}
@@ -119,13 +119,13 @@ public class CustomerPhoneNumberValidation {
 		}else{
 
 			if (tempCustomerPhoneNumber==null ){ // if records not exists in the Work flow table 
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41005",errParm, null));
 			}
 
 			if (tempCustomerPhoneNumber!=null && oldCustomerPhoneNumber!=null && 
 					!oldCustomerPhoneNumber.getLastMntOn().equals(tempCustomerPhoneNumber.getLastMntOn())){ 
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41005",errParm, null));
 			}
 
@@ -150,10 +150,10 @@ public class CustomerPhoneNumberValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(CustomerPhoneNumber customerPhoneNumber){
+	public ErrorDetail  screenValidations(CustomerPhoneNumber customerPhoneNumber){
 		
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneNumber()))){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("PhoneDetails"),
 					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
 					Labels.getLabel("listheader_PhoneTypeCode.label"),

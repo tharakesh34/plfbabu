@@ -76,7 +76,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -161,7 +161,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -1237,10 +1237,10 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		return oldVar_ContributorList;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

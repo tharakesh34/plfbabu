@@ -137,10 +137,6 @@ public class UserServiceImpl implements UserService {
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
 		return getUserDAO().getUserRolesByUserID(userID);
 	}
-
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles) {
-		return getSecurityRightDAO().getRoleRights(secRight, roles);
-	}
 	
 	@Override
 	public long logLoginAttempt(SecLoginlog logingLog) {

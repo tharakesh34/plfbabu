@@ -28,7 +28,7 @@
 <changeSet id="2" author="Chaitanya">
 	<sql>
 		Delete from SecRoleGroups where RoleID IN (select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER');
-		Insert into SecRoleGroups Value s((Select max(RoleGrpID)+1 from secRoleGroups),
+		Insert into SecRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),
 		(Select GrpID from secGroups where GrpCode = 'MANDATE_MAKER'),
 		(select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER'),0, 1000, Current_TimeStamp, null,null,null,null,
 		null,null,0);
@@ -81,5 +81,39 @@
 	        	RESEED_SEQUENCE_TABLES;
 	        end;
 	    </sql>
-	</changeSet> 
+	</changeSet>
+	<changeSet id="7" author="Chaitanya">
+		<sql>
+			delete SecGroupRights where GrpID=(select GrpID from SecGroups where GrpCode='BFSD_ORIGINATION_MAKER') 
+			and rightId in (select RightID from SecRights 
+			where RightName in ('menuItem_MandateEnquiry','menuItem_Mandate','menuItem_Finance_PaymentOrderIssue'));
+		</sql>
+	</changeSet>
+	<changeSet id="8" author="Jayant" dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
+	<changeSet id="9" author="Chaitanya">
+		<sql>
+			delete SecGroupRights where GrpID=(select GrpID from SecGroups where GrpCode='MANUALADVISE_MAKER') and rightId=(select RightID from SecRights where RightName='menuCat_Finance');
+			delete SecGroupRights where GrpID=(select GrpID from SecGroups where GrpCode='MANUALADVISE_APPROVER') and rightId=(select RightID from SecRights where RightName='menuCat_Finance');
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANUALADVISE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Jayant" dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>

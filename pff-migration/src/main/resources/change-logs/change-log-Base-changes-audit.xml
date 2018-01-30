@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -51,6 +49,24 @@
 		<changeSet id="41" author="Ganesh.p">
 		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
 	</changeSet>
+<changeSet id="1" author="Amit">
+	<addColumn tableName="ADTBMTDOCUMENTTYPES">
+		<column name="IsPdfExtRequired" type="boolean" />
+		<column name="IsPasswordProtected" type="boolean" />
+		<column name="MappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="2" author="amit">
+	<renameColumn newColumnName="DocIsPdfExtRequired"
+		oldColumnName="IsPdfExtRequired" tableName="ADTBMTDOCUMENTTYPES" />
+	<renameColumn newColumnName="DocIsPasswordProtected"
+		oldColumnName="IsPasswordProtected" tableName="ADTBMTDOCUMENTTYPES" />
+	<renameColumn newColumnName="PdfMappingRef" oldColumnName="MappingRef"
+		tableName="ADTBMTDOCUMENTTYPES" />
+</changeSet>
+
+</databaseChangeLog>
 	
 	<changeSet id="06" author="Prakash">
 		<addColumn tableName="ADTMandates">

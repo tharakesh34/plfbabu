@@ -54,7 +54,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -434,7 +434,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : "
 					+ finMaintainInstruction.getFinReference();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -764,7 +764,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	private AuditDetail validateFinCovenantType(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinCovenantType covenantType = (FinCovenantType) auditDetail.getModelData();
 		FinCovenantType tempFinCovenantPay = null;
 
@@ -787,19 +787,19 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				if (befFinCovenant != null) { // Record Already Exists in the
 												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befFinCovenant != null || tempFinCovenantPay != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinCovenant == null || tempFinCovenantPay != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 								usrLanguage));
 					}
 				}
@@ -813,18 +813,18 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				if (befFinCovenant == null) { // if records not exists in the
 												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinAdvancePay != null
 							&& !oldFinAdvancePay.getLastMntOn().equals(befFinCovenant.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
 					}
@@ -835,13 +835,13 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 													// the
 													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinCovenantPay != null && oldFinAdvancePay != null
 						&& !oldFinAdvancePay.getLastMntOn().equals(tempFinCovenantPay.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

@@ -74,7 +74,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -123,10 +123,11 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 	// ServiceDAOs / Domain Classes
 	private transient StepPolicyService stepPolicyService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private List<StepPolicyDetail> stepPolicyDetailList = new ArrayList<StepPolicyDetail>();
 	int listRows;
-
+	protected boolean										recSave;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -406,7 +407,15 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		}
 		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()){
 			
-			if(getStepPolicyDetailList().size() < 2) {
+			int stepCount = 0;
+			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
+				if(!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
+						!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+					stepCount = stepCount + 1;
+				}
+			}
+			
+			if(stepCount < 2) {
 				MessageUtil.showError(Labels.getLabel("StepPolicyDetail_Count_IS_EQUAL_OR_GREATER"));
 				return false;
 			}
@@ -719,10 +728,21 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
+		
+		if (this.userAction.getSelectedItem() != null) {
+			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+				recSave = true;
+			}
+		}
+		
 		// fill the StepPolicyHeader object with the components data
 		doWriteComponentsToBean(aStepPolicyHeader);
 
-		if(!validateStepPolicies()){
+		if(!recSave && !validateStepPolicies()){
 			return;
 		}
 
@@ -908,7 +928,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_StepPolicyDialog, auditHeader);
 						return processCompleted;
@@ -1055,7 +1075,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_StepPolicyDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1115,10 +1135,10 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		this.stepPolicyListCtrl = stepPolicyListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

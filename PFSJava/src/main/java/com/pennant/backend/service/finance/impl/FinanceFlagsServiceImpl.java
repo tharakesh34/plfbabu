@@ -12,7 +12,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -431,18 +431,18 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 			if (!finFlagsDetail.isWorkflow()){// With out Work flow only new records  
 				if (befFinFlagsDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
 							errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (finFlagsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinFlagsDetail !=null || tempFinFlagsDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFinFlagsDetail ==null || tempFinFlagsDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -451,17 +451,17 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			if (!finFlagsDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befFinFlagsDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldFinFlagsDetail!=null && !oldFinFlagsDetail.getLastMntOn().equals(
 							befFinFlagsDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",
 									errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",
 									errParm,null));
 						}
 					}
@@ -469,11 +469,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			}else{
 
 				if (tempFinFlagsDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempFinFlagsDetail!=null  && oldFinFlagsDetail!=null && !oldFinFlagsDetail.getLastMntOn().equals(tempFinFlagsDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}
@@ -571,7 +571,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,boolean onlineRequest) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinanceFlag financeFlag = (FinanceFlag) auditDetail.getModelData();
 
 		FinanceFlag tempFinanceFlag = null;
@@ -592,19 +592,19 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 			if (!financeFlag.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceFlag != null) {	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeFlag.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinanceFlag != null || tempFinanceFlag != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 						        usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceFlag == null || tempFinanceFlag != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 						        usrLanguage));
 					}
@@ -615,7 +615,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			if (!financeFlag.isWorkflow()) {	// With out Work flow for update and delete
 
 				if (befFinanceFlag == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinanceFlag != null
@@ -623,11 +623,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 					        		befFinanceFlag.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 							        usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 							        usrLanguage));
 						}
@@ -636,14 +636,14 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			} else {
 
 				if (tempFinanceFlag == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldFinanceFlag != null && tempFinanceFlag!=null
 				        && !oldFinanceFlag.getLastMntOn().equals(
 				        		tempFinanceFlag.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -744,7 +744,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		if (financeFlag != null) {
 			List<FinFlagsDetail> finFlagsDetailList = financeFlag.getFinFlagDetailList();
 			for (FinFlagsDetail detail : finFlagsDetailList) {
@@ -754,7 +754,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 					String[] valueParm = new String[2];
 					valueParm[0] = "flagCode";
 					valueParm[1] = detail.getFlagCode();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}

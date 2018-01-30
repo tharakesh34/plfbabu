@@ -205,11 +205,11 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName,  lovDescCustStsName,");
 			selectSql.append(" lovDescCustIndustryName, lovDescCustSectorName, lovDescCustSubSectorName, lovDescCustProfessionName, lovDescCustCOBName ,");
-			selectSql.append(" lovDescCustSegmentName, lovDescCustNationalityName, lovDescCustGenderCodeName, lovDescCustDSADeptName, lovDescCustRO1Name, ");
+			selectSql.append(" lovDescCustSegmentName, lovDescCustNationalityName, lovDescCustGenderCodeName, lovDescCustDSADeptName, lovDescCustRO1Name, lovDescCustRO1City, ");
 			selectSql.append(" lovDescCustGroupStsName, lovDescCustDftBranchName, lovDescCustCtgCodeName,lovDescCustCtgType, lovDescCustSalutationCodeName ,");
 			selectSql.append(" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
 			selectSql.append(" lovDescCustRejectedRsnName, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName" );
-			selectSql.append(" ,lovDescTargetName,");
+			selectSql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
 		}
 			
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
@@ -1896,5 +1896,53 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return recordCount;
 
 	}
+
+	/**
+	 * Method for validating customers in Customer Group
+	 * 
+	 */
+	@Override
+	public boolean customerExistingCustGrp(long custGrpID, String type) {
+		logger.debug("Entering");
+
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("CustGroupID", custGrpID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustGroupID = :CustGroupID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,
+					Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
 	
+	public int getCustCountByDealerId(long dealerId) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustRO1(dealerId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Customers");
+		selectSql.append(" Where CustRO1 =:CustRO1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
 }	

@@ -53,7 +53,7 @@ import com.pennant.backend.dao.administration.SecurityOperationDAO;
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -172,7 +172,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage
 			,String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		SecurityOperation securityOperation = (SecurityOperation) auditDetail.getModelData();
 		SecurityOperation tempSecurityOperation = null;
@@ -196,17 +196,17 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 			if (!securityOperation.isWorkflow()) {// With out Work flow only new records
 				if (befSecurityOperation != null) { // Record Already Exists in the table then error
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 
 				if (securityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befSecurityOperation != null || tempSecurityOperation != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSecurityOperation == null || tempSecurityOperation != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
 					}
 				}
 			}
@@ -216,16 +216,16 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 
 				if (befSecurityOperation == null) { // if records not exists in the main table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
 					if (oldSecurityOperation != null
 							&& !oldSecurityOperation.getLastMntOn().equals(befSecurityOperation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
 						}
 					}
 				}
@@ -235,13 +235,13 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 				if (tempSecurityOperation == null) { // if records not exists in the Work
 					// flow table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempSecurityOperation != null
 						&& oldSecurityOperation != null
 						&& !oldSecurityOperation.getLastMntOn().equals(tempSecurityOperation.getLastMntOn())) {
 					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 			}
 		}
@@ -249,10 +249,10 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 				&& StringUtils.equals(securityOperation.getRecordType(),PennantConstants.RECORD_TYPE_DEL)) {
 			
 			if (getSecurityOperationRolesDAO().getOprById(securityOperation.getOprID(), "_View") > 0) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			} else {
 				if (getSecurityUserOperationsDAO().getOprById(securityOperation.getOprID(), "_View") > 0) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006",errParm, null));
 				}
 			}			
 		}

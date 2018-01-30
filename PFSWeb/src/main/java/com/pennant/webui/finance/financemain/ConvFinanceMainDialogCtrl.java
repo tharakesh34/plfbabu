@@ -246,9 +246,9 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String prevRecordStatus = getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String prevRecordStatus = financeMain.getRecordStatus();
 		String recordStatus = userAction.getSelectedItem().getValue();
-
 		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
 				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
 						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
@@ -260,9 +260,12 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			} 
 		} 
 		
-		boolean capturereaonse = true;
-		if (capturereaonse) {
-			doFillReasons(recordStatus);
+		Long capturereaonse=null;
+		String taskId = getTaskId(getRole());
+		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		capturereaonse=getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
+		if (capturereaonse != null && capturereaonse.intValue() !=0) {
+			doFillReasons(capturereaonse.intValue());
 		} else {
 			doSave();
 		}
@@ -271,7 +274,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 
-	public void doFillReasons(String reason) throws InterruptedException{
+	public void doFillReasons(int reason) throws InterruptedException{
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);

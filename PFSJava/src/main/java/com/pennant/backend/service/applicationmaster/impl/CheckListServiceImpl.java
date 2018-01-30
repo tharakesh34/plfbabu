@@ -54,7 +54,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -343,7 +343,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 */
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		CheckList checkList= (CheckList) auditDetail.getModelData();
 
 		CheckList tempCheckList= null;
@@ -365,18 +365,18 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 			if (!checkList.isWorkflow()){// With out Work flow only new records  
 				if (befCheckList !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (checkList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCheckList !=null || tempCheckList!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCheckList ==null || tempCheckList!=null ){
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -386,15 +386,15 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 
 				if (befCheckList ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldCheckList!=null && !oldCheckList.getLastMntOn().equals(befCheckList.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -402,12 +402,12 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 
 				if (tempCheckList==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (tempCheckList!=null && oldCheckList!=null && !oldCheckList.getLastMntOn().equals(tempCheckList.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}

@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -362,7 +362,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_PinCode") + ": " + pinCode.getPinCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 		// If PIN Code is already utilized in Branches 
@@ -373,7 +373,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_PinCode") + ": " + pinCode.getPinCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
 

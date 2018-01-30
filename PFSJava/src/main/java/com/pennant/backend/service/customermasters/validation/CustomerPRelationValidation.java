@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerPRelation;
@@ -74,19 +74,19 @@ public class CustomerPRelationValidation {
 
 			if (!customerPRelation.isWorkflow()){// With out Work flow only new records  
 				if (befCustomerPRelation !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
 							errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (customerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCustomerPRelation !=null || tempCustomerPRelation!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
 								errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCustomerPRelation ==null || tempCustomerPRelation!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",
 								errParm,null));
 					}
 				}
@@ -96,7 +96,7 @@ public class CustomerPRelationValidation {
 			if (!customerPRelation.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befCustomerPRelation ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",
 							errParm,null));
 				}else{
 
@@ -104,10 +104,10 @@ public class CustomerPRelationValidation {
 							befCustomerPRelation.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",
 									errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",
 									errParm,null));
 						}
 					}
@@ -116,12 +116,12 @@ public class CustomerPRelationValidation {
 			}else{
 
 				if (tempCustomerPRelation==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempCustomerPRelation!=null  && oldCustomerPRelation!=null && 
 						!oldCustomerPRelation.getLastMntOn().equals(tempCustomerPRelation.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}

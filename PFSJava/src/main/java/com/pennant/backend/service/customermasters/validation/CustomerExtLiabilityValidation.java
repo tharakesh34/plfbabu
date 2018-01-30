@@ -9,7 +9,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -79,18 +79,18 @@ public class CustomerExtLiabilityValidation {
 
 			if (!customerExtLiability.isWorkflow()){// With out Work flow only new records  
 				if (befCustomerExtLiability !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
 							errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (customerExtLiability.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCustomerExtLiability !=null || tempCustomerExtLiability!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCustomerExtLiability ==null || tempCustomerExtLiability!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -99,17 +99,17 @@ public class CustomerExtLiabilityValidation {
 			if (!customerExtLiability.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befCustomerExtLiability ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldCustomerExtLiability!=null && !oldCustomerExtLiability.getLastMntOn().equals(
 							befCustomerExtLiability.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",
 									errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",
 									errParm,null));
 						}
 					}
@@ -117,11 +117,11 @@ public class CustomerExtLiabilityValidation {
 			}else{
 
 				if (tempCustomerExtLiability==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempCustomerExtLiability!=null  && oldCustomerExtLiability!=null && !oldCustomerExtLiability.getLastMntOn().equals(tempCustomerExtLiability.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 			}
@@ -145,7 +145,7 @@ public class CustomerExtLiabilityValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(CustomerExtLiability customerExtLiability){
+	public ErrorDetail  screenValidations(CustomerExtLiability customerExtLiability){
 
 		return null;
 	}
@@ -157,7 +157,7 @@ public class CustomerExtLiabilityValidation {
 	 */
 	public AuditDetail doValidations(CustomerExtLiability customerExtLiability) {
 		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		// validate Master code with PLF system masters
 		if (customerExtLiability.getFinDate().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customerExtLiability.getFinDate()) >= 0) {
 			String[] valueParm = new String[3];
@@ -165,7 +165,7 @@ public class CustomerExtLiabilityValidation {
 			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
 			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
 		int count = getCustomerExtLiabilityDAO().getBankNameCount(customerExtLiability.getBankName());
@@ -173,7 +173,7 @@ public class CustomerExtLiabilityValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "BankCode";
 			valueParm[1] = customerExtLiability.getBankName();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}
@@ -182,7 +182,7 @@ public class CustomerExtLiabilityValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "FinType";
 			valueParm[1] = customerExtLiability.getFinType();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}
@@ -192,7 +192,7 @@ public class CustomerExtLiabilityValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "FinStatus";
 			valueParm[1] = customerExtLiability.getFinStatus();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;	
 		}

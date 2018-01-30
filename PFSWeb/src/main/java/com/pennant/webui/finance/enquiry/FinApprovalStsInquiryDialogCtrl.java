@@ -47,16 +47,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Label;
@@ -75,11 +78,13 @@ import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -106,6 +111,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox mobileNo;
 	protected Textbox emailID;
 	protected Listbox listBoxFinApprovalStsInquiry;
+	protected A reasonDeatilsLog;	
 	
 	protected boolean approvedList;
 	private CustomerFinanceDetail customerFinanceDetail;
@@ -117,6 +123,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_windowTitle;
 	protected Label label_FinApprovalStsInquiryDialog_FinReference;
 	protected Label label_FinApprovalStsInquiryDialog_CustDocType;
+	private List<ReasonDetailsLog> reasonDetailsList = null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -139,6 +146,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinApprovalStsInquiryDialog(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
@@ -173,6 +181,10 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (arguments.containsKey("userActivityLog")) {
 				this.userActivityLog = (Boolean) arguments.get("userActivityLog");
 			}
+			
+			if (arguments.containsKey("reasonDetailsList")) {
+				this.reasonDetailsList = ((List<ReasonDetailsLog>) arguments.get("reasonDetailsList"));
+			} 
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -531,7 +543,32 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving " + event.toString());
 	}
- 
+	
+	public void onClick$reasonDeatilsLog(Event event) throws Exception {
+		logger.debug(Literal.ENTERING +event.toString());
+		doReasonDeatilsLog();
+		logger.debug(Literal.LEAVING +event.toString());
+	}
+	
+	private void doReasonDeatilsLog() {
+		logger.debug(Literal.ENTERING);
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+
+		if (reasonDetailsList != null && !reasonDetailsList.isEmpty()) {
+			map.put("reasonDetails", reasonDetailsList);
+			map.put("customerFinanceDetail", customerFinanceDetail);
+			try {
+				Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetailsLogDialog.zul", null, map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		} else if (customerFinanceDetail.getFinReference() != null) {
+			MessageUtil.showError("No Reason details are available for the reference : " + customerFinanceDetail.getFinReference());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

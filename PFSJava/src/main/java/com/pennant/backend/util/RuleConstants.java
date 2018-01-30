@@ -22,6 +22,7 @@ public class RuleConstants {
 	public static final String MODULE_LTVRULE = "LTVRULE";
 	public static final String MODULE_INSRULE = "INSRULE";
 	public static final String MODULE_BOUNCE = "BOUNCE";
+	public static final String MODULE_GSTRULE = "GSTRULE";	//GST Rules
 
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";

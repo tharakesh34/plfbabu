@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -320,7 +320,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinTypeFees finTypeFees = (FinTypeFees) auditDetail.getModelData();
 
 		FinTypeFees tempFinTypeFees = null;
@@ -341,16 +341,16 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 		if (finTypeFees.isNew()) { // for New record or new record into work flow
 			if (!finTypeFees.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypeFees != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinTypeFees == null || tempFinTypeFees != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -359,25 +359,25 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!finTypeFees.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinTypeFees == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldFinTypeFeesReference != null
 							&& !oldFinTypeFeesReference.getLastMntOn().equals(befFinTypeFees.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempFinTypeFees == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempFinTypeFees != null && oldFinTypeFeesReference != null
 						&& !oldFinTypeFeesReference.getLastMntOn().equals(tempFinTypeFees.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

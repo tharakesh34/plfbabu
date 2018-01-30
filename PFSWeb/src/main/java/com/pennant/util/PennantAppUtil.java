@@ -89,7 +89,6 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -135,7 +134,7 @@ public class PennantAppUtil {
 		searchObject.addField("ProductDesc");	
 		
 		if(filters != null && filters.length > 0){
-			searchObject.addFilterAnd(filters);
+			searchObject.addFilters(filters);
 		}
 		
 		List<Product> appList = pagedListService.getBySearchObject(searchObject);
@@ -1020,7 +1019,7 @@ public class PennantAppUtil {
 		searchObject.addTabelName("BMTDocumentTypes");
 		searchObject.addField("DocTypeCode");
 		searchObject.addField("DocTypeDesc");
-		searchObject.addFilterEqual("DocIsCustDoc", "1");
+		searchObject.addFilterEqual("DocIsCustDoc", 1);
 		
 		List<DocumentType> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
@@ -1046,7 +1045,7 @@ public class PennantAppUtil {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<Country> searchObject = new JdbcSearchObject<Country>(Country.class);
 		searchObject.addTabelName("BMTCountries");
-		searchObject.addFilterEqual("CountryIsActive", "1");
+		searchObject.addFilterEqual("CountryIsActive", 1);
 		searchObject.addField("CountryCode");
 		searchObject.addField("CountryDesc");
 		
@@ -1803,19 +1802,6 @@ public class PennantAppUtil {
 		List<SubSegment> subSegment = pagedListService.getBySearchObject(searchObject);
 		if (subSegment != null && !subSegment.isEmpty()) {
 			return subSegment.get(0);
-		}
-		return null;
-	}
-	
-	public static byte[]  getDocumentImage(long docID) {
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<DocumentManager> searchObject = new JdbcSearchObject<DocumentManager>(DocumentManager.class);
-		searchObject.addFilterEqual("Id",docID);
-		searchObject.addTabelName("DocumentManager");
-		searchObject.addField("DocImage");
-		List<DocumentManager> documentManagers = pagedListService.getBySearchObject(searchObject);
-		if (documentManagers != null && !documentManagers.isEmpty()) {
-			return documentManagers.get(0).getDocImage();
 		}
 		return null;
 	}

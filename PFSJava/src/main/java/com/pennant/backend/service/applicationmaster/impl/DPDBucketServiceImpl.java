@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -369,7 +369,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + dPDBucket.getBucketCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 		if (StringUtils.trimToEmpty(dPDBucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -381,7 +381,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 				valueParm[0] = dPDBucket.getBucketCode();
 				errParm[0] = PennantJavaUtil.getLabel("label_BucketCode") + ":" + valueParm[0];
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"41006", errParm, valueParm), usrLanguage));
 			}
 		}

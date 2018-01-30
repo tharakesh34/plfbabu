@@ -63,7 +63,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
@@ -297,7 +297,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 			valueParm[0]=aCollateralSetup.getCollateralRef();
 			errParm[0]=PennantJavaUtil.getLabel("label_CollateralRef")+":"+valueParm[0];
 
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(
 					PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			

@@ -56,7 +56,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -173,7 +173,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 		logger.debug(Literal.ENTERING);
 		
 			this.code.setMaxlength(8);
-			this.description.setMaxlength(50);
+			this.description.setMaxlength(200);
 		
 		setStatusDetails();
 		
@@ -319,6 +319,8 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 	
 			this.code.setValue(aReasonTypes.getCode());
 			this.description.setValue(aReasonTypes.getDescription());
+			this.recordStatus.setValue(aReasonTypes.getRecordStatus());
+
 		
 		
 		logger.debug(Literal.LEAVING);
@@ -411,10 +413,10 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonTypesDialog_Code.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonTypesDialog_Code.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonTypesDialog_Description.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonTypesDialog_Description.value"),null,false));
 		}
 	
 		logger.debug(Literal.LEAVING);
@@ -762,7 +764,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes>{
 							}
 
 						} else {
-							auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 									.getLabel("InvalidWorkFlowMethod"), null));
 							retValue = ErrorControl.showErrorControl(this.window_ReasonTypesDialog, auditHeader);
 							return processCompleted;

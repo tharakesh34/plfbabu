@@ -134,25 +134,36 @@
 								<rows>
 									<row>
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
-											<exePannel id="posidex" border="normal" title="${c:l('label_posidex')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="trailBalance" border="normal" title="${c:l('label_trailBalance')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="sapGL" border="normal" title="${c:l('label_sapGL')}" imgSrc="/images/icons/send.gif" visible="false" />
+
+											<exePannel id="posidex" border="normal" title="${c:l('label_posidex')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="dataMart" border="normal" title="${c:l('label_dataMart')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="trailBalance" border="normal" title="${c:l('label_trailBalance')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="sapGL" border="normal" title="${c:l('label_sapGL')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<space/>
 										</hbox>
 									</row>
 									<row>
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
-											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="dataMart" border="normal" title="${c:l('label_dataMart')}" imgSrc="/images/icons/send.gif" visible="false" />
+
+											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif" visible="true" />
 										</hbox>
 									</row>
-									<row visible="false">
-										<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
-										<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="false" />
-										<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="false" />
+									<row>
+										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
+											<exePannel id="dmLoanDetailsMonthly" border="normal" title="${c:l('label_dmLoanDetailsMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="dmLoanBalancesMonthly" border="normal" title="${c:l('label_dmLoanBalancesMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="dmDisbDetailsMonthly" border="normal" title="${c:l('label_dmDisbDetailsMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
+										</hbox>
+									</row>
+									<row>
+										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
+											<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="false" />
+										</hbox>
 									</row>
 								</rows>
 							</grid>

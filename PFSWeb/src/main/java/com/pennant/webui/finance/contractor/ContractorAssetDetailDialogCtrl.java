@@ -68,7 +68,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -955,7 +955,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 				if(aContractorAssetDetail.getContractorName().equals(loanDetail.getContractorName())){ // Both Current and Existing list same
 
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 								"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}

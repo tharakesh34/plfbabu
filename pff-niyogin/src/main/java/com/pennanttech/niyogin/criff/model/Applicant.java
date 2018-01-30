@@ -2,8 +2,15 @@ package com.pennanttech.niyogin.criff.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlType(propOrder = { "firstName", "lastName", "dob", "gender", "pan", "mobile", "maritalStatus", "personalAddress" })
+@XmlRootElement(name = "applicant")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Applicant implements Serializable {
 	private static final long	serialVersionUID	= -1685092053724752809L;
 

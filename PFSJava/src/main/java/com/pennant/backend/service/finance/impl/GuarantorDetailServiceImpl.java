@@ -39,7 +39,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -429,7 +429,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean onlineRequest) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
 
 		GuarantorDetail tempGuarantorDetail = null;
@@ -451,19 +451,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 								usrLanguage));
 					}
@@ -474,7 +474,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befGuarantorDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldGuarantorDetail != null
@@ -482,11 +482,11 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 									befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
@@ -495,14 +495,14 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			} else {
 
 				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldGuarantorDetail != null
 						&& !oldGuarantorDetail.getLastMntOn().equals(
 								tempGuarantorDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -625,7 +625,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
 		GuarantorDetail tempGuarantorDetail = null;
@@ -663,19 +663,19 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 								usrLanguage));
 					}
@@ -686,7 +686,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befGuarantorDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldGuarantorDetail != null
@@ -694,11 +694,11 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 									befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 									usrLanguage));
 						}
@@ -707,7 +707,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			} else {
 
 				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
@@ -715,7 +715,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 						&& oldGuarantorDetail != null
 						&& !oldGuarantorDetail.getLastMntOn().equals(
 								tempGuarantorDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}

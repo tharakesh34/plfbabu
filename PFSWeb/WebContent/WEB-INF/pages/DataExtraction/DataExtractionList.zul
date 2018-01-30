@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_DataExtractionList"
-			apply="${dataExtractionListCtrl}" border="none" width="100%">
+			apply="${dataExtractionListCtrl}" border="border:5px" width="100%">
 			<div sclass="z-toolbar" style="padding:0px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 					width="100%" widths="30%,40%,30%">
@@ -18,10 +18,16 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">
 						<button
-							id="btn_Process"
+							id="btn_Import"
 							label="${c:l('label_DataExtraction')}"
-							autodisable="btn_Process,btnRefresh"
+							autodisable="btn_Import,btnRefresh,btn_Download,processMonth,configName"
 							tooltiptext="${c:l('button_DataExtractionList_Process.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button
+							id="btn_Download"
+							label="${c:l('label_DataExtraction_Download')}"
+							autodisable="btn_Import,btnRefresh,btn_Download,processMonth,configName"
+							tooltiptext="${c:l('button_DataExtractionList_Download.tooltiptext')}"
 							sclass="z-toolbarbutton" />
 					</toolbar>
 
@@ -29,15 +35,15 @@
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
-							autodisable="btn_Process, btnRefresh"
+							autodisable="btn_Import, btnRefresh,btn_Download"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
 			<borderlayout id="borderLayout_DataExtractionList">
-				<north border="none" />
-				<center border="none">
+				<north border="border:5px" />
+				<center  border="border:5px">
 					<div>
 						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
@@ -56,7 +62,7 @@
 									<label value="${c:l('label_DataExtractionList_ProcessName.value')}" />
 									<hbox>
 										<space  spacing="2px" sclass="mandatory"/>
-										<combobox id="processName" />
+										<combobox id="configName" />
 									</hbox>
 								</row>
 							</rows>
@@ -64,7 +70,7 @@
 					</div>
 				</center>
 
-				<south border="none">
+				<south border="border:5px">
 					<paging id="pagingDataExtractionList" height="35px" visible="false"/>
 				</south>
 			</borderlayout>

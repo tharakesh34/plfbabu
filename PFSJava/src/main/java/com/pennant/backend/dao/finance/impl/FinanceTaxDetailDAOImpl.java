@@ -106,7 +106,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		try {
 			financeTaxDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn("Exception: ", e);
 			financeTaxDetail = null;
 		}
 

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,16 +30,20 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
+import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.RateUtil;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -81,6 +87,7 @@ public class AgreementGeneration implements Serializable {
 	public static final String		refField			= "SmartForm[0].LPOForm[0].txtrefno[0]";
 	public static final String		statusField			= "SmartForm[0].LPOForm[0].ddlIsActive[0]";
 	public static final String		dealerId			= "SmartForm[0].LPOForm[0].txtdealerid[0]";
+	ArrayList<ValueLabel> interestRateType = PennantStaticListUtil.getInterestRateType(true);
 
 	private NotesService			notesService;
 	private FinanceDetailService	financeDetailService;
@@ -385,93 +392,17 @@ public class AgreementGeneration implements Serializable {
 						}
 					}
 					
-					boolean addressset=false;
-					if (detail.getCustomerDetails().getAddressList() != null
-							&& !detail.getCustomerDetails().getAddressList().isEmpty()) {
-						for (CustomerAddres address : detail.getCustomerDetails().getAddressList()) {
-							if (PennantConstants.PFF_CUSTCTG_CORP.equals(detail.getCustomerDetails().getCustomer()
-									.getCustCtgCode())
-									&& "OFFICE".equals(address.getCustAddrType())) {
-								agreement.setCustAddrHNbr(address.getCustAddrHNbr());
-								agreement.setCustFlatNbr(StringUtils.trimToEmpty(address.getCustFlatNbr()));
-								agreement.setCustPOBox(StringUtils.trimToEmpty(address.getCustPOBox()));
-								agreement.setCustAddrStreet(StringUtils.trimToEmpty(address.getCustAddrStreet()));
-								agreement.setCustAddrCountry(StringUtils.trimToEmpty(address
-										.getLovDescCustAddrCountryName()));
-								agreement.setCustAddrProvince(StringUtils.trimToEmpty(address
-										.getLovDescCustAddrProvinceName()));
-								agreement
-										.setCustAddrCity(StringUtils.trimToEmpty(address.getLovDescCustAddrCityName()));
-								if (!PennantConstants.CITY_FREETEXT) {
-									agreement.setCustAddrCity(StringUtils.trimToEmpty(address
-											.getLovDescCustAddrCityName()));
-								}
-								agreement.setCustAddrLine1(StringUtils.trimToEmpty(address.getCustAddrLine1()));
-								agreement.setCustAddrLine2(StringUtils.trimToEmpty(address.getCustAddrLine2()));
-								addressset=true;
-								break;
-							} else {
-								if (!PennantConstants.PFF_CUSTCTG_CORP.equals(detail.getCustomerDetails().getCustomer()
-										.getCustCtgCode())
-										&& "HOME_RC".equals(address.getCustAddrType())) {
-									agreement.setCustAddrHNbr(address.getCustAddrHNbr());
-									agreement.setCustFlatNbr(StringUtils.trimToEmpty(address.getCustFlatNbr()));
-									agreement.setCustPOBox(StringUtils.trimToEmpty(address.getCustPOBox()));
-									agreement.setCustAddrCountry(StringUtils.trimToEmpty(address
-											.getLovDescCustAddrCountryName()));
-									agreement.setCustAddrCity(StringUtils.trimToEmpty(address.getCustAddrCity()));
-									if (!PennantConstants.CITY_FREETEXT) {
-										agreement.setCustAddrCity(StringUtils.trimToEmpty(address
-												.getLovDescCustAddrCityName()));
-									}
-									agreement.setCustAddrLine1(StringUtils.trimToEmpty(address.getCustAddrLine1()));
-									agreement.setCustAddrLine2(StringUtils.trimToEmpty(address.getCustAddrLine2()));
-									addressset=true;
-									break;
-								}
-							}
-						}
-						
-						if (!addressset) {
-							for (CustomerAddres customerAddres : detail.getCustomerDetails().getAddressList()) {
-								if (customerAddres.getCustAddrPriority() == Integer
-										.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
-									agreement.setCustAddrHNbr(customerAddres.getCustAddrHNbr());
-									agreement.setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
-									agreement.setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
-									agreement
-											.setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-									agreement.setCustAddrCountry(
-											StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
-									agreement.setCustAddrProvince(
-											StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
-									agreement.setCustAddrCity(
-											StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-									if (!PennantConstants.CITY_FREETEXT) {
-										agreement.setCustAddrCity(
-												StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-									}
-									agreement
-											.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
-									agreement
-											.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
-									agreement
-									.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
-									break;
-								}
-							}
-						}
-					}
+					//Customer address
+					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
+					setCustomerAddress(agreement, addressList);
+				
 
-					if (detail.getCustomerDetails().getCustomerDocumentsList() != null
-							&& !detail.getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+					List<CustomerDocument> customerDocumentsList = detail.getCustomerDetails().getCustomerDocumentsList();
+					if (customerDocumentsList != null
+							&& !customerDocumentsList.isEmpty()) {
 						
-						for (CustomerDocument customerDocument :detail.getCustomerDetails().getCustomerDocumentsList()) {
-							if (StringUtils.equals(PennantConstants.PANNUMBER,customerDocument.getCustDocCategory())) {
-								agreement.setPanNumber(customerDocument.getCustDocTitle());
-								break;
-							}
-						}
+						//pan number
+						agreement.setPanNumber(PennantApplicationUtil.getPanNumber(customerDocumentsList));
 						
 						String cusCtg = StringUtils.trimToEmpty(customer.getCustCtgCode());
 						boolean corpCust = false;
@@ -479,7 +410,7 @@ public class AgreementGeneration implements Serializable {
 							corpCust = true;
 						}
 
-						for (CustomerDocument customerDocument : detail.getCustomerDetails().getCustomerDocumentsList()) {
+						for (CustomerDocument customerDocument : customerDocumentsList) {
 							String docCategory = customerDocument.getCustDocCategory();
 							if (corpCust) {
 								// Trade License for Corporate Customer/ SME Customer
@@ -566,7 +497,14 @@ public class AgreementGeneration implements Serializable {
 				agreement = getFinAssetEvaluationDetails(agreement, detail.getFinAssetEvaluation(), formatter, detail
 						.getFinScheduleData().getFinanceMain().getFinCcy());
 			}
-			getCoapplicantDetails(detail, agreement);
+			// Co-applicant details
+			setCoapplicantDetails(detail, agreement);
+			//Mandate details
+			setMandateDetails(detail, agreement);
+			//customer bank info
+			setCustomerBankInfo(detail, agreement);
+			
+			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -574,7 +512,111 @@ public class AgreementGeneration implements Serializable {
 		return agreement;
 	}
 
-	private void getCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement) {
+	private void setCustomerBankInfo(FinanceDetail detail, AgreementDetail agreement) {
+		agreement.setCustomerBankInfos(new ArrayList<com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo>());
+		if (detail!=null && detail.getCustomerDetails()!=null && detail.getCustomerDetails().getCustomerBankInfoList()!=null) {
+			List<CustomerBankInfo> list = detail.getCustomerDetails().getCustomerBankInfoList();
+			for (CustomerBankInfo customerBankInfo : list) {
+				com.pennant.backend.model.finance.AgreementDetail.CustomerBankInfo custbank = agreement.new CustomerBankInfo();
+				custbank.setBankCode(customerBankInfo.getBankCode());
+				custbank.setBankName(customerBankInfo.getLovDescBankName());
+				custbank.setAccountType(customerBankInfo.getAccountType());
+				custbank.setAccountNumber(customerBankInfo.getAccountNumber());
+				agreement.getCustomerBankInfos().add(custbank);
+			}
+			
+		}else{
+			agreement.getCustomerBankInfos().add(agreement.new CustomerBankInfo());
+		}
+		
+	}
+
+	private void setCustomerAddress(AgreementDetail agreement, List<CustomerAddres> addressList) {
+		if (addressList != null	&& !addressList.isEmpty()) {
+			if (addressList.size()==1) {
+				setAddressDetails(agreement, addressList.get(0));
+			}else{
+				// sort the address based on priority and consider the top priority 
+				sortCustomerAdress(addressList);
+				for (CustomerAddres customerAddres : addressList) {
+					setAddressDetails(agreement, customerAddres);
+					break;
+				}
+				
+			}
+		}
+	}
+	
+	private void setCoapplicantAddress(CoApplicant coapplicant, List<CustomerAddres> addressList) {
+		if (addressList != null	&& !addressList.isEmpty()) {
+			if (addressList.size()==1) {
+				setAddressDetails(coapplicant, addressList.get(0));
+			}else{
+				// sort the address based on priority and consider the top priority 
+				sortCustomerAdress(addressList);
+				for (CustomerAddres customerAddres : addressList) {
+					setAddressDetails(coapplicant, customerAddres);
+					break;
+				}
+				
+			}
+		}
+	}
+	
+	public static void sortCustomerAdress(List<CustomerAddres> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerAddres>() {
+				@Override
+				public int compare(CustomerAddres detail1, CustomerAddres detail2) {
+					return detail2.getCustAddrPriority() - detail1.getCustAddrPriority();
+				}
+			});
+		}
+	}
+
+
+	private void setAddressDetails(AgreementDetail agreement, CustomerAddres customerAddres) {
+		agreement.setCustAddrHNbr(customerAddres.getCustAddrHNbr());
+		agreement.setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+		agreement.setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+		agreement.setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
+		agreement.setCustAddrCountry(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+		agreement.setCustAddrProvince(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+		agreement.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		if (!PennantConstants.CITY_FREETEXT) {
+			agreement.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		}
+		agreement.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
+		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
+		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+	}
+	
+	private void setAddressDetails(CoApplicant coapplicant, CustomerAddres customerAddres) {
+		coapplicant.setCustAddrHNbr(customerAddres.getCustAddrHNbr());
+		coapplicant.setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+		coapplicant.setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+		coapplicant.setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
+		coapplicant.setCustAddrCountry(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+		coapplicant.setCustAddrProvince(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+		coapplicant.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		if (!PennantConstants.CITY_FREETEXT) {
+			coapplicant.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		}
+		coapplicant.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
+		coapplicant.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
+		coapplicant.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+	}
+
+	private void setMandateDetails(FinanceDetail detail, AgreementDetail agreement) {
+		if (detail.getMandate() !=null) {
+			agreement.setAccNumberMandate(detail.getMandate().getAccNumber());
+		}
+		
+	}
+
+	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement) {
+		agreement.setCoApplicants(new ArrayList<>());
 		if (detail.getJountAccountDetailList()!=null && !detail.getJountAccountDetailList().isEmpty()) {
 			List<CustomerDetails> custIDs=new ArrayList<CustomerDetails>();
 			for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
@@ -582,61 +624,23 @@ public class AgreementGeneration implements Serializable {
 				custIDs.add(custdetails);
 			}
 			
-			agreement.setCoApplicants(new ArrayList<>());
 			for (CustomerDetails customerDetails : custIDs) {
 				//co applicant
 				CoApplicant coapplicant = agreement.new CoApplicant();
-				
 				Customer customer = customerDetails.getCustomer();
 				coapplicant.setCustName(customer.getCustShrtName());
-				
 				//pan number
 				List<CustomerDocument> doclist = customerDetails.getCustomerDocumentsList();
-				if (doclist!=null && !doclist.isEmpty()) {
-					for (CustomerDocument customerDocument : doclist) {
-						if (StringUtils.equals(PennantConstants.PANNUMBER,customerDocument.getCustDocCategory())) {
-							coapplicant.setPanNumber(customerDocument.getCustDocTitle());
-							break;
-						}
-					}
-				}
+				coapplicant.setPanNumber(PennantApplicationUtil.getPanNumber(doclist));
 				
 				List<CustomerAddres> addlist = customerDetails.getAddressList();
-				
 				if (addlist!=null && !addlist.isEmpty()) {
-
-					for (CustomerAddres customerAddres : addlist) {
-						if (customerAddres.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
-							coapplicant.setCustAddrHNbr(customerAddres.getCustAddrHNbr());
-							coapplicant.setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
-							coapplicant.setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
-							coapplicant
-									.setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-							coapplicant.setCustAddrCountry(
-									StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
-							coapplicant.setCustAddrProvince(
-									StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
-							coapplicant.setCustAddrCity(
-									StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-							if (!PennantConstants.CITY_FREETEXT) {
-								coapplicant.setCustAddrCity(
-										StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-							}
-							coapplicant
-									.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
-							coapplicant
-									.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
-							agreement
-							.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
-
-							break;
-						}
-
-					}
+					setCoapplicantAddress(coapplicant, addlist);
 				}
 				agreement.getCoApplicants().add(coapplicant);
 			}
+		}else{
+			agreement.getCoApplicants().add(agreement.new CoApplicant());
 		}
 	}
 
@@ -879,7 +883,7 @@ public class AgreementGeneration implements Serializable {
 			agreement.setFinCcy(main.getFinCcy());
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
-			agreement.setRepayRateBasis(main.getRepayRateBasis());
+			agreement.setRepayRateBasis(PennantStaticListUtil.getlabelDesc(main.getRepayRateBasis(), interestRateType));
 			agreement.setStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
 			agreement.setRepayFrqDay(FrequencyUtil.getFrequencyDay(main.getRepayFrq()));
 			if (main.getFinStartDate() != null) {
@@ -982,6 +986,18 @@ public class AgreementGeneration implements Serializable {
 			agreement.setReviewDate(DateUtility.formatToLongDate(main.getNextRepayRvwDate()));
 			agreement.setFacilityDate(DateUtility.formatToLongDate(main.getFinStartDate()));
 			agreement.setProfitRateType(main.getRepayRateBasis());
+			int tenor = DateUtility.getMonthsBetween(main.getFinStartDate(),
+					main.getMaturityDate(), true);
+			agreement.setTenor(String.valueOf(tenor));
+			
+			if (main.getRepayBaseRate()!=null) {
+				RateDetail details = RateUtil.rates(main.getRepayBaseRate(), main.getFinCcy(), main.getRepaySpecialRate(),
+						main.getRepayMargin(),main.getRpyMinRate(), main.getRpyMaxRate());
+				agreement.setNetRefRateLoan(PennantApplicationUtil.formatRate(details.getNetRefRateLoan().doubleValue(), 9));
+			}else{
+				agreement.setNetRefRateLoan(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 9));
+			}
+		
 
 		} catch (Exception e) {
 			logger.debug(e);

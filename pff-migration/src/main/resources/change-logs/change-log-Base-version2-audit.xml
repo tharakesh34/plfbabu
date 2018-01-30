@@ -19,6 +19,13 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	
 	
 	<changeSet id="pre_run_for_pgp_adt" author="Jayant" runAlways="true"
 		dbms="postgresql">
@@ -59,6 +66,17 @@
                       ADTReasons  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
 				WHERE     (TH.AuditTranType <> 'W') AND (TH.AuditModule = 'ReasonCode')]]>
     </createView>
+	</changeSet>
+	
+	<changeSet id="7" author="Prakash">
+		<sql>
+			update AdtCustomers set custro1=0;
+			
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="Prakash">
+	<modifyDataType tableName="Adtcustomers" columnName="custro1" newDataType="bigint"/>
 	</changeSet>
 	
  </databaseChangeLog>

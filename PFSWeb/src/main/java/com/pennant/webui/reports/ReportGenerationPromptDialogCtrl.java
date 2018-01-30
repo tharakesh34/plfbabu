@@ -103,13 +103,14 @@ import org.zkoss.zul.impl.NumberInputElement;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
 import com.pennant.backend.service.reports.ReportConfigurationService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -119,7 +120,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -127,13 +127,15 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 	/**
  * This is the controller class for the /WEB-INF/pages/reports/ReportGenerationPromptDialog.zul file.
@@ -193,6 +195,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private List<String> myLableList = new ArrayList<String>();
 	private Map<Long, List<String>> myOrderedLableMap = new HashMap<>();
 	
+	private String moduleType;
+	
 	public ReportGenerationPromptDialogCtrl() {
 		super();
 	}
@@ -200,6 +204,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "";
+		this.moduleType = getArgument("module");
 	}
 
 	/**
@@ -1655,10 +1660,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 				logger.debug("Buffer started");
 
-				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());// This
-																												// will
-																												// come
-																												// dynamically
+				// This will come dynamically
+				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());
 				con = reportDataSourceObj.getConnection();
 
 				if ((!isExcel && !this.rows_formatType.isVisible())
@@ -1682,23 +1685,24 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
-					JRXlsExporter excelExporter = new JRXlsExporter();
 					reportName = reportConfiguration.getReportHeading();
-					excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME, printfileName);
-					// excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS,
-							Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
-					excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+					
+					JRXlsExporter excelExporter = new JRXlsExporter();
+					excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
+					AbstractXlsReportConfiguration configuration=new AbstractXlsReportConfiguration();
+					configuration.setDetectCellType(true);
+					configuration.setWhitePageBackground(false);
+					configuration.setRemoveEmptySpaceBetweenColumns(true);
+					configuration.setRemoveEmptySpaceBetweenRows(true);
+					configuration.setIgnoreGraphics(false);
+					configuration.setIgnoreCellBorder(false);
+					configuration.setCollapseRowSpan(true);
+					configuration.setImageBorderFixEnabled(false);
+					SimpleOutputStreamExporterOutput outputStreamExporterOutput=new SimpleOutputStreamExporterOutput(outputStream);
+					excelExporter.setExporterOutput(outputStreamExporterOutput);
+					excelExporter.setConfiguration(configuration);
 					excelExporter.exportReport();
-					Filedownload.save(
-							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+					Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 
 					if (selectTab != null) {
 						// selectTab.setSelected(true);
@@ -2473,7 +2477,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (StringUtils.trimToNull(message.toString()) != null) {
 			throw new Exception(message.insert(0, "Please select the below fields:").toString());
 		}
-
+		
+		if (StringUtils.equals(moduleType, PennantConstants.NO_OBJECT_CERT)) {
+			Filter[] nocFilter = new Filter[2];
+			nocFilter[0] = Filter.equalTo("FINISACTIVE", 0);
+			nocFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_MATURED,
+					FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
+			filters = nocFilter;
+		}
 		logger.debug("Leaving");
 		return filters;
 	}
@@ -2676,7 +2687,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ReportPromptFilterCtrl, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

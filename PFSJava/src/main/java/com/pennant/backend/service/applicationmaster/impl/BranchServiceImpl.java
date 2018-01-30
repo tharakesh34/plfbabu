@@ -62,7 +62,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -155,7 +155,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		
 		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
@@ -179,7 +179,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -397,7 +397,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		
 		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
@@ -421,7 +421,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.setParmDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
 		}
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -505,7 +505,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + code;
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -514,4 +514,15 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		return auditDetail;
 	}
 	
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
+	
+		return this.branchDAO.getBrachDetailsByBranchCode(finBranches);
+	}
+
+	@Override
+	public boolean getUnionTerrotory (String cpProvince) {
+	
+		return this.branchDAO.getUnionTerrotory(cpProvince);
+	}
 }

@@ -472,6 +472,9 @@
 												id="listheader_ScheduleDetailDialog_SchFee" hflex="min" 
 												align="right" />
 											<listheader
+												id="listheader_ScheduleDetailDialog_SchTax" hflex="min"
+												align="right" />
+											<listheader
 												id="listheader_ScheduleDetailDialog_TDSAmount"
 												label="${c:l('listheader_TDSAmount.label')}"  hflex="min"
 												align="right" />

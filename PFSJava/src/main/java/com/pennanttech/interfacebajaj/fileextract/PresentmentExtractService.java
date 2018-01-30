@@ -15,10 +15,10 @@ public class PresentmentExtractService extends AbstractFileExtractService implem
 	private PresentmentHeaderService presentmentHeaderService;
 
 	@Override
-	public PresentmentDetailExtract getFileExtract(long userId) throws Exception {
+	public PresentmentDetailExtract getFileExtract(long userId,String contentType) throws Exception {
 		PresentmentDetailExtract extractDetails = new PresentmentDetailExtract(dataSource, presentmentHeaderService);
 		extractDetails.setDefaultDirectory(getLoacation("PRESENTMENT_RESPONSE_UPLOAD_FILEPATH"));
-		extractDetails.setFileExtension(".txt");
+		extractDetails.setFileExtension(contentType);
 		extractDetails.setFileNamePrefix("");// CheckWithChiatanya
 		extractDetails.setBatchType("PRESENTMENT_RESPONSE_IMPORT");
 		extractDetails.setUserId(userId);

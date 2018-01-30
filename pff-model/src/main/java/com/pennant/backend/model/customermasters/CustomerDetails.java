@@ -70,7 +70,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","extendedDetail","returnStatus","customerDedupList" })
+		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","returnStatus","customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -95,7 +95,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private String custBaseCcy;
 
 	@XmlElement
-	private String primaryRelationOfficer;
+	private long primaryRelationOfficer;
 
 	private String sourceId;
 
@@ -103,6 +103,14 @@ public class CustomerDetails implements java.io.Serializable {
 	private Customer customer;
 
 	private CustEmployeeDetail custEmployeeDetail;
+	
+	@XmlElement(name="extendedDetail")
+	private ExtendedFieldHeader	extendedFieldHeader;
+	private ExtendedFieldRender extendedFieldRender;
+	
+	@XmlElementWrapper(name="extendedDetails")
+	@XmlElement(name="extendedDetail")
+	private List<ExtendedField> extendedDetails = null;
 
 	private List<CustomerRating> ratingsList;
 
@@ -154,19 +162,11 @@ public class CustomerDetails implements java.io.Serializable {
 	
 	private List<FinanceEnquiry> customerFinances;
 	private FinanceEnquiry customerFinance;
-
+	
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 	@XmlElement
 	private boolean dedupReq;
-	
-	@XmlElement(name="extendedDetail")
-	private ExtendedFieldHeader	extendedFieldHeader;
-	private ExtendedFieldRender extendedFieldRender;
-	
-	@XmlElementWrapper(name="extendedDetails")
-	@XmlElement(name="extendedDetail")
-	private List<ExtendedField> extendedDetails = null;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -216,11 +216,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.custBaseCcy = custBaseCcy;
 	}
 
-	public String getPrimaryRelationOfficer() {
+	public long getPrimaryRelationOfficer() {
 		return primaryRelationOfficer;
 	}
 
-	public void setPrimaryRelationOfficer(String primaryRelationOfficer) {
+	public void setPrimaryRelationOfficer(long primaryRelationOfficer) {
 		this.primaryRelationOfficer = primaryRelationOfficer;
 	}
 
@@ -500,7 +500,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setDedupReq(boolean dedupReq) {
 		this.dedupReq = dedupReq;
 	}
-
+	
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}
@@ -530,6 +530,4 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
 	}
-	
-	
 }

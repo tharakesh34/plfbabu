@@ -774,4 +774,22 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		return aeAmountCodesList;
 	}
 	
+	@Override
+	public List<Rule> getGSTRuleDetails(String ruleModule, String type) {
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RuleModule", ruleModule);
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify, FeeToFinance, ");
+		selectSql.append(" WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType, DeviationType, GroupId,");
+		selectSql.append(" Revolving, FixedOrVariableLimit, Active, Fields ");
+		selectSql.append(" From Rules ");
+		selectSql.append(" WHERE RuleModule = :RuleModule" );
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
 }

@@ -46,6 +46,7 @@ package com.pennant.webui.finance.manualadvise;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -61,6 +62,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -105,7 +107,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	
 	private transient ManualAdviseService manualAdviseService;
 	private List<ValueLabel> listAdviseType=PennantStaticListUtil.getManualAdviseTypes();
-
+	private FinanceMain financeMain =null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -221,6 +223,8 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 			return;
 		}
 		
+		financeMain = manualAdviseService.getFinanceDetails(StringUtils.trimToEmpty(manualadvise.getFinReference()));
+		
 		StringBuffer whereCond= new StringBuffer();
 		whereCond.append("  AND  AdviseID = ");
 		whereCond.append( manualadvise.getAdviseID());
@@ -254,7 +258,13 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		arg.put("manualAdviseListCtrl", this);
 		
 		try {
+			
+			if(manualadvise.isNewRecord()){
+				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/SelectManualAdviseFinReferenceDialog.zul", null, arg);
+			}else {
+				arg.put("financeMain", financeMain);
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null, arg);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

@@ -77,8 +77,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -104,13 +103,14 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul file.
@@ -467,7 +467,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String[] valueParm = new String[1];
 			valueParm[0] = aFinanceMain.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			logger.debug("Leaving " + event.toString());
@@ -919,9 +919,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			whereClause.append("(',' ");
 
-			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(QueryUtil.getQueryConcat());
 			whereClause.append(" nextRoleCode ");
-			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(QueryUtil.getQueryConcat());
 			whereClause.append(" ',' LIKE '%,");
 			whereClause.append(role);
 			whereClause.append(",%')");
@@ -945,8 +945,38 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// FinReference
-		this.searchObj = setFinReferences(this.searchObj, this.searchObj.getWhereClause());
+		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			this.searchObj = setFinReferences(this.searchObj, this.searchObj.getWhereClause());
+		} else {
 
+			if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+				// get the search operator
+				final Listitem itemFinReference = this.sortOperator_finReference.getSelectedItem();
+
+				if (itemFinReference != null) {
+					final int searchOpId = ((SearchOperators) itemFinReference.getAttribute("data"))
+							.getSearchOperatorId();
+
+					if (searchOpId == -1) {
+						// do nothing
+					} else if (searchOpId == Filter.OP_LIKE) {
+						searchObj.addFilter(new Filter("FinReference",
+								"%" + this.finReference.getValue().trim().toUpperCase() + "%", searchOpId));
+					} else if (searchOpId == Filter.OP_IN) {
+						this.searchObj.addFilter(new Filter("FinReference",
+								this.finReference.getValue().trim().split(","), Filter.OP_IN));
+					} else if (searchOpId == Filter.OP_NOT_IN) {
+						this.searchObj.addFilter(new Filter("FinReference",
+								this.finReference.getValue().trim().split(","), Filter.OP_NOT_IN));
+					} else {
+						searchObj
+								.addFilter(new Filter("FinReference", this.finReference.getValue().trim(), searchOpId));
+					}
+				}
+			}
+		}
+		
+		
 		if (StringUtils.isNotBlank(this.fincustName.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_custName.getSelectedItem(), this.fincustName
 					.getValue().trim(), "lovDescCustShrtName");

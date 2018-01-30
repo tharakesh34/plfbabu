@@ -83,7 +83,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
@@ -113,10 +113,11 @@ import com.pennant.webui.dedup.dedupparm.FetchBlackListDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
-import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -363,19 +364,44 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		String recStatus = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain()
-				.getRecordStatus());
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String prevRecordStatus = financeMain.getRecordStatus();
+		String recordStatus = userAction.getSelectedItem().getValue();
+		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
+				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
+				&& StringUtils.isEmpty(moduleDefiner)) {
+			boolean allow = DisbursementInstCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
+			if (!allow) {
+				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
+				return;
+			} 
+		} 
 
-		if (this.userAction.getSelectedItem() != null
-				&& !recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)
-				&& (this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED) || this.userAction
-						.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED))) {
-			doReject();
+		Long capturereaonse = null;
+		String taskId = getTaskId(getRole());
+		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		capturereaonse = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
+		if (capturereaonse != null && capturereaonse.intValue() != 0) {
+			doFillReasons(capturereaonse.intValue());
 		} else {
 			doSave();
 		}
-		logger.debug("Leaving " + event.toString());
 	}
+
+	public void doFillReasons(int reason) throws InterruptedException {
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeMainDialogCtrl", this);
+		map.put("reason", reason);
+		try {
+			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", getMainWindow(), map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+	
 
 	/**
 	 * When record is rejected . <br>
@@ -2000,7 +2026,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QDEFinanceMainDialog, auditHeader);
 						return processCompleted;

@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.amtmasters.VehicleVersionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -345,7 +345,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		VehicleVersion vehicleVersion = (VehicleVersion) auditDetail
 		.getModelData();
 
@@ -374,7 +374,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (befVehicleVersion != null) { // Record Already Exists in the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -386,13 +386,13 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 						// in the
 						// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befVehicleVersion == null || tempVehicleVersion != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,
+								new ErrorDetail(PennantConstants.KEY_FIELD,
 										"41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -406,7 +406,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (befVehicleVersion == null) { // if records not exists in the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldVehicleVersion != null
@@ -416,12 +416,12 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(
+									.getErrorDetail(new ErrorDetail(
 											PennantConstants.KEY_FIELD,
 											"41003", errParm, valueParm),usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(
+									.getErrorDetail(new ErrorDetail(
 											PennantConstants.KEY_FIELD,
 											"41004", errParm, valueParm),usrLanguage));
 						}
@@ -432,7 +432,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (tempVehicleVersion == null) { // if records not exists in
 					// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
@@ -440,7 +440,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 						&& !oldVehicleVersion.getLastMntOn().equals(
 								tempVehicleVersion.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD,
+							new ErrorDetail(PennantConstants.KEY_FIELD,
 									"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -452,7 +452,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 			valueParm1[0] = vehiclevers.getLovDescVehicleModelDesc();
 			valueParm1[1] = vehiclevers.getVehicleVersionCode();
 			errParm1[0]=PennantJavaUtil.getLabel("label_VehicleModel")+":"+valueParm1[0]+ ","+PennantJavaUtil.getLabel("label_VehicleVersionCode")+":"+ valueParm1[1];		
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1,null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1,null));
 		}
 	
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(

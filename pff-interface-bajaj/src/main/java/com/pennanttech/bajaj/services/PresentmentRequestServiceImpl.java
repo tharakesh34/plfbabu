@@ -10,7 +10,8 @@ public class PresentmentRequestServiceImpl extends BajajService implements Prese
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
+		@SuppressWarnings("unchecked")
 		PresentmentRequestProcess process = new PresentmentRequestProcess(dataSource, (Long) params[0], (Date) params[1], (List<Long>) params[2], (Long) params[3], (Boolean)params[4]);
-		process.process("PRESENTMENT_REQUEST");
+		process.processData();
 	}
 }

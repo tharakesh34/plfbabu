@@ -57,7 +57,7 @@ import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -366,9 +366,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityUser securityUser= (SecurityUser) auditDetail.getModelData();
-		SecurityUser befSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrID(), "");
+		SecurityUser befSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		
 		if ("changePassword".equals(StringUtils.trimToEmpty(method))) {
 			auditDetail.setBefImage(befSecurityUser);	
@@ -378,7 +378,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		
 		SecurityUser tempSecurityUser= null;
 		if (securityUser.isWorkflow()){
-			tempSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrID(), "_Temp");
+			tempSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "_Temp");
 		}
 		//SecurityUser aBefSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		SecurityUser oldSecurityUser= securityUser.getBefImage();
@@ -399,7 +399,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 			if (!securityUser.isWorkflow()){// With out Work flow only new records  
 				if (befSecurityUser !=null){	// Record Already Exists in the table with same userID then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 
 				}	
 				/*if (aBefSecurityUser !=null){	// Record Already Exists in the table with same userLogin then error  
@@ -409,18 +409,18 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			}else{ // with work flow
 				if (tempSecurityUser!=null ){ // if records already exists in the Work flow table 
 					//auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 
 				}
 
 				if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befSecurityUser !=null){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befSecurityUser ==null){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 					}
 					/*if (aBefSecurityUser !=null){	// Record Already Exists in the table then error  
@@ -434,16 +434,16 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			if (!securityUser.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befSecurityUser ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 
 				}
 
 				if (befSecurityUser!=null && oldSecurityUser!=null && !oldSecurityUser.getLastMntOn().equals(befSecurityUser.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 					}else{
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 					}
 
 				}
@@ -451,12 +451,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			}else{
 
 				if (tempSecurityUser==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 
 				if (tempSecurityUser!=null && oldSecurityUser!=null && !oldSecurityUser.getLastMntOn().equals(tempSecurityUser.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 			}
@@ -468,7 +468,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			int roleIdCount =getSecurityUserOperationsDAO().getUserIdCount(securityUser.getUsrID());
 			/*if roleId assigned for any user or group show error message*/
 			if(roleIdCount>0){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"49002",parmUserIdAssigned,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"49002",parmUserIdAssigned,null));
 
 			}	
 		}

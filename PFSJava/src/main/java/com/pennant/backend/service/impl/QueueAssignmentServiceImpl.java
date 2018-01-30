@@ -45,7 +45,7 @@ import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.model.TaskOwners;
@@ -320,7 +320,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		logger.debug("Entering");
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		auditHeader.setAuditDetail(auditDetail);
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);

@@ -60,7 +60,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>PaymentDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "paymentDetailId", "paymentId", "amountType", "amount", "referenceId" })
+@XmlType(propOrder = { "paymentDetailId", "paymentId", "amountType", "amount", "referenceId", "finType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -81,7 +81,8 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private PaymentDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
+	private String feeTypeCode;
+	private String feeTypeDesc;
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -101,6 +102,8 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("referenceIdName");
 		excludeFields.add("availableAmount");
 		excludeFields.add("reserveAmount");
+		excludeFields.add("feeTypeDesc");
+		excludeFields.add("feeTypeCode");
 		return excludeFields;
 	}
 
@@ -210,6 +213,22 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
 	}
 
 }

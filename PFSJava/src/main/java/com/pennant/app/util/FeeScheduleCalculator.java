@@ -161,6 +161,12 @@ public class FeeScheduleCalculator {
 
 		int recalTerms = 0;
 		BigDecimal recalFee = BigDecimal.ZERO;
+		//GST fields
+		BigDecimal recalCGSTFee = BigDecimal.ZERO;
+		BigDecimal recalIGSTFee = BigDecimal.ZERO;
+		BigDecimal recalSGSTFee = BigDecimal.ZERO;
+		BigDecimal recalUGSTFee = BigDecimal.ZERO;
+
 		int avalableTerms = rpySchdMap.size();
 
 		if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)) {
@@ -178,11 +184,20 @@ public class FeeScheduleCalculator {
 		}
 
 		recalFee = feeDetail.getRemainingFee();
-		
+		//GST fields
+		recalCGSTFee = feeDetail.getFinTaxDetails().getRemFeeCGST();
+		recalIGSTFee = feeDetail.getFinTaxDetails().getRemFeeIGST();
+		recalSGSTFee = feeDetail.getFinTaxDetails().getRemFeeSGST();
+		recalUGSTFee = feeDetail.getFinTaxDetails().getRemFeeUGST();
+
 		feeScheduleDetails.clear();
 
 		financemain.setRecalTerms(recalTerms);
 		financemain.setRecalFee(recalFee);
+		financemain.setRecalCGSTFee(recalCGSTFee);
+		financemain.setRecalIGSTFee(recalIGSTFee);
+		financemain.setRecalSGSTFee(recalSGSTFee);
+		financemain.setRecalUGSTFee(recalUGSTFee);
 	}
 
 	/**
@@ -203,6 +218,11 @@ public class FeeScheduleCalculator {
 		int availableTerms = 0;
 		int recalTerms = 0;
 		BigDecimal recalFee = BigDecimal.ZERO;
+		//GST Fields
+		BigDecimal recalCGSTFee = BigDecimal.ZERO;
+		BigDecimal recalIGSTFee = BigDecimal.ZERO;
+		BigDecimal recalSGSTFee = BigDecimal.ZERO;
+		BigDecimal recalUGSTFee = BigDecimal.ZERO;
 
 		//Loop through all Fee schedules of a specific fee
 		for (int i = 0; i < feeSchdDetails.size(); i++) {
@@ -237,6 +257,13 @@ public class FeeScheduleCalculator {
 			}
 
 			recalFee = recalFee.add(feeSchdDetail.getSchAmount());
+
+			//GST fields
+			recalCGSTFee = recalCGSTFee.add(feeSchdDetail.getCGST());
+			recalIGSTFee = recalIGSTFee.add(feeSchdDetail.getIGST());
+			recalSGSTFee = recalSGSTFee.add(feeSchdDetail.getSGST());
+			recalUGSTFee = recalUGSTFee.add(feeSchdDetail.getUGST());
+			
 			recalTerms = recalTerms + 1;
 			feeSchdDetails.remove(i);
 			i = i - 1;
@@ -279,9 +306,14 @@ public class FeeScheduleCalculator {
 
 		financeMain.setRecalTerms(recalTerms);
 		financeMain.setRecalFee(recalFee);
+		
+		//GST fields
+		financeMain.setRecalCGSTFee(recalCGSTFee);
+		financeMain.setRecalIGSTFee(recalIGSTFee);
+		financeMain.setRecalSGSTFee(recalSGSTFee);
+		financeMain.setRecalUGSTFee(recalUGSTFee);
 
 		logger.debug("Leaving");
-
 	}
 
 	private static void calFeeSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap, FinFeeDetail finFeeDetail, Date evtFromDate) {
@@ -298,11 +330,29 @@ public class FeeScheduleCalculator {
 			return;
 		}
 		
-		BigDecimal recalFee = financeMain.getRecalFee();
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
+		BigDecimal recalFee = financeMain.getRecalFee();
+	
+		//GST fields
+		BigDecimal recalcgstAmount = financeMain.getRecalCGSTFee();
+		BigDecimal recaligstAmount = financeMain.getRecalIGSTFee();
+		BigDecimal recalsgstAmount = financeMain.getRecalSGSTFee();
+		BigDecimal recalugstAmount = financeMain.getRecalUGSTFee();
+		
 		BigDecimal totalNewSchdFee = BigDecimal.ZERO;
+		
+		//GST fields
+		BigDecimal totalcgstAmount = BigDecimal.ZERO;
+		BigDecimal totaligstAmount = BigDecimal.ZERO;
+		BigDecimal totalsgstAmount = BigDecimal.ZERO;
+		BigDecimal totalugstAmount = BigDecimal.ZERO;
+		BigDecimal totaloriginalSchFee = BigDecimal.ZERO;
+
 		BigDecimal newSchdFee = recalFee.divide(new BigDecimal(recalTerms), 0, RoundingMode.HALF_DOWN);
 		newSchdFee = CalculationUtil.roundAmount(newSchdFee, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+		
+		BigDecimal tgstPercent = finFeeDetail.getCgst().add(finFeeDetail.getIgst()).add(finFeeDetail.getSgst()).add(finFeeDetail.getUgst());
 
 		//Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
@@ -340,11 +390,67 @@ public class FeeScheduleCalculator {
 				newSchdFee = recalFee.subtract(totalNewSchdFee);
 			}
 
+			//GST code
+			BigDecimal cgstAmount = BigDecimal.ZERO;
+			BigDecimal igstAmount = BigDecimal.ZERO;
+			BigDecimal sgstAmount = BigDecimal.ZERO;
+			BigDecimal ugstAmount = BigDecimal.ZERO;
+			BigDecimal originalSchFee = BigDecimal.ZERO;
+			
+			if (finFeeDetail.isTaxApplicable()) {
+				if (recalTerms == schTerms) {
+ 					cgstAmount = recalcgstAmount.subtract(totalcgstAmount);
+					cgstAmount = CalculationUtil.roundAmount(cgstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
+					igstAmount = recaligstAmount.subtract(totaligstAmount);
+					igstAmount = CalculationUtil.roundAmount(igstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
+					sgstAmount = recalsgstAmount.subtract(totalsgstAmount);
+					sgstAmount = CalculationUtil.roundAmount(sgstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
+					ugstAmount = recalugstAmount.subtract(totalugstAmount);
+					ugstAmount = CalculationUtil.roundAmount(ugstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
+				}else { 
+					originalSchFee = calculateInclusivePercentage(newSchdFee, tgstPercent, formatter);
+
+					cgstAmount = originalSchFee.multiply((finFeeDetail.getCgst()).divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
+					cgstAmount = CalculationUtil.roundAmount(cgstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+					
+					totalcgstAmount = totalcgstAmount.add(cgstAmount);
+
+					igstAmount = originalSchFee.multiply((finFeeDetail.getIgst()).divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
+					igstAmount = CalculationUtil.roundAmount(igstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+					
+					totaligstAmount = totaligstAmount.add(igstAmount);
+
+					sgstAmount = originalSchFee.multiply((finFeeDetail.getSgst()).divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
+					sgstAmount = CalculationUtil.roundAmount(sgstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+					
+					totalsgstAmount = totalsgstAmount.add(sgstAmount);
+
+					ugstAmount = originalSchFee.multiply((finFeeDetail.getUgst()).divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
+					ugstAmount = CalculationUtil.roundAmount(ugstAmount, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+					
+					totalugstAmount = totalugstAmount.add(ugstAmount);
+				}	
+			}
+			totaloriginalSchFee = totaloriginalSchFee.add(originalSchFee);
+
 			totalNewSchdFee = totalNewSchdFee.add(newSchdFee);
+			
 			feeSchdDetail = new FinFeeScheduleDetail();
 			feeSchdDetail.setFeeID(feeID);
 			feeSchdDetail.setSchDate(schdDate);
 			feeSchdDetail.setSchAmount(newSchdFee);
+			
+			//GST fields
+			feeSchdDetail.setCGST(cgstAmount);
+			feeSchdDetail.setIGST(igstAmount);
+			feeSchdDetail.setSGST(sgstAmount);
+			feeSchdDetail.setUGST(ugstAmount);
+			feeSchdDetail.setTGST(cgstAmount.add(igstAmount).add(sgstAmount).add(ugstAmount));
+			
 			feeSchdDetails.add(feeSchdDetail);
 
 			if (totFeeAdjusted) {
@@ -355,6 +461,24 @@ public class FeeScheduleCalculator {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * calculate the inclusive percentage used in GST
+	 * @param amount
+	 * @param gstPercentage
+	 * @param formatter
+	 * @return
+	 */
+	private static BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal gstPercentage, int formatter) {
+	
+		//adding 100
+		BigDecimal percentage = gstPercentage.add(new BigDecimal(100));
+		
+		//divide by 100
+		percentage = percentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN);
+		
+		return amount.divide(percentage, formatter, RoundingMode.HALF_DOWN);
+	}
+	
 	private static Map<Date, Integer> fillSchdMap(FinScheduleData finScheduleData, Date evtFromDate, Map<Date, Integer> rpySchdMap,
 			Map<Date, Integer> hldSchdMap) {
 		logger.debug("Entering");
@@ -372,6 +496,7 @@ public class FeeScheduleCalculator {
 				continue;
 			}
 			curSchd.setFeeSchd(BigDecimal.ZERO);							//This might cause issue  in servicing
+			curSchd.setFeeTax(BigDecimal.ZERO);	//GST Fee Tax
 
 			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()) {
 				continue;
@@ -392,7 +517,6 @@ public class FeeScheduleCalculator {
 			} else {
 				rpySchdMap.put(curSchd.getSchDate(), i);
 			}
-
 		}
 
 		logger.debug("Leaving");
@@ -429,6 +553,7 @@ public class FeeScheduleCalculator {
 
 				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
 				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
+				curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST()));	//GST Fee Tax
 			}
 		}
 

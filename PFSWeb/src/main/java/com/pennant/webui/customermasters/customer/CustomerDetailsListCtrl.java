@@ -60,7 +60,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -232,8 +232,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 				errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0];
 				errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode") + ":" + valueParm[1];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
 								errParm, valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 

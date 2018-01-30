@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class ReceiptAllocationDetail {
 
+	private long receiptAllocationid = Long.MIN_VALUE;
 	private long receiptID = 0;
 	private int allocationID = 0;
 	private String allocationType;
@@ -70,6 +71,13 @@ public class ReceiptAllocationDetail {
 
 	public void setTypeDesc(String typeDesc) {
 		this.typeDesc = typeDesc;
+	}
+	
+	public long getReceiptAllocationid() {
+		return receiptAllocationid;
+	}
+	public void setReceiptAllocationid(long receiptAllocationid) {
+		this.receiptAllocationid = receiptAllocationid;
 	}
 	
 }

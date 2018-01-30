@@ -92,7 +92,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 	protected Button button_PFSParameterList_NewPFSParameter;
 	protected Button button_PFSParameterList_PFSParameterSearchDialog;
 
-	private transient PFSParameterService pFSParameterService;
+	private transient PFSParameterService systemParameterService;
 
 	/**
 	 * default constructor.<br>
@@ -197,7 +197,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
-		PFSParameter aPFSParameter = pFSParameterService.getPFSParameterById(id);
+		PFSParameter aPFSParameter = systemParameterService.getPFSParameterById(id);
 
 		if (aPFSParameter == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -266,8 +266,8 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 		doShowHelp(event);
 	}
 
-	public void setPFSParameterService(PFSParameterService pFSParameterService) {
-		this.pFSParameterService = pFSParameterService;
+	public void setSystemParameterService(PFSParameterService systemParameterService) {
+		this.systemParameterService = systemParameterService;
 	}
 
 }

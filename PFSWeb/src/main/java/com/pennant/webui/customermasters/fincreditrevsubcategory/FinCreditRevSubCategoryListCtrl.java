@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.service.customermasters.FinCreditRevSubCategoryService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -202,7 +202,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 				valueParm[0]=aFinCreditRevSubCategory.getId();
 				errParm[0]=PennantJavaUtil.getLabel("label_SubCategoryCode")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){

@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,16 +65,17 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.enquiry.model.FinApprovalStsInquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 	 
 /**
  * This is the controller class for the /WEB-INF/pages/PoolExecution/PoolExecutionDetail/PoolExecutionDetailList.zul
@@ -280,6 +282,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxCustFinanceDetail.getSelectedItem();
+		List<ReasonDetailsLog> reasonDetailsList = null;
 
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
@@ -299,6 +302,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 			}
 		}
 
+		if (StringUtils.trimToNull(id) != null) {
+			reasonDetailsList = approvalStatusEnquiryService.getResonDetailsLog(id);
+		}
 		if (aCustomerFinanceDetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -306,7 +312,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		//concate the UserFName and the lastmntby user
 		aCustomerFinanceDetail.setLastMntByUser(PennantApplicationUtil.getFullName(aCustomerFinanceDetail.getUsrFName(), aCustomerFinanceDetail.getLastMntByUser(), ""));
 		
-		doShowDialogPage(aCustomerFinanceDetail);
+		doShowDialogPage(aCustomerFinanceDetail, reasonDetailsList);
 // Since it is a inquiry role check may not be required.
 //		// Check whether the user has authority to change/view the record.
 //		String whereCond = " AND FinReference='" + aCustomerFinanceDetail.getFinReference() + "' AND version="
@@ -428,14 +434,16 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * 
 	 * @param aCustomerFinanceDetail
 	 *            The entity that need to be passed to the dialog.
+	 * @param reasonDetailsList 
 	 */
-	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail) {
+	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail, List<ReasonDetailsLog> reasonDetailsList) {
 		logger.debug("Entering");
 
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		arg.put("customerFinanceDetail", aCustomerFinanceDetail);
 		arg.put("FinApprovalStsInquiryListCtrl", this);
 		arg.put("facility", this.facility);
+		arg.put("reasonDetailsList", reasonDetailsList);
 
 		try {
 			Executions.createComponents(

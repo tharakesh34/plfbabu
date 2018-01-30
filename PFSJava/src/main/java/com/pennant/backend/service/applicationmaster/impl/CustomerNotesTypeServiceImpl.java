@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerNotesTypeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -340,7 +340,7 @@ public class CustomerNotesTypeServiceImpl extends
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		CustomerNotesType customerNotesType = (CustomerNotesType) auditDetail
 				.getModelData();
@@ -372,7 +372,7 @@ public class CustomerNotesTypeServiceImpl extends
 				if (befCustomerNotesType != null) { // Record Already Exists in
 					// the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -385,14 +385,14 @@ public class CustomerNotesTypeServiceImpl extends
 							|| tempCustomerNotesType != null) { // if records
 															// already exists
 											               //in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerNotesType == null
 							|| tempCustomerNotesType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -407,7 +407,7 @@ public class CustomerNotesTypeServiceImpl extends
 				if (befCustomerNotesType == null) { // if records not exists in
 					// the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -417,11 +417,11 @@ public class CustomerNotesTypeServiceImpl extends
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -431,7 +431,7 @@ public class CustomerNotesTypeServiceImpl extends
 				if (tempCustomerNotesType == null) { // if records not exists in
 					// the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -440,7 +440,7 @@ public class CustomerNotesTypeServiceImpl extends
 						&& !oldCustomerNotesType.getLastMntOn().equals(
 								tempCustomerNotesType.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

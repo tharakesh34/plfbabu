@@ -8,7 +8,7 @@
 	</bean>
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
@@ -37,13 +37,13 @@
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
 		<property name="paymentRecoveryDetailDAO" ref="paymentRecoveryDetailDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="paymentRecoveryHeaderDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryHeaderDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Late Pay Marking -->
@@ -114,26 +114,26 @@
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="collateralService" class="com.pennant.app.core.CollateralService">
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 	</bean>
 	<!-- No EOd -->
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- No end of day Service -->
 	<bean id="eodService" class="com.pennant.eod.EodService">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="rateReviewService" ref="rateReviewService" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
@@ -143,7 +143,7 @@
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>

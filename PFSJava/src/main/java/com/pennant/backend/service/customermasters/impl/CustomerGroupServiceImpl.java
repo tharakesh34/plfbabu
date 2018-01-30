@@ -49,9 +49,10 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerGroup;
@@ -71,7 +72,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerGroupDAO customerGroupDAO;
 	private LimitHeaderDAO limitHeaderDAO;
-
+	private CustomerDAO customerDAO;
 	public CustomerGroupServiceImpl() {
 		super();
 	}
@@ -79,6 +80,14 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -353,7 +362,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(customerGroup.getCustGrpCode());
-		errParm[0] = PennantJavaUtil.getLabel("label_CustGrpID") + ":" + valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustGrpID") + " : " + valueParm[0];
 
 		if (customerGroup.isNew()) { // for New record or new record into work
 			// flow
@@ -362,7 +371,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 				// records
 				if (befCustomerGroup != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
 				if (customerGroup.getRecordType().equals(
@@ -370,11 +379,11 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 					// is new
 					if (befCustomerGroup != null || tempCustomerGroup != null) { // if records already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerGroup == null || tempCustomerGroup != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -386,14 +395,14 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 
 				if (befCustomerGroup == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}else {
 					if (oldCustomerGroup != null
 							&& !oldCustomerGroup.getLastMntOn().equals(befCustomerGroup.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -402,26 +411,40 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 
 				if (tempCustomerGroup == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempCustomerGroup != null && oldCustomerGroup != null && !oldCustomerGroup.getLastMntOn().equals(
 						tempCustomerGroup.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
+		
+		// Checking Dependency Validation
+		if (!StringUtils.equals(method, PennantConstants.method_doReject)
+				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customerGroup.getRecordType())) {
 
-		if (customerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			// Customer Group Limit SetUp
 			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(),
 					"_View");
 			if (limitHeader != null) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
+			} else {
+
+				// Customer
+				boolean isCustExists = getCustomerDAO().customerExistingCustGrp(customerGroup.getCustGrpID(), "_View");
+				if (isCustExists) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				}
 			}
+
 		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		
 		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !customerGroup.isWorkflow()) {
-			customerGroup.setBefImage(befCustomerGroup);
+			auditDetail.setBefImage(befCustomerGroup);
 		}
 		logger.debug("Leaving");
 		return auditDetail;

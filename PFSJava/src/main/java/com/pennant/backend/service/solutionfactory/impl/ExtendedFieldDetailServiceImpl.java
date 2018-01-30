@@ -54,9 +54,10 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.GenericService;
@@ -600,7 +601,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	private AuditDetail validate(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		ExtendedFieldDetail extendedFieldDetail= (ExtendedFieldDetail) auditDetail.getModelData();
 
 		ExtendedFieldDetail tempExtendedFieldDetail= null;
@@ -621,16 +622,16 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 
 			if (!extendedFieldDetail.isWorkflow()){// With out Work flow only new records  
 				if (befExtendedFieldDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (extendedFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befExtendedFieldDetail !=null || tempExtendedFieldDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befExtendedFieldDetail ==null || tempExtendedFieldDetail!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -639,24 +640,24 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			if (!extendedFieldDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befExtendedFieldDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldExtendedFieldDetail!=null && !oldExtendedFieldDetail.getLastMntOn().equals(befExtendedFieldDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempExtendedFieldDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (tempExtendedFieldDetail!=null && oldExtendedFieldDetail!=null && !oldExtendedFieldDetail.getLastMntOn().equals(tempExtendedFieldDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}
@@ -732,33 +733,33 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * @return List<ErrorDetails>
 	 */
 	@Override
-	public List<ErrorDetails> doValidations(ExtendedFieldHeader extendedFieldHeader) {
+	public List<ErrorDetail> doValidations(ExtendedFieldHeader extendedFieldHeader) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		//verify module name is blank or not
 		if (StringUtils.isBlank(extendedFieldHeader.getModuleName())) {
-			ErrorDetails errorDetail = new ErrorDetails();
+			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[1];
 			valueParm[0] = "module";
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm));
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm));
 			errorDetails.add(errorDetail);
 		} else {
 			// verify the module either CUSTOMER or LOAN
 			if (!StringUtils.equals(extendedFieldHeader.getModuleName(), ExtendedFieldConstants.MODULE_CUSTOMER)
 					&& !StringUtils.equals(extendedFieldHeader.getModuleName(),ExtendedFieldConstants.MODULE_LOAN)) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[2];
 				valueParm[0] = extendedFieldHeader.getModuleName();
 				valueParm[1] = ExtendedFieldConstants.MODULE_CUSTOMER + "," + ExtendedFieldConstants.MODULE_LOAN;
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90337", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm));
 				errorDetails.add(errorDetail);
 			}
 			//verify subModule name is blank or not
 			if (StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[1];
 				valueParm[0] = "subModule";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm));
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm));
 				errorDetails.add(errorDetail);
 			}
 
@@ -768,12 +769,12 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_CORP)
 						&& !StringUtils.equals(extendedFieldHeader.getSubModuleName(),PennantConstants.PFF_CUSTCTG_SME)) {
 
-					ErrorDetails errorDetail = new ErrorDetails();
+					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[2];
 					valueParm[0] = extendedFieldHeader.getSubModuleName();
 					valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV + "," + PennantConstants.PFF_CUSTCTG_CORP + ","
 							+ PennantConstants.PFF_CUSTCTG_SME;
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90337", valueParm));
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm));
 					errorDetails.add(errorDetail);
 				}
 
@@ -784,11 +785,11 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 					!StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
 				// check the productCode(subModule) is valid or not
 				if (productDAO.getProductByID("", extendedFieldHeader.getSubModuleName(), "") == null) {
-					ErrorDetails errorDetail = new ErrorDetails();
+					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[2];
 					valueParm[0] = "subModule";
 					valueParm[1] = extendedFieldHeader.getSubModuleName();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm));
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm));
 					errorDetails.add(errorDetail);
 				}
 			}

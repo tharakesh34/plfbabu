@@ -22,7 +22,7 @@
 	<bean id="jsonClient" class="com.pennanttech.niyogin.clients.JSONClient"/>
 	
 	<bean id="niyoginDAOImpl" class="com.pennanttech.pff.external.dao.NiyoginDAOImpl">
-	<property name="dataSource" ref="pfsDatasource" />
+	<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Dedup Fields -->
@@ -66,14 +66,25 @@
 	<bean id="documentManagementService"
 		class="com.pennanttech.niyogin.dms.service.DocumentManagerServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${niyogin.dms.service.url}" />
-		<property name="client" ref="jsonClient" />
 	</bean>	
 	
 		<!-- LegalDesk -->
 	<bean id="legalDeskService"
 		class="com.pennanttech.niyogin.legaldesk.service.LegalDeskServiceImpl" parent="niyoginService">
-		<property name="serviceUrl" value="https://soadev.niyogin.in/gates/1.0/sweeps/createLoanAgreement" />
+		<property name="serviceUrl" value="${niyogin.legaldesk.url}" />
 	</bean>	
 	
+		<!-- HoldFinance -->
+	<bean id="holdFinanceService"
+		class="com.pennanttech.niyogin.holdfinance.service.HoldFinanceServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="${niyogin.holdfinance.url}" />
+	</bean>	
+
+		<!-- BreService -->
+	<bean id="breService"
+		class="com.pennanttech.niyogin.bre.service.BreServiceImpl" parent="niyoginService">
+		<property name="serviceUrl" value="${niyogin.bre.url}" />
+	</bean>	
+
 	
 </beans>

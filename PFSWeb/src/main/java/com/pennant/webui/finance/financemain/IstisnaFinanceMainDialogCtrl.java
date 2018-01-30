@@ -70,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -204,36 +205,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws IllegalAccessException 
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
-		String recStatus = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus());
-		
-		if(this.userAction.getSelectedItem() != null && !recStatus.equals(PennantConstants.RCD_STATUS_REJECTED) &&
-				(this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED) ||
-				this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED)) && StringUtils.isEmpty(moduleDefiner)){
-		   doReject();
-		}else{
-		   doSave();
-		}
-		logger.debug("Leaving " + event.toString());
-	}
-	/**
-	 * When  record is rejected . <br>
-	 * 
-	 */
-	
-	public void doReject() throws InterruptedException{
-		logger.debug("Entering");
-		
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
-		map.put("financeMainDialogCtrl", this);
-		try{
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
-					window_IstisnaFinanceMainDialog, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
+		processSave();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

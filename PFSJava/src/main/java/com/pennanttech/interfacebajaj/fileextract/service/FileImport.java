@@ -3,6 +3,7 @@ package com.pennanttech.interfacebajaj.fileextract.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,11 @@ import javax.sql.DataSource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -121,6 +127,25 @@ public class FileImport {
 		}
 		setFile(file);
 	}
+	
+	public void setExcelMedia(Media media) throws Exception {
+
+		File file = validateFile(media.getName());
+		
+		this.media = media;
+
+		if (isExcelEmpty()) {
+			throw new Exception(Labels.getLabel("empty_file"));
+		}
+		setFile(file);
+	}
+	
+	private boolean isExcelEmpty() {
+		if (getMedia().getByteData().equals(null)) {
+			return true;
+		}
+		return false;
+	}
 
 	private File validateFile(String fileName) throws Exception {
 		Assert.notNull(getDirectory(), "Default directory should not be blank");
@@ -137,6 +162,58 @@ public class FileImport {
 		}
 
 		return file;
+	}
+	
+	public void loadExcelFile(boolean isClientLoaction) throws Exception {
+		Assert.notNull(getFile(), Labels.getLabel("FIELD_NOT_BLANK", new String[] { "File Name" }));
+		if (isClientLoaction) {
+			writeToExcelFile();
+		}
+		validateExcelFile();
+	}
+	
+	private void writeToExcelFile() throws Exception {
+		byte[] data = media.getByteData();
+		if (getFile().exists()) {
+			if (!file.delete()) {
+				file.deleteOnExit();
+			}
+		}
+		FileUtils.writeByteArrayToFile(getFile(), data);
+	}
+
+	@SuppressWarnings("resource")
+	private void validateExcelFile() throws Exception {
+		Workbook workbook = null;
+		Sheet sheet = null;
+		FileInputStream fis = null;
+
+		try {
+			fis = new FileInputStream(getFile());
+
+			if (getFile().toString().toLowerCase().endsWith(".xls")) {
+				workbook = new HSSFWorkbook(fis);
+			} else {
+				workbook = new XSSFWorkbook(fis);
+			}
+
+			if (workbook != null) {
+				sheet = workbook.getSheetAt(0);
+			}
+
+			Row row = sheet.getRow(0);
+
+			if (row.getPhysicalNumberOfCells() != 12) {
+				throw new Exception("The file has invalid header columns. the columns should be 12.");
+			}
+			totalRecords = sheet.getPhysicalNumberOfRows() - 1;
+
+		} catch (Exception e) {
+			throw e;
+		}
+		if (fis != null) {
+			fis.close();
+		}
 	}
 
 	public void setDefaultDirectory(String filePath) throws Exception {

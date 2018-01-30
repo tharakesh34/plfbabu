@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinAgreementDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAgreementDetail;
@@ -77,17 +77,17 @@ public class FinAgreementDetailValidation {
 
 			if (!agreementDetail.isWorkflow()){// With out Work flow only new records  
 				if (befFinAgreementDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 				}	
 			}else{ // with work flow
 
 				if (agreementDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinAgreementDetail !=null || tempFinAgreementDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFinAgreementDetail ==null || tempFinAgreementDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -96,25 +96,25 @@ public class FinAgreementDetailValidation {
 			if (!agreementDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befFinAgreementDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
 					if (oldFinAgreementDetail!=null && !oldFinAgreementDetail.getLastMntOn().equals(befFinAgreementDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
 			}else{
 
 				if (tempFinAgreementDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempFinAgreementDetail!=null  && oldFinAgreementDetail!=null && !oldFinAgreementDetail.getLastMntOn().equals(tempFinAgreementDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}

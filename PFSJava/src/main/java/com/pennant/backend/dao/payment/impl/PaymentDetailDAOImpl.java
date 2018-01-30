@@ -274,7 +274,7 @@ public class PaymentDetailDAOImpl extends BasisNextidDaoImpl<PaymentDetail> impl
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,FeeTypeDesc,FeeTypeCode" );
 		sql.append(" From PaymentDetails");
 		sql.append(type);
 		sql.append(" Where paymentId = :paymentId");

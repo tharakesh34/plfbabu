@@ -67,7 +67,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -901,7 +901,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 																												// same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;

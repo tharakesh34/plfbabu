@@ -15,7 +15,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -86,19 +86,19 @@ public class ExtendedFieldDetailsValidation {
 
 			if (!extendedFieldRender.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldRender != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (extendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befExtendedFieldRender != null || tempExtendedFieldRender != null) { // if records already exists in the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befExtendedFieldRender == null || tempExtendedFieldRender != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -107,17 +107,17 @@ public class ExtendedFieldDetailsValidation {
 			if (!extendedFieldRender.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befExtendedFieldRender == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
 					if (oldExtendedFieldRender != null
 							&& !oldExtendedFieldRender.getLastMntOn().equals(befExtendedFieldRender.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									null));
 						}
 					}
@@ -125,12 +125,12 @@ public class ExtendedFieldDetailsValidation {
 			} else {
 
 				if (tempExtendedFieldRender == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempExtendedFieldRender != null && oldExtendedFieldRender != null
 						&& !oldExtendedFieldRender.getLastMntOn().equals(tempExtendedFieldRender.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -143,8 +143,8 @@ public class ExtendedFieldDetailsValidation {
 		return auditDetail;
 	}
 
-	public List<ErrorDetails> validateExtendedFieldData(ExtendedFieldDetail exdConfigDetail, ExtendedFieldData exdFieldData) {
-		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+	public List<ErrorDetail> validateExtendedFieldData(ExtendedFieldDetail exdConfigDetail, ExtendedFieldData exdFieldData) {
+		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		String fieldName = exdFieldData.getFieldName();
 		Object fieldValue = exdFieldData.getFieldValue();
 
@@ -158,7 +158,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "Date";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 				return errors;
 			}
 			if (!StringUtils.equals(exdConfigDetail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_TIME)) {
@@ -174,7 +174,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "Date";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 				return errors;
 			}
 			errors = dateValidation(exdConfigDetail, dateTimeVal, errors);
@@ -189,13 +189,13 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "number";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 			}
 			if(Objects.toString(fieldValue,"").length() > exdConfigDetail.getFieldLength()+2) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
 			exdFieldData.setFieldValue(decimalValue);
 			break;
@@ -205,7 +205,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
 			try {
@@ -217,14 +217,14 @@ public class ExtendedFieldDetailsValidation {
 						valueParm[0] = exdConfigDetail.getFieldName();
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 					}
 				}
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "number";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 			}
 			exdFieldData.setFieldValue(intValue);
 			break;
@@ -234,7 +234,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
 			try {
@@ -246,14 +246,14 @@ public class ExtendedFieldDetailsValidation {
 						valueParm[0] = exdConfigDetail.getFieldName();
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 					}
 				}
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "number";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 			}
 			exdFieldData.setFieldValue(longValue);
 			break;
@@ -264,7 +264,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
 
@@ -276,7 +276,7 @@ public class ExtendedFieldDetailsValidation {
 					if (matcher.matches() == false) {
 						String[] valueParm = new String[1];
 						valueParm[0] = fieldName;
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
 					}
 				}
 			}
@@ -289,7 +289,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(100);
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_PHONE:
@@ -297,14 +297,14 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(10);
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
 			if (StringUtils.isNotBlank(Objects.toString(fieldValue,""))) {
 				if (!(Objects.toString(fieldValue,"").matches("\\d{10}"))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = fieldName;
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
 					return errors;
 				}
 			}
@@ -315,17 +315,17 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
 			if(StringUtils.contains(Objects.toString(fieldValue,""), ".")){
 				String[] valueParm = new String[1];
 				valueParm[0] = fieldName;
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
 				return errors;
 			}
-			exdFieldData.setFieldValue(String.valueOf(Math.round(
-					(Integer.valueOf(Objects.toString(fieldValue,"")) / Math.pow(10, exdConfigDetail.getFieldPrec())))));
+			exdFieldData.setFieldValue(Math.round(
+					(Integer.valueOf(Objects.toString(fieldValue,"")) / Math.pow(10, exdConfigDetail.getFieldPrec()))));
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 				if (Integer.valueOf(Objects.toString(fieldValue,"")) > exdConfigDetail.getFieldMaxValue()
 						|| Integer.valueOf(Objects.toString(fieldValue,"")) < exdConfigDetail.getFieldMinValue()) {
@@ -333,7 +333,7 @@ public class ExtendedFieldDetailsValidation {
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 				}
 			}
 			break;
@@ -351,7 +351,7 @@ public class ExtendedFieldDetailsValidation {
 				} else {
 					String[] valueParm = new String[1];
 					valueParm[0] = fieldName;
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
 				}
 			}
 
@@ -372,14 +372,17 @@ public class ExtendedFieldDetailsValidation {
 				Object[][] filters = moduleMapping.getLovFilters();
 				int count=0;
 				if(!StringUtils.contains(moduleMapping.getTableName(), "Builder")){
-					if(filters !=null){
-						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], 
-								(String)filters[0][0], Objects.toString(fieldValue,""));
+					if (filters != null) {
+						if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, exdConfigDetail.getFieldType())) {
+							count=extendedFieldRenderDAO.validateExtendedComboBoxData(moduleMapping.getTableName(), lovFields[0], filters, fieldValue.toString());
+						} else {
+							count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],(String)filters[0][0], Objects.toString(fieldValue,""));	
+						}
 					} else {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],null , Objects.toString(fieldValue,""));
 					}
 				} else {
-					if(filters !=null){
+					if (filters != null) {
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[1], 
 								(String)filters[0][0], Objects.toString(fieldValue,""));
 					} else {
@@ -390,7 +393,7 @@ public class ExtendedFieldDetailsValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = fieldName;
 					valueParm[1] = Objects.toString(fieldValue,"");
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
 				}
 			}
 			break;
@@ -401,7 +404,7 @@ public class ExtendedFieldDetailsValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 					return errors;
 				}
 			}
@@ -424,7 +427,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = Objects.toString(fieldValue,"");
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
@@ -432,7 +435,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 				if (Integer.valueOf(Objects.toString(fieldValue,"")) > exdConfigDetail.getFieldMaxValue()
@@ -441,7 +444,7 @@ public class ExtendedFieldDetailsValidation {
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 				}
 			}
 			break;
@@ -451,7 +454,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
 			try {
 				percentage = Double.valueOf(Objects.toString(fieldValue,""));
@@ -460,7 +463,7 @@ public class ExtendedFieldDetailsValidation {
 					valueParm[0] = fieldName;
 					valueParm[1] = "0";
 					valueParm[2] ="100";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 				}
 				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 					if (percentage > exdConfigDetail.getFieldMaxValue() || percentage < exdConfigDetail.getFieldMinValue()) {
@@ -468,25 +471,25 @@ public class ExtendedFieldDetailsValidation {
 						valueParm[0] = fieldName;
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
 					}
 				}
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = "number";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 			}
 
 			exdFieldData.setFieldValue(percentage);
 			
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_FRQ:
-			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(Objects.toString(fieldValue,""));
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(Objects.toString(fieldValue,""));
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = Objects.toString(fieldValue,"");
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90207", "", valueParm)));
 				return errors;
 			}
 
@@ -496,7 +499,7 @@ public class ExtendedFieldDetailsValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(LengthConstants.LEN_ACCOUNT);
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
@@ -514,6 +517,7 @@ public class ExtendedFieldDetailsValidation {
 					int count=0;
 					if(!StringUtils.contains(moduleMapping1.getTableName(), "Builder")){
 						if(filters !=null){
+
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping1.getTableName(), lovFields[0], 
 									(String)filters[0][0], type);
 						} else {
@@ -531,7 +535,7 @@ public class ExtendedFieldDetailsValidation {
 						String[] valueParm = new String[2];
 						valueParm[0] = fieldName;
 						valueParm[1] = type;
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
 					}
 				}
 
@@ -559,7 +563,7 @@ public class ExtendedFieldDetailsValidation {
 						String[] valueParm = new String[2];
 						valueParm[0] = fieldName;
 						valueParm[1] = Objects.toString(fieldValue,"");
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
 					}
 				}
 			}
@@ -570,7 +574,7 @@ public class ExtendedFieldDetailsValidation {
 		return errors;
 	}
 
-	private List<ErrorDetails> dateValidation(ExtendedFieldDetail exdConfigDetail, Date dateValue, List<ErrorDetails> errors) {
+	private List<ErrorDetail> dateValidation(ExtendedFieldDetail exdConfigDetail, Date dateValue, List<ErrorDetail> errors) {
 		String[] value = exdConfigDetail.getFieldConstraint().split(",");
 		switch (value[0]) {
 		case "RANGE":
@@ -581,7 +585,7 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[0] = exdConfigDetail.getFieldName();
 				valueParm[1] = String.valueOf(DateUtility.getDate(value[1]));
 				valueParm[2] = String.valueOf(DateUtility.getDate(value[2]));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 			}
 			break;
@@ -590,7 +594,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;
 		case "PAST_DAYS":
@@ -598,7 +602,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "FUTURE_TODAY":
@@ -606,7 +610,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "PAST_TODAY":
@@ -614,7 +618,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;
 		case "FUTURE":
@@ -622,7 +626,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "PAST":
@@ -630,7 +634,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;
 

@@ -58,7 +58,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -179,7 +179,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		logger.debug(Literal.ENTERING);
 
 		this.code.setMaxlength(8);
-		this.description.setMaxlength(50);
+		this.description.setMaxlength(200);
 
 		this.reasonTypeID.setMaxlength(8);
 		this.reasonTypeID.setMandatoryStyle(true);
@@ -363,6 +363,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		this.recordStatus.setValue(aReasonCode.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -485,15 +486,16 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 					new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_ReasonCategoryID.value"), null, true, true));
 		}
 		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Code.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Code.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Description.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_ReasonCodeDialog_Description.value"),null,false));
 		}
 	
 		logger.debug(Literal.LEAVING);
 	}
 	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
@@ -655,7 +657,6 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	public void doClear() {
 		logger.debug("Entering");
 		this.reasonTypeID.setValue("");
-		;
 		this.reasonCategoryID.setValue("");
 		this.code.setValue("");
 		this.description.setValue("");
@@ -848,7 +849,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ReasonCodeDialog, auditHeader);
 						return processCompleted;

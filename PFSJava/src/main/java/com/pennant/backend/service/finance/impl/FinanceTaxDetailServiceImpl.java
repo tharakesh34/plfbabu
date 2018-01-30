@@ -57,7 +57,7 @@ import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -334,7 +334,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 			logger.debug(Literal.ENTERING);
 			
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 			FinanceTaxDetail financeTaxDetail = (FinanceTaxDetail) auditDetail.getModelData();
 
 			FinanceTaxDetail tempMandate = null;
@@ -353,16 +353,16 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 				if (!financeTaxDetail.isWorkflow()) {// With out Work flow only new records  
 					if (befMandate != null) { // Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // with work flow
 					if (financeTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 						if (befMandate != null || tempMandate != null) { // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 						}
 					} else { // if records not exists in the Main flow table				
 						if (befMandate == null || tempMandate != null) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
@@ -371,24 +371,24 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				if (!financeTaxDetail.isWorkflow()) { // With out Work flow for update and delete
 
 					if (befMandate == null) { // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 					} else {
 						if (oldMandate != null && !oldMandate.getLastMntOn().equals(befMandate.getLastMntOn())) {
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 							} else {
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 							}
 						}
 					}
 				} else {
 
 					if (tempMandate == null) { // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 
 					if (tempMandate != null && oldMandate != null && !oldMandate.getLastMntOn().equals(tempMandate.getLastMntOn())) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -458,7 +458,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 					parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
 					parameters[1] = taxNumber;
 					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null)));
 				}
 
 				Province province = this.provinceDAO.getProvinceById(financeTaxDetail.getCountry(), financeTaxDetail.getProvince(), "");
@@ -470,14 +470,14 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				if (StringUtils.isNotBlank(gstStateCode)) {		//if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) {
 						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65023", null, null)));
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
 					}
 				}
 
 				if (StringUtils.isNotBlank(panNumber)) {	//if PAN number is not available in GST Number
 					if (!StringUtils.equalsIgnoreCase(panNumber, taxNumber.substring(2, 12))) {
 						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65024", null, null)));
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65024", null, null)));
 					}
 				}
 			}

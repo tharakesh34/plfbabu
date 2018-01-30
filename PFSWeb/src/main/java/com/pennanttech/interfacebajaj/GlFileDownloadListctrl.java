@@ -96,6 +96,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.service.AmazonS3Bucket;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -249,7 +250,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
 			valueDate = appDate;
 
-			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("dataSource"),
 					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
 
 			if (trialbal.isBatchExists(selectedDimention)) {
@@ -258,14 +259,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 				if (conf == MessageUtil.NO) {
 					return;
-				}
+				} 
 			}
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
 			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
 				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+
 				if ("S".equals(status.getStatus())) {
-					new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+					new SAPGLProcess((DataSource) SpringUtil.getBean("dataSource"),
 							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
 				}
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {

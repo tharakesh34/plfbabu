@@ -54,7 +54,7 @@ import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -340,7 +340,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			BankBranch bankBranch= (BankBranch) auditDetail.getModelData();
 			
 			BankBranch tempBankBranch= null;
@@ -361,16 +361,16 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				
 				if (!bankBranch.isWorkflow()){// With out Work flow only new records  
 					if (befBankBranch !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}	
 				}else{ // with work flow
 					if (bankBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befBankBranch !=null || tempBankBranch!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befBankBranch ==null || tempBankBranch!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -379,30 +379,30 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				if (!bankBranch.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befBankBranch ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
 						if (oldBankBranch!=null && !oldBankBranch.getLastMntOn().equals(befBankBranch.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 							}
 						}
 					}
 				}else{
 				
 					if (tempBankBranch==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
 					if (tempBankBranch!=null && oldBankBranch!=null && !oldBankBranch.getLastMntOn().equals(tempBankBranch.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
 			int count = getBankBranchDAO().getBankBranchByIFSC(bankBranch.getIFSC(),bankBranch.getId(), "_View");
 			if(count != 0){
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm,valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm,valueParm), usrLanguage));
 
 			}
 			if (StringUtils.trimToEmpty(bankBranch.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -410,7 +410,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				int disbursementCount = getFinAdvancePaymentsDAO().getBranch(bankBranch.getBankBranchID(),"");
 				int beneficiaryCount = getBeneficiaryDAO().getBranch(bankBranch.getBankBranchID(),"");
 				if (mandateCount != 0 && disbursementCount != 0 && beneficiaryCount != 0) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 				}
 			}
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

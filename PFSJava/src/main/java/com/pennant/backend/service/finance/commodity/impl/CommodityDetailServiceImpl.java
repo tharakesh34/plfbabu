@@ -51,7 +51,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.commodity.CommodityDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -144,7 +144,7 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 			valueParm[1]=commodityDetail.getCommodityUnitCode();
 			errParm[0]=PennantJavaUtil.getLabel("label_Commodity_Code")+":"+valueParm[0];
 			errParm[1]=PennantJavaUtil.getLabel("label_CommodityUnitCode")+":"+valueParm[1];
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm,valueParm), auditHeader.getUsrLanguage()));
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm,valueParm), auditHeader.getUsrLanguage()));
 		}else{
 			getCommodityDetailDAO().delete(commodityDetail,"");
 		}
@@ -295,7 +295,7 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		CommodityDetail commodityDetail= (CommodityDetail) auditDetail.getModelData();
 
 		CommodityDetail tempCommodityDetail= null;
@@ -318,18 +318,18 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 
 			if (!commodityDetail.isWorkflow()){// With out Work flow only new records  
 				if (befCommodityDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (commodityDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCommodityDetail !=null || tempCommodityDetail!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCommodityDetail ==null || tempCommodityDetail!=null ){
 						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -338,17 +338,17 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 			if (!commodityDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befCommodityDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldCommodityDetail!=null && !oldCommodityDetail.getLastMntOn()
 							.equals(befCommodityDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								       .equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+									.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
@@ -356,12 +356,12 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 
 				if (tempCommodityDetail==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (oldCommodityDetail!=null && !oldCommodityDetail.getLastMntOn().equals(tempCommodityDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}

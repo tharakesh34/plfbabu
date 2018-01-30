@@ -13,7 +13,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.RemoveTermsService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -62,7 +62,7 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
 			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 		
@@ -73,7 +73,7 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 			valueParm[0] = "From date";
 			valueParm[1] = "finance start date:"+DateUtility.formatToShortDate(financeMain.getFinStartDate());
 			valueParm[2] = "maturity date:"+DateUtility.formatToShortDate(financeMain.getMaturityDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
 		
@@ -84,7 +84,7 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", "", valueParm), lang));
 			}
 		}
 		
@@ -93,13 +93,13 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 			if(finServiceInstruction.getRecalFromDate() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91105", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91105", "", valueParm), lang));
 				return auditDetail;
 			} else if(finServiceInstruction.getRecalFromDate().compareTo(finServiceInstruction.getFromDate()) >= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm), lang));
 			} 
 		}
 		
@@ -130,13 +130,13 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 			if(!isValidFromDate) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 			if(!isValidRecalFromDate && (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 					|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}
 		logger.debug("Leaving");
@@ -158,7 +158,7 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 				&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
 			String[] valueParm = new String[1];
 			valueParm[0] = label;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
 			return auditDetail;
 		}
 		return null;

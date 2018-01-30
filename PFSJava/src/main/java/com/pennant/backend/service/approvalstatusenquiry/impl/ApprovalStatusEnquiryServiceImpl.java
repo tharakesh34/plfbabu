@@ -1,7 +1,6 @@
 package com.pennant.backend.service.approvalstatusenquiry.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -10,6 +9,7 @@ import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 
 public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquiryService{
@@ -82,7 +82,7 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	}
 
 	@Override
-	public List<Map<String, Object>> getResonDetailsLog(String reference) {
+	public List<ReasonDetailsLog> getResonDetailsLog(String reference) {
 		return this.reasonDetailDAO.getReasonDetailsLog(reference);
 
 	}

@@ -62,6 +62,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
@@ -730,6 +731,36 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		List<Long> bounceIDList = namedParameterJdbcTemplate.queryForList(sql.toString(), paramSource, Long.class);
 		logger.debug(Literal.LEAVING);
 		return bounceIDList;
-	}	
+	}
+	@Override
+	public FinanceMain getFinanceDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName,");
+		sql.append("  FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,");
+		sql.append("  FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,CURR.CCYCODE finCcy  FROM FINANCEMAIN FM");
+		sql.append("  INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
+		sql.append("  INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
+		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
+		sql.append(" Where FM.FinReference = :FinReference");
+		logger.trace(Literal.SQL + sql.toString());
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return namedParameterJdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 	
 }	

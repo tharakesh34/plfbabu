@@ -64,7 +64,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -818,7 +818,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 							deleteNotes=true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_SplRateDialog, auditHeader);
 						logger.debug("Leaving");
@@ -879,7 +879,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
 			ErrorControl.showErrorControl(this.window_SplRateDialog,auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

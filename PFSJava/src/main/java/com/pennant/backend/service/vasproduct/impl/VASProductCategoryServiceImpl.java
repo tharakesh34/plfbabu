@@ -53,7 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.vasproduct.VASProductCategoryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
@@ -331,7 +331,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 */
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		VASProductCategory vASProductCategory= (VASProductCategory) auditDetail.getModelData();
 
 		VASProductCategory tempVASProductCategory= null;
@@ -352,16 +352,16 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 
 			if (!vASProductCategory.isWorkflow()){// With out Work flow only new records  
 				if (befVASProductCategory !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (vASProductCategory.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befVASProductCategory !=null || tempVASProductCategory!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befVASProductCategory ==null || tempVASProductCategory!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -370,24 +370,24 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 			if (!vASProductCategory.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befVASProductCategory ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (old_VASProductCategory!=null && !old_VASProductCategory.getLastMntOn().equals(befVASProductCategory.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 
 				if (tempVASProductCategory==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 
 				if (tempVASProductCategory != null  && old_VASProductCategory!=null && !old_VASProductCategory.getLastMntOn().equals(tempVASProductCategory.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}

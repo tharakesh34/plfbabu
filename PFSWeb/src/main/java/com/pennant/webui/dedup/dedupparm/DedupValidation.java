@@ -57,7 +57,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennanttech.pennapps.web.util.MessageUtil;

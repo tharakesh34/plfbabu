@@ -1,24 +1,11 @@
 package com.pennant.webui.batch.admin;
 
-import com.pennant.ProcessExecution;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.endofday.main.BatchMonitor;
-import com.pennant.backend.endofday.main.PFSBatchAdmin;
-import com.pennant.backend.model.ExecutionStatus;
-import com.pennant.backend.util.BatchUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
@@ -50,6 +37,20 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
+
+import com.pennant.ProcessExecution;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.endofday.main.BatchMonitor;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
+import com.pennant.backend.model.ExecutionStatus;
+import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
@@ -98,11 +99,13 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		sapGL;
 	protected ProcessExecution		cibil;
 	protected ProcessExecution		gstTaxDownload;
+	protected ProcessExecution		dmLoanDetailsMonthly;
+	protected ProcessExecution		dmLoanBalancesMonthly;
+	protected ProcessExecution		dmDisbDetailsMonthly;
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
-	private DataSource dataSource;
-
+	
 	public enum PFSBatchProcessess {
 		beforeEOD,
 		prepareCustomerQueue,
@@ -120,7 +123,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		trailBalance,
 		sapGL,
 		cibil,
-		gstTaxDownload
+		gstTaxDownload,
+		dmLoanDetailsMonthly,
+		dmLoanBalancesMonthly,
+		dmDisbDetailsMonthly
 	}
 
 	public BatchAdminCtrl() {
@@ -497,6 +503,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case gstTaxDownload:
 				renderDetials(this.gstTaxDownload, status);
 				break;
+			case dmLoanDetailsMonthly:
+				renderDetials(this.dmLoanDetailsMonthly, status);
+				break;
+			case dmLoanBalancesMonthly:
+				renderDetials(this.dmLoanBalancesMonthly, status);
+				break;
+			case dmDisbDetailsMonthly:
+				renderDetials(this.dmDisbDetailsMonthly, status);
+				break;
 			default:
 				break;
 				
@@ -706,9 +721,4 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		}
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 }

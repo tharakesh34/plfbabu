@@ -149,21 +149,6 @@ public class AbstractListController<T> extends AbstractController<T> {
 		}
 	}
 
-	/**
-	 * Returns value of the argument configured as configured as query string for the page in mainmenu.xml
-	 * 
-	 * @param argumentName
-	 *            Name of the query string argument.
-	 * @return argumentValue Value of the query string argument
-	 */
-	protected String getArgument(String argumentName) {
-		String argumentValue = null;
-		if (arguments != null) {
-			argumentValue = (String) arguments.get(argumentName);
-		}
-		return argumentValue;
-	}
-
 	protected final void doRenderPage() {
 		logger.debug("Entering");
 		

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.model.FrequencyDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -762,37 +763,37 @@ public class ScheduleGenerator {
 				Calendar calendar = frequencyDetails.getScheduleList().get(i);
 				FinanceScheduleDetail schedule = null;
 
-				if (finScheduleData.getScheduleMap()
-						.containsKey(
-								DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
-										PennantConstants.dateFormat)))) {
-
-					schedule = finScheduleData.getScheduleMap().get(
-							DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),
-									PennantConstants.dateFormat)));
+				Date date = DateUtility.getDate(DateUtility.formateDate(calendar.getTime(), PennantConstants.DBDateFormat),
+						PennantConstants.DBDateFormat);
+				
+				HashMap<Date, FinanceScheduleDetail> scheduleMap = finScheduleData.getScheduleMap();
+				if (scheduleMap.containsKey(date)) {
+					schedule = scheduleMap.get(date);
 				} else {
 					schedule = new FinanceScheduleDetail();
-					schedule.setSchDate(calendar.getTime());
-					schedule.setDefSchdDate(calendar.getTime());
+					schedule.setSchDate(date);
+					schedule.setDefSchdDate(date);
 				}
 
 				//SET various schedule flags
 				//Profit On Schedule Date
+				Date schDate = schedule.getSchDate();
 				if (scheduleFlag == 0) {
 					schedule.setPftOnSchDate(false);
 					schedule.setRepayOnSchDate(false);
 					schedule.setFrqDate(true);
 
-					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+					Date grcPeriodEndDate = financeMain.getGrcPeriodEndDate();
+					String grcSchdMthd = financeMain.getGrcSchdMthd();
+					if (schDate.compareTo(grcPeriodEndDate) <= 0) {
 						//Pay at Grace end and schedule date is grace end
-						if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
-								&& financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
+						if (schDate.compareTo(grcPeriodEndDate) == 0
+								&& grcSchdMthd.equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
 							schedule.setPftOnSchDate(true);
-						} else if (financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFT)) {
+						} else if (grcSchdMthd.equals(CalculationConstants.SCHMTHD_PFT)) {
 
-							if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
-									&& FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(),
-											financeMain.getGrcPeriodEndDate())) {
+							if (schDate.compareTo(grcPeriodEndDate) == 0 && FrequencyUtil
+									.isFrqDate(financeMain.getGrcPftFrq(), grcPeriodEndDate)) {
 								schedule.setPftOnSchDate(true);
 							} else {
 								schedule.setPftOnSchDate(true);
@@ -814,10 +815,9 @@ public class ScheduleGenerator {
 					//Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
 
-					if (reCheckFlags
-							&& (schedule.getSchDate().compareTo(startDate) == 0 || schedule.getSchDate().compareTo(
-									endDate) == 0)) {
-						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
+					if (reCheckFlags && (schDate.compareTo(startDate) == 0
+							|| schDate.compareTo(endDate) == 0)) {
+						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schDate));
 					} else {
 						schedule.setCpzOnSchDate(true);
 					}
@@ -827,8 +827,8 @@ public class ScheduleGenerator {
 					schedule.setPftOnSchDate(true);
 					schedule.setRepayOnSchDate(true);
 					schedule.setFrqDate(true);
-					
-					if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+
+					if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 						financeMain.setNumberOfTerms(frequencyDetails.getScheduleList().size());
 					}
 				}
@@ -915,13 +915,13 @@ public class ScheduleGenerator {
 	 * @return
 	 */
 
-	private static ErrorDetails validateFinanceMain(FinanceMain financeMain,
+	private static ErrorDetail validateFinanceMain(FinanceMain financeMain,
 			List<FinanceDisbursement> financeDisbursements, boolean isOverdraft) {
 		logger.debug("Entering");
 
 		String[] errorParm2 = new String[2];
 
-		ErrorDetails errorDetails = null;
+		ErrorDetail errorDetails = null;
 		if (financeMain == null) {
 			logger.warn("Schedule Error: on condition --->  financeMain == null");
 			return getErrorDetail("Schedule", "", new String[] { " " }, new String[] { " " });
@@ -974,12 +974,12 @@ public class ScheduleGenerator {
 		return errorDetails;
 	}
 
-	private static ErrorDetails validateFrqAndDates(FinanceMain financeMain) {
+	private static ErrorDetail validateFrqAndDates(FinanceMain financeMain) {
 		logger.debug("Entering");
 
 		String[] errorParm2 = new String[2];
 
-		ErrorDetails errorDetails = null;
+		ErrorDetail errorDetails = null;
 		if (financeMain == null) {
 			logger.warn("Schedule Error: on condition --->  financeMain == null");
 			return getErrorDetail("Schedule", "", new String[] { " " }, new String[] { " " });
@@ -1151,11 +1151,11 @@ public class ScheduleGenerator {
 		return errorDetails;
 	}
 
-	private static ErrorDetails getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
-		ErrorDetails errorDetail = ErrorUtil.getErrorDetail(
-				new ErrorDetails(errorField, errorCode, errParm, valueParm), SessionUserDetails.getUserLanguage());
+	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(
+				new ErrorDetail(errorField, errorCode, errParm, valueParm), SessionUserDetails.getUserLanguage());
 
-		logger.warn("Schedule Error: on condition --->  " + errorDetail.getErrorCode() + "-" + errorDetail.getError());
+		logger.warn("Schedule Error: on condition --->  " + errorDetail.getCode() + "-" + errorDetail.getError());
 		return errorDetail;
 	}
 

@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 
 public class AuditHeader implements java.io.Serializable,Entity {
@@ -78,15 +78,15 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	private boolean auditPrinted=false;
 	private boolean auditRecovered=false;
 	private String auditErrorForRecocvery;
-	private List<ErrorDetails> infoMessage;
-	private List<ErrorDetails> overideMessage;
-	private List<ErrorDetails> errorMessage;
+	private List<ErrorDetail> infoMessage;
+	private List<ErrorDetail> overideMessage;
+	private List<ErrorDetail> errorMessage;
 	private Object modelData;
 	private AuditDetail auditDetail;
 	private List<AuditDetail> auditDetails;
 	private int overideCount=0;
 	private String usrLanguage;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private int processStatus=0;
 	private boolean nextProcess=false;
 	private Object apiHeader;
@@ -105,15 +105,15 @@ public class AuditHeader implements java.io.Serializable,Entity {
 			BeanUtils.copyProperties(this.auditDate, auditHeader.auditDate);
 		}
 		if (this.infoMessage != null) {
-			auditHeader.setInfoMessage(new ArrayList<ErrorDetails>());
+			auditHeader.setInfoMessage(new ArrayList<ErrorDetail>());
 			BeanUtils.copyProperties(this.infoMessage, auditHeader.infoMessage);
 		}
 		if (this.overideMessage != null) {
-			auditHeader.setOverideMessage(new ArrayList<ErrorDetails>());
+			auditHeader.setOverideMessage(new ArrayList<ErrorDetail>());
 			BeanUtils.copyProperties(this.overideMessage, auditHeader.overideMessage);
 		}
 		if (this.errorMessage != null) {
-			auditHeader.setErrorMessage(new ArrayList<ErrorDetails>());
+			auditHeader.setErrorMessage(new ArrayList<ErrorDetail>());
 			BeanUtils.copyProperties(this.errorMessage, auditHeader.errorMessage);
 		}
 		if (this.modelData != null) {
@@ -126,7 +126,7 @@ public class AuditHeader implements java.io.Serializable,Entity {
 			BeanUtils.copyProperties(this.auditDetail, auditHeader.auditDetail);
 		}
 		if (this.overideMap != null) {
-			auditHeader.setOverideMap(new HashMap<String, ArrayList<ErrorDetails>>());
+			auditHeader.setOverideMap(new HashMap<String, ArrayList<ErrorDetail>>());
 			BeanUtils.copyProperties(this.overideMap, auditHeader.overideMap);
 		}
 		if(this.auditDetails!=null) {
@@ -282,26 +282,26 @@ public class AuditHeader implements java.io.Serializable,Entity {
 		this.auditError = auditError;
 	}
 		
-	public List<ErrorDetails> getInfoMessage() {
+	public List<ErrorDetail> getInfoMessage() {
 		return infoMessage;
 	}
 	
-	public void setInfoMessage(List<ErrorDetails> infoMessage) {
+	public void setInfoMessage(List<ErrorDetail> infoMessage) {
 		if (infoMessage!=null && !infoMessage.isEmpty()){
 			for (int i = 0; i < infoMessage.size(); i++) {
-				setInfoMessage((ErrorDetails)infoMessage.get(i));
+				setInfoMessage((ErrorDetail)infoMessage.get(i));
 			}
 		}else{
 			this.auditInfo=null;
 		}	
 	}
 	
-	private void setInfoMessage(ErrorDetails infoMessage) {
+	private void setInfoMessage(ErrorDetail infoMessage) {
 		if (infoMessage!=null){
 			
 			if (this.infoMessage==null){
 				this.auditInfo=null;
-				this.infoMessage= new ArrayList<ErrorDetails>();
+				this.infoMessage= new ArrayList<ErrorDetail>();
 				this.infoMessage.add(infoMessage);
 			}else{
 				this.infoMessage.add(infoMessage);
@@ -316,27 +316,27 @@ public class AuditHeader implements java.io.Serializable,Entity {
 		}
 	}
 	
-	public List<ErrorDetails> getOverideMessage() {
+	public List<ErrorDetail> getOverideMessage() {
 
 		return overideMessage;
 	}
 	
-	public void setOverideMessage(List<ErrorDetails> overideMessage) {
+	public void setOverideMessage(List<ErrorDetail> overideMessage) {
 		if (overideMessage!=null && !overideMessage.isEmpty()){
 			for (int i = 0; i < overideMessage.size(); i++) {
-				setOverideMessage((ErrorDetails)overideMessage.get(i));
+				setOverideMessage((ErrorDetail)overideMessage.get(i));
 			}
 		}else{
 			this.auditOveride=null;
 		}	
 	}
 
-	private void setOverideMessage(ErrorDetails overideMessage) {
+	private void setOverideMessage(ErrorDetail overideMessage) {
 		if (overideMessage!=null){
 			
 			if (this.overideMessage==null){
 				this.auditOveride=null;
-				this.overideMessage= new ArrayList<ErrorDetails>();
+				this.overideMessage= new ArrayList<ErrorDetail>();
 				this.overideMessage.add(overideMessage);
 			}else{
 				this.overideMessage.add(overideMessage);
@@ -353,26 +353,26 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 	
 	
-	public List<ErrorDetails> getErrorMessage() {
+	public List<ErrorDetail> getErrorMessage() {
 		return errorMessage;
 	}
 	
-	public void setErrorMessage(List<ErrorDetails> errorMessage) {
+	public void setErrorMessage(List<ErrorDetail> errorMessage) {
 		if (errorMessage!=null && !errorMessage.isEmpty()){
 			for (int i = 0; i < overideMessage.size(); i++) {
-				setErrorMessage((ErrorDetails)errorMessage.get(i));
+				setErrorMessage((ErrorDetail)errorMessage.get(i));
 			}
 		}else{
 			this.auditError=null;
 		}
 	}
 	
-	private void setErrorMessage(ErrorDetails errorMessage) {
+	private void setErrorMessage(ErrorDetail errorMessage) {
 		if (errorMessage!=null){
 			
 			if (this.errorMessage==null){
 				this.auditError=null;
-				this.errorMessage= new ArrayList<ErrorDetails>();
+				this.errorMessage= new ArrayList<ErrorDetail>();
 				this.errorMessage.add(errorMessage);
 			}else{
 				this.errorMessage.add(errorMessage);
@@ -388,7 +388,7 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 	
 	
-	public void setErrorList(List<ErrorDetails> errorDetails) {
+	public void setErrorList(List<ErrorDetail> errorDetails) {
 		
 		if(errorDetails!=null && !errorDetails.isEmpty()){
 			for (int i = 0; i < errorDetails.size(); i++) {
@@ -398,21 +398,21 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 	
 	
-	public void setErrorDetails(ErrorDetails errorDetails) {
+	public void setErrorDetails(ErrorDetail errorDetails) {
 
 		if (errorDetails!=null){
 
-			if (StringUtils.trimToEmpty(errorDetails.getErrorSeverity()).equalsIgnoreCase("I")){ // PennantConstants.ERR_SEV_INFO
+			if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("I")){ // PennantConstants.ERR_SEV_INFO
 				setInfoMessage(errorDetails);
-			}else if (StringUtils.trimToEmpty(errorDetails.getErrorSeverity()).equalsIgnoreCase("W")){ //PennantConstants.ERR_SEV_WARNING
+			}else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("W")){ //PennantConstants.ERR_SEV_WARNING
 				setOverideMessage(errorDetails);
-			} else if (StringUtils.trimToEmpty(errorDetails.getErrorSeverity()).equalsIgnoreCase("E")){ //PennantConstants.ERR_SEV_ERROR
+			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("E")){ //PennantConstants.ERR_SEV_ERROR
 				setErrorMessage(errorDetails);
 			}
 		}
 	}
 	
-	public AuditHeader(String reference,String custNo,String accNo,String loanNo,AuditDetail auditDetail, LoggedInUser userDetails,HashMap<String, ArrayList<ErrorDetails>> overideMap){
+	public AuditHeader(String reference,String custNo,String accNo,String loanNo,AuditDetail auditDetail, LoggedInUser userDetails,HashMap<String, ArrayList<ErrorDetail>> overideMap){
 		
 		this.auditReference=reference;
 		this.auditCustNo=custNo;
@@ -456,11 +456,11 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 
 	
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 	
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 	
@@ -495,16 +495,16 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 
 	
-	private void checkOveride(ErrorDetails overideMessage){
+	private void checkOveride(ErrorDetail overideMessage){
 		
 		if(overideMap!=null){
 			
-			if(overideMap.containsKey(overideMessage.getErrorField())){
-				ArrayList<ErrorDetails> overDetails =this.overideMap.get(overideMessage.getErrorField());
+			if(overideMap.containsKey(overideMessage.getField())){
+				ArrayList<ErrorDetail> overDetails =this.overideMap.get(overideMessage.getField());
 				
 				for (int i = 0; i < overDetails.size(); i++) {
 					if(!isEqual(overideMessage, overDetails.get(i))){
-						this.overideMap.remove(overideMessage.getErrorField());
+						this.overideMap.remove(overideMessage.getField());
 						break;
 					}
 				}
@@ -513,16 +513,16 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	}
 	
 	
-	private boolean isEqual(ErrorDetails oldDetails,ErrorDetails newDetails){
+	private boolean isEqual(ErrorDetail oldDetails,ErrorDetail newDetails){
 		boolean isSame=true;
-		if(StringUtils.trimToEmpty(oldDetails.getErrorCode()).equals(StringUtils.trimToEmpty(newDetails.getErrorCode()))){
-			if(oldDetails.getErrorFieldValues()==null && newDetails.getErrorFieldValues()==null){
+		if(StringUtils.trimToEmpty(oldDetails.getCode()).equals(StringUtils.trimToEmpty(newDetails.getCode()))){
+			if(oldDetails.getFieldValues()==null && newDetails.getFieldValues()==null){
 				isSame=true;
-			}else  if(oldDetails.getErrorFieldValues()==null || newDetails.getErrorFieldValues()==null){
+			}else  if(oldDetails.getFieldValues()==null || newDetails.getFieldValues()==null){
 				isSame=false;
 			}else{
-				for (int i = 0; i < oldDetails.getErrorFieldValues().length; i++) {
-					if(!oldDetails.getErrorFieldValues()[i].equals(newDetails.getErrorFieldValues()[i])){
+				for (int i = 0; i < oldDetails.getFieldValues().length; i++) {
+					if(!oldDetails.getFieldValues()[i].equals(newDetails.getFieldValues()[i])){
 						isSame=false;
 						break;
 					}

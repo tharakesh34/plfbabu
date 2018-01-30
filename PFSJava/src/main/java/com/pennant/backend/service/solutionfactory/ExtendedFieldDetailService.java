@@ -44,8 +44,9 @@ package com.pennant.backend.service.solutionfactory;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 
@@ -67,7 +68,7 @@ public interface ExtendedFieldDetailService {
 
 	void revertColumn(ExtendedFieldDetail efd);
 	
-	List<ErrorDetails> doValidations(ExtendedFieldHeader extendedFieldHeader);
+	List<ErrorDetail> doValidations(ExtendedFieldHeader extendedFieldHeader);
 	
 	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName,String subModuleName,String type);
 	

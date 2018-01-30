@@ -45,8 +45,6 @@ package com.pennanttech.pennapps.web.util;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
-import javax.ws.rs.ProcessingException;
-
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -57,7 +55,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -144,13 +142,13 @@ public final class MessageUtil {
 	 * Shows a confirmation message box with the specified buttons and returns the button that has been chosen.
 	 * 
 	 * @param error
-	 *            The {@link ErrorDetails error} object.
+	 *            The {@link ErrorDetail error} object.
 	 * @param buttons
 	 *            A combination of buttons.
 	 * @return The button being pressed.
 	 */
-	public static int confirm(ErrorDetails error, int buttons) {
-		String message = error.getErrorCode().concat(": ").concat(error.getError());
+	public static int confirm(ErrorDetail error, int buttons) {
+		String message = error.getCode().concat(": ").concat(error.getError());
 
 		Messagebox.setTemplate(TEMPLATE);
 		return Messagebox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
@@ -190,11 +188,11 @@ public final class MessageUtil {
 	 * Shows an information message box, logs the message and returns the button that has been chosen.
 	 * 
 	 * @param error
-	 *            The {@link ErrorDetails error} object.
+	 *            The {@link ErrorDetail error} object.
 	 * @return The button being pressed.
 	 */
-	public static int showMessage(ErrorDetails error) {
-		String message = error.getErrorCode().concat(": ").concat(error.getError());
+	public static int showMessage(ErrorDetail error) {
+		String message = error.getCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		Messagebox.setTemplate(TEMPLATE);
@@ -218,10 +216,10 @@ public final class MessageUtil {
 	 * Shows an error message box and logs the message.
 	 * 
 	 * @param error
-	 *            The {@link ErrorDetails error} object.
+	 *            The {@link ErrorDetail error} object.
 	 */
-	public static void showError(ErrorDetails error) {
-		String message = error.getErrorCode().concat(": ").concat(error.getError());
+	public static void showError(ErrorDetail error) {
+		String message = error.getCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		Messagebox.setTemplate(TEMPLATE);
@@ -232,13 +230,13 @@ public final class MessageUtil {
 	 * Shows an error message box and logs the message. Returns the button that has been chosen.
 	 * 
 	 * @param error
-	 *            The {@link ErrorDetails error} object.
+	 *            The {@link ErrorDetail error} object.
 	 * @param buttons
 	 *            A combination of buttons.
 	 * @return The button being pressed.
 	 */
-	public static int showError(ErrorDetails error, int buttons) {
-		String message = error.getErrorCode().concat(": ").concat(error.getError());
+	public static int showError(ErrorDetail error, int buttons) {
+		String message = error.getCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		Messagebox.setTemplate(TEMPLATE);
@@ -258,9 +256,7 @@ public final class MessageUtil {
 			show((InterfaceException) e);
 		} else if (e instanceof AppException) {
 			show((AppException) e);
-		} else if (e instanceof ProcessingException) {
-			show((ProcessingException) e);
-		}else {
+		} else {
 			show(e);
 		}
 	}
@@ -295,24 +291,6 @@ public final class MessageUtil {
 		Messagebox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 	
-	
-	/**
-	 * Shows an error message box for application exception and logs the message and cause.
-	 * 
-	 * @param e
-	 *            The exception.
-	 */
-	private static void show(ProcessingException e) {
-		if (e.getCause() != null) {
-			logger.warn(Literal.EXCEPTION, e);
-			
-		} else {
-			logger.info(e.getMessage());
-		}
-
-		Messagebox.setTemplate(TEMPLATE);
-		Messagebox.show(Labels.getLabel("Dedupe_other_system_Process_Error").concat(SUFFIX), App.NAME, OK, ERROR);
-	}
 
 	/**
 	 * Shows an error message box for unhandled exception and logs the message and cause.

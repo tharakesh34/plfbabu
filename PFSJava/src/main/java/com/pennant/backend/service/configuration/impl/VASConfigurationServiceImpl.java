@@ -56,7 +56,7 @@ import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -554,7 +554,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 			VASConfiguration vASConfiguration= (VASConfiguration) auditDetail.getModelData();
 			
 			VASConfiguration tempVASConfiguration= null;
@@ -575,16 +575,16 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 				
 				if (!vASConfiguration.isWorkflow()){// With out Work flow only new records  
 					if (befVASConfiguration !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}	
 				}else{ // with work flow
 					if (vASConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befVASConfiguration !=null || tempVASConfiguration!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befVASConfiguration ==null || tempVASConfiguration!=null ){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 						}
 					}
 				}
@@ -593,24 +593,24 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 				if (!vASConfiguration.isWorkflow()){	// With out Work flow for update and delete
 				
 					if (befVASConfiguration ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 					}else{
 						if (oldVasConfiguration!=null && !oldVasConfiguration.getLastMntOn().equals(befVASConfiguration.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 							}else{
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 							}
 						}
 					}
 				}else{
 				
 					if (tempVASConfiguration==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 					
 					if (tempVASConfiguration!=null  && oldVasConfiguration!=null && !oldVasConfiguration.getLastMntOn().equals(tempVASConfiguration.getLastMntOn())){ 
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -619,7 +619,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, vASConfiguration.getRecordType())){
 				boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(vASConfiguration.getProductCode(), PennantConstants.WORFLOW_MODULE_VAS);
 				if(workflowExists){
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 				}
 			}
 

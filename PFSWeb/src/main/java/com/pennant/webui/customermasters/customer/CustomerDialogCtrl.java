@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+o * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -97,9 +97,10 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -145,6 +146,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.search.Filter;
@@ -162,10 +164,10 @@ import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.rits.cloning.Cloner;
@@ -723,14 +725,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setDescColumn("CountryDesc");
 		this.custCOB.setValidateColumns(new String[] { "CountryCode" });
 
-		this.custRO1.setMaxlength(8);
-		this.custRO1.setTextBoxWidth(121);
-		this.custRO1.setMandatoryStyle(true);
-		this.custRO1.setModuleName("RelationshipOfficer");
-		this.custRO1.setValueColumn("ROfficerCode");
-		this.custRO1.setDescColumn("ROfficerDesc");
-		this.custRO1.setValidateColumns(new String[] { "ROfficerCode" });
-
 		this.target.setMaxlength(8);
 		this.target.setTextBoxWidth(121);
 		this.target.setMandatoryStyle(false);
@@ -853,6 +847,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValueColumn("SubSegmentCode");
 		this.custSubSegment.setDescColumn("SubSegmentDesc");
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
+		
+		this.custRO1.setTextBoxWidth(121);
+		this.custRO1.setMandatoryStyle(true);
+		this.custRO1.setModuleName("SourceOfficer");
+		this.custRO1.setValueColumn("DealerName");
+		this.custRO1.setDescColumn("DealerCity");
+		this.custRO1.setValidateColumns(new String[] { "DealerName" });
+		
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
 		} else {
@@ -1035,7 +1037,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custCOB.setValue(aCustomer.getCustCOB());
 		this.custDOB.setValue(aCustomer.getCustDOB());
 		this.noOfDependents.setValue(aCustomer.getNoOfDependents());
-		this.custRO1.setValue(aCustomer.getCustRO1());
+		
+		this.custRO1.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()),"");//FIXME 
+		this.custRO1.setAttribute("DealerId", aCustomer.getCustRO1());
+		
 		this.custTradeLicenceNum.setValue(aCustomer.getCustTradeLicenceNum());
 		this.custRelatedParty.setValue(StringUtils.trimToEmpty(aCustomer.getCustAddlVar83()));
 		this.custGroupId.setValue(aCustomer.getCustGroupID() == 0 ? "" : String.valueOf(aCustomer.getCustGroupID()));
@@ -1058,7 +1063,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSectorName()));
 		this.custIndustry.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustIndustryName()));
 		this.custCOB.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustCOBName()));
-		this.custRO1.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()));
 		this.target.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescTargetName()));
 		this.salariedCustomer.setChecked(aCustomer.isSalariedCustomer());
 
@@ -1352,7 +1356,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		try {
 			aCustomer.setLovDescCustRO1Name(this.custRO1.getDescription());
-			aCustomer.setCustRO1(StringUtils.trimToNull(this.custRO1.getValidatedValue()));
+			this.custRO1.getValidatedValue();
+			Object object = this.custRO1.getAttribute("DealerId");
+			if (object!=null) {
+				aCustomer.setCustRO1(Long.parseLong(object.toString()));	
+			}else{
+				aCustomer.setCustRO1(0);
+			}
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3047,7 +3058,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// Check Dedup if Prospect Customer
 			// &&
 			// StringUtils.trimToEmpty(aCustomerDetails.getCustomer().getRecordType()).equals("")
-			if (!aCustomerDetails.getCustomer().isSkipDedup()) {
+			if (processCompleted && !aCustomerDetails.getCustomer().isSkipDedup()) {
 				if (StringUtils.isBlank(aCustomerDetails.getCustomer().getCustCoreBank())) {
 					aCustomerDetails = FetchDedupDetails.getCustomerDedup(getRole(), aCustomerDetails,
 							this.window_CustomerDialog);
@@ -3117,7 +3128,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerDialog, auditHeader);
 						return processCompleted;
@@ -3670,6 +3681,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		logger.debug("Leaving");
+	}
+	
+	public void onFulfill$custRO1(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = custRO1.getObject();
+		if (dataObject instanceof String) {
+			this.custRO1.setValue(dataObject.toString());
+			this.custRO1.setDescription("");
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.custRO1.setAttribute("DealerId", details.getDealerId());
+				//this.custRO1.setDescription(details.getDealerName());
+			}
+		}
 	}
 
 	/**
@@ -4570,12 +4597,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if(customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(PennantAppUtil.getDocumentImage(customerDocument.getDocRefId()));
+						customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 					} else if(StringUtils.isNotBlank(customerDocument.getDocUri())) {
 						try {
 							// Fetch document from interface
-							DocumentDetails detail = externalDocumentManager.getExternalDocument(customerDocument.getDocUri());
-							customerDocument.setCustDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
+							String custCif=this.custCIF.getValue();
+							//here document name is  required to identify the file type
+							DocumentDetails detail = externalDocumentManager.getExternalDocument(customerDocument.getCustDocName(),customerDocument.getDocUri(),custCif);
+							if (detail!=null && detail.getDocImage()!=null) {
+								customerDocument.setCustDocImage(detail.getDocImage());
+								customerDocument.setCustDocName(detail.getDocName());
+							}
 						} catch (InterfaceException e) {
 							MessageUtil.showError(e);
 						}
@@ -4664,9 +4696,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setCustID(getCustomerDetails().getCustID());
 		customerAddres.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerAddres.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
+		if(StringUtils.isNotBlank(priority)){
+		customerAddres.setCustAddrPriority(Integer.parseInt(priority));
+		}
 
 		Filter[] countrysystemDefault = new Filter[1];
-		countrysystemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
 		if (countryObj != null) {
 			Country country = (Country) countryObj;
@@ -4760,6 +4796,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerPhoneNumber.setPhoneCustID(getCustomerDetails().getCustID());
 		customerPhoneNumber.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerPhoneNumber.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
+		if(StringUtils.isNotBlank(priority)){
+		customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
+		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerPhoneNumber", customerPhoneNumber);
 		map.put("customerDialogCtrl", this);
@@ -4841,7 +4881,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerEMail.setCustID(getCustomerDetails().getCustID());
 		customerEMail.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
 		customerEMail.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		customerEMail.setCustEMailPriority(Integer.parseInt(PennantConstants.EMAILPRIORITY_Medium));
+		String priority = SysParamUtil.getValueAsString(SMTParameterConstants.DEFAULT_KYC_PRIORITY);
+		if(StringUtils.isNotBlank(priority)){
+		customerEMail.setCustEMailPriority(Integer.parseInt(priority));
+		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerEMail", customerEMail);
 		map.put("customerDialogCtrl", this);
@@ -5539,7 +5582,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

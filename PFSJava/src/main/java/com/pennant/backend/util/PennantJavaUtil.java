@@ -50,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ApplicationDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.GlobalVariable;
@@ -186,7 +187,6 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -200,6 +200,8 @@ import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.CAFFacilityType;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
@@ -358,6 +360,7 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.util.ClassUtil;
@@ -416,7 +419,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("AddressType", new ModuleMapping("AddressType", AddressType.class, new String[] {
 				"BMTAddressTypes", "BMTAddressTypes_AView" }, masterWF, new String[] { "AddrTypeCode", "AddrTypeDesc" },
-				new String[][] { { "AddrTypeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "AddrTypeIsActive", "0", 1 } }, 300));
 		
 		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
 		"BuilderGroup_AView" }, masterWF, new String[] {"Id","Name"},null, 350));
@@ -429,48 +432,48 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BlackListReasonCode", new ModuleMapping("BlackListReasonCode", BlackListReasonCode.class,
 				new String[] { "BMTBlackListRsnCodes", "BMTBlackListRsnCodes_AView" }, masterWF, new String[] {
-						"BLRsnCode", "BLRsnDesc" }, new String[][] { { "BLIsActive", "0", "1" },
+						"BLRsnCode", "BLRsnDesc" }, new Object[][] { { "BLIsActive", "0", 1 },
 						{ "BLRsnCode", "1", "NONE" } }, 350));
 
 		ModuleUtil.register("City", new ModuleMapping("City", City.class, new String[] { "RMTProvinceVsCity",
-				"RMTProvinceVsCity_AView" }, masterWF, new String[] { "PCCity", "PCCityName" },new String[][] { {
-					"CityIsActive", "0", "1" } }, 350));
+				"RMTProvinceVsCity_AView" }, masterWF, new String[] { "PCCity", "PCCityName" },new Object[][] { {
+					"CityIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("Country", new ModuleMapping("Country", Country.class, new String[] { "BMTCountries",
-				"BMTCountries_AView" }, masterWF, new String[] { "CountryCode", "CountryDesc" }, new String[][] { {
-				"CountryIsActive", "0", "1" } }, 350));
+				"BMTCountries_AView" }, masterWF, new String[] { "CountryCode", "CountryDesc" }, new Object[][] { {
+				"CountryIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("Department", new ModuleMapping("Department", Department.class, new String[] {
 				"BMTDepartments", "BMTDepartments_AView" }, masterWF, new String[] { "DeptCode", "DeptDesc" },
-				new String[][] { { "DeptIsActive", "0", "1" } }, 300));
+				new Object[][] { { "DeptIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Designation", new ModuleMapping("Designation", Designation.class, new String[] {
 				"BMTDesignations", "BMTDesignations_AView" }, masterWF, new String[] { "DesgCode", "DesgDesc" },
-				new String[][] { { "DesgIsActive", "0", "1" } }, 300));
+				new Object[][] { { "DesgIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("DispatchMode", new ModuleMapping("DispatchMode", DispatchMode.class, new String[] {
 				"BMTDispatchModes", "BMTDispatchModes_AView" }, masterWF, new String[] { "DispatchModeCode",
-				"DispatchModeDesc" }, new String[][] { { "DispatchModeIsActive", "0", "1" } }, 300));
+				"DispatchModeDesc" }, new Object[][] { { "DispatchModeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("DivisionDetail", new ModuleMapping("DivisionDetail", DivisionDetail.class, new String[] {
 				"SMTDivisionDetail", "SMTDivisionDetail_AView" }, masterWF, new String[] { "DivisionCode",
-				"DivisionCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 300));
+				"DivisionCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("DocumentType", new ModuleMapping("DocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "DocTypeDesc" },
-				new String[][] { { "DocTypeIsActive", "0", "1" } }, 350));
+				new Object[][] { { "DocTypeIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("CustDocumentType", new ModuleMapping("DocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode", "DocTypeDesc" },
-				new String[][] { { "DocTypeIsActive", "0", "1" }, { "DocIsCustDoc", "0", "1" } }, 350));
+				new Object[][] { { "DocTypeIsActive", "0", 1 }, { "DocIsCustDoc", "0", 1 } }, 350));
 
 		ModuleUtil.register("EMailType", new ModuleMapping("EMailType", EMailType.class, new String[] {
 				"BMTEMailTypes", "BMTEMailTypes_AView" }, masterWF, new String[] { "EmailTypeCode", "EmailTypeDesc" },
-				new String[][] { { "EmailTypeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "EmailTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("EmployerDetail", new ModuleMapping("EmployerDetail", EmployerDetail.class, new String[] {
 				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmpName","EmpCity" },
-				new String[][] { { "EmpIsActive", "0", "1" } }, 350));
+				new Object[][] { { "EmpIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("TakafulProvider", new ModuleMapping("TakafulProvider", TakafulProvider.class,
 				new String[] { "TakafulProvider", "TakafulProvider_AView" }, masterWF, new String[] { "TakafulCode",
@@ -478,28 +481,28 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("EmploymentType", new ModuleMapping("EmploymentType", EmploymentType.class, new String[] {
 				"RMTEmpTypes", "RMTEmpTypes_AView" }, masterWF, new String[] { "EmpType", "EmpTypeDesc" },
-				new String[][] { { "EmpTypeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "EmpTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("EmpStsCode", new ModuleMapping("EmpStsCode", EmpStsCode.class, new String[] {
 				"BMTEmpStsCodes", "BMTEmpStsCodes_AView" }, masterWF, new String[] { "EmpStsCode", "EmpStsDesc" },
-				new String[][] { { "EmpStsIsActive", "0", "1" } }, 350));
+				new Object[][] { { "EmpStsIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("Gender", new ModuleMapping("Gender", Gender.class, new String[] { "BMTGenders",
-				"BMTGenders_AView" }, masterWF, new String[] { "GenderCode", "GenderDesc" }, new String[][] { {
-				"GenderIsActive", "0", "1" } }, 300));
+				"BMTGenders_AView" }, masterWF, new String[] { "GenderCode", "GenderDesc" }, new Object[][] { {
+				"GenderIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("GeneralDepartment", new ModuleMapping("GeneralDepartment", GeneralDepartment.class,
 				new String[] { "RMTGenDepartments", "RMTGenDepartments_AView" }, masterWF, new String[] { "GenDepartment",
-						"GenDeptDesc" }, new String[][] { { "GenDeptIsActive", "0", "1" } }, 300));
+						"GenDeptDesc" }, new Object[][] { { "GenDeptIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("GeneralDesignation", new ModuleMapping("GeneralDesignation", GeneralDesignation.class,
 				new String[] { "RMTGenDesignations", "RMTGenDesignations_AView" }, masterWF, new String[] {
-						"GenDesignation", "GenDesgDesc" }, new String[][] { {
-							"GenDesgIsActive", "0", "1" } }, 350));
+						"GenDesignation", "GenDesgDesc" }, new Object[][] { {
+							"GenDesgIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("GroupStatusCode", new ModuleMapping("GroupStatusCode", GroupStatusCode.class,
 				new String[] { "BMTGrpStatusCodes", "BMTGrpStatusCodes_AView" }, masterWF, new String[] { "GrpStsCode",
-						"GrpStsDescription" }, new String[][] { { "GrpStsIsActive", "0", "1" },
+						"GrpStsDescription" }, new Object[][] { { "GrpStsIsActive", "0", 1 },
 						{ "GrpStsCode", "1", "NONE" } }, 300));
 
 		ModuleUtil.register("IdentityDetails", new ModuleMapping("IdentityDetails", IdentityDetails.class,
@@ -508,15 +511,15 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("IncomeType", new ModuleMapping("IncomeType", IncomeType.class, new String[] {
 				"BMTIncomeTypes", "BMTIncomeTypes_AView" }, masterWF, new String[] { "IncomeTypeCode", "IncomeTypeDesc" },
-				new String[][] { { "IncomeTypeIsActive", "0", "1" } }, 400));
+				new Object[][] { { "IncomeTypeIsActive", "0", 1 } }, 400));
 
 		ModuleUtil.register("IncomeExpense", new ModuleMapping("IncomeType", IncomeType.class, new String[] {
 				"BMTIncomeTypes", "BMTIncomeTypes_AView" }, masterWF, new String[] { "IncomeTypeDesc",
-				"lovDescCategoryName", "IncomeExpense" }, new String[][] { { "IncomeTypeIsActive", "0", "1" } }, 500));
+				"lovDescCategoryName", "IncomeExpense" }, new Object[][] { { "IncomeTypeIsActive", "0", 1 } }, 500));
 
 		ModuleUtil.register("Industry", new ModuleMapping("Industry", Industry.class, new String[] { "BMTIndustries",
-				"BMTIndustries_AView" }, masterWF, new String[] { "IndustryCode", "IndustryDesc" }, new String[][] { {
-				"IndustryIsActive", "0", "1" } }, 300));
+				"BMTIndustries_AView" }, masterWF, new String[] { "IndustryCode", "IndustryDesc" }, new Object[][] { {
+				"IndustryIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("LovFieldDetail", new ModuleMapping("LovFieldDetail", LovFieldDetail.class, new String[] {
 				"RMTLovFieldDetail", "RMTLovFieldDetail_AView" }, masterWF, new String[] { "FieldCode", "FieldCodeValue" ,"ValueDesc" },
@@ -524,75 +527,76 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("MaritalStatusCode", new ModuleMapping("MaritalStatusCode", MaritalStatusCode.class,
 				new String[] { "BMTMaritalStatusCodes", "BMTMaritalStatusCodes_AView" }, masterWF, new String[] {
-						"MaritalStsCode", "MaritalStsDesc" }, new String[][] { { "MaritalStsIsActive", "0", "1" } },
+						"MaritalStsCode", "MaritalStsDesc" }, new Object[][] { { "MaritalStsIsActive", "0", 1 } },
 				300));
 
 		ModuleUtil.register("NationalityCode", new ModuleMapping("NationalityCode", NationalityCode.class,
 				new String[] { "BMTNationalityCodes", "BMTNationalityCodes_AView" }, masterWF, new String[] {
-						"NationalityCode", "NationalityDesc" }, new String[][] { { "NationalityIsActive", "0", "1" } },
+						"NationalityCode", "NationalityDesc" }, new Object[][] { { "NationalityIsActive", "0", 1 } },
 				350));
 
 		ModuleUtil.register("PhoneType", new ModuleMapping("PhoneType", PhoneType.class, new String[] {
 				"BMTPhoneTypes", "BMTPhoneTypes_AView" }, masterWF, new String[] { "PhoneTypeCode", "PhoneTypeDesc" },
-				new String[][] { { "PhoneTypeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "PhoneTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("PRelationCode", new ModuleMapping("PRelationCode", PRelationCode.class, new String[] {
 				"BMTPRelationCodes", "BMTPRelationCodes_AView" }, masterWF,
 				new String[] { "PRelationCode", "PRelationDesc" },
-				new String[][] { { "RelationCodeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "RelationCodeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Profession", new ModuleMapping("Profession", Profession.class, new String[] {
 				"BMTProfessions", "BMTProfessions_AView" }, masterWF, new String[] { "ProfessionCode", "ProfessionDesc" },
-				new String[][] { { "ProfessionIsActive", "0", "1" } }, 300));
+				new Object[][] { { "ProfessionIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Province", new ModuleMapping("Province", Province.class, new String[] {
 				"RMTCountryVsProvince", "RMTCountryVsProvince_AView" }, masterWF, new String[] { "CPProvince",
-				"CPProvinceName","TaxStateCode" }, new String[][] { { "CPIsActive", "0", "1" } }, 600));
+				"CPProvinceName","TaxStateCode" }, new Object[][] { { "CPIsActive", "0", 1 } }, 600));
 
 		ModuleUtil.register("Salutation", new ModuleMapping("Salutation", Salutation.class, new String[] {
 				"BMTSalutations", "BMTSalutations_AView" }, masterWF, new String[] { "SalutationCode", "SaluationDesc" },
-				new String[][] { { "SalutationIsActive", "0", "1" } }, 300));
+				new Object[][] { { "SalutationIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Sector", new ModuleMapping("Sector", Sector.class, new String[] { "BMTSectors",
-				"BMTSectors_AView" }, masterWF, new String[] { "SectorCode", "SectorDesc" }, new String[][] { {
-				"SectorIsActive", "0", "1" } }, 350));
+				"BMTSectors_AView" }, masterWF, new String[] { "SectorCode", "SectorDesc" }, new Object[][] { {
+				"SectorIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("Segment", new ModuleMapping("Segment", Segment.class, new String[] { "BMTSegments",
-				"BMTSegments_AView" }, masterWF, new String[] { "SegmentCode", "SegmentDesc" }, new String[][] { {
-				"SegmentIsActive", "0", "1" } }, 350));
+				"BMTSegments_AView" }, masterWF, new String[] { "SegmentCode", "SegmentDesc" }, new Object[][] { {
+				"SegmentIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("SubSector", new ModuleMapping("SubSector", SubSector.class, new String[] {
 				"BMTSubSectors", "BMTSubSectors_AView" }, masterWF, new String[] { "SubSectorCode", "SubSectorDesc" },
-				new String[][] { { "SubSectorIsActive", "0", "1" } }, 400));
+				new Object[][] { { "SubSectorIsActive", "0", 1 } }, 400));
 
 		ModuleUtil.register("PurposeDetail", new ModuleMapping("PurposeDetail", PurposeDetail.class,
 				new String[] { "PurposeDetails" }, masterWF, new String[] { "PurposeCode", "purposeDesc" }, null, 400));
 
 		ModuleUtil.register("SubSegment", new ModuleMapping("SubSegment", SubSegment.class, new String[] {
 				"BMTSubSegments", "BMTSubSegments_AView" }, masterWF, new String[] { "SubSegmentCode",
-				"SubSegmentDesc" }, new String[][] { { "SubSegmentIsActive", "0", "1" } }, 500));
+				"SubSegmentDesc" }, new Object[][] { { "SubSegmentIsActive", "0", 1 } }, 500));
 		
 				
 		/************* Application Masters *************/
 		ModuleUtil.register("ReasonCode", new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons",
-		"Reasons_AView" }, masterWF, new String[] {"ReasonTypeID","ReasonCategoryID","Code","Description","Active"},null, 600));
+		"Reasons_AView" }, masterWF, new String[] {"Id", "ReasonCategoryCode", "Code", "Description"},
+				new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("ReasonTypes", new ModuleMapping("ReasonTypes", ReasonTypes.class, new String[] { "ReasonTypes",
-		"ReasonTypes_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
+		"ReasonTypes_AView" }, masterWF, new String[] {"Code","Description"},null, 600));
 		
 		ModuleUtil.register("ReasonCategory", new ModuleMapping("ReasonCategory", ReasonCategory.class, new String[] { "ReasonCategory",
-		"ReasonCategory_AView" }, masterWF, new String[] {"Id","Code","Description"},null, 600));
+		"ReasonCategory_AView" }, masterWF, new String[] {"Code","Description"},null, 600));
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
-				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",
+				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] {"AggCode",
 						"AggName" }, null, 450));
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
 				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
-						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new String[][] { { "GroupIsActive", "0",
-						"1" } }, 400));
+						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new Object[][] { { "GroupIsActive", "0",
+						1} }, 400));
 
 		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
-				"Mandates_AView" }, manadateWF, new String[] { "MandateID","BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
+				"Mandates_AView" }, manadateWF, new String[] { "BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
 		
 		ModuleUtil.register("MandateStatus", new ModuleMapping("MandateStatus", MandateStatus.class, new String[] { "MandatesStatus",
 		"MandatesStatus_View" }, masterWF, new String[] { "MandateID", "Status" }, null, 300));
@@ -602,10 +606,10 @@ public class PennantJavaUtil {
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
 		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName","Gstin","LovDescPCCountryName"},
-				new String[][] { { "Active", "0", "1" } }, 600));
+				new Object[][] { { "Active", "0", 1 } }, 600));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
-			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {  "PartnerBankId", "PartnerBankCode", "PartnerBankName"  },
+			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {"PartnerBankCode", "PartnerBankName"  },
 			null, 300));
 		
 		ModuleUtil.register("FinTypePartnerBank", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class, new String[] { "FinTypePartnerBanks",
@@ -613,7 +617,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BankDetail", new ModuleMapping("BankDetail", BankDetail.class, new String[] {
 				"BMTBankDetail", "BMTBankDetail_AView" }, masterWF, new String[] { "BankCode", "BankName" },
-				new String[][] { { "Active", "0", "1" } }, 500));
+				new Object[][] { { "Active", "0", 1 } }, 500));
 		
 		ModuleUtil.register("BankBranch", new ModuleMapping("BankBranch", BankBranch.class, new String[] {
 			"BankBranches", "BankBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc", 
@@ -624,16 +628,16 @@ public class PennantJavaUtil {
 			"BranchDesc", "MICR", "IFSC" }, null, 700));
 
 		ModuleUtil.register("BaseRate", new ModuleMapping("BaseRate", BaseRate.class, new String[] { "RMTBaseRates",
-				"RMTBaseRates_AView" }, masterWF, new String[] { "BRType", "Currency", "BREffDate" }, new String[][] { {
-					"BRTypeIsActive", "0", "1" } }, 300));
+				"RMTBaseRates_AView" }, masterWF, new String[] { "BRType", "Currency", "BREffDate" }, new Object[][] { {
+					"BRTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("BaseRateCode", new ModuleMapping("BaseRateCode", BaseRateCode.class, new String[] {
 				"RMTBaseRateCodes", "RMTBaseRateCodes_AView" }, masterWF, new String[] { "BRType", "BRTypeDesc" },
 				new String[][] { { "BRType", "1", "MBR00" } }, 400));
 
 		ModuleUtil.register("Branch", new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches",
-				"RMTBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc" }, new String[][] { {
-				"BranchIsActive", "0", "1" } }, 350));
+				"RMTBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc" }, new Object[][] { {
+				"BranchIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("CheckList", new ModuleMapping("CheckList", CheckList.class, new String[] { "BMTCheckList",
 				"BMTCheckList_AView" }, masterWF, new String[] { "CheckListDesc","CheckRule" }, null, 500));
@@ -645,50 +649,50 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CorpRelationCode", new ModuleMapping("CorpRelationCode", CorpRelationCode.class,
 				new String[] { "BMTCorpRelationCodes", "BMTCorpRelationCodes_AView" }, masterWF, new String[] {
 						"CorpRelationCode", "CorpRelationDesc" },
-				new String[][] { { "CorpRelationIsActive", "0", "1" } }, 300));
+				new Object[][] { { "CorpRelationIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Currency", new ModuleMapping("Currency", Currency.class, new String[] { "RMTCurrencies",
-				"RMTCurrencies_AView" }, masterWF, new String[] { "CcyCode", "CcyDesc", "CcyNumber" }, new String[][] { {
-				"CcyIsActive", "0", "1" } }, 450));
+				"RMTCurrencies_AView" }, masterWF, new String[] { "CcyCode", "CcyDesc", "CcyNumber" }, new Object[][] { {
+				"CcyIsActive", "0", 1 } }, 450));
 
 
 		ModuleUtil.register("CustomerCategory", new ModuleMapping("CustomerCategory", CustomerCategory.class,
 				new String[] { "BMTCustCategories", "BMTCustCategories_AView" }, masterWF, new String[] { "CustCtgCode",
-						"CustCtgDesc" }, new String[][] { { "CustCtgIsActive", "0", "1" } }, 400));
+						"CustCtgDesc" }, new Object[][] { { "CustCtgIsActive", "0", 1 } }, 400));
 
 		ModuleUtil.register("CustomerNotesType", new ModuleMapping("CustomerNotesType", CustomerNotesType.class,
 				new String[] { "BMTCustNotesTypes", "BMTCustNotesTypes_AView" }, masterWF, new String[] {
-						"CustNotesTypeCode", "CustNotesTypeDesc" }, new String[][] { { "CustNotesTypeIsActive", "0",
-						"1" } }, 300));
+						"CustNotesTypeCode", "CustNotesTypeDesc" }, new Object[][] { { "CustNotesTypeIsActive", "0",
+						1 } }, 300));
 
 		ModuleUtil.register("CustomerStatusCode", new ModuleMapping("CustomerStatusCode", CustomerStatusCode.class,
 				new String[] { "BMTCustStatusCodes", "BMTCustStatusCodes_AView" }, masterWF, new String[] { "CustStsCode",
-						"CustStsDescription" }, new String[][] { { "CustStsIsActive", "0", "1" } }, 300));
+						"CustStsDescription" }, new Object[][] { { "CustStsIsActive", "0", 1 } }, 300));
 		
 		ModuleUtil.register("FeeType", new ModuleMapping("FeeType", FeeType.class, new String[] {
-			"FeeTypes", "FeeTypes_AView" }, masterWF, new String[] {"FeeTypeCode","FeeTypeDesc" },new String[][] { { "Active", "0", "1" } }, 300));
+			"FeeTypes", "FeeTypes_AView" }, masterWF, new String[] {"FeeTypeCode","FeeTypeDesc" },new Object[][] { { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("FinanceApplicationCode", new ModuleMapping("FinanceApplicationCode",
 				FinanceApplicationCode.class, new String[] { "BMTFinAppCodes", "BMTFinAppCodes_AView" }, masterWF,
-				new String[] { "FinAppType", "FinAppDesc" }, new String[][] { { "FinAppIsActive", "0", "1" } }, 300));
+				new String[] { "FinAppType", "FinAppDesc" }, new Object[][] { { "FinAppIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("InterestRateType", new ModuleMapping("InterestRateType", InterestRateType.class,
 				new String[] { "BMTInterestRateTypes", "BMTInterestRateTypes_AView" }, masterWF, new String[] {
-						"IntRateTypeCode", "IntRateTypeDesc" }, new String[][] { { "IntRateTypeIsActive", "0", "1" },
+						"IntRateTypeCode", "IntRateTypeDesc" }, new Object[][] { { "IntRateTypeIsActive", "0", 1 },
 						{ "IntRateTypeCode", "1", "DEFAULT" } }, 300));
 
 		ModuleUtil.register("RejectDetail", new ModuleMapping("RejectDetail", RejectDetail.class, new String[] {
 				"BMTRejectCodes", "BMTRejectCodes_AView" }, masterWF, new String[] { "RejectCode", "RejectDesc" },
-				new String[][] { { "RejectIsActive", "0", "1" }, { "RejectCode", "1", "NONE" } }, 350));
+				new Object[][] { { "RejectIsActive", "0", 1 }, { "RejectCode", "1", "NONE" } }, 350));
 
 		ModuleUtil.register("RelationshipOfficer", new ModuleMapping("RelationshipOfficer", RelationshipOfficer.class,
 				new String[] { "RelationshipOfficers", "RelationshipOfficers_AView" }, masterWF, new String[] {
-						"ROfficerCode", "ROfficerDesc" }, new String[][] { { "ROfficerIsActive", "0", "1" },
+						"ROfficerCode", "ROfficerDesc" }, new Object[][] { { "ROfficerIsActive", "0", 1 },
 						{ "ROfficerCode", "1", "NONE" } }, 300));
 
 		ModuleUtil.register("SalesOfficer", new ModuleMapping("SalesOfficer", SalesOfficer.class, new String[] {
 				"SalesOfficers", "SalesOfficers_AView" }, masterWF, new String[] { "SalesOffCode", "SalesOffFName" },
-				new String[][] { { "SalesOffIsActive", "0", "1" } }, 300));
+				new Object[][] { { "SalesOffIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("SplRate", new ModuleMapping("SplRate", SplRate.class, new String[] { "RMTSplRates",
 				"RMTSplRates_AView" }, masterWF, new String[] { "SRType", "SRRate" }, null, 300));
@@ -699,7 +703,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("TransactionCode", new ModuleMapping("TransactionCode", TransactionCode.class,
 				new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, masterWF, new String[] { "TranCode",
-						"TranDesc" }, new String[][] { { "TranIsActive", "0", "1" } }, 300));
+						"TranDesc" }, new Object[][] { { "TranIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("CommodityBrokerDetail", new ModuleMapping("CommodityBrokerDetail",
 				CommodityBrokerDetail.class, new String[] { "FCMTBrokerDetail", "FCMTBrokerDetail_AView" }, masterWF,
@@ -715,7 +719,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("TargetDetail", new ModuleMapping("TargetDetail", TargetDetail.class, new String[] {
 				"TargetDetails", "TargetDetails_AView" }, masterWF, new String[] { "TargetCode", "TargetDesc" },
-				new String[][] { { "Active", "0", "1" } }, 300));
+				new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("PoliceCaseDetail", new ModuleMapping("PoliceCaseDetail", PoliceCaseDetail.class,
 				new String[] { "PoliceCaseCustomers", "PoliceCaseCustomers" }, masterWF, new String[] { "CustCIF",
@@ -723,11 +727,11 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BlackListCustomers", new ModuleMapping("BlackListCustomers", BlackListCustomers.class,
 						new String[] { "BlackListCustomer", "" }, masterWF, new String[] { "CustCIF", "CustFName" },
-						new String[][] { { "CustIsActive", "0", "1" } }, 300));
+						new Object[][] { { "CustIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("OtherBankFinanceType", new ModuleMapping("OtherBankFinanceType",
 				OtherBankFinanceType.class, new String[] { "OtherBankFinanceType", "OtherBankFinanceType_AView" },
-				masterWF, new String[] { "FinType", "FinTypeDesc" }, new String[][] { { "Active", "0", "1" } }, 300));
+				masterWF, new String[] { "FinType", "FinTypeDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("ReturnedChequeDetails", new ModuleMapping("ReturnedChequeDetails",
 				ReturnedChequeDetails.class, new String[] { "ReturnedCheques", "ReturnedCheques_View" }, masterWF,
@@ -757,14 +761,14 @@ public class PennantJavaUtil {
 						"BondCode" }, null, 300));
 
 		ModuleUtil.register("Flag", new ModuleMapping("Flag", Flag.class, new String[] { "Flags", "Flags_AView" },
-				masterWF, new String[] { "FlagCode", "FlagDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
+				masterWF, new String[] { "FlagCode", "FlagDesc" },  new Object[][] { { "Active", "0", 1 } }, 300));
 		ModuleUtil.register("PresentmentReasonCode", new ModuleMapping("PresentmentReasonCode", PresentmentReasonCode.class, new String[] { "PresentmentReasonCode", "PresentmentReasonCode_AView" },
 				masterWF, new String[] { "Code", "Description" }, null, 300));
 		ModuleUtil.register("FinanceStatusCode",new ModuleMapping("FinanceStatusCode", FinanceStatusCode.class, new String[]{"FINANCESTATUSCODES", "FINANCESTATUSCODES_AView"},masterWF, new String[] {"StatusCode","StatusDesc"} , null,300));
 		ModuleUtil.register("NPABucketConfiguration",new ModuleMapping("NPABucketConfiguration", NPABucketConfiguration.class, new String[]{"NPABUCKETSCONFIG", "NPABUCKETSCONFIG_AView"}, masterWF,new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("Entities", new ModuleMapping("Entities", Entities.class, new String[] { "Entities", "Entities_AView" },
-				masterWF, new String[] { "EntityCode", "EntityDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
+				masterWF, new String[] { "EntityCode", "EntityDesc" },  new Object[][] { { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
 		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","pANNumber"},null, 600));
@@ -900,7 +904,7 @@ public class PennantJavaUtil {
 			"FinFeeDetail", "FinFeeDetail_AView" }, null, new String[] {"FinReference","FinEvent" }, null, 600));
 
 		ModuleUtil.register("Rule", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
-				limitconfigWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
+				limitconfigWF, new String[] {"RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail", new ModuleMapping("CorpScoreGroupDetail",
 				CorpScoreGroupDetail.class, new String[] { "CorpScoringGroupDetail", "CorpScoringGroupDetail" }, null,
@@ -911,7 +915,7 @@ public class PennantJavaUtil {
 						"NFRuleDesc", "MaxScore" }, null, 300));
 
 		ModuleUtil.register("ScoringGroup", new ModuleMapping("ScoringGroup", ScoringGroup.class, new String[] {
-				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupId",
+				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupCode",
 				"ScoreGroupName" }, null, 350));
 
 		ModuleUtil.register("ScoringSlab", new ModuleMapping("ScoringSlab", ScoringSlab.class, new String[] {
@@ -924,7 +928,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("MailTemplate", new ModuleMapping("MailTemplate", MailTemplate.class, new String[] {
 				"Templates", "Templates_AView" }, masterWF, new String[] { "TemplateCode", "TemplateDesc" },
-				new String[][] { { "Active", "0", "1" } }, 400));
+				new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("Notifications", new ModuleMapping("Notifications", Notifications.class, new String[] {
 				"Notifications", "Notifications_AView" }, masterWF, new String[] { "RuleCode", "RuleModule",
@@ -937,7 +941,7 @@ public class PennantJavaUtil {
 		/************* Solution Factory *************/
 
 		ModuleUtil.register("AccountType", new ModuleMapping("AccountType", AccountType.class, new String[] {
-				"RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF, new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "AcTypeIsActive", "0", "1" } },
+				"RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF, new String[] { "AcType", "AcTypeDesc" }, new Object[][] { { "AcTypeIsActive", "0", 1 } },
 				400));
 
 		ModuleUtil.register("AssetType", new ModuleMapping("AssetType", AssetType.class, new String[] {
@@ -946,12 +950,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("CustomerType", new ModuleMapping("CustomerType", CustomerType.class, new String[] {
 				"RMTCustTypes", "RMTCustTypes_AView" }, masterWF, new String[] { "CustTypeCode", "CustTypeDesc" },
-				new String[][] { { "CustTypeIsActive", "0", "1" }, { "CustTypeCode", "1", PennantConstants.NONE } },
+				new Object[][] { { "CustTypeIsActive", "0", 1 }, { "CustTypeCode", "1", PennantConstants.NONE } },
 				500));
 
 		ModuleUtil.register("CustomerGroup", new ModuleMapping("CustomerGroup", CustomerGroup.class, new String[] {
 				"CustomerGroups", "CustomerGroups_AView" }, customerWF, new String[] { "CustGrpID", "CustGrpCode",
-				"CustGrpDesc" }, new String[][] { { "CustGrpisActive", "1", "0" } }, 300));
+				"CustGrpDesc" }, new Object[][] { { "CustGrpisActive", "1", 1 } }, 300));
 
 		ModuleUtil.register("DedupParm", new ModuleMapping("DedupParm", DedupParm.class, new String[] { "DedupParams",
 				"DedupParams_AView" }, masterWF, new String[] { "QueryCode", "QueryModule" }, null, 300));
@@ -983,18 +987,18 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinanceWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_FTView" }, masterWF, new String[] {
-						"LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName",
-							"0", "FINANCE" }, { "FinIsActive", "0", "1"} }, 600));
+						"LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new Object[][] { { "ModuleName",
+							"0", "FINANCE" }, { "FinIsActive", "0", 1} }, 600));
 		
 		ModuleUtil.register("CollateralWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, masterWF, new String[] {
-						"TypeCode", "CollateralDesc" }, new String[][] { { "ModuleName",
-						"0", "COLLATERAL" }, { "FinIsActive", "0", "1"} }, 300));
+						"TypeCode", "CollateralDesc" }, new Object[][] { { "ModuleName",
+						"0", "COLLATERAL" }, { "FinIsActive", "0", 1} }, 300));
 		
 		ModuleUtil.register("CommitmentWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, masterWF, new String[] {
-						"TypeCode", "CommitmentTypeDesc" }, new String[][] { { "ModuleName",
-							"0", "COMMITMENT" }, { "FinIsActive", "0", "1"} }, 300));
+						"TypeCode", "CommitmentTypeDesc" }, new Object[][] { { "ModuleName",
+							"0", "COMMITMENT" }, { "FinIsActive", "0", 1} }, 300));
 
 		ModuleUtil.register("PromotionWorkFlow", new ModuleMapping("PromotionWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_PTView" }, masterWF, new String[] {
@@ -1008,12 +1012,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinanceType", new ModuleMapping("FinanceType", FinanceType.class, new String[] {
 				"RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF, new String[] { "FinType",
-				"FinCategory", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" },
+				"FinCategory", "FinTypeDesc" }, new Object[][] { { "FinIsActive", "0", 1 },
 				{ "Product", "0", "" } }, 600));
 
 		ModuleUtil.register("CMTFinanceType", new ModuleMapping("FinanceType", FinanceType.class, new String[] {
 				"RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF, new String[] { "FinType", "FinTypeDesc" },
-				new String[][] { { "FinIsActive", "0", "1" }, { "Product", "0", "" } }, 600));
+				new Object[][] { { "FinIsActive", "0", 1 }, { "Product", "0", "" } }, 600));
 
 		ModuleUtil.register("FinTypeAccount", new ModuleMapping("FinTypeAccount", FinTypeAccount.class,
 				new String[] { "FinTypeAccount" }, masterWF , new String[] { "FinCcy", "Event" }, null, 300));
@@ -1193,7 +1197,7 @@ public class PennantJavaUtil {
 				null, 300));
 		
 		ModuleUtil.register("CMTLimitLine", new ModuleMapping("LimitDetails", LimitDetails.class, new String[] { "LimitDetails", "LimitDetails_AView" },
-				masterWF, new String[] { "DetailId", "LimitLine"},  null, 400)); //TODO
+				masterWF, new String[] { "DetailId", "LimitLine"},  null, 400));
 
 		/************* JV Postings *************/
 
@@ -1506,8 +1510,8 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("InterestRateBasisCode", new ModuleMapping("InterestRateBasisCode",
 				InterestRateBasisCode.class, new String[] { "BMTIntRateBasisCodes", "BMTIntRateBasisCodes_AView" },
-				masterWF , new String[] { "IntRateBasisCode", "IntRateBasisDesc" }, new String[][] { {
-						"IntRateBasisIsActive", "0", "1" } }, 300));
+				masterWF , new String[] { "IntRateBasisCode", "IntRateBasisDesc" }, new Object[][] { {
+						"IntRateBasisIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("ExtendedFieldHeader", new ModuleMapping("ExtendedFieldHeader", ExtendedFieldHeader.class,
 				new String[] { "ExtendedFieldHeader", "ExtendedFieldHeader_AView" }, masterWF, new String[] { "ModuleId",
@@ -1515,7 +1519,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("Frequency", new ModuleMapping("Frequency", Frequency.class, new String[] {
 				"BMTFrequencies", "BMTFrequencies_AView" }, masterWF , new String[] { "FrqCode", "FrqDesc" },
-				new String[][] { { "FrqIsActive", "0", "1" } }, 300));
+				new Object[][] { { "FrqIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("Language", new ModuleMapping("Language", Language.class, new String[] { "BMTLanguage",
 				"BMTLanguage_AView" }, masterWF , new String[] { "LngCode", "LngDesc" }, null, 300));
@@ -1548,7 +1552,7 @@ public class PennantJavaUtil {
 				new String[] { "UsrLogin", "UsrFName", "UsrMName", "UsrLName" }, null, 600));
 
 		ModuleUtil.register("SecurityRole", new ModuleMapping("SecurityRole", SecurityRole.class, new String[] {
-				"SecRoles", "SecRoles" }, masterWF , new String[] { "RoleID", "RoleCd" }, null, 300));
+				"SecRoles", "SecRoles" }, masterWF , new String[] {  "RoleCd", "RoleDesc" }, null, 300));
 
 		ModuleUtil.register("SecurityRoleEnq", new ModuleMapping("SecurityRole", SecurityRole.class, new String[] {
 				"SecRoles", "SecRoles" }, masterWF , new String[] { "RoleCd", "RoleDesc" }, null, 450));
@@ -1569,15 +1573,15 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("AccountEngineEvent", new ModuleMapping("AccountEngineEvent", AccountEngineEvent.class,
 				new String[] { "BMTAEEvents", "BMTAEEvents_AView" }, masterWF , new String[] { "AEEventCode",
-						"AEEventCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 600));
+						"AEEventCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("RatingCode", new ModuleMapping("RatingCode", RatingCode.class, new String[] {
 				"BMTRatingCodes", "BMTRatingCodes_AView" }, masterWF, new String[] { "RatingCode", "RatingCodeDesc",
-				"RatingType" }, new String[][] { { "RatingIsActive", "0", "1" } }, 300));
+				"RatingType" }, new Object[][] { { "RatingIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("RatingType", new ModuleMapping("RatingType", RatingType.class, new String[] {
 				"BMTRatingTypes", "BMTRatingTypes_AView" }, masterWF, new String[] { "RatingType", "RatingTypeDesc" },
-				new String[][] { { "RatingIsActive", "0", "1" } }, 300));
+				new Object[][] { { "RatingIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("PFSParameter", new ModuleMapping("PFSParameter", PFSParameter.class, new String[] {
 				"SMTparameters", "SMTparameters_AView" }, masterWF , new String[] { "SysParmCode", "SysParmDesc" }, null,
@@ -1595,7 +1599,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("WorkFlowDetails", new ModuleMapping("WorkFlowDetails", WorkFlowDetails.class,
 				new String[] { "WorkFlowDetails", "WorkFlowDetails" }, masterWF, new String[] { "WorkFlowType",
-						"WorkFlowDesc" }, new String[][] { { "WorkFlowActive", "0", "1" } }, 500));
+						"WorkFlowDesc" }, new Object[][] { { "WorkFlowActive", "0", 1 } }, 500));
 		
 
 		/************* AMT Masters *************/
@@ -1612,8 +1616,12 @@ public class PennantJavaUtil {
 				null, 300));
 
 		ModuleUtil.register("VehicleDealer", new ModuleMapping("VehicleDealer", VehicleDealer.class, new String[] {
-				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] { "DealerId", "DealerName" }, null,
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, null,
 				300));
+		
+		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class, new String[] {
+				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, 
+				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER } }, 300));
 
 		ModuleUtil.register("VehicleManufacturer", new ModuleMapping("VehicleManufacturer", VehicleManufacturer.class,
 				new String[] { "AMTVehicleManufacturer", "AMTVehicleManufacturer_AView" }, masterWF , new String[] {
@@ -1621,7 +1629,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("VehicleModel", new ModuleMapping("VehicleModel", VehicleModel.class, new String[] {
 				"AMTVehicleModel", "AMTVehicleModel_AView" }, masterWF , new String[] { "lovDescVehicleManufacturerName",
-				"VehicleModelDesc", }, null, 300));
+				"VehicleModelDesc" }, null, 300));
 
 		ModuleUtil.register("VehicleVersion", new ModuleMapping("VehicleVersion", VehicleVersion.class, new String[] {
 				"AMTVehicleVersion", "AMTVehicleVersion_AView" }, masterWF , new String[] { "VehicleVersionId",
@@ -1762,11 +1770,11 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("SystemInternalAccountType", new ModuleMapping("AccountType", AccountType.class,
 				new String[] { "RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF , new String[] { "AcType",
-						"AcTypeDesc" }, new String[][] { { "InternalAc", "0", "1" } }, 300));
+						"AcTypeDesc" }, new Object[][] { { "InternalAc", "0", 1 } }, 300));
 
 		ModuleUtil.register("CustomerInternalAccountType", new ModuleMapping("AccountType", AccountType.class,
 				new String[] { "RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF , new String[] { "AcType",
-						"AcTypeDesc" }, new String[][] { { "CustSysAc", "0", "1" } }, 300));
+						"AcTypeDesc" }, new Object[][] { { "CustSysAc", "0", 1 } }, 300));
 
 		ModuleUtil.register("DocumentDetails", new ModuleMapping("DocumentDetails", DocumentDetails.class,
 				new String[] { "DocumentDetails" }, masterWF , new String[] { "DocModule", "DocCategory" }, null, 300));
@@ -1856,17 +1864,17 @@ public class PennantJavaUtil {
 
 		// LIMIT MODULE START
 		ModuleUtil.register("LimitFilterQuery", new ModuleMapping("LimitFilterQuery", LimitFilterQuery.class, new String[] { "LimitParams",
-				"LimitParams_AView" }, "MSTGRP1", new String[] { "QueryCode", "QueryDesc" }, new String[][] { { "Active", "0", "1" } }, 300));
+				"LimitParams_AView" }, "MSTGRP1", new String[] { "QueryCode", "QueryDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("LimitHeader", new ModuleMapping("LimitHeader", LimitHeader.class, new String[] {
 				"LimitHeader", "LimitHeader_AView" }, limitsetupWF, new String[] { "HeaderId",
-				"ResponsibleBranch" }, new String[][] { { "Active", "0", "1" } }, 300));
+				"ResponsibleBranch" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		/*ModuleUtil.register("LimitLine", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
 				masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" },  new String[][] { { "RuleModule", "0", RuleConstants.MODULE_LMTLINE } }, 400));*/
 		
 		ModuleUtil.register("LimitDetails", new ModuleMapping("LimitDetails", LimitDetails.class, new String[] {
-				"LimitDetails", "LimitDetails_AView" }, "MSTGRP1", new String[] { "DetailId", "LimitGroup" }, new String[][] { { "Active", "0", "1" } },
+				"LimitDetails", "LimitDetails_AView" }, "MSTGRP1", new String[] { "DetailId", "LimitGroup" }, new Object[][] { { "Active", "0", 1 } },
 				300));
 
 		ModuleUtil.register("LimitDetail", new ModuleMapping("LimitDetails", LimitDetails.class, new String[] {
@@ -1874,23 +1882,23 @@ public class PennantJavaUtil {
 				"ExpiryDate", "LimitSanctioned", "CalculatedLimit" }, null, 600));
 
 		ModuleUtil.register("LimitGroup", new ModuleMapping("LimitGroup", LimitGroup.class, new String[] {
-				"LimitGroup", "LimitGroup_AView" }, limitconfigWF, new String[] { "GroupCode", "GroupName" }, new String[][] { { "Active", "0", "1" } }, 300));
+				"LimitGroup", "LimitGroup_AView" }, limitconfigWF, new String[] { "GroupCode", "GroupName" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("LimitGroupLines", new ModuleMapping("LimitGroupLines", LimitGroupLines.class,
 				new String[] { "LimitGroupLines", "LimitGroupLines_AView" }, "MSTGRP1", new String[] {
-						"LimitGroupCode", "GroupCode", "ItemCode" }, new String[][] { { "Active", "0", "1" } }, 300));
+						"LimitGroupCode", "GroupCode", "ItemCode" }, new Object[][] { { "Active", "0", 1 }}, 300));
 
 		ModuleUtil.register("LimitStructure", new ModuleMapping("LimitStructure", LimitStructure.class, new String[] {
 				"LimitStructure", "LimitStructure_AView" }, limitconfigWF, new String[] { "StructureCode",
-				"StructureName" }, new String[][] { { "Active", "0", "1" } }, 300));
+				"StructureName" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("LimitStructureDetail", new ModuleMapping("LimitStructureDetail",
 				LimitStructureDetail.class,
 				new String[] { "LimitStructureDetails", "LimitStructureDetails_AView" }, "MSTGRP1", new String[] {
-						"LimitStructureCode", "StructureName" }, new String[][] { { "Active", "0", "1" } }, 300));
+						"LimitStructureCode", "StructureName" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("ErrorDetail", new ModuleMapping("ErrorDetail", ErrorDetail.class, new String[] {
-				"ErrorDetails", "ErrorDetails_AView" }, masterWF, new String[] { "ErrorCode", "ErrorMessage" }, null, 300));
+				"ErrorDetails", "ErrorDetails_AView" }, masterWF, new String[] { "Code", "Message" }, null, 300));
 		
 		ModuleUtil.register("CollateralAssignment", new ModuleMapping("CollateralAssignment",
 				CollateralAssignment.class, new String[] { "CollateralAssignment", "CollateralAssignment_AView" },
@@ -1965,7 +1973,7 @@ public class PennantJavaUtil {
  
 		ModuleUtil.register("AmountCode", new ModuleMapping("Amountcode",
 				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
-				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
+				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new Object[][] { { "AmountCodeIsActive", "0", 1 } }, 300));
 		ModuleUtil.register("DisbursementRegistration", new ModuleMapping("DisbursementRegistration",
 				FinAdvancePayments.class, new String[] { "INT_DISBURSEMENT_REQUEST_VIEW",
 						" INT_DISBURSEMENT_REQUEST_VIEW" }, null, new String[] { "PAYMENTID", "FINREFERENCE" }, null, 300));
@@ -1987,14 +1995,14 @@ public class PennantJavaUtil {
 				"ManualAdvise_AView" }, "MANUAL_ADVICE", new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {"BounceReasons", "BounceReasons_AView" }, 
-				masterWF, new String[] { "BounceID" , "BounceCode", "Category", "Reason" }, new String[][] { { "Active", "0", "1" } }, 600));
+				masterWF, new String[] { "BounceID" , "BounceCode", "Category", "Reason" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
 				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",
-				"ProfitCenterDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
+				"ProfitCenterDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
-				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
+				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 		/*PresentmentDetail*/
 		ModuleUtil.register("PresentmentDetail", new ModuleMapping("PresentmentDetail", PresentmentDetail.class, new String[] { "PresentmentDetails",
 				"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));
@@ -2033,6 +2041,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
+
 		/* RMT Lov Filed Details */
 		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
@@ -2043,7 +2052,16 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("PdfDocumentType", new ModuleMapping("PdfDocumentType", DocumentType.class, new String[] {
 				"BMTDocumentTypes", "BMTDocumentTypes_AView" }, masterWF, new String[] { "DocTypeCode","DocTypeDesc"},
-				new Object[][] { { "DocTypeIsActive", "0", "1" }}, 350));
+				new Object[][] { { "DocTypeIsActive", "0", 1 }}, 350));
+		
+		ModuleUtil.register("ChequeHeader", new ModuleMapping("ChequeHeader", ChequeHeader.class, new String[] { "CHEQUEHEADER",
+		"CHEQUEHEADER_AView" }, masterWF, new String[] {"FinReference","ChequeType","NoOfCheques","TotalAmount"},null, 600));
+		
+		ModuleUtil.register("ChequeDetail", new ModuleMapping("ChequeDetail", ChequeDetail.class, new String[] { "CHEQUEDETAIL",
+		"CHEQUEDETAIL_AView" }, masterWF, new String[] {"HeaderID","BankBranchID","AccountNo","ChequeSerialNo","ChequeDate","ChequeCcy","Status"},null, 600));
+		
+		ModuleUtil.register("CacheStats", new ModuleMapping("CacheStats", CacheStats.class, new String[] { "CACHE_PARAMETERS",
+		"CACHE_PARAMETERS" }, null, new String[] {""},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

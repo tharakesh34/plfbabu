@@ -1,3 +1,37 @@
+pff 4.1.0, 2018-01-26
+---------------------
+-- Refactoring Rename bean ErrorDetails from ErrorDetails to ErrorDetail.
+-- Refactoring Remove the prefix Error from the ErrorDetail properties.
+-- Refactoring Alter columns in tables and view's including audit.
+
+pff 4.1.0, 2018-01-09
+---------------------
+Cache enabled for ErrorDetails and SystemParameter service classes.
+
+pff 4.1.0, 2018-01-06
+---------------------
+- Refactoring renamed the application Datasoure and the corresponding TransactionManager(pfsDatasource and pfsTransactionManager) bean Id's to datasource and transactionManager
+- Refactoring removed the ErrorDetail class and used the ErrorDetails on behalf of ErrorDetail.   
+
+pff 4.1.0, 2017-12-22
+---------------------
+- Merged Reason Category Master code from Base/MLOD to Base/Trunk
+- Merged Reason Code Master code from Base/MLOD to Base/Trunk
+- Merged Reason Type Master code from Base/MLOD to Base/Trunk
+
+pff 4.1.0, 2017-12-21
+---------------------
+1.	DMS Integration.
+2.	CIBIL Integration.
+3.	New Tab for CIBIL Integration.
+4.	Mandate registration request.
+5.	Mandate registration response.
+6.	Update loan changes.
+7.	Mandate Partner Bank Intergartion with SFTP
+8.	Disbursment Partner Bank Intergartion with SFTP
+9.  PDF Extraction
+
+
 pff 4.1.0, 2017-12-12
 ---------------------
 - Refactoring moved MessageUtil class from the package com.pennant.webui.util to com.pennanttech.pennapps.web.util
@@ -50,14 +84,20 @@ pff 4.1.0, 2017-11-22
 
 pff 4.0.0, 2017-10-17
 ---------------------
-- Refactoring changes- Moved model classes and packages from PFSJava project to pff-model project
+- updated JDBC Search Processor for postgres changes
+- Added 3 new fields to System Master-> Document Type for pdf extraction and code modified accordingly to support document-parser module.
+- Enhanced JDBC Search Processor to support named parameters for better performance and avoiding SQL Injection.
+- Enhanced support for PostgreSQL.
+- Removed unnecessary classes and empty packages.
 - Enhanced menu builder and tree menu builder for menu generation.
+- Allow grouping of extended fields.
+- Allow extended fields in both customer & loan APIs.
 - Added support for PostgreSQL.
 - Added extended fields for customers and loans along with the APIs.
 - Removed the rights for menu groups and displaying the menu groups only when any of the child menu items are visible within the hierarchy.
 - Changed the display of menu to easily distinguish the children with different styles (colors).
 - Removed deprecated method SecurityRightDAO.getRoleRights().
-- Upgraded charts with JavaScript charts with re-factoring.
+- Upgraded charts with JavaScript charts along with re-factoring.
 - Introduced dependency management to consolidate and centralize the management of dependency versions.
 - Changed artifact group identifier to "com.pennanttech.pennapps.pff" and added new properties for the same along with version.
 - Upgraded spring batch to 3.0.8.RELEASE.

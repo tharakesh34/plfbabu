@@ -9,7 +9,7 @@ public class ChartDetail implements java.io.Serializable{
 	private String strXML;
 	private String chartWidth;
 	private String chartHeight;
-	private String swfFile;
+	private String chartType;
 	private String chartId;
 	private String iFrameWidth;
 	private String iFrameHeight;
@@ -55,22 +55,16 @@ public class ChartDetail implements java.io.Serializable{
 	public void setChartHeight(String chartHeight) {
 		this.chartHeight = chartHeight;
 	}
-	public void setSwfFile(String swfFile) {
-		this.swfFile = swfFile;
-	}
-	public String getSwfFile() {
-		return swfFile;
-	}
 	public void setChartId(String chartId) {
 		this.chartId = chartId;
 	}
 	public String getChartId() {
 		return chartId;
 	}
-	
-	
-	
-	
-	
-
+	public String getChartType() {
+		return chartType;
+	}
+	public void setChartType(String chartType) {
+		this.chartType = chartType;
+	}
 }

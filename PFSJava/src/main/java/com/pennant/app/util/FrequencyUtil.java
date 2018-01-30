@@ -52,8 +52,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.model.FrequencyDetails;
-import com.pennant.backend.dao.ErrorDetailsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 
@@ -64,7 +63,6 @@ import com.pennant.backend.util.PennantConstants;
 public class FrequencyUtil implements Serializable {
 	private static final long serialVersionUID = -1464410860290217531L;
 
-	private static ErrorDetailsDAO errorDetailsDAO;
 	private static final int[] frqMthDays = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	public static final String Y01 = "01";
@@ -294,7 +292,7 @@ public class FrequencyUtil implements Serializable {
 		return validateFrequency(new FrequencyDetails(frequency));
 	}
 
-	public static ErrorDetails validateFrequency(String frequency) {
+	public static ErrorDetail validateFrequency(String frequency) {
 		FrequencyDetails frequencyDetails = validateFrequency(new FrequencyDetails(frequency));
 		return frequencyDetails.getErrorDetails();
 	}
@@ -426,14 +424,14 @@ public class FrequencyUtil implements Serializable {
 			break;
 		default:
 			frequencyDetail
-					.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, "Invalid Frequency Code", null));
+					.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, "Invalid Frequency Code", null));
 		}
 
 		return frequencyDetail;
 	}
 
-	private static ErrorDetails getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
-		return ErrorUtil.getErrorDetail(new ErrorDetails(errorField, errorCode, errParm, valueParm),
+	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
+		return ErrorUtil.getErrorDetail(new ErrorDetail(errorField, errorCode, errParm, valueParm),
 				SessionUserDetails.getUserLanguage());
 	}
 
@@ -485,7 +483,7 @@ public class FrequencyUtil implements Serializable {
 		return frequencyDetails;
 	}
 
-	private static ErrorDetails validMonthDay(int startMth, int endMth, int startDay, int endDay,
+	private static ErrorDetail validMonthDay(int startMth, int endMth, int startDay, int endDay,
 			FrequencyDetails frequencyDetail) {
 
 		String[] errParm = new String[1];
@@ -1331,17 +1329,5 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		return "";
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public static ErrorDetailsDAO getErrorDetailsDAO() {
-		return errorDetailsDAO;
-	}
-
-	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
-		FrequencyUtil.errorDetailsDAO = errorDetailsDAO;
 	}
 }

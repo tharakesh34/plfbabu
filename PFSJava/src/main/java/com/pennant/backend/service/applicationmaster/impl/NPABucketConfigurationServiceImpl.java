@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -363,7 +363,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 					+ nPABucketConfiguration.getProductCode();
 			parameters[1] = PennantJavaUtil.getLabel("label_BucketID") + ": " + nPABucketConfiguration.getBucketID();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		if (!StringUtils.trimToEmpty(nPABucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL) && StringUtils.trimToEmpty(nPABucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(), nPABucketConfiguration.getDueDays(), "");
@@ -375,7 +375,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 				parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": " + nPABucketConfiguration.getProductCode();
 				parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + ": " + nPABucketConfiguration.getDueDays();
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015", parameters, parametersDueDays), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, parametersDueDays), usrLanguage));
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

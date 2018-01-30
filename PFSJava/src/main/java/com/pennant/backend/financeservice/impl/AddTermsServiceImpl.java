@@ -10,7 +10,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.AddTermsService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -53,21 +53,21 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			String[] valueParm = new String[2];
 			valueParm[0] = "Recal From Date";
 			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30512", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30512", "", valueParm), lang));
 			return auditDetail;
 		}
 		
 		if(finServiceInstruction.getRecalFromDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Recal From Date";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 			return auditDetail;
 		}
 		if(finServiceInstruction.getTerms() <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Terms";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
 			return auditDetail;
 		}
 		
@@ -91,7 +91,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			if(!isValidRecalFromDate) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}
 		
@@ -114,7 +114,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 				&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
 			String[] valueParm = new String[1];
 			valueParm[0] = label;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
 			return auditDetail;
 		}
 		return null;

@@ -94,7 +94,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		selectSql.append(" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
 		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append( " ,BankCodeDesc, FundingAcDesc, PartnerBankAc, PartnerBankAcType ");
+			selectSql.append( " ,BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType, FeeTypeCode ");
 			if (StringUtils.trimToEmpty(type).contains("AView")) {
 				selectSql.append( " ,FeeTypeDesc ");
 			}
@@ -215,13 +215,12 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		selectSql.append(" select MAX(T2.receivedDate)" );
 		selectSql.append(" From FINRECEIPTHEADER T1 " );
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID" );
-		selectSql.append(" where T1.Reference = '" + finReference + "'" );
-		
+		selectSql.append(" where T1.Reference = :FinReference AND T2.Status NOT IN('C','B') " );
 		
 		logger.debug("selectSql: " + selectSql.toString());
+		Date maxReceivedDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);	
 		logger.debug("Leaving");
-		
-		return  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);	
+		return maxReceivedDate;
 	}
 
 }

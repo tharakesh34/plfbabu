@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -92,8 +92,8 @@ public class FinanceFlagsController {
 			auditHeader = financeFlagsService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -138,8 +138,8 @@ public class FinanceFlagsController {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = financeFlagsService.deleteFinanceFlag(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -163,7 +163,7 @@ public class FinanceFlagsController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceFlag.getBefImage(), aFinanceFlag);
 		return new AuditHeader(null,
 				null, null, null, auditDetail,
-				aFinanceFlag.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				aFinanceFlag.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	public void setFinanceFlagsService(FinanceFlagsService financeFlagsService) {
 		this.financeFlagsService = financeFlagsService;

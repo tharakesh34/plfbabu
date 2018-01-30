@@ -245,6 +245,8 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name="extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 	
+	private ChequeHeader chequeHeader = null;
+	
 	// Reason Details
 	private ReasonHeader reasonHeader;
 
@@ -883,6 +885,14 @@ public class FinanceDetail implements java.io.Serializable {
 		this.extendedDetails = extendedDetails;
 	}
 
+	public ChequeHeader getChequeHeader() {
+		return chequeHeader;
+	}
+
+	public void setChequeHeader(ChequeHeader chequeHeader) {
+		this.chequeHeader = chequeHeader;
+	}
+	
 	public ReasonHeader getReasonHeader() {
 		return reasonHeader;
 	}
@@ -890,6 +900,5 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setReasonHeader(ReasonHeader reasonHeader) {
 		this.reasonHeader = reasonHeader;
 	}
-
 
 }

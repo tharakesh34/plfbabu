@@ -290,22 +290,31 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	public int validateMasterData(String tableName, String column, String filterColumn, String fieldValue) {
 		logger.debug("Entering");
 		
+		boolean tempFix = false;
 		MapSqlParameterSource source=new MapSqlParameterSource();
 		source.addValue("ColumnName", column);
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
 		if(StringUtils.equals("CustGrpID", column)) {//FIXME:DDP
 			source.addValue("Value", Integer.parseInt(fieldValue));
+		} else if(StringUtils.equals("DealerName", column)) {
+			tempFix = true;
+			source.addValue("Value", Long.parseLong(fieldValue));
 		}
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
-		selectSql.append(column);
-		selectSql.append("= :Value");
-		if(StringUtils.isNotBlank(filterColumn)){
-			selectSql.append(" AND "+filterColumn+"= 1");
+		if(tempFix) {
+			selectSql.append("DealerId");
+			selectSql.append("= :Value");
+		} else {
+			selectSql.append(column);
+			selectSql.append("= :Value");
+			if(StringUtils.isNotBlank(filterColumn)){
+				selectSql.append(" AND "+filterColumn+"= 1");
+			}
 		}
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
@@ -317,6 +326,59 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		}
 		logger.debug("Leaving");
 		
+		return recordCount;
+	}
+	
+	/**
+	 * 
+	 * @param tableName
+	 * @param lovField
+	 * @param filters
+	 * @param fieldValue
+	 * @return
+	 */
+	@Override
+	public int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters,String fieldValue) {
+		logger.debug("Entering");
+		
+		String valueColumn = lovField;
+		String filterColumn = filters[0][0].toString();
+		String filterColumnValue = filters[0][2].toString();
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		if(!filterColumn.contains("IsActive")){
+		source.addValue("filterColumnValue", filterColumnValue);
+		}else{
+			try{
+				source.addValue("filterColumnValue", Integer.parseInt(filterColumnValue));
+			}catch (NumberFormatException e) {
+				logger.debug("Exception: ",e);
+				source.addValue("filterColumnValue", filterColumnValue);
+			}
+		}
+		source.addValue("Value", fieldValue);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT COUNT(*) FROM ");
+		selectSql.append(tableName);
+		selectSql.append(" WHERE ");
+		selectSql.append(valueColumn);
+		selectSql.append("= :Value");
+		if (StringUtils.isNotBlank(filterColumn)) {
+			selectSql.append(" AND " + filterColumn);
+			selectSql.append("= :filterColumnValue");
+		}
+		logger.debug("insertSql: " + selectSql.toString());
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
 		return recordCount;
 	}
 	

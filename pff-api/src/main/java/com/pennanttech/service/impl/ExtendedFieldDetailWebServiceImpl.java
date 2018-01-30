@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
@@ -36,7 +36,7 @@ public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRes
 		ExtendedFieldHeader response = null;
 		try {
 			//ExtendedFieldHeader Validations
-			List<ErrorDetails> errorDetails = extendedFieldDetailService.doValidations(extendedFieldHeader);
+			List<ErrorDetail> errorDetails = extendedFieldDetailService.doValidations(extendedFieldHeader);
 			if (errorDetails.isEmpty()) {
 				response = extendedFieldDetailService.getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),
 						extendedFieldHeader.getSubModuleName(), "");
@@ -53,11 +53,11 @@ public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRes
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90351", valueParm));
 				}
 			} else {
-				for (ErrorDetails errorDetail : errorDetails) {
+				for (ErrorDetail errorDetail : errorDetails) {
 					response = new ExtendedFieldHeader();
 					doEmptyResponseObject(response);
 					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 					return response;
 				}
 			}

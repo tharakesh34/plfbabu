@@ -45,6 +45,7 @@ package com.pennant.app.util;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -597,24 +598,175 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setFeeWaived(rpyQueueHeader.getFeeWaived());
 		amountCodes.setInsWaived(rpyQueueHeader.getInsWaived());
 		
+		// Accrual & Future Paid Details
+		if(StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_EARLYSTL)){
+			
+			int schSize = scheduleDetails.size();
+			FinanceScheduleDetail lastSchd = scheduleDetails.get(schSize - 1);
+			FinanceScheduleDetail lastPrvSchd = scheduleDetails.get(schSize - 2);
+			
+			// Profit Due Paid
+			if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd()) > 0){
+				amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(amountCodes.getPftWaived()));
+			}else{
+				amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(lastSchd.getProfitSchd()).add(amountCodes.getPftWaived()));
+			}
+			
+			// Profit Due Waived
+			if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd()) > 0){
+				amountCodes.setPftDueWaived(amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd()));
+			}else{
+				amountCodes.setPftDueWaived(BigDecimal.ZERO);
+			}
+			
+			// Principal Due Paid
+			if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+				amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(amountCodes.getPriWaived()));
+			}else{
+				amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(lastSchd.getPrincipalSchd()).add(amountCodes.getPriWaived()));
+			}
+			
+			// Principal Due Waived
+			if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+				amountCodes.setPriDueWaived(amountCodes.getPriWaived().subtract(lastSchd.getPrincipalSchd()));
+			}else{
+				amountCodes.setPriDueWaived(BigDecimal.ZERO);
+			}
+			
+			Date prvSchdMonthEnd = DateUtility.getMonthEndDate(lastPrvSchd.getSchDate());
+			int curDays = DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), lastSchd.getSchDate());
+			if(DateUtility.compare(prvSchdMonthEnd, lastSchd.getSchDate()) < 0){
+				int daysTillMonthEnd = DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), prvSchdMonthEnd);
+				BigDecimal acrTillMonthEndFromLastDue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 
+						9, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillMonthEnd));
+				
+				acrTillMonthEndFromLastDue = CalculationUtil.roundAmount(acrTillMonthEndFromLastDue, 
+						financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
+				// Accrual Paid
+				if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue)) > 0){
+					BigDecimal diff = amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue));
+					if(diff.compareTo(acrTillMonthEndFromLastDue) > 0){
+						amountCodes.setAccruedPaid(BigDecimal.ZERO);
+					}else{
+						amountCodes.setAccruedPaid(acrTillMonthEndFromLastDue.subtract(diff));
+					}
+				}else{
+					amountCodes.setAccruedPaid(acrTillMonthEndFromLastDue);
+				}
+
+				// Accrual Waived
+				if(amountCodes.getPftWaived().compareTo(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue)) > 0){
+					BigDecimal diff = amountCodes.getPftWaived().subtract(lastSchd.getProfitSchd().subtract(acrTillMonthEndFromLastDue));
+					if(diff.compareTo(acrTillMonthEndFromLastDue) > 0){
+						amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue);
+					}else{
+						amountCodes.setAccrueWaived(acrTillMonthEndFromLastDue.subtract(diff));
+					}
+				}else{
+					amountCodes.setAccrueWaived(BigDecimal.ZERO);
+				}
+			}else{
+				amountCodes.setAccruedPaid(BigDecimal.ZERO);
+				amountCodes.setAccrueWaived(BigDecimal.ZERO);
+			}
+			
+			BigDecimal unaccrue = BigDecimal.ZERO;
+			if(DateUtility.compare(prvSchdMonthEnd, lastSchd.getSchDate()) < 0){
+				int daysTillTodayFromME = DateUtility.getDaysBetween(prvSchdMonthEnd, lastSchd.getSchDate());
+				unaccrue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 9, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillTodayFromME));
+				unaccrue = CalculationUtil.roundAmount(unaccrue, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			}else{
+				unaccrue = lastSchd.getProfitSchd();
+			}
+			
+			// UnAccrue Paid
+			if(amountCodes.getPftWaived().compareTo(unaccrue) > 0){
+				amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
+			}else{
+				amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
+			}
+			
+			// UnAccrue Waived
+			if(amountCodes.getPftWaived().compareTo(unaccrue) > 0){
+				amountCodes.setUnAccrueWaived(unaccrue);
+			}else{
+				amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
+			}
+			
+			// Future Principal Paid
+			if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+				amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+			}else{
+				amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(amountCodes.getPriWaived()));
+			}
+			
+			// Future Principal Waived
+			if(amountCodes.getPriWaived().compareTo(lastSchd.getPrincipalSchd()) > 0){
+				amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd());
+			}else{
+				amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
+			}
+		}
+		
 		amountCodes.setExcessAmt(BigDecimal.ZERO);
 		amountCodes.setEmiInAdvance(BigDecimal.ZERO);
 		amountCodes.setPayableAdvise(BigDecimal.ZERO);
+		boolean resetFieldsReq = false;
 		if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
 			amountCodes.setExcessAmt(amountCodes.getRpTot());
+			amountCodes.setExPft(amountCodes.getRpPft());
+			amountCodes.setExPri(amountCodes.getRpPri());
+			amountCodes.setExPftDuePaid(amountCodes.getPftDuePaid());
+			amountCodes.setExPriDuePaid(amountCodes.getPriDuePaid());
+			amountCodes.setExSchFeePay(amountCodes.getSchFeePay());
+			amountCodes.setExSchInsPay(amountCodes.getInsPay());
+			amountCodes.setExAccruedPaid(amountCodes.getAccruedPaid());
+			amountCodes.setExUnAccruedPaid(amountCodes.getUnAccruedPaid());
+			amountCodes.setExFuturePriPaid(amountCodes.getFuturePriPaid());
 			amountCodes.setRpExcessTds(amountCodes.getRpTds());
-			amountCodes.setRpTds(BigDecimal.ZERO);
-			amountCodes.setRpTot(BigDecimal.ZERO);
+			resetFieldsReq = true;
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
 			amountCodes.setEmiInAdvance(amountCodes.getRpTot());
+			amountCodes.setEAPft(amountCodes.getRpPft());
+			amountCodes.setEAPri(amountCodes.getRpPri());
+			amountCodes.setEAPftDuePaid(amountCodes.getPftDuePaid());
+			amountCodes.setEAPriDuePaid(amountCodes.getPriDuePaid());
+			amountCodes.setEASchFeePay(amountCodes.getSchFeePay());
+			amountCodes.setEASchInsPay(amountCodes.getInsPay());
+			amountCodes.setEAAccruedPaid(amountCodes.getAccruedPaid());
+			amountCodes.setEAUnAccruedPaid(amountCodes.getUnAccruedPaid());
+			amountCodes.setEAFuturePriPaid(amountCodes.getFuturePriPaid());
 			amountCodes.setRpEmiAdvTds(amountCodes.getRpTds());
-			amountCodes.setRpTds(BigDecimal.ZERO);
-			amountCodes.setRpTot(BigDecimal.ZERO);
+			resetFieldsReq = true;
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
 			amountCodes.setPayableAdvise(amountCodes.getRpTot());
+			amountCodes.setPAPft(amountCodes.getRpPft());
+			amountCodes.setPAPri(amountCodes.getRpPri());
+			amountCodes.setPAPftDuePaid(amountCodes.getPftDuePaid());
+			amountCodes.setPAPriDuePaid(amountCodes.getPriDuePaid());
+			amountCodes.setPASchFeePay(amountCodes.getSchFeePay());
+			amountCodes.setPASchInsPay(amountCodes.getInsPay());
+			amountCodes.setPAAccruedPaid(amountCodes.getAccruedPaid());
+			amountCodes.setPAUnAccruedPaid(amountCodes.getUnAccruedPaid());
+			amountCodes.setPAFuturePriPaid(amountCodes.getFuturePriPaid());
 			amountCodes.setRpPayableTds(amountCodes.getRpTds());
-			amountCodes.setRpTds(BigDecimal.ZERO);
+			resetFieldsReq = true;
+		}
+		
+		// Fields Resetting if Required
+		if(resetFieldsReq){
 			amountCodes.setRpTot(BigDecimal.ZERO);
+			amountCodes.setRpPft(BigDecimal.ZERO);
+			amountCodes.setRpPri(BigDecimal.ZERO);
+			amountCodes.setPftDuePaid(BigDecimal.ZERO);
+			amountCodes.setPriDuePaid(BigDecimal.ZERO);
+			amountCodes.setSchFeePay(BigDecimal.ZERO);
+			amountCodes.setInsPay(BigDecimal.ZERO);
+			amountCodes.setAccruedPaid(BigDecimal.ZERO);
+			amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
+			amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+			amountCodes.setRpTds(BigDecimal.ZERO);
 		}
 		
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
@@ -624,6 +776,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+		if(rpyQueueHeader.getExtDataMap() != null){
+			dataMap.putAll(rpyQueueHeader.getExtDataMap());
+		}
 		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
 		aeEvent.setDataMap(dataMap);
 

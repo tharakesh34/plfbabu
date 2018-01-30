@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.amtmasters;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,9 +145,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	public void setDealerName(String dealerName) {
 		this.dealerName = dealerName;
 	}
-	
-	
-		
 	
 	public String getDealerTelephone() {
     	return dealerTelephone;
@@ -398,6 +396,24 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.zipCode = zipCode;
 	}
 
-	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> customerMap = new HashMap<String, Object>();
+		
+		return getDeclaredFieldValues(customerMap);
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
+		customerMap = new HashMap<String, Object>();
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+		return customerMap;
+	}	
 	
 }

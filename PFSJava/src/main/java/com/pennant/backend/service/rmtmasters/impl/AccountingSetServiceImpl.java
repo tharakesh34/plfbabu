@@ -58,7 +58,7 @@ import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
@@ -428,7 +428,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		AccountingSet accountingSet = (AccountingSet) auditDetail.getModelData();
 
 		AccountingSet tempAccountingSet = null;
@@ -450,18 +450,18 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				// With out Work flow only new records
 				if (befAccountingSet != null) { 
 					// Record Already Exists in the table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (accountingSet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { 
 					// if records type is new
 					if (befAccountingSet != null || tempAccountingSet != null) {
 						// if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAccountingSet == null || tempAccountingSet != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -473,13 +473,13 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 
 				if (befAccountingSet == null) { // if records not exists in the
 												// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldAccountingSet != null && !oldAccountingSet.getLastMntOn().equals(befAccountingSet.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
@@ -487,11 +487,11 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 
 				if (tempAccountingSet == null) { // if records not exists in the
 													// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempAccountingSet != null && oldAccountingSet != null && !oldAccountingSet.getLastMntOn().equals(tempAccountingSet.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -510,7 +510,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			}
 
 			if (count > 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
 		
@@ -521,7 +521,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			valueParm1[0] = accountset.getEventCode();
 			valueParm1[1] = accountset.getAccountSetCode();
 			errParm1[0]=PennantJavaUtil.getLabel("label_EventCode")+":"+valueParm1[0]+ ", "+PennantJavaUtil.getLabel("label_AccountSetCode")+":"+ valueParm1[1];		
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1,null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1,null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

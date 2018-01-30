@@ -65,7 +65,7 @@
 			<center border="none" autoscroll="false">
 				<div>
 					<groupbox id="gb_basicDetails" sclass="gb-dialog">
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+						<grid  id="grid_basicDetails" sclass="GridLayoutNoBorder"  fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="225px" />
 								<column />
@@ -133,17 +133,18 @@
 								<!-- PaymentTypeInstructions -->
 								<tabpanel style="overflow:auto">
 									<groupbox id="gb_PayTypeInstructions" mold="3d">
-										<listbox  id="listBoxPaymentTypeInstructions"  height="100%" width="100%"
+										<listbox  id="listBoxPaymentTypeInstructions" 
 											emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" 
 											style="text-align:left;border:none;" mold="default" multiple="false" sizedByContent="true" span="true">
 											<listhead sizable="true">
-												<listheader label="${c:l('listheader_PaymentHeaderDialog_Type.label')}"
+											<listheader width="20px" id="listheader_PaymentHeaderDialog_button" />
+											<listheader label="${c:l('listheader_PaymentHeaderDialog_Type.label')}"
 													sort="false" hflex="min" />
 												<listheader id="listheader_PaymentHeaderDialog_AvailableAmount" label="${c:l('listheader_PaymentHeaderDialog_AvailableAmount.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_PaymentHeaderDialog_PayAmount.label')}"
 													align="right" sort="false" hflex="min" />
-												<listheader id="listheader_PaymentHeaderDialog_Balance"  label="${c:l('listheader_PaymentHeaderDialog_Balance.label')}"
+												<listheader id="listheader_PaymentHeaderDialog_Balance" label="${c:l('listheader_PaymentHeaderDialog_Balance.label')}"
 													align="right" sort="false" hflex="min" />
 											</listhead>
 										</listbox>

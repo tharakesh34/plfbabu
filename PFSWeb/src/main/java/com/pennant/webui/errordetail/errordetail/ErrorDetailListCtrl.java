@@ -59,14 +59,14 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.errordetail.ErrorDetail;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.errordetail.errordetail.model.ErrorDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -141,15 +141,14 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 
 		fillComboBox(this.errorSeverity, "", PennantStaticListUtil.getSysParamType(), "");
 
-		registerField("errorCode", listheader_ErrorCode, SortOrder.ASC, errorCode, sortOperator_ErrorCode,
+		registerField("Code", listheader_ErrorCode, SortOrder.ASC, errorCode, sortOperator_ErrorCode, Operators.STRING);
+		registerField("Language", listheader_ErrorLanguage, SortOrder.NONE, errorLanguage, sortOperator_ErrorLanguage,
 				Operators.STRING);
-		registerField("errorLanguage", listheader_ErrorLanguage, SortOrder.NONE, errorLanguage,
-				sortOperator_ErrorLanguage, Operators.STRING);
-		registerField("errorSeverity", listheader_ErrorSeverity, SortOrder.NONE, errorSeverity,
-				sortOperator_ErrorSeverity, Operators.SIMPLE_NUMARIC);
-		registerField("errorMessage", listheader_ErrorMessage, SortOrder.NONE, errorMessage, sortOperator_ErrorMessage,
+		registerField("Severity", listheader_ErrorSeverity, SortOrder.NONE, errorSeverity, sortOperator_ErrorSeverity,
+				Operators.SIMPLE_NUMARIC);
+		registerField("Message", listheader_ErrorMessage, SortOrder.NONE, errorMessage, sortOperator_ErrorMessage,
 				Operators.STRING);
-		registerField("errorExtendedMessage", listheader_ErrorExtendedMessage, SortOrder.NONE, errorExtendedMessage,
+		registerField("ExtendedMessage", listheader_ErrorExtendedMessage, SortOrder.NONE, errorExtendedMessage,
 				sortOperator_ErrorExtendedMessage, Operators.STRING);
 
 		// Render the page and display the data.
@@ -251,7 +250,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 		arg.put("enqModule", enqiryModule);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetail/ErrorDetailDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

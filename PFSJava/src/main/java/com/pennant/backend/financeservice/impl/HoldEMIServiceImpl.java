@@ -10,7 +10,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.HoldEMIService;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -63,7 +63,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 			valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
 			valueParm[1] = DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
 			valueParm[2] = DateUtility.formatToLongDate(datehldEMIAlwd);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30567", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30567", "", valueParm), lang));
 		}
 		//validation for Todate to check whether it is greater than next Schedule if yes then throw the validation
 		if(isValidCheck){
@@ -81,7 +81,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 				String[] valueParm = new String[2];
 				valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
 				valueParm[1] = DateUtility.formatToShortDate(nextSchdDate);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65028", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65028", "", valueParm), lang));
 
 			}
 		}

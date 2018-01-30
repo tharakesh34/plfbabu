@@ -75,7 +75,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -632,7 +632,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 					errParm[0] = Long.toString(aFinRefDetail.getLovDescCheckMinCount());
 					errParm[1] = Long.toString(aFinRefDetail.getLovDescCheckMaxCount());
 					errParm[2] = aFinRefDetail.getLovDescRefDesc();
-					wve.add(new WrongValueException(this.listBox_CheckList.getFellowIfAny(aFinRefDetail.getFinRefId()+"_LG"),ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30701", errParm, valueParm), usrLanguage).getError()));
+					wve.add(new WrongValueException(this.listBox_CheckList.getFellowIfAny(aFinRefDetail.getFinRefId()+"_LG"),ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30701", errParm, valueParm), usrLanguage).getError()));
 				}
 			}
 			return wve;

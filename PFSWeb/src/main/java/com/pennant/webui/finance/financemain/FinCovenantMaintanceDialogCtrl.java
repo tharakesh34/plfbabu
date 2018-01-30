@@ -64,7 +64,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -631,7 +631,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 						}
 
 					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_finCovenantMaintanceDialog, aAuditHeader);
 						return processCompleted;

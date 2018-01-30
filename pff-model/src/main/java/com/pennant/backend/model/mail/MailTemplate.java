@@ -43,6 +43,8 @@
 
 package com.pennant.backend.model.mail;
 
+import java.util.List;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -81,6 +83,8 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	
 	private String lovDescFormattedContent="";
 	private String[] lovDescMailId;
+	private String lovDescSMSContent;
+	private List<String> lovDescMobileNumbers;
 	
 
 	public boolean isNew() {
@@ -283,5 +287,21 @@ public class MailTemplate extends AbstractWorkflowEntity implements Entity {
 	public void setLovDescAttachmentName(String attachmentName) {
     	this.lovDescAttachmentName = attachmentName;
     }
+
+	public String getLovDescSMSContent() {
+		return lovDescSMSContent;
+	}
+
+	public void setLovDescSMSContent(String lovDescSMSContent) {
+		this.lovDescSMSContent = lovDescSMSContent;
+	}
+
+	public List<String> getLovDescMobileNumbers() {
+		return lovDescMobileNumbers;
+	}
+
+	public void setLovDescMobileNumbers(List<String> lovDescMobileNumbers) {
+		this.lovDescMobileNumbers = lovDescMobileNumbers;
+	}
 	
 }

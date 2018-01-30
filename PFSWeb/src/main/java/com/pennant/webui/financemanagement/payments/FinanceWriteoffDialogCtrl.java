@@ -89,7 +89,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1706,7 +1706,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinWriteoffDialog, auditHeader);
 						return processCompleted;

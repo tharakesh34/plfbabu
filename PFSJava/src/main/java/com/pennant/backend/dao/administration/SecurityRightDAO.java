@@ -65,17 +65,4 @@ public interface SecurityRightDAO {
 	 * @return The rights that the user has for a specified page.
 	 */
 	List<SecurityRight> getPageRights(SecurityRight right);
-
-	/**
-	 * Get the rights that the user has for a specified page.
-	 * 
-	 * @deprecated Use {@link #getPageRights(SecurityRight) getPageRights} instead.
-	 * @param secRight
-	 *            The model object that contains the parameters.
-	 * @param roles
-	 *            The list of roles.
-	 * @return The rights that the user has for a specified page.
-	 */
-	@Deprecated
-	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
 }

@@ -100,24 +100,6 @@
 				<element name="max">3</element>
 			</constraint>
 		</field>
-
-		<field name="primaryRelationOfficer">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>primaryRelationOfficer is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>primaryRelationOfficer should have maximum 8 characters</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-					<value>com.pennant.validation.PersionalInfoGroup</value>
-				</groups>
-				<element name="max">8</element>
-			</constraint>
-		</field>
 		<field name="customer">
 			<valid />
 		</field>

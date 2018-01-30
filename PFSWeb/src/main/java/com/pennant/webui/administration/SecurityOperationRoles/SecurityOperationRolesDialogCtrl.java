@@ -69,7 +69,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
@@ -726,7 +726,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"),
 								null));
@@ -1218,7 +1218,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog,
 					auditHeader);

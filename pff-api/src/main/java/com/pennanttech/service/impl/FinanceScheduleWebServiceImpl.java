@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -106,10 +106,10 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	}
 
 	private FinScheduleData getErrorMessage(FinScheduleData financeSchdData) {
-		for(ErrorDetails erroDetail: financeSchdData.getErrorDetails()) {
+		for(ErrorDetail erroDetail: financeSchdData.getErrorDetails()) {
 			FinScheduleData response = new FinScheduleData();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getErrorCode(), erroDetail.getError()));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
 			return response;
 		}
 		return financeSchdData;

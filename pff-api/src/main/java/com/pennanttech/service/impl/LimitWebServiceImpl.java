@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -136,8 +136,8 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		AuditDetail auditDetail = limitDetailService.doValidations(auditHeader);
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				String errorCode = errorDetail.getErrorCode();
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				String errorCode = errorDetail.getCode();
 				String errorMessage = errorDetail.getError();
 				response = new LimitHeader();
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorCode, errorMessage));
@@ -171,8 +171,8 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		WSReturnStatus response = null;
 		AuditDetail auditDetail = limitDetailService.doValidations(auditHeader);
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				String errorCode = errorDetail.getErrorCode();
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				String errorCode = errorDetail.getCode();
 				String errorMessage = errorDetail.getError();
 				return APIErrorHandlerService.getFailedStatus(errorCode, errorMessage);
 			}
@@ -432,7 +432,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 	private AuditHeader getAuditHeader(LimitHeader limitHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, limitHeader.getBefImage(), limitHeader);
 		return new AuditHeader(String.valueOf(limitHeader.getHeaderId()), String.valueOf(limitHeader.getHeaderId()),
-				null, null, auditDetail, limitHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, null, auditDetail, limitHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**

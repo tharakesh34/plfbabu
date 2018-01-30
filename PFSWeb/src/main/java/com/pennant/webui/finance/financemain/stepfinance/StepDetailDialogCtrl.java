@@ -25,7 +25,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -196,14 +196,14 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * @param isAlwManualSteps
 	 * @return
 	 */
-	public List<ErrorDetails> doValidateStepDetails(FinanceMain financeMain, int totalTerms, boolean isAlwManualSteps, int noOfSteps, String stepType){
+	public List<ErrorDetail> doValidateStepDetails(FinanceMain financeMain, int totalTerms, boolean isAlwManualSteps, int noOfSteps, String stepType){
 		logger.debug("Entering");
 		
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		if(this.finStepPolicyList != null && !finStepPolicyList.isEmpty()){
 			
 			if(isAlwManualSteps && noOfSteps != finStepPolicyList.size()){
-				errorList.add(new ErrorDetails("30542",PennantConstants.KEY_SEPERATOR, new String[] {}));
+				errorList.add(new ErrorDetail("30542",PennantConstants.KEY_SEPERATOR, new String[] {}));
 			}else{
 				
 				int sumInstallments = 0;
@@ -265,19 +265,19 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 				//If Any Step Policy have Zero installments while on Calculation
 				if(hadZeroInstStep){
-					errorList.add(new ErrorDetails("30569", PennantConstants.KEY_SEPERATOR, 
+					errorList.add(new ErrorDetail("30569", PennantConstants.KEY_SEPERATOR, 
 							new String[] {Labels.getLabel("label_MinInstallment")," 1 " }));
 				}
 				
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTerms != totalTerms){
-					errorList.add(new ErrorDetails("30540", PennantConstants.KEY_SEPERATOR, 
+					errorList.add(new ErrorDetail("30540", PennantConstants.KEY_SEPERATOR, 
 							new String[] {Labels.getLabel("label_TotStepInstallments"),Labels.getLabel("label_TotalTerms") }));
 				}
 				
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTenorSplit.compareTo(new BigDecimal(100)) != 0){
-					errorList.add(new ErrorDetails("30540", PennantConstants.KEY_SEPERATOR, 
+					errorList.add(new ErrorDetail("30540", PennantConstants.KEY_SEPERATOR, 
 							new String[] {Labels.getLabel("label_TenorSplitPerc"), "100.00 %"}));
 				}
 
@@ -285,17 +285,17 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 				if(StringUtils.equals(stepType, FinanceConstants.STEPTYPE_EMI)){
 					BigDecimal emiStepPercAvg = calTotEmiStepPercent.divide(new BigDecimal(finStepPolicyList.size()), 0 , RoundingMode.HALF_DOWN);
 					if(emiStepPercAvg.compareTo(new BigDecimal(100)) != 0){
-						errorList.add(new ErrorDetails("30540",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_AvgEMISplitPerc"), "100.00 %"}));
+						errorList.add(new ErrorDetail("30540",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_AvgEMISplitPerc"), "100.00 %"}));
 					}
 				}else if(StringUtils.equals(stepType, FinanceConstants.STEPTYPE_PRIBAL)){
 					if(calTotEmiStepPercent.compareTo(new BigDecimal(100)) != 0){
-						errorList.add(new ErrorDetails("30540",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_OutStandingPrincipalSplitPerc"), "100.00 %"}));
+						errorList.add(new ErrorDetail("30540",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_OutStandingPrincipalSplitPerc"), "100.00 %"}));
 					}
 				}
 			}
 		}else{
 			if(isAlwManualSteps){
-				errorList.add(new ErrorDetails("30541",PennantConstants.KEY_SEPERATOR, new String[] {}));
+				errorList.add(new ErrorDetail("30541",PennantConstants.KEY_SEPERATOR, new String[] {}));
 			}
 		}
 		logger.debug("Leaving");

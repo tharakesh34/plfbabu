@@ -70,6 +70,8 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -312,6 +314,29 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					finTypeAccounting.setVersion(1);
 					finTypeAccounting.setRecordType(PennantConstants.RCD_ADD);
 					aFinanceType.getFinTypeAccountingList().add(finTypeAccounting);
+				}
+			}
+			
+			List<FinTypeFees> finTypeFeesList = sourceFin.getFinTypeFeesList();
+			if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+				aFinanceType.setFinTypeFeesList(new ArrayList<FinTypeFees>());
+				for (FinTypeFees finTypeFees : finTypeFeesList) {
+					finTypeFees.setVersion(1);
+					finTypeFees.setRecordStatus("");
+					finTypeFees.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceType.getFinTypeFeesList().add(finTypeFees);
+				}
+			}
+			
+			List<FinTypePartnerBank> finTypePartnerBankList = sourceFin.getFinTypePartnerBankList();
+			if (finTypePartnerBankList != null && !finTypePartnerBankList.isEmpty()) {
+				aFinanceType.setFinTypePartnerBankList(new ArrayList<FinTypePartnerBank>());
+				for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
+					finTypePartnerBank.setID(Long.MIN_VALUE);
+					finTypePartnerBank.setVersion(1);
+					finTypePartnerBank.setRecordStatus("");
+					finTypePartnerBank.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceType.getFinTypePartnerBankList().add(finTypePartnerBank);
 				}
 			}
 		}

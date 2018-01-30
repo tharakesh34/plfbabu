@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennanttech.pff.core.TableType;
@@ -64,5 +66,7 @@ public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String docTypeCode, TableType tableType);
+
+	List<DocumentType> getApprovedPdfExternalList(String type);
 	
 }

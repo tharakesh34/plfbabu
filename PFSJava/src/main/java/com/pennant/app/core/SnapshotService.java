@@ -16,7 +16,8 @@ public class SnapshotService {
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
-	private static final String			snapshotQuery	= "INSERT INTO FinPftDetails_SnapShot  SELECT :AppDate,FINREFERENCE,CUSTID,FINBRANCH,FINTYPE,"
+	private static final String			snapshotQuery_FinPftDetails	= "INSERT INTO FinPftDetails_SnapShot  "
+			+ "SELECT :AppDate,FINREFERENCE,CUSTID,FINBRANCH,FINTYPE,"
 			+ "LASTMDFDATE,TOTALPFTSCHD,TOTALPFTCPZ,TOTALPFTPAID,TOTALPFTBAL,TOTALPFTPAIDINADV,TOTALPRIPAID,"
 			+ "TOTALPRIBAL,TDSCHDPFT,TDPFTCPZ,TDSCHDPFTPAID,TDSCHDPFTBAL,PFTACCRUED,PFTACCRUESUSP,PFTAMZ,"
 			+ "PFTAMZSUSP,TDSCHDPRI,TDSCHDPRIPAID,TDSCHDPRIBAL,ACRTILLLBD,AMZTILLLBD,REPAYFRQ,CUSTCIF,"
@@ -35,6 +36,12 @@ public class SnapshotService {
 			+ "EXCESSAMT,EMIINADVANCE,PAYABLEADVISE,PRODUCTCATEGORY,EXCESSAMTRESV,EMIINADVANCERESV,"
 			+ "PAYABLEADVISERESV,TOTCHARGESPAID,LINKEDFINREF,CLOSEDLINKEDFINREF,UPFRONTFEE,BOUNCEAMTDUE,"
 			+ "BOUNCEAMTPAID,BOUNCEAMT,RECEIVABLEADVISE,EXCESSAMTBAL,EMIINADVANCEBAL,RECEIVABLEADVISEBAL,PAYABLEADVISEBAL from FinPftDetails";
+	
+	private static final String			snapshotQuery_FinOdDetails	= "INSERT INTO FINODDETAILS_SnapShot  "
+			+ "SELECT :AppDate,FINREFERENCE,FINODSCHDDATE,FINODFOR,FINBRANCH,FINTYPE,"
+			+ "CUSTID,FINODTILLDATE,FINCURODAMT,FINCURODPRI,FINCURODPFT,FINMAXODAMT,FINMAXODPRI,FINMAXODPFT,GRACEDAYS,INCGRACEDAYS,"
+			+ "FINCURODDAYS,TOTPENALTYAMT,TOTWAIVED,TOTPENALTYPAID,TOTPENALTYBAL,FINLMDFDATE,LPIAMT,LPIPAID,LPIBAL,LPIWAIVED,ODCHARGETYPE,"
+			+ "ODGRACEDAYS,ODCHARGECALON,ODCHARGEAMTORPERC,ODALLOWWAIVER,ODMAXWAIVERPERC,APPLYODPENALTY,ODINCGRCDAYS from FINODDETAILS";
 
 	/**
 	 * Method for prepare Snapshot details
@@ -44,11 +51,49 @@ public class SnapshotService {
 	 */
 	public int doSnapshotPreparation(Date date) throws Exception {
 
+		int finPftCount = snapshotPreparationForFinPftDetails(date);
+		int finODCount = snapshotPreparationForFinOdDetails(date);
+
+		return finPftCount + finODCount;
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 * @throws Exception
+	 */
+	private int snapshotPreparationForFinPftDetails(Date date) throws Exception {
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
-		logger.debug("selectSql: " + snapshotQuery);
+		
+		logger.debug("selectSql: " + snapshotQuery_FinPftDetails);
+		
 		try {
-			return this.namedParameterJdbcTemplate.update(snapshotQuery, source);
+			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinPftDetails, source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			throw dae;
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 * @throws Exception
+	 */
+	private int snapshotPreparationForFinOdDetails(Date date) throws Exception {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AppDate", date);
+		
+		logger.debug("selectSql: " + snapshotQuery_FinOdDetails);
+		
+		try {
+			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinOdDetails, source);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			throw dae;

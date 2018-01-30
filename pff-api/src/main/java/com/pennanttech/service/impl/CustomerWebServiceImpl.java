@@ -1,6 +1,8 @@
 package com.pennanttech.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -111,10 +113,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		CustomerDetails response = null;
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerDetails();
 				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return response;
 			}
@@ -179,8 +181,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -321,8 +323,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -377,9 +379,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new EmploymentDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return response;
 			}
@@ -461,8 +463,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -472,9 +474,18 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				.getApprovedCustomerEmploymentDetailByCustEmpId(employmentDetail
 						.getCustomerEmploymentDetail().getCustEmpId());
 		if (customerEmpDetail != null) {
-			// call update customer if there is no errors
-			response = customerController.updateCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
-					employmentDetail.getCif());
+			if(customerEmpDetail.getCustID()==(customer.getCustID())){
+				// call update customer if there is no errors
+				response = customerController.updateCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
+						employmentDetail.getCif());
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
+				valueParm[1] = employmentDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			}
+			
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -524,7 +535,15 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (customerEmpDetail != null) {
 			customerEmploymentDetail.setCustEmpName(customerEmpDetail.getCustEmpName());
 			// call delete customer service
+			if(customerEmpDetail.getCustID()==(customer.getCustID())){
 			response = customerController.deleteCustomerEmployment(customerEmploymentDetail);
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
+				valueParm[1] = employmentDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			}
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -572,8 +591,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 
 			}
 		}
@@ -622,8 +641,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// validate Customer with given CustCIF
@@ -761,8 +780,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 
 			}
 		}
@@ -808,8 +827,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -949,8 +968,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// call add Customer Employment method in case of no errors
@@ -995,8 +1014,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1111,8 +1130,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "customerIncome";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(customerIncomeDetail.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerIncomeDetail.getCif());
+			 customer = customerDetailsService.getCustomerByCIF(customerIncomeDetail.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
@@ -1120,6 +1140,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Customerincome";
+			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+		}
+
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1129,8 +1156,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		WSReturnStatus returnStatus = customerDetailsController.addCustomerIncome(
@@ -1166,6 +1193,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
+		
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Customerincome";
+			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+		}
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerIncomeService.doValidations(customerIncomeDetail.getCustomerIncome());
@@ -1173,8 +1207,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// validate Customer with given CustCIF
@@ -1309,9 +1343,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		CustomerBankInfoDetail response = null;
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerBankInfoDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return response;
 			}
@@ -1363,8 +1397,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1662,9 +1696,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		CustomerExtLiabilityDetail response = null;
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerExtLiabilityDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 				return response;
 			}
@@ -1716,8 +1750,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1846,8 +1880,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// call add Customer Employment method in case of no errors
@@ -1891,8 +1925,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1986,28 +2020,48 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+
 	private CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
 		logger.debug("Entering");
 		String mobileNumber = "";
+		String mailId = "";
 		Customer customer = customerDetails.getCustomer();
-		if (customerDetails.getCustomerPhoneNumList() != null) {
-			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
-				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
-					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-					break;
-				}
-			}
-		}
-		
-		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
-		if (customerDocumentsList != null) {
-			for (CustomerDocument curCustDocument : customerDocumentsList) {
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
-						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-					}
-			}
-		}		
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		List<CustomerEMail> mailIdList = customerDetails.getCustomerEMailList();
 
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			if (phoneNumberList.size() > 1) {
+				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+					@Override
+					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+					}
+				});
+			}
+			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+		}
+
+		if (mailIdList != null && !mailIdList.isEmpty()) {
+			if (mailIdList.size() > 1) {
+				//mailIdList.sort((m1, m2) -> m2.getCustEMailPriority() - m1.getCustEMailPriority());
+				Collections.sort(mailIdList, new Comparator<CustomerEMail>() {
+					@Override
+					public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+						return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+					}
+				});
+			}
+			CustomerEMail custMail = mailIdList.get(0);
+			mailId = custMail.getCustEMail();
+		}
+
+		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
+		String panNumber = PennantApplicationUtil.getPanNumber(customerDocumentsList);
+		if (StringUtils.isNotBlank(panNumber)) {
+			customerDetails.getCustomer().setCustCRCPR(panNumber);
+		}
 		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setCustFName(customer.getCustFName());
 		customerDedup.setCustLName(customer.getCustLName());
@@ -2022,10 +2076,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		customerDedup.setCustPassportNo(customer.getCustPassportNo());
 		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
 		customerDedup.setCustVisaNum(customer.getCustVisaNum());
-		customerDedup.setMobileNumber(mobileNumber);
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
-		customerDedup.setCustEMail(customer.getEmailID());
+		customerDedup.setMobileNumber(mobileNumber);
+		customerDedup.setCustEMail(mailId);
 
 		logger.debug("Leaving");
 		return customerDedup;
@@ -2042,7 +2096,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
 				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2056,7 +2110,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerPhoneNumber.getBefImage(), aCustomerPhoneNumber);
 		return new AuditHeader(String.valueOf(aCustomerPhoneNumber.getPhoneCustID()),
 				String.valueOf(aCustomerPhoneNumber.getPhoneCustID()), null, null, auditDetail,
-				aCustomerPhoneNumber.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				aCustomerPhoneNumber.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2071,7 +2125,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				aCustomerEmploymentDetail);
 		return new AuditHeader(String.valueOf(aCustomerEmploymentDetail.getCustID()),
 				String.valueOf(aCustomerEmploymentDetail.getCustID()), null, null, auditDetail,
-				aCustomerEmploymentDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				aCustomerEmploymentDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2085,7 +2139,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
 		return new AuditHeader(String.valueOf(aCustomerAddres.getCustID()),
 				String.valueOf(aCustomerAddres.getCustID()), null, null, auditDetail, aCustomerAddres.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2099,7 +2153,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
 		return new AuditHeader(String.valueOf(aCustomerEMail.getCustID()), String.valueOf(aCustomerEMail.getCustID()),
 				null, null, auditDetail, aCustomerEMail.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2113,7 +2167,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 		return new AuditHeader(String.valueOf(aCustomerIncome.getCustID()),
 				String.valueOf(aCustomerIncome.getCustID()), null, null, auditDetail, aCustomerIncome.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -2127,7 +2181,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBankInfo.getBefImage(), aCustomerBankInfo);
 		return new AuditHeader(String.valueOf(aCustomerBankInfo.getCustID()), String.valueOf(aCustomerBankInfo
 				.getCustID()), null, null, auditDetail, aCustomerBankInfo.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	
 
@@ -2142,7 +2196,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerExtLiability.getBefImage(), aCustomerExtLiability);
 		return new AuditHeader(String.valueOf(aCustomerExtLiability.getCustID()), String.valueOf(aCustomerExtLiability
 				.getCustID()), null, null, auditDetail, aCustomerExtLiability.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	/**
 	 * Get Audit Header Details
@@ -2155,7 +2209,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDocument.getBefImage(), aCustomerDocument);
 		return new AuditHeader(String.valueOf(aCustomerDocument.getCustID()), String.valueOf(aCustomerDocument
 				.getCustID()), null, null, auditDetail, aCustomerDocument.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**

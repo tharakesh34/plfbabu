@@ -50,10 +50,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.ErrorDetailsDAO;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -70,8 +69,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 
 	private WorkFlowDetailsDAO workFlowDetailsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
-	private ErrorDetailsDAO errorDetailsDAO;
-
+	
 	public WorkFlowDetailsServiceImpl() {
 		super();
 	}
@@ -92,13 +90,6 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	}
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
-	
-	public ErrorDetailsDAO getErrorDetailsDAO() {
-		return errorDetailsDAO;
-	}
-	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
-		this.errorDetailsDAO = errorDetailsDAO;
 	}
 	
 	
@@ -201,7 +192,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		WorkFlowDetails workFlowDetails= (WorkFlowDetails) auditDetail.getModelData();
 		WorkFlowDetails flowDetails = getWorkFlowDetailsDAO()
 				.getWorkFlowDetailsByFlowType(workFlowDetails.getWorkFlowType());
@@ -216,12 +207,12 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 
 		if (workFlowDetails.isNew()){
 			if (flowDetails!=null){
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41001",errParm, null));		
 			}
 		}else{
 			if (flowDetails==null){
-				auditDetail.setErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41002",errParm, null));		
 			}
 			
@@ -236,33 +227,33 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	}
 
 	@Override
-	public List<ErrorDetails> doValidations(WorkFlowDetails workFlowDetails, String flag) {
-		List<ErrorDetails> errDetails = new ArrayList<ErrorDetails>();
+	public List<ErrorDetail> doValidations(WorkFlowDetails workFlowDetails, String flag) {
+		List<ErrorDetail> errDetails = new ArrayList<ErrorDetail>();
 		Long workflowId = workFlowDetails.getWorkflowId();
 		if (workflowId == 0 && !"create".equals(flag)) {// empty check for workflowId in get
 			String[] valueParm = new String[1];
 			valueParm[0] = "WorkflowDesignId";
-			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm), "EN");
 			errDetails.add(errorDetail);
 		}
 		if ((workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not found in get or update
 			String[] valueParm = new String[2];
 			valueParm[0] = "Workflow";
 			valueParm[1] = String.valueOf(workflowId);
-			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90256", valueParm), "EN");
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90256", valueParm), "EN");
 			errDetails.add(errorDetail);
 		}
 		if (!"get".equals(flag)) {
 			if (StringUtils.isBlank(workFlowDetails.getWorkFlowType())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Process Key";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isBlank(workFlowDetails.getWorkFlowRoles())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "WorkFlowRoles";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowType())
@@ -270,7 +261,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				String[] valueParm = new String[2];
 				valueParm[0] = "Process Key Length";
 				valueParm[1] = "50.";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowSubType())
@@ -278,7 +269,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				String[] valueParm = new String[2];
 				valueParm[0] = "Process Name Length";
 				valueParm[1] = "50.";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowDesc())
@@ -286,7 +277,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				String[] valueParm = new String[2];
 				valueParm[0] = "Description Length";
 				valueParm[1] = "200.";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isNotBlank(workFlowDetails.getFirstTaskOwner())
@@ -294,7 +285,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				String[] valueParm = new String[2];
 				valueParm[0] = "FirstTaskOwner Length";
 				valueParm[1] = "50.";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			if ("create".equals(flag)
@@ -304,8 +295,8 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 											.getWorkFlowType()))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Process Key Is";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(
-						new ErrorDetails("41001", valueParm), "EN");
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(
+						new ErrorDetail("41001", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
 			

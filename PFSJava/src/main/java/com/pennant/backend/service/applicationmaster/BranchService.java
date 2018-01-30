@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -58,5 +60,7 @@ public interface BranchService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-
+	
+	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
+	boolean getUnionTerrotory(String cpProvince);
 }

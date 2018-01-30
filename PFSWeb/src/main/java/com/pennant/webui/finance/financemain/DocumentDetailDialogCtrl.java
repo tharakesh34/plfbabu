@@ -89,8 +89,8 @@ import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
@@ -321,7 +321,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setLovDescCustShrtName(list != null ? String.valueOf(list.get(2).toString()) : "");
 
 			Filter[] countrysystemDefault = new Filter[1];
-			countrysystemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
 			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
 
 			if (countryObj != null) {
@@ -597,12 +597,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		
 		if(finDocumentDetail.getDocImage() == null) {
 			if (finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-				finDocumentDetail.setDocImage(PennantAppUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
+				finDocumentDetail.setDocImage(PennantApplicationUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
 			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
 				// Fetch document from interface
-				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocUri());
+				String custCif=finDocumentDetail.getLovDescCustCIF();
+				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(),finDocumentDetail.getDocUri(),custCif);
 				if (detail != null && detail.getDocImage() != null) {
-					finDocumentDetail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
+					finDocumentDetail.setDocImage(detail.getDocImage());
+					finDocumentDetail.setDocName(detail.getDocName());
 				}
 			}
 		}

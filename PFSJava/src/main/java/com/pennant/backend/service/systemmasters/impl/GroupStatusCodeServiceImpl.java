@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.GroupStatusCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.GroupStatusCode;
@@ -343,7 +343,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		GroupStatusCode groupStatusCode = (GroupStatusCode) auditDetail
 				.getModelData();
@@ -372,7 +372,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 				if (befGroupStatusCode != null) { // Record Already Exists in
 					// the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -385,14 +385,14 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 							|| tempGroupStatusCode != null) { // if
 						  					// records already exists
 											// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befGroupStatusCode == null
 							|| tempGroupStatusCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -407,7 +407,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 				if (befGroupStatusCode == null) { // if records not exists in
 													// the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -417,11 +417,11 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -431,7 +431,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 				if (tempGroupStatusCode == null) { // if records not exists in
 					// the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -440,7 +440,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 						&& !oldGroupStatusCode.getLastMntOn().equals(
 								tempGroupStatusCode.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

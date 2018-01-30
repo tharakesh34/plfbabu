@@ -65,7 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
@@ -147,7 +147,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	// ServiceDAOs / Domain Classes
 	private transient CorporateCustomerDetailService corporateCustomerDetailService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date appStartDate = DateUtility.getAppDate();
@@ -1422,7 +1422,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 							deleteNotes=true;
 						}
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_CorporateCustomerDetailDialog, auditHeader);
@@ -1484,7 +1484,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CorporateCustomerDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1555,10 +1555,10 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		this.pagedListService = pagedListService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

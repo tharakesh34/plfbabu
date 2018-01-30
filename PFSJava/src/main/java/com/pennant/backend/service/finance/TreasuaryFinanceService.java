@@ -45,7 +45,7 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
@@ -68,8 +68,8 @@ public interface TreasuaryFinanceService {
 	void setDocumentDetails(FinanceDetail financeDetail) ;
 	void setFeeCharges(FinanceDetail financeDetail, String type) ;
 	void setFinanceDetails(FinanceDetail financeDetail, String strTab, String userRole);
-	ErrorDetails  investmentDealValidations(FinanceDetail aFinanceDetail,InvestmentFinHeader investmentFinHeader , String usrLanguage);
-	ErrorDetails  treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage);
+	ErrorDetail  investmentDealValidations(FinanceDetail aFinanceDetail,InvestmentFinHeader investmentFinHeader , String usrLanguage);
+	ErrorDetail  treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage);
 	AuditHeader saveOrUpdateDeal(AuditHeader auditHeader);
 	String getCustStatusByMinDueDays();
 }

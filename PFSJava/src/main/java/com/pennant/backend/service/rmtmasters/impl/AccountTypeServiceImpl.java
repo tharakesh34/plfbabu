@@ -53,7 +53,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -350,7 +350,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		AccountType accountType = (AccountType) auditDetail.getModelData();
 
 		AccountType tempAccountType = null;
@@ -373,19 +373,19 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 
 			if (!accountType.isWorkflow()) {// With out Work flow only new records
 				if (befAccountType != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 				}
 			} else { // with work flow
 				if (accountType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befAccountType != null || tempAccountType != null) { // if records already exists in the main
 																				// table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAccountType == null || tempAccountType != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}	
@@ -396,27 +396,27 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 			if (!accountType.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befAccountType == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 					if (oldAccountType != null
 							&& !oldAccountType.getLastMntOn().equals(
 									befAccountType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
 			} else {
 				if (tempAccountType == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 				if (tempAccountType != null && oldAccountType != null
 						&& !oldAccountType.getLastMntOn().equals(
 								tempAccountType.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}

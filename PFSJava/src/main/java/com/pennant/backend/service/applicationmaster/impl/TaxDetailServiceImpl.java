@@ -53,7 +53,7 @@ import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -367,7 +367,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 
 			parameters[0] = PennantJavaUtil.getLabel("label_TaxCode") + ": " + taxDetail.getTaxCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		boolean gstFlag = provinceDAO.count(taxDetail.getTaxCode().substring(0, 2), taxDetail.getStateCode(),
@@ -379,7 +379,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode().substring(0, 2);
 			parameters[1] = PennantJavaUtil.getLabel("label_StateCode") + ": " + taxDetail.getStateCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90701", parameters, null));
 		}
 
 		boolean entityFlag = entityDAO.panNumberExist(taxDetail.getTaxCode().substring(2, 12),
@@ -392,7 +392,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 					+ taxDetail.getTaxCode().substring(2, 12);
 			parameters[1] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + taxDetail.getEntityCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90701", parameters, null));
 		}
 
 		auditDetail = gstNumbeValidation(auditDetail, taxDetail);
@@ -424,7 +424,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 				parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
 				parameters[1] = taxCode;
 				auditDetail.setErrorDetail(ErrorUtil
-						.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null)));
 			}
 
 			Province province = this.provinceDAO.getProvinceById(taxDetail.getCountry(), taxDetail.getStateCode(), "");
@@ -441,14 +441,14 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available
 				if (!StringUtils.equalsIgnoreCase(gstStateCode, taxCode.substring(0, 2))) {
 					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65023", null, null)));
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
 				}
 			}
 
 			if (StringUtils.isNotBlank(panNumber)) { // if PAN number is not available in GST Number
 				if (!StringUtils.equalsIgnoreCase(panNumber, taxCode.substring(2, 12))) {
 					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65024", null, null)));
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65024", null, null)));
 				}
 			}
 		}

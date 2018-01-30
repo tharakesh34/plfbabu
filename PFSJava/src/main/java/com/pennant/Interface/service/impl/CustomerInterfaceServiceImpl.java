@@ -732,12 +732,12 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 					customer.setCustSalutationCode("");
 				}
 				if(("").equals(customer.getCustRO1())){
-					customer.setCustRO1(null);
-				}else if(!valueExistInMaster(customer.getCustRO1(),rShipOfficerCodeMasterList)){
+					customer.setCustRO1(0);
+				}else if(!valueExistInMaster(String.valueOf(customer.getCustRO1()),rShipOfficerCodeMasterList)){
 					masterMissedDetail.setFieldName("CustRO1");
 					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRO1()+"' Value Does Not Exist In Master RelationshipOfficers Table ");
 					masterValueMissedDetails.add(masterMissedDetail);	
-					customer.setCustRO1("");
+					customer.setCustRO1(0);
 				}
 				if(("").equals(customer.getCustSector())  ||
 						("").equals(customer.getCustSubSector())){

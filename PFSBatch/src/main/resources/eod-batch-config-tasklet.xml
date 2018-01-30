@@ -19,9 +19,9 @@
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD">
 		<property name="eodService" ref="eodService" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">
@@ -36,7 +36,7 @@
 	</bean>
 
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="snapshotService" ref="snapshotService" />
 	</bean>
 	
@@ -45,33 +45,49 @@
 	</bean>
 		
 	<bean id="almTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ALM">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
 	<bean id="controlDumpTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ControlDump">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<bean id="posidexTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Posidex">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<bean id="dataMartTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.DataMart">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
+	<bean id="DM_LOAN_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_DETAILS_MONTHLY" />
+	</bean>
+	<bean id="DM_LOAN_BALANCES_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_BALANCES_MONTHLY" />
+	</bean>
+	<bean id="DM_DISB_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_DISB_DETAILS_MONTHLY" />
+	</bean>
+	
 	<bean id="trailBalanceTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.TrailBalance">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<bean id="sapGLTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.SAPGL">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<bean id="cibilTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Cibil">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<bean id="gstTaxDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.GstTaxDownload">
-		<property name="dataSource" ref="pfsDatasource"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="dateService" ref="dateService" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
@@ -86,7 +102,7 @@
 
 	<!-- Audit Data Purging -->
 	<bean id="auditDataPurgingTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="auditDataPurgingTarget" />
 		<property name="transactionAttributes">
 			<props>
@@ -100,7 +116,7 @@
 
 	<!-- Notifications -->
 	<bean id="notificationTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="notificationTarget" />
 		<property name="transactionAttributes">
 			<props>
@@ -109,12 +125,12 @@
 		</property>
 	</bean>
 	<bean id="notificationTarget" class="com.pennant.backend.endofday.tasklet.Notification">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Not used -->
 	<!-- Backup Data base Before Eod -->
 	<bean id="backupDatabaseBeforeEodTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="backupDatabaseTargetBeforeEod" />
 		<property name="transactionAttributes">
 			<props>
@@ -128,7 +144,7 @@
 	</bean>
 	<!-- Backup Data base After Eod -->
 	<bean id="backupDatabaseAfterEodTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="backupDatabaseTargetAfterEod" />
 		<property name="transactionAttributes">
 			<props>
@@ -144,11 +160,11 @@
 	<bean id="capitalizationPostingsTasklet"  class="com.pennant.backend.endofday.tasklet.CapitalizationPostings">
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Future Account Holds -->
 	<bean id="futureInstallmentHoldsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="futureInstallmentHoldsTarget" />
 		<property name="transactionAttributes">
 			<props>
@@ -169,12 +185,12 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="provisionMovementDAO" ref="provisionMovementDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Overdue Details Daily Download -->
 	<bean id="oDDetailDownloadTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="oDDetailTarget" />
 		<property name="transactionAttributes">
 			<props>
@@ -183,11 +199,11 @@
 		</property>
 	</bean>
 	<bean id="oDDetailTarget" class="com.pennant.backend.endofday.tasklet.ODDetailDownload">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Commitment Expiry Details Updation -->
 	<bean id="commitmentExpiryProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="commitmentExpiryProcessTarget" />
 		<property name="transactionAttributes">
 			<props>
@@ -196,11 +212,11 @@
 		</property>
 	</bean>
 	<bean id="commitmentExpiryProcessTarget" class="com.pennant.backend.endofday.tasklet.CommitmentExpiryProcess">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Month End Download Details Updation -->
 	<bean id="monthEndDownloadProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="monthEndDownloadProcessTarget" />
 		<property name="transactionAttributes">
 			<props>

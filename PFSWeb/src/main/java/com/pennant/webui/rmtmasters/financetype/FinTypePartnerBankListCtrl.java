@@ -186,8 +186,9 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		doFillFinTypePartnerBanks(this.finTypePartnerBankList);
 		
 		if (parent != null) {
-			this.window_FinTypePartnerBankList.setHeight(borderLayoutHeight-75+"px");
-			parent.appendChild(this.window_FinTypePartnerBankList);
+			this.window_FinTypePartnerBankList.setHeight(this.borderLayoutHeight - 90 + "px");
+			this.listBoxFinTypePartnerBank.setHeight(this.borderLayoutHeight - 125 + "px");
+ 			parent.appendChild(this.window_FinTypePartnerBankList);
 		}
 		
 		try {

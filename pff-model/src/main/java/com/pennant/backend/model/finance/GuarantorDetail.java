@@ -71,6 +71,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private String mobileNo;
 	@XmlElement
 	private String emailId;
+	private String guarantorGenderCode;
 	
 	@XmlElement(name = "idDocContent")
 	private byte[] guarantorProof = new byte[Byte.valueOf("0")];
@@ -530,5 +531,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
+	}
+	
+	public String getGuarantorGenderCode() {
+		return guarantorGenderCode;
+	}
+
+	public void setGuarantorGenderCode(String guarantorGenderCode) {
+		this.guarantorGenderCode = guarantorGenderCode;
 	}
 }

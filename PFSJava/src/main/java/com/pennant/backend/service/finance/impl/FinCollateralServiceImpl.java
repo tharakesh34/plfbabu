@@ -10,7 +10,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -309,7 +309,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 	
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinCollaterals finCollaterals = (FinCollaterals) auditDetail.getModelData();
 
 		FinCollaterals tempFinCollaterals = null;
@@ -331,19 +331,19 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 			if (!finCollaterals.isWorkflow()) {// With out Work flow only new records  
 				if (befFinCollaterals != null) {	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finCollaterals.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinCollaterals != null || tempFinCollaterals != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 						        usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinCollaterals == null || tempFinCollaterals != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 						        usrLanguage));
 					}
@@ -354,7 +354,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			if (!finCollaterals.isWorkflow()) {	// With out Work flow for update and delete
 
 				if (befFinCollaterals == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinCollaterals != null
@@ -362,11 +362,11 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 					                befFinCollaterals.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
 							        usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
 							        usrLanguage));
 						}
@@ -375,14 +375,14 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			} else {
 
 				if (tempFinCollaterals == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinCollaterals != null && oldFinCollaterals != null
 				        && !oldFinCollaterals.getLastMntOn().equals(
 				                tempFinCollaterals.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}

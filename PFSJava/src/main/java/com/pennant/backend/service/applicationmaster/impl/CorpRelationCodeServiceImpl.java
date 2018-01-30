@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CorpRelationCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -342,7 +342,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		CorpRelationCode corpRelationCode = (CorpRelationCode) auditDetail
 				.getModelData();
@@ -372,7 +372,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 				if (befCorpRelationCode != null) { // Record Already Exists in
 													// the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -386,14 +386,14 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 																// already
 																// exists in the
 																// main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCorpRelationCode == null
 							|| tempCorpRelationCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -408,7 +408,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 				if (befCorpRelationCode == null) { // if records not exists in
 													// the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -418,11 +418,11 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -434,7 +434,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 				if (tempCorpRelationCode == null) { // if records not exists in
 													// the Work flow table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -444,7 +444,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 						&& !oldCorpRelationCode.getLastMntOn().equals(
 								tempCorpRelationCode.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

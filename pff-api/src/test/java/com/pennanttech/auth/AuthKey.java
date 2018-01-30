@@ -22,9 +22,9 @@ public class AuthKey {
 		Assert.assertNotNull(authKey);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void crackDown() throws UnsupportedEncodingException {
-		String authKey = "dXNlcjpiZnNkOlBlbm5hbnRAMTIz";
+		String authKey = "dXNlcjphZG1pbjpQZW5uYW50QDEyMw==";
 		String authDetails = new String(Base64.decode(authKey.getBytes()), "UTF-8");
 
 		logger.info(authKey);

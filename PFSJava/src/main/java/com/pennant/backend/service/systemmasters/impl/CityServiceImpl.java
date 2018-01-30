@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
@@ -344,7 +344,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 			parameters[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+city.getPCProvince();
 			parameters[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+city.getPCCity();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008", parameters, null));
 		}
 		
 		// If City Code is already utilized in PinCode 
@@ -355,7 +355,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_PCCity") + ": " + city.getPCCity();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
 

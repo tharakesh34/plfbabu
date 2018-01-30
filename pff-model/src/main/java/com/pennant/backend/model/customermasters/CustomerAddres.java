@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -61,9 +62,10 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = {"custAddrType", "custAddrHNbr", "custFlatNbr", "custAddrStreet" , "custAddrLine1", "custAddrLine2", "custPOBox",
 		"custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP", "custAddrFrom","typeOfResidence","custAddrPriority"})
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerAddres extends AbstractWorkflowEntity {
+public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -3309604710675073740L;
-
+	
+	private long custAddressId=Long.MIN_VALUE;
 	private long custID =Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	@XmlElement(name="addrType")
@@ -399,5 +401,13 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 
 	public void setCustAddrLine4(String custAddrLine4) {
 		this.custAddrLine4 = custAddrLine4;
+	}
+	
+	public long getCustAddressId() {
+		return custAddressId;
+	}
+
+	public void setCustAddressId(long custAddressId) {
+		this.custAddressId = custAddressId;
 	}
 }

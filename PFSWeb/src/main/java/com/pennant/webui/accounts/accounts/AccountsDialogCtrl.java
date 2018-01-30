@@ -70,7 +70,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountNumberGeneration;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -156,7 +156,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	// ServiceDAOs / Domain Classes
 	private transient AccountsService accountsService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -1178,7 +1178,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 						}
 
 					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999
 								, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccountsDialog, auditHeader);
 						return processCompleted; 
@@ -1286,11 +1286,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

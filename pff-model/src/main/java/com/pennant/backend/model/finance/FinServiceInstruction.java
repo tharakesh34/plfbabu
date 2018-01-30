@@ -86,7 +86,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private String dmaCode;
 	@XmlElement
-	private String accountsOfficer;
+	private long accountsOfficer;
 	@XmlElement
 	private String referralId;
 	private int adjRpyTerms = 0;
@@ -410,11 +410,11 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 		this.dmaCode = dmaCode;
 	}
 
-	public String getAccountsOfficer() {
+	public long getAccountsOfficer() {
 		return accountsOfficer;
 	}
 
-	public void setAccountsOfficer(String accountsOfficer) {
+	public void setAccountsOfficer(long accountsOfficer) {
 		this.accountsOfficer = accountsOfficer;
 	}
 

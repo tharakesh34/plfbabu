@@ -60,7 +60,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -357,7 +357,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
 		FinAdvancePayments tempFinAdvancePay = null;
 		if (finAdvancePay.isWorkflow()) {
@@ -375,18 +375,18 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 			if (!finAdvancePay.isWorkflow()) {// With out Work flow only new records  
 				if (befFinAdvancePay != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finAdvancePay.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinAdvancePay != null || tempFinAdvancePay != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinAdvancePay == null || tempFinAdvancePay != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -396,17 +396,17 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			if (!finAdvancePay.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befFinAdvancePay == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinAdvancePay != null
 							&& !oldFinAdvancePay.getLastMntOn().equals(befFinAdvancePay.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -414,13 +414,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			} else {
 
 				if (tempFinAdvancePay == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinAdvancePay != null && oldFinAdvancePay != null
 						&& !oldFinAdvancePay.getLastMntOn().equals(tempFinAdvancePay.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -573,7 +573,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	}
 
-	public List<ErrorDetails> validateFinAdvPayments(List<FinAdvancePayments> list, List<FinanceDisbursement> financeDisbursement, 
+	public List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> list, List<FinanceDisbursement> financeDisbursement, 
 			FinanceMain financeMain, boolean loanApproved) {
 		logger.debug(" Entering ");
 
@@ -581,7 +581,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		boolean checkMode = true;
 
 		BigDecimal totDisbAmt = BigDecimal.ZERO;
@@ -589,7 +589,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (financeMain.isQuickDisb() && financeDisbursement != null && financeDisbursement.size() > 1) {
 			//Multiple disbursement not allowed in quick disbursement
-			ErrorDetails error = new ErrorDetails("60405", null);
+			ErrorDetail error = new ErrorDetail("60405", null);
 			errorList.add(error);
 			return errorList;
 		}
@@ -621,7 +621,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				String[] valueParm = new String[2];
 				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
 				valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
-				ErrorDetails error = new ErrorDetails("60401", valueParm);
+				ErrorDetail error = new ErrorDetail("60401", valueParm);
 				errorList.add(error);
 				return errorList;
 			}
@@ -629,7 +629,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (!checkMode) {
 			//For quick disbursement, only payment type cheque is allowed.
-			ErrorDetails error = new ErrorDetails("60402", null);
+			ErrorDetail error = new ErrorDetail("60402", null);
 			errorList.add(error);
 			return errorList;
 		}
@@ -662,7 +662,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				if (singletDisbursment.compareTo(totalGroupAmt) != 0) {
 					String errorDesc = DateUtility.formatToLongDate(disbDate) + " , " + disbursement.getDisbSeq();
 					//Total amount should match with disbursement amount dated :{0}.
-					ErrorDetails error = new ErrorDetails("60404", new String[] { errorDesc });
+					ErrorDetail error = new ErrorDetail("60404", new String[] { errorDesc });
 					errorList.add(error);
 					return errorList;
 				}

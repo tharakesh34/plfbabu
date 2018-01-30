@@ -42,13 +42,15 @@
  */
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DocumentType;
@@ -199,6 +201,10 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		return getDocumentTypeDAO().getDocumentTypeById(id, "_AView");
 	}
 	
+	/**Getting pdf type list for pdf uploader menuitem*/ 
+	public List<DocumentType> getApprovedPdfExternalList() {
+		return getDocumentTypeDAO().getApprovedPdfExternalList("_AView");
+	}
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or
@@ -353,7 +359,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_DocTypeCode") + ": " + code;
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

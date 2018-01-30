@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -154,11 +154,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String agreeName;
 	private boolean finIsAlwMD;
 	@XmlElement
-	private String accountsOfficer;
+	private long accountsOfficer;
 	@XmlElement
 	private String dsaCode;
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
+	private String lovDescSourceCity;
 	private String lovDescMobileNumber;
 	private String lovDescFinProduct;
 	private String lovDescCustCRCPR;
@@ -574,7 +575,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private long mandateID = 0;
 
 	private BigDecimal refundAmount = BigDecimal.ZERO;
-	private List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 	private Map<String, String> lovDescNextUsersRolesMap = null;
 
 	private List<SecondaryAccount> secondaryAccount = new ArrayList<SecondaryAccount>();
@@ -619,6 +620,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean dedupMatch;
 	private boolean hunterGo = true;
 	private boolean bureau;
+	
+	//GST Columns Added
+	private BigDecimal recalCGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalIGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
+	private BigDecimal recalUGSTFee = BigDecimal.ZERO;
+
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -736,6 +744,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("dedupMatch");
 		excludeFields.add("hunterGo");
 		excludeFields.add("bureau");
+
+		//GST
+		excludeFields.add("recalCGSTFee");
+		excludeFields.add("recalIGSTFee");
+		excludeFields.add("recalSGSTFee");
+		excludeFields.add("recalUGSTFee");
 
 		return excludeFields;
 	}
@@ -2231,7 +2245,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	/**
 	 * @return the errorDetails
 	 */
-	public List<ErrorDetails> getErrorDetails() {
+	public List<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
 
@@ -2239,14 +2253,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	 * @param errorDetails
 	 *            the errorDetails to set
 	 */
-	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
+	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetail) {
+	public void setErrorDetail(ErrorDetail errorDetail) {
 
 		if (errorDetails == null) {
-			errorDetails = new ArrayList<ErrorDetails>();
+			errorDetails = new ArrayList<ErrorDetail>();
 		}
 
 		this.errorDetails.add(errorDetail);
@@ -2612,11 +2626,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public String getAccountsOfficer() {
+	public long getAccountsOfficer() {
 		return accountsOfficer;
 	}
 
-	public void setAccountsOfficer(String accountsOfficer) {
+	public void setAccountsOfficer(long accountsOfficer) {
 		this.accountsOfficer = accountsOfficer;
 	}
 
@@ -3123,7 +3137,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.validateMain = validateMain;
 	}
 
-	public void setErrorDetails(List<ErrorDetails> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
@@ -3456,6 +3470,48 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setBureau(boolean bureau) {
 		this.bureau = bureau;
+	}
+
+	public String getLovDescSourceCity() {
+		return lovDescSourceCity;
+	}
+
+	public void setLovDescSourceCity(String lovDescSourceCity) {
+		this.lovDescSourceCity = lovDescSourceCity;
+	}
+
+	//GST
+	
+	public BigDecimal getRecalIGSTFee() {
+		return recalIGSTFee;
+	}
+
+	public void setRecalIGSTFee(BigDecimal recalIGSTFee) {
+		this.recalIGSTFee = recalIGSTFee;
+	}
+
+	public BigDecimal getRecalCGSTFee() {
+		return recalCGSTFee;
+	}
+
+	public void setRecalCGSTFee(BigDecimal recalCGSTFee) {
+		this.recalCGSTFee = recalCGSTFee;
+	}
+
+	public BigDecimal getRecalSGSTFee() {
+		return recalSGSTFee;
+	}
+
+	public void setRecalSGSTFee(BigDecimal recalSGSTFee) {
+		this.recalSGSTFee = recalSGSTFee;
+	}
+
+	public BigDecimal getRecalUGSTFee() {
+		return recalUGSTFee;
+	}
+
+	public void setRecalUGSTFee(BigDecimal recalUGSTFee) {
+		this.recalUGSTFee = recalUGSTFee;
 	}
 
 }

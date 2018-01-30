@@ -71,9 +71,9 @@ public class ReasonCodeListModelItemRenderer implements ListitemRenderer<ReasonC
 	public void render(Listitem item, ReasonCode reasonCode, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(String.valueOf(reasonCode.getReasonTypeID()));
+		lc = new Listcell(String.valueOf(reasonCode.getReasonTypeCode()));
 	  	lc.setParent(item);
-		lc = new Listcell(String.valueOf(reasonCode.getReasonCategoryID()));
+		lc = new Listcell(String.valueOf(reasonCode.getReasonCategoryCode()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(reasonCode.getCode());
 		lc.setParent(item);

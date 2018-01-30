@@ -205,6 +205,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
 	public boolean isDocIsPdfExtRequired() {
 		return docIsPdfExtRequired;
 	}

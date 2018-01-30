@@ -59,7 +59,7 @@ import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.limit.LimitGroup;
@@ -401,7 +401,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		LimitGroup limitGroup = (LimitGroup) auditDetail.getModelData();
 
 		LimitGroup tempLimitGroup = null;
@@ -421,18 +421,18 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 			if (!limitGroup.isWorkflow()) {// With out Work flow only new records  
 				if (befLimitGroup != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (limitGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befLimitGroup != null || tempLimitGroup != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befLimitGroup == null || tempLimitGroup != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -442,16 +442,16 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			if (!limitGroup.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befLimitGroup == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldLimitGroup != null && !oldLimitGroup.getLastMntOn().equals(befLimitGroup.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -459,13 +459,13 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			} else {
 
 				if (tempLimitGroup == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempLimitGroup != null && oldLimitGroup != null
 						&& !oldLimitGroup.getLastMntOn().equals(tempLimitGroup.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}

@@ -50,7 +50,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.MaritalStatusCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;
@@ -360,13 +360,13 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			String[] parameters = new String[1];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_MaritalStsCode") + ":"+ maritalStatusCode.getMaritalStsCode();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
 		}
 		
 		if (maritalStatusCode.isSystemDefault()) {
 			String dftMaritalStsCode = getMaritalStatusCodeDAO().getSystemDefaultCount(maritalStatusCode.getMaritalStsCode());
 			if (StringUtils.isNotEmpty(dftMaritalStsCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
 						new String[]{dftMaritalStsCode,PennantJavaUtil.getLabel("MaritalStatusCode")}, null));
 			}
         }

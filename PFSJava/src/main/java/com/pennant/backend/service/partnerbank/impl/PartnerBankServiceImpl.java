@@ -56,7 +56,7 @@ import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -388,13 +388,13 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		if (partnerBank.isNew()
 				&& partnerBankDAO.isDuplicateKey(partnerBank.getPartnerBankId(), partnerBank.getPartnerBankCode(),
 						partnerBank.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 		}
 
 		// Duplicate Partner Bank Code
 		if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && partnerBank.isNewRecord()
 				&& getPartnerCodeExist(partnerBank.getPartnerBankCode(), "_View")) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
 		}
 		
 		// Check Dependency Validation
@@ -402,7 +402,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			boolean isPartnerBankUsed = checkDependencyValidation(partnerBank.getPartnerBankId());
 
 			if (isPartnerBankUsed) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 			}
 		}
 

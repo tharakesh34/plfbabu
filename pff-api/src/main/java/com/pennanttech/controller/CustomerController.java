@@ -15,9 +15,10 @@ import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -42,7 +43,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -55,14 +55,14 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class CustomerController {
 	private final Logger						logger				= Logger.getLogger(CustomerController.class);
 
-	HashMap<String, ArrayList<ErrorDetails>>	overideMap;
+	HashMap<String, ArrayList<ErrorDetail>>	overideMap;
 	private CustomerService						customerService;
 	private CustomerDetailsService				customerDetailsService;
-	private ErrorDetailService					errorDetailService;
 	private CustomerEmploymentDetailService		customerEmploymentDetailService;
 	private ExtendedFieldDetailsService			extendedFieldDetailsService;
 	private DocumentManagerDAO					documentManagerDAO;
 	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
+	
 
 	private final String						PROCESS_TYPE_SAVE	= "Save";
 	private final String						PROCESS_TYPE_UPDATE	= "Update";
@@ -90,9 +90,9 @@ public class CustomerController {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerDetails();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
@@ -124,14 +124,17 @@ public class CustomerController {
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 			
+			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			customerDetails.getCustomer().setCustNationality(AppCountry);
+			
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDetails,PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
 		} catch (Exception e) {
@@ -212,14 +215,15 @@ public class CustomerController {
 		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
+		if (customerDetails.getPrimaryRelationOfficer() != 0) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())){
-			curCustomer.setCustCOB(PennantConstants.DEFAULT_COUNTRY);
+			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			curCustomer.setCustCOB(AppCountry);
 		}
 		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
@@ -241,6 +245,9 @@ public class CustomerController {
 			curCustomer.setLastMntBy(userDetails.getUserId());
 		} else {
 			Customer prvCustomer = prvCustomerDetails.getCustomer();
+			if (StringUtils.isBlank(curCustomer.getCustDftBranch())) {
+				curCustomer.setCustDftBranch(prvCustomer.getCustDftBranch());
+			}
 			customerDetails.setCustID(prvCustomer.getCustID());
 			curCustomer.setCustCIF(customerDetails.getCustCIF());
 			curCustomer.setCustID(prvCustomer.getCustID());
@@ -621,7 +628,7 @@ public class CustomerController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
 				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -635,7 +642,7 @@ public class CustomerController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), String.valueOf(aCustomerDetails
 				.getCustID()), null, null, auditDetail, aCustomerDetails.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -718,8 +725,8 @@ public class CustomerController {
 				auditHeader = customerDetailsService.delete(auditHeader);
 
 				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-						response = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+						response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 								errorDetail.getError());
 					}
 				} else {
@@ -898,7 +905,7 @@ public class CustomerController {
 		} else {
 			curCustomer.setCustBaseCcy(prvCustomer.getCustBaseCcy());
 		}
-		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
+		if (customerDetails.getPrimaryRelationOfficer() != 0) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		} else {
 			curCustomer.setCustRO1(prvCustomer.getCustRO1());
@@ -922,8 +929,8 @@ public class CustomerController {
 		auditHeader = customerService.doApprove(auditHeader);
 		WSReturnStatus response = new WSReturnStatus();
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 			}
 		} else {
 			response = APIErrorHandlerService.getSuccessStatus();
@@ -1007,9 +1014,9 @@ public class CustomerController {
 
 		
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new EmploymentDetail();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getError()));
 			}
 		} else {
@@ -1045,7 +1052,7 @@ public class CustomerController {
 			customerEmploymentDetail.setUserDetails(userDetails);
 			customerEmploymentDetail.setCustID(prvCustomer.getCustID());
 			customerEmploymentDetail.setLovDescCustCIF(cif);
-			customerEmploymentDetail.setLovDesccustEmpName(String.valueOf(customerEmploymentDetail.getCustEmpName()));
+			customerEmploymentDetail.setCustEmpName(customerEmploymentDetail.getCustEmpName());
 			customerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			customerEmploymentDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerEmploymentDetail.setNewRecord(false);
@@ -1063,8 +1070,8 @@ public class CustomerController {
 
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -1104,8 +1111,8 @@ public class CustomerController {
 			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 				}
 			} else {
@@ -1134,7 +1141,7 @@ public class CustomerController {
 	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
 		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null,
-				null, auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				null, auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public CustomerService getCustomerService() {
@@ -1143,14 +1150,6 @@ public class CustomerController {
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
-	}
-
-	public ErrorDetailService getErrorDetailService() {
-		return errorDetailService;
-	}
-
-	public void setErrorDetailService(ErrorDetailService errorDetailService) {
-		this.errorDetailService = errorDetailService;
 	}
 
 	public CustomerDetailsService getCustomerDetailsService() {

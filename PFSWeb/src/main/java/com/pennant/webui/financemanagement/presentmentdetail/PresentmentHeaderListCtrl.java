@@ -89,6 +89,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	// List headers
 	protected Listheader listheader_Reference;
 	protected Listheader listheader_PresentmentDate;
+	protected Listheader listheader_BankCode;
 	protected Listheader listheader_PartnerBankId;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_MandateType;
@@ -104,7 +105,8 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
   	protected Combobox status; 
     protected Combobox mandateType; 
 	protected Datebox schdate; 
-	protected Datebox presentmentDate; 
+	protected Datebox presentmentDate;
+	protected Textbox bankCode;
 	
 	protected Listbox sortOperator_Reference;
 	protected Listbox sortOperator_PresentmentDate;
@@ -112,6 +114,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_Status;
 	protected Listbox sortOperator_MandateType;
 	protected Listbox sortOperator_Schdate;
+	protected Listbox sortOperator_BankCode;
 	
 	private transient PresentmentHeaderService presentmentHeaderService;
 
@@ -163,6 +166,8 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerButton(button_PresentmentHeaderList_PresentmentHeaderSearch);
 		registerField("reference", listheader_Reference, SortOrder.NONE, reference, sortOperator_Reference, Operators.STRING);
 		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate, sortOperator_PresentmentDate, Operators.DATE);
+		registerField("bankCode",bankCode,SortOrder.NONE,sortOperator_BankCode,Operators.STRING);
+		registerField("bankName", listheader_BankCode, SortOrder.NONE);
 		registerField("partnerBankId", listheader_PartnerBankId, SortOrder.NONE, partnerBank, sortOperator_PartnerBankId, Operators.STRING);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);

@@ -25,7 +25,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -497,7 +497,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CollateralAssignmentDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -878,7 +878,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 					if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}

@@ -10,7 +10,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -85,7 +85,7 @@ public class CustomerDocumentValidation {
 													// records
 				if (befCustomerDocument != null) { // Record Already Exists in
 													// the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
@@ -95,12 +95,12 @@ public class CustomerDocumentValidation {
 																// is new
 					if (befCustomerDocument != null || tempCustomerDocument != null) { 
 							//if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerDocument == null || tempCustomerDocument != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
@@ -113,7 +113,7 @@ public class CustomerDocumentValidation {
 
 				if (befCustomerDocument == null) { // if records not exists in
 													// the main table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
@@ -122,10 +122,10 @@ public class CustomerDocumentValidation {
 								befCustomerDocument.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41003", errParm, null));
 					} else {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41004", errParm, null));
 					}
 				}
@@ -133,14 +133,14 @@ public class CustomerDocumentValidation {
 
 				if (tempCustomerDocument == null) { // if records not exists in
 													// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempCustomerDocument != null && oldCustomerDocument != null
 						&& !oldCustomerDocument.getLastMntOn().equals(
 								tempCustomerDocument.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -161,7 +161,7 @@ public class CustomerDocumentValidation {
 				errParm1[0] = PennantJavaUtil.getLabel("DocumentDetails") + " , "
 						+ customerDocument.getLovDescCustDocCategory() + " "
 						+ PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + valueParm1[0];
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm1, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm1, null));
 			}
 		}
 
@@ -184,11 +184,11 @@ public class CustomerDocumentValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(CustomerDocument customerDocument ){
+	public ErrorDetail  screenValidations(CustomerDocument customerDocument ){
        //Customer Document Details Validation
 
 		if( customerDocument.isDocIdNumMand() && StringUtils.isBlank(customerDocument.getCustDocTitle())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DocumentDetails"),
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
 					Labels.getLabel("listheader_CustDocType.label"),
@@ -202,7 +202,7 @@ public class CustomerDocumentValidation {
 		}
 
 		if(customerDocument.isLovDescdocExpDateIsMand()  && customerDocument.getCustDocExpDate() == null){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DocumentDetails")+"  :  ",
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
 					Labels.getLabel("listheader_CustDocType.label"),
@@ -212,7 +212,7 @@ public class CustomerDocumentValidation {
 
 		if(customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null
 				&& !customerDocument.getCustDocExpDate().after(customerDocument.getCustDocIssuedOn())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30536", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30536", 
 					new String[] {Labels.getLabel("DocumentDetails"),
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
 					Labels.getLabel("listheader_CustDocType.label")}, 
@@ -221,7 +221,7 @@ public class CustomerDocumentValidation {
 		
 		if (customerDocument.getCustDocExpDate() != null
 				&& !customerDocument.getCustDocExpDate().after(DateUtility.getAppDate())) {
-			return new ErrorDetails(PennantConstants.KEY_FIELD, "30536", new String[] {
+			return new ErrorDetail(PennantConstants.KEY_FIELD, "30536", new String[] {
 					Labels.getLabel("DocumentDetails"),
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
 					DateUtility.getAppDate(DateFormat.SHORT_DATE) }, new String[] {});
@@ -229,7 +229,7 @@ public class CustomerDocumentValidation {
 
 		if (customerDocument.getCustDocIssuedOn() != null
 				&& !(customerDocument.getCustDocIssuedOn().after(SysParamUtil.getValueAsDate("APP_DFT_START_DATE")))) {
-			return new ErrorDetails(PennantConstants.KEY_FIELD, "30536", new String[] {
+			return new ErrorDetail(PennantConstants.KEY_FIELD, "30536", new String[] {
 					Labels.getLabel("DocumentDetails"),
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
 					DateUtility.formatToShortDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE")) }, new String[] {});

@@ -60,7 +60,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -98,7 +98,7 @@ public class ProvisionCalculationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public ErrorDetails processProvCalculations(Provision procProvision, Date dateValueDate, boolean isProvRelated,
+	public ErrorDetail processProvCalculations(Provision procProvision, Date dateValueDate, boolean isProvRelated,
 			boolean isScrnLvlProc, boolean isFromCore) throws IllegalAccessException,
 			InvocationTargetException, InterfaceException {
 
@@ -196,7 +196,7 @@ public class ProvisionCalculationUtil implements Serializable {
 		}
 
 		ProvisionMovement movement = null;
-		ErrorDetails errorDetails = null;
+		ErrorDetail errorDetails = null;
 		if (isProceedFurthur) {
 			//Provision Movement record update
 			if (provision.getProvisionDue().compareTo(BigDecimal.ZERO) == 0) {
@@ -232,7 +232,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				isPostingsSuccess = aeEvent.isPostingSucess();
 
 				if (!isPostingsSuccess) {
-					errorDetails = new ErrorDetails("", PennantConstants.ERR_9999, "E",
+					errorDetails = new ErrorDetail("", PennantConstants.ERR_9999, "E",
 							"Provision Posting Details are failed...", null, null);
 				} else {
 					movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));

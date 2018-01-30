@@ -64,7 +64,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -324,7 +324,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			valueParm[0] = aFinanceMain.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 		} else {

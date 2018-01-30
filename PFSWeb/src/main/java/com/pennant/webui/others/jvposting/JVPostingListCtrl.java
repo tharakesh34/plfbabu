@@ -61,7 +61,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -255,7 +255,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 					valueParm[0] = Long.toString(aJVPosting.getId());
 					errParm[0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + valueParm[0];
 
-					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), getUserWorkspace().getUserLanguage());
 					MessageUtil.showError(errorDetails.getError());
 				} else {

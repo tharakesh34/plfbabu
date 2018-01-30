@@ -15,7 +15,7 @@ import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -646,7 +646,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 			String usrLanguage, String method){
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FinanceCheckListReference financeCheckListReference= (FinanceCheckListReference) auditDetail.getModelData();
 		FinanceCheckListReference oldFinanceCheckListReference= financeCheckListReference.getBefImage();
 
@@ -663,14 +663,14 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 			if (!financeCheckListReference.isWorkflow()){// With out Work flow only new records  
 				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008"
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008"
 							, errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)){ // if records type is new
 					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if 
 						//records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
 								, "41008", errParm,valueParm), usrLanguage));
 					}
 				}
@@ -681,29 +681,29 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldFinanceCheckListReference!=null 
 							&& !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				if (tempFinanceCheckListReference!=null && oldFinanceCheckListReference!=null 
 						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}
@@ -722,7 +722,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method){
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FinanceCheckListReference financeCheckListReference= (FinanceCheckListReference) auditDetail.getModelData();
 
 		FinanceCheckListReference tempFinanceCheckListReference= null;
@@ -751,14 +751,14 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 			if (!financeCheckListReference.isWorkflow()){// With out Work flow only new records  
 				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008"
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008"
 							, errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)){ // if records type is new
 					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if 
 						//records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
 								, "41008", errParm,valueParm), usrLanguage));
 					}
 				}
@@ -769,29 +769,29 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldFinanceCheckListReference!=null 
 							&& !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				if (tempFinanceCheckListReference!=null && oldFinanceCheckListReference!=null 
 						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}

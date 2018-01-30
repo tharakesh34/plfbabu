@@ -54,7 +54,8 @@ public class PennantConstants {
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
-		SeqFinMaintainInstructions,SeqServiceTaskDetails,SeqMailTemplate
+		SeqFinMaintainInstructions,SeqServiceTaskDetails,SeqMailTemplate,SeqCustomerAddresses,SeqFinASSETTYPES,
+		SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping,SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -191,6 +192,8 @@ public class PennantConstants {
 	public static final String method_Crif_Bureau = "executeCrif";
 	public static final String method_Cibil_Bureau = "executeCibilConsumer";
 	public static final String method_LegalDesk = "executeLegalDesk";
+	public static final String method_HoldFinance = "executeHold";
+	public static final String method_bre = "executeBRE";	
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
 	public static final String ERR_SEV_WARNING = "W";
@@ -687,12 +690,9 @@ public class PennantConstants {
 
 	//Customer Dedup source sstem
 	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENNANT";
-	public static final String CUSTOMER_DEDUP_REJECTED= "R";
-	public static final String CUSTOMER_DEDUP_UPDATE= "U";
-	public static final String CUSTOMER_DEDUP_INSERT= "I";
 	
-	//Fin-one customer creation stored procedure
-	public static final String CUSTOMER_DEDUP_PROCNAME= "CREATE_CUSTOMER_IN_FINNONE";
+	// No objection certificate
+	public static final String NO_OBJECT_CERT= "NOC";
 	
 	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
 	public static final String FINANCE_INQUIRY_LOAN = "LOAN";

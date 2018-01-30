@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -50,8 +50,8 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 
 			}
 		}
@@ -73,7 +73,7 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
 		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
-				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	@Autowired

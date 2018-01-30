@@ -42,13 +42,15 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -70,6 +72,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReasonCodeDAO reasonCodeDAO;
+	private ReasonDetailDAO  reasonDetailDAO;
 
 
 	// ******************************************************//
@@ -358,7 +361,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		// Check the unique keys.
 		if (reasonCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
 				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
-						reasonCode.getCode(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+						reasonCode.getCode().trim(), reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeID();
@@ -366,13 +369,34 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 					+ reasonCode.getReasonCategoryID();
 			parameters[2] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonCode.getCode();
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+		// If Reasons Code is already utilized in ReasonDetails
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, reasonCode.getRecordType())) {
+			boolean workflowExists = getReasonDetailDAO().isreasonCodeExists(reasonCode.getId());
+			if (workflowExists) {
+
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + reasonCode.getCode();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
+
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+
+	public ReasonDetailDAO getReasonDetailDAO() {
+		return reasonDetailDAO;
+	}
+
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
+	}
+	
 
 }

@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -81,11 +81,11 @@ public class RateUtil implements Serializable {
 		logger.debug("Entering");
 		boolean error = false;
 
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 
 		if (rateDetail == null) {
 			rateDetail = new RateDetail();
-			errorDetails.add(new ErrorDetails(" ", "30561",
+			errorDetails.add(new ErrorDetail(" ", "30561",
 					new String[] { PennantJavaUtil.getLabel("label_BaseRate") }, new String[] { "null" }));
 			error = true;
 		}
@@ -93,14 +93,14 @@ public class RateUtil implements Serializable {
 		if (!error
 				&& (StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode())) && StringUtils
 						.isEmpty(StringUtils.trimToEmpty(rateDetail.getSplRateCode())))) {
-			errorDetails.add(new ErrorDetails("Rate", "30559", new String[] {
+			errorDetails.add(new ErrorDetail("Rate", "30559", new String[] {
 					PennantJavaUtil.getLabel("label_BaseRate"), PennantJavaUtil.getLabel("label_SplRateCode") },
 					new String[] { "null" }));
 			error = true;
 		}
 
 		if (!error && rateDetail.getValueDate() == null) {
-			errorDetails.add(new ErrorDetails("Date", "30559", new String[] { PennantJavaUtil.getLabel("label_Date") },
+			errorDetails.add(new ErrorDetail("Date", "30559", new String[] { PennantJavaUtil.getLabel("label_Date") },
 					new String[] { "null" }));
 			error = true;
 		}
@@ -130,7 +130,7 @@ public class RateUtil implements Serializable {
 				valueParm[0] = rateDetail.getBaseRateCode();
 				errorParm[0] = PennantJavaUtil.getLabel("label_BaseRate") + ": " + valueParm[0];
 
-				errorDetails.add(new ErrorDetails("BaseRate", "41002", errorParm, valueParm));
+				errorDetails.add(new ErrorDetail("BaseRate", "41002", errorParm, valueParm));
 				rateDetail.setBaseRefRate(BigDecimal.ZERO);
 				error = true;
 			}
@@ -147,7 +147,7 @@ public class RateUtil implements Serializable {
 				if (rateDetail.getSplRefRate() == null) {
 					valueParm[0] = rateDetail.getSplRateCode();
 					errorParm[0] = PennantJavaUtil.getLabel("label_SplRateCode") + ": " + valueParm[0];
-					errorDetails.add(new ErrorDetails("SplRate", "41002", errorParm, valueParm));
+					errorDetails.add(new ErrorDetail("SplRate", "41002", errorParm, valueParm));
 					rateDetail.setBaseRefRate(BigDecimal.ZERO);
 					error = true;
 				}

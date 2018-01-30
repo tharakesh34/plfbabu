@@ -39,7 +39,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -234,10 +234,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetRequiredDetails(financeDetail, loanWithWIF,userDetails,stp);
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
-				for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
@@ -255,10 +255,10 @@ public class CreateFinanceController extends SummaryDetailService {
 					// process planned EMI details
 					doProcessPlanEMIHDays(finScheduleData);
 					if (finScheduleData.getErrorDetails() != null) {
-						for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {
+						for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 							FinanceDetail response = new FinanceDetail();
 							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 									errorDetail.getError()));
 							return response;
 						}
@@ -309,7 +309,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
-					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 			auditHeader.setApiHeader(reqHeaderDetails);
@@ -327,29 +327,29 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinanceDetail response = null;
 			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
-				for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
 					response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
 			}
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
 			}
 
 			if (auditHeader.getAuditDetail().getErrorDetails() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+				for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
 					response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 							errorDetail.getError()));
 					return response;
 				}
@@ -596,6 +596,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setNextRoleCode(financeMain.getNextRoleCode());
 			jointAccDetail.setTaskId(financeMain.getTaskId());
 			jointAccDetail.setNextTaskId(financeMain.getNextTaskId());
+
+			Customer coApplicant = customerDetailsService.getCustomerByCIF(jointAccDetail.getCustCIF());
+			if (coApplicant != null) {
+				jointAccDetail.setCustID(coApplicant.getCustID());
+			}
 		}
 
 		// guarantor details
@@ -866,12 +871,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			for (FinAdvancePayments advPayments : financeDetail.getAdvancePaymentsList()) {
 				advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
 			}
-			List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(
+			List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(
 					financeDetail.getAdvancePaymentsList(), finScheduleData.getDisbursementDetails(),
 					finScheduleData.getFinanceMain(), true);
-			for (ErrorDetails erroDetails : errors) {
+			for (ErrorDetail erroDetails : errors) {
 				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(erroDetails.getErrorCode(), erroDetails.getErrorParameters())));
+						new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
 			}
 		}
 	}
@@ -943,7 +948,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (StringUtils.isBlank(eventCode)) {
 				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
 			}
-			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null, true);
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null);
 		} else {
 			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null);
 		}
@@ -1386,8 +1391,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		// validate total disbursement amount
 		validateDisbInstAmount(financeDetail);
 		if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		
@@ -1413,19 +1418,19 @@ public class CreateFinanceController extends SummaryDetailService {
 	private AuditHeader getAuditHeader(FinanceMain finMain, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, finMain.getBefImage(), finMain);
 		return new AuditHeader(finMain.getFinReference(), null, null, null, auditDetail,
-				finMain.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetails>>());
+				finMain.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 	
 	private AuditHeader getAuditHeader(DocumentDetails documentDetails, String transType) {
 		AuditDetail auditDetail = new AuditDetail(transType, 1, documentDetails.getBefImage(), documentDetails);
 		return new AuditHeader(documentDetails.getReferenceId(), null, null, null, auditDetail,
-				documentDetails.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetails>>());
+				documentDetails.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
-				aMandate.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetails>>());
+				aMandate.getUserDetails(),  new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	private void prepareResponse(FinanceDetail financeDetail) {

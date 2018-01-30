@@ -41,9 +41,7 @@
  */
 package com.pennant.webui.reason.detail;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,6 +58,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -88,7 +87,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Listbox listReasonDetailsLog;
 	
 	private CustomerFinanceDetail customerFinanceDetail;
-	private List<Map<String, Object>> reasonDetails;
+	private List<ReasonDetailsLog> reasonDetails;
 	
 	/**
 	 * default constructor.<br>
@@ -125,7 +124,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			
 			if (arguments.containsKey("reasonDetails")) {
-				this.reasonDetails = (List<Map<String, Object>>) arguments.get("reasonDetails");
+				this.reasonDetails = (List<ReasonDetailsLog>) arguments.get("reasonDetails");
 			} 
 			
 			doShowDialog();
@@ -154,7 +153,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
 				CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
 		this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
-		fillReasonDeatilsLog(this.reasonDetails);
+		fillReasonDeatilsLog();
 		logger.debug(Literal.LEAVING);
 	}
 	 
@@ -164,79 +163,85 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param reasonDetails
 	 */
-	private void fillReasonDeatilsLog(List<Map<String, Object>> reasonDetails) {
+	private void fillReasonDeatilsLog() {
 
-		Map<String, Object> map = null;
 		this.listReasonDetailsLog.getItems().clear();
+		if (this.reasonDetails == null) {
+			return;
+		}
+
 		this.listReasonDetailsLog.setHeight(reasonDetails.size() * 26 + 100 + "px");
 		Listitem item;
 
-		for (int i = 0; i < reasonDetails.size(); i++) {
-			map = reasonDetails.get(i);
+		for (ReasonDetailsLog detailsLog : reasonDetails) {
 			item = new Listitem();
 			Listcell lc;
 
+			String date = "";
+			if (detailsLog.getLogTime() != null) {
+				date = DateUtility.formatToLongDate(detailsLog.getLogTime());
+			}
+			lc = new Listcell(date);
+			lc.setParent(item);
+			
 			String logTime = "";
-			Object objTime = map.get("Logtime");
-			if (objTime != null) {
-				logTime = DateUtility.format((Date) map.get("Logtime"),
-						DateUtility.DateFormat.LONG_DATE_TIME.getPattern());
+			if (detailsLog.getLogTime() != null) {
+				logTime = DateUtility.format(detailsLog.getLogTime(), DateUtility.DateFormat.LONG_TIME.getPattern());
 			}
 			lc = new Listcell(logTime);
 			lc.setParent(item);
-
+			
 			String roleCode = "";
-			Object objRoleCode = map.get("Rolecode");
-			if (objRoleCode != null) {
-				roleCode = (String) map.get("Rolecode");
+			if (detailsLog.getRoleCode() != null) {
+				roleCode = detailsLog.getRoleDesc();
 			}
 			lc = new Listcell(roleCode);
 			lc.setParent(item);
 
 			String toUser = "";
-			Object objToUser = map.get("Touser");
-			if (objToUser != null) {
-				toUser = String.valueOf(objToUser);
+			if (StringUtils.trimToNull(detailsLog.getUsrFname()) != null) {
+				toUser = toUser.concat(detailsLog.getUsrFname());
+			}
+			if (StringUtils.trimToNull(detailsLog.getUsrMname()) != null) {
+				toUser = toUser.concat(" ").concat(toUser.concat(detailsLog.getUsrMname()));
+			}
+			if (StringUtils.trimToNull(detailsLog.getUsrLname()) != null) {
+				toUser = toUser.concat(" ").concat(toUser.concat(detailsLog.getUsrLname()));
 			}
 			lc = new Listcell(toUser);
 			lc.setParent(item);
 
 			String toModule = "";
-			Object objModule = map.get("Module");
-			if (objModule != null) {
-				toModule = (String) map.get("Module");
+			if (detailsLog.getModule() != null) {
+				toModule = detailsLog.getModule();
 			}
 			lc = new Listcell(toModule);
 			lc.setParent(item);
 
 			String activity = "";
-			Object objActivity = map.get("Activity");
-			if (objActivity != null) {
-				activity = (String) map.get("Activity");
+			if (detailsLog.getActivity() != null) {
+				activity = detailsLog.getActivity();
 			}
 			lc = new Listcell(activity);
 			lc.setParent(item);
 
 			String code = "";
-			Object objCode = map.get("Code");
-			if (objCode != null) {
-				code = (String) map.get("Code");
+			if (detailsLog.getCode() != null) {
+				code = detailsLog.getCode();
 			}
 			lc = new Listcell(code);
 			lc.setParent(item);
 
 			String description = "";
-			Object objDescription = map.get("Description");
-			if (objDescription != null) {
-				description = (String) map.get("Description");
+			if (detailsLog.getDescription() != null) {
+				description = detailsLog.getDescription();
 			}
 			lc = new Listcell(description);
 			lc.setParent(item);
 
 			String remarks = "";
-			Object objRemarks = map.get("Remarks");
-			if (objRemarks != null) {
-				remarks = (String) map.get("Remarks");
+			if (detailsLog.getRemarks() != null) {
+				remarks = detailsLog.getRemarks();
 			}
 			lc = new Listcell(remarks);
 			lc.setParent(item);

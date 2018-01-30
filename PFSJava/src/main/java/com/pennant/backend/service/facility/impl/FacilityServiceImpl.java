@@ -53,7 +53,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -644,7 +644,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Facility facility = (Facility) auditDetail.getModelData();
 
 		Facility tempFacility = null;
@@ -664,18 +664,18 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 			if (!facility.isWorkflow()) {// With out Work flow only new records  
 				if (befFacility != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (facility.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFacility != null || tempFacility != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						        "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFacility == null || tempFacility != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						        "41005", errParm, valueParm));
 					}
 				}
@@ -685,17 +685,17 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!facility.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befFacility == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41002", errParm, valueParm));
 				} else {
 					if (oldFacility != null
 					        && !oldFacility.getLastMntOn().equals(befFacility.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							        "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							        "41004", errParm, valueParm));
 						}
 					}
@@ -703,13 +703,13 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			} else {
 
 				if (tempFacility == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41005", errParm, valueParm));
 				}
 
 				if (oldFacility != null
 				        && !oldFacility.getLastMntOn().equals(tempFacility.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41005", errParm, valueParm));
 				}
 			}
@@ -1234,15 +1234,15 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return auditList;
 	}
 	
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader,String usrLanguage,String method ){
-		List<ErrorDetails> errorDetails=new ArrayList<ErrorDetails>();
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader,String usrLanguage,String method ){
+		List<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
 		Facility facility = (Facility) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails=null;
 		//Document Details
 		if (facility.getAuditDetailMap().get("DocumentDetails")!=null) {
 			auditDetails= facility.getAuditDetailMap().get("DocumentDetails");
 		        for (AuditDetail auditDetail : auditDetails) {
-		        	List<ErrorDetails> details=validationDocumentDetails(auditDetail, usrLanguage, method).getErrorDetails();
+		        	List<ErrorDetail> details=validationDocumentDetails(auditDetail, usrLanguage, method).getErrorDetails();
 			        if (details!=null) {
 		                errorDetails.addAll(details);
 	                }
@@ -1252,7 +1252,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		if (facility.getAuditDetailMap().get("FinanceCheckList")!=null) {
 			auditDetails= facility.getAuditDetailMap().get("FinanceCheckList");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationFinanceCheckList(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details=validationFinanceCheckList(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details!=null) {
 					errorDetails.addAll(details);
 				}
@@ -1262,7 +1262,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		if (facility.getAuditDetailMap().get("Collateral")!=null) {
 			auditDetails= facility.getAuditDetailMap().get("Collateral");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationCollateral(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details=validationCollateral(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details!=null) {
 					errorDetails.addAll(details);
 				}
@@ -1272,7 +1272,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		if (facility.getAuditDetailMap().get("FacilityDetail")!=null) {
 			auditDetails= facility.getAuditDetailMap().get("FacilityDetail");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationFacilityDetails(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details=validationFacilityDetails(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details!=null) {
 					errorDetails.addAll(details);
 				}
@@ -1282,7 +1282,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		if (facility.getAuditDetailMap().get("CustomerRatings")!=null) {
 			auditDetails= facility.getAuditDetailMap().get("CustomerRatings");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationCustomerRatingDetails(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details=validationCustomerRatingDetails(auditDetail, usrLanguage, method).getErrorDetails();
 				if (details!=null) {
 					errorDetails.addAll(details);
 				}
@@ -1481,7 +1481,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	
 	private AuditDetail validationDocumentDetails(AuditDetail auditDetail,String usrLanguage,String method ){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		DocumentDetails documentDetails= (DocumentDetails) auditDetail.getModelData();
 		if (!documentDetails.isDocIsCustDoc()) {
 
@@ -1503,16 +1503,16 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 				if (!documentDetails.isWorkflow()){// With out Work flow only new records  
 					if (befDocumentDetails !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}	
 				}else{ // with work flow
 					if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 						if (befDocumentDetails !=null || tempDocumentDetails!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 						}
 					}else{ // if records not exists in the Main flow table
 						if (befDocumentDetails ==null || tempDocumentDetails!=null ){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 						}
 					}
 				}
@@ -1521,24 +1521,24 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (!documentDetails.isWorkflow()){	// With out Work flow for update and delete
 
 					if (befDocumentDetails ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 					}else{
 						if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(befDocumentDetails.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 							}else{
-								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 							}
 						}
 					}
 				}else{
 
 					if (tempDocumentDetails==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 
 					if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(tempDocumentDetails.getLastMntOn())){ 
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -1687,7 +1687,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	
 	private AuditDetail validationFinanceCheckList(AuditDetail auditDetail,String usrLanguage,String method ){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FinanceCheckListReference finCheckRef= (FinanceCheckListReference) auditDetail.getModelData();
 		
 		FinanceCheckListReference tempFinanceCheckListReference= null;
@@ -1708,16 +1708,16 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			
 			if (!finCheckRef.isWorkflow()){// With out Work flow only new records  
 				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (finCheckRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFinanceCheckListReference ==null || tempFinanceCheckListReference!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -1726,24 +1726,24 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!finCheckRef.isWorkflow()){	// With out Work flow for update and delete
 			
 				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 			
 				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
 				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}
@@ -1918,7 +1918,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	
 	private AuditDetail validationCollateral(AuditDetail auditDetail,String usrLanguage,String method ){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		Collateral collateral= (Collateral) auditDetail.getModelData();
 		
 		Collateral tempCollateral= null;
@@ -1939,16 +1939,16 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			
 			if (!collateral.isWorkflow()){// With out Work flow only new records  
 				if (befCollateral !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (collateral.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCollateral !=null || tempCollateral!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCollateral ==null || tempCollateral!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -1957,24 +1957,24 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!collateral.isWorkflow()){	// With out Work flow for update and delete
 			
 				if (befCollateral ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befCollateral.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 			
 				if (tempCollateral==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
 				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempCollateral.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}
@@ -2123,7 +2123,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	
 	private AuditDetail validationFacilityDetails(AuditDetail auditDetail,String usrLanguage,String method ){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		FacilityDetail facilityDetail= (FacilityDetail) auditDetail.getModelData();
 		
 		FacilityDetail tempFacilityDetail= null;
@@ -2144,16 +2144,16 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			
 			if (!facilityDetail.isWorkflow()){// With out Work flow only new records  
 				if (befFacilityDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (facilityDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFacilityDetail !=null || tempFacilityDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befFacilityDetail ==null || tempFacilityDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -2162,24 +2162,24 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!facilityDetail.isWorkflow()){	// With out Work flow for update and delete
 			
 				if (befFacilityDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(befFacilityDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 			
 				if (tempFacilityDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
 				if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(tempFacilityDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}
@@ -2329,7 +2329,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	
 	private AuditDetail validationCustomerRatingDetails(AuditDetail auditDetail,String usrLanguage,String method ){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		CustomerRating customerRating= (CustomerRating) auditDetail.getModelData();
 		
 		CustomerRating tempCustomerRating= null;
@@ -2350,16 +2350,16 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			
 			if (!customerRating.isWorkflow()){// With out Work flow only new records  
 				if (befCustomerRating !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (customerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCustomerRating !=null || tempCustomerRating!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCustomerRating ==null || tempCustomerRating!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -2368,24 +2368,24 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!customerRating.isWorkflow()){	// With out Work flow for update and delete
 			
 				if (befCustomerRating ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 			
 				if (tempCustomerRating==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
 				if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}

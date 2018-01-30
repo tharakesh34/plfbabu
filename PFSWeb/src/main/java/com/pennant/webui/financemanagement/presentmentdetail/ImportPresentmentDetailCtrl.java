@@ -99,10 +99,18 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		Media media = event.getMedia();
 		txtFileName.setText(media.getName());
 		try {
-			setFileImportData();
-			fileImport.setMedia(media);
-			fileImport.load(true);
-			renderPannel();
+			String fileName = StringUtils.lowerCase(media.getName());
+			if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+				fileImport = null;
+				txtFileName.setText(media.getName());
+				setFileImportData(media.getName().substring(media.getName().lastIndexOf('.')));
+				fileImport.setExcelMedia(media);
+				fileImport.loadExcelFile(true);
+				renderPannel();
+			} else {
+				throw new Exception("Invalid file format.");
+			}
+
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			MessageUtil.showError(e.getMessage());
@@ -110,12 +118,13 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 		logger.debug(Literal.LEAVING);
 	}
+	
 
-	private void setFileImportData() throws Exception {
+	private void setFileImportData(String contentType) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId());
+			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),contentType);
 		}
 
 		logger.debug(Literal.LEAVING);

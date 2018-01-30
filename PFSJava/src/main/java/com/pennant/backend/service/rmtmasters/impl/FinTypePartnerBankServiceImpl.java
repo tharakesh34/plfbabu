@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
@@ -332,7 +332,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditDetail.getModelData();
 
 		FinTypePartnerBank tempFinTypePartnerBank = null;
@@ -353,16 +353,16 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		if (finTypePartnerBank.isNew()) { // for New record or new record into work flow
 			if (!finTypePartnerBank.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypePartnerBank != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
 					if (befFinTypePartnerBank != null || tempFinTypePartnerBank != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinTypePartnerBank == null || tempFinTypePartnerBank != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -370,28 +370,28 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!finTypePartnerBank.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinTypePartnerBank == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldFinTypePartnerBank != null
 							&& !oldFinTypePartnerBank.getLastMntOn().equals(befFinTypePartnerBank.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempFinTypePartnerBank == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempFinTypePartnerBank != null && oldFinTypePartnerBank != null
 						&& !oldFinTypePartnerBank.getLastMntOn().equals(tempFinTypePartnerBank.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

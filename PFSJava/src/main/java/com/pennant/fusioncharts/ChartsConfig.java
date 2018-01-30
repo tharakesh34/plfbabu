@@ -1,9 +1,8 @@
 package com.pennant.fusioncharts;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,10 +25,6 @@ public class ChartsConfig extends ChartUtil{
 	private List<ChartSetElement> setElements=new ArrayList<ChartSetElement>();
 	private List<String> catogeryList=new ArrayList<String>();
 
-	private Map<String, ChartStyleDefinition> styleDefinition;
-	private Map<String, ChartStyleApplication> styleApplication;
-
-
 	public ChartsConfig(String caption, String subCaption,
 			String yAxisName, String xAxisName) {
 		super();
@@ -47,32 +42,6 @@ public class ChartsConfig extends ChartUtil{
 		this.plotFillAlpha=plotFillAlpha;
 		this.overlapColumns=overlapColumns;
 
-	}
-
-	public void setStyleDefinition(ChartStyleDefinition styleDefinition)  {
-
-		if(this.styleDefinition==null){
-			this.styleDefinition = new HashMap<String, ChartStyleDefinition>();
-		}
-		this.styleDefinition.put(styleDefinition.getName(), styleDefinition);
-	} 
-
-
-	public Map<String, ChartStyleApplication> getStyleApplication() {
-		return styleApplication;
-	}
-	public void setStyleApplication(
-			Map<String, ChartStyleApplication> styleApplication) {
-		this.styleApplication = styleApplication;
-	} 
-
-
-	public void setStyleApplication(ChartStyleApplication styleApplication)  {
-
-		if(this.styleApplication==null){
-			this.styleApplication = new HashMap<String, ChartStyleApplication>();
-		}
-		this.styleApplication.put(styleApplication.getToObject(), styleApplication);
 	}
 	/**
 	 * This method will return  DataXML for single series charts
@@ -126,7 +95,7 @@ public class ChartsConfig extends ChartUtil{
 		chartXML = setChartBasicElements(chartXML);
 		String[] remarks=null;
 		if(StringUtils.contains(getRemarks(), "||")){
-			remarks=StringUtils.split(getRemarks(), "||");
+			remarks=getRemarks().split(Pattern.quote("||"));
 		}
 		if(remarks!=null && remarks.length>0){
 			chartXML.append(" "+remarks[0]+" ");

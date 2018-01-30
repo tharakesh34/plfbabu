@@ -98,8 +98,8 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 			insertSql.append(" INSERT INTO FinFeeScheduleDetail");
 		}
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount) ");
-		insertSql.append(" VALUES (:FeeID, :SchDate, :SchAmount, :PaidAmount, :OsAmount, :WaiverAmount, :WriteoffAmount) ");
+		insertSql.append(" (FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST) ");
+		insertSql.append(" VALUES (:FeeID, :SchDate, :SchAmount, :PaidAmount, :OsAmount, :WaiverAmount, :WriteoffAmount, :CGST, :SGST, :UGST, :IGST) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(feeScheduleList.toArray());
@@ -178,7 +178,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		finFeeDetail.setFeeID(feeID);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount " );
+		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST " );
 		if(isWIF){
 			selectSql.append(" FROM WIFFinFeeScheduleDetail");
 		}else{
@@ -202,7 +202,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount " );
+		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST " );
 		if(isWIF){
 			selectSql.append(" FROM WIFFinFeeScheduleDetail");
 		}else{
@@ -227,7 +227,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail");
-		updateSql.append(" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount ");
+		updateSql.append(" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
 		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -244,7 +244,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		feeSchd.setSchDate(schDate);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, PaidAmount " );
+		selectSql.append(" SELECT FeeID, SchDate, PaidAmount, CGST, SGST, UGST, IGST " );
 		selectSql.append(" FROM FinFeeScheduleDetail_View ");
 		selectSql.append(" WHERE FinReference=:FinReference AND SchDate=:SchDate ");
 		
@@ -264,7 +264,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		feeSchd.setSchDate(schDate);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FFSD.FeeID, FFSD.SchDate,FFSD.SchAmount,FFSD.PaidAmount,FFSD.WaiverAmount,FFSD.OsAmount,FFSD.WriteoffAmount " );
+		selectSql.append(" SELECT FFSD.FeeID, FFSD.SchDate,FFSD.SchAmount,FFSD.PaidAmount,FFSD.WaiverAmount,FFSD.OsAmount,FFSD.WriteoffAmount, FFSD.CGST, FFSD.SGST, FFSD.UGST, FFSD.IGST " );
 		selectSql.append(" FROM FinFeeScheduleDetail FFSD INNER JOIN FINFEEDETAIL FFD ON FFSD.FEEID = FFD.FEEID ");
 		selectSql.append(" WHERE FFD.FinReference=:FinReference AND FFSD.SchDate=:SchDate ");
 		
@@ -284,7 +284,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		feeSchd.setSchDate(schDate);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT " );
+		selectSql.append(" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT, FFSD.CGST, FFSD.SGST, FFSD.UGST, FFSD.IGST " );
 		selectSql.append(" ,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT ");
 		selectSql.append(" FROM FINFEESCHEDULEDETAIL FESD inner join FINFEEDETAIL FED ON ");
 		selectSql.append(" FESD.FEEID=FED.FEEID INNER JOIN FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID ");
@@ -304,7 +304,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail ");
-		updateSql.append(" Set PaidAmount = :PaidAmount, WaiverAmount = :WaiverAmount, OsAmount = :OsAmount ");
+		updateSql.append(" Set PaidAmount = :PaidAmount, WaiverAmount = :WaiverAmount, OsAmount = :OsAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
 		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
 		
 		logger.debug("updateSql: " + updateSql.toString());

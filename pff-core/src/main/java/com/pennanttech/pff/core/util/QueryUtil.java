@@ -13,6 +13,8 @@ package com.pennanttech.pff.core.util;
 
 import java.util.Set;
 
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -20,7 +22,7 @@ import com.pennanttech.pff.core.TableType;
  * A suite of utilities for building the SQL queries.
  * </p>
  */
-public final class QueryUtil {
+public final class QueryUtil {	
 	private QueryUtil() {
 		super();
 	}
@@ -99,5 +101,13 @@ public final class QueryUtil {
 		sql.append("Values (").append(columns.toString()).append(")");
 
 		return sql.toString();
+	}
+	
+	public static String getQueryConcat() {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
+			return "||";
+		} 
+
+		return "+";
 	}
 }

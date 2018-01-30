@@ -242,7 +242,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".CSV"))) {
+		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLSX"))) {//FIXME this  should not be hardcoded
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;

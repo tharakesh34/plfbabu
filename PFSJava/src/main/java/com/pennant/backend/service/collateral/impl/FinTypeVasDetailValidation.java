@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.util.PennantConstants;
@@ -66,19 +66,19 @@ public class FinTypeVasDetailValidation {
 
 			if (!finTypeVASProducts.isWorkflow()) {// With out Work flow only new records  
 				if (beffinTypeVASProductsDetail != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (finTypeVASProducts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (beffinTypeVASProductsDetail != null || tempfinTypeVASProductsDetail != null) { // if records already exists in the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beffinTypeVASProductsDetail == null || tempfinTypeVASProductsDetail != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -87,17 +87,17 @@ public class FinTypeVasDetailValidation {
 			if (!finTypeVASProducts.isWorkflow()) { // With out Work flow for update and delete
 
 				if (beffinTypeVASProductsDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
 					if (oldfinTypeVASProductsDetail != null
 							&& !oldfinTypeVASProductsDetail.getLastMntOn().equals(beffinTypeVASProductsDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									null));
 						}
 					}
@@ -105,12 +105,12 @@ public class FinTypeVasDetailValidation {
 			} else {
 
 				if (tempfinTypeVASProductsDetail == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempfinTypeVASProductsDetail != null && oldfinTypeVASProductsDetail != null
 						&& !oldfinTypeVASProductsDetail.getLastMntOn().equals(tempfinTypeVASProductsDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}

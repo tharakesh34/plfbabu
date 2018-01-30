@@ -25,6 +25,7 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,9 +37,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
@@ -77,7 +78,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	private ServerAuthService serverAuthService;
 	private ErrorDetailService errorDetailService;
 	private UserService userService;
-	private PFSParameterService pFSParameterService;
+	@Autowired
+	private PFSParameterService systemParameterService;
 	private APILogDetailDAO		aPILogDetailDAO;
 
 
@@ -200,7 +202,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				String userLogin = authenticate(userName, password, authDetails);
 				 // valid user
 					String Token = RandomStringUtils.random(8, true, true);
-					PFSParameter pFSParameter = getpFSParameterService().getApprovedPFSParameterById(
+					PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById(
 							"WS_TOKENEXPPERIOD");
 					if (pFSParameter != null) {
 						if (pFSParameter.getSysParmValue() != null) {
@@ -281,7 +283,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		ErrorDetail erroDetail = errorDetailService.getErrorDetailById(errorCode);
 		
 		if (erroDetail != null) {
-			serviceExceptionDetails.setFaultMessage(erroDetail.getErrorMessage());
+			serviceExceptionDetails.setFaultMessage(erroDetail.getMessage());
 		}
 		
 		// Get the error details from authentication and throw the Fault details
@@ -407,7 +409,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				this.setContext(userLoginDetails, authDetails);
 			}
 			if (expiry.getTime() <= userAuthDetail.getExpiry().getTime()) {
-				PFSParameter pFSParameter = getpFSParameterService().getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
+				PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
 				if (pFSParameter.getSysParmValue() != null) {
 					TOKEN_EXPIRY = Long.valueOf(pFSParameter.getSysParmValue());
 				}
@@ -483,15 +485,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	public PFSParameterService getpFSParameterService() {
-		return pFSParameterService;
-	}
-
-	@Autowired
-	public void setpFSParameterService(PFSParameterService pFSParameterService) {
-		this.pFSParameterService = pFSParameterService;
 	}
 
 	@Bean

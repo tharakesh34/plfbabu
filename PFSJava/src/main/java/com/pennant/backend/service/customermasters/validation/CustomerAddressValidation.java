@@ -8,7 +8,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -93,7 +93,7 @@ public class CustomerAddressValidation {
 				// records
 				if (befCustomerAddres != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
@@ -105,12 +105,12 @@ public class CustomerAddressValidation {
 						// if records already
 						// exists in the
 						// main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerAddres == null || tempCustomerAddres != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
@@ -123,7 +123,7 @@ public class CustomerAddressValidation {
 
 				if (befCustomerAddres == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -131,10 +131,10 @@ public class CustomerAddressValidation {
 									befCustomerAddres.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).
 								equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
@@ -143,13 +143,13 @@ public class CustomerAddressValidation {
 
 				if (tempCustomerAddres == null) { // if records not exists in
 					// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempCustomerAddres != null && oldCustomerAddres != null
 						&& !oldCustomerAddres.getLastMntOn().equals(tempCustomerAddres.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -163,7 +163,7 @@ public class CustomerAddressValidation {
 			valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
 
 	        errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0];
-			auditDetail.setErrorDetail(new ErrorDetails(
+			auditDetail.setErrorDetail(new ErrorDetail(
 					PennantConstants.KEY_FIELD, "81005", errParm, null));
 		}
 		
@@ -182,10 +182,10 @@ public class CustomerAddressValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetails  screenValidations(CustomerAddres customerAddres){
+	public ErrorDetail  screenValidations(CustomerAddres customerAddres){
 		
 		if(StringUtils.isBlank(customerAddres.getCustAddrHNbr())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("AddressDetails"),
 					Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value"),
 					Labels.getLabel("listheader_CustAddrType.label"),
@@ -194,7 +194,7 @@ public class CustomerAddressValidation {
 		}
 		
 		if(StringUtils.isBlank(customerAddres.getCustAddrStreet())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("AddressDetails"),
 					Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
 					Labels.getLabel("listheader_CustAddrType.label"),
@@ -212,7 +212,7 @@ public class CustomerAddressValidation {
 		}*/
 		
 		if(StringUtils.isBlank(customerAddres.getCustAddrCountry())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("AddressDetails"),
 					Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"),
 					Labels.getLabel("listheader_CustAddrType.label"),
@@ -221,7 +221,7 @@ public class CustomerAddressValidation {
 		}
 		
 		if(StringUtils.isBlank(customerAddres.getCustAddrProvince())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
+			return	new ErrorDetail(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("AddressDetails"),
 					Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"),
 					Labels.getLabel("listheader_CustAddrType.label"),

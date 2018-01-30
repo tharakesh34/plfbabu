@@ -209,7 +209,7 @@
 								<label
 									id="label_CustomerAddresDialog_CustAddrZIP"
 									value="${c:l('label_CustomerAddresDialog_CustAddrZIP.value')}" />
-								<extendedcombobox id="custAddrZIP" />
+									<extendedcombobox id="custAddrZIP" />
 							</row>
 							<row>
 								<label

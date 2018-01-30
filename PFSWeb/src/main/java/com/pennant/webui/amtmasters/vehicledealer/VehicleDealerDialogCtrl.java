@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  VehicleDealerDialogCtrl.java                                                   * 	  
+ * FileName    		:  VehicleDealerDialogCtrl.java                                         * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -67,7 +67,7 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -103,6 +103,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_VehicleDealerDialog; // autowired
+	protected Label windowTitle;
 	protected Combobox dealerType; // autowired
 	protected Textbox dealerName; // autowired
 	protected Textbox dealerTelephone; // autowired
@@ -146,7 +147,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 	// ServiceDAOs / Domain Classes
 	private transient VehicleDealerService vehicleDealerService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private final List<ValueLabel> paymentModes = PennantStaticListUtil
 			.getPaymentModes();
 	private final List<ValueLabel> commisionPaidList = PennantStaticListUtil
@@ -156,6 +157,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 	private transient String sDealerCountry;
 	private transient String sDealerProvince;
+	private String module="";
 
 	/**
 	 * default constructor.<br>
@@ -236,6 +238,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 						.get("vehicleDealerListCtrl"));
 			} else {
 				setVehicleDealerListCtrl(null);
+			}
+			
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
 			}
 
 			// set Field Properties
@@ -337,6 +343,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		} else {
 			this.groupboxWf.setVisible(false);
 
+		}
+		
+		if (StringUtils.equals(module, VASConsatnts.VASAGAINST_PARTNER)) {
+			this.windowTitle.setValue(Labels.getLabel("window_VehicleDealerDialog_Patner.title"));
 		}
 
 		logger.debug("Leaving");
@@ -506,8 +516,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 */
 	public void doWriteBeanToComponents(VehicleDealer aVehicleDealer) {
 		logger.debug("Entering");
-		fillComboBox(dealerType, VASConsatnts.VASAGAINST_VASM,
-				PennantStaticListUtil.getDealerType(), "");
+		fillComboBox(dealerType, module,
+					PennantStaticListUtil.getDealerType(), "");
 		this.dealerName.setValue(aVehicleDealer.getDealerName());
 		String[] telephone = PennantApplicationUtil
 				.unFormatPhoneNumber(aVehicleDealer.getDealerTelephone());
@@ -1088,58 +1098,58 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 				this.accountNumber.setReadonly(true);
 			} else {
 				this.accountNumber
-						.setReadonly(isReadOnly("VehicleDealerDialog_AccountNumber"));
+						.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_AccountNumber"));
 				this.iBANnumber
-						.setReadonly(isReadOnly("VehicleDealerDialog_AccountNumber"));
+						.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_AccountNumber"));
 			}
 		}
 		this.dealerName
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerName"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerName"));
 		this.dealerTelephone
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerName"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerName"));
 		this.phoneCountryCode
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerName"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerName"));
 		this.phoneAreaCode
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerName"));
-		this.dealerFax.setReadonly(isReadOnly("VehicleDealerDialog_dealerFax"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerName"));
+		this.dealerFax.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerFax"));
 		this.faxAreaCode
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerFax"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerFax"));
 		this.faxCountryCode
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerFax"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerFax"));
 		this.dealerAddress1
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerAddress1"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerAddress1"));
 		this.dealerAddress2
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerAddress2"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerAddress2"));
 		this.dealerAddress3
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerAddress3"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerAddress3"));
 		this.dealerAddress4
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerAddress4"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerAddress4"));
 		this.dealerCountry
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerCountry"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerCountry"));
 		this.dealerCountry
-				.setMandatoryStyle(!isReadOnly("VehicleDealerDialog_dealerCountry"));
+				.setMandatoryStyle(!isReadOnly("VehicleDealerDialog_"+module+"_dealerCountry"));
 		this.dealerCity
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerCity"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerCity"));
 		this.dealerProvince
-				.setReadonly(isReadOnly("VehicleDealerDialog_dealerProvince"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerProvince"));
 		this.paymentMode
-				.setDisabled(isReadOnly("VehicleDealerDialog_PaymentMode"));
-		this.emirates.setReadonly(isReadOnly("VehicleDealerDialog_Emirates"));
-		this.email.setReadonly(isReadOnly("VehicleDealerDialog_Email"));
+				.setDisabled(isReadOnly("VehicleDealerDialog_"+module+"_PaymentMode"));
+		this.emirates.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_Emirates"));
+		this.email.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_Email"));
 		this.accountingSetId
-				.setReadonly(isReadOnly("VehicleDealerDialog_AccountingTreatment"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_AccountingTreatment"));
 		this.accountingSetId
-				.setMandatoryStyle(!isReadOnly("VehicleDealerDialog_AccountingTreatment"));
+				.setMandatoryStyle(!isReadOnly("VehicleDealerDialog_"+module+"_AccountingTreatment"));
 		this.commisionPaid
-				.setDisabled(isReadOnly("VehicleDealerDialog_CommisionPaidAt"));
+				.setDisabled(isReadOnly("VehicleDealerDialog_"+module+"_CommisionPaidAt"));
 		this.commisionCalRule
-				.setReadonly(isReadOnly("VehicleDealerDialog_CalculationRule"));
-		this.dealerPoBox.setReadonly(isReadOnly("VehicleDealerDialog_PoBox"));
+				.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_CalculationRule"));
+		this.dealerPoBox.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_PoBox"));
 		this.sellerType
-				.setDisabled(isReadOnly("VehicleDealerDialog_SellerType"));
-		this.cityName.setReadonly(isReadOnly("VehicleDealerDialog_dealerCity"));
-		this.zipCode.setReadonly(isReadOnly("VehicleDealerDialog_ZipCode"));
-		this.active.setDisabled(isReadOnly("VehicleDealerDialog_Active"));
+				.setDisabled(isReadOnly("VehicleDealerDialog_"+module+"_SellerType"));
+		this.cityName.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_dealerCity"));
+		this.zipCode.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_ZipCode"));
+		this.active.setDisabled(isReadOnly("VehicleDealerDialog_"+module+"_Active"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1468,7 +1478,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels
 										.getLabel("InvalidWorkFlowMethod"),
 								null));
@@ -1664,7 +1674,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_VehicleDealerDialog,
 					auditHeader);
@@ -1728,11 +1738,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	}
 
 	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

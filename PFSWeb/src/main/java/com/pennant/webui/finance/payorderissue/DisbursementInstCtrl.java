@@ -66,8 +66,7 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -75,7 +74,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -83,7 +81,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
@@ -100,7 +97,8 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement>	financeDisbursements;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
-	private FinanceDetailService		financeDetailService;
+	private DocumentDetails				documentDetails;
+	
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -170,15 +168,15 @@ public class DisbursementInstCtrl {
 	 * @param netFinAmount
 	 * @return
 	 */
-	public List<ErrorDetails> validateOrgFinAdvancePayment(List<FinAdvancePayments> list, boolean validate) {
+	public List<ErrorDetail> validateOrgFinAdvancePayment(List<FinAdvancePayments> list, boolean validate) {
 		logger.debug(" Entering ");
 
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		if (list == null || list.isEmpty()) {
 			if (!validate) {
 				return errorList;
 			}
-			ErrorDetails error = new ErrorDetails("60403", null);
+			ErrorDetail error = new ErrorDetail("60403", null);
 			errorList.add(error);
 			return errorList;
 		}
@@ -190,15 +188,14 @@ public class DisbursementInstCtrl {
 
 	}
 
-	public List<ErrorDetails> validateFinAdvancePayment(List<FinAdvancePayments> list, boolean loanApproved) {
+	public List<ErrorDetail> validateFinAdvancePayment(List<FinAdvancePayments> list, boolean loanApproved) {
 		logger.debug(" Entering ");
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		errorList.addAll(validate(list, loanApproved));
 		return errorList;
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
 		listbox.getItems().clear();
@@ -248,7 +245,7 @@ public class DisbursementInstCtrl {
 				listbox.appendChild(listgroup);
 
 				List<FinAdvancePayments> list = entrySet.getValue();
-				Comparator<FinAdvancePayments> comp = new BeanComparator("paymentSeq");
+				Comparator<FinAdvancePayments> comp = new BeanComparator<FinAdvancePayments>("paymentSeq");
 				Collections.sort(list, comp);
 
 				for (FinAdvancePayments detail : list) {
@@ -334,30 +331,9 @@ public class DisbursementInstCtrl {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
-		getDocumentImage(dialogCtrl, map);
+		map.put("documentDetails", documentDetails);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
 		
-		logger.debug("Leaving");
-	}
-
-	private void getDocumentImage(Object dialogCtrl, HashMap<String, Object> map) throws Exception {
-		logger.debug("Entering");
-		
-		DocumentDetailDialogCtrl DocumentDetailDialogCtrl = (DocumentDetailDialogCtrl) dialogCtrl.getClass()
-				.getMethod("getDocumentDetailDialogCtrl").invoke(dialogCtrl);
-		String document = SysParamUtil.getValueAsString("DISB_DOC");
-
-		for (DocumentDetails details : DocumentDetailDialogCtrl.getDocumentDetailsList()) {
-			if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
-				if (details.getDocImage() == null && details.getDoctype() != null) {
-					details.setDocImage(getFinanceDetailService()
-							.getFinDocDetailByDocId(details.getDocId(), "_View", true).getDocImage());
-				}
-				map.put("documentDetails", details);
-				break;
-			}
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -377,7 +353,7 @@ public class DisbursementInstCtrl {
 				aFinAdvancePayments.setNewRecord(false);
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finAdvancePayments", aFinAdvancePayments);
-				getDocumentImage(dialogCtrl, map);
+				map.put("documentDetails", documentDetails);
 				doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry);
 
 			}
@@ -516,7 +492,7 @@ public class DisbursementInstCtrl {
 		return true;
 	}
 
-	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
+	private List<ErrorDetail> validate(List<FinAdvancePayments> list, boolean loanApproved) {
 		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursements, financeMain, loanApproved);
 	}
 
@@ -617,6 +593,7 @@ public class DisbursementInstCtrl {
 		}
 		return false;
 	}
+	
 
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
@@ -634,12 +611,12 @@ public class DisbursementInstCtrl {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
+	public DocumentDetails getDocumentDetails() {
+		return documentDetails;
 	}
 
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
+	public void setDocumentDetails(DocumentDetails documentDetails) {
+		this.documentDetails = documentDetails;
 	}
 
 }

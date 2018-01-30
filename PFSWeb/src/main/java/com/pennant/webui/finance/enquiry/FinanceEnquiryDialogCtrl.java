@@ -49,6 +49,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -63,7 +64,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
@@ -82,6 +82,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
+import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
@@ -121,7 +122,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -152,7 +152,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Tabs 						tabsIndexCenter;
 	protected Tab						disburseDetailsTab;
 	private Tabpanel					tabpanel_graph;
-	protected Div						graphDivTabDiv;
 	private Tabpanel					tabPanel_dialogWindow;
 	protected Grid						grid_BasicDetails;
 	protected Grid						grid_GrcDetails;
@@ -468,6 +467,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private  boolean						enquiry    				= false;
 	private	 boolean 						fromApproved;
 	private FinanceProfitDetailDAO          financeProfitDetailDAO;
+	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1253,10 +1253,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		if (getFinScheduleData().getFinanceScheduleDetails() != null) {
 			this.repayGraphTab.setVisible(true);
-			graphDivTabDiv = new Div();
-			this.graphDivTabDiv.setStyle("overflow:auto");
-			tabpanel_graph.appendChild(graphDivTabDiv);
-			doShowReportChart();
 		}
 		
 		//Showing Product Details for Promotion Type
@@ -1275,7 +1271,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_accountsOfficer.setVisible(false);
 		}
 		
-		this.accountsOfficer.setValue(aFinanceMain.getAccountsOfficer());
+		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
 		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
 		
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
@@ -1800,7 +1796,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering ");
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		ChartDetail chartDetail = new ChartDetail();
-		ChartUtil chartUtil = new ChartUtil();
 		// For Finance Vs Amounts Chart
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount();
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts", "Loan Amount ="
@@ -1811,18 +1806,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Pie"));
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_3D"));
 		aDashboardConfiguration.setMultiSeries(false);
-		chartsConfig.setRemarks("pieRadius='90' startingAngle='310'"
-				+ "formatNumberScale='0'enableRotation='1'  forceDecimals='1'  decimals='" + formatter + "'");
+		chartsConfig.setRemarks(ChartType.PIE3D.getRemarks()+" decimals='" + formatter + "'");
 		String chartStrXML = chartsConfig.getChartXML();
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_FinanceVsAmounts");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("Pie3D.swf");
+		chartDetail.setChartType(ChartType.PIE3D.toString());
 		chartDetail.setChartHeight("160");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("200px");
 		chartDetail.setiFrameWidth("95%");
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
 		// For Repayments Chart
 		chartsConfig = new ChartsConfig("Payments", "", "", "");
 		chartsConfig.setSetElements(getReportDataForRepayments());
@@ -1831,19 +1825,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		aDashboardConfiguration.setDimension(Labels.getLabel("label_Select_2D"));
 		aDashboardConfiguration.setMultiSeries(true);
 		chartsConfig
-				.setRemarks("labelDisplay='ROTATE' formatNumberScale='0'"
-						+ "rotateValues='0' startingAngle='310' showValues='0' forceDecimals='1' skipOverlapLabels='0'  decimals='"
-						+ formatter + "'");
+				.setRemarks(ChartType.MSLINE.getRemarks()+" decimals='" +formatter + "'");
 		chartStrXML = chartsConfig.getSeriesChartXML(aDashboardConfiguration.getRenderAs());
 		chartDetail = new ChartDetail();
 		chartDetail.setChartId("form_Repayments");
 		chartDetail.setStrXML(chartStrXML);
-		chartDetail.setSwfFile("MSLine.swf");
+		chartDetail.setChartType(ChartType.MSLINE.toString());
 		chartDetail.setChartHeight("270");
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("320px");
 		chartDetail.setiFrameWidth("95%");
-		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
+		chartDetailList.add(chartDetail);
 		logger.debug("Leaving ");
 	}
 
@@ -2128,7 +2120,23 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return financeDisbursement;
 	}
 
+	/** new code to display chart by skipping jsps code start */
+	public void onSelect$repayGraphTab(Event event) throws InterruptedException {
+		logger.debug("Entering");
+		doShowReportChart();
+		for (ChartDetail chartDetail : chartDetailList) {
+			String strXML = chartDetail.getStrXML();
+			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
+			strXML = StringEscapeUtils.escapeJavaScript(strXML);
+			chartDetail.setStrXML(strXML);
 
+			Executions.createComponents("/Charts/Chart.zul", tabpanel_graph,
+					Collections.singletonMap("chartDetail", chartDetail));
+		}
+		chartDetailList =  new ArrayList<ChartDetail>(); // Resetting 
+		logger.debug("Leaving");
+	}
+	/** new code to display chart by skipping jsps code end */
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

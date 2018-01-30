@@ -54,7 +54,7 @@ import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.util.GenerateAccountNumberDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
@@ -96,7 +96,7 @@ public class AccountNumberGeneration implements Serializable {
 			String[][] parms= new String[2][1]; 
 			parms[1][0] =  acType;
 			parms[0][0] = PennantJavaUtil.getLabel("label_AcType");
-			ErrorDetails details = getError("41002", parms);
+			ErrorDetail details = getError("41002", parms);
 			throw new AppException(details.getError());
 		}else{
 			this.accountHeade = accountType.getAcHeadCode().trim();
@@ -164,8 +164,8 @@ public class AccountNumberGeneration implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails  getError(String errorId, String[][] parms){
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD
+	private ErrorDetail  getError(String errorId, String[][] parms){
+		return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
 				, errorId, parms[0],parms[1]), SessionUserDetails.getUserLanguage());
 	}
 

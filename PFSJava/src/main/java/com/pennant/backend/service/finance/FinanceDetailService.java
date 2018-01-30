@@ -51,8 +51,9 @@ import java.util.Set;
 
 import org.jaxen.JaxenException;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
@@ -132,7 +133,7 @@ public interface FinanceDetailService {
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
 	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
-	List<ErrorDetails> getDiscrepancies(FinanceDetail financeDetail);
+	List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
 	List<FeeRule> getApprovedFeeRules(String finReference,String finEvent,  boolean isWIF);
 	List<CustomerIncome> prepareIncomeDetails();
 	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer ,String finCcy) throws IllegalAccessException, InvocationTargetException;
@@ -189,9 +190,11 @@ public interface FinanceDetailService {
 	
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, WorkflowEngine engine) 
-			throws AppException, JaxenException;
-	AuditHeader doCheckScore(AuditHeader auditHeader);
+			throws AppException, JaxenException, Exception;
 	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
 	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
 	DocumentDetails getDocumentDetails(long id, String type);
+	
+	//GST
+	List<Branch> getBrachDetailsByBranchCode (List<String> finBranches);
  }

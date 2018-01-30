@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -207,7 +207,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 				String[] valueParm = new String[1];
 				parm[0]=PennantJavaUtil.getLabel("label_FieldName")+aDedupFields.getFieldName();
 				valueParm[0] = aDedupFields.getFieldName();
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",parm,valueParm),getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",parm,valueParm),getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){

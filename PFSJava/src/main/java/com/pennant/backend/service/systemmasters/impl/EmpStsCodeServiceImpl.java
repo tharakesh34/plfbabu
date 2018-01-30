@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
@@ -350,7 +350,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			String[] parameters = new String[1];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_EmpStsCode") + ":"+ empStsCode.getEmpStsCode();
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

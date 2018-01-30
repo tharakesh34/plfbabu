@@ -2,6 +2,7 @@ package com.pennant.backend.model.FinRepayQueue;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class FinRepayQueueHeader {
 
@@ -30,6 +31,7 @@ public class FinRepayQueueHeader {
 	private String partnerBankAcType;
 	private boolean pftChgAccReq;
 	
+	private Map<String , BigDecimal> extDataMap = null;
 	private List<FinRepayQueue> queueList = null;
 	
 	public FinRepayQueueHeader() {
@@ -205,6 +207,14 @@ public class FinRepayQueueHeader {
 
 	public void setPftChgAccReq(boolean pftChgAccReq) {
 		this.pftChgAccReq = pftChgAccReq;
+	}
+
+	public Map<String , BigDecimal> getExtDataMap() {
+		return extDataMap;
+	}
+
+	public void setExtDataMap(Map<String , BigDecimal> extDataMap) {
+		this.extDataMap = extDataMap;
 	}
 
 }

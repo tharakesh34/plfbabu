@@ -48,7 +48,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.BuilderProjcetDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
@@ -360,7 +360,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 		if (builderProjcet.isNew() && builderProjcetDAO.isDuplicateKey(builderProjcet.getId(), builderProjcet.getName(),
 				builderProjcet.getBuilderId(), builderProjcet.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

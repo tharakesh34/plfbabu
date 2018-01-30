@@ -53,7 +53,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.AccountEngineEventDAO;
 import com.pennant.backend.dao.bmtmasters.impl.AccountEngineEventDAOImpl;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -356,7 +356,7 @@ public class AccountEngineEventServiceImpl extends
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditDetail
 				.getModelData();
@@ -388,7 +388,7 @@ public class AccountEngineEventServiceImpl extends
 				if (befAccountEngineEvent != null) { // Record Already Exists in
 														// the table then error
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",
 									errParm, null));
 				}
@@ -401,14 +401,14 @@ public class AccountEngineEventServiceImpl extends
 							|| tempAccountEngineEvent != null) { // if records already
 																	// exists in the
 																	// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAccountEngineEvent == null
 							|| tempAccountEngineEvent != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -424,7 +424,7 @@ public class AccountEngineEventServiceImpl extends
 				if (befAccountEngineEvent == null) { // if records not exists in
 														// the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
@@ -435,11 +435,11 @@ public class AccountEngineEventServiceImpl extends
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -450,7 +450,7 @@ public class AccountEngineEventServiceImpl extends
 														// in the Work flow
 														// table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}
@@ -460,7 +460,7 @@ public class AccountEngineEventServiceImpl extends
 						&& !oldAccountEngineEvent.getLastMntOn().equals(
 								tempAccountEngineEvent.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(
+							.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",
 									errParm, null));
 				}

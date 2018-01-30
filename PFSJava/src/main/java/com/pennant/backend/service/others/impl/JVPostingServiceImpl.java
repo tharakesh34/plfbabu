@@ -37,6 +37,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -46,7 +47,7 @@ import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.LegalExpenses;
@@ -76,6 +77,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
+	private AccountProcessUtil			accountProcessUtil;
 
 	public JVPostingServiceImpl() {
 		super();
@@ -401,34 +403,24 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			long linkedTranId = Long.MIN_VALUE;
 			try {
 				List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
-				//Post and save
-				/*getPostingsPreparationUtil().postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(),
-						"Y", false, false, linkedTranId, BigDecimal.ZERO, "", false);*/
 				
+				getAccountProcessUtil().procAccountUpdate(list);
 				
 				
 				if (list != null && list.size() > 0) {
-					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 					for (int i = 0; i < list.size(); i++) {
 						ReturnDataSet set = list.get(i);
 						if (!("0000".equals(set.getErrorId()) || StringUtils.isEmpty(set.getErrorId()))) {
-							/*
-							 * errorDetails.add(new
-							 * ErrorDetails(set.getAccountType(),
-							 * set.getErrorId(), "E", set.getErrorMsg(), new
-							 * String[] {}, new String[] {}));
-							 */// TODO Uncomment later
 							postingSuccess = true;
 						} else {
 							linkedTranId = set.getLinkedTranId();
 							set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 							set.setTransOrder(i);
+							set.setPostingId(set.getPostingId()+i);
 						}
 					}
-					// save to postings table.
-					for (ReturnDataSet set : list) {
-						set.setFinReference(String.valueOf(jVPosting.getReference()));
-					}
+					
 					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
@@ -606,7 +598,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		JVPosting jVPosting = (JVPosting) auditDetail.getModelData();
 
 		JVPosting tempJVPosting = null;
@@ -627,7 +619,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			if (!jVPosting.isWorkflow()) {// With out Work flow only new records
 				if (befJVPosting != null) { // Record Already Exists in the
 											// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -644,12 +636,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 																			// the
 																			// main
 																			// table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befJVPosting == null || tempJVPosting != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -662,16 +654,16 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 				if (befJVPosting == null) { // if records not exists in the main
 											// table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldJVPosting != null && !oldJVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -680,13 +672,13 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 				if (tempJVPosting == null) { // if records not exists in the
 												// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 				if (oldJVPosting != null
 						&& !StringUtils.equals(oldJVPosting.getLastMntOn().toString(), tempJVPosting.getLastMntOn()
 								.toString())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -700,7 +692,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				valueParm[0] = jVPosting.getExpReference();
 				errParm[0] = PennantJavaUtil.getLabel("label_LegalExpensesList_ExpReference.value") + ":"
 						+ valueParm[0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"E0061", errParm, valueParm), usrLanguage));
 			}
 		}
@@ -1178,6 +1170,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
+	}
+
+	public AccountProcessUtil getAccountProcessUtil() {
+		return accountProcessUtil;
+	}
+
+	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
+		this.accountProcessUtil = accountProcessUtil;
 	}
 
 }

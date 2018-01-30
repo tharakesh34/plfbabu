@@ -2132,46 +2132,6 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 		inner join financemain t2 on t1.finreference=t2.finreference
 	</createView>
 </changeSet>
-<changeSet id="70" author="Prasad" dbms="oracle">
-	<createView viewName="k" replaceIfExists="true">
-		select T1.FinReference AGREEMENTNO,substr(T1.FinReference,9,length(T1.FinReference)) AGREEMENTID,
-		null PROPINSTLID,t2.InstNumber EMI_NO,t2.SchDate DUEDATE,
-		udf_convertcurrency(t2.BalanceForPftCal,T1.finccy,'INR')  OPENING_PRINCIPAL,
-		udf_convertcurrency(t2.RepayAmount,T1.finccy,'INR')  INSTALMENT_AMT,
-		udf_convertcurrency(t2.PrincipalSchd,T1.finccy,'INR')  PRINCIPAL_AMT,
-		udf_convertcurrency(t2.ProfitSchd,T1.finccy,'INR')  INTEREST_AMT,
-		udf_convertcurrency(t2.ClosingBalance,T1.finccy,'INR')  CLOSING_PRINCIPAL,t2.SchdMethod INSTAL_TYPE,
-		null TOTAL_AMOUNT_DUE,
-		udf_convertcurrency(t1.FinAssetvalue,T1.finccy,'INR') DROPLINE_LIMIT,
-		udf_convertcurrency((FinAssetvalue-fincurrassetvalue),T1.finccy,'INR') ACT_AVAILABLE_LIMIT,
-		udf_convertcurrency(FP.TOTALPRISCHD,T1.finccy,'INR') ACT_UTILISATION_LIMIT,case when BPIOrHoliday='H' then 'Y' else 'N' end EMI_HOLIDAY,
-		NULL BATCH_ID,
-		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  BUSINESSDATE
-		from financemain t1
-		inner join FINPFTDETAILS FP on t1.finreference=FP.finreference
-		inner join FinScheduleDetails t2 on t1.finreference=t2.finreference
-	</createView>
-</changeSet>
-<changeSet id="70" author="Prasad" dbms="mssql">
-	<createView viewName="k" replaceIfExists="true">
-		select T1.FinReference AGREEMENTNO,substring(T1.FinReference,9,len(T1.FinReference)) AGREEMENTID,
-		null PROPINSTLID,t2.InstNumber EMI_NO,t2.SchDate DUEDATE,
-		dbo.udf_convertcurrency(t2.BalanceForPftCal,T1.finccy,'INR')  OPENING_PRINCIPAL,
-		dbo.udf_convertcurrency(t2.RepayAmount,T1.finccy,'INR')  INSTALMENT_AMT,
-		dbo.udf_convertcurrency(t2.PrincipalSchd,T1.finccy,'INR')  PRINCIPAL_AMT,
-		dbo.udf_convertcurrency(t2.ProfitSchd,T1.finccy,'INR')  INTEREST_AMT,
-		dbo.udf_convertcurrency(t2.ClosingBalance,T1.finccy,'INR')  CLOSING_PRINCIPAL,t2.SchdMethod INSTAL_TYPE,
-		null TOTAL_AMOUNT_DUE,
-		dbo.udf_convertcurrency(t1.FinAssetvalue,T1.finccy,'INR') DROPLINE_LIMIT,
-		dbo.udf_convertcurrency((FinAssetvalue-fincurrassetvalue),T1.finccy,'INR') ACT_AVAILABLE_LIMIT,
-		dbo.udf_convertcurrency(FP.TOTALPRISCHD,T1.finccy,'INR') ACT_UTILISATION_LIMIT,case when BPIOrHoliday='H' then 'Y' else 'N' end EMI_HOLIDAY,
-		NULL BATCH_ID,
-		(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  BUSINESSDATE
-		from financemain t1
-		inner join FINPFTDETAILS FP on t1.finreference=FP.finreference
-		inner join FinScheduleDetails t2 on t1.finreference=t2.finreference
-	</createView>
-</changeSet>
 <changeSet id="71" author="Prasad" dbms="oracle">
 	<createView viewName="FORECLOSURECHARGES_VIEW" replaceIfExists="true">
 		select 

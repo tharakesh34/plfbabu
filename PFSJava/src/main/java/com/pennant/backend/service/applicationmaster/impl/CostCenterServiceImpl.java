@@ -50,7 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CostCenterDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -370,7 +370,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 				
 				parameters[0] = PennantJavaUtil.getLabel("label_CostCenterCode") + ": " + costCenter.getCostCenterCode();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 			
 			if (StringUtils.trimToEmpty(costCenter.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -380,7 +380,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 
 					parameters[0] = PennantJavaUtil.getLabel("label_CostCenterCode") + ": " + costCenter.getCostCenterCode();
 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 				}
 			}
 			

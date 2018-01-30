@@ -15,7 +15,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -442,7 +442,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 		if(isInputAllowed) {
 			if (!financeDetail.isSufficientScore()) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,  "30564", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "30564", errParm, valueParm), usrLanguage));
 			}
 		}
 		logger.debug("Leaving");

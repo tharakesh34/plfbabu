@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "name", "seqNumbOfSign", "email" })
+@XmlType(propOrder = { "name", "seqNumbOfSign", "email", "pan" })
 @XmlRootElement(name = "signers_info")
 @XmlAccessorType(XmlAccessType.NONE)
 public class SignerDetails {
@@ -21,6 +21,9 @@ public class SignerDetails {
 	private String	email;
 
 	private long	custID;
+
+	@XmlElement(name = "borrower_pan")
+	private String	pan;
 
 	public String getName() {
 		return name;
@@ -54,4 +57,11 @@ public class SignerDetails {
 		this.custID = custID;
 	}
 
+	public String getPan() {
+		return pan;
+	}
+
+	public void setPan(String pan) {
+		this.pan = pan;
+	}
 }

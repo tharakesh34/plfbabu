@@ -50,7 +50,7 @@ public interface BeneficiaryDAO {
 
 	Beneficiary getBeneficiaryById(long id, String type);
 
-	int getBeneficiaryByAccNo(String accNumber, long bankBranchId, long id, String type);
+	int getBeneficiaryByAccNo(Beneficiary beneficiary, String type);
 
 	void update(Beneficiary beneficiary, String type);
 
@@ -63,4 +63,6 @@ public interface BeneficiaryDAO {
 	int getBeneficiaryByBankBranchId(String accNumber, long bankBranchId, String type);
 
 	int getBranch(long bankBranchID, String type);
+
+	int getDefaultsBeneficiary(long custID, long id, String type);
 }

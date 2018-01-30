@@ -51,7 +51,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
@@ -330,7 +330,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		WeekendMaster weekendMaster = (WeekendMaster) auditDetail
 		.getModelData();
@@ -362,7 +362,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 					// table
 					// then error
 					auditDetail
-					.setErrorDetail(new ErrorDetails(
+					.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41001",
 							errParm, null));
 				}
@@ -374,13 +374,13 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 					if (befWeekendMaster != null || tempWeekendMaster != null) { // if records
 																// already exists
 																// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,
 								null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befWeekendMaster == null || tempWeekendMaster != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,
 								null));
 					}
@@ -396,7 +396,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 					// main
 					// table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(
+					.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41002",
 							errParm, null));
 				} else {
@@ -406,11 +406,11 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003",
 									errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004",
 									errParm, null));
 						}
@@ -420,7 +420,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 				if (tempWeekendMaster == null) { // if records not exists in the
 					// Work flow table
 					auditDetail
-					.setErrorDetail(new ErrorDetails(
+					.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005",
 							errParm, null));
 				}
@@ -430,7 +430,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 						&& !oldWeekendMaster.getLastMntOn().equals(
 								tempWeekendMaster.getLastMntOn())) {
 					auditDetail
-					.setErrorDetail(new ErrorDetails(
+					.setErrorDetail(new ErrorDetail(
 							PennantConstants.KEY_FIELD, "41005",
 							errParm, null));
 				}

@@ -49,7 +49,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.BuilderCompanyDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
@@ -360,13 +360,13 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		// Check the unique keys.
 		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(), builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		// If Builder Group is already utilized in Builder Company 
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, builderCompany.getRecordType())) {
 			boolean workflowExists = getBuilderCompanyDAO().isIdExists(builderCompany.getId());
 			if (workflowExists) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
 

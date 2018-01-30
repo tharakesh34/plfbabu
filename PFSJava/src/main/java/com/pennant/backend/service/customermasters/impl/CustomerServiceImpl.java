@@ -64,7 +64,7 @@ import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -101,7 +101,6 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private BranchDAO	branchDAO;
 	private ProvinceDAO provinceDAO;
 	private CityDAO		cityDAO;
-
 
 	public CustomerServiceImpl() {
 		super();
@@ -423,7 +422,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		Customer customer = (Customer) auditDetail.getModelData();
 		Customer tempCustomer = null;
@@ -450,7 +449,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			if (!customer.isWorkflow()) {// With out Work flow only new records
 				if (befCustomer != null) { // Record Already Exists in the table
 											// then error
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41001",errParm, null));
 				}
 			} else { // with work flow
@@ -459,12 +458,12 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 																// is new
 					if (befCustomer != null  || tempCustomer != null) { // if records already exists in
 												// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomer == null || tempCustomer == null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm,null));
 					}
 				}
@@ -474,7 +473,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			// out work flow)
 			if (!customer.isWorkflow()) { // With out Work flow for update and delete
 				if (befCustomer == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41002",errParm, null));
 				}else{
 
@@ -482,10 +481,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 						&& !oldCustomer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41003", errParm,null));
 					} else {
-						auditDetail.setErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41004", errParm,null));
 					}
 				}
@@ -494,7 +493,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			} else {
 
 				if (tempCustomer == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 
@@ -502,7 +501,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 						&& oldCustomer != null
 						&& !oldCustomer.getLastMntOn().equals(
 								tempCustomer.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(
+					auditDetail.setErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 			}
@@ -584,14 +583,14 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			auditDetail
 			.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
 		}
-		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
-			auditDetail.setErrorDetail(validateMasterCode("RelationshipOfficers", "ROfficerCode",
-					customerDetails.getPrimaryRelationOfficer()));
+		if (customerDetails.getPrimaryRelationOfficer() != 0) {
+			auditDetail.setErrorDetail(validateMasterCode("SourceOfficer", "DealerId",
+					String.valueOf(customerDetails.getPrimaryRelationOfficer())));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getCode())) {
 					return auditDetail;
 				}
 			}
@@ -601,8 +600,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-			for (ErrorDetails errDetail : auditDetail.getErrorDetails()) {
-				if (StringUtils.isNotBlank(errDetail.getErrorCode())) {
+			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
+				if (StringUtils.isNotBlank(errDetail.getCode())) {
 					return auditDetail;
 				}
 			}
@@ -622,32 +621,32 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Entering");
 
 		// validate conditional mandatory fields
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			if (StringUtils.isBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "firstName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustLName())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "lastName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "salutation";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustGenderCode())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "gender";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 			if (StringUtils.isBlank(customer.getCustMaritalSts())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "maritalStatus";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 
 			auditDetail.setErrorDetail(validateMasterCode("BMTSalutations", "SalutationCode",
@@ -660,7 +659,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "shortName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}	
 		}
 		auditDetail.setErrorDetail(validateMasterCode("BMTSectors", "SectorCode", customer.getCustSector()));
@@ -713,7 +712,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			if (matcher.matches() == false) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "saleAgent";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN"));
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustStaffID())){
@@ -723,7 +722,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			if (matcher.matches() == false) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "staffID";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN"));
 			}
 		}
 
@@ -733,7 +732,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
 			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
 		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO.
@@ -746,7 +745,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 							+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 					valueParm[1] = "Cust DOB:"
 							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -761,7 +760,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "Cust DOB:"
 							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				}
@@ -780,10 +779,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetails validateMasterCode(String moduleName,String fieldValue) {
+	private ErrorDetail validateMasterCode(String moduleName,String fieldValue) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
 		if(moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
@@ -797,7 +796,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];
 				valueParm[1] = fieldValue;
-				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
+				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
 			}
 		}
 
@@ -813,10 +812,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
-		ErrorDetails errorDetail = new ErrorDetails();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
 		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
@@ -824,7 +823,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
 			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 
 		logger.debug("Leaving");
@@ -851,4 +850,5 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 		logger.debug("Leaving");
 	}
+	
 }

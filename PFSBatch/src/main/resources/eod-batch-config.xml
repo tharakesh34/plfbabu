@@ -42,12 +42,6 @@
 		
 		<step id="datesUpdate">
 			<tasklet ref="datesUpdateTaskLet" />
-			<next on="*" to="snapShotPreparation" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="snapShotPreparation">
-			<tasklet ref="snapShotPreparationTaskLet" />
 			<!-- <next on="*" to="posidex" /> -->
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
@@ -57,17 +51,26 @@
 			<tasklet ref="posidexTaskLet">
 				<transaction-attributes propagation="NEVER" />
 			</tasklet>
+			<next on="*" to="dataMart" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step> -->
 		
 		<!-- End Of Month Decision For Month End process -->
 <!-- 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="alm" />
+			<next on="EndOfMonth" to="controlDump" />
 			<end on="NotEndOfMonth" exit-code="COMPLETED" />
 			<fail on="FAILED" />
 		</decision> -->
 		
+
 <!-- 		<step id="alm">
 			<tasklet ref="almTaskLet" />
 			<next on="*" to="controlDump" />
@@ -90,6 +93,12 @@
 		
 		<!-- <step id="sapGL">
 			<tasklet ref="sapGLTaskLet" />
+			<next on="*" to="alm" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="alm">
+			<tasklet ref="almTaskLet" />
 			<next on="*" to="cibil" />
 			<fail on="FAILED" />
 		</step> -->
@@ -102,14 +111,34 @@
 		 -->
 <!-- 		<step id="gstTaxDownload">
 			<tasklet ref="gstTaxDownloadTaskLet" />
-			<next on="*" to="dataMart" />
+			<next on="*" to="dmLoanDetailsMonthly" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="dmLoanDetailsMonthly">
+			<tasklet ref="DM_LOAN_DETAILS_MONTHLY"/>
+			<next on="*" to="dmLoanBalancesMonthly" />
 			<fail on="FAILED" />
 		</step> -->
-		
+
 <!-- 		<step id="dataMart">
 			<tasklet ref="dataMartTaskLet">
 				<transaction-attributes propagation="NEVER" />
 			</tasklet>
+		<step id="dmLoanBalancesMonthly">
+			<tasklet ref="DM_LOAN_BALANCES_MONTHLY" />
+			<next on="*" to="dmDisbDetailsMonthly" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="dmDisbDetailsMonthly">
+			<tasklet ref="DM_DISB_DETAILS_MONTHLY" />
+			<next on="*" to="snapShotPreparation" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="snapShotPreparation">
+			<tasklet ref="snapShotPreparationTaskLet" />
 			<end on="*" exit-code="COMPLETED" />
 			<fail on="FAILED" />
 		</step> -->

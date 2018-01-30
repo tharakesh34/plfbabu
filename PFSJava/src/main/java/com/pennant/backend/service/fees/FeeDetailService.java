@@ -16,10 +16,10 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -226,7 +226,7 @@ public class FeeDetailService {
 	}
 	
 	private void validateFeeConfig(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
 			if (!finFeeDetail.isAlwModifyFee() && finFeeDetail.getActualAmount().compareTo(calcAmount) != 0) {
@@ -234,7 +234,7 @@ public class FeeDetailService {
 				valueParm[0] = "Fee amount";
 				valueParm[1] = "Actual fee amount:" + String.valueOf(calcAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return;	
 			}
@@ -243,7 +243,7 @@ public class FeeDetailService {
 				valueParm[0] = "Paid amount";
 				valueParm[1] = "Actual amount:" + String.valueOf(calcAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
@@ -254,7 +254,7 @@ public class FeeDetailService {
 				valueParm[0] = "Waiver amount";
 				valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
@@ -266,7 +266,7 @@ public class FeeDetailService {
 					valueParm[0] = "Sum of waiver and paid amounts";
 					valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
 					valueParm[2] = finFeeDetail.getFeeTypeCode();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90268", valueParm)));
 					finScheduleData.setErrorDetails(errorDetails);
 				}
 			}
@@ -276,7 +276,7 @@ public class FeeDetailService {
 				valueParm[0] = "Sum of waiver and paid amounts";
 				valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90257", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 		}
@@ -291,18 +291,22 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst,boolean isOrgination) 
+	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst) 
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
+		boolean isOrigination = false;
+		if(finServiceInst == null) {
+			isOrigination = true;
+		}
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, isOrgination,
-					FinanceConstants.MODULEID_FINTYPE));
+		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
+					isOrigination, FinanceConstants.MODULEID_FINTYPE));
 		} else {
 			String promotionType = financeDetail.getFinScheduleData().getFinanceType().getPromotionCode();
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent,
-					false, FinanceConstants.MODULEID_PROMOTION));
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent, isOrigination,
+					FinanceConstants.MODULEID_PROMOTION));
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -312,23 +316,6 @@ public class FeeDetailService {
 		setFinFeeDetailList(convertToFinanceFees(financeDetail.getFinTypeFeesList(), finReference));
 		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
 		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
-		List<FinFeeDetail> feeDetails= new ArrayList<>();
-		for(VASRecording vasRecording:financeDetail.getFinScheduleData().getVasRecordingList()){
-			FinFeeDetail feeDetail = new FinFeeDetail();
-			feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-			feeDetail.setFeeCategory("FC");
-			feeDetail.setOriginationFee(true);
-			feeDetail.setFeeTypeCode(vasRecording.getProductCode());
-			feeDetail.setActualAmount(vasRecording.getFee());
-			feeDetail.setVasReference(vasRecording.getVasReference());
-			feeDetail.setFeeTypeID(0);
-			feeDetail.setNewRecord(true);
-			feeDetail.setCalculatedAmount(vasRecording.getFee());
-			feeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
-			feeDetails.add(feeDetail);
-		}
-		//financeDetail.getFinScheduleData().setFinFeeDetailList(feeDetails);
-		actualFinFeeList.addAll(feeDetails);
 		setFinFeeDetailList(actualFinFeeList);
 
 		// Organize Fee detail changes
@@ -338,16 +325,10 @@ public class FeeDetailService {
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
 			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-			if (financeDetail.isStp()) {
-				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			} else {
-				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-			}
+			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
-			if (!StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
-				finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
-			}
+			finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
 			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
 				feeRuleCodes.add(finFeeDetail.getRuleCode());
 			}
@@ -363,7 +344,7 @@ public class FeeDetailService {
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			if (!isOrgination) {
+			if(!isOrigination) {
 				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
 			}
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
@@ -457,6 +438,11 @@ public class FeeDetailService {
 				BigDecimal remPartPaymentAmt = PennantApplicationUtil.formateAmount(finServiceInst.getRemPartPayAmt(), formatter);
 				executionMap.put("partialPaymentAmount", remPartPaymentAmt);
 			}
+			
+			if (finMain != null && finMain.getFinStartDate() != null) {
+				int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), finMain.getFinStartDate());
+				executionMap.put("finAgetilldate", finAge);
+			}
 
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
@@ -477,7 +463,7 @@ public class FeeDetailService {
 			}
 		}
 	}
-	
+
 	private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
 		for(FinFeeDetail finTypeFeeDetail: finTypeFees) {
 			for(FinFeeDetail finFeeDetail: finFeeDetailList) {

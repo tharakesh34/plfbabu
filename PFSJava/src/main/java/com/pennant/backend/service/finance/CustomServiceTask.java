@@ -48,6 +48,6 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 
 public interface CustomServiceTask {
 
-	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask);
+	public boolean executeExternalServiceTask(AuditHeader auditHeader, ServiceTask serviceTask) throws Exception;
 	
 }

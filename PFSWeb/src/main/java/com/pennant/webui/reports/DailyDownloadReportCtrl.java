@@ -261,7 +261,7 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		
 		try {
 			
-			dataSourceObj = (DataSource) SpringUtil.getBean("pfsDatasource");
+			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 			
 			generateExcelReport(folderPath, reportName,reportDesc, false,"", connection);
@@ -445,7 +445,7 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 		try {
 			
-			dataSourceObj = (DataSource) SpringUtil.getBean("pfsDatasource");
+			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
 			for (int i = 0; i < reportNameList.size(); i++) {

@@ -15,12 +15,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 
-public class FinAssetTypesDAOImpl extends BasisCodeDAO<FinAssetTypes> implements FinAssetTypeDAO {
+public class FinAssetTypesDAOImpl implements FinAssetTypeDAO {
 private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	
 	// Spring Named JDBC Template
@@ -55,12 +54,13 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	@Override
 	public void save(FinAssetTypes finAssetTypes, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder query =new StringBuilder("Insert Into FinAssetTypes");
+
+		StringBuilder query = new StringBuilder();
+		query.append("Insert Into FinAssetTypes");
 		query.append(StringUtils.trimToEmpty(type));
-		query.append(" (Reference, AssetType, SeqNo, ");
+		query.append(" (FinAssetTypeId,Reference, AssetType, SeqNo, ");
 		query.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		query.append(" Values(:Reference, :AssetType, :SeqNo,");
+		query.append(" Values(:FinAssetTypeId,:Reference, :AssetType, :SeqNo,");
 		query.append(" :Version ,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + query.toString());
@@ -118,7 +118,7 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		FinAssetTypes finAssetTypes = new FinAssetTypes();
 		finAssetTypes.setReference(reference);
 
-		StringBuilder selectSql = new StringBuilder("Select Reference , AssetType , SeqNo ,  ");
+		StringBuilder selectSql = new StringBuilder("Select FinAssetTypeId, Reference , AssetType , SeqNo ,  ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinAssetTypes");
@@ -142,7 +142,7 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		logger.debug("Entering");
 
 		FinAssetTypes finAssetType = null;
-		StringBuilder selectSql = new StringBuilder(" Select Reference, AssetType, SeqNo, ");
+		StringBuilder selectSql = new StringBuilder(" Select FinAssetTypeId, Reference, AssetType, SeqNo, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinAssetTypes");

@@ -2,6 +2,8 @@ package com.pennanttech.niyogin.utility;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -16,64 +18,101 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 public class NiyoginUtility {
 
 	/**
-	 * Method to get the High priority email.
+	 * Method for sort the given CustomerEMailList based on their Priority High to Low.
 	 * 
-	 * @param customerEMailList
-	 * @param priority
-	 * @return String EmailId
+	 * @param list
 	 */
-	public static String getHignPriorityEmail(List<CustomerEMail> customerEMailList, int priority) {
-		for (CustomerEMail customerEMail : customerEMailList) {
-			if (customerEMail.getCustEMailPriority() == priority) {
-				return customerEMail.getCustEMail();
-			}
+	public static void sortCustomerEmail(List<CustomerEMail> list) {
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerEMail>() {
+				@Override
+				public int compare(CustomerEMail detail1, CustomerEMail detail2) {
+					return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
+				}
+			});
 		}
-		if (priority > 1) {
-			getHignPriorityEmail(customerEMailList, priority - 1);
+	}
+
+
+	/**
+	 * Method for sort the given CustomerPhoneNumberList based on their Priority High to Low.
+	 * 
+	 * @param list
+	 */
+	public static void sortCustomerPhoneNumber(List<CustomerPhoneNumber> list) {
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerPhoneNumber>() {
+				@Override
+				public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+					return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+				}
+			});
 		}
-		return null;
 	}
 
 	/**
-	 * Method to get the High priority PhoneNumeber
+	 * Method for sort the given CustomerAddresList based on their Priority High to Low.
 	 * 
-	 * @param customerPhoneNumList
-	 * @param priority
-	 * @return String CustomerPhoneNumber
+	 * @param list
 	 */
-	public static CustomerPhoneNumber getHighPriorityPhone(List<CustomerPhoneNumber> customerPhoneNumList,
-			int priority) {
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-			if (customerPhoneNumber.getPhoneTypePriority() == priority) {
-				return customerPhoneNumber;
-			}
+	public static void sortCustomerAddres(List<CustomerAddres> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerAddres>() {
+				@Override
+				public int compare(CustomerAddres detail1, CustomerAddres detail2) {
+					return detail2.getCustAddrPriority() - detail1.getCustAddrPriority();
+				}
+			});
 		}
-		if (priority > 1) {
-			getHighPriorityPhone(customerPhoneNumList, priority - 1);
-		}
-		return null;
 	}
 
-	/**
-	 * Method to get the High Priority Address.
-	 * 
-	 * @param addressList
-	 * @param priority
-	 * @return CustomerAddres
-	 */
-	public static CustomerAddres getHighPriorityAddress(List<CustomerAddres> addressList, int priority) {
-
-		for (CustomerAddres customerAddres : addressList) {
-			if (customerAddres.getCustAddrPriority() == priority) {
-				return customerAddres;
+	public static String getPhoneNumber(List<CustomerPhoneNumber> phoneList) {
+		String phoneNumber = "";
+		if (phoneList != null && !phoneList.isEmpty()) {
+			if (phoneList.size() > 1) {
+				NiyoginUtility.sortCustomerPhoneNumber(phoneList);
 			}
+			CustomerPhoneNumber phone = phoneList.get(0);
+			phoneNumber = phone.getPhoneNumber();
 		}
-		if (priority > 1) {
-			getHighPriorityAddress(addressList, priority - 1);
-		}
-		return null;
+		return phoneNumber;
 	}
-
+	
+	public static CustomerPhoneNumber getPhone(List<CustomerPhoneNumber> phoneList) {
+		CustomerPhoneNumber phone = new CustomerPhoneNumber();
+		if (phoneList != null && !phoneList.isEmpty()) {
+			if (phoneList.size() > 1) {
+				NiyoginUtility.sortCustomerPhoneNumber(phoneList);
+			}
+			phone = phoneList.get(0);
+		}
+		return phone;
+	}
+	
+	public static String getEmail(List<CustomerEMail> customerEMailList) {
+		String emailId = "";
+		if (customerEMailList != null && !customerEMailList.isEmpty()) {
+			if (customerEMailList.size() > 1) {
+				NiyoginUtility.sortCustomerEmail(customerEMailList);
+			}
+			CustomerEMail email = customerEMailList.get(0);
+			emailId = email.getCustEMail();
+		}
+		return emailId;
+	}
+	
+	public static CustomerAddres getAddress(List<CustomerAddres> addressList) {
+		CustomerAddres address = new CustomerAddres();
+		if (addressList != null && !addressList.isEmpty()) {
+			if (addressList.size() > 1) {
+				NiyoginUtility.sortCustomerAddres(addressList);
+			}
+			address = addressList.get(0);
+		}
+		return address;
+	}
+	
 	/**
 	 * Method to fetch customer phone number.
 	 * 
@@ -221,4 +260,59 @@ public class NiyoginUtility {
 		return Math.abs((int) days);
 	}
 
+	public static String formatRate(double value, int decPos) {
+		StringBuffer sb = new StringBuffer("###,###,######");
+
+		if (value != 0) {
+			String subString = String.valueOf(value).substring(String.valueOf(value).indexOf('.'));
+			if (!subString.contains("E")) {
+				
+				if (decPos > 0) {
+					sb.append('.');
+					for (int i = 0; i < decPos; i++) {
+						sb.append('0');
+					}
+				}
+				
+				java.text.DecimalFormat df = new java.text.DecimalFormat();
+				df.applyPattern(sb.toString());
+				String returnResult = df.format(value);
+				returnResult = returnResult.replaceAll("[0]*$", "");
+				if(returnResult.endsWith(".")){
+					returnResult = returnResult + "00";
+				}else if(returnResult.contains(".") && returnResult.substring(returnResult.indexOf('.')+1).length() == 1){
+					returnResult = returnResult + "0";
+				}
+				
+				if(returnResult.startsWith(".")){
+					returnResult = "0"+returnResult;
+				}
+				return returnResult;
+			} else {
+				
+				String actValue = String.valueOf(value).substring(0,String.valueOf(value).indexOf('.'));
+				int powValue = Integer.parseInt(String.valueOf(value).substring(String.valueOf(value).indexOf('E')+1));
+				
+				String string = "0.";
+				if(powValue < 0){
+					powValue = 0-powValue;
+					if(powValue > 0){
+						for (int i = 0; i < powValue-1; i++) {
+							string = string.concat("0");
+						}
+					}
+				}
+				
+				string += actValue;
+				return string;
+			}
+		} else {
+			String string = "0.";
+			for (int i = 0; i < 2; i++) {
+				string =string.concat("0");
+			}
+			return string;
+
+		}
+	}
 }

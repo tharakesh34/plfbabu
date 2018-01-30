@@ -57,7 +57,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -377,7 +377,7 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 	public void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage) {
 		// Eligibility
 		if (!isCustEligible(financeEligibilityDetailList)) {
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,  "30563", errParm, valueParm), usrLanguage));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,  "30563", errParm, valueParm), usrLanguage));
 		}
 	}
 	

@@ -22,7 +22,7 @@ import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
@@ -62,11 +62,11 @@ public class LimitManagement {
 	 * @param tranType
 	 * @return
 	 */
-	public List<ErrorDetails> processLoanLimitOrgination(FinanceDetail financeDetail, boolean overide, String tranType,
+	public List<ErrorDetail> processLoanLimitOrgination(FinanceDetail financeDetail, boolean overide, String tranType,
 			boolean validateOnly) {
 		logger.debug(" Entering ");
 
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		FinScheduleData finschData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
@@ -91,14 +91,14 @@ public class LimitManagement {
 		// If limit required is true in Finance type			
 		if (limitrequired) {
 			if (custHeader == null) {
-				errors.add(new ErrorDetails("60310", null));
+				errors.add(new ErrorDetail("60310", null));
 				return ErrorUtil.getErrorDetails(errors, usrlang);
 			} else {
 				if (!custHeader.isActive()) {
 					StringBuilder key = new StringBuilder(custHeader.getLimitStructureCode());
 					key.append("-");
 					key.append(custHeader.getStructureName());
-					errors.add(new ErrorDetails("60313", new String[] { key.toString() }));
+					errors.add(new ErrorDetail("60313", new String[] { key.toString() }));
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
 			}
@@ -223,7 +223,7 @@ public class LimitManagement {
 	 * @param override
 	 * @return
 	 */
-	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
+	private List<ErrorDetail> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
 			boolean allowOverride, BigDecimal limitAmount, boolean override, boolean validateOnly, Date disbDate,
 			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount) {
 		logger.debug(" Entering ");
@@ -231,7 +231,7 @@ public class LimitManagement {
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 
 		//	validate
 		if (StringUtils.equals(LimitConstants.BLOCK, tranType)) {
@@ -312,11 +312,11 @@ public class LimitManagement {
 		return errors;
 	}
 
-	public List<ErrorDetails> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType,
+	public List<ErrorDetail> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType,
 			boolean validateOnly) {
 		logger.debug(" Entering ");
 
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		FinScheduleData finschData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
@@ -433,14 +433,14 @@ public class LimitManagement {
 		return errors;
 	}
 
-	private List<ErrorDetails> procesServicingLimits(LimitReferenceMapping mapping, String tranType,
+	private List<ErrorDetail> procesServicingLimits(LimitReferenceMapping mapping, String tranType,
 			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, Date appdate,
 			boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
 		long headerId = mapping.getHeaderId();
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		LimitTransactionDetail prvblock = getFinTransaction(finref, headerId, LimitConstants.BLOCK, -1);
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
@@ -645,11 +645,11 @@ public class LimitManagement {
 	 * @param limitAmount
 	 * @param custLimitDetails
 	 */
-	public List<ErrorDetails> processLimitIncrease(FinanceDetail financeDetail, boolean override,
+	public List<ErrorDetail> processLimitIncrease(FinanceDetail financeDetail, boolean override,
 			boolean validateOnly) {
 		logger.debug(" Entering ");
 
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		FinScheduleData finschData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
@@ -955,12 +955,12 @@ public class LimitManagement {
 	 * @param financeMain
 	 * @return
 	 */
-	private List<ErrorDetails> validate(List<LimitDetails> limitDetails, BigDecimal limitAmount,
+	private List<ErrorDetail> validate(List<LimitDetails> limitDetails, BigDecimal limitAmount,
 			BigDecimal preLimitAmount, boolean overrideAllowed, Date appdate) {
 
-		ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (LimitDetails detail : limitDetails) {
-			ErrorDetails error = validateLimitDetail(detail, limitAmount, preLimitAmount, overrideAllowed, appdate);
+			ErrorDetail error = validateLimitDetail(detail, limitAmount, preLimitAmount, overrideAllowed, appdate);
 			if (error != null) {
 				errorDetails.add(error);
 			}
@@ -977,7 +977,7 @@ public class LimitManagement {
 	 * @param overrideAllowed
 	 * @return
 	 */
-	private ErrorDetails validateLimitDetail(LimitDetails limitDetail, BigDecimal tranAmount, BigDecimal preLimitAmount,
+	private ErrorDetail validateLimitDetail(LimitDetails limitDetail, BigDecimal tranAmount, BigDecimal preLimitAmount,
 			boolean overrideAllowed, Date date) {
 
 		// If limit expired then return error  
@@ -989,7 +989,7 @@ public class LimitManagement {
 
 			if (limitDetail.getExpiryDate() != null) {
 				if (limitDetail.getExpiryDate().compareTo(date) <= 0) {
-					return new ErrorDetails(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
+					return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
 				}
 			}
 			BigDecimal limitAmount = BigDecimal.ZERO;
@@ -1002,9 +1002,9 @@ public class LimitManagement {
 			if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
 				if (overrideAllowed) {
 					//return new ErrorDetails("60312", new String[] { param });
-					return new ErrorDetails(KEY_LIMITAMT, "60312", new String[] { param }, null);
+					return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
 				} else {
-					return new ErrorDetails(KEY_LIMITAMT, "60314", new String[] { param }, null);
+					return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
 				}
 			}
 		}
@@ -1186,10 +1186,10 @@ public class LimitManagement {
 	 * @param tranType
 	 * @return
 	 */
-	public ArrayList<ErrorDetails> processCommitmentLimit(Commitment commitment, boolean overide, String tranType) {
+	public ArrayList<ErrorDetail> processCommitmentLimit(Commitment commitment, boolean overide, String tranType) {
 		logger.debug(" Entering ");
 
-		ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		String cmtRef = commitment.getCmtReference();
 		long limtiDetailID = commitment.getLimitLineId();
 		String cmtCcy = commitment.getCmtCcy();

@@ -42,8 +42,8 @@
  */
 package com.pennant.backend.service.errordetail;
 
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.errordetail.ErrorDetail;
 
 public interface ErrorDetailService {
 	
@@ -58,4 +58,6 @@ public interface ErrorDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	ErrorDetail getErrorDetail(String errorCode);
 }

@@ -50,7 +50,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Country;
@@ -351,12 +351,12 @@ public class CountryServiceImpl extends GenericService<Country> implements
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_CountryCode") + ": " + code;
 
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		if (country.isSystemDefault()) {
 			String dftCountryCode = getCountryDAO().getSystemDefaultCount(code);
 			if (StringUtils.isNotEmpty(dftCountryCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501", new String[] {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501", new String[] {
 						dftCountryCode, PennantJavaUtil.getLabel("Country") }, null));
 			}
 		}

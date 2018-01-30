@@ -55,7 +55,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -404,7 +404,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditDetail.getModelData();
 		StepPolicyHeader tempStepPolicyHeader = null;
@@ -428,7 +428,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 				// records
 				if (befStepPolicyHeader != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 				}
 			} else { // with work flow
@@ -443,13 +443,13 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 																				// exists
 						// in the main table
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 					}
 				} else { // if records not exists in the Main flow table
 					if (befStepPolicyHeader == null || tempStepPolicyHeader != null) {
 						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 					}
 				}
@@ -463,7 +463,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 				if (befStepPolicyHeader == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 
 				} else {
 
@@ -471,10 +471,10 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 							&& !oldStepPolicyHeader.getLastMntOn().equals(befStepPolicyHeader.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									null));
 						}
 
@@ -484,11 +484,11 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			} else {
 				if (tempStepPolicyHeader == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempStepPolicyHeader != null && oldStepPolicyHeader != null
 						&& !oldStepPolicyHeader.getLastMntOn().equals(tempStepPolicyHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -497,7 +497,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())){
 			boolean isStepUsed = getFinanceTypeDAO().isStepPolicyExists(stepPolicyHeader.getPolicyCode());
 			if(isStepUsed){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
 		}
 
@@ -610,15 +610,15 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			return auditList;
 		}
 		
-		private List<ErrorDetails> validateChilds(AuditHeader auditHeader,String usrLanguage,String method){
-			List<ErrorDetails> errorDetails=new ArrayList<ErrorDetails>();
+		private List<ErrorDetail> validateChilds(AuditHeader auditHeader,String usrLanguage,String method){
+			List<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
 			StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
 			List<AuditDetail> auditDetails=null;
 			//StepPolicyDetail
 			if (stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail")!=null) {
 				auditDetails= stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
 				for (AuditDetail auditDetail : auditDetails) {
-					List<ErrorDetails> details=validationStepPolicyDetail(auditDetail, usrLanguage, method).getErrorDetails();
+					List<ErrorDetail> details=validationStepPolicyDetail(auditDetail, usrLanguage, method).getErrorDetails();
 					if (details!=null) {
 						errorDetails.addAll(details);
 					}
@@ -783,7 +783,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	
 	private AuditDetail validationStepPolicyDetail(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		StepPolicyDetail stepPolicyDetail= (StepPolicyDetail) auditDetail.getModelData();
 		
 		StepPolicyDetail tempStepPolicyDetail= null;
@@ -806,16 +806,16 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			
 			if (!stepPolicyDetail.isWorkflow()){// With out Work flow only new records  
 				if (befStepPolicyDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 				}	
 			}else{ // with work flow
 				if (stepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befStepPolicyDetail !=null || tempStepPolicyDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befStepPolicyDetail ==null || tempStepPolicyDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -824,24 +824,24 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			if (!stepPolicyDetail.isWorkflow()){	// With out Work flow for update and delete
 			
 				if (befStepPolicyDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
 					if (oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(befStepPolicyDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
 						}
 					}
 				}
 			}else{
 			
 				if (tempStepPolicyDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
 				if (tempStepPolicyDetail!=null && oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(tempStepPolicyDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
 		}

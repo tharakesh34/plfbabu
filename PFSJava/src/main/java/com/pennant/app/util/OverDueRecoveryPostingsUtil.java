@@ -135,27 +135,21 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 
 		amountCodes.setExPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setExPenaltyWaived(BigDecimal.ZERO);
 		amountCodes.setEAPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setEAPenaltyWaived(BigDecimal.ZERO);
 		amountCodes.setPAPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setPAPenaltyWaived(BigDecimal.ZERO);
 		amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 		amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 
 		if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
 			amountCodes.setExPenaltyPaid(penaltyPaidNow);
-			amountCodes.setExPenaltyWaived(penaltyWaived);
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
 			amountCodes.setEAPenaltyPaid(penaltyPaidNow);
-			amountCodes.setEAPenaltyWaived(penaltyWaived);
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
 			amountCodes.setPAPenaltyPaid(penaltyPaidNow);
-			amountCodes.setPAPenaltyWaived(penaltyWaived);
 		}else {
 			amountCodes.setPenaltyPaid(penaltyPaidNow);
-			amountCodes.setPenaltyWaived(penaltyWaived);
 		}
+		amountCodes.setPenaltyWaived(penaltyWaived);
 
 		aeEvent.setSchdDate(schDate);
 		aeEvent.setEOD(false);

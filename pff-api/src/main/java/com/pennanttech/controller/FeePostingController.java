@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -41,8 +41,8 @@ public class FeePostingController {
 			auditHeader = feePostingService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			} else {
 				return APIErrorHandlerService.getSuccessStatus();
@@ -66,7 +66,7 @@ public class FeePostingController {
 	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
 		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
-				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	private void doSetPrepareData(FeePostings feePostings) {

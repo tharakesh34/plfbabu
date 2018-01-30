@@ -90,6 +90,10 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private String debitTxnCode;
 	private String debitTxnDesc;
 	
+	private String debitAcType;
+	private String debitAcname;
+	
+	
 	private long derivedTxnRef;
 
 	private boolean newRecord = false;
@@ -142,6 +146,8 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("debitAccount");
 		excludeFields.add("debitTxnCode");
 		excludeFields.add("debitTxnDesc");
+		excludeFields.add("debitAcType");
+		excludeFields.add("debitAcname");
 		return excludeFields;
 	}
 
@@ -571,6 +577,21 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	public void setDerivedTxnRef(long derivedTxnRef) {
 		this.derivedTxnRef = derivedTxnRef;
 	}
-	
+
+	public String getDebitAcType() {
+		return debitAcType;
+	}
+
+	public void setDebitAcType(String debitAcType) {
+		this.debitAcType = debitAcType;
+	}
+
+	public String getDebitAcname() {
+		return debitAcname;
+	}
+
+	public void setDebitAcname(String debitAcname) {
+		this.debitAcname = debitAcname;
+	}
 	
 }

@@ -71,7 +71,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -131,7 +131,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	// ServiceDAOs / Domain Classes
 	private transient FacilityReferenceDetailService facilityReferenceDetailService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private String roleCodes;
 	
 	protected Listbox listboxshowInStage; // auto wired
@@ -857,7 +857,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FacilityReferenceDetailDialogLink, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -885,11 +885,11 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

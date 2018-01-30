@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_ErrorDetailList" apply="${errorDetailListCtrl}"
+		border="none" width="100%">
+
+		<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+				<!-- COMMON BUTTONS -->
+				<label value="" />
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<button
+						id="button_ErrorDetailList_ErrorDetailSearch"
+						label="${c:l('label_Filter')}"
+						autodisable="button_ErrorDetailList_ErrorDetailSearch,print,button_ErrorDetailList_NewErrorDetail,btnRefresh,help"
+						tooltiptext="${c:l('button_ErrorDetailList_ErrorDetailSearch.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="print" label="${c:l('label_Print')}"
+						autodisable="button_ErrorDetailList_ErrorDetailSearch,print,button_ErrorDetailList_NewErrorDetail,btnRefresh,help"
+						tooltiptext="${c:l('button_ErrorDetailList_PrintList.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="button_ErrorDetailList_NewErrorDetail"
+						label="${c:l('label_New')}" visible="false"
+						autodisable="button_ErrorDetailList_ErrorDetailSearch,print,button_ErrorDetailList_NewErrorDetail,btnRefresh,help"
+						tooltiptext="${c:l('button_ErrorDetailList_NewErrorDetail.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
+						autodisable="button_ErrorDetailList_ErrorDetailSearch,print,button_ErrorDetailList_NewErrorDetail,btnRefresh,help"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="help" visible="false"
+						label="${c:l('label_Help')}"
+						autodisable="button_ErrorDetailList_ErrorDetailSearch,print,button_ErrorDetailList_NewErrorDetail,btnRefresh,help"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_ErrorDetailList">
+			<north border="none" />
+			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true">
+						<columns>
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_ErrorDetailList_ErrorCode"
+									value="${c:l('label_ErrorDetailList_ErrorCode.value')}" />
+								<listbox id="sortOperator_ErrorCode"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="errorCode"
+									width="90px" maxlength="10" />
+								<label
+									id="label_ErrorDetailList_ErrorLanguage"
+									value="${c:l('label_ErrorDetailList_ErrorLanguage.value')}" />
+								<listbox id="sortOperator_ErrorLanguage"
+									width="43px" mold="select" rows="1" />
+								<textbox id="errorLanguage" width="30px"
+									maxlength="2" />
+							</row>
+							<row>
+								<label
+									id="label_ErrorDetailList_ErrorSeverity"
+									value="${c:l('label_ErrorDetailList_ErrorSeverity.value')}" />
+								<listbox id="sortOperator_ErrorSeverity"
+									width="43px" mold="select" rows="1" />
+								<combobox id="errorSeverity"
+									width="200px" />
+								<label
+									id="label_ErrorDetailList_ErrorMessage"
+									value="${c:l('label_ErrorDetailList_ErrorMessage.value')}" />
+								<listbox id="sortOperator_ErrorMessage"
+									width="43px" mold="select" rows="1" />
+								<textbox id="errorMessage" width="200px"
+									maxlength="100" />
+							</row>
+							<row>
+								<label
+									id="label_ErrorDetailList_ErrorExtendedMessage"
+									value="${c:l('label_ErrorDetailList_ErrorExtendedMessage.value')}" />
+								<listbox
+									id="sortOperator_ErrorExtendedMessage" width="43px"
+									mold="select" rows="1" />
+								<textbox id="errorExtendedMessage"
+									width="200px" maxlength="300" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_ErrorDetailList_RecordStatus"
+									value="${c:l('label_ErrorDetailList_RecordStatus.value')}" />
+								<listbox id="sortOperator_RecordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_ErrorDetailList_RecordType"
+									value="${c:l('label_ErrorDetailList_RecordType.value')}" />
+								<listbox id="sortOperator_RecordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+							<row id="workFlowFrom">
+								<label
+									value="${c:l('common.fetch.selectfrom')}" />
+								<cell colspan="5">
+									<radiogroup>
+										<radio id="fromApproved"
+											selected="true"
+											label="${c:l('common.fetch.fromapproved')}">
+										</radio>
+										<radio id="fromWorkFlow"
+											label="${c:l('common.fetch.fromWorkFlow')}">
+										</radio>
+									</radiogroup>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxErrorDetail"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" sizedByContent="true"
+						span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_ErrorCode"
+								label="${c:l('listheader_ErrorCode.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_ErrorLanguage"
+								label="${c:l('listheader_ErrorLanguage.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_ErrorSeverity"
+								label="${c:l('listheader_ErrorSeverity.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_ErrorMessage"
+								label="${c:l('listheader_ErrorMessage.label')}" sort="auto"
+								hflex="min" />
+							<listheader
+								id="listheader_ErrorExtendedMessage"
+								label="${c:l('listheader_ErrorExtendedMessage.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
+			</center>
+			<south border="none">
+				<paging id="pagingErrorDetailList" />
+			</south>
+		</borderlayout>
+	</window>
+</zk>

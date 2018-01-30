@@ -42,6 +42,9 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -331,4 +334,63 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
+	
+
+	@Override
+	public List<Branch> getBrachDetailsByBranchCode(List<String> finBranches) {
+		logger.debug(Literal.ENTERING);
+	
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finBranches", finBranches);
+	
+		List<Branch> finFeeDetailsList = null;
+	
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select BranchCode, BRANCHPROVINCE from RMTBRANCHES");
+		sql.append(" WHERE BranchCode in (:finBranches)");
+	
+		logger.trace(Literal.SQL + sql.toString());
+		
+		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+	
+		try {
+			finFeeDetailsList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finFeeDetailsList = new ArrayList<Branch>();
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	
+		return finFeeDetailsList;
+	}
+	
+	@Override
+	public boolean getUnionTerrotory(String cpProvince) {
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("cpProvince", cpProvince);
+		
+		boolean unionterrotory = false;
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select UNIONTERRITORY from RMTCOUNTRYVSPROVINCE where CPPROVINCE = :cpProvince");
+		
+		logger.trace(Literal.SQL + sql.toString());
+		
+		try {
+			unionterrotory = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Boolean.class);
+		} catch (EmptyResultDataAccessException e) {
+			unionterrotory = false;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+		
+		return unionterrotory;
+	}
+
 }

@@ -53,7 +53,7 @@ import com.pennant.backend.dao.administration.SecurityGroupDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -326,7 +326,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage
 			,String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityGroup securityGroup= (SecurityGroup) auditDetail.getModelData();
 		SecurityGroup tempSecurityGroup= null;
 		if (securityGroup.isWorkflow()){
@@ -357,29 +357,29 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 
 			if (!securityGroup.isWorkflow()){// With out Work flow only new records  
 				if (befSecurityGroup !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 
 				}	
 				if (aBefSecurityGroup !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",parmGrpCodeExisted,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",parmGrpCodeExisted,null));
 
 				}	
 
 
 			}else{ // with work flow
 				if (tempSecurityGroup!=null ){ // if records already exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 
 				if (securityGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befSecurityGroup !=null){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befSecurityGroup ==null){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 					}
 				}
@@ -389,16 +389,16 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 			if (!securityGroup.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befSecurityGroup ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}
 
 				if (befSecurityGroup!=null && oldSecurityGroup!=null && !oldSecurityGroup.getLastMntOn()
 						.equals(befSecurityGroup.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 					}else{
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 					}
 
 				}
@@ -406,13 +406,13 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 			}else{
 
 				if (tempSecurityGroup==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 
 				if (tempSecurityGroup!=null && oldSecurityGroup!=null && !oldSecurityGroup.getLastMntOn()
 						.equals(tempSecurityGroup.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 
 				}
 
@@ -426,7 +426,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 			.getGroupIdCount(securityGroup.getGrpID());
 
 			if((groupIdCount>0) ||(0<aGroupIdCount)){
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"49001",parmGrpIdAssigned,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"49001",parmGrpIdAssigned,null));
 
 			}
 		}

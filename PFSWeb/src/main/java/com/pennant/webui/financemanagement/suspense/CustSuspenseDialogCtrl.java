@@ -73,7 +73,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -131,7 +131,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	
 	private String suspTrigger = "";
 
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
 	private MailUtil mailUtil;
 	
 	/**
@@ -911,7 +911,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustSuspenseDialog, auditHeader);
 						return processCompleted;
@@ -1031,10 +1031,10 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.customer = customer;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

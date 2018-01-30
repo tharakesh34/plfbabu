@@ -45,7 +45,7 @@ package com.pennant.backend.service;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -58,6 +58,6 @@ public interface WorkFlowDetailsService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 	List<WorkFlowDetails> getActiveWorkFlowDetails();
 	long getWorkFlowDetailsCountByID(long id);
-	List<ErrorDetails> doValidations(WorkFlowDetails aWorkFlowDetails, String flag);
+	List<ErrorDetail> doValidations(WorkFlowDetails aWorkFlowDetails, String flag);
 	int getWorkFlowDetailsVersionByID(long id);
  }

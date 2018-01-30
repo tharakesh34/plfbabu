@@ -74,7 +74,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -144,7 +144,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private String roleCodes;
 	private String moduleName;
 	private String eventAction;
@@ -986,7 +986,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinanceReferenceDetailDialogLink, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1014,10 +1014,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
-	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -18,7 +18,7 @@
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
@@ -56,9 +56,9 @@
 	<!-- ====================================================== -->
 	<!-- Define the transaction manager -->
 	<!-- ====================================================== -->
-	<bean id="pfsTransactionManager"
+	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="secTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -108,7 +108,7 @@
 		<property name="jndiName" value="jdbc/PFFSEC"/>
 		<property name="lookupOnStartup" value="true"/>
 	</bean>
-	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 	  	<property name="resourceRef" value="true"/>		
 		<property name="jndiName" value="jdbc/PFF"/>
 		<property name="lookupOnStartup" value="true"/>
@@ -118,31 +118,28 @@
 		<property name="jndiName" value="jdbc/PFFAUDIT"/>
 		<property name="lookupOnStartup" value="true"/>
 	</bean>
-
-	<bean id="finOneDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/FINONE"/>
-		<property name="lookupOnStartup" value="true"/>
-	</bean>
-	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="extDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
 	  	<property name="resourceRef" value="true"/>		
 		<property name="jndiName" value="jdbc/PFFEXT"/>
 		<property name="lookupOnStartup" value="true"/>
 	</bean>
+	
+	<bean id="finOneDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="resourceRef" value="true" />
+      <property name="jndiName" value="jdbc/FINONE" />
+      <property name="lookupOnStartup" value="true" />
+	</bean>
 
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="extDataSource" ref="pfsExtDatasource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDatasource" />
 	</bean>
 
 	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="secDatasource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
 
 	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="auditDatasource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
 </beans>

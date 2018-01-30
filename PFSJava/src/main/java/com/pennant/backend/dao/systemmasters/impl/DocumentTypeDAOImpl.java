@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -241,6 +243,24 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public List<DocumentType> getApprovedPdfExternalList(String type) {
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
+		selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef");
+		selectSql.append(" FROM  BMTDocumentTypes"); 
+		selectSql.append(type);
+		selectSql.append(" Where DocIsPdfExtRequired =1") ;
+				
+		logger.debug("selectSql: " + selectSql.toString());
+		DocumentType documentType = new DocumentType();
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
+		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
 	/**
 	 * @param dataSource
 	 *            the dataSource to set
@@ -248,4 +268,5 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
 }

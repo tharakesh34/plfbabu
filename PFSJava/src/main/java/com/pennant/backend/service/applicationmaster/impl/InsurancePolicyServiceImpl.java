@@ -54,7 +54,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.InsurancePolicyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -333,7 +333,7 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		InsurancePolicy insurancePolicy = (InsurancePolicy) auditDetail.getModelData();
 
 		InsurancePolicy tempInsurancePolicy = null;
@@ -355,17 +355,17 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 			if (!insurancePolicy.isWorkflow()) {// With out Work flow only new records  
 				if (befInsurancePolicy != null) { // Record Already Exists in the table then error  
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (PennantConstants.RECORD_TYPE_NEW.equals(insurancePolicy.getRecordType())) { // if records type is new
 					if (befInsurancePolicy != null || tempInsurancePolicy != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
 								valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befInsurancePolicy == null || tempInsurancePolicy != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
 								valueParm));
 					}
 				}
@@ -376,16 +376,16 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 
 				if (befInsurancePolicy == null) { // if records not exists in the main table
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldInsurancePolicy != null
 							&& !oldInsurancePolicy.getLastMntOn().equals(befInsurancePolicy.getLastMntOn())) {
 						if (PennantConstants.TRAN_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail
 								.getAuditTranType()))) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
 									valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
 									valueParm));
 						}
 					}
@@ -394,13 +394,13 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 
 				if (tempInsurancePolicy == null) { // if records not exists in the Work flow table 
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempInsurancePolicy != null && oldInsurancePolicy != null
 						&& !oldInsurancePolicy.getLastMntOn().equals(tempInsurancePolicy.getLastMntOn())) {
 					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -415,7 +415,7 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 				String[][] parms = new String[2][1];
 				parms[1][0] = insurancePolicy.getPolicyCode();
 				parms[0][0] = PennantJavaUtil.getLabel("label_PolicyCode") + ":" + parms[1][0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"41006", parms[0], parms[1]), usrLanguage));
 
 			}

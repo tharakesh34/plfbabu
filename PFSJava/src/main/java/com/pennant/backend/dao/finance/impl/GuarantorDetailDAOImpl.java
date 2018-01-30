@@ -118,7 +118,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName");
 		selectSql
-        	.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP");
+        	.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -221,13 +221,13 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		insertSql
 		        .append(" (GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks ");
 		insertSql
-    		.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP");
+    		.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
 		insertSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql
 		        .append(" Values(:GuarantorId, :FinReference, :BankCustomer, :GuarantorCIF, :GuarantorIDType, :GuarantorIDNumber, :GuarantorCIFName, :GuranteePercentage, :MobileNo, :EmailId, :GuarantorProof, :GuarantorProofName, :Remarks ");
 		insertSql
-			.append(", :AddrHNbr, :FlatNbr, :AddrStreet, :AddrLine1, :AddrLine2, :POBox, :AddrCity, :AddrProvince, :AddrCountry, :AddrZIP");
+			.append(", :AddrHNbr, :FlatNbr, :AddrStreet, :AddrLine1, :AddrLine2, :POBox, :AddrCity, :AddrProvince, :AddrCountry, :AddrZIP, :GuarantorGenderCode");
 		insertSql
 		        .append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -266,7 +266,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		}
 		updateSql.append(" AddrHNbr=:AddrHNbr, FlatNbr=:FlatNbr, AddrStreet=:AddrStreet, AddrLine1=:AddrLine1, ");
 		updateSql.append(" AddrLine2=:AddrLine2, POBox=:POBox, AddrCity=:AddrCity, AddrProvince=:AddrProvince, ");
-		updateSql.append(" AddrCountry=:AddrCountry, AddrZIP=:AddrZIP, ");
+		updateSql.append(" AddrCountry=:AddrCountry, AddrZIP=:AddrZIP, GuarantorGenderCode = :GuarantorGenderCode, ");
 		updateSql.append(" Remarks =:Remarks , Version = :Version , ");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
@@ -300,7 +300,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks");
 		selectSql
-    		.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP");
+    		.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -370,7 +370,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql.append(" POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, ");
 		selectSql.append(" Remarks, Version , LastMntBy, LastMntOn, RecordStatus, ");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, ");
-		selectSql.append(" RecordType, WorkflowId,GuarantorIDTypeName,GuarantorProof");
+		selectSql.append(" RecordType, WorkflowId,GuarantorIDTypeName,GuarantorProof, GuarantorGenderCode");
 		
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(", custID, CustShrtName ");

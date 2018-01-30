@@ -18,7 +18,7 @@
 						width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start"
-							style="float:left; border-style: none;">
+							sclass="toolbar-start">
 							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
@@ -46,14 +46,14 @@
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
-							style="toolbar-center">
+							sclass="toolbar-center">
 							<label
 								value="${c:l('window_ManualAdviseDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end"
-							style="float:right; border-style: none;">
+							sclass="toolbar-end">
 							<button id="btnHelp"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
@@ -66,8 +66,66 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
+			<center border="none">
+			<div>
+				<groupbox id="finBasicdetails" sclass="gb-dialog">
+ 					<grid id="grid_basicDetails"
+						sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="220px" />
+							<column />
+							<column width="220px" />
+							<column />
+						</columns>
+						<rows>
+							<row height="24px">
+								<label
+									value="${c:l('label_ManualAdviseDialog_LoanReference.value')}" />
+								<hbox>
+									<label id="lbl_LoanReference"
+										style="font-weight:bold;" />
+								</hbox>
+								<label
+									value="${c:l('label_ManualAdviseDialog_LoanType.value')}" />
+								<hbox>
+									<label id="lbl_LoanType"
+										style="font-weight:bold;" />
+								</hbox>
+							</row>
+							<row height="24px">
+								<label
+									value="${c:l('label_CustomerCIF')}" />
+								<hbox>
+									<label id="lbl_CustCIF"
+										style="font-weight:bold;" />
+								</hbox>
+								<label
+									value="${c:l('label_ManualAdviseDialog_FinAmount.value')}" />
+								<hbox>
+									<label id="lbl_FinAmount"
+										style="font-weight:bold;" />
+								</hbox>
+							</row>
+							<row height="24px">
+								<label
+									value="${c:l('label_ManualAdviseDialog_LoanStartDate.value')}" />
+								<hbox>
+									<label id="lbl_startDate"
+										style="font-weight:bold;" />
+								</hbox>
+								<label
+									value="${c:l('label_ManualAdviseDialog_MaturityDate.value')}" />
+								<hbox>
+									<label id="lbl_MaturityDate"
+										style="font-weight:bold;" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<caption label= "${c:l('label_ManualAdviseDialog_ManualAdvise.value')}"/>
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px">
 						<columns>
@@ -78,18 +136,20 @@
 						</columns>
 						<rows>
 							<row id="row0">
-								<label id="label_FinReference"
-									value="${c:l('label_ManualAdviseDialog_FinReference.value')}" />
-								<hbox>
-									<extendedcombobox id="finReference" />
-								</hbox>
 								<label id="label_AdviseType"
-									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="true"/>
+									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}"
+									visible="true" />
 								<hbox visible="true">
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="adviseType"
 										width="120px" />
+								</hbox>
+								<label id="label_FinReference"
+									value="${c:l('label_ManualAdviseDialog_FinReference.value')}"
+									visible="false" />
+								<hbox visible="false">
+									<extendedcombobox id="finReference" />
 								</hbox>
 							</row>
 							<row id="row1">
@@ -119,19 +179,16 @@
 								<datebox id="postDate" width="100px" />
 							</hbox>
 							</row>
-							<row id="row2">
-								<hbox id="hbox_PaidAmount">
-									<label id="label_PaidAmount"
-										value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
-									<currencyBox id="paidAmount"
-										width="162px" />
-								</hbox>
-								<hbox id="hbox_WaivedAmount">
-									<label id="label_WaivedAmount"
-										value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
-									<currencyBox id="waivedAmount"
-										width="162px" />
-								</hbox>
+							<row id="row2" visible="false">
+								<label id="label_PaidAmount"
+									value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
+								<currencyBox id="paidAmount"
+									width="162px" />
+									
+								<label id="label_WaivedAmount"
+									value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
+								<currencyBox id="waivedAmount"
+									width="162px" />
 							</row>
 							<row id="row3">
 								<label id="label_Remarks"
@@ -140,7 +197,7 @@
 									<space spacing="2px"
 										/>
 									<textbox id="remarks"
-										maxlength="100" width="320px" />
+										maxlength="100" width="400px"  rows="4" multiline="true"/>
 								</hbox>							
 								<hbox id="hbox_Sequence">
 									<label id="label_Sequence"
@@ -181,6 +238,7 @@
 						</listbox>
 					</groupbox>
 				</groupbox>
+				</div>
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

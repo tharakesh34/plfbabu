@@ -42,7 +42,7 @@
  */
 package com.pennant.backend.dao.errordetail;
 
-import com.pennant.backend.model.errordetail.ErrorDetail;
+import com.pennant.backend.model.ErrorDetail;
 
 public interface ErrorDetailDAO {
 
@@ -53,4 +53,6 @@ public interface ErrorDetailDAO {
 	void delete(ErrorDetail errorDetail, String type);
 
 	String save(ErrorDetail errorDetail, String type);
+	
+	ErrorDetail getErrorDetail(String errorCode);
 }

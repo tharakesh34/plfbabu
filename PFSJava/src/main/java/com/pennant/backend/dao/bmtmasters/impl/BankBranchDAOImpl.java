@@ -243,6 +243,8 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 			bankBranch.setId(getNextidviewDAO().getNextId("SeqBankBranches"));
 			logger.debug("get NextID:"+bankBranch.getId());
 		}
+		//since it has foreign key
+		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into BankBranches");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -275,6 +277,8 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 	public void update(BankBranch bankBranch,String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
+		//since it has foreign key
+		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
 		StringBuilder	updateSql =new StringBuilder("Update BankBranches");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");

@@ -17,7 +17,7 @@ import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditReviewSummaryDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -433,7 +433,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				// records
 				if (befCustomerDocument != null) { // Record Already Exists in
 					// the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41001", errParm, null));
 				}
 			} else { // with work flow
@@ -442,12 +442,12 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					// is new
 					if (befCustomerDocument != null || tempCustomerDocument != null) {
 						//if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						        "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomerDocument == null || tempCustomerDocument != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						        "41005", errParm, null));
 					}
 				}
@@ -460,7 +460,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 				if (befCustomerDocument == null) { // if records not exists in
 					// the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41002", errParm, null));
 				}else{
 					if (oldCustomerDocument != null
@@ -468,10 +468,10 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					                befCustomerDocument.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 						        PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							        "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							        "41004", errParm, null));
 						}
 					}	
@@ -480,7 +480,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 				if (tempCustomerDocument == null) { // if records not exists in
 					// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41005", errParm, null));
 				}
 
@@ -488,7 +488,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				        && oldCustomerDocument != null
 				        && !oldCustomerDocument.getLastMntOn().equals(
 				                tempCustomerDocument.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 					        "41005", errParm, null));
 				}
 			}
@@ -506,7 +506,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 	
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinCreditReviewDetails creditReviewDetails = (FinCreditReviewDetails) auditDetail.getModelData();
 
 		FinCreditReviewDetails tempCreditReviewDetails = null;
@@ -527,18 +527,18 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				// With out Work flow only new records
 				if (befCreditReviewDetails != null) { 
 					// Record Already Exists in the table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (creditReviewDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { 
 					// if records type is new
 					if (befCreditReviewDetails != null || tempCreditReviewDetails != null) {
 						// if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCreditReviewDetails == null || tempCreditReviewDetails != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -550,13 +550,13 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 				if (befCreditReviewDetails == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldCreditReviewDetails != null && !oldCreditReviewDetails.getLastMntOn().equals(befCreditReviewDetails.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
@@ -564,11 +564,11 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 				if (tempCreditReviewDetails == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldCreditReviewDetails != null && !oldCreditReviewDetails.getLastMntOn().equals(tempCreditReviewDetails.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

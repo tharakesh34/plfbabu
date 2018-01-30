@@ -68,7 +68,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -390,7 +390,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	// ++++++++++++++++++custom component events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	//Generate the chart based on the query and display it in chart.zul
+	//Generate the chart based on the query and display it in chartSimulator.zul
 	public void onClick$btnValidate(Event event) throws SuspendNotAllowedException, InterruptedException{
 		logger.debug("Entering"+event.toString());
 		doSetValidation();
@@ -406,13 +406,14 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 				chartStrXML=aDashboardConfiguration.getDataXML();
 			}
 			ChartDetail chartDetail=new ChartDetail();
-			chartDetail.setChartId(aDashboardConfiguration.getDashboardCode());
+			// to avoid id issue onclick simulate button
+			chartDetail.setChartId(aDashboardConfiguration.getDashboardCode()+"simulate"); 
 			chartDetail.setStrXML(chartStrXML);
 			chartDetail.setChartHeight("450px");//85%-450px
 			chartDetail.setChartWidth("512px");//85%-512px
 			chartDetail.setiFrameHeight("100%");
 			chartDetail.setiFrameWidth("100%");
-			chartDetail.setSwfFile(chartUtil.getSWFFileName(aDashboardConfiguration));
+			chartDetail.setChartType(chartUtil.getChartType(aDashboardConfiguration));
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 
 			map.put("chartDetail", chartDetail);
@@ -427,7 +428,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 
 			// call the ZUL-file with the parameters packed in a map
 
-			Executions.createComponents("/chart.zul", null, map);	 
+			Executions.createComponents("/Charts/chartSimulator.zul", null, map);	 
 			logger.debug("Leaving"+event.toString());
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -644,7 +645,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 
 
 		aDashboardDetail.setMultiSeries(this.isMultiSeries.isChecked());
-		aDashboardDetail.setDimension(String.valueOf(this.cbDimension.getSelectedItem().getValue()));
+		aDashboardDetail.setDimension(this.cbDimension.getSelectedItem().getValue().toString());
 		aDashboardDetail.setRemarks(this.remarks.getValue());
 		aDashboardDetail.setDrillDownChart(this.isDrillDownChart.isChecked());
 		doRemoveValidation();
@@ -1097,7 +1098,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),	null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),	null));
 						retValue = ErrorControl.showErrorControl(this.window_DashboardConfigurationDialog, auditHeader);
 						return processCompleted;
 					}

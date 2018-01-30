@@ -49,33 +49,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
@@ -90,9 +70,11 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
+import com.pennant.batchupload.fileprocessor.service.BatchUploadConfigService;
+import com.pennant.batchupload.model.BatchUploadConfig;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 
 /**
@@ -113,10 +95,13 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 	private final String uploadLoaction = "/opt/external";
 	private File file;
-	private List<Map<String, String>> allApiDetails;
 	@Value("${api.authkey}")
 	private String authorization;
 	private String extraHeader = null;
+	private String apiUrl = null;
+	private String sourceFileName = null;
+	
+	private BatchUploadConfigService batchUploadConfigService;
 
 	/**
 	 * default constructor.<br>
@@ -138,19 +123,16 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	public void onCreate$window_ExternalUploadsList(Event event) {
 		setPageComponents(window_ExternalUploadsList);
-		List<ValueLabel> list = new ArrayList<ValueLabel>();
+		String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
+		//String baseurl = "http://192.168.1.160:8080/pff-api/services";
 
-		allApiDetails = getDropDownList();
-		String flag = "";
-		for (Map<String, String> currentData : allApiDetails) {
-			if (!flag.equals(currentData.get("apiModuleName")) && currentData.get("apiUrl")
-					.substring(currentData.get("apiUrl").lastIndexOf("/") + 1).contains("create")) {
-				list.add(new ValueLabel(currentData.get("apiModuleName"), currentData.get("apiModuleName")));
-				flag = currentData.get("apiModuleName");
-			}
-
+		if (StringUtils.isBlank(baseurl)) {
+			MessageUtil.showError("Could not find configuration in system parameters.");
+			return;
 		}
-		fillComboBox(apiType, "", list, "");
+		
+		List<BatchUploadConfig>  batchUploadActiveConfig = batchUploadConfigService.getActiveConfiguration();
+		fillComboBox(apiType, "", prepairDropDwnList(batchUploadActiveConfig, baseurl), "");
 	}
 
 	public void onClick$btnImport(Event event) throws InterruptedException {
@@ -179,60 +161,27 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		}
 	}
 
-	private void downloadResponseFile() {
-		ByteArrayOutputStream stream = null;
-		InputStream inputStream = null;
-		try {
-			stream = new ByteArrayOutputStream();
-			inputStream = new FileInputStream(file.getPath());
-			int data;
-			while ((data = inputStream.read()) >= 0) {
-				stream.write(data);
-			}
-			inputStream.close();
-			inputStream = null;
-			Filedownload.save(stream.toByteArray(), "text/plain", FilenameUtils.removeExtension(file.getName())
-					+ "_Response." + FilenameUtils.getExtension(file.getName()));
-			stream.close();
-			stream = null;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			MessageUtil.showError("Something Went Wrong Please Contact To System Administrator.");
-		} finally {
-
-			try {
-				if (stream != null) {
-					stream.close();
-					stream = null;
-				}
-				if (inputStream != null) {
-					inputStream.close();
-					inputStream = null;
-				}
-			} catch (IOException e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-	}
-
 	/**
 	 * when the Source type is changed. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	private String apiUrl = "";
 
 	public void onChange$apiType(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {
-			apiUrl = getUrlByModuleName(this.apiType.getSelectedItem().getValue());
-			extraHeader = this.apiType.getSelectedItem().getValue() + "Id";
+			String[] valueArray = org.apache.commons.lang3.StringUtils.split(this.apiType.getSelectedItem().getValue(),",");
+			apiUrl = valueArray[0];
+			if(valueArray.length>1 && org.apache.commons.lang3.StringUtils.isNotBlank(valueArray[1]) && !"null".equals(valueArray[1])){
+			extraHeader = valueArray[1];
+			}
+			sourceFileName = this.apiType.getSelectedItem().getLabel();
 			logger.info(apiUrl);
 			fileName.setValue("");
 			file = null;
 
-			if (!StringUtils.equals("#", apiUrl)) {
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
 				row1.setVisible(true);
 			} else {
 				this.btnImport.setDisabled(true);
@@ -287,124 +236,64 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	private void doFileProcess() throws Exception {
-		// String envUri = "http://bfl2.pennanttech.com/pff-api-demo/services";
-		if (!"".equals(apiUrl)) {
-			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader);
+		logger.debug(Literal.ENTERING);
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
+			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader, sourceFileName);
 			batchProcessor.process();
 			fileName.setValue("");
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
-	public String getUrlByModuleName(String moduleName) {
-		for (Map<String, String> m : allApiDetails) {
-			String mapValue = m.get("apiModuleName");
-			if (mapValue.equals(moduleName)
-					&& m.get("apiUrl").substring(m.get("apiUrl").lastIndexOf("/") + 1).contains("create")) {
-				return m.get("apiUrl");
-			}
-		}
-		return "#";
-	}
-
-	public List<Map<String, String>> getDropDownList() {
-		RestTemplate restTemplate = new RestTemplate();
-		String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
-		//String baseurl = "http://192.168.1.160:8080/pff-api/services";
-		ResponseEntity<String> response = null;
-
-		if (StringUtils.isBlank(baseurl)) {
-			MessageUtil.showError("Could not find configuration in system parameters.");
-			return new ArrayList<>();
-		}
-
+	private void downloadResponseFile() {
+		ByteArrayOutputStream stream = null;
+		InputStream inputStream = null;
 		try {
-			response = restTemplate.getForEntity(baseurl, String.class);
-		} catch (ResourceAccessException rae) {
-			MessageUtil.showError("Please check, pff-api service is not available.");
-			return new ArrayList<>();
-		} catch (HttpClientErrorException hcee) {
-			MessageUtil.showError("Please check, pff-api service is not available.");
-			return new ArrayList<>();
-		}
-		org.jsoup.nodes.Document doc = Jsoup.parse(response.getBody());
-		org.jsoup.select.Elements table = doc.select("table");
-		org.jsoup.select.Elements value = table.get(0).getElementsByClass("value");
-		List<Map<String, String>> allApiDetails = new ArrayList<Map<String, String>>();
-		for (int i = 0, l = value.size(); i < l; i++) {
-			String restAPiUrl = value.get(i).text() + "?_wadl";
+			stream = new ByteArrayOutputStream();
+			inputStream = new FileInputStream(file.getPath());
+			int data;
+			while ((data = inputStream.read()) >= 0) {
+				stream.write(data);
+			}
+			inputStream.close();
+			inputStream = null;
+			Filedownload.save(stream.toByteArray(), "text/plain", FilenameUtils.removeExtension(file.getName())
+					+ "_Response." + FilenameUtils.getExtension(file.getName()));
+			stream.close();
+			stream = null;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError("Something Went Wrong Please Contact To System Administrator.");
+		} finally {
 
-			restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.setAccept(Arrays.asList(org.springframework.http.MediaType.APPLICATION_XML));
-
-			HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-			response = restTemplate.exchange(restAPiUrl, HttpMethod.GET, entity, String.class);
-
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder;
 			try {
-
-				builder = factory.newDocumentBuilder();
-				Document document = builder.parse(new InputSource(new java.io.StringReader(response.getBody())));
-
-				NodeList nodeList = document.getElementsByTagName("*");
-
-				String base = "";
-				String path = "";
-				String methodType = "";
-				Map<String, String> currentApiDetail = new ConcurrentHashMap<String, String>();
-
-				for (int k = 0; k < nodeList.getLength(); k++) {
-
-					Element element = (Element) nodeList.item(k);
-
-					NamedNodeMap baseElmnt_gold_attr = element.getAttributes();
-
-					for (int j = 0; j < baseElmnt_gold_attr.getLength(); ++j) {
-						Node attr = baseElmnt_gold_attr.item(j);
-
-						if (attr.getNodeName().equals("base") && attr.getNodeValue() != null
-								&& element.getNodeName().equals("resources")) {
-							base = attr.getNodeValue();
-						}
-
-						if (attr.getNodeName().equals("path") && "resource".equals(element.getNodeName())) {
-							if (!attr.getNodeValue().equals("/")) {
-								path = "/" + attr.getNodeValue();
-							}
-						}
-
-						if (attr.getNodeName().equals("name") && "method".equals(element.getNodeName())) {
-							methodType = attr.getNodeValue();
-						}
-						if (!"".equals(path) && !"".equals(methodType)) {
-							String apiModuleName = base.trim();
-							if (apiModuleName.endsWith("Rest")) {
-								apiModuleName = apiModuleName.substring(apiModuleName.lastIndexOf("/") + 1)
-										.replace("Rest", "");
-								apiModuleName = apiModuleName.substring(0, 1).toUpperCase()
-										+ apiModuleName.substring(1);
-							} else {
-								apiModuleName = apiModuleName.substring(apiModuleName.lastIndexOf("/") + 1);
-							}
-
-							currentApiDetail.put("apiUrl", base + path);
-							currentApiDetail.put("methodType", methodType);
-							currentApiDetail.put("apiModuleName", apiModuleName);
-
-							allApiDetails.add(currentApiDetail);
-							path = "";
-							methodType = "";
-							apiModuleName = "";
-							currentApiDetail = new ConcurrentHashMap<String, String>();
-						}
-					}
+				if (stream != null) {
+					stream.close();
+					stream = null;
 				}
-			} catch (Exception e) {
+				if (inputStream != null) {
+					inputStream.close();
+					inputStream = null;
+				}
+			} catch (IOException e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
-		return allApiDetails;
+	}
+	
+	private List<ValueLabel> prepairDropDwnList(List<BatchUploadConfig> batchUploadActiveConfig, String baseurl) {
+		List<ValueLabel> list = new ArrayList<ValueLabel>();
+		for (BatchUploadConfig batchUploadConfig : batchUploadActiveConfig) {
+			list.add(new ValueLabel(baseurl+batchUploadConfig.getUrl()+","+batchUploadConfig.getExtraHeader(), batchUploadConfig.getLabel()));
+		}
+		return list;
+	}
+
+	public BatchUploadConfigService getBatchUploadConfigService() {
+		return batchUploadConfigService;
+	}
+
+	public void setBatchUploadConfigService(BatchUploadConfigService batchUploadConfigService) {
+		this.batchUploadConfigService = batchUploadConfigService;
 	}
 }

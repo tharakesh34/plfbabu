@@ -1439,7 +1439,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		pFSParameter.setSysParmValue(DateUtility.addDays(valuedate,1).toString());
 		pFSParameter.setSysParmCode("DAILY_DOWNLOADS_DATE");
 		getpFSParameterDAO().updateParmValue(pFSParameter);
-		SysParamUtil.setParmDetails("DAILY_DOWNLOADS_DATE",pFSParameter.getSysParmValue());
+		SysParamUtil.updateParamDetails("DAILY_DOWNLOADS_DATE",pFSParameter.getSysParmValue());
 		logger.debug("Leaving");
 	}
 	

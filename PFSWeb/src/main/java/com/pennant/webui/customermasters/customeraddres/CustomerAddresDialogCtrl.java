@@ -66,7 +66,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -90,6 +90,7 @@ import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the
@@ -1206,7 +1207,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 						customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
 						valueParm[1]=this.custAddrPriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_CustAddrPriority") + ":"+valueParm[1];
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;
@@ -1216,7 +1217,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				if(aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())){ // Both Current and Existing list addresses same
 					
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					
@@ -1405,7 +1406,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 						}
 						
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
+						auditHeader.setErrorDetails(new ErrorDetail(
 								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerAddresDialog, auditHeader);
 						return processCompleted;
@@ -1479,7 +1480,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				fillPindetails(null, pcProvince);
 			}
 		}
-		
+
 		this.custAddrCity.setObject("");
 		this.custAddrZIP.setObject("");
 		this.custAddrCity.setValue("");
@@ -1488,9 +1489,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setDescription("");
 		fillCitydetails(pcProvince);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
-	
+
+
     /**
      * based on state param ,city will be filtered
      * @param state
@@ -1515,7 +1517,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		
 		logger.debug("Leaving");
 	}
-
+	
+	
 	/**
 	 * onFulfill custAddrCity
 	 * 
@@ -1577,10 +1580,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
 		
+
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.custAddrZIP.setFilters(filters);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1684,7 +1688,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails( PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail( PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerAddresDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);

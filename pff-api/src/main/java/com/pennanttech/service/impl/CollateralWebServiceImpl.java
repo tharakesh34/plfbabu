@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -74,10 +74,10 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
 
 			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 					response = new CollateralSetup();
 					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 					return response;
 				}
 			}
@@ -116,8 +116,8 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 
 		
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -149,8 +149,8 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
 		
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		

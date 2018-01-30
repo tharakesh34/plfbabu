@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,16 +29,20 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
-import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.niyogin.holdfinance.model.HoldReason;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
@@ -47,68 +52,21 @@ public abstract class NiyoginService {
 	private static final Logger	logger				= Logger.getLogger(NiyoginService.class);
 
 	private InterfaceLoggingDAO	interfaceLoggingDAO;
-	private NiyoginDAOImpl	niyoginDAOImpl;
-	private JSONClient			client;
-
+	private NiyoginDAOImpl		niyoginDAOImpl;
+	protected JSONClient		client;
 	public static final int		LENGTH_ACCOUNT		= 50;
 	public static final int		LENGTH_FREQUENCY	= 5;
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String	DELIMITER_COMMA		= ",";
 
-	public String				status				= InterfaceConstants.STATUS_SUCCESS;
-	public String				errorCode			= null;
-	public String				errorDesc			= null;
-	public String				jsonResponse		= null;
-	public Timestamp			reqSentOn			= null;
-	
-	public String				errorCodeKey		= "ERRORCODE";
-	public String				errorDescKey		= "ERRORMESSAGE";
+	private String				ERRORCODE			= "$.errorCode";
+	private String				ERRORMESSAGE		= "$.message";
+	private String				STATUSCODE			= "$.statusCode";
 
 	public String				reference;
 
-
 	public NiyoginService() {
 		super();
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param serviceUrl
-	 * @param requestObject
-	 * @param extConfigFileName
-	 * @return
-	 */
-	protected Map<String, Object> post(String serviceUrl, Object requestObject, String extConfigFileName) {
-		Map<String, Object> extendedFieldMap = null;
-		try {
-			logger.debug("ServiceURL : " + serviceUrl);
-			jsonResponse = client.post(serviceUrl, requestObject);
-			extendedFieldMap = getExtendedMapValues(jsonResponse, extConfigFileName);
-
-			// error validation on Response status
-			if (extendedFieldMap.get(errorCodeKey) != null) {
-				errorCode = Objects.toString(extendedFieldMap.get(errorCodeKey));
-				errorDesc = Objects.toString(extendedFieldMap.get(errorDescKey));
-				throw new InterfaceException(errorCode, errorDesc);
-			} else {
-				extendedFieldMap.remove(errorCodeKey);
-				extendedFieldMap.remove(errorDescKey);
-			}
-			//extendedFieldMap.put("jsonResponse", jsonResponse);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			status = "FAILED";
-			errorCode = "9999";
-			StringWriter writer = new StringWriter();
-			e.printStackTrace(new PrintWriter(writer));
-			errorDesc = writer.toString();
-			InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObject, jsonResponse, reqSentOn,
-					status, errorCode, errorDesc, reference);
-			logInterfaceDetails(interfaceLogDetail);
-			throw new InterfaceException("9999", e.getMessage());
-		}
-		return extendedFieldMap;
 	}
 
 	/**
@@ -130,12 +88,12 @@ public abstract class NiyoginService {
 	 * @param extConfigFileName
 	 * @return extendedMappedValues
 	 */
-	protected Map<String, Object> getExtendedMapValues(String jsonResponse, String extConfigFileName) {
+	protected Map<String, Object> getPropValueFromResp(String jsonResponse, String extConfigFileName) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> extendedFieldMap = new HashMap<>(1);
 		Properties properties = new Properties();
-		InputStream inputStream = this.getClass().getResourceAsStream("/" + extConfigFileName + ".properties");
+		InputStream inputStream = this.getClass().getResourceAsStream("/properties/" + extConfigFileName);
 		try {
 			properties.load(inputStream);
 		} catch (IOException ioException) {
@@ -170,317 +128,323 @@ public abstract class NiyoginService {
 
 		Map<String, Object> validatedMap = new HashMap<>(1);
 		Set<String> fieldNames = extendedFieldMap.keySet();
-		String wrongValueMSG = "Inavalid Data received from interface for extended field:";
+		String wrongValueMSG = "Inavalid Data received from interface Response for extended field:";
 		String wrongLengthMSG = "Total length is Excedeed for extended field:";
-		try {
-			List<ExtendedFieldDetail> configurationList = niyoginDAOImpl.getExtendedFieldDetailsByFieldName(fieldNames);
+		List<ExtendedFieldDetail> configurationList = null;
+		if (fieldNames == null || (fieldNames != null && fieldNames.isEmpty())) {
+			logger.info("Response Elements Not Configured.");
+		} else {
+
+			configurationList = niyoginDAOImpl.getExtendedFieldDetailsByFieldName(fieldNames);
 			for (String field : fieldNames) {
-				String key = field;
-				Object fieldValue = extendedFieldMap.get(field);
-				ExtendedFieldDetail configuration = null;
-				if (configurationList == null || configurationList.isEmpty()) {
-					return validatedMap;
-				}
-				for (ExtendedFieldDetail extdetail : configurationList) {
-					if (StringUtils.equals(key, extdetail.getFieldName())) {
-						configuration = extdetail;
-						break;
+				try {
+					String key = field;
+					Object fieldValue = extendedFieldMap.get(field);
+					ExtendedFieldDetail configuration = null;
+					if (configurationList == null || configurationList.isEmpty()) {
+						return validatedMap;
 					}
-				}
-				if (configuration == null) {
-					continue;
-				}
+					for (ExtendedFieldDetail extdetail : configurationList) {
+						if (StringUtils.equals(key, extdetail.getFieldName())) {
+							configuration = extdetail;
+							break;
+						}
+					}
+					if (configuration == null) {
+						continue;
+					}
 
-				String jsonResponseValue = Objects.toString(fieldValue, null);
-				if (jsonResponseValue == null) {
-					continue;
-				}
+					String jsonRespValue = Objects.toString(fieldValue, null);
+					if (jsonRespValue == null) {
+						continue;
+					}
 
-				switch (configuration.getFieldType()) {
+					switch (configuration.getFieldType()) {
 
-				case ExtendedFieldConstants.FIELDTYPE_TEXT:
-				case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-				case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
-					if (jsonResponseValue.length() > configuration.getFieldLength()) {
+					case ExtendedFieldConstants.FIELDTYPE_TEXT:
+					case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
+					case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+						if (jsonRespValue.length() > configuration.getFieldLength()) {
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,
+									configuration.getFieldType())) {
+								String value = jsonRespValue.substring(0, configuration.getFieldLength());
+								validatedMap.put(key, value.toUpperCase());
+							} else {
+								validatedMap.put(key, jsonRespValue.substring(0, configuration.getFieldLength()));
+							}
+							break;
+						}
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,
 								configuration.getFieldType())) {
-							String value = jsonResponseValue.substring(0, configuration.getFieldLength());
-							validatedMap.put(key, value.toUpperCase());
+							validatedMap.put(key, jsonRespValue.toUpperCase());
 						} else {
-							validatedMap.put(key, jsonResponseValue.substring(0, configuration.getFieldLength()));
+							validatedMap.put(key, jsonRespValue);
 						}
 						break;
-					}
-					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT, configuration.getFieldType())) {
-						validatedMap.put(key, jsonResponseValue.toUpperCase());
-					} else {
-						validatedMap.put(key, jsonResponseValue);
-					}
-					break;
 
-				case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
-					if (jsonResponseValue.length() > 100) {
-						validatedMap.put(key, jsonResponseValue.substring(0, 100));
-					} else {
-						validatedMap.put(key, jsonResponseValue);
-					}
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_DATE:
-				case ExtendedFieldConstants.FIELDTYPE_TIME:
-					Date dateValue = null;
-					try {
-						DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
-						dateValue = formatter.parse(jsonResponseValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					validatedMap.put(key, dateValue);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_DATETIME:
-					Date dateTimeVal = null;
-					try {
-						DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
-						dateTimeVal = formatter.parse(jsonResponseValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					validatedMap.put(key, dateTimeVal);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
-					Boolean booleanValue;
-					if (StringUtils.equals(jsonResponseValue, "true")
-							|| StringUtils.equals(jsonResponseValue, "false")) {
-						booleanValue = jsonResponseValue.equals("true") ? true : false;
-					} else if (StringUtils.equals(jsonResponseValue, "1")
-							|| StringUtils.equals(jsonResponseValue, "0")) {
-						booleanValue = jsonResponseValue.equals("1") ? true : false;
-					} else {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					validatedMap.put(key, booleanValue);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
-					BigDecimal decimalValue = BigDecimal.ZERO;
-					try {
-						double rateValue = Double.parseDouble(jsonResponseValue);
-						decimalValue = BigDecimal.valueOf(rateValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					if (jsonResponseValue.length() > configuration.getFieldLength() + 2) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					validatedMap.put(key, decimalValue);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_INT:
-					int intValue = 0;
-					if (jsonResponseValue.length() > configuration.getFieldLength()) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					try {
-						if (!StringUtils.isEmpty(jsonResponseValue)) {
-							intValue = Integer.parseInt(jsonResponseValue);
-						}
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-						if (!(intValue >= configuration.getFieldMinValue()
-								&& intValue <= configuration.getFieldMaxValue())) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-						}
-					}
-					validatedMap.put(key, intValue);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_LONG:
-					long longValue = 0;
-					if (jsonResponseValue.length() > configuration.getFieldLength()) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					try {
-						longValue = Long.parseLong(jsonResponseValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-						if (!(longValue >= configuration.getFieldMinValue()
-								&& longValue <= configuration.getFieldMaxValue())) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-						}
-					}
-					validatedMap.put(key, longValue);
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_RADIO:
-					int radioValue = 0;
-					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, configuration.getFieldType())) {
-						try {
-							radioValue = Integer.parseInt(jsonResponseValue);
-						} catch (Exception e) {
-							throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-						}
-						if (radioValue > configuration.getFieldLength()) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
+					case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
+						if (jsonRespValue.length() > 100) {
+							validatedMap.put(key, jsonRespValue.substring(0, 100));
 						} else {
-							validatedMap.put(key, radioValue);
+							validatedMap.put(key, jsonRespValue);
 						}
-					}
-					break;
+						break;
 
-				case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
-					String[] values = new String[0];
-					String staticList = configuration.getFieldList();
-					if (staticList != null) {
-						if (staticList.contains(DELIMITER_COMMA)) {
-							values = staticList.split(DELIMITER_COMMA);
-							for (String vale : values) {
-								if (vale.equals(jsonResponseValue)) {
-									validatedMap.put(key, jsonResponseValue);
-									break;
-								}
+					case ExtendedFieldConstants.FIELDTYPE_DATE:
+					case ExtendedFieldConstants.FIELDTYPE_TIME:
+						Date dateValue = null;
+						try {
+							DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
+							dateValue = formatter.parse(jsonRespValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						validatedMap.put(key, dateValue);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_DATETIME:
+						Date dateTimeVal = null;
+						try {
+							DateFormat formatter = new SimpleDateFormat(InterfaceConstants.InterfaceDateFormatter);
+							dateTimeVal = formatter.parse(jsonRespValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						validatedMap.put(key, dateTimeVal);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
+						Boolean booleanValue = false;
+						if (StringUtils.equals(jsonRespValue, "true") || StringUtils.equals(jsonRespValue, "false")) {
+							booleanValue = jsonRespValue.equals("true") ? true : false;
+						} else if (StringUtils.equals(jsonRespValue, "1") || StringUtils.equals(jsonRespValue, "0")) {
+							booleanValue = jsonRespValue.equals("1") ? true : false;
+						} else {
+							logger.error(wrongValueMSG + configuration.getFieldLabel());
+						}
+						validatedMap.put(key, booleanValue);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+						BigDecimal decimalValue = BigDecimal.ZERO;
+						try {
+							double rateValue = Double.parseDouble(jsonRespValue);
+							decimalValue = BigDecimal.valueOf(rateValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						if (jsonRespValue.length() > configuration.getFieldLength() + 2) {
+
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						validatedMap.put(key, decimalValue);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_INT:
+						int intValue = 0;
+						if (jsonRespValue.length() > configuration.getFieldLength()) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						try {
+							if (!StringUtils.isEmpty(jsonRespValue)) {
+								intValue = Integer.parseInt(jsonRespValue);
 							}
-						} else if (staticList.equals(jsonResponseValue)) {
-							validatedMap.put(key, jsonResponseValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+							if (!(intValue >= configuration.getFieldMinValue()
+									&& intValue <= configuration.getFieldMaxValue())) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							}
+						}
+						validatedMap.put(key, intValue);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_LONG:
+						long longValue = 0;
+						if (jsonRespValue.length() > configuration.getFieldLength()) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						try {
+							longValue = Long.parseLong(jsonRespValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+							if (!(longValue >= configuration.getFieldMinValue()
+									&& longValue <= configuration.getFieldMaxValue())) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							}
+						}
+						validatedMap.put(key, longValue);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_RADIO:
+						int radioValue = 0;
+						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, configuration.getFieldType())) {
+							try {
+								radioValue = Integer.parseInt(jsonRespValue);
+							} catch (Exception e) {
+								logger.error("Exception : ", e);
+							}
+							if (radioValue > configuration.getFieldLength()) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							} else {
+								validatedMap.put(key, radioValue);
+							}
+						}
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
+						String[] values = new String[0];
+						String staticList = configuration.getFieldList();
+						if (staticList != null) {
+							if (staticList.contains(DELIMITER_COMMA)) {
+								values = staticList.split(DELIMITER_COMMA);
+								for (String vale : values) {
+									if (vale.equals(jsonRespValue)) {
+										validatedMap.put(key, jsonRespValue);
+										break;
+									}
+								}
+							} else if (staticList.equals(jsonRespValue)) {
+								validatedMap.put(key, jsonRespValue);
+								break;
+							} else {
+								logger.error(wrongValueMSG + configuration.getFieldLabel());
+							}
+						} else {
+							logger.error(wrongValueMSG + configuration.getFieldLabel());
+						}
+						break;
+
+					//TODO:any regix validation
+					case ExtendedFieldConstants.FIELDTYPE_PHONE:
+						if (jsonRespValue.length() > 10) {
+							validatedMap.put(key, jsonRespValue.substring(0, 10));
 							break;
 						} else {
-							throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
+							validatedMap.put(key, jsonRespValue);
 						}
-					} else {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					break;
-
-				//TODO:any regix validation
-				case ExtendedFieldConstants.FIELDTYPE_PHONE:
-					if (jsonResponseValue.length() > 10) {
-						validatedMap.put(key, jsonResponseValue.substring(0, 10));
 						break;
-					} else {
-						validatedMap.put(key, jsonResponseValue);
-					}
-					break;
 
-				case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-					if (jsonResponseValue.length() > configuration.getFieldLength()) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-
-					if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-						if (Integer.valueOf(jsonResponseValue) > configuration.getFieldMaxValue()
-								|| Integer.valueOf(jsonResponseValue) < configuration.getFieldMinValue()) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
+					case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
+						if (jsonRespValue.length() > configuration.getFieldLength()) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
 						}
-					}
 
-					validatedMap.put(key, String.valueOf(Math
-							.round((Integer.valueOf(jsonResponseValue) / Math.pow(10, configuration.getFieldPrec())))));
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-					double actRate = 0;
-					if (jsonResponseValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					try {
-						actRate = Double.valueOf(jsonResponseValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-
-					if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-						if (Integer.valueOf(jsonResponseValue) > configuration.getFieldMaxValue()
-								|| Integer.valueOf(jsonResponseValue) < configuration.getFieldMinValue()) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
+						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+							if (Integer.valueOf(jsonRespValue) > configuration.getFieldMaxValue()
+									|| Integer.valueOf(jsonRespValue) < configuration.getFieldMinValue()) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							}
 						}
-					}
-					validatedMap.put(key, actRate);
-					break;
 
-				case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-					double percentage = 0;
-					if (jsonResponseValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					try {
-						percentage = Double.valueOf(jsonResponseValue);
-					} catch (Exception e) {
-						throw new InterfaceException("9999", wrongValueMSG + configuration.getFieldLabel());
-					}
-					if (percentage < 0 || percentage > 100) {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-						if (percentage > configuration.getFieldMaxValue()
-								|| percentage < configuration.getFieldMinValue()) {
-							throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
+						validatedMap.put(key, Math
+								.round((Integer.valueOf(jsonRespValue) / Math.pow(10, configuration.getFieldPrec()))));
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
+						double actRate = 0;
+						if (jsonRespValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
 						}
-					}
-					validatedMap.put(key, percentage);
-					break;
+						try {
+							actRate = Double.valueOf(jsonRespValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
 
-				case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
-					String[] values1 = new String[0];
-					String[] fieldvalues = new String[0];
-					String multiStaticList = configuration.getFieldList();
-					if (multiStaticList != null && multiStaticList.contains(DELIMITER_COMMA)) {
-						values1 = multiStaticList.split(DELIMITER_COMMA);
-					}
-					if (fieldValue != null && jsonResponseValue.contains(DELIMITER_COMMA)) {
-						fieldvalues = jsonResponseValue.split(DELIMITER_COMMA);
-					}
-					if (values1.length > 0) {
-						for (int i = 0; i <= fieldvalues.length - 1; i++) {
-							boolean isValid1 = false;
-							for (int j = 0; j <= values1.length - 1; j++) {
-								if (StringUtils.equals(fieldvalues[i], values1[j])) {
-									isValid1 = true;
+						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+							if (Integer.valueOf(jsonRespValue) > configuration.getFieldMaxValue()
+									|| Integer.valueOf(jsonRespValue) < configuration.getFieldMinValue()) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							}
+						}
+						validatedMap.put(key, actRate);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
+						double percentage = 0;
+						if (jsonRespValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						try {
+							percentage = Double.valueOf(jsonRespValue);
+						} catch (Exception e) {
+							logger.error("Exception : ", e);
+						}
+						if (percentage < 0 || percentage > 100) {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+							if (percentage > configuration.getFieldMaxValue()
+									|| percentage < configuration.getFieldMinValue()) {
+								logger.error(wrongLengthMSG + configuration.getFieldLabel());
+							}
+						}
+						validatedMap.put(key, percentage);
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
+						String[] values1 = new String[0];
+						String[] fieldvalues = new String[0];
+						String multiStaticList = configuration.getFieldList();
+						if (multiStaticList != null && multiStaticList.contains(DELIMITER_COMMA)) {
+							values1 = multiStaticList.split(DELIMITER_COMMA);
+						}
+						if (fieldValue != null && jsonRespValue.contains(DELIMITER_COMMA)) {
+							fieldvalues = jsonRespValue.split(DELIMITER_COMMA);
+						}
+						if (values1.length > 0) {
+							for (int i = 0; i <= fieldvalues.length - 1; i++) {
+								boolean isValid1 = false;
+								for (int j = 0; j <= values1.length - 1; j++) {
+									if (StringUtils.equals(fieldvalues[i], values1[j])) {
+										isValid1 = true;
+									}
+								}
+								if (!isValid1) {
+									logger.error(wrongLengthMSG + configuration.getFieldLabel());
+
+								} else {
+									validatedMap.put(key, jsonRespValue);
 								}
 							}
-							if (!isValid1) {
-								throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-
-							} else {
-								validatedMap.put(key, jsonResponseValue);
-							}
 						}
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_FRQ:
+						if (jsonRespValue.length() <= LENGTH_FREQUENCY) {
+							validatedMap.put(key, jsonRespValue);
+						} else {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
+						if (jsonRespValue.length() <= LENGTH_ACCOUNT) {
+							validatedMap.put(key, jsonRespValue);
+						} else {
+							logger.error(wrongLengthMSG + configuration.getFieldLabel());
+						}
+						break;
+
+					case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
+					case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
+					case ExtendedFieldConstants.FIELDTYPE_BASERATE:
+						validatedMap.put(key, jsonRespValue);
+						break;
+					default:
+						break;
 					}
-					break;
 
-				case ExtendedFieldConstants.FIELDTYPE_FRQ:
-					if (jsonResponseValue.length() <= LENGTH_FREQUENCY) {
-						validatedMap.put(key, jsonResponseValue);
-					} else {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_ACCOUNT:
-					if (jsonResponseValue.length() <= LENGTH_ACCOUNT) {
-						validatedMap.put(key, jsonResponseValue);
-					} else {
-						throw new InterfaceException("9999", wrongLengthMSG + configuration.getFieldLabel());
-					}
-					break;
-
-				case ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO:
-				case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
-				case ExtendedFieldConstants.FIELDTYPE_BASERATE:
-					validatedMap.put(key, jsonResponseValue);
-					break;
-				default:
-					break;
+				} catch (Exception e) {
+					logger.error("Exception", e);
 				}
 			}
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw new InterfaceException("9999", "Unable to process");
 		}
 		logger.debug(Literal.ENTERING);
 		return validatedMap;
@@ -508,16 +472,11 @@ public abstract class NiyoginService {
 	}
 
 	protected void logInterfaceDetails(InterfaceLogDetail interfaceLogDetail) {
-		interfaceLoggingDAO.save(interfaceLogDetail);
-		doClearInterfaceLogDetails();
-	}
-
-	private void doClearInterfaceLogDetails() {
-		this.status = InterfaceConstants.STATUS_SUCCESS;
-		this.errorCode = null;
-		this.errorDesc = null;
-		this.jsonResponse = null;
-		this.reqSentOn = null;
+		try {
+			interfaceLoggingDAO.save(interfaceLogDetail);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
 	}
 
 	/**
@@ -571,28 +530,6 @@ public abstract class NiyoginService {
 	}
 
 	/**
-	 * Method for log the Exception details
-	 * 
-	 * @param e
-	 * @param serviceUrl
-	 * @param requestObject
-	 */
-	protected void doLogError(Exception e, String serviceUrl, Object requestObject) {
-		logger.debug(Literal.ENTERING);
-
-		status = "FAILED";
-		errorCode = "9999";
-		StringWriter writer = new StringWriter();
-		e.printStackTrace(new PrintWriter(writer));
-		errorDesc = writer.toString();
-		InterfaceLogDetail interfaceLogDetail = prepareLoggingData(serviceUrl, requestObject, jsonResponse, reqSentOn,
-				status, errorCode, errorDesc, reference);
-		logInterfaceDetails(interfaceLogDetail);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Method for get the appDate
 	 * 
 	 * @return appDate
@@ -606,6 +543,34 @@ public abstract class NiyoginService {
 
 		}
 		return null;
+	}
+
+	public String getDocumentNumber(List<CustomerDocument> customerDetails, String type) {
+		String docNumber = "";
+		if (StringUtils.isBlank(type)) {
+			return docNumber;
+		}
+		if (customerDetails != null && !customerDetails.isEmpty()) {
+			String[] docTypes = null;
+			if (type.contains(",")) {
+				docTypes = type.split(",");
+			} else {
+				docTypes = new String[1];
+				docTypes[0] = type;
+			}
+
+			if (docTypes != null) {
+				for (int i = 0; i < docTypes.length; i++) {
+					for (CustomerDocument customerDocument : customerDetails) {
+						if (StringUtils.equals(docTypes[i], customerDocument.getCustDocCategory())) {
+							docNumber = customerDocument.getCustDocTitle();
+							return docNumber;
+						}
+					}
+				}
+			}
+		}
+		return docNumber;
 	}
 
 	/**
@@ -630,7 +595,10 @@ public abstract class NiyoginService {
 		return niyoginDAOImpl.getCoApplicants(coApplicantIDs, "_VIEW");
 	}
 
-	
+	protected long getCustomerId(String custCIF) {
+		return niyoginDAOImpl.getCustomerId(custCIF);
+	}
+
 	/**
 	 * Method for get the list of email's for given customerIds
 	 * 
@@ -640,7 +608,17 @@ public abstract class NiyoginService {
 	protected List<CustomerEMail> getCustomersEmails(Set<Long> customerIds) {
 		return niyoginDAOImpl.getCustomersEmails(customerIds, "_VIEW");
 	}
-	
+
+	/**
+	 * Method for get the list of documents for given customerIds
+	 * 
+	 * @param customerIds
+	 * @return
+	 */
+	protected List<CustomerDocument> getCustomersDocuments(long customerId) {
+		return niyoginDAOImpl.getCustomerDocumentByCustomer(customerId, "");
+	}
+
 	/**
 	 * Method for get the pincodeGroupId
 	 * 
@@ -648,6 +626,107 @@ public abstract class NiyoginService {
 	 */
 	protected long getPincodeGroupId(String pincode) {
 		return niyoginDAOImpl.getPincodeGroupId(pincode);
+	}
+
+	/**
+	 * Method for get the Hold reasons.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	protected List<HoldReason> getholdReasonsById(List<Long> reasonIds) {
+		return niyoginDAOImpl.getholdReasonsById(reasonIds);
+	}
+
+	protected Object getSMTParameter(String sysParmCode, Class<?> type) {
+		return niyoginDAOImpl.getSMTParameter(sysParmCode, type);
+	}
+
+	/**
+	 * Method for get the CoApplicants with ExtendedField Details
+	 * 
+	 * @param customerIds
+	 * @return
+	 */
+	protected List<CustomerDetails> getCoApplicantsWithExtFields(List<Long> customerIds) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder tableName = new StringBuilder("");
+		ExtendedFieldHeader extendedFieldHeader = null;
+		Map<String, Object> extMapValues = null;
+		List<CustomerDetails> customerDetailList = new ArrayList<CustomerDetails>(1);
+		List<Customer> customers = niyoginDAOImpl.getCustomerByID(customerIds, "_AVIEW");
+		String module = ExtendedFieldConstants.MODULE_CUSTOMER;
+		for (Customer customer : customers) {
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustID(customer.getCustID());
+			customerDetails.setCustCIF(customer.getCustCIF());
+			extendedFieldHeader = niyoginDAOImpl.getExtendedFieldHeaderByModuleName(module, customer.getCustCtgCode());
+			if (extendedFieldHeader != null) {
+				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+				extendedFieldRender.setReference(customer.getCustCIF());
+				tableName.append(module);
+				tableName.append("_");
+				tableName.append(customer.getCustCtgCode());
+				tableName.append("_ED");
+				extMapValues = niyoginDAOImpl.getExtendedField(customer.getCustCIF(), tableName.toString());
+				extendedFieldRender.setMapValues(extMapValues);
+				customerDetails.setExtendedFieldRender(extendedFieldRender);
+				tableName.setLength(0);
+				customerDetailList.add(customerDetails);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return customerDetailList;
+	}
+
+	protected String getCustTypeDesc(String custTypeCode) {
+		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
+	}
+
+	/**
+	 * Method for Fetch the CustomerTypeCode description for given CustTypeCode.
+	 * 
+	 * @param custTypeCode
+	 * @return
+	 */
+	protected String getCustomerTypeDesc(String custTypeCode) {
+		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
+	}
+
+	protected String getLovFieldDetailByCode(String fieldCodeValue) {
+		return niyoginDAOImpl.getLovFieldDetailByCode(fieldCodeValue, "");
+	}
+
+	/**
+	 * Method for get the customer PanNumber.
+	 * 
+	 * @param customerDetails
+	 * @return
+	 */
+	public String getPanNumber(List<CustomerDocument> customerDetails) {
+		String pannumber = "";
+		if (customerDetails != null && !customerDetails.isEmpty()) {
+			String[] pancards = null;
+			String panCard = StringUtils.trimToEmpty((String) getSMTParameter("PAN_DOC_TYPE", String.class));
+			if (panCard.contains(",")) {
+				pancards = panCard.split(",");
+			} else {
+				pancards = new String[1];
+				pancards[0] = panCard;
+			}
+
+			if (pancards != null) {
+				for (int i = 0; i < pancards.length; i++) {
+					for (CustomerDocument customerDocument : customerDetails) {
+						if (StringUtils.equals(pancards[i], customerDocument.getCustDocCategory())) {
+							pannumber = customerDocument.getCustDocTitle();
+							return pannumber;
+						}
+					}
+				}
+			}
+		}
+		return pannumber;
 	}
 
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
@@ -660,6 +739,47 @@ public abstract class NiyoginService {
 
 	public void setClient(JSONClient client) {
 		this.client = client;
+	}
+
+	public String getval(Object object) {
+		return Objects.toString(object, "");
+	}
+
+	public String getErrorCode(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, ERRORCODE), "");
+	}
+
+	public String getErrorMessage(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
+	}
+
+	public String getStatusCode(String jsonResponse) {
+		return Objects.toString(getValueFromResponse(jsonResponse, STATUSCODE), "");
+	}
+
+	public Object getValueFromResponse(String jsonResponse, String keypath) {
+		Object value = null;
+		try {
+			value = JsonPath.read(jsonResponse, keypath);
+		} catch (PathNotFoundException pathNotFoundException) {
+			value = null;
+		}
+		return value;
+	}
+
+	public String getTrimmedMessage(String errorDesc) {
+		if (errorDesc != null && errorDesc.length() > 149) {
+			errorDesc = errorDesc.substring(0, 143);
+		}
+		return errorDesc;
+	}
+
+	public String getWriteException(Exception e) {
+		String errorDesc;
+		StringWriter writer = new StringWriter();
+		e.printStackTrace(new PrintWriter(writer));
+		errorDesc = writer.toString();
+		return errorDesc;
 	}
 
 }

@@ -55,7 +55,7 @@ import com.pennant.app.model.MailData;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rulefactory.Notifications;
@@ -366,7 +366,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		
 		Notifications notifications = (Notifications) auditDetail.getModelData();
 
@@ -396,7 +396,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 			if (!notifications.isWorkflow()) {// With out Work flow only new records
 				if (befNotifications != null) { // Record Already Exists in the table
 											// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 				}
 			} else { // with work flow
 				if (notifications.getRecordType().equals(
@@ -404,11 +404,11 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 																// is new
 					if (befNotifications != null || tempNotifications != null) { // if records already exists in
 												// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befNotifications == null || tempNotifications != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -419,7 +419,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 											// delete
 				if (befNotifications == null) { // if records not exists in the main
 											// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
 					if (oldNotifications != null
 							&& !oldNotifications.getLastMntOn().equals(
@@ -427,21 +427,21 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
 			} else {
 				if (tempNotifications == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 				
 				if ( tempNotifications != null &&  oldNotifications != null
 						&& !oldNotifications.getLastMntOn().equals(
 								tempNotifications.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}

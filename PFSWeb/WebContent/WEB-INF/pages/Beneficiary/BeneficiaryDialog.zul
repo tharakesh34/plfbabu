@@ -138,6 +138,21 @@
 										<space spacing="2px" />
 										<textbox id="email" />
 									</hbox>
+									<label id="label_BeneficiaryActive"
+										value="${c:l('label_BeneficiaryDialog_BeneficiaryActive.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="beneficiaryActive" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label id="label_DefaultBeneficiary"
+										value="${c:l('label_BeneficiaryDialog_DefaultBeneficiary.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox
+											id="defaultBeneficiary" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

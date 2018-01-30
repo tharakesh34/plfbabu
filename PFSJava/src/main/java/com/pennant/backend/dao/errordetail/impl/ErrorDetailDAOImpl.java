@@ -43,10 +43,14 @@
 
 package com.pennant.backend.dao.errordetail.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -58,9 +62,10 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.errordetail.ErrorDetail;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ErrorDetail model</b> class.<br>
@@ -68,164 +73,195 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
  */
 
 public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements ErrorDetailDAO {
+	private static Logger log = LogManager.getLogger(ErrorDetailDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(ErrorDetailDAOImpl.class);
-	
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	
-	public ErrorDetailDAOImpl(){
+
+	public ErrorDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Error Detail details by key field
+	 * Fetch the Record Error Detail details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ErrorDetail
 	 */
 	@Override
 	public ErrorDetail getErrorDetailById(final String id, String type) {
-		logger.debug("Entering");
+		log.debug(Literal.ENTERING);
 		ErrorDetail errorDetail = new ErrorDetail();
-		
 		errorDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select ErrorCode, ErrorLanguage, ErrorSeverity, ErrorMessage, ErrorExtendedMessage");
-		selectSql.append(", Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
-		selectSql.append(" From ErrorDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ErrorCode =:ErrorCode");
-		
-		logger.debug("selectSql: " + selectSql.toString());
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("Select Code, Language, Severity, Message, ExtendedMessage");
+		sql.append(", Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
+		sql.append(" From ErrorDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Code =:Code");
+
+		log.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
 		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
-		
-		try{
-			errorDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
-			logger.error(e);
+
+		try {
+			errorDetail = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			log.warn(Literal.EXCEPTION, e);
 			errorDetail = null;
 		}
-		logger.debug("Leaving");
+		log.debug(Literal.LEAVING);
 		return errorDetail;
 	}
-	
+
 	/**
-	 * To Set  dataSource
+	 * To Set dataSource
+	 * 
 	 * @param dataSource
 	 */
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the ErrorDetails or ErrorDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Error Detail by key ErrorCode
+	 * This method Deletes the Record from the ErrorDetails or
+	 * ErrorDetails_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete Error Detail by key ErrorCode
 	 * 
-	 * @param Error Detail (errorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Error
+	 *            Detail (errorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(ErrorDetail errorDetail,String type) {
-		logger.debug("Entering");
+	public void delete(ErrorDetail errorDetail, String type) {
+		log.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
-		StringBuilder deleteSql = new StringBuilder("Delete From ErrorDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where ErrorCode =:ErrorCode");
-		logger.debug("deleteSql: " + deleteSql.toString());
+
+		StringBuilder sql = new StringBuilder("Delete From ErrorDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Code =:Code");
+		log.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		log.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method insert new Records into ErrorDetails or ErrorDetails_Temp.
 	 *
-	 * save Error Detail 
+	 * save Error Detail
 	 * 
-	 * @param Error Detail (errorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Error
+	 *            Detail (errorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(ErrorDetail errorDetail,String type) {
-		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into ErrorDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ErrorCode, ErrorLanguage, ErrorSeverity, ErrorMessage, ErrorExtendedMessage");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ErrorCode, :ErrorLanguage, :ErrorSeverity, :ErrorMessage, :ErrorExtendedMessage");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: " + insertSql.toString());
-		
+	public String save(ErrorDetail errorDetail, String type) {
+		log.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert Into ErrorDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (Code, Language, Severity, Message, ExtendedMessage");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(:Code, :Language, :Severity, :Message, :ExtendedMessage");
+		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		log.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		log.debug(Literal.LEAVING);
 		return errorDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record ErrorDetails or ErrorDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * This method updates the Record ErrorDetails or ErrorDetails_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
 	 * update Error Detail by key ErrorCode and Version
 	 * 
-	 * @param Error Detail (errorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Error
+	 *            Detail (errorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(ErrorDetail errorDetail,String type) {
+	public void update(ErrorDetail errorDetail, String type) {
+		log.debug(Literal.ENTERING);
 		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update ErrorDetails");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ErrorLanguage = :ErrorLanguage, ErrorSeverity = :ErrorSeverity, ErrorMessage = :ErrorMessage, ErrorExtendedMessage = :ErrorExtendedMessage");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where ErrorCode =:ErrorCode");
-		
-		if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
+		StringBuilder sql = new StringBuilder("Update ErrorDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		sql.append(" Set Language=:Language, Severity=:Severity, Message =:Message, ExtendedMessage =:ExtendedMessage");
+		sql.append(", Version=:Version, LastMntBy=:LastMntBy, LastMntOn=:LastMntOn, RecordStatus=:RecordStatus");
+		sql.append(", RoleCode = :RoleCode, NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId");
+		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" Where Code=:Code");
+
+		if (!type.endsWith("_Temp")) {
+			sql.append("  AND Version=:Version-1");
 		}
-		
-		logger.debug("updateSql: " + updateSql.toString());
-		
+
+		log.debug("updateSql: " + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		log.debug(Literal.LEAVING);
 	}
-	
+
+	@Override
+	public ErrorDetail getErrorDetail(String code) {
+		log.debug(String.format("Error code: %s", code));
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select Code, Language, Severity, Message");
+		sql.append(", ExtendedMessage from Details where Code =:Code");
+
+		log.trace(Literal.SQL + sql);
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		namedParameters.put("Code", code);
+
+		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
+		List<ErrorDetail> errorList = namedParameterJdbcTemplate.query(sql.toString(), namedParameters, typeRowMapper);
+		if (errorList == null || errorList.isEmpty()) {
+			return null;
+		}
+
+		return errorList.get(0);
+	}
+
 }

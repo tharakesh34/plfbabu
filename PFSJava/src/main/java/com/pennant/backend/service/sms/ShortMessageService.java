@@ -2,9 +2,9 @@ package com.pennant.backend.service.sms;
 
 import java.util.List;
 
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.mail.MailTemplate;
 
 public interface ShortMessageService {
 
-	public void sendMessage(List<CustomerPhoneNumber> custPhoneNoList, List<String> smsContent);
+	public void sendMessage(List<MailTemplate> smsList ,String finReference);
 }

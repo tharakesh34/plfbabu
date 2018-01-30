@@ -70,7 +70,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -86,8 +86,8 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -143,7 +143,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	private transient boolean validationOn;
 	
 	// ServiceDAOs / Domain Classes
-	private transient PFSParameterService pFSParameterService;
+	private transient PFSParameterService systemParameterService;
 	private List<ValueLabel> listSysParmType = null; // autowired
 
 	/**
@@ -894,7 +894,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			if (doProcess(aPFSParameter, tranType)) {
 				
 				//Parameter Updation in Map Details
-				SysParamUtil.setParmDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
+				SysParamUtil.updateParamDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
 				
 				refreshList();
 				// Close the Existing Dialog
@@ -1024,27 +1024,27 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getPFSParameterService().delete(auditHeader);
+						auditHeader = systemParameterService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getPFSParameterService().saveOrUpdate(auditHeader);
+						auditHeader = systemParameterService.saveOrUpdate(auditHeader);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getPFSParameterService().doApprove(auditHeader);
+						auditHeader = systemParameterService.doApprove(auditHeader);
 						if (aPFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 					} else if (StringUtils.trimToEmpty(method)
 							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getPFSParameterService().doReject(auditHeader);
+						auditHeader = systemParameterService.doReject(auditHeader);
 						if (aPFSParameter.getRecordType().equals(
 								PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(
 								this.window_PFSParameterDialog, auditHeader);
@@ -1107,7 +1107,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(
+			auditHeader.setErrorDetails(new ErrorDetail(
 					PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_PFSParameterDialog,
 					auditHeader);
@@ -1219,20 +1219,17 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	public void setPFSParameter(PFSParameter pFSParameter) {
 		this.pFSParameter = pFSParameter;
 	}
-
-	public void setPFSParameterService(PFSParameterService pFSParameterService) {
-		this.pFSParameterService = pFSParameterService;
-	}
-	public PFSParameterService getPFSParameterService() {
-		return this.pFSParameterService;
-	}
-
+	
 	public void setPFSParameterListCtrl(
 			PFSParameterListCtrl pFSParameterListCtrl) {
 		this.pFSParameterListCtrl = pFSParameterListCtrl;
 	}
 	public PFSParameterListCtrl getPFSParameterListCtrl() {
 		return this.pFSParameterListCtrl;
+	}
+
+	public void setSystemParameterService(PFSParameterService systemParameterService) {
+		this.systemParameterService = systemParameterService;
 	}
 
 }

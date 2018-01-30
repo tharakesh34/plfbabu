@@ -60,7 +60,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDetailsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -328,7 +328,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, bulkRateChangeHeader.getBefImage(), bulkRateChangeHeader);   
 		AuditHeader auditHeader = new AuditHeader(bulkRateChangeHeader.getBulkRateChangeRef(), null, null, null, auditDetail, bulkRateChangeHeader.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+				new HashMap<String, ArrayList<ErrorDetail>>());
 
 		BulkRateChangeHeader aBulkRateChangeHeader = new BulkRateChangeHeader();
 		BeanUtils.copyProperties((BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData(), aBulkRateChangeHeader);
@@ -437,7 +437,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		BulkRateChangeHeader bulkRateChangeHeader = (BulkRateChangeHeader) auditDetail.getModelData();
 
 		BulkRateChangeHeader tempBulkRateChangeHeader = null;
@@ -463,18 +463,18 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			if (!bulkRateChangeHeader.isWorkflow()) {// With out Work flow only new records
 				if (befBulkRateChangeHeader != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 				}
 			} else { // with work flow
 				if (bulkRateChangeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befBulkRateChangeHeader != null || tempBulkRateChangeHeader != null) { // if records already exists in
 						// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befBulkRateChangeHeader == null || tempBulkRateChangeHeader != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
 			}
@@ -485,7 +485,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 				// delete
 				if (befBulkRateChangeHeader == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
 					if (oldBulkRateChangeHeader != null
 							&& !oldBulkRateChangeHeader.getLastMntOn().equals(
@@ -493,21 +493,21 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 						}
 					}
 				}
 			} else {
 				if (tempBulkRateChangeHeader == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if ( tempBulkRateChangeHeader != null &&  oldBulkRateChangeHeader != null
 						&& !oldBulkRateChangeHeader.getLastMntOn().equals(
 								tempBulkRateChangeHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}
 		}
@@ -613,7 +613,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), "");
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1], financeDetail.getBefImage(), financeDetail);
 		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+				financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 		//Changed Finance Save in Database
 		saveOrUpdate(auditHeader, false);
@@ -700,7 +700,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1], financeMain.getBefImage(), financeMain);
 			auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-					financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+					financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -752,7 +752,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean isWIF) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		financeDetail.setUserDetails(getLoggedInUser());
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -778,17 +778,17 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			if (befFinanceMain == null) { // if records not exists in the
 				// main table
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 			} else {
 				if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
 						.equals(befFinanceMain.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 					} else {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -797,13 +797,13 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			if (tempFinanceMain == null) { // if records not exists in the
 				// Work flow table
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 			}
 
 			if (tempFinanceMain != null && oldFinanceMain != null
 					&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 						PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 			}
 		}
@@ -1008,7 +1008,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 	private AuditDetail bulkRateChangeDetailsValidation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		BulkRateChangeDetails bulkRateChangeDetail= (BulkRateChangeDetails) auditDetail.getModelData();
 
 		BulkRateChangeDetails tempBulkRateChangeDetails= null;
@@ -1030,16 +1030,16 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			if (!bulkRateChangeDetail.isWorkflow()){// With out Work flow only new records  
 				if (befBulkRateChangeDetails !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (bulkRateChangeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befBulkRateChangeDetails !=null || tempBulkRateChangeDetails!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befBulkRateChangeDetails ==null || tempBulkRateChangeDetails!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}
 			}
@@ -1048,24 +1048,24 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			if (!bulkRateChangeDetail.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befBulkRateChangeDetails ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
 					if (oldBulkRateChangeDetails!=null && !oldBulkRateChangeDetails.getLastMntOn().equals(befBulkRateChangeDetails.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
 
 				if (tempBulkRateChangeDetails==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
 				if (oldBulkRateChangeDetails!=null && !oldBulkRateChangeDetails.getLastMntOn().equals(tempBulkRateChangeDetails.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
 		}

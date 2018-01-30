@@ -61,7 +61,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.dashboard.DashboardConfigurationDAO;
 import com.pennant.backend.dao.dashboard.DetailStatisticsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -334,7 +334,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditDetail.getModelData();
 		DashboardConfiguration tempDashboardConfiguration = null;
@@ -359,7 +359,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			if (!dashboardConfiguration.isWorkflow()) {// With out Work flow only new records
 				if (befDashboardConfiguration != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, valueParm));
 				}
 			} else { // with work flow
 				if (dashboardConfiguration.getRecordType().equals(
@@ -368,11 +368,11 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 					if (befDashboardConfiguration != null || tempDashboardConfiguration != null) { //if records 
 						// already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDashboardConfiguration == null || tempDashboardConfiguration != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
 			}
@@ -384,14 +384,14 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 				if (befDashboardConfiguration == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, valueParm));
 				} else {
 					if (oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
 							.equals(befDashboardConfiguration.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, valueParm));
+							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, valueParm));
 						}
 					}
 				}
@@ -399,12 +399,12 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 				if (tempDashboardConfiguration == null) { // if records not exists in the Work
 					// flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
 				}
 				if (tempDashboardConfiguration != null && oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
 						.equals(tempDashboardConfiguration.getLastMntOn())) {
 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
 				}
 			}
 		}

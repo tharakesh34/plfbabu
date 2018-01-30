@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<changeSet id="pre-run-for-pgp" author="suresh.s" runAlways="true" dbms="postgresql">
+	<sql>
+	set search_path=plf,public,pg_catalog;
+	</sql>
+	</changeSet>
+
+	<!--CHEQUEHEADER TABLE -->
+	<changeSet author="suresh.s" id="1" dbms="mssql">
+		<createTable tableName="SEQCHEQUEHEADER">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="2">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER">
+			<!-- <column name="ChequeID" type="int"> <constraints nullable="false" 
+				/> </column> -->
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Frequency" type="varchar(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNoOfHirer" type="varchar(50)" />
+			<column name="FirstChequeDate" type="datetime" />
+			<column name="StartingChequeNo" type="varchar(50)" />
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="3">
+		<addPrimaryKey columnNames="ID" constraintName="PK_CHEQUEHEADER_ID"
+			tableName="CHEQUEHEADER" />
+	</changeSet>
+
+	<!--CHEQUEHEADER TEMP TABLE -->
+
+	<changeSet author="suresh.s" id="4">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER_TEMP">
+			<!-- <column name="ChequeID" type="int"> <constraints nullable="false" 
+				/> </column> -->
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Frequency" type="varchar(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNoOfHirer" type="varchar(50)" />
+			<column name="FirstChequeDate" type="datetime" />
+			<column name="StartingChequeNo" type="varchar(50)" />
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="5">
+		<addPrimaryKey columnNames="ID" constraintName="PK_CHEQUEHEADER_TEMP_ID"
+			tableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+
+
+
+	<!--CHEQUEDETAIL TABLE -->
+	<changeSet author="suresh.s" id="6" dbms="mssql">
+		<createTable tableName="SEQCHEQUEDETAIL">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="suresh.s" id="7">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCurrency" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="8">
+		<addPrimaryKey columnNames="ID"
+			constraintName="PK_CHQDTL_CHQDTLID_ID" tableName="CHEQUEDETAIL" />
+		<addForeignKeyConstraint baseColumnNames="ChequeDetailsID"
+			baseTableName="CHEQUEDETAIL" constraintName="FK_CHQDTL_CHQHEADER_T"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHEQUEHEADER" />
+	</changeSet>
+
+
+
+
+
+	<!--CHEQUEDETAIL_TEMP TABLE -->
+	<changeSet author="suresh.s" id="9">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL_TEMP">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCurrency" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="10">
+		<addPrimaryKey columnNames="ID" constraintName="PK_CHQDTL_T_CHQDTLID_ID"
+			tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+
+	<changeSet author="suresh.s" id="11">
+		<addForeignKeyConstraint baseColumnNames="ChequeDetailsID"
+			baseTableName="CHEQUEDETAIL_TEMP" constraintName="FK_CHQDTL_T_CHQHDR_T"
+			referencedColumnNames="ID" referencedTableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+	
+	<changeSet id="12" author="suresh.s">
+		<dropTable tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet id="13" author="suresh.s">
+		<dropTable tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>	
+
+	<changeSet id="14" author="suresh.s">
+		<dropTable tableName="CHEQUEHEADER" />
+	</changeSet>
+	<changeSet id="15" author="suresh.s">
+		<dropTable tableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+	
+	<changeSet author="suresh.s" id="16">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER">
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="17">
+		<addPrimaryKey columnNames="HeaderID" constraintName="PK_CHEQUEHEADER_ID"
+			tableName="CHEQUEHEADER" />
+	</changeSet>
+
+	<changeSet author="suresh.s" id="18">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER_TEMP">
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="19">
+		<addPrimaryKey columnNames="HeaderID" constraintName="PK_CHEQUEHEADER_TEMP_ID"
+			tableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+
+
+	<changeSet author="suresh.s" id="20">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="21">
+		<addPrimaryKey columnNames="ChequeDetailsID"
+			constraintName="PK_CHQDTL_CHQDTLID_ID" tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet author="suresh.s" id="22">
+		<addForeignKeyConstraint baseColumnNames="HeaderID"
+			baseTableName="CHEQUEDETAIL" constraintName="FK_CHQDTL_CHQHEADER_T"
+			referencedColumnNames="HeaderID" referencedTableName="CHEQUEHEADER" />
+	</changeSet>
+
+
+	<changeSet author="suresh.s" id="23">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL_TEMP">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="24">
+		<addPrimaryKey columnNames="ChequeDetailsID"
+			constraintName="PK_CHQDTL_T_CHQDTLID_ID" tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+	<changeSet author="suresh.s" id="25">
+		<addForeignKeyConstraint baseColumnNames="HeaderID"
+			baseTableName="CHEQUEDETAIL_TEMP" constraintName="FK_CHQDTL_T_CHQHDR_T"
+			referencedColumnNames="HeaderID" referencedTableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+	<changeSet author="suresh.s" id="26">
+		<addUniqueConstraint columnNames="BankBranchID,AccountNo,ChequeSerialNo"
+			constraintName="UK_CHEQUEDETAIL" tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet author="suresh.s" id="27">
+		<addUniqueConstraint columnNames="BankBranchID,AccountNo,ChequeSerialNo"
+			constraintName="UK_CHEQUEDETAIL_TEMP" tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+	
+	<!-- restructured chequeheader and chequedetails  -->
+	
+	<changeSet id="28" author="suresh.s">
+		<dropTable tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet id="29" author="suresh.s">
+		<dropTable tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+
+	<changeSet id="30" author="suresh.s">
+		<dropTable tableName="CHEQUEHEADER" />
+	</changeSet>
+	<changeSet id="31" author="suresh.s">
+		<dropTable tableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+
+	<changeSet author="suresh.s" id="32">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER">
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="33">
+		<addPrimaryKey columnNames="HeaderID" constraintName="PK_CHEQUEHEADER_ID"
+			tableName="CHEQUEHEADER" />
+	</changeSet>
+
+	<changeSet author="suresh.s" id="34">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="CHEQUEHEADER_TEMP">
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="35">
+		<addPrimaryKey columnNames="HeaderID" constraintName="PK_CHEQUEHEADER_TEMP_ID"
+			tableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+
+
+	<changeSet author="suresh.s" id="36">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="37">
+		<addPrimaryKey columnNames="ChequeDetailsID"
+			constraintName="PK_CHQDTL_CHQDTLID_ID" tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet author="suresh.s" id="38">
+		<addForeignKeyConstraint baseColumnNames="HeaderID"
+			baseTableName="CHEQUEDETAIL" constraintName="FK_CHQDTL_CHQHEADER_T"
+			referencedColumnNames="HeaderID" referencedTableName="CHEQUEHEADER" />
+	</changeSet>
+
+
+	<changeSet author="suresh.s" id="39">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="CHEQUEDETAIL_TEMP">
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="suresh.s" id="40">
+		<addPrimaryKey columnNames="ChequeDetailsID"
+			constraintName="PK_CHQDTL_T_CHQDTLID_ID" tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+	<changeSet author="suresh.s" id="41">
+		<addForeignKeyConstraint baseColumnNames="HeaderID"
+			baseTableName="CHEQUEDETAIL_TEMP" constraintName="FK_CHQDTL_T_CHQHDR_T"
+			referencedColumnNames="HeaderID" referencedTableName="CHEQUEHEADER_TEMP" />
+	</changeSet>
+	<changeSet author="suresh.s" id="42">
+		<addUniqueConstraint columnNames="BankBranchID,AccountNo,ChequeSerialNo"
+			constraintName="UK_CHEQUEDETAIL"  tableName="CHEQUEDETAIL" />
+	</changeSet>
+	<changeSet author="suresh.s" id="43">
+		<addUniqueConstraint columnNames="BankBranchID,AccountNo,ChequeSerialNo"
+			constraintName="UK_CHEQUEDETAIL_TEMP" tableName="CHEQUEDETAIL_TEMP" />
+	</changeSet>
+	
+	<changeSet id="44" author="suresh.s" dbms="postgresql">
+		<createSequence sequenceName="SEQCHEQUEHEADER" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
+	<changeSet id="45" author="suresh.s" dbms="postgresql">
+		<createSequence sequenceName="SEQCHEQUEDETAIL" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
+	<changeSet id="44" author="suresh.s" dbms="oracle">
+		<createSequence sequenceName="SEQCHEQUEHEADER" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
+	<changeSet id="45" author="suresh.s" dbms="oracle">
+		<createSequence sequenceName="SEQCHEQUEDETAIL" startValue="1" maxValue="9999999999" cycle="false" incrementBy="1"/>
+	</changeSet>
+	<!--altered columns Active and status data types   -->
+	<changeSet id="46" author="suresh.s">
+		<modifyDataType tableName="CHEQUEHEADER" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="47" author="suresh.s">
+		<modifyDataType tableName="CHEQUEHEADER_TEMP" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="48" author="suresh.s">
+		<modifyDataType tableName="CHEQUEDETAIL" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="49" author="suresh.s">
+		<modifyDataType tableName="CHEQUEDETAIL_TEMP" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="50" author="suresh.s">
+		<modifyDataType tableName="CHEQUEDETAIL" columnName="status"
+			newDataType="varchar(50)" />
+	</changeSet>
+	<changeSet id="51" author="suresh.s">
+		<modifyDataType tableName="CHEQUEDETAIL_TEMP" columnName="status"
+			newDataType="varchar(50)" />
+	</changeSet>
+	
+	<!-- script for chequeheader and chequedetail views  -->
+
+	<changeSet id="52" author="suresh.s">
+		<createView viewName="CHEQUEHEADER_AView" replaceIfExists="true">
+	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEHEADER  T1 
+	</createView>
+	</changeSet>
+
+	<changeSet id="53" author="suresh.s">
+		<createView viewName="CHEQUEHEADER_View" replaceIfExists="true">
+	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEHEADER_Temp  T1 
+	UNION ALL
+	
+	SELECT		T1.HeaderID, T1.FinReference, T1.ChequeType, T1.NoOfCheques, T1.TotalAmount, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEHEADER  T1 
+	WHERE     NOT EXISTS (SELECT 1 FROM CHEQUEHEADER_TEMP WHERE HeaderID = T1.HeaderID)
+	</createView>
+	</changeSet>
+
+	<changeSet id="54" author="suresh.s">
+		<createView viewName="CHEQUEDETAIL_AView" replaceIfExists="true">
+	SELECT		T1.ChequeDetailsID, T1.HeaderID, T1.BankBranchID,T2.BankCode,T2.BranchCode,T2.BranchDesc,T2.micr,T2.ifsc,T2.city,T3.bankname, T1.AccountNo, T1.ChequeSerialNo, T1.ChequeDate, T1.EMIRefNo, T1.Amount, T1.ChequeCcy, T1.Status, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEDETAIL T1   
+		 LEFT JOIN bankbranches T2 ON T1.bankbranchid = T2.bankbranchid
+	     LEFT JOIN bmtbankdetail T3 ON T2.BankCode = T3.BankCode      
+	</createView>
+	</changeSet>
+
+	<changeSet id="55" author="suresh.s">
+		<createView viewName="CHEQUEDETAIL_View" replaceIfExists="true">
+	SELECT		T1.ChequeDetailsID, T1.HeaderID, T1.BankBranchID,T2.BankCode,T2.BranchCode,T2.BranchDesc,T2.micr,T2.ifsc,T2.city,T3.bankname, T1.AccountNo, T1.ChequeSerialNo, T1.ChequeDate, T1.EMIRefNo, T1.Amount, T1.ChequeCcy, T1.Status, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEDETAIL_Temp T1   
+		 LEFT JOIN bankbranches T2 ON T1.bankbranchid = T2.bankbranchid
+	     LEFT JOIN bmtbankdetail T3 ON T2.BankCode = T3.BankCode 
+	UNION ALL
+	
+	SELECT		T1.ChequeDetailsID, T1.HeaderID, T1.BankBranchID,T2.BankCode,T2.BranchCode,T2.BranchDesc,T2.micr,T2.ifsc,T2.city,T3.bankname, T1.AccountNo, T1.ChequeSerialNo, T1.ChequeDate, T1.EMIRefNo, T1.Amount, T1.ChequeCcy, T1.Status, T1.Active		
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	FROM    	CHEQUEDETAIL T1   
+		 LEFT JOIN bankbranches T2 ON T1.bankbranchid = T2.bankbranchid
+	     LEFT JOIN bmtbankdetail T3 ON T2.BankCode = T3.BankCode 
+	WHERE     NOT EXISTS (SELECT 1 FROM CHEQUEDETAIL_TEMP WHERE ChequeDetailsID = T1.ChequeDetailsID)
+	</createView>
+	</changeSet>
+	
+	<!--sec rights for chequeheader and chequedetail  -->
+	
+	<changeSet id="56" author="suresh.s" >
+		<sql>							
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEHEADER_VIEW', 'Allow to view ChequeHeader', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEHEADER_MAKER', 'WF Maker for ChequeHeader', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEHEADER_APPROVER', 'WF Approver for ChequeHeader', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_pdc_ChequeHeader','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_pdc_ChequeHeaderEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderList_PrintList','ChequeHeaderList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderList_NewChequeHeader','ChequeHeaderList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderDialog_btnNew','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderDialog_btnEdit','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderDialog_btnDelete','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeHeaderDialog_btnSave','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_HeaderID','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_FinReference','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_ChequeType','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_NoOfCheques','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_TotalAmount','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeHeaderDialog_Active','ChequeHeaderDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='menuItem_pdc_ChequeHeaderEnquiry'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='menuItem_pdc_ChequeHeader'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeHeaderList_NewChequeHeader'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeHeaderDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeHeaderDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_HeaderID'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_FinReference'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_ChequeType'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_NoOfCheques'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_TotalAmount'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEHEADER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeHeaderDialog_Active'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='CHEQUEHEADER_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='CHEQUEHEADER_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+								
+		 </sql>
+		</changeSet>
+		
+		<changeSet id="57" author="suresh.s" >
+		  <sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEDETAIL_VIEW', 'Allow to view ChequeDetail', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEDETAIL_MAKER', 'WF Maker for ChequeDetail', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CHEQUEDETAIL_APPROVER', 'WF Approver for ChequeDetail', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_pdc_ChequeDetail','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_pdc_ChequeDetailEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailList_PrintList','ChequeDetailList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailList_NewChequeDetail','ChequeDetailList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailDialog_btnNew','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailDialog_btnEdit','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailDialog_btnDelete','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_ChequeDetailDialog_btnSave','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_ChequeDetailsID','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_HeaderID','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_BankBranchID','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_AccountNo','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_ChequeSerialNo','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_ChequeDate','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_EMIRefNo','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_Amount','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_ChequeCcy','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_Status','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'ChequeDetailDialog_Active','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='menuItem_pdc_ChequeDetailEnquiry'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='menuItem_pdc_ChequeDetail'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeDetailList_NewChequeDetail'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeDetailDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='button_ChequeDetailDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_ChequeDetailsID'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_HeaderID'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_BankBranchID'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_AccountNo'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_ChequeSerialNo'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_ChequeDate'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_EMIRefNo'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_Amount'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_ChequeCcy'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_Status'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CHEQUEDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName='ChequeDetailDialog_Active'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='CHEQUEDETAIL_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='CHEQUEDETAIL_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);	
+	   </sql>			
+	 </changeSet>
+</databaseChangeLog>

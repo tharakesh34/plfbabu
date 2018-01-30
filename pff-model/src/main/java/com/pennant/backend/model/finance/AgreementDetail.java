@@ -314,6 +314,8 @@ public class AgreementDetail {
 	private String finMinRate;
 	private String finMaxRate;
 	private String profitRateType;														//Profit Rate Type
+	private String tenor;
+	private String netRefRateLoan;
 	//DDA Fields
 	//===============================
 	private String 	bankName ="";														// DDA Sponsoring Bank
@@ -321,6 +323,10 @@ public class AgreementDetail {
 	private String 	iban =""; 															// Customer IBAN Number
 	private String 	ddaPurposeCode ="";													// DDA Purpose Code
 	private String 	ifscCode ="";													// DDA Purpose Code
+	
+	//Mandate
+	private String				accNumberMandate;
+
 	
 	//External Fields
 	//===============================
@@ -4123,6 +4129,39 @@ private String custAccount ="";
 		this.panNumber = panNumber;
 	}
 
+
+	public String getAccNumberMandate() {
+		return StringUtils.trimToEmpty(accNumberMandate);
+	}
+
+	public void setAccNumberMandate(String accNumberMandate) {
+		this.accNumberMandate = accNumberMandate;
+	}
+
+	public String getTenor() {
+		return StringUtils.trimToEmpty(tenor);
+	}
+
+	public void setTenor(String tenor) {
+		this.tenor = tenor;
+	}
+
+	public String getNetRefRateLoan() {
+		return StringUtils.trimToEmpty(netRefRateLoan);
+	}
+
+	public void setNetRefRateLoan(String netRefRateLoan) {
+		this.netRefRateLoan = netRefRateLoan;
+	}
+
+	public List<CustomerBankInfo> getCustomerBankInfos() {
+		return customerBankInfos;
+	}
+
+	public void setCustomerBankInfos(List<CustomerBankInfo> customerBankInfos) {
+		this.customerBankInfos = customerBankInfos;
+	}
+
 	public class CoApplicant {
 		
 		private String custName ="";
@@ -4148,7 +4187,7 @@ private String custAccount ="";
 		}
 
 		public String getCustName() {
-			return custName;
+			return StringUtils.trimToEmpty(custName);
 		}
 
 		public void setCustName(String custName) {
@@ -4156,7 +4195,7 @@ private String custAccount ="";
 		}
 
 		public String getPanNumber() {
-			return panNumber;
+			return StringUtils.trimToEmpty(panNumber);
 		}
 
 		public void setPanNumber(String panNumber) {
@@ -4164,7 +4203,7 @@ private String custAccount ="";
 		}
 
 		public String getAddress() {
-			return Address;
+			return StringUtils.trimToEmpty(Address);
 		}
 
 		public void setAddress(String address) {
@@ -4172,7 +4211,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrHNbr() {
-			return custAddrHNbr;
+			return StringUtils.trimToEmpty(custAddrHNbr);
 		}
 
 		public void setCustAddrHNbr(String custAddrHNbr) {
@@ -4180,7 +4219,7 @@ private String custAccount ="";
 		}
 
 		public String getCustFlatNbr() {
-			return custFlatNbr;
+			return StringUtils.trimToEmpty(custFlatNbr);
 		}
 
 		public void setCustFlatNbr(String custFlatNbr) {
@@ -4188,7 +4227,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrStreet() {
-			return custAddrStreet;
+			return StringUtils.trimToEmpty(custAddrStreet);
 		}
 
 		public void setCustAddrStreet(String custAddrStreet) {
@@ -4196,7 +4235,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrLine1() {
-			return custAddrLine1;
+			return StringUtils.trimToEmpty(custAddrLine1);
 		}
 
 		public void setCustAddrLine1(String custAddrLine1) {
@@ -4204,7 +4243,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrLine2() {
-			return custAddrLine2;
+			return StringUtils.trimToEmpty(custAddrLine2);
 		}
 
 		public void setCustAddrLine2(String custAddrLine2) {
@@ -4212,7 +4251,7 @@ private String custAccount ="";
 		}
 
 		public String getCustPOBox() {
-			return custPOBox;
+			return StringUtils.trimToEmpty(custPOBox);
 		}
 
 		public void setCustPOBox(String custPOBox) {
@@ -4220,7 +4259,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrCountry() {
-			return custAddrCountry;
+			return StringUtils.trimToEmpty(custAddrCountry);
 		}
 
 		public void setCustAddrCountry(String custAddrCountry) {
@@ -4228,7 +4267,7 @@ private String custAccount ="";
 		}
 
 		public String getLovDescCustAddrCountryName() {
-			return lovDescCustAddrCountryName;
+			return StringUtils.trimToEmpty(lovDescCustAddrCountryName);
 		}
 
 		public void setLovDescCustAddrCountryName(String lovDescCustAddrCountryName) {
@@ -4236,7 +4275,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrProvince() {
-			return custAddrProvince;
+			return StringUtils.trimToEmpty(custAddrProvince);
 		}
 
 		public void setCustAddrProvince(String custAddrProvince) {
@@ -4244,7 +4283,7 @@ private String custAccount ="";
 		}
 
 		public String getLovDescCustAddrProvinceName() {
-			return lovDescCustAddrProvinceName;
+			return StringUtils.trimToEmpty(lovDescCustAddrProvinceName);
 		}
 
 		public void setLovDescCustAddrProvinceName(String lovDescCustAddrProvinceName) {
@@ -4252,7 +4291,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrCity() {
-			return custAddrCity;
+			return StringUtils.trimToEmpty(custAddrCity);
 		}
 
 		public void setCustAddrCity(String custAddrCity) {
@@ -4260,7 +4299,7 @@ private String custAccount ="";
 		}
 
 		public String getLovDescCustAddrCityName() {
-			return lovDescCustAddrCityName;
+			return StringUtils.trimToEmpty(lovDescCustAddrCityName);
 		}
 
 		public void setLovDescCustAddrCityName(String lovDescCustAddrCityName) {
@@ -4268,7 +4307,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrZIP() {
-			return custAddrZIP;
+			return StringUtils.trimToEmpty(custAddrZIP);
 		}
 
 		public void setCustAddrZIP(String custAddrZIP) {
@@ -4276,7 +4315,7 @@ private String custAccount ="";
 		}
 
 		public String getCustAddrPhone() {
-			return custAddrPhone;
+			return StringUtils.trimToEmpty(custAddrPhone);
 		}
 
 		public void setCustAddrPhone(String custAddrPhone) {
@@ -4284,9 +4323,47 @@ private String custAccount ="";
 		}
 		
 	}
+	private List<CustomerBankInfo> customerBankInfos;
+ 	
+	public class CustomerBankInfo {
+		private String	bankCode;
+		private String	bankName;
+		private String	accountNumber;
+		private String	accountType;
 
+		public String getBankCode() {
+			return bankCode;
+		}
 
+		public void setBankCode(String bankCode) {
+			this.bankCode = bankCode;
+		}
 
+		public String getBankName() {
+			return StringUtils.trimToEmpty(bankName);
+		}
+
+		public void setBankName(String bankName) {
+			this.bankName = bankName;
+		}
+
+		public String getAccountNumber() {
+			return StringUtils.trimToEmpty(accountNumber);
+		}
+
+		public void setAccountNumber(String accountNumber) {
+			this.accountNumber = accountNumber;
+		}
+
+		public String getAccountType() {
+			return StringUtils.trimToEmpty(accountType);
+		}
+
+		public void setAccountType(String accountType) {
+			this.accountType = accountType;
+		}
+
+	}
 
 
 }

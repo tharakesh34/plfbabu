@@ -114,6 +114,7 @@ public class CalculationConstants {
 	public static final String	EARLYPAY_ADMPFI						= "ADMPFI";
 	public static final String	EARLYPAY_RECRPY						= "RECRPY";
 	public static final String	EARLYPAY_RECPFI						= "RECPFI";
+	public static final String	EARLYPAY_PRIHLD						= "PRIHLD";
 
 	// FINANCE FEE SCHEDULE METHODS
 	public static final String	REMFEE_PART_OF_DISBURSE				= "DISB";

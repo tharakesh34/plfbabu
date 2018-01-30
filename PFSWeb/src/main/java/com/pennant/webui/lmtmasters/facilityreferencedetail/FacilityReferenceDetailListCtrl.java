@@ -61,7 +61,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.CAFFacilityType;
 import com.pennant.backend.model.lmtmasters.FacilityReference;
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
@@ -210,7 +210,7 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 				valueParm[0]=String.valueOf(aFacilityReference.getFinType());
 				errParm[0]=PennantJavaUtil.getLabel("label_FinType")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}
 			if(facilityReference.getLovDescWorkFlowRolesName()==null || StringUtils.isEmpty(facilityReference.getLovDescWorkFlowRolesName())){

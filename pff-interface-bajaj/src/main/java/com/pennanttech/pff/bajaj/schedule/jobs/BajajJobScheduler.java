@@ -65,6 +65,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			job.setTrigger(TriggerBuilder.newTrigger().withIdentity(name, "MASTER_FILE_EXTRACT")
 					.withDescription(config.getDescription())
 					.withSchedule(CronScheduleBuilder.cronSchedule(config.getCronExpression())).build());
+
 			jobs.put("DE_" + name, job);
 		}
 
@@ -86,10 +87,12 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
+
 				Job job = new Job();
 				job.setJobDetail(JobBuilder.newJob(DisbursementResponseJob.class)
 						.withIdentity("AUTO_DISB_RES_JOB", "AUTO_DISB_RES_FILE")
 						.withDescription("Auto Disbrsement response file job").build());
+
 				job.setTrigger(
 						TriggerBuilder.newTrigger().withIdentity("AUTO_DISB_RES_FILE_TRIGGER", "AUTO_DISB_RES_FILE")
 								.withDescription("Auto disbursement response file trigger.")
@@ -113,10 +116,12 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
+
 				Job job = new Job();
 				job.setJobDetail(JobBuilder.newJob(DisbrsementImpsResponseJob.class)
 						.withIdentity("DISB_IMPS_RES_JOB", "DISB_IMPS_RESPONSE")
 						.withDescription("Disbrsement imps response job").build());
+
 				job.setTrigger(
 						TriggerBuilder.newTrigger().withIdentity("DISB_IMPS_RES_JOB_TRIGGER", "DISB_IMPS_RESPONSE")
 								.withDescription("Disbrsement imps response job trigger.")
@@ -141,10 +146,12 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
+
 				Job job = new Job();
 				job.setJobDetail(JobBuilder.newJob(PosidexCustomerUpdateResponseJob.class)
 						.withIdentity("POSIDEX_RES_JOB", "POSIDEX_CUSTOMER_RESPONSE")
 						.withDescription("Posidex customer update response job trigger.").build());
+
 				job.setTrigger(
 						TriggerBuilder.newTrigger().withIdentity("POSIDEX_RES_JOB_TRIGGER", "POSIDEX_CUSTOMER_RESPONSE")
 								.withDescription("Posidex customer update response job trigger.")
@@ -169,10 +176,12 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
+
 				Job job = new Job();
 				job.setJobDetail(JobBuilder.newJob(CustomerCrudOperationJob.class)
 						.withIdentity("CUSTOMER_CRUD_JOB", "CUSTOMER_CRUD_RESPONSE")
 						.withDescription("Customer crud opretion job trigger.").build());
+
 				job.setTrigger(
 						TriggerBuilder.newTrigger().withIdentity("CUSTOMER_CRUD_JOB_TRIGGER", "CUSTOMER_CRUD_RESPONSE")
 								.withDescription("Customer crud opretion job trigger.")

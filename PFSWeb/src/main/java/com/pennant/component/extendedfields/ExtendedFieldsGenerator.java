@@ -10,16 +10,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
@@ -84,6 +87,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
+@SuppressWarnings("rawtypes")
 public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * 
@@ -103,6 +107,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private int					rowWidth;
 	private final String		TABPANEL_ID			= "Tab_Panel";
 	private Row					row;
+	private Tab					topLevelTab;// To through wrong value exceptions
 
 	public ExtendedFieldsGenerator() {
 
@@ -437,15 +442,20 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		Map<String, Object> values = new HashMap<String, Object>();
 		List<Component> compList = new ArrayList<Component>();
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<ExtendedFieldDetail> notInputElements=new ArrayList<>();
+		HashMap<ExtendedFieldDetail , WrongValueException> wveMap =new HashMap<>();
 
 		if (extendedFieldDetailList == null) {
 			return values;
 		}
 
 		for (ExtendedFieldDetail detail : extendedFieldDetailList) {
+			if (!detail.isInputElement()) {
+				notInputElements.add(detail);
+				continue;
+			}
 			String id = getComponentId(detail.getFieldName());
-			isReadOnly=!detail.isEditable();
+			isReadOnly = !detail.isEditable();
 
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
 				id = "ad_".concat(detail.getFieldName().concat("_CC"));
@@ -456,111 +466,115 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				compList.add(component);
 
 				if (component instanceof CurrencyBox) {
-					CurrencyBox currencyBox = (CurrencyBox) component;
-					currencyBox.setConstraint("");
-					currencyBox.setErrorMessage("");
-					if (!isReadOnly && (detail.isFieldMandatory() || currencyBox.getActualValue() != null)) {
-						currencyBox.setConstraint(new PTDecimalValidator(detail.getFieldLabel(), getCcyFormat(),
-								detail.isFieldMandatory(), false));
-					}
 					try {
+						CurrencyBox currencyBox = (CurrencyBox) component;
+						currencyBox.setConstraint("");
+						currencyBox.setErrorMessage("");
+						if (!isReadOnly && (detail.isFieldMandatory() || currencyBox.getActualValue() != null)) {
+							currencyBox.setConstraint(new PTDecimalValidator(detail.getFieldLabel(), getCcyFormat(),
+									detail.isFieldMandatory(), false));
+						}
+
 						values.put(detail.getFieldName(),
 								PennantApplicationUtil.unFormateAmount(currencyBox.getActualValue(), ccyFormat));
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Decimalbox) {
-					Decimalbox decimalbox = (Decimalbox) component;
-					decimalbox.setConstraint("");
-					decimalbox.setErrorMessage("");
-					if (!isReadOnly && (detail.isFieldMandatory() || decimalbox.getValue() != null)) {
-						decimalValidation(decimalbox, detail);
-					}
-
 					try {
+						Decimalbox decimalbox = (Decimalbox) component;
+						decimalbox.setConstraint("");
+						decimalbox.setErrorMessage("");
+						if (!isReadOnly && (detail.isFieldMandatory() || decimalbox.getValue() != null)) {
+							decimalValidation(decimalbox, detail);
+						}
+
 						values.put(detail.getFieldName(), decimalbox.getValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Intbox) {
-					Intbox intbox = (Intbox) component;
-					intbox.setConstraint("");
-					intbox.setErrorMessage("");
-					if (!isReadOnly) {
-						intbox.setConstraint(new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(),
-								false, Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
-								Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
-					}
-
 					try {
+						Intbox intbox = (Intbox) component;
+						intbox.setConstraint("");
+						intbox.setErrorMessage("");
+						if (!isReadOnly) {
+							intbox.setConstraint(
+									new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
+											Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
+											Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
+						}
+
 						values.put(detail.getFieldName(), intbox.intValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Longbox) {
-					Longbox longbox = (Longbox) component;
-					longbox.setConstraint("");
-					longbox.setErrorMessage("");
-					if (!isReadOnly) {//TODO: Check for LONG Validation
-						longbox.setConstraint(new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(),
-								false, Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
-								Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
-					}
-
 					try {
+						Longbox longbox = (Longbox) component;
+						longbox.setConstraint("");
+						longbox.setErrorMessage("");
+						if (!isReadOnly) {//TODO: Check for LONG Validation
+							longbox.setConstraint(
+									new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
+											Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
+											Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
+						}
+
 						values.put(detail.getFieldName(), longbox.longValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 
 				} else if (component instanceof AccountSelectionBox) {
-					AccountSelectionBox accSelectionBox = (AccountSelectionBox) component;
-					accSelectionBox.setConstraint("");
-					accSelectionBox.setErrorMessage("");
-
-					if (!isReadOnly && detail.isFieldMandatory()) {
-						accSelectionBox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null, true));
-					}
-
 					try {
+						AccountSelectionBox accSelectionBox = (AccountSelectionBox) component;
+						accSelectionBox.setConstraint("");
+						accSelectionBox.setErrorMessage("");
+
+						if (!isReadOnly && detail.isFieldMandatory()) {
+							accSelectionBox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null, true));
+						}
+
 						accSelectionBox.validateValue();
 						values.put(detail.getFieldName(), accSelectionBox.getValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					} catch (InterruptedException e) {
 						logger.error(e);
 					}
 				} else if (component instanceof FrequencyBox) {
-					FrequencyBox frqBox = (FrequencyBox) component;
-
 					try {
+						FrequencyBox frqBox = (FrequencyBox) component;
+
 						if (!isReadOnly && detail.isFieldMandatory()) {
 							frqBox.isValidComboValue();
 						}
 						values.put(detail.getFieldName(), frqBox.getValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof RateBox) {
-					RateBox rateBox = (RateBox) component;
-
-					if (!isReadOnly && detail.isFieldMandatory()) {
-						rateBox.setBaseConstraint(
-								new PTStringValidator(detail.getFieldLabel(), null, detail.isFieldMandatory(), true));
-					}
 					try {
+						RateBox rateBox = (RateBox) component;
+
+						if (!isReadOnly && detail.isFieldMandatory()) {
+							rateBox.setBaseConstraint(new PTStringValidator(detail.getFieldLabel(), null,
+									detail.isFieldMandatory(), true));
+						}
+
 						values.put(detail.getFieldName().concat("_BR"), rateBox.getBaseValue());
 						values.put(detail.getFieldName().concat("_SR"), rateBox.getSpecialValue());
 						values.put(detail.getFieldName().concat("_MR"), rateBox.getMarginValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Timebox) {
-					Timebox timebox = (Timebox) component;
-					timebox.setConstraint("");
-					timebox.setErrorMessage("");
-
 					try {
+						Timebox timebox = (Timebox) component;
+						timebox.setConstraint("");
+						timebox.setErrorMessage("");
+
 						Date timeValue = DateUtil.parse(DateUtil.format(timebox.getValue(), DateFormat.LONG_TIME),
 								DateFormat.LONG_TIME);
 						if (!isReadOnly && (detail.isFieldMandatory() && timeValue == null)) {
@@ -570,17 +584,17 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 						values.put(detail.getFieldName(), timeValue);
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Datebox) {
-					Datebox datebox = (Datebox) component;
-					datebox.setConstraint("");
-					datebox.setErrorMessage("");
-					if (!isReadOnly && (detail.isFieldMandatory() || datebox.getValue() != null)) {
-						dateValidation(datebox, detail);
-					}
-
 					try {
+						Datebox datebox = (Datebox) component;
+						datebox.setConstraint("");
+						datebox.setErrorMessage("");
+						if (!isReadOnly && (detail.isFieldMandatory() || datebox.getValue() != null)) {
+							dateValidation(datebox, detail);
+						}
+
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType())) {
 							values.put(detail.getFieldName(), DateUtil
 									.parse(DateUtil.formatToShortDate(datebox.getValue()), DateFormat.SHORT_DATE));
@@ -590,28 +604,28 @@ public class ExtendedFieldsGenerator extends AbstractController {
 											DateFormat.LONG_DATE_TIME));
 						}
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof ExtendedCombobox) {
-					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
-					extendedCombobox.setConstraint("");
-					extendedCombobox.setErrorMessage("");
-					if (!isReadOnly && detail.isFieldMandatory()) {
-						extendedCombobox.setConstraint(
-								new PTStringValidator(detail.getFieldLabel(), null, detail.isFieldMandatory(), true));
-					}
-
 					try {
+						ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+						extendedCombobox.setConstraint("");
+						extendedCombobox.setErrorMessage("");
+						if (!isReadOnly && detail.isFieldMandatory()) {
+							extendedCombobox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null,
+									detail.isFieldMandatory(), true));
+						}
+
 						values.put(detail.getFieldName(), extendedCombobox.getValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Combobox) {
-					Combobox combobox = (Combobox) component;
-					combobox.setConstraint("");
-					combobox.setErrorMessage("");
-
 					try {
+						Combobox combobox = (Combobox) component;
+						combobox.setConstraint("");
+						combobox.setErrorMessage("");
+
 						if (detail.isFieldMandatory()) {
 							if (!isReadOnly && (combobox.getSelectedItem() == null
 									|| combobox.getSelectedItem().getValue() == null
@@ -623,14 +637,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 						values.put(detail.getFieldName(), combobox.getSelectedItem().getValue().toString());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Bandbox) {
-					Bandbox bandbox = (Bandbox) component;
-					bandbox.setConstraint("");
-					bandbox.setErrorMessage("");
-
 					try {
+						Bandbox bandbox = (Bandbox) component;
+						bandbox.setConstraint("");
+						bandbox.setErrorMessage("");
+
 						if (detail.isFieldMandatory()) {
 							if (!isReadOnly && StringUtils.isEmpty(bandbox.getValue())) {
 								bandbox.setConstraint(
@@ -640,7 +654,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 						values.put(detail.getFieldName(), bandbox.getValue());
 					} catch (WrongValueException we) {
-						wve.add(we);
+						wveMap.put(detail, we);
 					}
 				} else if (component instanceof Radiogroup) {
 					Radiogroup radiogroup = (Radiogroup) component;
@@ -650,7 +664,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								throw new WrongValueException(radiogroup,
 										Labels.getLabel("STATIC_INVALID", new String[] { detail.getFieldLabel() }));
 							} catch (WrongValueException we) {
-								wve.add(we);
+								wveMap.put(detail, we);
 							}
 						} else {
 							values.put(detail.getFieldName(), radiogroup.getSelectedItem().getValue().toString());
@@ -668,74 +682,75 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				} else if (component instanceof Textbox) {
 
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
-
-						Textbox countryCode = (Textbox) component;
-						Textbox areCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_AC"));
-						Textbox subCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_SC"));
-
-						if (!isReadOnly) {
-							countryCode.setConstraint(new PTPhoneNumberValidator(
-									detail.getFieldLabel().concat(" Country Code "), detail.isFieldMandatory(), 1));
-							areCode.setConstraint(new PTPhoneNumberValidator(
-									detail.getFieldLabel().concat(" Area Code "), detail.isFieldMandatory(), 2));
-							subCode.setConstraint(new PTPhoneNumberValidator(
-									detail.getFieldLabel().concat(" Subsidary Code "), detail.isFieldMandatory(), 3));
-						}
-
 						try {
+							Textbox countryCode = (Textbox) component;
+							Textbox areCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_AC"));
+							Textbox subCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_SC"));
+
+							if (!isReadOnly) {
+								countryCode.setConstraint(new PTPhoneNumberValidator(
+										detail.getFieldLabel().concat(" Country Code "), detail.isFieldMandatory(), 1));
+								areCode.setConstraint(new PTPhoneNumberValidator(
+										detail.getFieldLabel().concat(" Area Code "), detail.isFieldMandatory(), 2));
+								subCode.setConstraint(
+										new PTPhoneNumberValidator(detail.getFieldLabel().concat(" Subsidary Code "),
+												detail.isFieldMandatory(), 3));
+							}
+
 							values.put(detail.getFieldName().concat("_CC"), countryCode.getValue());
 							values.put(detail.getFieldName().concat("_AC"), areCode.getValue());
 							values.put(detail.getFieldName().concat("_SC"), subCode.getValue());
 						} catch (WrongValueException we) {
-							wve.add(we);
+							wveMap.put(detail, we);
 						}
 
 					} else {
-						Textbox textbox = (Textbox) component;
-						textbox.setConstraint("");
-						textbox.setErrorMessage("");
-						if (!isReadOnly && (detail.isFieldMandatory() || textbox.getValue() != null)) {
-
-							String regEx = StringUtils.trimToEmpty(detail.getFieldConstraint());
-
-							switch (regEx) {
-							case "REGEX_EMAIL":
-								textbox.setConstraint(
-										new PTEmailValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
-								break;
-							case "REGEX_WEB":
-								textbox.setConstraint(
-										new PTWebValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
-								break;
-							case "REGEX_TELEPHONE_FAX":
-								textbox.setConstraint(
-										new PTPhoneNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
-								break;
-							case "REGEX_MOBILE":
-								textbox.setConstraint(
-										new PTMobileNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
-								break;
-							default:
-								if (textbox.isReadonly() || StringUtils.isEmpty(detail.getFieldConstraint())) {
-									textbox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null,
-											detail.isFieldMandatory()));
-								} else {
-									textbox.setConstraint(new PTStringValidator(detail.getFieldLabel(),
-											detail.getFieldConstraint(), detail.isFieldMandatory()));
-								}
-								break;
-							}
-						}
 						try {
+							Textbox textbox = (Textbox) component;
+							textbox.setConstraint("");
+							textbox.setErrorMessage("");
+							if (!isReadOnly && (detail.isFieldMandatory() || textbox.getValue() != null)) {
+
+								String regEx = StringUtils.trimToEmpty(detail.getFieldConstraint());
+
+								switch (regEx) {
+								case "REGEX_EMAIL":
+									textbox.setConstraint(
+											new PTEmailValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
+									break;
+								case "REGEX_WEB":
+									textbox.setConstraint(
+											new PTWebValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
+									break;
+								case "REGEX_TELEPHONE_FAX":
+									textbox.setConstraint(new PTPhoneNumberValidator(detail.getFieldLabel(),
+											detail.isFieldMandatory()));
+									break;
+								case "REGEX_MOBILE":
+									textbox.setConstraint(new PTMobileNumberValidator(detail.getFieldLabel(),
+											detail.isFieldMandatory()));
+									break;
+								default:
+									if (textbox.isReadonly() || StringUtils.isEmpty(detail.getFieldConstraint())) {
+										textbox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null,
+												detail.isFieldMandatory()));
+									} else {
+										textbox.setConstraint(new PTStringValidator(detail.getFieldLabel(),
+												detail.getFieldConstraint(), detail.isFieldMandatory()));
+									}
+									break;
+								}
+							}
+
 							values.put(detail.getFieldName(), textbox.getValue());
 						} catch (WrongValueException we) {
-							wve.add(we);
+							wveMap.put(detail, we);
 						}
 					}
 				}
 			}
 		}
-		showErrorDetails(wve, compList);
+		showErrorDetails(wveMap, compList,notInputElements);
 
 		logger.debug(Literal.LEAVING);
 		return values;
@@ -922,12 +937,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * Method for Showing Error Details
 	 * 
-	 * @param wve
+	 * @param wveMap
+	 * @param notInputElements 
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, List<Component> compList) {
+	private void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<Component> compList,
+			List<ExtendedFieldDetail> notInputElements) {
 		logger.debug(Literal.ENTERING);
 
-		if (wve.size() > 0) {
+		if (wveMap.size() > 0) {
 			for (Component component : compList) {
 				if (component instanceof CurrencyBox) {
 					CurrencyBox currencyBox = (CurrencyBox) component;
@@ -989,14 +1006,101 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					textbox.setErrorMessage("");
 				}
 			}
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+
+			//group the exception by tab's
+			HashMap<ExtendedFieldDetail, List<WrongValueException>> data = groupByParentTab(wveMap, notInputElements);
+			//
+			if (data != null && !data.isEmpty()) {
+				if (topLevelTab != null) {
+					topLevelTab.setSelected(true);
+				}
+
+				//throw the exception by tabs
+				for (Entry<ExtendedFieldDetail, List<WrongValueException>> entryset : data.entrySet()) {
+					ExtendedFieldDetail extdetai = entryset.getKey();
+					//get tab by name and set selected
+					Component fellowIfAny = window.getFellowIfAny(extdetai.getFieldName());
+					if (fellowIfAny != null && fellowIfAny instanceof Tab) {
+						Tab parTab = (Tab) fellowIfAny;
+						parTab.setSelected(true);
+					}
+					
+					// throw the excpetions
+					List<WrongValueException> list = entryset.getValue();
+					WrongValueException[] wvea = new WrongValueException[list.size()];
+					for (int i = 0; i < list.size(); i++) {
+						WrongValueException wrongValueException = list.get(i);
+						wvea[i] = wrongValueException;
+						if (i == 0) {
+							Component comp = wrongValueException.getComponent();
+							if (comp instanceof HtmlBasedComponent) {
+								Clients.scrollIntoView(comp);
+							}
+						}
+					}
+					logger.debug(Literal.LEAVING);
+					throw new WrongValuesException(wvea);
+				}
 			}
-			logger.debug(Literal.LEAVING);
-			throw new WrongValuesException(wvea);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Group exception based on the tab
+	 * @param wveMap
+	 * @param nonInputElements
+	 * @return
+	 */
+	private HashMap<ExtendedFieldDetail, List<WrongValueException>> groupByParentTab(
+			HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<ExtendedFieldDetail> nonInputElements) {
+
+		HashMap<ExtendedFieldDetail, List<WrongValueException>> map = new HashMap<>();
+		for (Entry<ExtendedFieldDetail, WrongValueException> entryset : wveMap.entrySet()) {
+			
+			ExtendedFieldDetail extDetails = entryset.getKey();
+			WrongValueException value = entryset.getValue();
+
+			ExtendedFieldDetail extParentDetails = getFirstTabParentIfAny(extDetails, nonInputElements);
+			if (extParentDetails != null) {
+				if (map.containsKey(extParentDetails)) {
+					map.get(extParentDetails).add(value);
+				}else{
+					List<WrongValueException> errorlist = new ArrayList<>();
+					errorlist.add(value);
+					map.put(extParentDetails, errorlist);
+				}
+			} else {
+				List<WrongValueException> errorlist = new ArrayList<>();
+				errorlist.add(value);
+				map.put(extDetails, errorlist);
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * Method to get the parent for the child component
+	 * @param extDetails
+	 * @param notInputElements
+	 * @return
+	 */
+	private ExtendedFieldDetail getFirstTabParentIfAny(ExtendedFieldDetail extDetails, List<ExtendedFieldDetail> notInputElements) {
+		if (StringUtils.isNotBlank(extDetails.getParentTag())) {
+			for (ExtendedFieldDetail extendedFieldDetail : notInputElements) {
+				if (StringUtils.equals(extendedFieldDetail.getFieldName(), extDetails.getParentTag())) {
+					if (ExtendedFieldConstants.FIELDTYPE_TABPANEL.equals(extendedFieldDetail.getFieldType())) {
+						return extendedFieldDetail;
+					} else {
+						if (StringUtils.isNotBlank(extendedFieldDetail.getParentTag())) {
+							return getFirstTabParentIfAny(extendedFieldDetail, notInputElements);
+						}
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1852,6 +1956,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setRowWidth(int rowWidth) {
 		this.rowWidth = rowWidth;
+	}
+
+	public void setTopLevelTab(Tab topLevelTab) {
+		this.topLevelTab = topLevelTab;
 	}
 
 }

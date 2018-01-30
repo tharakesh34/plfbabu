@@ -32,7 +32,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -324,7 +324,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -346,7 +346,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				// records
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
@@ -354,12 +354,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 					// records type is new
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
@@ -372,16 +372,16 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -390,13 +390,13 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && oldFinanceMain != null
 						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -407,7 +407,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 		if(eodProgressCount > 0){
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 

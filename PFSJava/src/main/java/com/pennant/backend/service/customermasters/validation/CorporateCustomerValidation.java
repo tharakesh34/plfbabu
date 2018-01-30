@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CorporateCustomerDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
@@ -54,7 +54,7 @@ public class CorporateCustomerValidation {
 
 	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		CorporateCustomerDetail corporateCustomerDetail= (CorporateCustomerDetail) 
 		auditDetail.getModelData();
 
@@ -79,20 +79,20 @@ public class CorporateCustomerValidation {
 			if (!corporateCustomerDetail.isWorkflow()){// With out Work flow only new records  
 				if (befCorporateCustomerDetail !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
 									errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
 				if (corporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befCorporateCustomerDetail !=null || tempCorporateCustomerDetail!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
 										errParm,valueParm), usrLanguage));
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befCorporateCustomerDetail ==null || tempCorporateCustomerDetail!=null ){
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 										errParm,valueParm), usrLanguage));
 					}
 				}
@@ -103,7 +103,7 @@ public class CorporateCustomerValidation {
 
 				if (befCorporateCustomerDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
 					if (oldCorporateCustomerDetail!=null && 
@@ -112,11 +112,11 @@ public class CorporateCustomerValidation {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003",
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003",
 											errParm,valueParm), usrLanguage));
 						}else{
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", 
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", 
 											errParm,valueParm), usrLanguage));
 						}
 					}
@@ -125,7 +125,7 @@ public class CorporateCustomerValidation {
 
 				if (tempCorporateCustomerDetail==null ){ // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 
@@ -133,7 +133,7 @@ public class CorporateCustomerValidation {
 						!oldCorporateCustomerDetail.getLastMntOn().equals(
 								tempCorporateCustomerDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
 									errParm,valueParm), usrLanguage));
 				}
 			}

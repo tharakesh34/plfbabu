@@ -17,9 +17,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -41,6 +42,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -71,7 +73,7 @@ public class FinanceValidationService {
 	private RuleDAO ruleDAO;
 	private GeneralDepartmentService generalDepartmentService;
 	private RelationshipOfficerService relationshipOfficerService;
-	
+	private VehicleDealerService vehicleDealerService;
 
 	/**
 	 * Validate the finance detail object.<br>
@@ -295,12 +297,12 @@ public class FinanceValidationService {
 			}
 			
 			// validate grace profit frequency codes
-			ErrorDetails errorDetail = null;
+			ErrorDetail errorDetail = null;
 			if (financeMain.isAllowGrcPeriod()) {
 				// validate grace profit frequency code
 				if (StringUtils.isNotBlank(financeMain.getGrcPftFrq())) {
 					errorDetail = FrequencyUtil.validateFrequency(financeMain.getGrcPftFrq());
-					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = financeMain.getGrcPftFrq();
 						return getErrorDetails("90207", valueParm);
@@ -363,7 +365,7 @@ public class FinanceValidationService {
 			// validate repay frequency code
 			if (StringUtils.isNotBlank(financeMain.getRepayFrq())) {
 				errorDetail = FrequencyUtil.validateFrequency(financeMain.getRepayFrq());
-				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getRepayFrq();
 					return getErrorDetails("90207", valueParm);
@@ -373,7 +375,7 @@ public class FinanceValidationService {
 			// validate repay profit frequency code
 			if (StringUtils.isNotBlank(financeMain.getRepayPftFrq())) {
 				errorDetail = FrequencyUtil.validateFrequency(financeMain.getRepayPftFrq());
-				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getRepayPftFrq();
 					return getErrorDetails("90207", valueParm);
@@ -383,7 +385,7 @@ public class FinanceValidationService {
 			// validate repay review frequency code
 			if (StringUtils.isNotBlank(financeMain.getRepayRvwFrq())) {
 				errorDetail = FrequencyUtil.validateFrequency(financeMain.getRepayRvwFrq());
-				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getRepayPftFrq();
 					return getErrorDetails("90207", valueParm);
@@ -743,8 +745,8 @@ public class FinanceValidationService {
 				
 				//validate periodicity
 				if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-					ErrorDetails errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
-					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+					ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = mandate.getPeriodicity();
 						return getErrorDetails("90207", valueParm);
@@ -881,14 +883,14 @@ public class FinanceValidationService {
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (financeMain != null) {
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
-					.getApprovedRelationshipOfficerById(financeMain.getAccountsOfficer());
-			if (relationshipOfficer == null) {
+			VehicleDealer vehicleDealer = vehicleDealerService.getVehicleDealerById(financeMain.getAccountsOfficer());
+			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = financeMain.getAccountsOfficer();
+				valueParm[0] = String.valueOf(financeMain.getAccountsOfficer());
 				return getErrorDetails("90501", valueParm);
 			}
-			relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
+			
+			RelationshipOfficer	relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
@@ -1003,4 +1005,9 @@ public class FinanceValidationService {
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
+	@Autowired
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
+	}
+
 }

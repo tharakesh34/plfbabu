@@ -54,7 +54,7 @@ import com.pennant.backend.dao.administration.SecurityRoleDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -324,7 +324,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityRole secRoles= (SecurityRole) auditDetail.getModelData();
 		SecurityRole tempSecurityRole= null;
 		if (secRoles.isWorkflow()){
@@ -353,7 +353,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 
 			if (!secRoles.isWorkflow()){// With out Work flow only new records  
 				if (befSecurityRole !=null){	// Record Already Exists in the table with same roleID  then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 					
 				}	
 
@@ -363,18 +363,18 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 				}*/
 			}else{ // with work flow
 				if (tempSecurityRole!=null ){ // if records already exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 			
 				}
 
 				if (secRoles.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befSecurityRole !=null){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
 						
 					}
 				}else{ // if records not exists in the Main flow table
 					if (befSecurityRole ==null){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 						
 					}
 				}
@@ -388,15 +388,15 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 			if (!secRoles.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befSecurityRole ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
 					
 				}
 
 				if (befSecurityRole!=null && oldSecurityRole!=null && !oldSecurityRole.getLastMntOn().equals(befSecurityRole.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 					}else{
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
 					}
 					
 				}
@@ -404,11 +404,11 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 			}else{
 
 				if (tempSecurityRole==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
 				if (tempSecurityRole!=null && oldSecurityRole!=null && !oldSecurityRole.getLastMntOn().equals(tempSecurityRole.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));		
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));		
 				}
 			}
 		}
@@ -420,7 +420,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 			/*if roleId assigned for any user or group show error message*/
 			if((roleIdCount>0) ||( 0< aRoleIdCount)){
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"49001",parmRoleIdAssigned,null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"49001",parmRoleIdAssigned,null));
 
 			}	
 		}

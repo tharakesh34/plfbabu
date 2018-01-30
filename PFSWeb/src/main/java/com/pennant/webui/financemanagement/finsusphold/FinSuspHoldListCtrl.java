@@ -62,7 +62,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
 import com.pennant.backend.service.financemanagement.FinSuspHoldService;
@@ -223,7 +223,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		if (finSuspHold == null) {
 			String[] errorParm = { getValidationMsg(finSuspHold) };
 
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
 					errorParm, null), getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 		}

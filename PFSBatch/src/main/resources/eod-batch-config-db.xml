@@ -15,7 +15,7 @@
 	<!--         Define schemas for transactions                -->
 	<!-- ====================================================== -->
 	
-	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
@@ -41,9 +41,9 @@
 	<!--             Define the transaction manager             -->
 	<!-- ====================================================== -->
 	
-	<bean id="pfsTransactionManager"
+	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 </beans>

@@ -183,6 +183,17 @@
 												label="${c:l('label_GuarantorUploadDialog_btnUpload.value')}"
 												upload="true" id="btnUploadGuarantorProof" />
 										</hlayout>
+										
+									</row>
+									<row id="row7">
+										<label id="label_GenderCode"
+											value="${c:l('label_GuarantorDetailDialog_GenderCode.value')}" />
+										<hlayout id="hlayout_GenderCode">
+											<space id="space_GenderCode"
+												spacing="2px" sclass="mandatory" />
+											<combobox
+												id="guarantorGenderCode" width="150px" />
+										</hlayout>
 									</row>
 									
 									<row>

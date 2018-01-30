@@ -72,7 +72,7 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -571,7 +571,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else {
 
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-					auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
+					auditHeader.setErrorDetails(new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
 							errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
 					return auditHeader;
 				}
@@ -589,7 +589,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else {
 
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-					auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
+					auditHeader.setErrorDetails(new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
 							errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
 					return auditHeader;
 				}
@@ -779,7 +779,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Commitment commitment = (Commitment) auditDetail.getModelData();
 
 		Commitment tempCommitment = null;
@@ -802,25 +802,25 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 			if (!commitment.isWorkflow()) {// With out Work flow only new records  
 				if (befCommitment != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCommitment != null || tempCommitment != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCommitment == null || tempCommitment != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
 			Commitment facilityRef = getCommitmentDAO().getCommitmentByFacilityRef(commitment.getId(), "_AView");
 			if (facilityRef != null) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 						"41001", errParmFacRef, valueParmFacRef), usrLanguage));
 			}
 		} else {
@@ -828,16 +828,16 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			if (!commitment.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befCommitment == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldCommitment != null && !oldCommitment.getLastMntOn().equals(befCommitment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
 									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
@@ -845,12 +845,12 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			} else {
 
 				if (tempCommitment == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldCommitment != null && !oldCommitment.getLastMntOn().equals(tempCommitment.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}

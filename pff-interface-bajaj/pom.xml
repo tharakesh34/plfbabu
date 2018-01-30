@@ -5,11 +5,14 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
+		<version>4.7.11-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
+	<groupId>${pff.groupId}</groupId>
 	<artifactId>pff-interface-bajaj</artifactId>
+	<version>${pff.version}</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<cxf.version>3.1.8</cxf.version>
