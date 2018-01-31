@@ -8,6 +8,7 @@ import com.pennanttech.controller.SecRolesController;
 import com.pennanttech.pffws.SecRolesRestService;
 import com.pennanttech.pffws.SecRolesSoapService;
 import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
+import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class SecRolesWebServiceImpl implements SecRolesSoapService,SecRolesRestService {
@@ -23,6 +24,9 @@ public class SecRolesWebServiceImpl implements SecRolesSoapService,SecRolesRestS
 	@Override
 	public SecurityRoleDetail getSecRoles(String test) {
 		logger.debug("Entering");
+
+		// for logging purpose
+		APIErrorHandlerService.logReference("SecRoles_" + test);
 
 		SecurityRoleDetail response = new SecurityRoleDetail();
 		response = secRolesController.getSecRoles();

@@ -34,6 +34,9 @@ public class ExtendedFieldDetailWebServiceImpl implements ExtendedFieldDetailRes
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldHeader response = null;
+		// for logging purpose
+		String reference = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
+		APIErrorHandlerService.logReference(reference);
 		try {
 			//ExtendedFieldHeader Validations
 			List<ErrorDetail> errorDetails = extendedFieldDetailService.doValidations(extendedFieldHeader);

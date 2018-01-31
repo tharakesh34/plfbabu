@@ -204,6 +204,9 @@ public class FinanceDetailController extends SummaryDetailService {
 
 				response = getFinanceScheduleResponse(auditHeader);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+				// for failure case logging purpose
+				APIErrorHandlerService.logReference(response.getFinReference());
 				
 				logger.debug("Leaving");
 				return response;

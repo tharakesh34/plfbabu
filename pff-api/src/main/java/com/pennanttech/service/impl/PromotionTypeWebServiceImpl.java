@@ -45,6 +45,9 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 				validationUtility.fieldLevelException();
 			}
 
+			//for failure case logging purpose
+			APIErrorHandlerService.logReference(finTypeReq.getPromotionType());
+
 			// validate financeType
 			String promotionCode = finTypeReq.getPromotionType();
 			Promotion promotion = promotionService.getApprovedPromotionById(promotionCode,
@@ -85,6 +88,8 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 		if (StringUtils.isBlank(policyCode)) {
 			validationUtility.fieldLevelException();
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(policyCode);	
 
 		StepPolicyHeader response = new StepPolicyHeader();
 
@@ -115,6 +120,8 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 		if (StringUtils.isBlank(finType)) {
 			validationUtility.fieldLevelException();
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(finType);	
 
 		FinanceTypeResponse response = new FinanceTypeResponse();
 

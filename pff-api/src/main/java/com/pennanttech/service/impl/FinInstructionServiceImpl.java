@@ -96,6 +96,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, AddRateChangeGroup.class);
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		FinanceDetail financeDetail = null;
 
 		// set Default date formats
@@ -170,6 +173,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -233,6 +239,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, DefermentsGroup.class);
 		FinanceDetail financeDetail = null;
 		
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -299,6 +308,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
 		FinanceDetail financeDetail = null;
 		
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -365,6 +377,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
 		FinanceDetail financeDetail = null;
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -439,6 +454,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -506,6 +524,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -570,6 +591,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		FinanceDetail financeDetail = null;
 		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
 		
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -653,6 +677,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -716,6 +743,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ReSchedulingGroup.class);
 		FinanceDetail financeDetail = null;
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -785,6 +815,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return returnStatus;
 		}
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		
@@ -822,6 +855,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, UpdateLoanPenaltyDetailGroup.class);
 		
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		if (finServiceInstruction.getFinODPenaltyRate() != null) {
 			if (finServiceInstruction.getFinODPenaltyRate().isApplyODPenalty()) {
 				if(finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc() == null ){
@@ -916,6 +952,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		String eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		FinanceDetail financeDetail = null;
@@ -943,6 +982,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, PartialSettlementGroup.class);
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
 		String eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -980,7 +1022,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 		FinanceDetail financeDetail = null;
-		
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
 		// Method for validate instruction details
 		WSReturnStatus status = validateInstructions(finServiceInstruction, moduleDefiner, eventCode);
 		if(StringUtils.isNotBlank(status.getReturnCode())) {

@@ -18,7 +18,8 @@ public class SystemDateWebServiceImpl implements SystemDateRestService, SystemDa
 	@Override
 	public SystemDate getSystemDate() throws ServiceException {
 		logger.debug(Literal.ENTERING);
-
+		// for logging purpose
+		APIErrorHandlerService.logReference("SystemDate");
 		SystemDate systemDate = new SystemDate();
 		try {
 			systemDate.setAppDate(DateUtility.getAppDate());

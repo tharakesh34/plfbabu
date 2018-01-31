@@ -72,6 +72,8 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		if (StringUtils.isBlank(structureCode)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(structureCode);
 
 		LimitStructure limitStructure = null;
 
@@ -106,6 +108,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		validationUtility.validate(limitHeader, LimitSetupGroup.class);
 		LimitHeader response = null;
 
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(limitHeader.getCustGrpCode());
+
 		// validate customer id and customer group id
 		WSReturnStatus returnStatus = doCustomerValidations(limitHeader);
 
@@ -128,6 +133,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// bean validations
 		validationUtility.validate(limitHeader, SaveValidationGroup.class);
+
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(limitHeader.getCustGrpCode());
 
 		AuditHeader auditHeader = getAuditHeader(limitHeader, PennantConstants.TRAN_WF);
 
@@ -166,6 +174,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		// bean validations
 		validationUtility.validate(limitHeader, UpdateValidationGroup.class);
 
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(limitHeader.getCustGrpCode());
+
 		AuditHeader auditHeader = getAuditHeader(limitHeader, PennantConstants.TRAN_WF);
 
 		WSReturnStatus response = null;
@@ -201,6 +212,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// bean validations
 		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(limitTransDetail.getCustGrpCode());
+
 		WSReturnStatus returnStatus = null;
 		try {
 			limitTransactionDetailDAO.deleteReservedLogs(limitTransDetail.getReferenceNumber());
@@ -244,6 +258,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			return returnStatus;
 		}
 		
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(StringUtils.trimToEmpty(limitTransDetail.getCustGrpCode()));
+
 		// validate limit reserve amount for cancellation
 		String finReference = limitTransDetail.getReferenceNumber();
 		String transType = limitTransDetail.getTransactionType();

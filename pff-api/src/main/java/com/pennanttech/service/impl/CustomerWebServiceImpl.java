@@ -121,6 +121,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return response;
 			}
 		}
+		//logging customer phoneNumber in failure case
+		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+		if (customerPhoneNumbers != null && !customerPhoneNumbers.isEmpty()) {
+			CustomerPhoneNumber custPhoneNumber = customerPhoneNumbers.get(0);
+			APIErrorHandlerService.logReference(custPhoneNumber.getPhoneNumber());
+		}
+		
 		//call dedup service for customer duplication
 		if (customerDetails.isDedupReq()) {
 			List<CustomerDedup> dedupList = new ArrayList<CustomerDedup>(1);
@@ -207,7 +214,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = null;
 
 		// validate Customer with given CustCIF

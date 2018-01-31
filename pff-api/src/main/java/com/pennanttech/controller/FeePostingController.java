@@ -34,6 +34,8 @@ public class FeePostingController {
 	 */
 	public WSReturnStatus doFeePostings(FeePostings feePostings) {
 		logger.debug(Literal.ENTERING);
+		// for logging purpose
+		APIErrorHandlerService.logReference(feePostings.getFeeTyeCode());
 		try {
 			doSetPrepareData(feePostings);
 			AuditHeader auditHeader = getAuditHeader(feePostings, PennantConstants.TRAN_WF);

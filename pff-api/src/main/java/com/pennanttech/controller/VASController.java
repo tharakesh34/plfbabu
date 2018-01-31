@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 
@@ -129,6 +130,14 @@ public class VASController {
 			} else {
 				response.setVasReference(vasRecording.getVasReference());
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				//for failure case logging
+				if (StringUtils.isNotBlank(response.getCif())) {
+					APIErrorHandlerService.logReference(response.getCif());
+				} else if (StringUtils.isNotBlank(response.getFinReference())) {
+					APIErrorHandlerService.logReference(response.getFinReference());
+				} else if (StringUtils.isNotBlank(response.getCollateralRef())) {
+					APIErrorHandlerService.logReference(response.getCollateralRef());
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
@@ -179,6 +188,10 @@ public class VASController {
 			} else {
 
 				response = APIErrorHandlerService.getSuccessStatus();
+				// for logging purpose
+				if (StringUtils.isNotBlank(vasDetails.getPrimaryLinkRef())) {
+					APIErrorHandlerService.logReference(vasDetails.getPrimaryLinkRef());
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -197,6 +210,8 @@ public class VASController {
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) {
 		logger.debug("Entering");
 		VASRecordingDetail vASRecordingDetail = null;
+		// for logging purpose
+		APIErrorHandlerService.logReference(vasRecording.getPrimaryLinkRef());				
 		try {
 			List<VASRecording> vasRecordingList;
 			vasRecordingList = vASRecordingService.getVasRecordingsByPrimaryLinkRef(vasRecording.getPrimaryLinkRef());

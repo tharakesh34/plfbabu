@@ -98,6 +98,11 @@ public class FinStatementController extends SummaryDetailService {
 				// generate response info
 				prepareResponse(financeDetail, serviceName);
 
+				// for logging purpose
+				if (StringUtils.isNotBlank(financeDetail.getFinReference())) {
+					APIErrorHandlerService.logReference(financeDetail.getFinReference());
+				}
+
 				stmtResponse.setCustomer(financeDetail.getCustomerDetails());
 				financeDetail.setCustomerDetails(null);
 				finDetailList.add(financeDetail);
@@ -168,6 +173,11 @@ public class FinStatementController extends SummaryDetailService {
 
 				// generate response info
 				prepareResponse(financeDetail, serviceName);
+
+				// for logging purpose
+				if (StringUtils.isNotBlank(financeDetail.getFinReference())) {
+					APIErrorHandlerService.logReference(financeDetail.getFinReference());
+				}
 
 				stmtResponse.setCustomer(financeDetail.getCustomerDetails());
 				financeDetail.setCustomerDetails(null);

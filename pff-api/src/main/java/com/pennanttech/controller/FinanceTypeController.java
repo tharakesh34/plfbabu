@@ -125,6 +125,9 @@ public class FinanceTypeController {
 			}
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			//for logging purpose
+			APIErrorHandlerService.logReference(response.getFinType());
 		}
 
 		logger.debug("Leaving");

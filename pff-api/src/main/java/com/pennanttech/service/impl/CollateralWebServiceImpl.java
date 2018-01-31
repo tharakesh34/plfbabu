@@ -187,6 +187,9 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			// call getCollaterals service
 			collateralDetail = collateralController.getCollaterals(customer.getCustID());
 			
+			// for logging purpose
+			APIErrorHandlerService.logReference(cif);
+
 			if (collateralDetail != null) {
 				collateralDetail.setCif(cif);
 				collateralDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());

@@ -55,7 +55,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			if (StringUtils.isBlank(product)) {
 				validationUtility.fieldLevelException();
 			}
-
+			// for logging purpose
+			APIErrorHandlerService.logReference(product);
 			// validate VasStructre with given productCode
 			vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(product);
 			if (vasConfiguration != null && vasConfiguration.isActive()) {
@@ -93,6 +94,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		// validate recordVAS details as per the API specification
 		// bean validations
 		validationUtility.validate(vasRecording, SaveValidationGroup.class);
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(vasRecording.getProductCode());
 		VASRecording response = null;
 		try {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
@@ -135,6 +138,10 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
+
+			//for failure case logging purpose
+			APIErrorHandlerService.logReference(vasRecording.getVasReference());
+
 			VASRecording vasDetails = vASRecordingService
 					.getVASRecordingByRef(vasRecording.getVasReference(), "", true);
 			if (vasDetails != null) {
@@ -197,6 +204,9 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
+			//for failure case logging purpose
+			APIErrorHandlerService.logReference(vasRecording.getVasReference());
+
 			response = vASRecordingService.getVASRecordingByRef(vasRecording.getVasReference(), "", false);
 
 			if (response != null) {
@@ -233,6 +243,10 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 
 				if (validConfig) {
 					response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					// for logging purpose
+					if (StringUtils.isNotBlank(response.getPrimaryLinkRef())) {
+						APIErrorHandlerService.logReference(response.getPrimaryLinkRef());
+					}
 					return response;
 
 				} else {

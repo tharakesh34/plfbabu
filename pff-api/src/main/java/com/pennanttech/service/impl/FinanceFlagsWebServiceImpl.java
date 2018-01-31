@@ -52,7 +52,8 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 			validationUtility.fieldLevelException();
 		}
 		FinanceFlag response = null;
-		
+		// for  logging purpose
+		APIErrorHandlerService.logReference(finReference);
 		// validate Reference with Origination
 		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
 		if (count <= 0) {
@@ -90,6 +91,10 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 
 		// bean validations
 		validationUtility.validate(financeFlag, SaveValidationGroup.class);
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeFlag.getFinReference());
+
 		if (financeFlag.getFinFlagDetailList().isEmpty()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "flag";
@@ -131,6 +136,10 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 		
 		// bean validations
 		validationUtility.validate(financeFlag, DeleteValidationGroup.class);
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeFlag.getFinReference());
+
 		if (financeFlag.getFinFlagDetailList().isEmpty()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "flag";

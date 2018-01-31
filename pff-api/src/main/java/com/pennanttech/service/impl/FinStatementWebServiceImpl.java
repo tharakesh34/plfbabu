@@ -50,6 +50,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(statementRequest.getCif());
+
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
 			String[] valueParm = new String[1];
@@ -78,6 +81,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(statementRequest.getCif());
+
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
 			String[] valueParm = new String[1];
@@ -107,6 +113,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(statementRequest.getCif());
+
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
 			String[] valueParm = new String[1];
@@ -152,7 +161,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 		}
-
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(statementRequest.getCif());
 		// call controller to get NOC details 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
@@ -197,7 +207,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("65031", valueParm));
 			return finStatementResponse;
 		}
-		
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(statementRequest.getCif());
 		// call controller to get fore-closure letter 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
 		logger.debug("Leaving");

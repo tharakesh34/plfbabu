@@ -40,7 +40,8 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 			if (StringUtils.isBlank(finTypeReq.getFinType())) {
 				validationUtility.fieldLevelException();
 			}
-
+			// for logging purpose
+			APIErrorHandlerService.logReference(finTypeReq.getFinType());
 			// validate financeType
 			String finType = finTypeReq.getFinType();
 			int count = financeTypeService.getFinanceTypeCountById(finType);
@@ -79,6 +80,9 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 			validationUtility.fieldLevelException();
 		}
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(policyCode);
+
 		StepPolicyHeader response = new StepPolicyHeader();
 		
 		// validate policyCode
@@ -107,6 +111,9 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 		if (StringUtils.isBlank(productCode)) {
 			validationUtility.fieldLevelException();
 		}
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(productCode);
 
 		ProductType response = new ProductType();
 		

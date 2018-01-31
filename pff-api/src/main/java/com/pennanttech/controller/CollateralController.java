@@ -73,7 +73,8 @@ public class CollateralController {
 	 */
 	public CollateralStructure getCollateralType(String collateralType) {
 		logger.debug("Entering");
-
+		//for logging purpose
+		APIErrorHandlerService.logReference(collateralType);
 		CollateralStructure collateralStructure = null;
 
 		try {
@@ -110,6 +111,8 @@ public class CollateralController {
 		logger.debug("Entering");
 
 		CollateralSetup response = null;
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(collateralSetup.getDepositorCif());
 		try {
 			doSetRequiredValues(collateralSetup, PROCESS_TYPE_SAVE);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
@@ -159,7 +162,8 @@ public class CollateralController {
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(response.getCollateralRef());
 		logger.debug("Leaving");
 		return response;
 	}
@@ -174,7 +178,8 @@ public class CollateralController {
 	 */
 	public WSReturnStatus updateCollateral(CollateralSetup collateralSetup) {
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
 		try {
 			doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE);
 
@@ -216,7 +221,8 @@ public class CollateralController {
 	 */
 	public WSReturnStatus deleteCollateral(CollateralSetup setup) { 
 		logger.debug("Entering");
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(setup.getCollateralRef());
 		try {
 			// fetch collateral details to delete
 			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(setup.getCollateralRef(),"", false);

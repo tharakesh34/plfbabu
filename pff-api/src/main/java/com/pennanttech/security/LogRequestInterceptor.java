@@ -3,6 +3,8 @@ package com.pennanttech.security;
 import java.io.InputStream;
 import java.sql.Timestamp;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.helpers.IOUtils;
@@ -124,7 +126,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 	private String getServiceName(String endPoint, String method) {
 		String serviceName = "";
 		String[] values = endPoint.split("/");
-		if (StringUtils.equalsIgnoreCase(method, "DELETE") || StringUtils.equalsIgnoreCase(method, "GET")) {
+		if (StringUtils.equalsIgnoreCase(method, HttpMethod.DELETE) || StringUtils.equalsIgnoreCase(method, HttpMethod.GET)) {
 			if (values.length >= 2) {
 				serviceName = values[values.length - 2];
 			}

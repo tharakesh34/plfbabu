@@ -24,16 +24,16 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService,FinanceScheduleSoapService {
-	private static final Logger logger = Logger.getLogger(FinanceScheduleWebServiceImpl.class);
+public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService, FinanceScheduleSoapService {
+	private static final Logger				logger	= Logger.getLogger(FinanceScheduleWebServiceImpl.class);
 
-	private FinanceDetailController financeDetailController;
-	private ValidationUtility validationUtility;
-	private FinanceMainDAO financeMainDAO;
-	
-	private FinanceDataDefaulting financeDataDefaulting;
-	private FinanceDataValidation financeDataValidation;
-	private CustomizeFinanceDataValidation customizeFinanceDataValidation;
+	private FinanceDetailController			financeDetailController;
+	private ValidationUtility				validationUtility;
+	private FinanceMainDAO					financeMainDAO;
+
+	private FinanceDataDefaulting			financeDataDefaulting;
+	private FinanceDataValidation			financeDataValidation;
+	private CustomizeFinanceDataValidation	customizeFinanceDataValidation;
 
 	/**
 	 * Create finance schedule (WIF) by receiving the request from interface.<br>
@@ -47,26 +47,30 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(finScheduleData, SaveValidationGroup.class);
-		
+
 		FinScheduleData financeSchdData = null;
 		try {
-			if(finScheduleData.getFinanceMain() == null){
+			if (finScheduleData.getFinanceMain() == null) {
 				FinScheduleData response = new FinScheduleData();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[1];
 				valueParm[0] = "financeDetail";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502",valueParm));
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
+
+			// for failure case logging purpose
+			APIErrorHandlerService.logReference(finScheduleData.getFinanceMain().getCustCIF());
+
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finScheduleData);
 
-			if(!finScheduleData.getErrorDetails().isEmpty()) {
+			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
 
 			// validate finance data
-			if(!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) {
+			if (!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) {
 				FinanceDetail financeDetail = new FinanceDetail();
 				financeDetail.setFinScheduleData(finScheduleData);
 				CustomerDetails customerDetails = new CustomerDetails();
@@ -74,21 +78,21 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-			if(ImplementationConstants.CLIENT_NFL){
+			if (ImplementationConstants.CLIENT_NFL) {
 				customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData,
 						true);
 			} else {
 				financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
 			}
 
-			if(!finScheduleData.getErrorDetails().isEmpty()) {
+			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
 
 			// call doCreateFinanceSchedule method after successful validations
 			financeSchdData = financeDetailController.doCreateFinanceSchedule(finScheduleData);
 
-			if(financeSchdData != null && financeSchdData.getErrorDetails() != null) {
+			if (financeSchdData != null && financeSchdData.getErrorDetails() != null) {
 				return getErrorMessage(financeSchdData);
 			}
 		} catch (Exception e) {
@@ -106,10 +110,11 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	}
 
 	private FinScheduleData getErrorMessage(FinScheduleData financeSchdData) {
-		for(ErrorDetail erroDetail: financeSchdData.getErrorDetails()) {
+		for (ErrorDetail erroDetail : financeSchdData.getErrorDetails()) {
 			FinScheduleData response = new FinScheduleData();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+			response.setReturnStatus(
+					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
 			return response;
 		}
 		return financeSchdData;
@@ -128,6 +133,8 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 		if (StringUtils.isBlank(finReference)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
 
 		String type = APIConstants.FINANCE_ORIGINATION;
 

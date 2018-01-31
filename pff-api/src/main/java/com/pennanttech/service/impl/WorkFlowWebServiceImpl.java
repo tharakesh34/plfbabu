@@ -37,6 +37,8 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 	@Override
 	public WorkFlowDetails createWorkFlow(WorkFlowDetails workFlowDetails) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		APIErrorHandlerService.logReference("CREATEWORKFLOW");
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		WorkFlowDetails response = new WorkFlowDetails();
 		workFlowDetails.setNewRecord(true);
@@ -76,6 +78,8 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 	@Override
 	public WorkFlowDetails updateWorkFlow(WorkFlowDetails workFlowDetails) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		APIErrorHandlerService.logReference("UPDATEWORKFLOW");
 		WorkFlowDetails response = new WorkFlowDetails();
 		try {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -116,6 +120,8 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 	@Override
 	public WorkFlowDetails getWorkFlowDetails(String workFlowId) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		APIErrorHandlerService.logReference("GETWORKFLOWDETAILS"+workFlowId);				
 		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
 			if(StringUtils.isNotBlank(workFlowId))
 			workFlowDetails.setWorkflowId(Long.valueOf(workFlowId));

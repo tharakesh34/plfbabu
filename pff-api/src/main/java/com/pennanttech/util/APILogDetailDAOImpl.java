@@ -2,6 +2,7 @@ package com.pennanttech.util;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -31,16 +32,16 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 	 * 
 	 */
 	@Override
-	public void saveLogDetails(APILogDetail aPILogDetail) {
+	public void saveLogDetails(APILogDetail apiLogDetail) {
 		logger.debug(Literal.ENTERING);
-
+		validateApiLogDetails(apiLogDetail);
 		StringBuilder insertSql = new StringBuilder("Insert Into PLFAPILOGDETAILS");
 
 		insertSql.append("( cxfID , serviceName, reference, endPoint, method, authKey, clientIP, request,");
 		insertSql.append("response, receivedOn, responseGiven, statusCode, error )");
 		insertSql.append(" Values(:cxfID , :serviceName, :reference, :endPoint, :method, :authKey, :clientIP,");
 		insertSql.append(" :request, :response, :receivedOn, :responseGiven, :statusCode, :error)");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPILogDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(apiLogDetail);
 		logger.trace(Literal.SQL + insertSql.toString());
 		try {
 			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -49,6 +50,21 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	/**
+	 * Method for validate the ApiLogdetails according to the table length.
+	 * 
+	 * @param aPILogDetail
+	 */
+	private void validateApiLogDetails(APILogDetail apiLogDetail) {
+		if (apiLogDetail != null) {
+			if (StringUtils.isNotBlank(apiLogDetail.getReference()) && apiLogDetail.getReference().length() > 20) {
+				String reference = apiLogDetail.getReference();
+				apiLogDetail.setReference(reference.substring(0, 18));
+			}
+		}
+	}
+
 	/**
 	 * @param dataSource the dataSource to set
 	 */
