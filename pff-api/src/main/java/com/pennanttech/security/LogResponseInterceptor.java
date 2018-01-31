@@ -127,6 +127,8 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
 				apiLogDetail.setStatusCode(getStatusCode(String.valueOf(buffer.getPayload())));
 				apiLogDetail.setResponse(String.valueOf(buffer.getPayload()));
+				
+				// save API logging details
 				aPILogDetailDAO.saveLogDetails(apiLogDetail);
 			}
 		}
@@ -150,7 +152,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				}
 			} catch (PathNotFoundException pathNotFoundException) {
 				value = null;
-				LOG.error("Exceptio in getStatusCode", pathNotFoundException);
+				LOG.error("Exception in getStatusCode", pathNotFoundException);
 			}
 			return Objects.toString(value, "");
 		}

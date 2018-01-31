@@ -360,8 +360,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				response = getFinanceDetailResponse(auditHeader);
 				response.setStp(false);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				// for logging purpose
-				APIErrorHandlerService.logReference(finReference);
 
 				logger.debug("Leaving");
 				return response;
@@ -488,6 +486,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (customerDetails != null) {
 				customerDetails.setUserDetails(userDetails);
 				financeDetail.setCustomerDetails(customerDetails);
+				
+				// logging customer CIF as reference for create loan failure cases
+				APIErrorHandlerService.logReference(customerDetails.getCustomer().getCustCIF());
 			}
 		}
 
@@ -1010,6 +1011,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		response.setDocumentDetailsList(null);
 		response.setFinanceCollaterals(null);
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeMain.getFinReference());
+		
 		logger.debug("Leaving");
 
 		return response;

@@ -45,7 +45,7 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 		try {
 			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
