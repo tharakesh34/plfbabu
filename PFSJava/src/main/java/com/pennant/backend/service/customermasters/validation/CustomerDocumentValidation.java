@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -147,21 +148,23 @@ public class CustomerDocumentValidation {
 		}
 
 		// Check whether the document id exists for another customer.
-		if (StringUtils.isNotEmpty(customerDocument.getCustDocTitle())) {
-			if (customerDocumentDAO.isDuplicateTitle(customerDocument.getCustID(),
-					customerDocument.getCustDocCategory(), customerDocument.getCustDocTitle())) {
-				String[] errParm1 = new String[2];
-				String[] valueParm1 = new String[2];
-				if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE)) {
-					valueParm1[0] = PennantApplicationUtil.formatEIDNumber(customerDocument.getCustDocTitle());
-				} else {
-					valueParm1[0] = customerDocument.getCustDocTitle();
+		if(!ImplementationConstants.PAN_DUPLICATE_NOT_ALLOWED) {
+			if (StringUtils.isNotEmpty(customerDocument.getCustDocTitle())) {
+				if (customerDocumentDAO.isDuplicateTitle(customerDocument.getCustID(),
+						customerDocument.getCustDocCategory(), customerDocument.getCustDocTitle())) {
+					String[] errParm1 = new String[2];
+					String[] valueParm1 = new String[2];
+					if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE)) {
+						valueParm1[0] = PennantApplicationUtil.formatEIDNumber(customerDocument.getCustDocTitle());
+					} else {
+						valueParm1[0] = customerDocument.getCustDocTitle();
+					}
+					
+					errParm1[0] = PennantJavaUtil.getLabel("DocumentDetails") + " , "
+							+ customerDocument.getLovDescCustDocCategory() + " "
+							+ PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + valueParm1[0];
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm1, null));
 				}
-
-				errParm1[0] = PennantJavaUtil.getLabel("DocumentDetails") + " , "
-						+ customerDocument.getLovDescCustDocCategory() + " "
-						+ PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + valueParm1[0];
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm1, null));
 			}
 		}
 

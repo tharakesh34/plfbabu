@@ -113,4 +113,5 @@ public class ImplementationConstants {
 
 	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// Excess upfront fees paid by customer to be created as Payable Advise/Excess.
 	public static final boolean	CO_APP_ENQ_SAME_AS_CUST_ENQ	    = true;		// Inquiry menu in the co-applicant should show screen as customer details
+	public static final boolean	PAN_DUPLICATE_NOT_ALLOWED	   	= true; 
 }
