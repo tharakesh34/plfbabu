@@ -121,8 +121,8 @@ import com.pennant.webui.finance.financemain.FinDelegationDeviationCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -730,6 +730,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			aCustomerDocument.setCustDocImage(details.getCustDocImage());
 			aCustomerDocument.setCustDocType(details.getCustDocType());
 			aCustomerDocument.setDocRefId(Long.MIN_VALUE);
+			aCustomerDocument.setDocIsPasswordProtected(details.isDocIsPasswordProtected());
+			aCustomerDocument.setPdfMappingRef(details.getPdfMappingRef());
+			aCustomerDocument.setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1301,6 +1304,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		aDocumentDetails.setLastMntOn(aCustomerDocument.getLastMntOn());
 		aDocumentDetails.setDocIsCustDoc(true);
 		aDocumentDetails.setVersion(aCustomerDocument.getVersion());
+		aDocumentDetails.setDocIsPasswordProtected(aCustomerDocument.isDocIsPasswordProtected());
+		aDocumentDetails.setPdfMappingRef(aCustomerDocument.getPdfMappingRef());
+		aDocumentDetails.setPdfPassWord(aCustomerDocument.getPdfPassWord());
+		aDocumentDetails.setDocIsPdfExtRequired(aCustomerDocument.isDocIsPdfExtRequired());
 		if(aCustomerDocument.getBefImage() != null){
 			aDocumentDetails.setBefImage(getCustDocumentDetail(aCustomerDocument.getBefImage()));
 		}
@@ -1530,11 +1537,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								closeDialog();
 							}
 						}
-						if (custDialogCtrl != null) {
+						if (getCustomerDialogCtrl() != null) {
 							List<CustomerDocument> newCustDocList = new ArrayList<CustomerDocument>();
 							boolean isDocNewRecord = true;
-							if(custDialogCtrl.getCustomerDocumentDetailList() != null){
-								for (CustomerDocument custDocument : custDialogCtrl.getCustomerDocumentDetailList()) {
+							if(getCustomerDialogCtrl().getCustomerDocumentDetailList() != null){
+								for (CustomerDocument custDocument : getCustomerDialogCtrl().getCustomerDocumentDetailList()) {
 									if(StringUtils.trimToEmpty(custDocument.getCustDocCategory()).
 											equalsIgnoreCase(aCustomerDocument.getCustDocCategory())){
 										isDocNewRecord = false;
@@ -1567,7 +1574,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								aCustomerDocument.setRecordType(PennantConstants.RCD_UPD);
 							}
 							newCustDocList.add(aCustomerDocument);
-							custDialogCtrl.doFillDocumentDetails(newCustDocList);
+							getCustomerDialogCtrl().doFillDocumentDetails(newCustDocList);
 							if(isRetailCustomer){
 								if(StringUtils.equals(PennantConstants.CPRCODE,this.custDocType.getValue())){
 									getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());

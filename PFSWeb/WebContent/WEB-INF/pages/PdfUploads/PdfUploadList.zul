@@ -37,14 +37,11 @@
 								<column />
 							</columns>
 							<rows>
-
 								<row>
 									<label id="label_Form_Type"
 										value="${c:l('label_Form_Type.value')}" />
 									<extendedcombobox id="formType" />
 								</row>
-
-
 								<row id="row1" visible="false">
 									<label value="${c:l('label_UploadFileName.value')}" />
 									<hbox spacing="2px">
@@ -58,7 +55,6 @@
 											sclass="z-toolbarbutton" height="21px" />
 									</hbox>
 								</row>
-
 								<row visible="false" id="passwordRow">
 									<label id="label_pdfpasword"
 										value="${c:l('label_pdf_password.value')}" />
@@ -69,18 +65,14 @@
 											type="password" maxlength="200" width="80%" />
 									</hbox>
 								</row>
-
 								<row visible="true">
 									<label id="label_Year"
 										value="${c:l('label_Ext_Year.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
 										<textbox id="year"
 											maxlength="50" width="80%" />
 									</hbox>
 								</row>
-
 							</rows>
 						</grid>
 

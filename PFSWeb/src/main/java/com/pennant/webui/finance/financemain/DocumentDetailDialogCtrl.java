@@ -550,6 +550,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setLastMntOn(finDocumentDetail.getLastMntOn());
 			customerDocument.setVersion(finDocumentDetail.getVersion());
 			customerDocument.setWorkflowId(0);
+			customerDocument.setDocIsPasswordProtected(finDocumentDetail.isDocIsPasswordProtected());
+			customerDocument.setDocIsPdfExtRequired(finDocumentDetail.isDocIsPdfExtRequired());
+			customerDocument.setPdfMappingRef(finDocumentDetail.getPdfMappingRef());
+			customerDocument.setPdfPassWord(finDocumentDetail.getPdfPassWord());
+
 		}
 
 		try {
@@ -694,6 +699,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			jdbcSearchObject.addField("DocIdNumMand");
 			jdbcSearchObject.addField("DocIssuedAuthorityMand");
 			jdbcSearchObject.addTabelName("BMTDocumentTypes");
+			jdbcSearchObject.addField("PdfMappingRef");
+			jdbcSearchObject.addField("DocIsPasswordProtected");
+			jdbcSearchObject.addField("DocIsPdfExtRequired");
 			jdbcSearchObject.addFilterEqual("DocTypeCode", customerDocument.getCustDocCategory());
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<DocumentType> docTypeLIst = pagedListService.getBySearchObject(jdbcSearchObject);

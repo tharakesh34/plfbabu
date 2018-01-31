@@ -43,6 +43,7 @@
 
 package com.pennant.webui.pdfupload;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,14 +62,18 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.document.DocumentParser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -94,7 +99,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private long fileTypeRef = 0;
 	
 	@Autowired
-	private DocumentParser documentParser;
+	private PdfParserCaller pdfParserCaller;
 	
 	
 	/**
@@ -175,8 +180,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	private void checkReadButtonVisibility() {
-		if (StringUtils.isBlank(formType.getValue()) || StringUtils.isBlank(fileName.getText())
-				|| StringUtils.isBlank(year.getText())) {
+		if (StringUtils.isBlank(formType.getValue()) || StringUtils.isBlank(fileName.getText())) {
 			this.btnImport.setDisabled(true);
 		} else {
 			if (passwordRow.isVisible() && StringUtils.isBlank(pdfPassword.getText())) {
@@ -187,11 +191,11 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		}
 	}
 
-	public void onChange$year(Event event) {
+	/*public void onChange$year(Event event) {
 		logger.debug("Entering");
 		checkReadButtonVisibility();
 		logger.debug("Leaving");
-	}
+	}*/
 
 	public void onChange$pdfPassword(Event event) {
 		logger.debug("Entering");
@@ -211,13 +215,12 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		logger.debug("Entering");
 
 		doSetValidation();
+		Map<String, Object> extractionoutPut = null;
+		CustomerDocument customerDocument = prepairCustomerDocument();
 		try {
 			if (fileByte != null) {
 				// entry point
-				Map<String, Object> outPut = documentParser.getValueByTypeNYear(fileByte, fileName.getText(),
-						pdfPassword.getText(), fileTypeRef, year.getText().trim()); 
-				renderResult(outPut);
-				MessageUtil.showMessage("File is processed successfully.");
+				extractionoutPut =  pdfParserCaller.parsePdf(customerDocument); 
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -234,7 +237,35 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 			doRemoveValidation();
 			doClearMessage();
 		}
+		renderResult(mapOutPut(extractionoutPut));
+		MessageUtil.showMessage("File is processed successfully.");
 		logger.debug("Leaving");
+	}
+
+	private CustomerDocument prepairCustomerDocument() {
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setCustDocImage(fileByte);
+		customerDocument.setCustDocName(fileName.getText());
+		customerDocument.setPdfPassWord(pdfPassword.getText());
+		customerDocument.setPdfMappingRef(fileTypeRef);
+		customerDocument.setYear(year.getText().trim());
+		customerDocument.setDocIsPdfExtRequired(true);
+		return customerDocument;
+	}
+
+	private Map<String, Object> mapOutPut(Map<String, Object> outPut) {
+		Map<String, Object> outPutAfterMapping = new HashMap<>();
+		
+		ExtendedFieldCtrl extendedFieldCtrl = new ExtendedFieldCtrl();
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl
+				.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, "USL");
+		 
+		for(ExtendedFieldDetail extendedFieldDetail : extendedFieldHeader.getExtendedFieldDetails()){
+			if(outPut.containsKey(extendedFieldDetail.getFieldName())){
+				outPutAfterMapping.put(extendedFieldDetail.getFieldLabel(), outPut.get(extendedFieldDetail.getFieldName()));
+			}
+		}
+		return outPutAfterMapping;
 	}
 
 	/**
@@ -245,7 +276,6 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		this.fileName.setConstraint("");
 		this.formType.setConstraint("");
 		this.pdfPassword.setConstraint("");
-		this.year.setConstraint("");
 		logger.debug("Leaving ");
 	}
 
@@ -257,7 +287,6 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		this.fileName.setErrorMessage("");
 		this.pdfPassword.setErrorMessage("");
 		this.formType.setErrorMessage("");
-		this.year.setErrorMessage("");
 
 		this.fileName.setText("");
 		this.pdfPassword.setText("");
@@ -304,10 +333,10 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_pdf_password.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
-		if (!this.year.isReadonly()) {
+		/*if (!this.year.isReadonly()) {
 			this.year.setConstraint(new PTStringValidator(Labels.getLabel("label_Ext_Year.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
-		}
+		}*/
 		logger.debug("Leaving ");
 	}
 

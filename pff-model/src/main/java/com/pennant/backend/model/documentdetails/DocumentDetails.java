@@ -62,7 +62,10 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Date docReceivedDate;
 	private boolean docReceived;
 	private String password;
-
+	private boolean docIsPasswordProtected= false;
+	private long pdfMappingRef= Long.MIN_VALUE;
+	private String pdfPassWord;
+	private boolean docIsPdfExtRequired= false;
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
 
@@ -94,6 +97,10 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("docIsCustDoc");
 		excludeFields.add("password");
 		// In the excludeFields method, docImage is added to avoid attachment stored in Audit Tables
+		excludeFields.add("docIsPasswordProtected");
+		excludeFields.add("pdfMappingRef");
+		excludeFields.add("pdfPassWord");
+		excludeFields.add("docIsPdfExtRequired");
 		excludeFields.add("docImage");
 		return excludeFields;
 	}
@@ -358,6 +365,38 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isDocIsPasswordProtected() {
+		return docIsPasswordProtected;
+	}
+
+	public void setDocIsPasswordProtected(boolean docIsPasswordProtected) {
+		this.docIsPasswordProtected = docIsPasswordProtected;
+	}
+
+	public long getPdfMappingRef() {
+		return pdfMappingRef;
+	}
+
+	public void setPdfMappingRef(long pdfMappingRef) {
+		this.pdfMappingRef = pdfMappingRef;
+	}
+
+	public String getPdfPassWord() {
+		return pdfPassWord;
+	}
+
+	public void setPdfPassWord(String pdfPassWord) {
+		this.pdfPassWord = pdfPassWord;
+	}
+
+	public boolean isDocIsPdfExtRequired() {
+		return docIsPdfExtRequired;
+	}
+
+	public void setDocIsPdfExtRequired(boolean docIsPdfExtRequired) {
+		this.docIsPdfExtRequired = docIsPdfExtRequired;
 	}
 
 }

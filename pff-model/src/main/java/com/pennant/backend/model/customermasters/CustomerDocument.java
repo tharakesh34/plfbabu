@@ -113,6 +113,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private long pdfMappingRef= Long.MIN_VALUE;
 	@XmlElement(name="docPassword")
 	private String pdfPassWord;
+	private String year;
 	
 	
 	private String sourceId;
@@ -151,6 +152,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docIsPasswordProtected");
 		excludeFields.add("pdfMappingRef");
 		excludeFields.add("custCtgCode");
+		excludeFields.add("year");
 		return excludeFields;
 	}
 
@@ -466,5 +468,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 
 	public void setPdfPassWord(String pdfPassWord) {
 		this.pdfPassWord = pdfPassWord;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
 	}
 }
