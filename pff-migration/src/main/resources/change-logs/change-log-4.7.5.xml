@@ -89,7 +89,51 @@
 	<changeSet id="04" author="Ganesh.p" dbms="postgresql">
 		<modifyDataType tableName="plfapilogdetails"
 			columnName="error" newDataType="citext" />
-	</changeSet>	
+	</changeSet>
 
-
+	<changeSet id="05" author="Durga Prasad D">
+	<createView viewName="chequedetailmaintain_view" replaceIfExists="true">
+		SELECT t1.headerid,
+    t1.finreference,
+    t1.chequetype,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader_temp t1
+     JOIN financemain t2 ON t1.finreference::text = t2.finreference::text
+UNION ALL
+ SELECT t1.headerid,
+    t1.finreference,
+    t1.chequetype,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+     JOIN financemain t2 ON t1.finreference::text = t2.finreference::text
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequeheader_temp
+          WHERE chequeheader_temp.headerid = t1.headerid))
+		 </createView>
+</changeSet>
+		 
 </databaseChangeLog>
