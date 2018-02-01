@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -584,6 +585,42 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		}
 		logger.debug("Leaving");
 		return recordCount;
+	}
+
+	/**
+	 * Method for fetch duplicate CIF's for same document
+	 * 
+	 * @param custId
+	 * @param docCategory
+	 * @param docNumber
+	 * @return List<String>
+	 */
+	@Override
+	public List<String> getDuplicateDocByTitle(long custId, String docCategory, String docNumber) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the parameter source.
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		//source.addValue("CustId", custId);
+		source.addValue("CustDocCategory", docCategory);
+		source.addValue("CustDocTitle", docNumber);
+		
+		// Check whether the document id exists for another customer.
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT T1.CustCIF FROM Customers T1 INNER JOIN CustomerDocuments_View T2 ");
+		selectSql.append(" ON T1.CustId = T2.CustId WHERE T2.CustDocCategory = :CustDocCategory ");
+		selectSql.append(" AND T2.CustDocTitle = :CustDocTitle");
+
+		logger.trace(Literal.SQL + selectSql);
+		List<String> duplicateCIFs = new ArrayList<>();
+		try {
+			duplicateCIFs = namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);			
+		} catch (EmptyResultDataAccessException dae) {
+			Collections.emptyList();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return duplicateCIFs;
 	}
 
 }

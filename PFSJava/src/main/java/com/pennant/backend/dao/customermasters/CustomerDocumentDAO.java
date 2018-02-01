@@ -79,4 +79,6 @@ public interface CustomerDocumentDAO {
 	int getVersion(long custId, String docType);
 
 	int getCustCountryCount(String countryCode);
+
+	List<String> getDuplicateDocByTitle(long custId, String docCategory, String docNumber);
 }

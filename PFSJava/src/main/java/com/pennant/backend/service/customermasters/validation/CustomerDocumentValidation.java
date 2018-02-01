@@ -2,6 +2,7 @@ package com.pennant.backend.service.customermasters.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
@@ -150,20 +151,20 @@ public class CustomerDocumentValidation {
 		// Check whether the document id exists for another customer.
 		if(!ImplementationConstants.PAN_DUPLICATE_NOT_ALLOWED) {
 			if (StringUtils.isNotEmpty(customerDocument.getCustDocTitle())) {
-				if (customerDocumentDAO.isDuplicateTitle(customerDocument.getCustID(),
-						customerDocument.getCustDocCategory(), customerDocument.getCustDocTitle())) {
+				long custId = customerDocument.getCustID();
+				String docCategory = customerDocument.getCustDocCategory();
+				String docNumber = customerDocument.getCustDocTitle();
+				List<String> duplicateCIFs = customerDocumentDAO.getDuplicateDocByTitle(custId, docCategory, docNumber);
+				if(!duplicateCIFs.isEmpty()) {
 					String[] errParm1 = new String[2];
-					String[] valueParm1 = new String[2];
 					if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE)) {
-						valueParm1[0] = PennantApplicationUtil.formatEIDNumber(customerDocument.getCustDocTitle());
-					} else {
-						valueParm1[0] = customerDocument.getCustDocTitle();
+						docNumber = PennantApplicationUtil.formatEIDNumber(docNumber);
 					}
+					errParm1[0] = PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + docNumber;
+					String cifs = duplicateCIFs.stream().collect(Collectors.joining(","));
+					errParm1[1] = PennantJavaUtil.getLabel("Customer_CIF") + ":" + cifs;
 					
-					errParm1[0] = PennantJavaUtil.getLabel("DocumentDetails") + " , "
-							+ customerDocument.getLovDescCustDocCategory() + " "
-							+ PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + valueParm1[0];
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm1, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errParm1, null));
 				}
 			}
 		}
