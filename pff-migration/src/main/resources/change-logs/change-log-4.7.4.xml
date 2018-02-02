@@ -751,9 +751,9 @@ INSERT INTO documentdataconfig (year, label, labeltext, labelvaluetype, defaultv
 		UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 	</sql>
 </changeSet>
-<changeSet id="7.3" author="Jayant">
+<!-- <changeSet id="7.3" author="Jayant">
 	<renameColumn tableName="licencefile" oldColumnName="fileid" newColumnName="Id"/>
-</changeSet>
+</changeSet> -->
 <changeSet author="Amit" id="8">
 		<modifyDataType tableName="DOCUMENTDATACONFIG" columnName="Formula"
 			newDataType="nvarchar(1500)" />
