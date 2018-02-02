@@ -4038,8 +4038,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		default:
 			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {
-				//boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
-				if(true) {
+				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
+				if(taskExecuted) {
 					return auditHeader;
 				}
 			}
@@ -5733,7 +5733,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		getFinMandateService().validateMandate(auditDetail, financeDetail);
 		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
-			getFinMandateService().promptMandate(auditDetail, financeDetail);
+			//getFinMandateService().promptMandate(auditDetail, financeDetail);//FIXME: Override issue to be fixed
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
