@@ -279,6 +279,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		loggedInUser.setBrowserType(getBrowser());
 		loggedInUser.setLogonTime(DateUtility.getTimestamp(new Date()));
 		loggedInUser.setAuthType(user.getAuthType());
+		loggedInUser.setUserType(user.getUserType());
 
 		return loggedInUser;
 	}
