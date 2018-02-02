@@ -74,6 +74,7 @@ public class LoggedInUser implements Serializable {
 	private Timestamp logonTime;
 	private long loginLogId;
 	private String authType;
+	private String userType; 
 
 	public LoggedInUser() {
 		super();
@@ -278,5 +279,13 @@ public class LoggedInUser implements Serializable {
 
 	public void setAuthType(String authType) {
 		this.authType = authType;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 }
