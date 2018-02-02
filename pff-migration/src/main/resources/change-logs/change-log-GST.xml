@@ -1210,5 +1210,49 @@
 			<where> RuleModule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="66" author="Kesav">
+		<createView viewName="FINTAXDETAILS_TVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS_TEMP T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="67" author="Kesav">
+		<createView viewName="FINTAXDETAILS_AVIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="68" author="Kesav">
+		<createView viewName="FINTAXDETAILS_VIEW" replaceIfExists="true">
+			SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS_TEMP T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+			UNION ALL
+					SELECT  T1.FINTAXID, T1.FEEID, T1.PAIDCGST, T1.PAIDIGST, T1.PAIDUGST, T1.PAIDSGST, T1.PAIDTGST, T1.NETCGST, T1.NETIGST, T1.NETUGST, T1.NETSGST,
+					T1.NETTGST, T1.REMFEECGST, T1.REMFEEIGST, T1.REMFEEUGST, T1.REMFEESGST, T1.REMFEETGST, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+          			T1.ActualCGST, T1.ActualIGST, T1.ActualUGST, T1.ActualSGST, T1.ActualTGST
+			FROM    FINTAXDETAILS T1 LEFT JOIN 
+					FINFEEDetail T2 ON T1.FEEID = T2.FEEID
+			WHERE     	NOT EXISTS
+                          (SELECT     1
+                            FROM          FINTAXDETAILS_TEMP
+                            WHERE      FeeID = T1.FeeID AND FINTAXID = T1.FINTAXID)
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
