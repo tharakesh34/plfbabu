@@ -1145,6 +1145,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		customerDocument.setCustDocType(documentDetails.getDoctype());
 		customerDocument.setCustDocCategory(documentDetails.getDocCategory());
 		customerDocument.setCustDocName(documentDetails.getDocName());
+		customerDocument.setPdfPassWord(documentDetails.getPdfPassWord());
 		customerDocument.setLovDescCustDocCategory(documentDetails.getLovDescDocCategoryName());
 
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

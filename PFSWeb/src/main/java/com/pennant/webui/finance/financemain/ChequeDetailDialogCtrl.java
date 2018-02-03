@@ -1291,7 +1291,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 									if (fromLoan) {
 										parenttab.setSelected(true);
 									}
-									throw new WrongValueException(emiAmountLc, Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+									throw new WrongValueException(this.listBoxChequeDetail, Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
 								} else {
 									break;
 								}
