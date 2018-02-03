@@ -7,6 +7,12 @@
 <property name="call.concatenate" value="||" dbms="oracle" />
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
+<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
 
 	<!-- Fee Types -->
 	<changeSet id="1" author="Kesav">
