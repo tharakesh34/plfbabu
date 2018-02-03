@@ -81,7 +81,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	private enum FieldType {
 		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, 
 		TIME, INT, LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, 
-		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE
+		ACCOUNT, FREQUENCY, BASERATE, ADDRESS, PHONE, LISTFIELD
 	}
 
 	// Spring Named JDBC Template
@@ -493,6 +493,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		case MULTISTATICCOMBO:
 		case MULTIEXTENDEDCOMBO:
 		case RADIO:
+		case LISTFIELD:	
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" varchar2(");
 				datatype.append(fieldDetail.getFieldLength());

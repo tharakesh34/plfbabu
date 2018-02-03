@@ -407,7 +407,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldName.setValue(aExtendedFieldDetail.getFieldName());
 
 		fillComboBox(this.fieldType,aExtendedFieldDetail.getFieldType(),PennantStaticListUtil.getFieldType(),"");
-		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getGroupBoxList(), "");
+		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getParentElements(), "");
 
 		if(isTextType()){
 			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint(),PennantStaticListUtil.getRegexType(),"");
@@ -453,18 +453,20 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	}
 
 	/**
-	 * Method for get the list of parent components in the ExtendedFields except the same parent element and button.
+	 * Method for get the list of parent components in the ExtendedFields except the same parent element, button and
+	 * listbox.
 	 * 
 	 * @return parentList
 	 */
-	private List<ValueLabel> getGroupBoxList() {
+	private List<ValueLabel> getParentElements() {
 		List<ValueLabel> parentList = null;
 		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 		if (extendedFieldDetail != null) {
 			parentList = new ArrayList<ValueLabel>();
 			for (ExtendedFieldDetail detail : extendedFieldDetail) {
 				if (!detail.isInputElement() && !detail.getFieldName().equals(this.fieldName.getValue())
-						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, detail.getFieldType())) {
+						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, detail.getFieldType())
+						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
 					parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
 				}
 			}
@@ -472,15 +474,42 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		return parentList;
 	}
 
+	/**
+	 * Method for get the list of ListBoxs in the Extendedfielddetail's.
+	 * 
+	 * @return listBoxs
+	 */
+	private List<ValueLabel> getListBoxElements() {
+		List<ValueLabel> listBoxs = null;
+		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		if (extendedFieldDetail != null) {
+			listBoxs = new ArrayList<ValueLabel>();
+			for (ExtendedFieldDetail detail : extendedFieldDetail) {
+				if (!detail.isInputElement()
+						&& StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
+					listBoxs.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
+				}
+			}
+		}
+		return listBoxs;
+	}
+
+	/**
+	 * Method for find is there any child elements containing that element or not.
+	 * 
+	 * @param groupName
+	 * @return
+	 */
 	private boolean isGroupContainChilds(String groupName) {
-		List<ExtendedFieldDetail> extendedFieldDetail=getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
-		for(ExtendedFieldDetail detail:extendedFieldDetail){
-			if(StringUtils.equals(groupName,detail.getParentTag())){
+		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		for (ExtendedFieldDetail detail : extendedFieldDetail) {
+			if (StringUtils.equals(groupName, detail.getParentTag())) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -616,7 +645,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TEXT,aExtendedFieldDetail.getFieldType())
 				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT,aExtendedFieldDetail.getFieldType()))) {
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT,aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD,aExtendedFieldDetail.getFieldType()))) {
 			aExtendedFieldDetail.setFieldPrec(0);
 			aExtendedFieldDetail.setFieldList("");
 			aExtendedFieldDetail.setFieldDefaultValue(this.fieldDefaultValue.getValue());
@@ -962,7 +992,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		try{
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, aExtendedFieldDetail.getFieldType())
 					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,aExtendedFieldDetail.getFieldType())
-					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON,aExtendedFieldDetail.getFieldType())) {
+					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON,aExtendedFieldDetail.getFieldType())
+					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX,aExtendedFieldDetail.getFieldType())) {
 				aExtendedFieldDetail.setInputElement(false);
 			}else{
 				aExtendedFieldDetail.setInputElement(true);
@@ -976,6 +1007,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			wve.add(we);
 		}
 		
+		try {
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, aExtendedFieldDetail.getFieldType())) {
+				if (this.parentTag.getSelectedIndex() == 0) {
+					throw new WrongValueException(this.parentTag, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_Parent.value") }));
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -990,6 +1032,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		aExtendedFieldDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
+
 
 	/**
 	 * Opens the Dialog window modal.
@@ -1083,6 +1126,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				maxLength = 8;
 			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LONG)) {
 				maxLength = 12;
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LISTFIELD)) {
+				minLength = 1000;
+				maxLength = 5000;
 			}
 
 			if (maxLength != 0) {
@@ -1738,7 +1784,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 	private boolean isListType() {
 		String type = this.fieldType.getSelectedItem().getValue().toString();
-		return "|EXTENDEDCOMBO|STATICCOMBO|MULTISTATICCOMBO|MULTIEXTENDEDCOMBO|RADIO|".contains("|" + type + "|");
+		return "|EXTENDEDCOMBO|STATICCOMBO|MULTISTATICCOMBO|MULTIEXTENDEDCOMBO|RADIO|LISTFIELD|".contains("|" + type + "|");
 	}
 
 	private void onFieldTypeChange(String fieldType, boolean newSelection) {
@@ -1962,12 +2008,13 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, fieldType)
-					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)) {
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, fieldType)
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, fieldType)) {
 				this.rowfieldDefaultValue.setVisible(false);
 				this.rowMandatory.setVisible(false);
 				this.rowfieldIsEditable.setVisible(false);
 			} else {
-
 				this.rowfieldIsEditable.setVisible(true);
 			}
 
@@ -1976,10 +2023,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			} else {
 				this.rowfieldparentTag.setVisible(true);
 			}
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, fieldType)){
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, fieldType)) {
 				this.rowMandatory.setVisible(false);
 			}
-			
+
+			//For listfield
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, fieldType)) {
+				fillComboBox(this.parentTag, "", getListBoxElements(), "");
+			} else {
+				fillComboBox(this.parentTag, "", getParentElements(), "");
+			}
+
 			if(this.rowfieldLength.isVisible()){
 				if(isTextType()){
 					this.fieldDefaultValue.setStyle("text-align:left;");

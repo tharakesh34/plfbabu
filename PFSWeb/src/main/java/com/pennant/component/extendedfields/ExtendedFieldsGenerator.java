@@ -41,6 +41,8 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listhead;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Radio;
@@ -106,6 +108,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private int					ccyFormat;
 	private int					rowWidth;
 	private final String		TABPANEL_ID			= "Tab_Panel";
+	private final String		DELIMETR_DOUBLE_BAR	= "\\|\\|";
 	private Row					row;
 	private Tab					topLevelTab;// To through wrong value exceptions
 
@@ -137,12 +140,15 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		List<ExtendedFieldDetail> containers = new ArrayList<ExtendedFieldDetail>();
 		List<ExtendedFieldDetail> inputElemetswithoutParents = new ArrayList<ExtendedFieldDetail>();
+		List<ExtendedFieldDetail> inputElemetswithParents = new ArrayList<ExtendedFieldDetail>();
 
 		// group the Containers and inputElements
 		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
 			if (extendedFieldDetail.isInputElement()) {
 				if (extendedFieldDetail.getParentTag() == null) {
 					inputElemetswithoutParents.add(extendedFieldDetail);
+				} else {
+					inputElemetswithParents.add(extendedFieldDetail);
 				}
 			} else {
 				containers.add(extendedFieldDetail);
@@ -154,104 +160,70 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (!inputElemetswithoutParents.isEmpty()) {
 			for (int i = 0; i < inputElemetswithoutParents.size(); i++) {
 				ExtendedFieldDetail inputElemetswithoutParent = inputElemetswithoutParents.get(i);
-				renderComponents(inputElemetswithoutParent, columnCount, tabpanel, isReadOnly, newRecord, i);
+				renderComponents(inputElemetswithoutParent, columnCount, this.tabpanel, isReadOnly, newRecord, i);
 			}
 		}
 
+		//at first render all the containers and then.
 		//render the elements which is having a parent container
 		Collections.sort(containers, new ExtendedFieldsComparator());
 		for (ExtendedFieldDetail containerElement : containers) {
-			Component existting = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
-			if (existting == null) {
-				prepareGroupdElements(newRecord, columnCount, extendedFieldDetails, containerElement, tabpanel);
+			String parentTag = containerElement.getParentTag();
+			if (parentTag == null) {
+				processContainer(containerElement, this.tabpanel);
+			} else {
+				Component existting = this.tabpanel.getFellowIfAny(parentTag);
+				if (existting instanceof Tab) {
+					existting = this.tabpanel.getFellowIfAny(TABPANEL_ID + parentTag);
+				}
+				if (existting != null) {
+					processContainer(containerElement, existting);
+				}
 			}
+
+			if (containerElement.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX)) {
+				//renders ListBox
+				processListBoxrender(containerElement, inputElemetswithParents);
+
+			} else {
+				//create childs
+				processChildElements(newRecord, columnCount, inputElemetswithParents, containerElement);
+			}
+
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for Group the elements based on parent child relation between components and render the elements. if
-	 * parent contains subParents also it is calling itself, it is a recursive method.
+	 * Method for render all the child's of the container element.
+	 * 
 	 * 
 	 * @param newRecord
 	 * @param columnCount
-	 * @param extendedFieldDetails
+	 * @param inputElemetswithParents
 	 * @param containerElement
-	 * @param rootElement
 	 * @throws ParseException
 	 */
-	private void prepareGroupdElements(boolean newRecord, int columnCount,
-			List<ExtendedFieldDetail> extendedFieldDetails, ExtendedFieldDetail containerElement, Component rootElement)
+	private void processChildElements(boolean newRecord, int columnCount,
+			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement)
 			throws ParseException {
+		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
+		if (childlist != null && !childlist.isEmpty()) {
+			Collections.sort(childlist, new ExtendedFieldsComparator());
+			int i = 0;
+			for (ExtendedFieldDetail extendedFieldDetail : childlist) {
 
-		Component parent = createContainer(containerElement, rootElement);
-
-		List<ExtendedFieldDetail> childs = getChilds(extendedFieldDetails, containerElement);
-		Collections.sort(childs, new ExtendedFieldsComparator());
-		for (int i = 0; i < childs.size(); i++) {
-			ExtendedFieldDetail child = childs.get(i);
-
-			//if the child is also a parent then creates the container and call the prepareGroupdElements method to
-			//group their child's and then render the elements. if the child is not a parent then render the elements.
-			if (!child.isInputElement() && child.getParentTag() != null) {
-				Component childContainer = null;
-				if (containerElement.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL)) {
-					childContainer = this.tabpanel.getFellowIfAny(TABPANEL_ID + containerElement.getFieldName());
-				} else {
-					childContainer = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
+				String childparentTag = extendedFieldDetail.getParentTag();
+				Component existting = tabpanel.getFellowIfAny(childparentTag);
+				if (existting instanceof Tab) {
+					existting = this.tabpanel.getFellowIfAny(TABPANEL_ID + childparentTag);
 				}
-
-				prepareGroupdElements(newRecord, columnCount, extendedFieldDetails, child, childContainer);
-			} else {
-				renderComponents(child, columnCount, parent, isReadOnly, newRecord, i);
+				if (existting != null) {
+					renderComponents(extendedFieldDetail, columnCount, existting, isReadOnly, newRecord, i);
+				}
+				i++;
 			}
-		}
-	}
-
-	/**
-	 * Method to group the list of child's for given parent
-	 * 
-	 * @param extendedFieldDetails
-	 * @param parent
-	 * @return
-	 */
-	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> extendedFieldDetails,
-			ExtendedFieldDetail parent) {
-
-		List<ExtendedFieldDetail> parentinputElemets = new ArrayList<ExtendedFieldDetail>();
-		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
-			if (StringUtils.equals(extendedFieldDetail.getParentTag(), parent.getFieldName())) {
-				parentinputElemets.add(extendedFieldDetail);
-			}
-		}
-		return parentinputElemets;
-	}
-
-	/**
-	 * Method for create the Container, it creates the container based on the fieldType and append that container to the
-	 * rootElement
-	 * 
-	 * @param container
-	 * @param rootElement
-	 * @return
-	 */
-	private Component createContainer(ExtendedFieldDetail container, Component rootElement) {
-		String key = container.getFieldType().trim();
-		switch (key) {
-		case ExtendedFieldConstants.FIELDTYPE_GROUPBOX:
-			Groupbox groupbox = getGroupbox(container);
-			rootElement.appendChild(groupbox);
-			return groupbox;
-		case ExtendedFieldConstants.FIELDTYPE_TABPANEL:
-			return getTabpanel(container);
-		case ExtendedFieldConstants.FIELDTYPE_BUTTON:
-			Button button = getButton(container);
-			rootElement.appendChild(button);
-			return button;
-		default:
-			return this.tabpanel;
-
 		}
 	}
 
@@ -274,37 +246,79 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			rowWidth = 220;//default
 		}
 
-		Grid grid = new Grid();
-		grid.setStyle("border:0px");
-		grid.setSclass("GridLayoutNoBorder");
-		parentComponent.appendChild(grid);
-
-		Columns columns = new Columns();
-		grid.appendChild(columns);
-		Rows rows = new Rows();
-		grid.appendChild(rows);
-
-		if (columnCount == 2) {
-			columns.appendChild(getColumn("220px"));
-			columns.appendChild(getColumn());
-			columns.appendChild(getColumn("220px"));
-			columns.appendChild(getColumn());
-		} else {
-			columns.appendChild(new Column("", null, "250px"));
-			columns.appendChild(new Column("", null));
-		}
-
-		Hbox hbox = null;
+		Grid grid = getGrid(parentComponent, columnCount);
+		Rows rows = grid.getRows();
 
 		row = getRow(columnCount, row, i);
-		hbox = new Hbox();
+		Hbox hbox = new Hbox();
 		row.appendChild(getLabel(detail.getFieldLabel()));
 		row.appendChild(hbox);
 
+		Component component = getComponent(detail, isReadOnly, hbox, newRecord, parentComponent);
+
+		if (component != null) {
+			readOnlyComponent(!detail.isEditable(), component);
+			hbox.appendChild(component);
+		}
+
+		rows.appendChild(row);
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for create the Container, it creates the container based on the fieldType and append that container to the
+	 * rootElement
+	 * 
+	 * @param container
+	 * @param rootElement
+	 * @return
+	 */
+	private Component processContainer(ExtendedFieldDetail container, Component rootElement) {
+		String key = container.getFieldType().trim();
+
+		Component existting = rootElement.getFellowIfAny(container.getFieldName());
+		if (existting != null) {
+			return existting;
+		}
+
+		switch (key) {
+		case ExtendedFieldConstants.FIELDTYPE_GROUPBOX:
+			Groupbox groupbox = getGroupbox(container);
+			rootElement.appendChild(groupbox);
+			return groupbox;
+		case ExtendedFieldConstants.FIELDTYPE_TABPANEL:
+			return getTabpanel(container);
+		case ExtendedFieldConstants.FIELDTYPE_BUTTON:
+			Button button = getButton(container);
+			rootElement.appendChild(button);
+			return button;
+		case ExtendedFieldConstants.FIELDTYPE_LISTBOX:
+			Listbox listbox = getListBox(container);
+			Listhead listhead = new Listhead();
+			listbox.appendChild(listhead);
+			rootElement.appendChild(listbox);
+			return listbox;
+		default:
+			return this.tabpanel;
+
+		}
+	}
+
+	/**
+	 * Method to create a component based on their fieldType
+	 * 
+	 * @param detail
+	 * @param isReadOnly
+	 * @param hbox
+	 * @param newRecord
+	 * @param parentComponent
+	 * @return
+	 */
+	private Component getComponent(ExtendedFieldDetail detail, boolean isReadOnly, Hbox hbox, boolean newRecord,
+			Component parentComponent) {
 		String key = detail.getFieldType().trim();
-
 		Component component = null;
-
 		switch (key) {
 
 		case ExtendedFieldConstants.FIELDTYPE_TEXT:
@@ -407,26 +421,126 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			break;
 		default:
 			break;
+
 		}
-		if (component != null) {
-			readOnlyComponent(!detail.isEditable(), component);
-			hbox.appendChild(component);
+		return component;
+	}
+	
+	/**
+	 * Method for Create Grid component and append column and rows to that based on columncount
+	 * 
+	 * @param parentComponent
+	 * @param columnCount
+	 * @return
+	 */
+	private Grid getGrid(Component parentComponent, int columnCount) {
+
+		Grid grid = new Grid();
+		grid.setStyle("border:0px");
+		grid.setSclass("GridLayoutNoBorder");
+
+		Rows rows = new Rows();
+		grid.appendChild(rows);
+
+		Columns columns = new Columns();
+		grid.appendChild(columns);
+
+		if (columnCount == 2) {
+			columns.appendChild(getColumn("220px"));
+			columns.appendChild(getColumn());
+			columns.appendChild(getColumn("220px"));
+			columns.appendChild(getColumn());
+		} else {
+			columns.appendChild(new Column("", null, "250px"));
+			columns.appendChild(new Column("", null));
 		}
 
-		rows.appendChild(row);
+		parentComponent.appendChild(grid);
+		return grid;
+	}
+	
+	/**
+	 * Method for process all the ListFields of the ListBox container element and render the List
+	 * 
+	 * @param containerElement
+	 * @param inputElemetswithParents
+	 */
+	private void processListBoxrender(ExtendedFieldDetail containerElement,List<ExtendedFieldDetail> inputElemetswithParents) {
+	
+		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
+		if (childlist != null && !childlist.isEmpty()) {
+			Component component = this.tabpanel.getFellowIfAny(containerElement.getFieldName());
+			if (component instanceof Listbox) {
+				Listbox listbox = (Listbox) component;
+				Collections.sort(childlist, new ExtendedFieldsComparator());
+				for (ExtendedFieldDetail extendedFieldDetail : childlist) {
+					Listheader listheader = new Listheader(extendedFieldDetail.getFieldLabel());
+					listbox.getListhead().appendChild(listheader);
+				}
 
-		logger.debug(Literal.LEAVING);
+				int maxlenght = getLoopIndex(childlist);
+
+				for (int i = 0; i < maxlenght; i++) {
+
+					Listitem listitem = new Listitem();
+					for (ExtendedFieldDetail extendedFieldDetail : childlist) {
+						String label = "";
+						String[] dataarray = null;
+						Object data = this.fieldValueMap.get(extendedFieldDetail.getFieldName());
+						if (data != null) {
+							String commadata = (String) data;
+							dataarray = commadata.split(DELIMETR_DOUBLE_BAR);
+							if (dataarray != null && i < dataarray.length) {
+								label = dataarray[i];
+							}
+						}
+
+						Listcell listcell = new Listcell(label);
+						listitem.appendChild(listcell);
+					}
+					listitem.setParent(listbox);
+				}
+			}
+		}
 	}
 
-	private Component getColumn(String width) {
-		Column column = new Column();
-		column.setWidth(width);
-		return column;
+	/**
+	 * method to find the max lenght for ListItem among all the Childs
+	 * 
+	 * @param childlist
+	 * @return
+	 */
+	private int getLoopIndex(List<ExtendedFieldDetail> childlist) {
+		int maxlenght = 0;
+		for (ExtendedFieldDetail extendedFieldDetail : childlist) {
+			Object data = this.fieldValueMap.get(extendedFieldDetail.getFieldName());
+			if (data != null) {
+				String commadata = (String) data;
+				String[] dataarray = commadata.split(DELIMETR_DOUBLE_BAR);
+				if (maxlenght < dataarray.length) {
+					maxlenght = dataarray.length;
+				}
+			}
+		}
+		return maxlenght;
 	}
 
-	private Component getColumn() {
-		Column column = new Column();
-		return column;
+	/**
+	 * Method to group the list of child's for given parent
+	 * 
+	 * @param extendedFieldDetails
+	 * @param parentgrid
+	 * @return
+	 */
+	private List<ExtendedFieldDetail> getChilds(List<ExtendedFieldDetail> extendedFieldDetails,ExtendedFieldDetail parent) {
+		List<ExtendedFieldDetail> parentinputElemets = new ArrayList<ExtendedFieldDetail>();
+		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
+			if (StringUtils.equals(extendedFieldDetail.getParentTag(), parent.getFieldName())
+					&& extendedFieldDetail.isInputElement()) {
+				parentinputElemets.add(extendedFieldDetail);
+			}
+		}
+		return parentinputElemets;
 	}
 
 	/**
@@ -442,8 +556,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		Map<String, Object> values = new HashMap<String, Object>();
 		List<Component> compList = new ArrayList<Component>();
-		List<ExtendedFieldDetail> notInputElements=new ArrayList<>();
-		HashMap<ExtendedFieldDetail , WrongValueException> wveMap =new HashMap<>();
+		List<ExtendedFieldDetail> notInputElements = new ArrayList<>();
+		HashMap<ExtendedFieldDetail, WrongValueException> wveMap = new HashMap<>();
 
 		if (extendedFieldDetailList == null) {
 			return values;
@@ -750,7 +864,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 			}
 		}
-		showErrorDetails(wveMap, compList,notInputElements);
+		showErrorDetails(wveMap, compList, notInputElements);
 
 		logger.debug(Literal.LEAVING);
 		return values;
@@ -938,7 +1052,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for Showing Error Details
 	 * 
 	 * @param wveMap
-	 * @param notInputElements 
+	 * @param notInputElements
 	 */
 	private void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<Component> compList,
 			List<ExtendedFieldDetail> notInputElements) {
@@ -1024,7 +1138,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Tab parTab = (Tab) fellowIfAny;
 						parTab.setSelected(true);
 					}
-					
+
 					// throw the excpetions
 					List<WrongValueException> list = entryset.getValue();
 					WrongValueException[] wvea = new WrongValueException[list.size()];
@@ -1048,6 +1162,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	/**
 	 * Group exception based on the tab
+	 * 
 	 * @param wveMap
 	 * @param nonInputElements
 	 * @return
@@ -1057,7 +1172,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		HashMap<ExtendedFieldDetail, List<WrongValueException>> map = new HashMap<>();
 		for (Entry<ExtendedFieldDetail, WrongValueException> entryset : wveMap.entrySet()) {
-			
+
 			ExtendedFieldDetail extDetails = entryset.getKey();
 			WrongValueException value = entryset.getValue();
 
@@ -1065,7 +1180,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			if (extParentDetails != null) {
 				if (map.containsKey(extParentDetails)) {
 					map.get(extParentDetails).add(value);
-				}else{
+				} else {
 					List<WrongValueException> errorlist = new ArrayList<>();
 					errorlist.add(value);
 					map.put(extParentDetails, errorlist);
@@ -1081,11 +1196,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	/**
 	 * Method to get the parent for the child component
+	 * 
 	 * @param extDetails
 	 * @param notInputElements
 	 * @return
 	 */
-	private ExtendedFieldDetail getFirstTabParentIfAny(ExtendedFieldDetail extDetails, List<ExtendedFieldDetail> notInputElements) {
+	private ExtendedFieldDetail getFirstTabParentIfAny(ExtendedFieldDetail extDetails,
+			List<ExtendedFieldDetail> notInputElements) {
 		if (StringUtils.isNotBlank(extDetails.getParentTag())) {
 			for (ExtendedFieldDetail extendedFieldDetail : notInputElements) {
 				if (StringUtils.equals(extendedFieldDetail.getFieldName(), extDetails.getParentTag())) {
@@ -1106,8 +1223,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * Method for getting the Row
 	 * 
-	 * @param int
-	 *            columnCount
+	 * @param intreturn
+	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
 	 * @param Row
 	 *            row
 	 * @param int
@@ -1559,14 +1676,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 			//checkbox.setChecked((boolean) fieldValueMap.get(detail.getFieldName()));
-		if(App.DATABASE == Database.POSTGRES){
-			checkbox.setChecked(
-					fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
-		}else{
-			checkbox.setChecked(
-					Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
-		}
-			
+			if (App.DATABASE == Database.POSTGRES) {
+				checkbox.setChecked(fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
+			} else {
+				checkbox.setChecked(
+						Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
+			}
+
 		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 
 			if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
@@ -1858,21 +1974,39 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
+	 * Method for create ListBox based on the Extended field details.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	private Listbox getListBox(ExtendedFieldDetail container) {
+		Listbox listbox = new Listbox();
+		listbox.setId(container.getFieldName());
+		return listbox;
+	}
+
+	private Component getColumn(String width) {
+		Column column = new Column();
+		column.setWidth(width);
+		return column;
+	}
+
+	private Component getColumn() {
+		Column column = new Column();
+		return column;
+	}
+
+	
+	/**
 	 * 
 	 * This Comparator class is used to sort the ExtendedFieldDetail based on their sequenceNumber
 	 */
+
 	public class ExtendedFieldsComparator implements Comparator<ExtendedFieldDetail> {
 		@Override
-		public int compare(ExtendedFieldDetail arg0, ExtendedFieldDetail arg1) {
-
-			if (arg0.getFieldSeqOrder() < arg1.getFieldSeqOrder()) {
-				return 1;
-			} else {
-				return 0;
-			}
-
+		public int compare(ExtendedFieldDetail detail1, ExtendedFieldDetail detail2) {
+			return detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder();
 		}
-
 	}
 
 	/**
