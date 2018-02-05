@@ -47,6 +47,11 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	@Override
 	public AuditHeader checkHunterDetails(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isBlank(serviceUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();

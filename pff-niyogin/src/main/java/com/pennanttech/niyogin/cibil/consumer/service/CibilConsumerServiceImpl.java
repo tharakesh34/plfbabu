@@ -52,6 +52,11 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	public AuditHeader getCibilConsumer(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
+		if (StringUtils.isBlank(serviceUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();

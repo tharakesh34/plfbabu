@@ -63,6 +63,11 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	public AuditHeader checkDedup(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
+		if (StringUtils.isBlank(serviceUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 

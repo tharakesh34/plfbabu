@@ -94,6 +94,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	@Override
 	public AuditHeader executeCriffBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
 		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isBlank(consumerUrl) && StringUtils.isBlank(commercialUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+		
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();

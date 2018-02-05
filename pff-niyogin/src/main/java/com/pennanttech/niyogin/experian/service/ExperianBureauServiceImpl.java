@@ -85,6 +85,11 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	public AuditHeader executeExperianBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
 		logger.debug(Literal.ENTERING);
 
+		if (StringUtils.isBlank(consumerUrl) && StringUtils.isBlank(commercialUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 

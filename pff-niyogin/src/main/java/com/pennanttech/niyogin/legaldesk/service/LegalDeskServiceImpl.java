@@ -54,6 +54,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	@Override
 	public AuditHeader executeLegalDesk(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isBlank(serviceUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Map<String, Object> appplicationdata = new HashMap<>();
 		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail);

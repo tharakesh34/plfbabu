@@ -77,6 +77,12 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	@Override
 	public AuditHeader executeBRE(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isBlank(serviceUrl)) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
