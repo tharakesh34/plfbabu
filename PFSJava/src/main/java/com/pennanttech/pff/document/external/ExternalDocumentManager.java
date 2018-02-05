@@ -31,11 +31,17 @@ public class ExternalDocumentManager {
 	@Autowired(required = false)
 	private DocumentManagementService	documentManagementService;
 
+	
 	public AMedia setDocContent(DocumentDetails documentDetails) {
 		AMedia amedia = null;
 		if (documentDetails == null) {
 			return amedia;
 		}
+
+		if (documentDetails.getDocImage() != null) {
+			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
+		}
+
 		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
 			documentDetails.setDocImage(PennantApplicationUtil.getDocumentImage(documentDetails.getDocRefId()));
 		}

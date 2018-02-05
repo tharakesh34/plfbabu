@@ -1075,14 +1075,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (media!=null) {
 				mandatedoc.setContent(media);
 			}
-
 		}
 		AMedia amedia = null;
 		if (aMandate.getDocImage() != null) {
 			amedia = new AMedia(aMandate.getDocumentName(), null, null, aMandate.getDocImage());
 			imagebyte = aMandate.getDocImage();
+			mandatedoc.setContent(amedia);
 		}
-		mandatedoc.setContent(amedia);
 	}
 
 	/**
