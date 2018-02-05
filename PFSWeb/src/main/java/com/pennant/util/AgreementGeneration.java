@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -36,6 +37,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
+import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -48,6 +50,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
 import com.pennant.backend.model.finance.AgreementDetail.CustomerFinance;
@@ -57,6 +60,7 @@ import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinCollaterals;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -70,15 +74,21 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.search.Filter;
+import com.pennant.search.Search;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;
@@ -95,6 +105,8 @@ public class AgreementGeneration implements Serializable {
 	
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
+	@Autowired
+	private JdbcSearchSupport jdbcSearchSupport;
 
 	public AgreementGeneration() {
 		super();
@@ -1397,6 +1409,97 @@ public class AgreementGeneration implements Serializable {
 		agreement.setCustConInWords("");
 		return agreement;
 	}
+	
+	/**
+	 * To get the description form extended combobox in Extended details
+	 * @param detail
+	 * @return
+	 */
+	public void setExtendedMasterDescription(FinanceDetail detail, TemplateEngine engine) {
+		logger.debug(" Entering ");
+		try {
+			ExtendedFieldHeader header = detail.getExtendedFieldHeader();
+			List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
+			Map<String, Object> extendedData = detail.getExtendedFieldRender().getMapValues();
+
+			//extended fields in merge
+			String[] keys = extendedData.keySet().toArray(new String[extendedData.size()]);
+			Object[] values = extendedData.values().toArray(new Object[extendedData.size()]);
+			engine.mergeFields(keys, values);
+
+			Map<String, String> map = new HashMap<>();
+
+			//extended fields description in merge
+			for (ExtendedFieldDetail extFieldDetail : list) {
+				if (extFieldDetail.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO)) {
+
+					try {
+						ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(extFieldDetail.getFieldList());
+						Search search = new Search();
+						search.setSearchClass(moduleMapping.getModuleClass());
+						List<Filter> filters = new ArrayList<>();
+						if (moduleMapping.getLovFilters() != null) {
+							Object[][] condArray = moduleMapping.getLovFilters();
+							Filter filter1;
+							for (int i = 0; i < condArray.length; i++) {
+								String property = (String) condArray[i][0];
+								Object value = condArray[i][2];
+								int filtertype = Integer.parseInt((String) condArray[i][1]);
+								filter1 = new Filter(property, value, filtertype);
+								filters.add(filter1);
+							}
+						}
+
+						if (moduleMapping.getLovFields() != null) {
+							String[] condArray = moduleMapping.getLovFields();
+							Filter filter1;
+							String fieldName = extFieldDetail.getFieldName();
+							filter1 = new Filter((String) condArray[0], extendedData.get(fieldName), Filter.OP_EQUAL);
+							filters.add(filter1);
+							search.setFilters(filters);
+							List<Object> result = jdbcSearchSupport.search(search);
+							for (Object object2 : result) {
+								String descMethod = "get" + condArray[1];
+								String desc = object2.getClass().getMethod(descMethod).invoke(object2).toString();
+								map.put(fieldName + "_Desc", StringUtils.trimToEmpty(desc));
+							}
+						}
+					} catch (Exception e) {
+						logger.error(e);
+					}
+				}
+			}
+
+			if (!map.isEmpty()) {
+				String[] desckeys = map.keySet().toArray(new String[map.size()]);
+				Object[] descvalues = map.values().toArray(new String[map.size()]);
+				engine.mergeFields(desckeys, descvalues);
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(" Leaving ");
+	}
+	
+	public void setFeeDetails(FinanceDetail detail, TemplateEngine engine) throws Exception {
+		List<FinFeeDetail> feelist = detail.getFinFeeDetails();
+		String finCcy = detail.getFinScheduleData().getFinanceMain().getFinCcy();
+		Map<String, String> map = new HashMap<>();
+		if (feelist !=null && !feelist.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : feelist) {
+				BigDecimal actAmount = finFeeDetail.getActualAmount();
+				map.put(finFeeDetail.getFeeTypeCode(), PennantApplicationUtil.amountFormate(actAmount, CurrencyUtil.getFormat(finCcy)));
+			}
+		}
+		
+		if (!map.isEmpty()) {
+			String[] desckeys = map.keySet().toArray(new String[map.size()]);
+			Object[] descvalues = map.values().toArray(new String[map.size()]);
+			engine.mergeFields(desckeys, descvalues);
+		}
+		
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1425,5 +1528,7 @@ public class AgreementGeneration implements Serializable {
 	public void setmMAgreementService(MMAgreementService mMAgreementService) {
 		this.mMAgreementService = mMAgreementService;
 	}
+
+
 
 }
