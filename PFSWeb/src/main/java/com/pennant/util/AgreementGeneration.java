@@ -1483,7 +1483,7 @@ public class AgreementGeneration implements Serializable {
 	}
 	
 	public void setFeeDetails(FinanceDetail detail, TemplateEngine engine) throws Exception {
-		List<FinFeeDetail> feelist = detail.getFinFeeDetails();
+		List<FinFeeDetail> feelist = detail.getFinScheduleData().getFinFeeDetailList();
 		String finCcy = detail.getFinScheduleData().getFinanceMain().getFinCcy();
 		Map<String, String> map = new HashMap<>();
 		if (feelist !=null && !feelist.isEmpty()) {

@@ -298,7 +298,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setInsuranceGstAmt(App.getLabel("label_LegalDesk_InsuranceGstAmt"));
 		formData.setDisbursementOfLoan(finMain.getCurDisbursementAmt());
 		formData.setLoanType(finMain.getFinType());
-		List<FinFeeDetail> fereedetails = financeDetail.getFinFeeDetails();
+		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();;
 		formData.setInsuranceAmount(getFeeAmount(fereedetails, INSURANCE_FEE));
 		logger.debug(Literal.LEAVING);
 		return formData;
