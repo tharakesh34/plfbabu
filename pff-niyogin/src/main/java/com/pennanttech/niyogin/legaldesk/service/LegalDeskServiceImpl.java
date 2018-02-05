@@ -1,5 +1,6 @@
 package com.pennanttech.niyogin.legaldesk.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,9 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 	//Form Fields
 	public static final String	FORM_FLDS_LOANPURPOSE	= "LOANPURPOSE";
+
+	public static final String	STAMP_FEE				= "STAMP_FEE";
+	public static final String	INSURANCE_FEE			= "INSURANCE_FEE";
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -144,18 +148,27 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		}
 		stampPaperData.setFirstPartyAddress(partyAddress);
 		List<FinFeeDetail> feeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		for (FinFeeDetail finFee : feeDetailsList) {
-			String stampFeeCode = (String) getSMTParameter("STAMPFEE", String.class);
-			if (StringUtils.isNotBlank(stampFeeCode)) {
-				if (StringUtils.equals(finFee.getFeeTypeCode(), stampFeeCode)) {
-					stampPaperData.setStampAmount(finFee.getActualAmount());
-					break;
-				}
-			}
-		}
+		stampPaperData.setStampAmount(getFeeAmount(feeDetailsList, STAMP_FEE));
 		stampPaperData.setStampDutyPaidBy(customer.getCustShrtName());
 		logger.debug(Literal.LEAVING);
 		return stampPaperData;
+	}
+
+	private BigDecimal getFeeAmount(List<FinFeeDetail> feeDetailsList, String Code) {
+		BigDecimal feeAmount=BigDecimal.ZERO;
+		if (feeDetailsList != null && !feeDetailsList.isEmpty()) {
+			for (FinFeeDetail finFee : feeDetailsList) {
+				String feeCode = (String) getSMTParameter(Code, String.class);
+				if (StringUtils.isNotBlank(feeCode)) {
+					if (StringUtils.equals(finFee.getFeeTypeCode(), feeCode)) {
+						feeAmount= finFee.getActualAmount();
+						break;
+					}
+				}
+			}
+		}
+
+		return feeAmount;
 	}
 
 	/**
@@ -285,6 +298,8 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setInsuranceGstAmt(App.getLabel("label_LegalDesk_InsuranceGstAmt"));
 		formData.setDisbursementOfLoan(finMain.getCurDisbursementAmt());
 		formData.setLoanType(finMain.getFinType());
+		List<FinFeeDetail> fereedetails = financeDetail.getFinFeeDetails();
+		formData.setInsuranceAmount(getFeeAmount(fereedetails, INSURANCE_FEE));
 		logger.debug(Literal.LEAVING);
 		return formData;
 	}

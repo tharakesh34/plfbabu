@@ -66,6 +66,9 @@ public class FormData {
 
 	@XmlElement(name = "loan_type")
 	private String		loanType;
+	
+	@XmlElement(name = "insurance")
+	private BigDecimal	insuranceAmount		= BigDecimal.ZERO;
 
 	public String getPurposeOfLoan() {
 		return purposeOfLoan;
@@ -209,5 +212,13 @@ public class FormData {
 
 	public void setSactionAmt(BigDecimal sactionAmt) {
 		this.sactionAmt = sactionAmt;
+	}
+	
+	public BigDecimal getInsuranceAmount() {
+		return insuranceAmount;
+	}
+
+	public void setInsuranceAmount(BigDecimal insuranceAmount) {
+		this.insuranceAmount = insuranceAmount;
 	}
 }
