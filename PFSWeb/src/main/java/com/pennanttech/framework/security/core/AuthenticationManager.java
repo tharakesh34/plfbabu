@@ -63,6 +63,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -219,7 +220,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		User userImpl = (User) authentication.getPrincipal();
 		LoggedInUser loggedInUser = getUserDetails(userImpl.getSecurityUser());
 
-		loggedInUser.setSessionId(getSessionId());
+		loggedInUser.setSessionId(getSessionId(authentication));
 		loggedInUser.setLoginLogId(userImpl.getLoginId());
 
 		return loggedInUser;
@@ -305,8 +306,9 @@ public class AuthenticationManager implements AuthenticationProvider {
 		}
 	}
 
-	public static String getSessionId() {
-		return getRequestAttribute().getSessionId();
+	public static String getSessionId(Authentication authentication) {
+		WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+		return details.getSessionId();
 	}
 
 	public static String getBrowser() {
@@ -331,7 +333,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		secLoginlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
 		secLoginlog.setLoginIP(getRemoteAddress());
 		secLoginlog.setLoginBrowserType(getBrowser());
-		secLoginlog.setLoginSessionID(getSessionId());
+		secLoginlog.setLoginSessionID(getSessionId(authentication));
 
 		if (StringUtils.length(loginError) <= 500) {
 			secLoginlog.setLoginError(loginError);
