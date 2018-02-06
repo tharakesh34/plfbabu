@@ -164,6 +164,7 @@ public abstract class NiyoginService {
 					case ExtendedFieldConstants.FIELDTYPE_TEXT:
 					case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
 					case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+					case ExtendedFieldConstants.FIELDTYPE_LISTFIELD:	
 						if (jsonRespValue.length() > configuration.getFieldLength()) {
 							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,
 									configuration.getFieldType())) {

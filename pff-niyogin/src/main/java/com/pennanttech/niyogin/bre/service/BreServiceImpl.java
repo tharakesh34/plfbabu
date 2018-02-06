@@ -56,17 +56,30 @@ import com.pennanttech.pff.external.BreService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class BreServiceImpl extends NiyoginService implements BreService {
-	private static final Logger	logger				= Logger.getLogger(BreServiceImpl.class);
+	private static final Logger	logger						= Logger.getLogger(BreServiceImpl.class);
 
-	private final String		extConfigFileName	= "bre.properties";
+	private final String		extConfigFileName			= "bre.properties";
 	private String				serviceUrl;
-	private Map<String, Object>	extendedMap			= null;
+	private Map<String, Object>	extendedMap					= null;
+	private static final String	LIST_DELIMETER				= "||";
 
 	//BRE
-	public static final String	REQ_SEND			= "REQSENDEXPBRE";
-	public static final String	STATUSCODE			= "STATUSEXPBRE";
-	public static final String	RSN_CODE			= "REASONEXPBRE";
-	public static final String	REMARKS				= "REMARKSEXPBRE";
+	public static final String	REQ_SEND					= "REQSENDEXPBRE";
+	public static final String	STATUSCODE					= "STATUSEXPBRE";
+	public static final String	RSN_CODE					= "REASONEXPBRE";
+	public static final String	REMARKS						= "REMARKSEXPBRE";
+	//BRE LIST FIELDS
+	public static final String	LOOKALIKEVALUE				= "LOOKALIKEVALUE";
+	public static final String	LOOKALIKEELEMENT			= "LOOKALIKEELE";
+	public static final String	EXPERTSCOREVALUES			= "EXPERTSCOREVALUES";
+	public static final String	EXPERTSCOREELEMENTS			= "EXPERTSCOREELEMENT";
+	public static final String	POLICYREASONCODE			= "POLICYREASONCODE";
+
+	private String				PATH_LOOKALIKESCOREVALUES	= "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREVALUES.item[*]";
+	private String				PATH_LOOKALIKESCOREELEMENTS	= "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREELEMENTS.item[*]";
+	private String				PATH_EXPERTSCOREVALUES		= "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREVALUES.item[*]";
+	private String				PATH_EXPERTSCOREELEMENTS	= "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREELEMENTS.item[*]";
+	private String				PATH_POLICYREASONCODE		= "$.data.OUTAPPLICATION.CALL2.POLICYSORTEDREASONCODETABLE1.item[*]";
 
 	/***
 	 * Method for get the BRE details of the Customer and set these details to ExtendedFieldDetails.
@@ -112,6 +125,8 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
+				//process the Response
+				prepareBreExtendedMap(jsonResponse, mapdata);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
 				//add to final
 				appplicationdata.putAll(mapvalidData);
@@ -709,7 +724,61 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		logInterfaceDetails(iLogDetail);
 		logger.debug(Literal.LEAVING);
 	}
+	
+	/**
+	 * Method for the prepare the BRE response extended map
+	 * 
+	 * @param jsonResponse
+	 * @param mapdata
+	 */
+	private void prepareBreExtendedMap(String jsonResponse, Map<String, Object> mapdata) {
+		logger.debug(Literal.ENTERING);
+		mapdata.put(LOOKALIKEVALUE, getListFieldData(jsonResponse, PATH_LOOKALIKESCOREVALUES));
+		mapdata.put(LOOKALIKEELEMENT, getListFieldData(jsonResponse, PATH_LOOKALIKESCOREELEMENTS));
+		mapdata.put(EXPERTSCOREVALUES, getListFieldData(jsonResponse, PATH_EXPERTSCOREVALUES));
+		mapdata.put(EXPERTSCOREELEMENTS, getListFieldData(jsonResponse, PATH_EXPERTSCOREELEMENTS));
+		mapdata.put(POLICYREASONCODE, getListFieldData(jsonResponse, PATH_POLICYREASONCODE));
+		logger.debug(Literal.LEAVING);
 
+	}
+
+	/**
+	 * Method to prepare the Extendedfield detail ListField data by seperating the each list cell value with regix
+	 * 
+	 * @param jsonResponse
+	 * @param jsonPath
+	 * @return String with regix seperated listCell's
+	 */
+	@SuppressWarnings("unchecked")
+	public String getListFieldData(String jsonResponse, String jsonPath) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder builder = new StringBuilder();
+		Object responseObj = null;
+
+		String listFieldsData = Objects.toString(getValueFromResponse(jsonResponse, jsonPath), "");
+		if (!StringUtils.isEmpty(listFieldsData)) {
+			try {
+				responseObj = getResponseObject(listFieldsData, String.class, true);
+			} catch (Exception e) {
+				logger.error("Exception : ", e);
+				return builder.toString();
+			}
+			List<String> dataList = (List<String>) responseObj;
+			if (dataList != null && !dataList.isEmpty()) {
+				for (String value : dataList) {
+					if (!value.contains(LIST_DELIMETER)) {
+						builder.append(value);
+					} else {
+						builder.append(value.replaceAll(LIST_DELIMETER, ""));
+					}
+					builder.append(LIST_DELIMETER);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return builder.toString();
+	}
+	
 	/**
 	 * Method for failure logging.
 	 * 
