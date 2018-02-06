@@ -759,20 +759,20 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		if (!StringUtils.isEmpty(listFieldsData)) {
 			try {
 				responseObj = getResponseObject(listFieldsData, String.class, true);
+				List<String> dataList = (List<String>) responseObj;
+				if (dataList != null && !dataList.isEmpty()) {
+					for (String value : dataList) {
+						if (!value.contains(LIST_DELIMETER)) {
+							builder.append(value);
+						} else {
+							builder.append(value.replaceAll(LIST_DELIMETER, ""));
+						}
+						builder.append(LIST_DELIMETER);
+					
+					}
+				}
 			} catch (Exception e) {
 				logger.error("Exception : ", e);
-				return builder.toString();
-			}
-			List<String> dataList = (List<String>) responseObj;
-			if (dataList != null && !dataList.isEmpty()) {
-				for (String value : dataList) {
-					if (!value.contains(LIST_DELIMETER)) {
-						builder.append(value);
-					} else {
-						builder.append(value.replaceAll(LIST_DELIMETER, ""));
-					}
-					builder.append(LIST_DELIMETER);
-				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
