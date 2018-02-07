@@ -170,6 +170,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(commercial);
 			jsonResponse = client.post(commercialUrl, reuestString);
@@ -177,7 +178,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, commercialUrl, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, commercialUrl, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
@@ -198,7 +199,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, commercialUrl, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, commercialUrl, reuestString, jsonResponse, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, errorDesc);
@@ -229,6 +230,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(consumer);
 			jsonResponse = client.post(consumerUrl, reuestString);
@@ -236,7 +238,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, consumerUrl, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, consumerUrl, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
@@ -257,7 +259,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, consumerUrl, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, consumerUrl, reuestString, jsonResponse, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, errorDesc);
@@ -732,9 +734,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String serviceUrl, String requets, String response,
-			String errorCode, String errorDesc) {
+			String errorCode, String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -742,7 +745,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -764,9 +767,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doExceptioLogging(String reference, String serviceUrl, String requets, String response,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -774,7 +778,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

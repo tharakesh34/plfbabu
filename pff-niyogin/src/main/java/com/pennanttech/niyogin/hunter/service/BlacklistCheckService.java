@@ -63,7 +63,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(hunterRequest);
 			jsonResponse = client.post(serviceUrl, reuestString);
@@ -71,7 +71,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
@@ -93,7 +93,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 			//As per the clint need
 			financeMain.setHunterGo(false);
 
@@ -196,9 +196,10 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -206,7 +207,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -228,8 +229,10 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
+			Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -237,7 +240,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

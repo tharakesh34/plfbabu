@@ -74,7 +74,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(legalDeskRequest);
 			jsonResponse = client.post(serviceUrl, reuestString);
@@ -82,7 +82,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
@@ -94,7 +94,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 		}
 		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
@@ -312,9 +312,10 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -322,7 +323,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -344,8 +345,9 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -353,7 +355,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

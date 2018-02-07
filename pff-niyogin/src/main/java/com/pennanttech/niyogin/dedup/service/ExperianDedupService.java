@@ -103,7 +103,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(experianDedupApplicant);
 			jsonResponse = client.post(serviceUrl, reuestString);
@@ -111,7 +111,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
@@ -134,7 +134,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 
 			//As per the clint need
 			financeMain.setDedupMatch(true);
@@ -183,7 +183,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 			String errorDesc = null;
 			String reuestString = null;
 			String jsonResponse = null;
-
+			Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 			try {
 				reuestString = client.getRequestString(experianDedupApplicant);
 				jsonResponse = client.post(serviceUrl, reuestString);
@@ -191,7 +191,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 				errorCode = getErrorCode(jsonResponse);
 				errorDesc = getErrorMessage(jsonResponse);
 
-				doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+				doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 				if (StringUtils.isEmpty(errorCode)) {
 					//read values from response and load it to extended map
@@ -204,7 +204,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 				logger.error("Exception: ", e);
 				errorDesc = getWriteException(e);
 				errorDesc = getTrimmedMessage(errorDesc);
-				doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+				doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 			}
 
 		}
@@ -323,9 +323,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -333,7 +334,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -355,8 +356,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
+			Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -364,7 +367,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

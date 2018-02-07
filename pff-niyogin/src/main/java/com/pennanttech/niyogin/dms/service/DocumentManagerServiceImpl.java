@@ -40,6 +40,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			logger.debug("ServiceURL : " + serviceUrl);
 
@@ -48,7 +49,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			errorDesc = Objects.toString(getValueFromResponse(jsonResponse, ERRORMESSAGE), "");
 			errorCode = Objects.toString(getValueFromResponse(jsonResponse, ERRORCODE), "");
 
-			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
@@ -65,7 +66,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
@@ -81,9 +82,10 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -91,7 +93,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -114,7 +116,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param errorCode
 	 * @param errorDesc
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -122,7 +124,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

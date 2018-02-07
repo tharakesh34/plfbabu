@@ -58,7 +58,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		String errorDesc = null;
 		String reuestString = null;
 		String jsonResponse = null;
-
+		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
 		try {
 			reuestString = client.getRequestString(holdFinanceRequest);
 			jsonResponse = client.post(serviceUrl, reuestString);
@@ -66,7 +66,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 			errorCode = getErrorCode(jsonResponse);
 			errorDesc = getErrorMessage(jsonResponse);
 
-			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc);
+			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
 			if (StringUtils.isEmpty(errorCode)) {
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
@@ -77,7 +77,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 			logger.error("Exception: ", e);
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
-			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc);
+			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 		}
 		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
@@ -127,9 +127,10 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
-			String errorDesc) {
+			String errorDesc, Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -137,7 +138,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
@@ -159,8 +160,10 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
+	 * @param reqSentOn
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
+			Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
@@ -168,7 +171,7 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 		iLogDetail.setServiceName(values[values.length - 1]);
 		iLogDetail.setEndPoint(serviceUrl);
 		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+		iLogDetail.setReqSentOn(reqSentOn);
 
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
