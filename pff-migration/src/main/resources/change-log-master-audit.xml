@@ -67,10 +67,11 @@
 	<include file="change-logs/change-log-Base-version1-audit.xml" />
 	<include file="change-logs/change-log-Base-changes-audit.xml" />-->
 	<!-- <include file="change-logs/change-log-pdc-audit.xml"/>
-	<include file="change-logs/change-log-Base-version2-audit.xml" /> -->
+	<include file="change-logs/change-log-Base-version2-audit.xml" />
 	<include file="change-logs/change-log-4.7.3-audit.xml" />
 	<include file="change-logs/change-log-4.7.4-audit.xml" />
 	<include file="change-logs/change-log-GST-audit.xml" />
 	<include file="change-logs/refactor/change-log-errordetail-audit.xml" />
-	<include file="change-logs/change-log-4.7.5-audit.xml" />
+	<include file="change-logs/change-log-4.7.5-audit.xml" /> -->
+	<include file="change-logs/change-log-4.7.6-audit.xml" />
 </databaseChangeLog>

@@ -19,11 +19,25 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="Durga Prasad D">
+		<addColumn tableName="ChequeDetail_Temp">
+			<column name="documentName" type="nvarchar(200)"></column>
+			<column name="documentRef" type="number(64)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Durga Prasad D">
+		<addColumn tableName="ChequeDetail">
+			<column name="documentName" type="nvarchar(200)"></column>
+			<column name="documentRef" type="number(64)"></column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

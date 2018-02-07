@@ -86,11 +86,12 @@
 	<include file="change-logs/change-log-3.16.18.xml" />
 	<include file="change-logs/change-log-3.16.20.xml" />
 	<include file="change-logs/change-log-3.16.21.1.xml" />
-	<include file="change-logs/change-log-Base-version1.xml" /> -->
+	<include file="change-logs/change-log-Base-version1.xml" />
 	<include file="change-logs/change-log-pdc.xml"/>
 	<include file="change-logs/change-log-Base-version2.xml" />
 	<include file="change-logs/change-log-4.7.4.xml" />
 	<include file="change-logs/change-log-GST.xml" />
 	<include file="change-logs/refactor/change-log-errordetail.xml"/>
-	<include file="change-logs/change-log-4.7.5.xml" />
+	<include file="change-logs/change-log-4.7.5.xml" /> -->
+	<include file="change-logs/change-log-4.7.6.xml" />
 </databaseChangeLog>
