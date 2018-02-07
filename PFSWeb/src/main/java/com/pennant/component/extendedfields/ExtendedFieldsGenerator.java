@@ -103,7 +103,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private Tabpanel			tabpanel;
 	private Map<String, Object>	fieldValueMap		= new HashMap<>();
 	private boolean				isReadOnly;
-	private String				tabHeight;
+	private int 				tabHeight;
 	private String				labelKey;
 	private int					ccyFormat;
 	private int					rowWidth;
@@ -170,14 +170,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		for (ExtendedFieldDetail containerElement : containers) {
 			String parentTag = containerElement.getParentTag();
 			if (parentTag == null) {
-				processContainer(containerElement, this.tabpanel);
+				processContainer(containerElement, this.tabpanel,isReadOnly);
 			} else {
 				Component existting = this.tabpanel.getFellowIfAny(parentTag);
 				if (existting instanceof Tab) {
 					existting = this.tabpanel.getFellowIfAny(TABPANEL_ID + parentTag);
 				}
 				if (existting != null) {
-					processContainer(containerElement, existting);
+					processContainer(containerElement, existting,isReadOnly);
 				}
 			}
 
@@ -255,9 +255,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		row.appendChild(hbox);
 
 		Component component = getComponent(detail, isReadOnly, hbox, newRecord, parentComponent);
-
 		if (component != null) {
-			readOnlyComponent(!detail.isEditable(), component);
+			boolean editable=true;
+			if (!detail.isEditable() || isReadOnly) {
+				editable=false;
+			}
+			readOnlyComponent(!editable, component);
 			hbox.appendChild(component);
 		}
 
@@ -274,7 +277,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param rootElement
 	 * @return
 	 */
-	private Component processContainer(ExtendedFieldDetail container, Component rootElement) {
+	private Component processContainer(ExtendedFieldDetail container, Component rootElement,boolean readonly) {
 		String key = container.getFieldType().trim();
 
 		Component existting = rootElement.getFellowIfAny(container.getFieldName());
@@ -291,6 +294,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			return getTabpanel(container);
 		case ExtendedFieldConstants.FIELDTYPE_BUTTON:
 			Button button = getButton(container);
+			readOnlyComponent(isReadOnly, button);
 			rootElement.appendChild(button);
 			return button;
 		case ExtendedFieldConstants.FIELDTYPE_LISTBOX:
@@ -1943,6 +1947,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @return Tabpanel
 	 */
 	private Tabpanel getTabpanel(ExtendedFieldDetail container) {
+		if (tabHeight == 0) {
+			tabHeight = 150;
+		}
+		
 		Tabbox tabbox = (Tabbox) this.tabpanel.getFellowIfAny("Tab_ROOT_");
 		if (tabbox == null) {
 			tabbox = new Tabbox();
@@ -1966,8 +1974,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		Tabpanel tabpanel = new Tabpanel();
 		tabpanel.setId(TABPANEL_ID + container.getFieldName());
+		int height = getDesktopHeight();
+		height = height - tabHeight;
 		tabpanel.setStyle("overflow:auto;border:none;");
-		tabpanel.setHeight("100%");
+		tabpanel.setHeight(height+"px");
 		tabpanels.appendChild(tabpanel);
 		tabpanels.setParent(tabbox);
 		return tabpanel;
@@ -2052,11 +2062,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		this.isReadOnly = isReadOnly;
 	}
 
-	public String getTabHeight() {
+	public int getTabHeight() {
 		return tabHeight;
 	}
 
-	public void setTabHeight(String tabHeight) {
+	public void setTabHeight(int tabHeight) {
 		this.tabHeight = tabHeight;
 	}
 

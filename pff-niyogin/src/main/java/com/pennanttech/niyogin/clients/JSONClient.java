@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -134,6 +135,9 @@ public class JSONClient {
 		client.accept(MediaType.APPLICATION_JSON);
 		client.type(MediaType.APPLICATION_JSON);
 		client = prepareHeader(client);
+		HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+		conduit.getClient().setConnectionTimeout(1000 * 120);
+		conduit.getClient().setReceiveTimeout(1000 * 120);
 
 		logger.debug(Literal.LEAVING);
 		return client;

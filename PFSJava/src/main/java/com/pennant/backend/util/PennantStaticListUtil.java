@@ -920,6 +920,8 @@ public class PennantStaticListUtil {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
 			}
 			enquiryTypes.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
+			//Module to display Loan extended details where label will be replaced with tab heading
+			enquiryTypes.add(new ValueLabel("LOANEXTDET", "")); 
 			//enquiryTypes.add(new ValueLabel("PFTENQ",  Labels.getLabel("label_ProfitListEnquiry")));
 			//enquiries.add(new ValueLabel("CFSENQ",  Labels.getLabel("label_CustomerFinanceSummary")));
 			//enquiries.add(new ValueLabel("CASENQ",  Labels.getLabel("label_CustomerAccountSummary")));

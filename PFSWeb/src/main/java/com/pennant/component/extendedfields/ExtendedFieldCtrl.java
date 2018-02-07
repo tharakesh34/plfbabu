@@ -52,6 +52,7 @@ public class ExtendedFieldCtrl {
 	private static final Logger		logger		= Logger.getLogger(ExtendedFieldCtrl.class);
 
 	private int								ccyFormat;
+	private int								tabHeight;
 	private boolean							isReadOnly	= false;
 	private Tab								parentTab;
 	private Tab								tab;
@@ -81,8 +82,12 @@ public class ExtendedFieldCtrl {
 		this.generator.setCcyFormat(this.ccyFormat);
 		this.generator.setReadOnly(this.isReadOnly);
 		this.generator.setWindow(window);
-		this.generator.setTopLevelTab(tab);
-		this.tab.setLabel(extendedFieldHeader.getTabHeading());
+		this.generator.setTabHeight(tabHeight);
+		if (tab!=null) {
+			this.generator.setTopLevelTab(tab);
+			this.tab.setLabel(extendedFieldHeader.getTabHeading());
+		}
+	
 
 		// Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
@@ -318,6 +323,26 @@ public class ExtendedFieldCtrl {
 		tabpanel.setHeight("100%");
 		tabpanel.setParent(tabPanels);
 		// it store all tabpanel id (for pdf extraction)
+		tabPanelsMap.put("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName(), tabpanel);
+	}
+	
+	public void createEnquiryTab(Tabpanel tabPanel) {
+		
+//		Tabbox tabbox=new Tabbox();
+//		tab = new Tab(this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
+//		tab.setId("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
+//		Tabs tabs=new Tabs();
+//		tabs.appendChild(tab);
+//		tabbox.appendChild(tabs);
+//		Tabpanels tabPanels=new Tabpanels();
+//		tabbox.appendChild(tabPanels);
+		tabpanel = tabPanel;
+		tabpanel.setId("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
+		tabpanel.setStyle("overflow:auto");
+		tabpanel.setHeight("100%");
+//		tabpanel.setParent(tabPanels);
+		// it store all tabpanel id (for pdf extraction)
+//		tabPanel.appendChild(tabbox);
 		tabPanelsMap.put("TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName(), tabpanel);
 	}
 	
@@ -564,6 +589,10 @@ public class ExtendedFieldCtrl {
 
 	public void setWindow(Window window) {
 		this.window = window;
+	}
+
+	public void setTabHeight(int tabHeight) {
+		this.tabHeight = tabHeight;
 	}
 
 }
