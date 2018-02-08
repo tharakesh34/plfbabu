@@ -448,6 +448,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} else {
 			this.fieldEditable.setChecked(aExtendedFieldDetail.isEditable());
 		}
+		this.parentTag.setValue(aExtendedFieldDetail.getParentTag());
 
 		logger.debug("Leaving");
 	}
@@ -995,6 +996,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON,aExtendedFieldDetail.getFieldType())
 					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX,aExtendedFieldDetail.getFieldType())) {
 				aExtendedFieldDetail.setInputElement(false);
+				this.fieldEditable.setValue(false);
 			}else{
 				aExtendedFieldDetail.setInputElement(true);
 			}
@@ -1013,6 +1015,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					throw new WrongValueException(this.parentTag, Labels.getLabel("FIELD_IS_MAND",
 							new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_Parent.value") }));
 				}
+				aExtendedFieldDetail.setEditable(false);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
