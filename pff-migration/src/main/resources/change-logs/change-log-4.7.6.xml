@@ -40,4 +40,124 @@
 			<column name="documentRef" type="number(64)"></column>
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="3" author="Durga Prasad D">
+		<sql>
+			drop view Chequedetail_aview cascade;
+			drop view Chequedetail_view cascade;
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="Durga Prasad D">
+		<createView viewName="Chequedetail_view" replaceIfExists="true">
+			    SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail_temp t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+UNION ALL
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequedetail_temp
+          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid))
+		 </createView>
+	</changeSet>
+	
+	<changeSet id="5" author="Durga Prasad D">
+		<createView viewName="Chequedetail_aview" replaceIfExists="true">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+	t1.documentName,
+	t1.documentRef
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+		 </createView>
+	</changeSet>
 </databaseChangeLog>
