@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.holdfinance.model.HoldReason;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
@@ -64,6 +66,8 @@ public abstract class NiyoginService {
 	private String				STATUSCODE			= "$.statusCode";
 
 	public String				reference;
+	private final String		wrongValueMSG		= App.getLabel("WRONG_VALUE_EXT");
+	private final String		wrongLengthMSG		= App.getLabel("WRONG_LENGTH_EXT");
 
 	public NiyoginService() {
 		super();
@@ -128,8 +132,6 @@ public abstract class NiyoginService {
 
 		Map<String, Object> validatedMap = new HashMap<>(1);
 		Set<String> fieldNames = extendedFieldMap.keySet();
-		String wrongValueMSG = "Inavalid Data received from interface Response for extended field:";
-		String wrongLengthMSG = "Total length is Excedeed for extended field:";
 		List<ExtendedFieldDetail> configurationList = null;
 		if (fieldNames == null || (fieldNames != null && fieldNames.isEmpty())) {
 			logger.info("Response Elements Not Configured.");
@@ -163,23 +165,19 @@ public abstract class NiyoginService {
 
 					case ExtendedFieldConstants.FIELDTYPE_TEXT:
 					case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-					case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
-					case ExtendedFieldConstants.FIELDTYPE_LISTFIELD:	
+					case ExtendedFieldConstants.FIELDTYPE_LISTFIELD:
 						if (jsonRespValue.length() > configuration.getFieldLength()) {
-							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,
-									configuration.getFieldType())) {
-								String value = jsonRespValue.substring(0, configuration.getFieldLength());
-								validatedMap.put(key, value.toUpperCase());
-							} else {
-								validatedMap.put(key, jsonRespValue.substring(0, configuration.getFieldLength()));
-							}
-							break;
-						}
-						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,
-								configuration.getFieldType())) {
-							validatedMap.put(key, jsonRespValue.toUpperCase());
+							validatedMap.put(key, jsonRespValue.substring(0, configuration.getFieldLength()));
 						} else {
 							validatedMap.put(key, jsonRespValue);
+						}
+						break;
+					case ExtendedFieldConstants.FIELDTYPE_UPPERTEXT:
+						if (jsonRespValue.length() > configuration.getFieldLength()) {
+							String value = jsonRespValue.substring(0, configuration.getFieldLength());
+							validatedMap.put(key, value.toUpperCase());
+						} else {
+							validatedMap.put(key, jsonRespValue.toUpperCase());
 						}
 						break;
 
@@ -235,9 +233,9 @@ public abstract class NiyoginService {
 							logger.error("Exception : ", e);
 						}
 						if (jsonRespValue.length() > configuration.getFieldLength() + 2) {
-
 							logger.error(wrongLengthMSG + configuration.getFieldLabel());
 						}
+						decimalValue = decimalValue.setScale(configuration.getFieldPrec(), RoundingMode.HALF_DOWN);
 						validatedMap.put(key, decimalValue);
 						break;
 
@@ -329,41 +327,10 @@ public abstract class NiyoginService {
 							validatedMap.put(key, jsonRespValue);
 						}
 						break;
-
 					case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-						if (jsonRespValue.length() > configuration.getFieldLength()) {
-							logger.error(wrongLengthMSG + configuration.getFieldLabel());
-						}
-
-						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-							if (Integer.valueOf(jsonRespValue) > configuration.getFieldMaxValue()
-									|| Integer.valueOf(jsonRespValue) < configuration.getFieldMinValue()) {
-								logger.error(wrongLengthMSG + configuration.getFieldLabel());
-							}
-						}
-
-						validatedMap.put(key, Math
-								.round((Integer.valueOf(jsonRespValue) / Math.pow(10, configuration.getFieldPrec()))));
-						break;
-
 					case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
-						double actRate = 0;
-						if (jsonRespValue.length() > (configuration.getFieldLength() - configuration.getFieldPrec())) {
-							logger.error(wrongLengthMSG + configuration.getFieldLabel());
-						}
-						try {
-							actRate = Double.valueOf(jsonRespValue);
-						} catch (Exception e) {
-							logger.error("Exception : ", e);
-						}
-
-						if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
-							if (Integer.valueOf(jsonRespValue) > configuration.getFieldMaxValue()
-									|| Integer.valueOf(jsonRespValue) < configuration.getFieldMinValue()) {
-								logger.error(wrongLengthMSG + configuration.getFieldLabel());
-							}
-						}
-						validatedMap.put(key, actRate);
+						Double decValue = getDecimalValue(configuration, jsonRespValue);
+						validatedMap.put(key, decValue);
 						break;
 
 					case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
@@ -449,6 +416,53 @@ public abstract class NiyoginService {
 		}
 		logger.debug(Literal.ENTERING);
 		return validatedMap;
+	}
+
+	/**
+	 * Method for validate the response value and return decimal value.
+	 * 
+	 * @param configuration
+	 * @param jsonRespValue
+	 * @return
+	 */
+	private double getDecimalValue(ExtendedFieldDetail configuration, String jsonRespValue) {
+		logger.debug(Literal.ENTERING);
+
+		double decValue = 0;
+		String beforePrcsnValue = null;
+		String aftrPrcsnValue = null;
+
+		if (jsonRespValue.contains(".")) {
+			beforePrcsnValue = jsonRespValue.substring(0, jsonRespValue.indexOf("."));
+			aftrPrcsnValue = jsonRespValue.substring(jsonRespValue.indexOf(".") + 1, jsonRespValue.length());
+		} else {
+			beforePrcsnValue = jsonRespValue;
+		}
+
+		if (beforePrcsnValue.length() > configuration.getFieldLength()) {
+			logger.error(wrongLengthMSG + configuration.getFieldLabel());
+		}
+
+		if (aftrPrcsnValue != null && aftrPrcsnValue.length() > configuration.getFieldPrec()) {
+			logger.error(wrongLengthMSG + configuration.getFieldLabel());
+		}
+		try {
+			decValue = Double.parseDouble(jsonRespValue);
+		} catch (Exception e) {
+			logger.error("Exception : ", e);
+		}
+
+		if (configuration.getFieldMaxValue() > 0 || configuration.getFieldMinValue() > 0) {
+			if (Math.round(decValue) > configuration.getFieldMaxValue()
+					|| Math.round(decValue) < configuration.getFieldMinValue()) {
+				logger.error(wrongLengthMSG + configuration.getFieldLabel());
+			}
+		}
+		BigDecimal amount = new BigDecimal(decValue);
+		amount = amount.setScale(configuration.getFieldPrec(), RoundingMode.HALF_DOWN);
+
+		logger.debug(Literal.LEAVING);
+		return amount.doubleValue();
 	}
 
 	/**
