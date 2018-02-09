@@ -247,7 +247,7 @@
 				<element name="max">8</element>
 			</constraint>
 		</field> -->
-		<field name="phoneNumber">
+		<!-- <field name="phoneNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>90279%%disbursement</message>
 				<groups>
@@ -266,7 +266,7 @@
 				</groups>
 				<element name="min">10</element>
 			</constraint>
-		</field>
+		</field> -->
 	</bean>
 	</constraint-mappings>
 

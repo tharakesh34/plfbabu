@@ -465,11 +465,6 @@ public class CustomizeFinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getDocumentName();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
-				} else {
-					//TODO: uploaded document {0} is not supported
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90407", valueParm)));
 				}
 			}
 		}

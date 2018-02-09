@@ -274,7 +274,7 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90188", null)));
 		}
 
-		errorDetails = finODPenaltyRateValidation(finScheduleData);
+		errorDetails.addAll(finODPenaltyRateValidation(finScheduleData));
 
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -1526,6 +1526,14 @@ public class FinanceDataValidation {
 	private List<ErrorDetail> mandateValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Mandate mandate = financeDetail.getMandate();
+		// if it is stp process mandate is mandatory
+		if (financeDetail.isStp() && mandate == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Mandate";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			return errorDetails;
+		}
+		// Validate mandate details
 		if (mandate != null) {
 			if (mandate.isUseExisting()) {
 				if (mandate.getMandateID() == Long.MIN_VALUE) {
@@ -1883,9 +1891,16 @@ public class FinanceDataValidation {
 
 	public List<ErrorDetail> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-
-		// validate disbursement details
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
+
+		// if it is stp process disbursement is mandatory
+		if (financeDetail.isStp() && finAdvPayments == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "disbursement";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			return errorDetails;
+		}
+		// validate disbursement details
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
 				// partnerbankid
@@ -1896,8 +1911,36 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 
+				// validate disbParty
+				if (StringUtils.isBlank(advPayment.getPaymentDetail())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "disbParty";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				} else {
+					List<ValueLabel> disbPartys = PennantStaticListUtil.getPaymentDetails();
+					boolean isValidDisbParty = false;
+					for (ValueLabel value : disbPartys) {
+						if (StringUtils.equals(value.getValue(), advPayment.getPaymentDetail())) {
+							isValidDisbParty = true;
+							break;
+						}
+					}
+					// Invalid {0} code {1}.
+					if (!isValidDisbParty) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "disbParty";
+						valueParm[1] = advPayment.getPaymentDetail();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+					}
+				}
+
 				// validate disbType
-				if (StringUtils.isNotBlank(advPayment.getPaymentType())) {
+				if (StringUtils.isBlank(advPayment.getPaymentType())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "disbType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
 					List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypes(false);
 					boolean paymentTypeSts = false;
 					for (ValueLabel value : paymentTypes) {
@@ -1968,6 +2011,15 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "payableLoc";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90214", valueParm)));
+					} else {
+						Pattern pattern = Pattern.compile(
+								PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ADDRESS));
+						Matcher matcher = pattern.matcher(advPayment.getPayableLoc());
+						if (matcher.matches() == false) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "payableLoc";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90909", "", valueParm), "EN"));
+						}
 					}
 
 					// Printing location
@@ -1975,6 +2027,15 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "printingLoc";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90214", valueParm)));
+					} else {
+						Pattern pattern = Pattern.compile(
+								PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ADDRESS));
+						Matcher matcher = pattern.matcher(advPayment.getPrintingLoc());
+						if (matcher.matches() == false) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "printingLoc";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90909", "", valueParm), "EN"));
+						}
 					}
 
 					// value date
@@ -2069,11 +2130,6 @@ public class FinanceDataValidation {
 					}
 				}
 			}
-		} else {
-			String[] valueParm = new String[1];
-			valueParm[0] = "disbursement";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			return errorDetails;
 		}
 		return errorDetails;
 	}
