@@ -1927,6 +1927,11 @@
 		<property name="chequeHeaderService" ref="chequeHeaderService" />
 	</bean>
 	
+	<bean id="chequeDetailDocumentDialogCtrl" class="com.pennant.webui.pdc.chequeheader.ChequeDetailDocumentDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	    <property name="documentManagerDAO" ref="documentManagerDAO"/>
+	</bean>
+	
 	<!-- ChequeHeader -->
 	<bean id="chequeHeaderListCtrl" class="com.pennant.webui.pdc.chequeheader.ChequeHeaderListCtrl"
 		parent="basisListCtrl" scope="prototype">

@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -59,33 +60,37 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>ChequeDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {"chequeDetailsID","headerID","bankBranchID","accountNo","chequeSerialNo","chequeDate","eMIRefNo","amount","chequeCcy","status"
-		,"active"})
+@XmlType(propOrder = { "chequeDetailsID", "headerID", "bankBranchID", "accountNo", "chequeSerialNo", "chequeDate",
+		"eMIRefNo", "amount", "chequeCcy", "status", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChequeDetail extends AbstractWorkflowEntity {
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 1L;
 
-	private long chequeDetailsID;
-	private long headerID= 0;
-	private long bankBranchID= 0;
-	private String bankBranchIDName;
-	private String accountNo;
-	private int chequeSerialNo;
-	private String chequeType;
-	private Date chequeDate;
-	private String eMIRefNo;
-	private BigDecimal amount;
-	private String chequeCcy;
-	private String status;
-	private boolean active = false;
+	private long				chequeDetailsID;
+	private long				headerID			= 0;
+	private long				bankBranchID		= 0;
+	private String				bankBranchIDName;
+	private String				accountNo;
+	private int					chequeSerialNo;
+	private String				chequeType;
+	private Date				chequeDate;
+	private String				eMIRefNo;
+	private BigDecimal			amount;
+	private String				chequeCcy;
+	private String				status;
+	private boolean				active				= false;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean				newRecord			= false;
 	@XmlTransient
-	private String lovValue;
+	private String				lovValue;
 	@XmlTransient
-	private ChequeDetail befImage;
+	private ChequeDetail		befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
+	private LoggedInUser		userDetails;
+
+	private String				documentName;
+	private long				documentRef			= Long.MIN_VALUE;
+	private byte[]				docImage;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -100,10 +105,11 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankBranchIDName");
 		excludeFields.add("chequeType");
+		excludeFields.add("docImage");
 		return excludeFields;
 	}
 
@@ -111,12 +117,14 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		return chequeDetailsID;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.chequeDetailsID = id;
 	}
+
 	public long getChequeDetailsID() {
 		return chequeDetailsID;
 	}
+
 	public void setChequeDetailsID(long chequeDetailsID) {
 		this.chequeDetailsID = chequeDetailsID;
 	}
@@ -124,6 +132,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public long getHeaderID() {
 		return headerID;
 	}
+
 	public void setHeaderID(long headerID) {
 		this.headerID = headerID;
 	}
@@ -131,20 +140,23 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public long getBankBranchID() {
 		return bankBranchID;
 	}
+
 	public void setBankBranchID(long bankBranchID) {
 		this.bankBranchID = bankBranchID;
 	}
+
 	public String getBankBranchIDName() {
 		return this.bankBranchIDName;
 	}
 
-	public void setBankBranchIDName (String bankBranchIDName) {
+	public void setBankBranchIDName(String bankBranchIDName) {
 		this.bankBranchIDName = bankBranchIDName;
 	}
 
 	public String getAccountNo() {
 		return accountNo;
 	}
+
 	public void setAccountNo(String accountNo) {
 		this.accountNo = accountNo;
 	}
@@ -152,6 +164,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public int getChequeSerialNo() {
 		return chequeSerialNo;
 	}
+
 	public void setChequeSerialNo(int chequeSerialNo) {
 		this.chequeSerialNo = chequeSerialNo;
 	}
@@ -159,6 +172,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public Date getChequeDate() {
 		return chequeDate;
 	}
+
 	public void setChequeDate(Date chequeDate) {
 		this.chequeDate = chequeDate;
 	}
@@ -166,6 +180,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -173,6 +188,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public String getChequeCcy() {
 		return chequeCcy;
 	}
+
 	public void setChequeCcy(String chequeCcy) {
 		this.chequeCcy = chequeCcy;
 	}
@@ -180,6 +196,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -187,6 +204,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -207,19 +225,19 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public ChequeDetail getBefImage(){
+	public ChequeDetail getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(ChequeDetail beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(ChequeDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -243,4 +261,27 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.eMIRefNo = eMIRefNo;
 	}
 
+	public long getDocumentRef() {
+		return documentRef;
+	}
+
+	public void setDocumentRef(long documentRef) {
+		this.documentRef = documentRef;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
+	}
+
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
 }

@@ -1951,6 +1951,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getChequeHeader() != null) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
 			finChequeHeaderService.saveOrUpdate(auditHeader, tableType);
+			auditDetails.addAll(auditHeader.getAuditDetails());
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeDetail
 					.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
 		}

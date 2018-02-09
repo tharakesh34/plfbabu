@@ -43,6 +43,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,11 +53,13 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -77,9 +80,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	private AuditHeaderDAO		auditHeaderDAO;
 	private ChequeHeaderDAO		chequeHeaderDAO;
 	private ChequeDetailDAO		chequeDetailDAO;
+	private DocumentManagerDAO	documentManagerDAO;
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
 
 	/**
 	 * @return the auditHeaderDAO
@@ -133,15 +141,17 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 
 		if (chequeHeader.isNew()) {
+			processDocument(chequeHeader.getChequeDetailList());
 			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(chequeHeader);
 			auditHeader.setAuditReference(String.valueOf(chequeHeader.getHeaderID()));
 		} else {
+			processDocument(chequeHeader.getChequeDetailList());
 			getChequeHeaderDAO().update(chequeHeader, tableType);
 		}
 
@@ -397,7 +407,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public ChequeHeader getChequeHeader(String finRef) {
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(finRef, "_View");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader
+					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
@@ -414,11 +425,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeaderByRef(finReference, "_View");
 		if (chequeHeader != null) {
 			chequeHeader
-			.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
-	
+
 	/**
 	 * getApprovedChequeHeadersById fetch the details by using ChequeHeadersDAO's getChequeHeadersById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ChequeHeaders.
@@ -478,6 +489,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			chequeHeader.setNextTaskId("");
 			chequeHeader.setWorkflowId(0);
 
+			processDocument(chequeHeader.getChequeDetailList());
+
 			if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				chequeHeader.setRecordType("");
@@ -511,6 +524,37 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	/**
+	 * 
+	 * @param chequeDetails
+	 */
+	private void processDocument(List<ChequeDetail> chequeDetails) {
+		if (chequeDetails != null && !chequeDetails.isEmpty()) {
+			for (ChequeDetail detail : chequeDetails) {
+				DocumentManager documentManager = new DocumentManager();
+				if (!detail.isNewRecord()) {
+					if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+						byte[] arr1 = null;
+						DocumentManager olddocumentManager = documentManagerDAO.getById(detail.getDocumentRef());
+						if (olddocumentManager != null) {
+							arr1 = olddocumentManager.getDocImage();
+						}
+						byte[] arr2 = detail.getDocImage();
+						if (!Arrays.equals(arr1, arr2)) {
+							documentManager.setDocImage(arr2);
+							detail.setDocumentRef(documentManagerDAO.save(documentManager));
+						}
+					}
+				} else {
+					if (detail.getDocImage() != null) {
+						documentManager.setDocImage(detail.getDocImage());
+						detail.setDocumentRef(documentManagerDAO.save(documentManager));
+					}
+				}
+			}
+		}
 	}
 
 	// Method for Deleting all records related to ChequeHeaderModule and ChequeHeaderLOB in _Temp/Main tables depend on method type

@@ -54,12 +54,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -151,6 +153,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private String						curCcyField;
 	private BankDetailService			bankDetailService;
 	private List<FinanceScheduleDetail>	financeSchedules		= new ArrayList<>();
+	private List<ChequeDetail>			chequeDocuments         = new ArrayList<>();
+	
 	private ChequeHeaderListCtrl		chequeHeaderListCtrl;
 
 	private ChequeHeaderService			chequeHeaderService;
@@ -1185,6 +1189,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				Combobox emiReference = getCombobox("1");
 				Combobox emi = getCombobox(chequeDetail.geteMIRefNo());
 				emiReference.setValue(emi.getSelectedItem().getLabel());
+				emiReference.setReadonly(readonly);
 				readOnlyComponent(readonly, emiReference);
 				listcell.appendChild(emiReference);
 				listcell.setParent(listitem);
@@ -1200,13 +1205,22 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				listcell.appendChild(emiAmount);
 				listcell.setParent(listitem);
 
-				// Bank branch id
+				// Delete action
 				listcell = new Listcell();
-				Button delButton = new Button("Delete");
-				Object[] objected = new Object[2];
-				objected[0] = listitem;
+				Button delButton = new Button(Labels.getLabel("ChequeDetailDialog_Delete"));
+				Object[] deleteItem = new Object[1];
+				deleteItem[0] = listitem;
 				readOnlyComponent(readonly, delButton);
 				listcell.appendChild(delButton);
+				listcell.setParent(listitem);
+				
+				// Upload image action
+				listcell = new Listcell();
+				Button uploadButton = new Button(Labels.getLabel("ChequeDetailDialog_Upload"));
+				Object[] uploadItem = new Object[1];
+				uploadItem[0] = listitem;
+				readOnlyComponent(readonly, uploadButton);
+				listcell.appendChild(uploadButton);
 				listcell.setParent(listitem);
 
 				// only to avoid the number format exception while setting the
@@ -1219,16 +1233,25 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				List<Object> list = new ArrayList<Object>(11);
 				list.add(chequeDetail); //0
 				list.add(emiAmount); //1
-				list.add(objected); //2
+				list.add(deleteItem); //2
 				list.add(getComboboxValue(emiReference)); //3
 
 				emiAmount.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiAmount", list);
 				delButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickDeleteButton", list);
+				uploadButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickUploadButton", list);
 				emiReference.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiDate", list);
 			}
 		}
 	}
 
+	// Process for Document uploading
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		Media media = event.getMedia();
+		//browseDoc(media);
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	/**
 	 * Method for validating
 	 * 
@@ -1264,9 +1287,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					Listcell emiLc = (Listcell) list.get(3);
 					Combobox emi = (Combobox) emiLc.getFirstChild();
 					if (StringUtils.equals(getComboboxValue(emi), chequeDetail.geteMIRefNo())) {
-						if(!emi.isReadonly()) {
-							emiRefCount++;
-						}
+						emiRefCount++;
 						if (emiRefCount > 1) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
@@ -1323,8 +1344,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				noOfCheques++;
 			}
 		}
+		
 		chequeDetail.setAmount(
 				PennantAppUtil.unFormateAmount(emiAmount1.getValue(), CurrencyUtil.getFormat(this.curCcyField)));
+		
 		this.amount.setValue(totalChequeAmt);
 		this.noOfCheques.setValue(noOfCheques);
 
@@ -1410,8 +1433,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			chequeDetail.setAmount(chequeAmt);
 
 			if (newRecord) { //only for new records
+				for(ChequeDetail document:getChequeDocuments()) {
+					if(document.getChequeSerialNo() == chequeDetail.getChequeSerialNo()) {
+						chequeDetail.setDocImage(document.getDocImage());
+						chequeDetail.setDocumentName(document.getDocumentName());
+					}
+				}
+				
 				oldList.add(chequeDetail);
 				chequeDetail.setActive(true);
+				chequeDetail.setStatus("NEW");
 			}
 		}
 		chequeHeader.setChequeDetailList(oldList);
@@ -1449,8 +1480,23 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				chequeDetail.setRecordType(PennantConstants.RCD_UPD);
 			}
 		}
-
 		onChangeEmiAmount(event);
+	}
+	
+	public void onClickUploadButton(ForwardEvent event) {
+		@SuppressWarnings("unchecked")
+		List<Object> list = (List<Object>) event.getData();
+		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("ChequeDetailDialogCtrl", this);
+		map.put("chequeDetail", chequeDetail);
+		
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDocumentDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	private Combobox getCombobox(String eminumber) {
@@ -1562,5 +1608,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
 		this.chequeHeaderService = chequeHeaderService;
+	}
+	
+	public List<ChequeDetail> getChequeDocuments() {
+		return chequeDocuments;
+	}
+
+	public void setChequeDocuments(List<ChequeDetail> chequeDocuments) {
+		this.chequeDocuments = chequeDocuments;
 	}
 }

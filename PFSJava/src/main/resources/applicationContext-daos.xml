@@ -10629,6 +10629,7 @@
 		class="com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl">
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	
@@ -10655,6 +10656,7 @@
 		class="com.pennant.backend.service.finance.impl.FinChequeHeaderServiceImpl">
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	

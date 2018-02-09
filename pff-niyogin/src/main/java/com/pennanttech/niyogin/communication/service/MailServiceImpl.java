@@ -10,6 +10,7 @@ import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.niyogin.clients.JSONClient;
 import com.pennanttech.niyogin.communication.model.Email;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -97,7 +98,7 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	private Email prepareRequest(String toAddress, String subject, String body) {
 		logger.debug(Literal.ENTERING);
 		Email email = new Email();
-		email.setFrom("partner@niyogin.in");
+		email.setFrom(App.getLabel("EMAIL_ADDRESS_FROM"));
 		email.setTo(toAddress);
 		email.setSubject(subject);
 		email.setBody(body);

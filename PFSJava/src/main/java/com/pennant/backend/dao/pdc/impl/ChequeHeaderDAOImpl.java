@@ -84,7 +84,6 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" headerID, finReference, chequeType, noOfCheques, totalAmount, active, ");
-
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
 		sql.append(type);

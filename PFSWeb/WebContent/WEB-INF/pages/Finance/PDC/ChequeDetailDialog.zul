@@ -222,6 +222,7 @@
 							<listheader id="listheader_Amount"
 								label="${c:l('listheader_Amount.label')}" align="right" />
 							<listheader />
+							<listheader />
 						</listhead>
 					</listbox>
 				</div>

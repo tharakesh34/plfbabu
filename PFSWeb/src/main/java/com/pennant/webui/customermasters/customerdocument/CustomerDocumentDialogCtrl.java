@@ -176,12 +176,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private transient CreditApplicationReviewDialogCtrl creditApplicationReviewDialogCtrl;
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchPRCustid; 
 
-	
 
-	
+
+
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerDocumentService customerDocumentService;
@@ -247,7 +247,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		try {
 			setSecUserPagedListWrapper();
 
-		
+
 			if (arguments.containsKey("customerDocument")) {
 				Cloner cloner = new Cloner();
 				this.customerDocument = cloner
@@ -319,11 +319,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				getUserWorkspace().allocateRoleAuthorities(userRole,
 						"CustomerDocumentDialog");
 			}
-			
+
 			if (arguments.containsKey("moduleType")) {
 				this.moduleType = (String) arguments.get("moduleType");
 			}
-			
+
 			if (arguments.containsKey("isRetailCustomer")) {
 				this.isRetailCustomer = (Boolean) arguments.get("isRetailCustomer");
 			}
@@ -336,11 +336,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (arguments.containsKey("enqiryModule")) {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
-			
+
 			doLoadWorkFlow(this.customerDocument.isWorkflow(),
 					this.customerDocument.getWorkflowId(),
 					this.customerDocument.getNextTaskId());
@@ -384,7 +384,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			setFinDelegationDeviationCtrl();
 
 			if (isCheckList) {// TODO Need to add a condition based visibility
-								// for delete button
+				// for delete button
 				btnDelete.setVisible(false);
 			}
 		} catch (Exception e) {
@@ -427,7 +427,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if(getCustomerDocument().isDocIsPasswordProtected()){
 			this.passwordRow.setVisible(true);
 		}
-		
+
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -561,13 +561,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custID.setValue(aCustomerDocument.getCustID());	
 		}
 		this.custDocType.setValue(aCustomerDocument.getCustDocCategory());
-		
+
 		if(PennantConstants.CPRCODE.equalsIgnoreCase(aCustomerDocument.getCustDocCategory())){
 			this.custDocTitle.setValue(PennantApplicationUtil.formatEIDNumber(aCustomerDocument.getCustDocTitle()));
 		}else{
 			this.custDocTitle.setValue(aCustomerDocument.getCustDocTitle());
 		}
-		
+
 		this.custDocSysName.setValue(aCustomerDocument.getCustDocSysName());
 		this.pdfPassword.setValue(aCustomerDocument.getPdfPassWord());
 		this.custDocRcvdOn.setValue(aCustomerDocument.getCustDocRcvdOn());
@@ -579,7 +579,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			Filter[] countrysystemDefault=new Filter[1];
 			countrysystemDefault[0]=new Filter("SystemDefault", 1,Filter.OP_EQUAL);
 			Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
-			
+
 			if (countryObj!=null) {
 				Country country=(Country) countryObj;
 				this.custDocIssuedCountry.setValue(country.getCountryCode());
@@ -611,7 +611,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocIsAcrive.setChecked(true);
 			this.custDocIsAcrive.setDisabled(true);
 		}
-		
+
 		if(aCustomerDocument.isLovDescdocExpDateIsMand()){
 			this.space_CustDocExpDate.setSclass(PennantConstants.mandateSclass);
 			expDateIsMand=true;
@@ -625,14 +625,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}else{
 			this.space_custDocIssuedOn.setSclass("");			
 		}
-		
+
 		if(aCustomerDocument.isDocIdNumMand()){
 			this.space_CustIDNumber.setSclass(PennantConstants.mandateSclass);
 			isIdNumMand=true;
 		}else{
 			this.space_CustIDNumber.setSclass("");
 		}
-		
+
 		if(aCustomerDocument.isDocIssuedAuthorityMand()){
 			this.space_CustDocSysName.setSclass(PennantConstants.mandateSclass);
 			isIssuedAuth=true;
@@ -646,8 +646,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}else{
 			this.space_documnetName.setSclass("");			
 		}
-		
-		
+
+
 		this.documnetName.setValue(aCustomerDocument.getCustDocName());
 		this.documnetName.setAttribute("data", aCustomerDocument);
 
@@ -660,12 +660,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
 				ageementLink.setContent("<a href='' style = 'font-weight:bold'>"
-								+ aCustomerDocument.getCustDocName() + "</a> ");
-				
+						+ aCustomerDocument.getCustDocName() + "</a> ");
+
 				List<Object> list = new ArrayList<Object>();
 				list.add(aCustomerDocument.getCustDocType());
 				list.add(aCustomerDocument.getCustDocImage());
-				
+
 				ageementLink.addForward("onClick", window_CustomerDocumentDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
 			}else{
@@ -781,12 +781,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	private void checkDocumentExpired(CustomerDocument aCustomerDocument) {
 		boolean deviationallowed = false;
-//		Date date = aCustomerDocument.getCustDocExpDate();
-//		if (date != null && date.compareTo(DateUtility.getAppDate()) <= 0) {
-//			if (finDelegationDeviationCtrl!=null) {
-//				deviationallowed=finDelegationDeviationCtrl.checkDeviationForDocument(aCustomerDocument);
-//			}
-//		}
+		//		Date date = aCustomerDocument.getCustDocExpDate();
+		//		if (date != null && date.compareTo(DateUtility.getAppDate()) <= 0) {
+		//			if (finDelegationDeviationCtrl!=null) {
+		//				deviationallowed=finDelegationDeviationCtrl.checkDeviationForDocument(aCustomerDocument);
+		//			}
+		//		}
 		if (!deviationallowed) {
 			if (!this.custDocExpDate.isReadonly() && !this.custDocExpDate.isDisabled()) {
 				this.custDocExpDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"), expDateIsMand, DateUtility.addDays(appStartDate, 1), endDate, true));
@@ -795,7 +795,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -854,9 +854,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.btnSearchPRCustid.setVisible(false);
 				this.custDocType.setReadonly(true);
 			}
-			
+
 			doCheckEnquiry();
-			
+
 			if (isNewCustomer()) {
 				this.groupboxWf.setVisible(false);
 			}
@@ -903,11 +903,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 			}else if(StringUtils.trimToEmpty(this.custDocType.getValue()).equalsIgnoreCase(PennantConstants.PANNUMBER)){
 				this.custDocTitle.clearErrorMessage();
-					this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, isIdNumMand));
+				this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+						PennantRegularExpressions.REGEX_PANNUMBER, isIdNumMand));
 			}
-			
-			
+
+
 			else{
 				this.custDocTitle.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
 						PennantRegularExpressions.REGEX_ALPHANUM_CODE, isIdNumMand));
@@ -922,15 +922,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (!this.custDocRcvdOn.isReadonly() && !this.custDocRcvdOn.isDisabled()) {
 			this.custDocRcvdOn.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocRcvdOn.value"),true,startDate,appStartDate,true));
 		}
- 
+
 
 		if (!this.custDocIssuedOn.isDisabled()) {
 			this.custDocIssuedOn.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_CustomerDocumentDialog_CustDocIssuedOn.value"), isIssueDateMand, startDate, true,
 					false));
 		}
-		
-		
+
+
 		if (!this.custDocExpDate.isDisabled()) {
 			this.custDocExpDate.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"), expDateIsMand));
@@ -940,7 +940,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocVerifiedBy.setConstraint(new PTNumberValidator(Labels.getLabel(
 					"label_CustomerDocumentDialog_CustDocVerifiedBy.value"), true));
 		}
-		
+
 		if (this.passwordRow.isVisible()) {
 			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_pdf_password.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
@@ -1009,7 +1009,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	// Method for refreshing the list after successful update
 	private void refreshList() {
 		getCustomerDocumentListCtrl().search();
-		}
+	}
 
 	// CRUD operations
 
@@ -1058,64 +1058,64 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		final CustomerDocument aCustomerDocument = new CustomerDocument();
 		BeanUtils.copyProperties(getCustomerDocument(), aCustomerDocument);
 		String tranType = PennantConstants.TRAN_WF;
-		
+
 		if(isFinanceProcess && StringUtils.equals(PennantConstants.PANNUMBER,aCustomerDocument.getCustDocCategory())){
 			MessageUtil.showError("Document with PAN Number Can't be deleted!!!");
 		}else{
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value")+" : "+aCustomerDocument.getCustDocCategory();
+			// Show a confirm box
+			final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value")+" : "+aCustomerDocument.getCustDocCategory();
 
-		int conf = MessageUtil.confirm(msg);
+			int conf = MessageUtil.confirm(msg);
 
 			if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl == null) {
-			logger.debug("doDelete: Yes");
+				logger.debug("doDelete: Yes");
 
-			if (StringUtils.isBlank(aCustomerDocument.getRecordType())) {
-				aCustomerDocument.setVersion(aCustomerDocument.getVersion() + 1);
-				aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if(!isFinanceProcess && getCustomerDialogCtrl() != null &&  
-						getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
-					aCustomerDocument.setNewRecord(true);
+				if (StringUtils.isBlank(aCustomerDocument.getRecordType())) {
+					aCustomerDocument.setVersion(aCustomerDocument.getVersion() + 1);
+					aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					if(!isFinanceProcess && getCustomerDialogCtrl() != null &&  
+							getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+						aCustomerDocument.setNewRecord(true);
+					}
+					if (isWorkFlowEnabled()) {
+						aCustomerDocument.setNewRecord(true);
+						tranType = PennantConstants.TRAN_WF;
+					} else {
+						tranType = PennantConstants.TRAN_DEL;
+					}
 				}
-				if (isWorkFlowEnabled()) {
-					aCustomerDocument.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
 
-			try {
-				if(isNewCustomer()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerDocument,tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillDocumentDetails(this.customerDocuments);
-						if (isFinanceProcess) {
-							processChecklistDocuments(aCustomerDocument, false);
-						}
-						
+				try {
+					if(isNewCustomer()){
+						tranType=PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerDocument,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillDocumentDetails(this.customerDocuments);
+							if (isFinanceProcess) {
+								processChecklistDocuments(aCustomerDocument, false);
+							}
+
+							closeDialog();
+						}	
+					}else if (doProcess(aCustomerDocument, tranType)) {
+						refreshList();
 						closeDialog();
-					}	
-				}else if (doProcess(aCustomerDocument, tranType)) {
-					refreshList();
-					closeDialog();
-				}
+					}
 
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
+				} catch (DataAccessException e) {
+					MessageUtil.showError(e);
+				}
 			} else if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl != null) {
-			this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);
-			this.creditApplicationReviewDialogCtrl.customerDocumentList.remove(aCustomerDocument);
-			getCreditApplicationRevDialog();
-			closeDialog();
+				this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);
+				this.creditApplicationReviewDialogCtrl.customerDocumentList.remove(aCustomerDocument);
+				getCreditApplicationRevDialog();
+				closeDialog();
+			}
 		}
-	}
 
 		logger.debug("Leaving");
 	}
@@ -1211,7 +1211,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocIsAcrive.setDisabled(true);
 		}
 	}
-	
+
 	public boolean isReadOnly(String componentName){
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
@@ -1314,14 +1314,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug("Leaving");
 		return aDocumentDetails;
 	}
-	
+
 	private void processChecklistDocuments(CustomerDocument aCustomerDocument,boolean isSaveProcess){
 		logger.debug("Entering");
 		if(getFinanceMainDialogCtrl() !=null){
 			try{
 				if(getFinanceMainDialogCtrl().getClass().getMethod("getFinanceCheckListReferenceDialogCtrl") != null && 
 						getFinanceMainDialogCtrl().getClass().getMethod("getDocumentDetailDialogCtrl") != null) {
-					
+
 					FinanceCheckListReferenceDialogCtrl chkCtrl = (FinanceCheckListReferenceDialogCtrl) getFinanceMainDialogCtrl().
 							getClass().getMethod("getFinanceCheckListReferenceDialogCtrl").invoke(getFinanceMainDialogCtrl());
 
@@ -1343,9 +1343,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 						detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						newCustDocList.add(detail);
 					}
-					
+
 					docDetailDilogCtrl.doFillDocumentDetails(newCustDocList);
-					
+
 					//CheckList Details
 					if (chkCtrl != null && chkCtrl.getCheckListDocTypeMap() != null && chkCtrl.getCheckListDocTypeMap().
 							containsKey(aCustomerDocument.getCustDocCategory())) {
@@ -1363,7 +1363,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Saves the components to table. <br>
 	 * 
@@ -1559,7 +1559,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 							}
 							aCustomerDocument.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							aCustomerDocument.setUserDetails(getUserWorkspace().getLoggedInUser());
-							
+
 							if(isNewRecord()){
 								if(StringUtils.isBlank(aCustomerDocument.getRecordType())){
 									aCustomerDocument.setVersion(1);
@@ -1596,29 +1596,29 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		if(getCustomerDialogCtrl() != null){
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-			if(isRetailCustomer){
-				if(StringUtils.equals(PennantConstants.CPRCODE,this.custDocType.getValue())){
-					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+				if(isRetailCustomer){
+					if(StringUtils.equals(PennantConstants.CPRCODE,this.custDocType.getValue())){
+						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+					}
+				}else{
+					if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
+						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+						getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+					}
 				}
 			}else{
-				if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
-					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+				if(isRetailCustomer){
+					if(StringUtils.equals(PennantConstants.PANNUMBER,this.custDocType.getValue())){
+						getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+					}
+				}else{
+					if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
+						getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+					}
 				}
+
 			}
-		}else{
-			if(isRetailCustomer){
-				if(StringUtils.equals(PennantConstants.PANNUMBER,this.custDocType.getValue())){
-					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
-				}
-			}else{
-				if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
-					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
-				}
-			}
-			
 		}
-	}
 		logger.debug("Leaving");
 	}
 
@@ -1987,7 +1987,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 		}
 		this.custDocTitle.setValue("");
-		
+
 		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			if (PennantConstants.CPRCODE.equals(this.custDocType.getValue())) {
 				if (getCustomerDialogCtrl() != null) {
@@ -2042,7 +2042,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	}
 	public void onFulfill$custDocIssuedCountry(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = custDocIssuedCountry.getObject();
 		if (dataObject instanceof String) {
 			this.custDocIssuedCountry.setValue(dataObject.toString());
@@ -2056,7 +2056,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
@@ -2080,7 +2080,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 				return;
 			}
-			
+
 			//Process for Correct Format Document uploading
 			String fileName = media.getName();
 			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
@@ -2095,7 +2095,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
 				ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName+ "</a> ");
-				
+
 				List<Object> list = new ArrayList<Object>();
 				list.add(docType);
 				list.add(ddaImageData);
@@ -2129,12 +2129,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	}
 
 	public void onDocumentClicked(Event event) throws Exception {
-		
+
 		@SuppressWarnings("unchecked")
 		List<Object> list  = (List<Object>) event.getData();
 		String docType = (String) list.get(0);
 		byte[] ddaImageData= (byte[]) list.get(1);
-		
+
 		if(docType.equals(PennantConstants.DOC_TYPE_WORD)){
 			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
 		}else if(docType.equals(PennantConstants.DOC_TYPE_MSG)){
@@ -2235,7 +2235,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.customerDocument);
-		
+
 	}
 
 	/**
@@ -2369,11 +2369,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
-	
+
 	public void setFinDelegationDeviationCtrl() throws Exception {
 		if(getFinanceMainDialogCtrl()!=null && isFinanceProcess){
-		finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceMainDialogCtrl().getClass()
-				.getMethod("getFinDelegationDeviationCtrl").invoke(getFinanceMainDialogCtrl());
+			finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceMainDialogCtrl().getClass()
+					.getMethod("getFinDelegationDeviationCtrl").invoke(getFinanceMainDialogCtrl());
 		}
 	}
 
@@ -2384,5 +2384,5 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	public void setFinDelegationDeviationCtrl(FinDelegationDeviationCtrl finDelegationDeviationCtrl) {
 		this.finDelegationDeviationCtrl = finDelegationDeviationCtrl;
 	}
-	
+
 }
