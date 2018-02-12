@@ -60,6 +60,7 @@ public abstract class NiyoginService {
 	public static final int		LENGTH_FREQUENCY	= 5;
 	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
 	public static final String	DELIMITER_COMMA		= ",";
+	public static final String	LIST_DELIMETER		= "||";
 
 	private String				ERRORCODE			= "$.errorCode";
 	private String				ERRORMESSAGE		= "$.message";

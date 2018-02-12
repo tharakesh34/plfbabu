@@ -36,11 +36,29 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	private final String		extConfigFileName	= "cibilConsumer.properties";
 	private String				serviceUrl;
 
-	//CIBIL
+	//CIBIL APPLICANT
 	public static final String	REQ_SEND			= "REQSENDCIBIL";
 	public static final String	STATUSCODE			= "STATUSCIBIL";
 	public static final String	RSN_CODE			= "REASONCIBIL";
 	public static final String	REMARKS				= "REMARKSCIBIL";
+	public static final String	CBTOTENQ			= "CBTOTENQ";
+	public static final String	CBLAST30DAYS		= "CBLAST30DAYS";
+	public static final String	CBLAST6MONTHS		= "CBLAST6MONTHS";
+	public static final String	CBLAST12MONTHS		= "CBLAST12MONTHS";
+	public static final String	CBLAST24MONTHS		= "CBLAST24MONTHS";
+	public static final String	RECENTDATE			= "RECENTDATE";
+
+	//CIBIL CO_APPLICANT
+	public  final String	COAPP_REQ_SEND			= "COAPPREQSENDCIBIL";
+	public  final String	COAPP_STATUSCODE		= "COAPPSTATUSCIBIL";
+	public  final String	COAPP_RSN_CODE			= "COAPPREASONCIBIL";
+	public  final String	COAPP_REMARKS			= "COAPPREMARKSCIBIL";
+	public  final String	COAPP_CBTOTENQ			= "COAPPCBTOTENQ";
+	public  final String	COAPP_CBLAST30DAYS		= "COAPPCBLAST30DAYS";
+	public  final String	COAPP_CBLAST6MONTHS		= "COAPPCBLAST6MONTHS";
+	public  final String	COAPP_CBLAST12MONTHS	= "COAPPCBLAST12MONTHS";
+	public  final String	COAPP_CBLAST24MONTHS	= "COAPPCBLAST24MONTHS";
+	public  final String	COAPP_RECENTDATE		= "COAPPRECENTDATE";
 
 	/**
 	 * Method for get the CibilConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -147,6 +165,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		}
 
 		List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
+		Map<String, Object> coApplicantsData = new HashMap<>();
 		for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
 			Map<String, Object> appplicationdata = new HashMap<>();
 			CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(coAppCustomerDetails);
@@ -182,9 +201,15 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 				errorDesc = getTrimmedMessage(errorDesc);
 				doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 			}
+			//prepare the coApp Data
+			prepareCoAppResponse(appplicationdata, coApplicantsData);	
 		}
+		
+		Map<String, Object> mapvalidData = validateExtendedMapValues(coApplicantsData);
+		prepareResponseObj(mapvalidData, financeDetail);
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	/**
 	 * method for prepare the CibilConsumerRequest request object.
@@ -285,6 +310,42 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		logger.debug(Literal.ENTERING);
 		return address;
 
+	}
+	
+	/**
+	 * Method for prepare the coApplicant response.
+	 * 
+	 * @param mapvalidData
+	 * @param coApplicantsData
+	 */
+	private void prepareCoAppResponse(Map<String, Object> mapvalidData, Map<String, Object> coApplicantsData) {
+		logger.debug(Literal.ENTERING);
+
+		if (mapvalidData != null) {
+			coApplicantsData.put(COAPP_REQ_SEND, prepareListData(REQ_SEND, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_STATUSCODE, prepareListData(STATUSCODE, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_RSN_CODE, prepareListData(RSN_CODE, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_REMARKS, prepareListData(REMARKS, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_CBTOTENQ, prepareListData(CBTOTENQ, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_CBLAST30DAYS, prepareListData(CBLAST30DAYS, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_CBLAST6MONTHS, prepareListData(CBLAST6MONTHS, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_CBLAST12MONTHS, prepareListData(CBLAST12MONTHS, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_CBLAST24MONTHS, prepareListData(CBLAST24MONTHS, coApplicantsData, mapvalidData));
+			coApplicantsData.put(COAPP_RECENTDATE, prepareListData(RECENTDATE, coApplicantsData, mapvalidData));
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for combining both previous data and current data of both maps as String and append a delimeter.
+	 * 
+	 * @param key
+	 * @param previousDataMap
+	 * @param currentDataMap
+	 * @return
+	 */
+	private String prepareListData(String key, Map<String, Object> previousDataMap,Map<String, Object> currentDataMap) {
+		return getval(previousDataMap.get(key)) + getval(currentDataMap.get(key)) + LIST_DELIMETER;
 	}
 
 	/**

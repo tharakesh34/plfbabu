@@ -61,7 +61,6 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private final String		extConfigFileName			= "bre.properties";
 	private String				serviceUrl;
 	private Map<String, Object>	extendedMap					= null;
-	private static final String	LIST_DELIMETER				= "||";
 
 	//BRE
 	public static final String	REQ_SEND					= "REQSENDEXPBRE";

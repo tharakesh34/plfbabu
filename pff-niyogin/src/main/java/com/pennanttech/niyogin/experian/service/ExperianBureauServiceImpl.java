@@ -71,6 +71,22 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	public static final String	STATUS						= "STATUS";
 	public static final String	WRITEOFF					= "25";
 	public static final String	SETTLE						= "23";
+	public static final String	PANNUMBER					= "PANNUMBER";
+
+	public final String			COAPP_REQ_SEND					= "COAPPREQSENDEXPBURU";
+	public final String			COAPP_STATUSCODE				= "COAPPSTATUSEXPBURU";
+	public final String			COAPP_RSN_CODE					= "COAPPREASONEXPBURU";
+	public final String			COAPP_REMARKS					= "COAPPREMARKSEXPBURU";
+	public final String			COAPP_NO_OF_ENQUIRES			= "COAPPNOOFENQUIRES";
+	public final String			COAPP_RESTRUCTURED_FLAG			= "COAPPRESTRUCTUREDLOAN";
+	public final String			COAPP_SUIT_FILED_FLAG			= "COAPPSUITFILED";
+	public final String			COAPP_WILLFUL_DEFAULTER_FLAG	= "COAPPWILLFULDEFAULTER";
+	public final String			COAPP_WRITE_OFF_FLAG			= "COAPPEXPBWRUTEOFF";
+	public final String			COAPP_SETTLED_FLAG_FLAG			= "COAPPEXPBSETTLED";
+	public final String			COAPP_NO_EMI_BOUNCES_IN3M		= "COAPPEMI3MONTHS";
+	public final String			COAPP_NO_EMI_BOUNCES_IN6M		= "COAPPEMI6MNTHS";
+	public final String			COAPP_STATUS					= "COAPPSTATUS";
+	public final String			COAPP_PANNUMBER					= "COAPPPANNUMBER";
 
 	private Date				appDate						= getAppDate();
 
@@ -109,9 +125,13 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 
 		List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
+		Map<String, Object> coAppplicantsdata = new HashMap<>();
 		for (CustomerDetails coAppCustomerDetail : coApplicantCustomers) {
 			executeBureau(financeDetail, coAppCustomerDetail);
+			processCoAppResponse(coAppplicantsdata,appplicationdata);
 		}
+		Map<String, Object> mapvalidData = validateExtendedMapValues(coAppplicantsdata);
+		prepareResponseObj(mapvalidData, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -664,7 +684,40 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		logger.debug(Literal.LEAVING);
 		return false;
 	}
+	private void processCoAppResponse(Map<String, Object> coAppplicantsdata, Map<String, Object> appplicationdata) {
+		if (appplicationdata != null) {
 
+			coAppplicantsdata.put(COAPP_REQ_SEND,prepareListData(REQ_SEND, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_STATUSCODE,prepareListData(STATUSCODE, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_RSN_CODE,prepareListData(RSN_CODE, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_REMARKS,prepareListData(REMARKS, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_NO_OF_ENQUIRES,prepareListData(NO_OF_ENQUIRES, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_RESTRUCTURED_FLAG,prepareListData(RESTRUCTURED_FLAG, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_SUIT_FILED_FLAG,prepareListData(SUIT_FILED_FLAG, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_WILLFUL_DEFAULTER_FLAG,prepareListData(WILLFUL_DEFAULTER_FLAG, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_WRITE_OFF_FLAG,prepareListData(WRITE_OFF_FLAG, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_SETTLED_FLAG_FLAG,prepareListData(SETTLED_FLAG_FLAG, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_NO_EMI_BOUNCES_IN3M,prepareListData(NO_EMI_BOUNCES_IN3M, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_NO_EMI_BOUNCES_IN6M,prepareListData(NO_EMI_BOUNCES_IN6M, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_STATUS,prepareListData(STATUS, coAppplicantsdata, appplicationdata));
+			coAppplicantsdata.put(COAPP_PANNUMBER,prepareListData(PANNUMBER, coAppplicantsdata, appplicationdata));
+
+		}
+		
+	}
+	
+	/**
+	 * Method for combining both previous data and current data of both maps as String and append a delimeter.
+	 * 
+	 * @param key
+	 * @param previousDataMap
+	 * @param currentDataMap
+	 * @return
+	 */
+	private String prepareListData(String key, Map<String, Object> previousDataMap,Map<String, Object> currentDataMap) {
+		return getval(previousDataMap.get(key)) + getval(currentDataMap.get(key)) + LIST_DELIMETER;
+	}
+	
 	/**
 	 * 
 	 * This Comparator class is used to sort the BillPayGrid based on their bpayDate H to L
