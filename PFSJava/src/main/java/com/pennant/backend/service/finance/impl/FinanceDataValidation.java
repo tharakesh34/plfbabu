@@ -1090,7 +1090,7 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 
-			errorDetails = jountAccountDetailsValidation(financeDetail);
+			errorDetails = jointAccountDetailsValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
@@ -1381,7 +1381,7 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetail> jountAccountDetailsValidation(FinanceDetail financeDetail) {
+	private List<ErrorDetail> jointAccountDetailsValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
 		if (jountAccountDetails != null) {
@@ -1390,13 +1390,18 @@ public class FinanceDataValidation {
 					if (StringUtils.isBlank(jointAccDetail.getRepayAccountId())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "RepayAccountId";
-						valueParm[1] = "IncludeRepay";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90124", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;
 					}
+				}else if(StringUtils.isNotBlank(jointAccDetail.getRepayAccountId())){
+					String[] valueParm = new String[2];
+					valueParm[0] = "RepayAccountId";
+					valueParm[1] = "includeRepay";
+					//{0} is only applicable for {1} customer.
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90124", valueParm)));
 				}
-				if (StringUtils.equals(jointAccDetail.getCustCIF(), financeDetail.getFinScheduleData().getFinanceMain()
-						.getLovDescCustCIF())) {
+				if (StringUtils.equals(jointAccDetail.getCustCIF(), 
+						financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = jointAccDetail.getCustCIF();
 					valueParm[1] = "co-applicant";
@@ -1408,6 +1413,47 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = jointAccDetail.getCustCIF();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90102", valueParm)));
+				}
+				//for authoritySignatory and sequence		
+				if (jointAccDetail.isAuthoritySignatory()) {
+
+					if (jointAccDetail.getSequence() <= 0 || jointAccDetail.getSequence() >= 10) {
+						//{0} should between or including {1} and {2}.
+						String[] valueParm = new String[3];
+						valueParm[0] = "sequence";
+						valueParm[1] = "1";
+						valueParm[2] = "9";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90282", valueParm)));
+
+					}
+				} else if (jointAccDetail.getSequence() != 0) {
+					//{0} is only applicable for {1}.
+					String[] valueParm = new String[2];
+					valueParm[0] = "sequence";
+					valueParm[1] = "authoritySignatory";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+				}
+				int duplicateSeqCount = 0;
+				int duplicateCifCount = 0;
+				for (JointAccountDetail detail : jountAccountDetails) {
+					if (jointAccDetail.getSequence() == detail.getSequence() && detail.getSequence() != 0) {
+						duplicateSeqCount++;
+					}
+					if (StringUtils.equals(jointAccDetail.getCustCIF(), detail.getCustCIF())) {
+						duplicateCifCount++;
+					}
+				}
+				//Duplicate {0} are not allowed.
+				if (duplicateSeqCount >= 2) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "sequence id";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+				}
+				//Duplicate {0} are not allowed.
+				if (duplicateCifCount >= 2) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CIF";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
 				}
 			}
 		}
@@ -1752,10 +1798,12 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90278", null)));
 					}
 				}
+
+				String acc_holder_regix = "^$|^[A-Za-z]+[A-Za-z.\\s]*";
 				//validate names
 				String accHolderName = mandate.getAccHolderName();
 				if (StringUtils.isNotBlank(accHolderName)) {
-					if (!(accHolderName.matches(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME)))) {
+					if (!(accHolderName.matches(acc_holder_regix))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "AccHolderName";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", valueParm)));
@@ -1763,7 +1811,7 @@ public class FinanceDataValidation {
 				}
 				String jointAccHolderName = mandate.getJointAccHolderName();
 				if (StringUtils.isNotBlank(jointAccHolderName)) {
-					if (!(jointAccHolderName.matches(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME)))) {
+					if (!(jointAccHolderName.matches(acc_holder_regix))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "JointAccHolderName";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", valueParm)));
@@ -1854,18 +1902,25 @@ public class FinanceDataValidation {
 			}
 			
 			if (StringUtils.isNotBlank(mandate.getDocumentName())) {
-				String docName = mandate.getDocumentName();
+				String docName = mandate.getDocumentName().toLowerCase();
+				// document name has no extension
+				if (!docName.contains(".")) {
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getDocumentName();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
+				}
+				// document name has only extension
+				else if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Document Name";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				}
 				//document Name Extension validation
 				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
 						&& !docName.endsWith(".pdf")) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "Document Extension, available ext are:JPG,PNG,PDF ";
+					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
-				} else if (!docName.contains(".")) {
-					//Uploaded document {0} extension should be required.
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
 				}
 			}
 		}

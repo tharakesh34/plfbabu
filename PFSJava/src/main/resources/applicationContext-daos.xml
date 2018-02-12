@@ -10434,17 +10434,6 @@
 		<property name="ddaControllerService" ref="ddaControllerService" />
 		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
-	<!--Customize Finance Data Validation Service -->
-	<bean id="customizeFinanceDataValidation"
-		class="com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation">
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="bankBranchService" ref="bankBranchService" />
-		<property name="mandateService" ref="mandateService" />
-		<property name="bankDetailService" ref="bankDetailService" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
-	</bean>
-
 	<!-- custom service tasks -->
 	<bean id="shortMessageService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

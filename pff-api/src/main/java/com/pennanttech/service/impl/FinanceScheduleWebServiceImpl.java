@@ -78,13 +78,8 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-			if (ImplementationConstants.CLIENT_NFL) {
-				customizeFinanceDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData,
-						true);
-			} else {
-				financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
-			}
-
+			// validate schedule details
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
 			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
