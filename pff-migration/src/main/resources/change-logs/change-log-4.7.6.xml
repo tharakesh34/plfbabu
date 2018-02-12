@@ -160,11 +160,26 @@ UNION ALL
      LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
 		 </createView>
 	</changeSet>
+	<changeSet id="6" author="DurgaPrasad D">
+		<update tableName="chequeDetail_Temp">
+			<column name="documentRef">0</column>
+			<where>
+				<column name="documentRef">null</column>
+			</where>
+		</update>
+	</changeSet>
+	<changeSet id="7" author="DurgaPrasad D">
+		<update tableName="chequeDetail">
+			<column name="documentRef">0</column>
+			<where>
+				<column name="documentRef">null</column>
+			</where>
+		</update>
+	</changeSet>
 	
 	<changeSet id="5" author="Ganesh.p">
 	<sql>
 	<![CDATA[INSERT INTO ErrorDetails VALUES('90909','EN','E','{0} iS invalid. Allowed Characters are [a-z A-Z 0-9 . > < , - / ! @ $ & # ( ) [ ] { } ].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0) ]]>
 	</sql>
 	</changeSet>
-	
 </databaseChangeLog>
