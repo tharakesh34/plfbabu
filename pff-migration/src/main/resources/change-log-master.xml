@@ -93,5 +93,6 @@
 	<include file="change-logs/change-log-GST.xml" />
 	<include file="change-logs/refactor/change-log-errordetail.xml"/>
 	<include file="change-logs/change-log-4.7.5.xml" /> -->
-	<include file="change-logs/change-log-4.7.6.xml" />
+<!-- 	<include file="change-logs/change-log-4.7.6.xml" /> -->
+	<include file="change-logs/change-log-4.7.7.xml" />
 </databaseChangeLog>
