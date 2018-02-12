@@ -155,47 +155,58 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		return auditHeader;
 	}
 
+	/**
+	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
+	 * 
+	 * @param coAppplicantsdata
+	 * @param appplicationdata
+	 */
 	private void processCoAppResponse(Map<String, Object> coAppplicantsdata, Map<String, Object> appplicationdata) {
+		logger.debug(Literal.ENTERING);
 		if (appplicationdata != null) {
 			
-			coAppplicantsdata.put(COAPP_REQ_SEND,prepareListData(REQ_SEND, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_STATUSCODE,prepareListData(STATUSCODE, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_RSN_CODE,prepareListData(RSN_CODE, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_REMARKS,prepareListData(REMARKS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_OLDEST_LOANDISBURSED_DT,prepareListData(OLDEST_LOANDISBURSED_DT, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NO_PREVS_LOANS_AS_OF_APP_DT,prepareListData(NO_PREVS_LOANS_AS_OF_APP_DT, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_IS_APP_SUBSTANDARD_IN_L6M,prepareListData(IS_APP_SUBSTANDARD_IN_L6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M,prepareListData(IS_APP_REPORTED_AS_LOSS_IN_L6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_IS_APP_DOUBTFUL_IN_L6M,prepareListData(IS_APP_DOUBTFUL_IN_L6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_IS_APP_MENTIONED_AS_SMA,prepareListData(IS_APP_MENTIONED_AS_SMA, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_IS_APP_90PLUS_DPD_IN_L6M,prepareListData(IS_APP_90PLUS_DPD_IN_L6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_LAST_UPDATE_DT_IN_BUREAU,prepareListData(LAST_UPDATE_DT_IN_BUREAU, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NOT_ENOUGH_INFO,prepareListData(NOT_ENOUGH_INFO, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_COMB_OF_PREVS_LOANS_TAKEN,prepareListData(COMB_OF_PREVS_LOANS_TAKEN, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_PRODUCT_INDEX,prepareListData(PRODUCT_INDEX, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS,prepareListData(SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS,prepareListData(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M,prepareListData(NUMB_OF_BUS_LOANS_OPENED_IN_L6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS,prepareListData(MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M,prepareListData(MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS,prepareListData(MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN,prepareListData(COMBINATION_OF_PREVIOUS_LOANS_TAKEN, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M,prepareListData(MONTHS_SINCE_30_PLUS_DPD_IN_L12M, coAppplicantsdata, appplicationdata));
+			prepareListData(COAPP_REQ_SEND,REQ_SEND, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_STATUSCODE,STATUSCODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RSN_CODE,RSN_CODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_REMARKS,REMARKS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_OLDEST_LOANDISBURSED_DT,OLDEST_LOANDISBURSED_DT, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NO_PREVS_LOANS_AS_OF_APP_DT,NO_PREVS_LOANS_AS_OF_APP_DT, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_SUBSTANDARD_IN_L6M,IS_APP_SUBSTANDARD_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M,IS_APP_REPORTED_AS_LOSS_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_DOUBTFUL_IN_L6M,IS_APP_DOUBTFUL_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_MENTIONED_AS_SMA,IS_APP_MENTIONED_AS_SMA, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_90PLUS_DPD_IN_L6M,IS_APP_90PLUS_DPD_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_LAST_UPDATE_DT_IN_BUREAU, LAST_UPDATE_DT_IN_BUREAU, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NOT_ENOUGH_INFO, NOT_ENOUGH_INFO, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_COMB_OF_PREVS_LOANS_TAKEN, COMB_OF_PREVS_LOANS_TAKEN, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_PRODUCT_INDEX, PRODUCT_INDEX, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS,SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M,NUMB_OF_BUS_LOANS_OPENED_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN, COMBINATION_OF_PREVIOUS_LOANS_TAKEN, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M, MONTHS_SINCE_30_PLUS_DPD_IN_L12M, coAppplicantsdata, appplicationdata);
 
 		}
-		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
-	 * Method for combining both previous data and current data of both maps as String and append a delimeter.
+	 * Method for combining both coApplicantsMap data and currentDataMap data by appending a delimeter.
 	 * 
-	 * @param key
-	 * @param previousDataMap
+	 * @param curMapKey
+	 * @param coAppKey
+	 * @param coApplicantsMap
 	 * @param currentDataMap
 	 * @return
 	 */
-	private String prepareListData(String key, Map<String, Object> previousDataMap,Map<String, Object> currentDataMap) {
-		return getval(previousDataMap.get(key)) + getval(currentDataMap.get(key)) + LIST_DELIMETER;
+	private void prepareListData(String coAppKey, String curMapKey, Map<String, Object> coApplicantsMap,
+			Map<String, Object> currentDataMap) {
+		String value = null;
+		value = getval(coApplicantsMap.get(coAppKey)) + getval(currentDataMap.get(curMapKey)) + LIST_DELIMETER;
+		coApplicantsMap.put(coAppKey, value);
 	}
 
 	/**

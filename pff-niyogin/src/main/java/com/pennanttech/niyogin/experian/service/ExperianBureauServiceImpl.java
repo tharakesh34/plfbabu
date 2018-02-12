@@ -684,38 +684,48 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		logger.debug(Literal.LEAVING);
 		return false;
 	}
+	
+	/**
+	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
+	 * 
+	 * @param coAppplicantsdata
+	 * @param appplicationdata
+	 */
 	private void processCoAppResponse(Map<String, Object> coAppplicantsdata, Map<String, Object> appplicationdata) {
+		logger.debug(Literal.ENTERING);
 		if (appplicationdata != null) {
-
-			coAppplicantsdata.put(COAPP_REQ_SEND,prepareListData(REQ_SEND, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_STATUSCODE,prepareListData(STATUSCODE, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_RSN_CODE,prepareListData(RSN_CODE, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_REMARKS,prepareListData(REMARKS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NO_OF_ENQUIRES,prepareListData(NO_OF_ENQUIRES, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_RESTRUCTURED_FLAG,prepareListData(RESTRUCTURED_FLAG, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_SUIT_FILED_FLAG,prepareListData(SUIT_FILED_FLAG, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_WILLFUL_DEFAULTER_FLAG,prepareListData(WILLFUL_DEFAULTER_FLAG, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_WRITE_OFF_FLAG,prepareListData(WRITE_OFF_FLAG, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_SETTLED_FLAG_FLAG,prepareListData(SETTLED_FLAG_FLAG, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NO_EMI_BOUNCES_IN3M,prepareListData(NO_EMI_BOUNCES_IN3M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_NO_EMI_BOUNCES_IN6M,prepareListData(NO_EMI_BOUNCES_IN6M, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_STATUS,prepareListData(STATUS, coAppplicantsdata, appplicationdata));
-			coAppplicantsdata.put(COAPP_PANNUMBER,prepareListData(PANNUMBER, coAppplicantsdata, appplicationdata));
-
+			prepareListData(COAPP_REQ_SEND, REQ_SEND, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_STATUSCODE, STATUSCODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RSN_CODE, RSN_CODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_REMARKS, REMARKS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NO_OF_ENQUIRES, NO_OF_ENQUIRES, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RESTRUCTURED_FLAG, RESTRUCTURED_FLAG, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_SUIT_FILED_FLAG, SUIT_FILED_FLAG, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_WILLFUL_DEFAULTER_FLAG, WILLFUL_DEFAULTER_FLAG, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_WRITE_OFF_FLAG, WRITE_OFF_FLAG, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_SETTLED_FLAG_FLAG, SETTLED_FLAG_FLAG, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NO_EMI_BOUNCES_IN3M, NO_EMI_BOUNCES_IN3M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NO_EMI_BOUNCES_IN6M, NO_EMI_BOUNCES_IN6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_STATUS, STATUS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_PANNUMBER, PANNUMBER, coAppplicantsdata, appplicationdata);
 		}
-		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
-	 * Method for combining both previous data and current data of both maps as String and append a delimeter.
+	 * Method for combining both coApplicantsMap data and currentDataMap data by appending a delimeter.
 	 * 
-	 * @param key
-	 * @param previousDataMap
+	 * @param curMapKey
+	 * @param coAppKey
+	 * @param coApplicantsMap
 	 * @param currentDataMap
 	 * @return
 	 */
-	private String prepareListData(String key, Map<String, Object> previousDataMap,Map<String, Object> currentDataMap) {
-		return getval(previousDataMap.get(key)) + getval(currentDataMap.get(key)) + LIST_DELIMETER;
+	private void prepareListData(String coAppKey, String curMapKey, Map<String, Object> coApplicantsMap,
+			Map<String, Object> currentDataMap) {
+		String value = null;
+		value = getval(coApplicantsMap.get(coAppKey)) + getval(currentDataMap.get(curMapKey)) + LIST_DELIMETER;
+		coApplicantsMap.put(coAppKey, value);
 	}
 	
 	/**

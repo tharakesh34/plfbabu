@@ -313,39 +313,43 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	}
 	
 	/**
-	 * Method for prepare the coApplicant response.
+	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
 	 * 
-	 * @param mapvalidData
-	 * @param coApplicantsData
+	 * @param coAppplicantsdata
+	 * @param appplicationdata
 	 */
 	private void prepareCoAppResponse(Map<String, Object> mapvalidData, Map<String, Object> coApplicantsData) {
 		logger.debug(Literal.ENTERING);
 
 		if (mapvalidData != null) {
-			coApplicantsData.put(COAPP_REQ_SEND, prepareListData(REQ_SEND, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_STATUSCODE, prepareListData(STATUSCODE, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_RSN_CODE, prepareListData(RSN_CODE, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_REMARKS, prepareListData(REMARKS, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_CBTOTENQ, prepareListData(CBTOTENQ, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_CBLAST30DAYS, prepareListData(CBLAST30DAYS, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_CBLAST6MONTHS, prepareListData(CBLAST6MONTHS, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_CBLAST12MONTHS, prepareListData(CBLAST12MONTHS, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_CBLAST24MONTHS, prepareListData(CBLAST24MONTHS, coApplicantsData, mapvalidData));
-			coApplicantsData.put(COAPP_RECENTDATE, prepareListData(RECENTDATE, coApplicantsData, mapvalidData));
+			prepareListData(COAPP_REQ_SEND, REQ_SEND, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_STATUSCODE, STATUSCODE, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_RSN_CODE, RSN_CODE, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_REMARKS, REMARKS, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_CBTOTENQ, CBTOTENQ, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_CBLAST30DAYS, CBLAST30DAYS, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_CBLAST6MONTHS, CBLAST6MONTHS, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_CBLAST12MONTHS, CBLAST12MONTHS, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_CBLAST24MONTHS, CBLAST24MONTHS, coApplicantsData, mapvalidData);
+			prepareListData(COAPP_RECENTDATE, RECENTDATE, coApplicantsData, mapvalidData);
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * Method for combining both previous data and current data of both maps as String and append a delimeter.
+	 * Method for combining both coApplicantsMap data and currentDataMap data by appending a delimeter.
 	 * 
-	 * @param key
-	 * @param previousDataMap
+	 * @param curMapKey
+	 * @param coAppKey
+	 * @param coApplicantsMap
 	 * @param currentDataMap
 	 * @return
 	 */
-	private String prepareListData(String key, Map<String, Object> previousDataMap,Map<String, Object> currentDataMap) {
-		return getval(previousDataMap.get(key)) + getval(currentDataMap.get(key)) + LIST_DELIMETER;
+	private void prepareListData(String coAppKey, String curMapKey, Map<String, Object> coApplicantsMap,
+			Map<String, Object> currentDataMap) {
+		String value = null;
+		value = getval(coApplicantsMap.get(coAppKey)) + getval(currentDataMap.get(curMapKey)) + LIST_DELIMETER;
+		coApplicantsMap.put(coAppKey, value);
 	}
 
 	/**
