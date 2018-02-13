@@ -59,7 +59,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.bmtmasters.Question;
 import com.pennant.backend.service.bmtmasters.QuestionService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -67,6 +66,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.question.model.QuestionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 

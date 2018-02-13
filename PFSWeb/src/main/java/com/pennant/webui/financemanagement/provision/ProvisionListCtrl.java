@@ -69,7 +69,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.bmtmasters.Product;
@@ -97,6 +96,7 @@ import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/ProvisionList.zul

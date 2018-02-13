@@ -62,7 +62,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceUtil;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.service.finance.TreasuaryFinanceService;
@@ -75,6 +74,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul file.

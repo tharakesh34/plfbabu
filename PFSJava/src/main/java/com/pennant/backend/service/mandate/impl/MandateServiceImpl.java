@@ -59,7 +59,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -72,6 +71,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>Mandate</b>.<br>

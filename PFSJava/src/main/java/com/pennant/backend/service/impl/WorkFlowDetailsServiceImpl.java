@@ -52,7 +52,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -61,6 +60,7 @@ import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 
 public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> implements WorkFlowDetailsService {

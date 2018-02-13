@@ -10,9 +10,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMasters/Sector/SectorList.zul file.

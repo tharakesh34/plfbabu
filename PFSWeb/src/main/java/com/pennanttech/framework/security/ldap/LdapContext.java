@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LdapContext {

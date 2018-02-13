@@ -12,7 +12,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -25,6 +24,7 @@ import com.pennant.backend.service.finance.FinanceFlagsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> implements
         FinanceFlagsService {

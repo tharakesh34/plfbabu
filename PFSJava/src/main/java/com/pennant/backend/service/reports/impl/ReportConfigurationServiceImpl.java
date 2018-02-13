@@ -56,7 +56,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.reports.ReportFilterFieldsDAO;
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -67,6 +66,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ReportConfigurationServiceImpl extends GenericService<ReportConfiguration> implements ReportConfigurationService{
 	private static Logger logger = Logger.getLogger(ReportConfigurationServiceImpl .class);

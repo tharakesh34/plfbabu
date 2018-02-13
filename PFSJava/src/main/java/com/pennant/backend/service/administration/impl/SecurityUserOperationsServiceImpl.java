@@ -59,7 +59,6 @@ import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityOperationRoles;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
@@ -71,6 +70,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUserOperations>
 		implements SecurityUserOperationsService {

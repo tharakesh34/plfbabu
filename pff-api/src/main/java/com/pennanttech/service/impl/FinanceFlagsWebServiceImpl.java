@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -21,6 +20,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinanceFlagsController;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.FinanceFlagsRestService;
 import com.pennanttech.pffws.FinanceFlagsSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;

@@ -51,13 +51,13 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.model.BuilderTable;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>DedupFields</b>.<br>

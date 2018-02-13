@@ -81,7 +81,6 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.LabelElement;
 
 import com.pennant.backend.model.BuilderTable;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -100,6 +99,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * This is the controller class for the

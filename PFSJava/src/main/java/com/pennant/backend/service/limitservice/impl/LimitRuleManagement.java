@@ -19,7 +19,6 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.dao.rulefactory.impl.LimitRuleDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitDetails;
@@ -30,6 +29,7 @@ import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class LimitRuleManagement {
 

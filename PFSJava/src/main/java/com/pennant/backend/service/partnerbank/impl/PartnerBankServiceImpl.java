@@ -56,7 +56,6 @@ import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -66,6 +65,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 

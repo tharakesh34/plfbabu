@@ -15,11 +15,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * This is generic Validation utility for validating the Bean objects.

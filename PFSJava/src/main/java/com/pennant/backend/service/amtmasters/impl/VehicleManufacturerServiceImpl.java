@@ -51,7 +51,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.amtmasters.VehicleManufacturerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -59,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.VehicleManufacturerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>VehicleManufacturer</b>.<br>

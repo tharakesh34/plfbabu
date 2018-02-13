@@ -14,7 +14,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -27,6 +26,7 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction> implements AddDisbursementService {
 	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);

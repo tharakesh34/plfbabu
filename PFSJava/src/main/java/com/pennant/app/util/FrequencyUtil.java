@@ -52,9 +52,9 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.model.FrequencyDetails;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Validates the Frequency code and returns the FrequencyDetails object with any

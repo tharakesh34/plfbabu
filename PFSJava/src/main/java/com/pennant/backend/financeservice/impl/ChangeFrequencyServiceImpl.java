@@ -18,7 +18,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -29,6 +28,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.rits.cloning.Cloner;
 
 public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruction> implements ChangeFrequencyService {

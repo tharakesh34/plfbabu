@@ -48,9 +48,9 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ErrorControl {

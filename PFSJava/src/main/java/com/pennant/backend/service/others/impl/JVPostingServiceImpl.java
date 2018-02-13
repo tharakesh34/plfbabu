@@ -47,7 +47,6 @@ import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.LegalExpenses;
@@ -61,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>

@@ -57,7 +57,6 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -72,6 +71,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
 	

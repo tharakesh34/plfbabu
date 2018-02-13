@@ -71,7 +71,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
@@ -86,6 +85,7 @@ import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryComparator;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;

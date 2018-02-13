@@ -54,12 +54,12 @@ import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.util.GenerateAccountNumberDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AccountNumberGeneration implements Serializable {
 	

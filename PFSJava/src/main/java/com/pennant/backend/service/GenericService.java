@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.cache.Cache;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public abstract class GenericService<T> {
 	protected static Logger log = LogManager.getLogger(GenericService.class.getClass());

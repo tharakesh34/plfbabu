@@ -45,9 +45,9 @@ package com.pennant.backend.service;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface WorkFlowDetailsService {
 

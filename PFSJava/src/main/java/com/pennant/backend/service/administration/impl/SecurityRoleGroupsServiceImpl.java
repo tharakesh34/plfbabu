@@ -52,7 +52,6 @@ import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
@@ -61,6 +60,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityRoleGroupsService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGroups> implements  SecurityRoleGroupsService{
 

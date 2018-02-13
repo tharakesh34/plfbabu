@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -17,6 +16,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private static Logger logger = Logger.getLogger(CustomerBankInfoServiceImpl.class);

@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 

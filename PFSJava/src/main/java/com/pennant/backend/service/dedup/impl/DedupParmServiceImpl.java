@@ -60,7 +60,6 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -84,6 +83,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.service.CustomerDedupService;
 
 /**

@@ -56,7 +56,6 @@ import com.pennant.backend.dao.rmtmasters.ScoringGroupDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -68,6 +67,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.ScoringGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>ScoringGroup</b>.<br>

@@ -42,7 +42,7 @@
  */
 package com.pennant.backend.dao.errordetail;
 
-import com.pennant.backend.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface ErrorDetailDAO {
 

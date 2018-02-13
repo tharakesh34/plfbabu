@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -19,6 +18,7 @@ import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CollateralController;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.CollateralRestService;
 import com.pennanttech.pffws.CollateralSoapService;
 import com.pennanttech.util.APIConstants;

@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class AuditHeader implements java.io.Serializable,Entity {

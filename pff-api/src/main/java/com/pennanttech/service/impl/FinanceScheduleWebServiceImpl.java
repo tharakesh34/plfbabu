@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -16,6 +15,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.FinanceDetailController;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.FinanceScheduleRestService;
 import com.pennanttech.pffws.FinanceScheduleSoapService;
 import com.pennanttech.util.APIConstants;

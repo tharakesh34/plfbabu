@@ -54,7 +54,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.SukukBrokerBondsDAO;
 import com.pennant.backend.dao.applicationmaster.SukukBrokerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
 import com.pennant.backend.model.applicationmasters.SukukBrokerBonds;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -63,6 +62,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.SukukBrokerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>SukukBroker</b>.<br>

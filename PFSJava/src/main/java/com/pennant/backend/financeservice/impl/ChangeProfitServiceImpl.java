@@ -11,12 +11,12 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ChangeProfitService;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ChangeProfitServiceImpl extends GenericService<FinServiceInstruction> implements ChangeProfitService {
 

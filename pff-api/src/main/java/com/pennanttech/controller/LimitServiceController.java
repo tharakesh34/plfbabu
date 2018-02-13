@@ -13,7 +13,6 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -39,6 +38,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 

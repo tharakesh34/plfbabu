@@ -9,7 +9,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.util.CollateralConstants;
@@ -18,6 +17,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class DocumentDetailValidation {
 

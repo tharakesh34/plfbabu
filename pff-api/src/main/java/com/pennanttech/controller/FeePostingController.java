@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -16,6 +15,7 @@ import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;

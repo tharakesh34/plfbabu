@@ -74,7 +74,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -87,6 +86,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 

@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.log.model.APILogDetail;
 

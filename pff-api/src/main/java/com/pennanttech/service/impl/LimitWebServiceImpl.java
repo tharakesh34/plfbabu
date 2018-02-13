@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -39,6 +38,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.LimitServiceController;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.LimitRestService;
 import com.pennanttech.pffws.LimitSoapService;
 import com.pennanttech.util.APIConstants;

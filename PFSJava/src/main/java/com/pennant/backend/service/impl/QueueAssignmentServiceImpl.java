@@ -45,7 +45,6 @@ import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.model.TaskOwners;
@@ -56,6 +55,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements
         QueueAssignmentService {

@@ -42,8 +42,8 @@
  */
 package com.pennant.backend.service.errordetail;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface ErrorDetailService {
 	

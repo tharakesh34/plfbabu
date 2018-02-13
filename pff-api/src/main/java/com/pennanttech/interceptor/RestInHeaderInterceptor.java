@@ -36,7 +36,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -46,6 +45,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.ws.auth.model.ServerAuthentication;
 import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;

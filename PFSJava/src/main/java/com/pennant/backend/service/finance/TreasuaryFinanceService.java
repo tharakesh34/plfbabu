@@ -45,11 +45,11 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface TreasuaryFinanceService {
 

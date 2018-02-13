@@ -15,7 +15,6 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -30,6 +29,7 @@ import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> implements ScoringDetailService{
 	

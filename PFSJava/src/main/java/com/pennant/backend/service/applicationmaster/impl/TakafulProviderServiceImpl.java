@@ -53,7 +53,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeDAO;
 import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -62,6 +61,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.TakafulProviderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>TakafulProvider</b>.<br>

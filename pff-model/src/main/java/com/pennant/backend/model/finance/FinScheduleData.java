@@ -60,7 +60,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -70,6 +69,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",

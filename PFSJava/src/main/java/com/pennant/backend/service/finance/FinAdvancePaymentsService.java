@@ -45,12 +45,12 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentsById(String id,String type);

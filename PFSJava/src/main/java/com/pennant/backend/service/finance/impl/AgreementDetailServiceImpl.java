@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinAgreementDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.FinAgreementDetail;
@@ -19,6 +18,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AgreementDetailServiceImpl extends GenericService<AgreementDetail> implements AgreementDetailService{
 

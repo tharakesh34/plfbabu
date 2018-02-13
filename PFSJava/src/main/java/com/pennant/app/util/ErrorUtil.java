@@ -49,9 +49,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ErrorUtil implements Serializable {
 	private static final long serialVersionUID = 6700340086746473118L;

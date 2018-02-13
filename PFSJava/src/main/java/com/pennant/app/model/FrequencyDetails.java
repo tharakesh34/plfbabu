@@ -49,7 +49,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.backend.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FrequencyDetails implements Serializable {
     

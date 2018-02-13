@@ -10,13 +10,13 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.HoldEMIService;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> implements HoldEMIService {
 	private static Logger logger = Logger.getLogger(AddRepaymentServiceImpl.class);

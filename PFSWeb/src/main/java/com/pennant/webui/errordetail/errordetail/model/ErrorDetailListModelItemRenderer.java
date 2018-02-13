@@ -50,9 +50,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Item renderer for listitems in the listbox.

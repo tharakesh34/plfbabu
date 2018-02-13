@@ -34,7 +34,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.channeldetails.APIChannel;
@@ -44,6 +43,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.ws.dao.APIChannelDAO;
 import com.pennant.ws.exception.APIException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class APIChannelServiceImpl  extends GenericService<APIChannel> implements APIChannelService {
 	private static final Logger logger = Logger.getLogger(APIChannelServiceImpl.class);

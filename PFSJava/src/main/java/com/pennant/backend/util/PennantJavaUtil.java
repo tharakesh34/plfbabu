@@ -50,7 +50,6 @@ import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ApplicationDetails;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.GlobalVariable;
@@ -363,6 +362,7 @@ import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 

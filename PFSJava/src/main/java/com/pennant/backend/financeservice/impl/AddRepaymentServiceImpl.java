@@ -13,7 +13,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.AddRepaymentService;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -22,6 +21,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddRepaymentServiceImpl extends GenericService<FinServiceInstruction> implements AddRepaymentService {
 	private static Logger logger = Logger.getLogger(AddRepaymentServiceImpl.class);

@@ -52,7 +52,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.NotesService;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.web.components.ButtonControl;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

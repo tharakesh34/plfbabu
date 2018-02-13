@@ -13,7 +13,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -31,6 +30,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomizeFinanceDataValidation {
