@@ -5,13 +5,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.service.finance.impl.CustomizeFinanceDataValidation;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.PennantConstants;
@@ -33,7 +31,6 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 
 	private FinanceDataDefaulting			financeDataDefaulting;
 	private FinanceDataValidation			financeDataValidation;
-	private CustomizeFinanceDataValidation	customizeFinanceDataValidation;
 
 	/**
 	 * Create finance schedule (WIF) by receiving the request from interface.<br>
@@ -199,9 +196,5 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	@Autowired
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
-	}
-	@Autowired
-	public void setCustomizeFinanceDataValidation(CustomizeFinanceDataValidation customizeFinanceDataValidation) {
-		this.customizeFinanceDataValidation = customizeFinanceDataValidation;
 	}
 }
