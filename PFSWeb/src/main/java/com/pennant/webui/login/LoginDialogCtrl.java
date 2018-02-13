@@ -46,13 +46,19 @@ import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.webui.util.WindowBaseCtrl;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 /**
  * This is the controller class for the /WEB-INF/loginDialog.zul file.
@@ -61,11 +67,18 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	private static final long	serialVersionUID	= -71422545405325060L;
 	private static final Logger	logger				= Logger.getLogger(LoginDialogCtrl.class);
 
-	protected Window			loginwin;
-	protected Textbox			txtbox_Username;
-	protected Textbox			txtbox_Password;
-	protected Button			btnReset;
-	protected Textbox			txtbox_randomKey;
+	protected Window loginwin;
+	protected Textbox txtbox_Username;
+	protected Textbox txtbox_Password;
+	protected Button btnReset;
+	protected Textbox txtbox_randomKey;
+	
+	protected Row licenceMessageRow;
+	protected Label licenceMessage;
+	protected A licenceMessageIcon;
+	protected Label copyRight;
+	protected A copyRightInfo;
+	
 
 	/**
 	 * Default constructor.
@@ -94,7 +107,8 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 			logger.warn("Unable to get session attribute 'SATTR_RANDOM_KEY':", ex);
 		}
 
-		txtbox_randomKey.setValue(randomKey);
+		txtbox_randomKey.setValue(randomKey);		
+		setLicenceMessage();		
 		logger.info(Literal.LEAVING);
 	}
 
@@ -106,4 +120,44 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	public void onClick$btnReset(Event event) {
 		Executions.sendRedirect("loginDialog.zul");
 	}
+	
+	/**
+	 * when clicks on "copyrightInfo" hyper link
+	 * 
+	 * @param event
+	 */
+	public void onClick$copyRightInfo(Event event) {
+		Executions.createComponents("/WEB-INF/pages/License/CopyRight.zul", this, null);
+	}
+	
+	
+	public void setLicenceMessage() {
+		
+		boolean licenseFound = false;
+		try {
+			License.validateLicense();
+			licenseFound = true;
+		} catch (LicenseException e) {
+			licenceMessage.setValue(e.getErrorMessage());
+			licenceMessageIcon.setIconSclass("z-icon-exclamation-triangle");
+			licenceMessageRow.setVisible(true);
+			copyRightInfo.setVisible(false);
+		}
+
+		if (licenseFound && License.getWarningMessage(false) != null) {
+			licenceMessage.setValue(License.getWarningMessage(false));
+			licenceMessageIcon.setIconSclass("z-icon-warning");
+			licenceMessageRow.setVisible(true);
+			copyRight.setValue(License.getCopyRight());
+		}
+
+		if (License.getCopyRight() != null) {
+			copyRight.setValue(License.getCopyRight());
+		} else {
+			copyRight.setValue(App.getVersion());
+		}
+
+	}
+	
+	
 }

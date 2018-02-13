@@ -120,6 +120,7 @@ import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -170,6 +171,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Tab secUserDetailsTab;
 	protected Tab secUserDivBranchsTab;
 	protected Rows divBranch_Rows;
+	protected Row licenceMessageRow;
+	protected Label licenceMessage;
+	
 	/* not auto wired variables */
 	private SecurityUser securityUser; // overHanded per parameters
 	private transient SecurityUserListCtrl securityUserListCtrl; // overHanded per parameters
@@ -1110,7 +1114,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrLogin.setReadonly(false);
 			setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
 			this.usrDftAppId.setDisabled(false);
+			
+			String warningMessage = License.getUserLimitWarning();
+			if (warningMessage != null) {
+				licenceMessageRow.setVisible(true);
+				licenceMessage.setValue(warningMessage);
+			}
+	
 		} else {
+			
 			this.usrDftAppId.setDisabled(false);
 			this.usrEnabled.setDisabled(false);
 			this.usrLogin.setReadonly(true);
@@ -1118,6 +1130,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 			this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
 			this.usrLogin.setReadonly(true);
+			
+			licenceMessageRow.setVisible(false);
+			licenceMessage.setValue("");
 		}
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));

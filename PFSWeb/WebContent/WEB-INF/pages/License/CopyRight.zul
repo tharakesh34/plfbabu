@@ -1,0 +1,18 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_Copyright" apply="${copyRightCtrl}" mode="popup" style="width: 680px; height:450px; border: 2px solid #385D8A;" contentStyle="padding:0px;">
+		<div style="padding:0px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%">				
+				<toolbar align="end" sclass="toolbar-end">
+					<a id="close" label="Close" iconSclass="z-icon-close" style="text-decoration:none;color:#385D8A;" tabindex="1"/>					
+				</toolbar>
+			</hbox>
+		</div>
+		<html id="copyright" />
+	</window>
+</zk>

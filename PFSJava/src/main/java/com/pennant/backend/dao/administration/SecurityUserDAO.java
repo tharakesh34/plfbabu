@@ -50,17 +50,34 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 public interface SecurityUserDAO {
 
 	SecurityUser getSecurityUser();
+
 	SecurityUser getNewSecurityUser();
+
 	SecurityUser getSecurityUserById(long id, String type);
+
 	void update(SecurityUser secUser, String type);
+
 	void delete(SecurityUser secUser, String type);
+
 	long save(SecurityUser secUser, String type);
+
 	void changePassword(SecurityUser secUser);
+
 	SecurityUser getSecurityUserByLogin(String usrLogin, String type);
-	long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
+
+	long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type);
+
+	void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type);
+
+	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type);
+
+	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID, String type);
+
 	SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type);
-	void deleteBranchs(SecurityUser securityUser,String type) ;
+
+	void deleteBranchs(SecurityUser securityUser, String type);
+
+	int getActiveUsersCount(long userId);
+
+	int getActiveUsersCount();
 }

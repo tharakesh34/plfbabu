@@ -43,26 +43,19 @@
 package com.pennant.webui.util;
 
 import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Session;
-import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Div;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Style;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.administration.SecurityRole;
@@ -71,19 +64,18 @@ import com.pennant.backend.service.messages.MessagesService;
 import com.pennant.core.EventManager;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.lic.License;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;
 	private static final Logger logger = Logger.getLogger(MessageBarCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window statusBar;
-	protected Row statusBarSections;
-	private Toolbarbutton btnOpenMsg;
+	//protected Row statusBarSections;
+	protected A messageBox;
+	protected Label copyRight;
+	protected A copyRightInfo;
 	private Window msgWindow = null;
 	private String msg = "";
 	private String userName;
@@ -99,38 +91,35 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	 */
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
-		logger.debug("Entering");
-
 		super.doAfterCompose(comp);
 		try {
 			LoggedInUser user = getUserWorkspace().getLoggedInUser();			
 			userName = user.getUserName();			
 			listSecRoles = getUserWorkspace().getSecurityRoles();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		// Subscribe to the Notification Queue
-		EventQueues.lookup(EventManager.QUEUE_NAME, EventQueues.APPLICATION,
-				true).subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				Object[] data = (Object[]) event.getData();
+		EventQueues.lookup(EventManager.QUEUE_NAME, EventQueues.APPLICATION, true)
+				.subscribe(new EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						Object[] data = (Object[]) event.getData();
 
-				if (!EventManager.isRecipient(data, userName, listSecRoles)) {
-					return;
-				}
+						if (!EventManager.isRecipient(data, userName, listSecRoles)) {
+							return;
+						}
 
-				setMsg((String) data[0]);
+						setMsg((String) data[0]);
 
-				if (msgWindow == null) {
-					openMessageWindow();
-				} else {
-					((Textbox) getMsgWindow().getFellow("tb"))
-							.setValue(getMsg());
-				}
-			}
-		});
+						if (msgWindow == null) {
+							openMessageWindow();
+						} else {
+							((Textbox) getMsgWindow().getFellow("tb")).setValue(getMsg());
+						}
+					}
+				});
 
 		logger.debug("Leaving");
 	}
@@ -139,47 +128,36 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		getMsgWindow();
 		((Textbox) getMsgWindow().getFellow("tb")).setValue(getMsg());
 	}
+	
+	
+	public void onClick$messageBox(Event event) {
+		// 1. Reset to normal image
+		messageBox.setImage("/images/icons/message2_16x16.gif");
+		// 2. open the message window
+		Window win = getMsgWindow();
+		Textbox t = (Textbox) win.getFellow("tb");
+		t.setText(getMsg());
+		Clients.scrollIntoView(t);
+	}
 
 	/**
 	 * Build the status bar on window create
 	 */
 	public void onCreate$statusBar(Event event) {
-		logger.debug("Entering");
+		this.messageBox.setImage("/images/icons/message2_16x16.gif");
+		this.messageBox.setTooltiptext(Labels.getLabel("common.Message.Open"));
+		this.messageBox.setStyle("text-decoration:none;color:#385D8A;");
+		this.messageBox.appendChild(new Label(getMsg()));
+			
+		if (License.getCopyRight() != null) {
+			copyRight.setValue(License.getCopyRight());
+		} else {
+			copyRight.setValue(App.getVersion());
+		}
 
-		// Message section
-		Div div = new Div();
-		div.setStyle("padding: 1px;");
-		div.appendChild(new Label(getMsg()));
-		statusBarSections.appendChild(div);
-
-		// Message section - Message tool bar button
-		this.btnOpenMsg = new Toolbarbutton();
-		this.btnOpenMsg.setImage("/images/icons/message2_16x16.gif");
-		this.btnOpenMsg.setTooltiptext(Labels.getLabel("common.Message.Open"));
-		this.btnOpenMsg.addEventListener("onClick", new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				// 1. Reset to normal image
-				btnOpenMsg.setImage("/images/icons/message2_16x16.gif");
-				// 2. open the message window
-				Window win = getMsgWindow();
-				Textbox t = (Textbox) win.getFellow("tb");
-				t.setText(getMsg());
-				Clients.scrollIntoView(t);
-
-			}
-		});
-		this.btnOpenMsg.setParent(div);
-
-		// Version section
-		statusBarSections.appendChild(new Label(getAppVersion()));
-		statusBarSections.appendChild(new Label(""));
 		
-		// Show off-line messages at the time of login
 		StringBuilder builder = new StringBuilder();
-		List<OfflineUsersMessagesBackup> offlineMessages = messagesService
-				.getOfflineUsersMessagesBackupByUsrId(userName);
-
+		List<OfflineUsersMessagesBackup> offlineMessages = messagesService.getOfflineUsersMessagesBackupByUsrId(userName);
 		if (offlineMessages != null && offlineMessages.size() > 0) {
 			for (OfflineUsersMessagesBackup offlineMessage : offlineMessages) {
 				builder.append(offlineMessage.getMessage());
@@ -192,9 +170,6 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			// Clear Off line messages from OfflineMessagesBackup table
 			messagesService.deleteOfflineUsersMessages(userName);
 		}
-
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -245,6 +220,15 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		}
 		return msgWindow;
 	}
+	
+	/**
+	 * when clicks on "copyRightInfo" hyper link
+	 * 
+	 * @param event
+	 */
+	public void onClick$copyRightInfo(Event event) {
+		Executions.createComponents("/WEB-INF/pages/License/CopyRight.zul", null, null);
+	}
 
 	// Setter/Getter
 
@@ -262,25 +246,5 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 
 	public void setMessagesService(MessagesService messagesService) {
 		this.messagesService = messagesService;
-	}
-
-	private String getAppVersion() {
-		String appVersion = App.NAME;
-
-		try {
-			Session sess = Sessions.getCurrent();
-			HttpSession hses = (HttpSession) sess.getNativeSession();
-			ServletContext sCon = hses.getServletContext();
-			Properties prop = new Properties();
-			prop.load(sCon.getResourceAsStream("/META-INF/MANIFEST.MF"));
-
-			appVersion = appVersion + " "
-					+ prop.getProperty("Implementation-Version");
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-
-		return appVersion;
 	}
 }

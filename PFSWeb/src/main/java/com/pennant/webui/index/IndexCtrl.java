@@ -67,6 +67,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.lic.constant.LicenseError;
+import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/index.zul file.
@@ -122,8 +126,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		logger.info("User Name: " + user.getUserName());
 
 		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LAST_LOGIN_INFO"))) {
-			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true)
-					.publish(new Event("onChangeLastLogin", null, ""));
+			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true) .publish(new Event("onChangeLastLogin", null, ""));
 		}
 
 		logger.debug("Leaving");
@@ -138,12 +141,25 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 * @throws Exception
 	 */
 	public void onClientInfo(ClientInfoEvent event) throws Exception {
-		logger.debug("Entering");
 		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);
 		currentDesktopWidth.setValue(event.getDesktopWidth());
+		LoggedInUser user = getUserWorkspace().getLoggedInUser();
+		
+		try {
+			License.userLogin();
+		} catch (LicenseException e) {
+			if (LicenseError.LIC001 == LicenseError.valueOf(e.getErrorCode())) {
+				if (UserType.valueOf(user.getUserType()) == UserType.ADMIN && getUserWorkspace().isAllowed("menuItem_License_LicenseUpload")) {
+					Executions.createComponents("/WEB-INF/pages/License/LicenseUpload.zul", null, null);
+				} else {
+					Executions.sendRedirect("default-error.jsp");
+				}
+			} else {
+				Executions.sendRedirect("default-error.jsp");
+			}
+		}
 
 		createMainTreeMenu();
-		logger.debug("Leaving");
 	}
 
 	/**

@@ -167,7 +167,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 
 		SecurityUser secUser = new SecurityUser();
 
-		StringBuilder selectSql = new StringBuilder("SELECT UsrID, UsrLogin, UsrPwd, AuthType, UsrLName, UsrMName,UsrFName,");
+		StringBuilder selectSql = new StringBuilder("SELECT UsrID, UsrLogin, UsrPwd, AuthType, UserType, UsrLName, UsrMName,UsrFName,");
 		selectSql.append(" UsrMobile,UsrEmail,UsrEnabled,UsrCanSignonFrom,UsrCanSignonTo,UsrCanOverrideLimits,");
 		selectSql.append(" UsrAcExp, UsrCredentialsExp,UserStaffID, UsrAcLocked,UsrLanguage,UsrDftAppCode,UsrBranchCode,UsrDeptCode,");
 		selectSql.append(" UsrToken, UsrIsMultiBranch,UsrInvldLoginTries,UsrAcExpDt,LastMntOn, LastMntBy,nextRoleCode,TaskId,nextTaskId,LastLoginOn,LastFailLoginOn");

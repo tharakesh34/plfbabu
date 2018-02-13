@@ -68,6 +68,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.lic.exception.LicenseException;
 import com.pennanttech.pff.core.util.DateUtil;
 
 /**
@@ -473,8 +475,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			}	
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if("doApprove".equals(StringUtils.trimToEmpty(method))){
-			securityUser.setBefImage(befSecurityUser);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method))) {
+			securityUser.setBefImage(befSecurityUser);
+			// Validating the active users limit
+			checkUserLimit(auditDetail);
 		}
 		logger.debug("Leaving ");
 		return auditDetail;
@@ -897,6 +901,23 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		
 		logger.debug("Leaving ");
 		return securityUser;
+	}
+	
+	private void checkUserLimit(AuditDetail auditDetail) {
+		SecurityUser securityUser = (SecurityUser) auditDetail.getModelData();
+
+		if (securityUser.isUsrEnabled()) {
+			try {
+				License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount(securityUser.getId()));
+			} catch (LicenseException e) {
+				auditDetail.setErrorDetail(new ErrorDetail(e.getErrorCode(), e.getErrorMessage(), null));
+			} 
+		}
+	}
+	
+	@Override
+	public void validateLicensedUsers() throws LicenseException {
+		License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount());
 	}
 	
 }

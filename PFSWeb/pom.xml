@@ -40,7 +40,7 @@
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-web</artifactId>
 		</dependency>
-
+	
 		<!-- Spring Framework -->
 		<dependency>
 			<groupId>org.springframework</groupId>

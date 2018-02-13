@@ -1,0 +1,50 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_LicenseUploadList"  apply="${licenseUploadCtrl}" width="60%" height="50%" mode="modal">
+		<div sclass="z-toolbar" style="padding:0px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+				<toolbar align="start" sclass="toolbar-start">
+					<button id="upload" label="upload" sclass="z-toolbarbutton" tabindex="1"/>
+				</toolbar>
+				
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="License Upload"/>
+				</toolbar>
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnClose" label="Close" sclass="z-toolbarbutton" tabindex="3"/>
+				</toolbar>
+			</hbox>
+		</div>
+		<borderlayout width="100%" height="100%">
+			<center border="none" autoscroll="true"
+				style="overflow:auto">
+				<div>
+					<groupbox style="overflow:auto">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
+							<columns>
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="row0" visible="true">
+									<label value="File Name" />
+									<hbox spacing="2px">
+										<space spacing="2px" sclass="mandatory" />
+										<textbox  id="fileName" readonly="true" width="250px" />
+										<button id="btnBrowse" label="Browse" upload="true,accept=.lic,native" autodisable="btnBrowse,btnFileUpload" tabindex="2"/>
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+			<south border="none" />
+		</borderlayout>
+	</window>
+</zk>

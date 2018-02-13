@@ -71,6 +71,9 @@ import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 /**
  * Workspace for the user. One workspace per userSession. <br>
@@ -121,6 +124,11 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	 * Therefore we make a sendRedirect() to the logout uri we have configured in the spring-config.
 	 */
 	public void doLogout() {
+		try {
+			License.userLogout();
+		} catch (LicenseException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 		Executions.sendRedirect("/csrfLogout.zul");
 	}
 

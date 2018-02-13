@@ -52,6 +52,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -560,6 +561,27 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 			};
 		}
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public int getActiveUsersCount(long userId) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "select count(*) from secusers where usrId <> :usrId and usrenabled = :usrenabled";
+
+		paramMap.addValue("usrId", userId);
+		paramMap.addValue("usrenabled", 1);
+
+		return namedParameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+	}
+
+	@Override
+	public int getActiveUsersCount() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "select count(*) from secusers where usrenabled = :usrenabled";
+
+		paramMap.addValue("usrenabled", 1);
+
+		return namedParameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 	}
 	
 	

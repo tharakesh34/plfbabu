@@ -22,6 +22,7 @@ p, li, a {
 							<p>You may not be visit the page because of:
 							<ul>
 								<li>You have no access to this page.</li>
+								<li>License not valid or has expired.</li>
 								<li>The requested resource was not found.</li>
 								<li>A mistyped address or tried direct access to URL.</li>
 								<li>An unexpected error occurred.</li>

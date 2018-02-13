@@ -73,10 +73,8 @@
 				<tabbox id="tabBoxIndexCenter" width="99%"
 					height="100%">
 					<tabs id="tabsIndexCenter">
-						<tab id="secUserDetailsTab"
-							label="Security User Details" />
-						<tab id="secUserDivBranchsTab"
-							label="Branch Details" />
+						<tab id="secUserDetailsTab" label="Security User Details" />
+						<tab id="secUserDivBranchsTab" label="Branch Details" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
@@ -93,6 +91,23 @@
 												<column width="35%" />
 											</columns>
 											<rows>
+												<row id="licenceMessageRow" visible="false">
+													<cell colspan="4" align="center">
+														<div style="margin-top:5px; padding: 5px; border:2px solid #F7F5E2; background: #FFFDF6; color: #000;font-size:14px;" height="100%">
+															<tablelayout columns="3">
+																<tablechildren style="vertical-align:middle">
+																	<a id="licenceMessageIcon" iconSclass="z-icon-info-circle" style="text-decoration:none;color:#E9D490;font-size: 20px;" />
+																</tablechildren>
+																<tablechildren style="vertical-align:middle">
+																	<label value=""/>
+																</tablechildren>
+																<tablechildren>
+																	<label id="licenceMessage"/>
+																</tablechildren>
+															</tablelayout>
+														</div>
+													</cell>
+												</row>
 												<row visible="true">
 													<label
 														id="label_SecurityUserDialog_UsrLogin"

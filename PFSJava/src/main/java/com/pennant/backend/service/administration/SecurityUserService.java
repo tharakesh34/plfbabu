@@ -49,21 +49,38 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 public interface SecurityUserService {
-	
-	SecurityUser  getSecurityUser();
-	SecurityUser  getNewSecurityUser();
+
+	SecurityUser getSecurityUser();
+
+	SecurityUser getNewSecurityUser();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	SecurityUser  getSecurityUserById(long id);
-	SecurityUser  getApprovedSecurityUserById(long id);
+
+	SecurityUser getSecurityUserById(long id);
+
+	SecurityUser getApprovedSecurityUserById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	AuditHeader  changePassword(AuditHeader auditHeader);
-	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
-	List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType, String auditTranType);
-	//Security Work flow changes
+
+	AuditHeader changePassword(AuditHeader auditHeader);
+
+	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID, String type);
+
+	List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType,
+			String auditTranType);
+
+	// Security Work flow changes
 	SecurityUser getSecurityUserOperationsById(long id);
+
 	SecurityUser getApprovedSecurityUserOperationsById(long id);
+
+	void validateLicensedUsers() throws LicenseException;
+
 }
