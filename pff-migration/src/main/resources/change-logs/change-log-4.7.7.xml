@@ -50,7 +50,93 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 
 </sql>
 	</changeSet>
-
-	
-	
+<changeSet id="2" author="Jayant">
+	<createTable tableName="license_file">
+		<column name="id" type="bigint" >
+			<constraints primaryKey="true" primaryKeyName="PK_license_file_id" nullable="false" />
+		</column>
+		<column name="name" type="varchar(100)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="content" type="blob">
+			<constraints nullable="false"/>
+		</column>
+		<column name="uploaded_by" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="uploaded_on" type="datetime">
+			<constraints nullable="false"/>
+		</column>
+		<column name="active" type="boolean">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+<changeSet id="2" author="Jayant">
+	<createTable tableName="app_log">
+		<column name="id" type="bigint" >
+			<constraints primaryKey="true" primaryKeyName="PK_license_file_id" nullable="false" />
+		</column>
+		<column name="code" type="varchar(100)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="value" type="blob">
+			<constraints nullable="false"/>
+		</column>
+		<column name="created_on" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="updated_on" type="datetime">
+			<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>	
+<changeSet id="3" author="Jayant">
+	<addPrimaryKey tableName="app_log" columnNames="id,code" constraintName="PK_app_log_id_code"/>
+</changeSet>
+<changeSet id="4" author="Jayant">
+	<addForeignKeyConstraint constraintName="FK_LICENSE_FILE" referencedTableName="license_file" 
+	baseColumnNames="id" baseTableName="app_log" referencedColumnNames="id"/>
+</changeSet>
+<changeSet id="5" author="Jayant">
+	<sql>
+		DELETE FROM SecOperationRoles Where OprId=(Select OprId  From SecOperations Where OprCode='LICENSE_UPLOAD') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='LICENSE_UPLOAD');
+		DELETE FROM SECOPERATIONS Where OprCode='LICENSE_UPLOAD';
+		DELETE FROM SecRoleGroups Where GrpId=(Select GrpId  From SecGroups Where GrpCode='LICENSE_UPLOAD') AND RoleID=(Select  RoleID  From SecRoles Where RoleCd='LICENSE_UPLOAD');
+		DELETE FROM SECGROUPRIGHTS Where GRPID=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LICENSE_UPLOAD') AND RIGHTID=(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_License_LicenseUpload');
+		DELETE FROM SECROLES Where RoleCd='LICENSE_UPLOAD';
+		DELETE FROM SECGROUPS Where GRPCODE='LICENSE_UPLOAD';
+		delete from secgrouprights where rightId IN (select RightId from SECRIGHTS where RIGHTNAME='menuItem_License_LicenseUpload');
+		DELETE FROM SECRIGHTS Where RIGHTNAME='menuItem_License_LicenseUpload';
+		
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_License_LicenseUpload','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LICENSE_UPLOAD', 'Gropup to upload license file', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LICENSE_UPLOAD') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_License_LicenseUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		
+		UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+		INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'LICENSE_UPLOAD', 'Role to upload license file','', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+		UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+		
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LICENSE_UPLOAD'), (Select  RoleID  From SecRoles Where RoleCd='LICENSE_UPLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		
+		UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+		INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'LICENSE_UPLOAD', 'Operation to upload license file', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+		UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+		
+		UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+		INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='LICENSE_UPLOAD'), (Select  RoleID  From SecRoles Where RoleCd='LICENSE_UPLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+	</sql>
+</changeSet>
 </databaseChangeLog>
