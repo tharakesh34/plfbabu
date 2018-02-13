@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.ErrorDetail;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -20,6 +19,7 @@ import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.service.finance.FinanceFlagsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceFlagsController {

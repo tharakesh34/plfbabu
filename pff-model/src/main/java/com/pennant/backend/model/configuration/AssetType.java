@@ -46,8 +46,8 @@ package com.pennant.backend.model.configuration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

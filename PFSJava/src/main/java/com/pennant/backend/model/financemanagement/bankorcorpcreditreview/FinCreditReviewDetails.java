@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class FinCreditReviewDetails extends AbstractWorkflowEntity implements Entity {

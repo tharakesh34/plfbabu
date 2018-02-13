@@ -50,7 +50,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {

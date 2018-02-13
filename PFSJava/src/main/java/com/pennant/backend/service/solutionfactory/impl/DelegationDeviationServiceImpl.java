@@ -39,7 +39,6 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.DeviationDetailDAO;
 import com.pennant.backend.dao.solutionfactory.DeviationHeaderDAO;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -49,6 +48,7 @@ import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Service implementation for methods that depends on <b>DeviationHeader</b>.<br>

@@ -45,8 +45,8 @@ package com.pennant.backend.model.bmtmasters;
 import java.util.HashMap;
 import java.util.List;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

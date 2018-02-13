@@ -46,7 +46,7 @@ package com.pennant.backend.model.rulefactory;
 import java.sql.Timestamp;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>DedupParm table</b>.<br>

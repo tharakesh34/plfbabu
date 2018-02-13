@@ -63,7 +63,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -71,6 +70,7 @@ import com.pennanttech.framework.security.core.AuthenticationManager;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Workspace for the user. One workspace per userSession. <br>

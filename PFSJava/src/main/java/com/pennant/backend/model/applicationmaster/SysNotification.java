@@ -45,7 +45,7 @@ package com.pennant.backend.model.applicationmaster;
 import java.util.List;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

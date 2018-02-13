@@ -45,13 +45,13 @@ package com.pennant.backend.service.limit;
 import java.io.InputStream;
 import java.util.List;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface LimitDetailService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);

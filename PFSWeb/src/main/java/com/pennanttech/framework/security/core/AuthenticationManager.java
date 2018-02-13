@@ -68,11 +68,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 import eu.bitwalker.useragentutils.UserAgent;

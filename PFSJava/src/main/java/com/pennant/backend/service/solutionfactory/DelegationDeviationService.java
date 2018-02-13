@@ -44,10 +44,10 @@ package com.pennant.backend.service.solutionfactory;
 
 import java.util.List;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface DelegationDeviationService {
 	void processDelegationDeviation(List<DeviationHeader> deviationHeaders, String finType, LoggedInUser user);

@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class SecurityUser extends AbstractWorkflowEntity implements Entity {

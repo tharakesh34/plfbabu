@@ -59,8 +59,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>LimitStructureDetail table</b>.<br>

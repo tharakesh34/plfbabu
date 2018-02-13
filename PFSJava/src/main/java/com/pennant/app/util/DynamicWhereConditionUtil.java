@@ -50,9 +50,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DynamicWhereConditionUtil implements Serializable {
 

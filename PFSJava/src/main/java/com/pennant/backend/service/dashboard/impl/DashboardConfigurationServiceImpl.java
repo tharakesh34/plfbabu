@@ -62,7 +62,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.dashboard.DashboardConfigurationDAO;
 import com.pennant.backend.dao.dashboard.DetailStatisticsDAO;
 import com.pennant.backend.model.ErrorDetail;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -74,6 +73,7 @@ import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.fusioncharts.ChartSetElement;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Service implementation for methods that depends on <b>DashboardDetail</b>.<br>

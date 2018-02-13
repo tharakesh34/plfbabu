@@ -47,6 +47,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class ErrorDetail extends AbstractWorkflowEntity {

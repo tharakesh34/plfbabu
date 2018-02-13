@@ -43,7 +43,7 @@
 
 package com.pennant.backend.model.systemmasters;
 
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

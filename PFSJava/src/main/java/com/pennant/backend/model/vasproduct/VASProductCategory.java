@@ -45,7 +45,7 @@ package com.pennant.backend.model.vasproduct;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

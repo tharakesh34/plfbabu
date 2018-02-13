@@ -46,9 +46,9 @@ package com.pennant.backend.model.reports;
 import java.util.Map;
 
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

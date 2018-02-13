@@ -52,7 +52,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.ErrorDetail;
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class AuditHeader implements java.io.Serializable,Entity {
 	//private static final Logger logger = Logger.getLogger(AuditHeader.class);

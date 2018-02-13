@@ -51,11 +51,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

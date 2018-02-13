@@ -3,7 +3,6 @@ package com.pennant.webservice.services;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.RequestDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.externalinput.ExtFinanceData;
@@ -12,6 +11,7 @@ import com.pennant.webservice.schema.ExtFinanceDetails;
 import com.pennant.webservice.schema.PFSLoanCreationRequest;
 import com.pennant.webservice.schema.PFSLoanCreationResponse;
 import com.pennant.webservice.schema.StatusType;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * @author pennant

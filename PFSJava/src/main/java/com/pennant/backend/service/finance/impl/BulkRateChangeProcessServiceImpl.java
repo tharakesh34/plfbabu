@@ -61,7 +61,6 @@ import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDetailsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.model.ErrorDetail;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -79,6 +78,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 

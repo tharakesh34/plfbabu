@@ -45,6 +45,8 @@ package com.pennant.backend.model;
 
 import java.util.Date;
 
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 /**
  * @author PENNANT TECHNOLOGIES
  * 

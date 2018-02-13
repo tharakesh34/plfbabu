@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.model;
+package com.pennanttech.pennapps.core.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

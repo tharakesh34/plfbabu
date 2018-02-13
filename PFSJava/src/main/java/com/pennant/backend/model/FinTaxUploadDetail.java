@@ -3,6 +3,7 @@ package com.pennant.backend.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

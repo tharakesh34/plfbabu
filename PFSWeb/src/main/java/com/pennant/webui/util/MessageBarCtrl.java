@@ -65,12 +65,12 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.messages.MessagesService;
 import com.pennant.core.EventManager;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;

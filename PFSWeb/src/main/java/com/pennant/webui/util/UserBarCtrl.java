@@ -58,8 +58,8 @@ import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;

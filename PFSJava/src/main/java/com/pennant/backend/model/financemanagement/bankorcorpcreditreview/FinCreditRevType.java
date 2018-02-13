@@ -1,6 +1,6 @@
 package com.pennant.backend.model.financemanagement.bankorcorpcreditreview;
 
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class FinCreditRevType extends AbstractWorkflowEntity {

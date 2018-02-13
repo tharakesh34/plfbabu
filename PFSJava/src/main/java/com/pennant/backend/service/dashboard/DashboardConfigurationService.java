@@ -45,13 +45,13 @@ package com.pennant.backend.service.dashboard;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dashboard.DashBoard;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.dashboarddetail.DashboardPosition;
 import com.pennant.fusioncharts.ChartSetElement;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface DashboardConfigurationService {
 	DashboardConfiguration getNewDashboardDetail();

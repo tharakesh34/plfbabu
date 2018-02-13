@@ -2,7 +2,7 @@ package com.pennant.backend.model.lmtmasters;
 
 import java.util.List;
 
-import com.pennant.backend.model.LoggedInUser;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinanceReference {
 

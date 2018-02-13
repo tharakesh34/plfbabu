@@ -49,8 +49,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class SessionUserDetails implements Serializable {
 	private static final long serialVersionUID = 1116443283350618246L;

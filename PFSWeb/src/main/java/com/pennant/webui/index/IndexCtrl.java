@@ -63,10 +63,10 @@ import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * This is the controller class for the /WEB-INF/pages/index.zul file.

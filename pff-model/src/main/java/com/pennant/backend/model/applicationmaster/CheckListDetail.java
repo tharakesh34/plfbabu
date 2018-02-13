@@ -46,8 +46,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**

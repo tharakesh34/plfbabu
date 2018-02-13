@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.ErrorDetail;
-import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -20,6 +19,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.WorkFlowRESTService;
 import com.pennanttech.pffws.WorkFlowSOAPService;
