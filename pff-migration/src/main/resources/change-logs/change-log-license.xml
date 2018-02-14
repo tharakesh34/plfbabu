@@ -116,7 +116,7 @@
 			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 			
 			UPDATE SeqSecUserOperations set SEQNO = (SELECT MAX(usrOprId) FROM SecUserOperations);
-			INSERT INTO plf.SecUserOperations values((Select MAX(usrOprId)+1 From SecUserOperations),(Select usrId  From SecUsers Where usrLogin='ADMIN_MAKER'), (Select  OprId  From SecOperations Where OprCode='LICENSE_UPLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecUserOperations values((Select MAX(usrOprId)+1 From SecUserOperations),(Select usrId  From SecUsers Where usrLogin='ADMIN_MAKER'), (Select  OprId  From SecOperations Where OprCode='LICENSE_UPLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
 			UPDATE SeqSecUserOperations set SEQNO= (SELECT MAX(usrOprId) FROM SecUserOperations);
 		</sql>
 	</changeSet>
