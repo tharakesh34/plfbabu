@@ -27,10 +27,6 @@
 			<artifactId>pennapps-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>pennapps-lic</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-model</artifactId>
 			<version>${project.version}</version>

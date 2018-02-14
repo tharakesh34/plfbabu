@@ -63,13 +63,8 @@
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
-				<artifactId>pennapps-lic</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.4</version>
+				<version>0.4.1</version>
 			</dependency>
 			<!-- Logging Framework -->
 			<dependency>
