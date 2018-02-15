@@ -50,9 +50,9 @@ import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.security.UserType;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class SecurityUser extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -8443234918260997954L;

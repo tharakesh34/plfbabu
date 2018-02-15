@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Mandate table</b>.<br>

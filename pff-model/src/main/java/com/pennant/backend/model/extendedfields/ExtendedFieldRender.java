@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ExtendedFieldRender extends AbstractWorkflowEntity {
 

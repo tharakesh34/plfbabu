@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "insType", "insDesc", "insReq", "provider", "providerDesc", "providerRate", 
 						"payType", "reference", "waiverReason", "calcFrq", "amount", "formula" })

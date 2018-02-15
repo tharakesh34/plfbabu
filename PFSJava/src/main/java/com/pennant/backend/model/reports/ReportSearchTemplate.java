@@ -42,7 +42,7 @@
 */
 package com.pennant.backend.model.reports;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ReportSearchTemplate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -619353564397203914L;

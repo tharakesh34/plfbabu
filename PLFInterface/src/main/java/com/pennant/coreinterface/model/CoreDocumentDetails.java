@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class CoreDocumentDetails extends AbstractWorkflowEntity {
 	private static final long	serialVersionUID	= -5569765259024813213L;

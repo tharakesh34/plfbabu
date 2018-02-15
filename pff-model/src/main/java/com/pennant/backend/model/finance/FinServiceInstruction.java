@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction  extends AbstractWorkflowEntity implements Entity {

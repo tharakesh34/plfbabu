@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class MMAgreement extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;

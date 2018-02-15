@@ -42,7 +42,7 @@
  */
 package com.pennant.backend.model.administration;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class SecurityUserOperationRoles extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 3894711431224067299L;

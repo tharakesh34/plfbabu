@@ -45,7 +45,7 @@ package com.pennant.backend.model.accounts;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Accounts table</b>.<br>

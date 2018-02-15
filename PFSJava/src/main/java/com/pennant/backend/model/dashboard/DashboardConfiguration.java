@@ -44,8 +44,8 @@
 package com.pennant.backend.model.dashboard;
 
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>DashboardDetail table</b>.<br>

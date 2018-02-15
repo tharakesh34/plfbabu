@@ -16,8 +16,8 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.ButtonStatusCtrl;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public abstract class AbstractDialogController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 4993596882485929197L;

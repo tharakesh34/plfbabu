@@ -1,7 +1,7 @@
 package com.pennant.backend.model.applicationmaster;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class TargetDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 71023783624451043L;

@@ -46,8 +46,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>CorporateCustomerDetail table</b>.<br>

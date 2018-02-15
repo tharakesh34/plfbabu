@@ -48,7 +48,7 @@ import java.sql.Timestamp;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennanttech.pff.core.model.AbstractEntity;
+import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 /**
  * Model class for the <b>Notes table</b>.<br>

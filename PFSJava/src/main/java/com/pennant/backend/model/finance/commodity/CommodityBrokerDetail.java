@@ -46,8 +46,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>CommodityBrokerDetail table</b>.<br>

@@ -2,7 +2,7 @@ package com.pennant.coreinterface.model;
 
 import java.util.Date;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class EquationAbuser extends AbstractWorkflowEntity { 
     private static final long serialVersionUID = -7305078754814792618L;

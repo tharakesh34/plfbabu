@@ -59,9 +59,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {

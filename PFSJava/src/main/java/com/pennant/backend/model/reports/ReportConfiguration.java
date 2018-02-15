@@ -45,8 +45,8 @@ package com.pennant.backend.model.reports;
 import java.util.List;
 
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class ReportConfiguration extends AbstractWorkflowEntity implements Entity{
 

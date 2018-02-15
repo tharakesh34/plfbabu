@@ -48,8 +48,8 @@ import java.util.Map;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>ReportList table</b>.<br>

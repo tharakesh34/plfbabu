@@ -44,7 +44,7 @@ package com.pennant.coreinterface.model;
 
 import java.math.BigDecimal;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Currency table</b>.<br>

@@ -1,5 +1,9 @@
 pff 4.7.14, 2018-02-14
 ----------------------
+-- Moved AbstractEntity.java and AbstractWorkflowEntity.java from com.pennanttech.pff.core.model to com.pennanttech.pennapps.core.model package
+
+pff 4.7.14, 2018-02-14
+----------------------
 -- Integrate the License validation functionality.
 
 pff 4.7.11, 2018-02-13

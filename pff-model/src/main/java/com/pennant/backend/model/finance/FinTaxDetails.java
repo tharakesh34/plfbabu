@@ -3,7 +3,7 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 
 import com.pennant.backend.model.Entity;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class FinTaxDetails extends AbstractWorkflowEntity implements Entity {
 	

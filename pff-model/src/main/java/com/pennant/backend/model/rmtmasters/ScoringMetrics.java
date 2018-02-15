@@ -45,8 +45,8 @@ package com.pennant.backend.model.rmtmasters;
 
 import java.math.BigDecimal;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>ScoringMetrics table</b>.<br>

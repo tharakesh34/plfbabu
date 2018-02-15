@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class CommitmentMovement extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -2091525494536161888L;

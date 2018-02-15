@@ -3,8 +3,8 @@ package com.pennant.backend.model.channeldetails;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class APIChannelIP extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;

@@ -45,8 +45,8 @@ package com.pennant.backend.model.applicationmaster;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Currency table</b>.<br>

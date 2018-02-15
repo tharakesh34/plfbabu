@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennanttech.pff.core.model.AbstractEntity;
+import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class CustEODEvent extends AbstractEntity {
 	private static final long	serialVersionUID	= -8270026465500688782L;

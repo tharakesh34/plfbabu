@@ -10,8 +10,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "liabilitySeq", "finType", "bankName", "instalmentAmount", "outStandingBal", "originalAmount",
 		"finDate", "finStatus" })

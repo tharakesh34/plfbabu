@@ -47,8 +47,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
-
 public class ErrorDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
