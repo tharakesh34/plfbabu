@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.cache.Cache;
+import com.pennanttech.pennapps.core.cache.CacheManager;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public abstract class GenericService<T> {
@@ -91,11 +92,15 @@ public abstract class GenericService<T> {
 	
 	
 	protected T getCachedEntity(String key) {
+		if (!CacheManager.isEnabled()) {
+			return null;
+		}
+
 		if (cache == null) {
 			throw new IllegalStateException(
-					"Cache is not enabled for the module or class " + this.getClass().getSimpleName());
+					String.format("Cache is not enabled for the module or class %s", this.getClass().getSimpleName()));
 		}
-		
+				
 		T entity = cache.getEntity(key);
 		if (entity == null) {
 			entity = getEntity(key);
@@ -118,7 +123,7 @@ public abstract class GenericService<T> {
 	protected void invalidateEntity(String key) {
 		if (cache == null) {
 			throw new IllegalStateException(
-					"Cache is not enabled for the module or class " + this.getClass().getSimpleName());
+					String.format("Cache is not enabled for the module or class %s", this.getClass().getSimpleName()));
 		}
 		cache.invalidateEntity(key);
 	}
