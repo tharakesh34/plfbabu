@@ -57,10 +57,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -162,6 +165,9 @@ public class CustomerDetails implements java.io.Serializable {
 	
 	private List<FinanceEnquiry> customerFinances;
 	private FinanceEnquiry customerFinance;
+	private List<FinanceMain> financeMainList;
+	private List<VASRecording> vasRecordingList;
+	private List<CollateralSetup> collateraldetailList;
 	
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
@@ -529,5 +535,28 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
+	}
+	public List<FinanceMain> getFinanceMainList() {
+		return financeMainList;
+	}
+
+	public void setFinanceMainList(List<FinanceMain> financeMainList) {
+		this.financeMainList = financeMainList;
+	}
+
+	public List<VASRecording> getVasRecordingList() {
+		return vasRecordingList;
+	}
+
+	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
+		this.vasRecordingList = vasRecordingList;
+	}
+
+	public List<CollateralSetup> getCollateraldetailList() {
+		return collateraldetailList;
+	}
+
+	public void setCollateraldetailList(List<CollateralSetup> collateraldetailList) {
+		this.collateraldetailList = collateraldetailList;
 	}
 }

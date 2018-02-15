@@ -2573,6 +2573,9 @@
 		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="customerService" ref="customerService" />
 	</bean>
 

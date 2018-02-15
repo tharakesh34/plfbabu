@@ -24,7 +24,9 @@ import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CoreCustomerDAO;
 import com.pennant.backend.dao.customermasters.CorporateCustomerDetailDAO;
@@ -45,6 +47,7 @@ import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
@@ -64,6 +67,7 @@ import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.RatingCode;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CoreCustomer;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
@@ -201,6 +205,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private PinCodeDAO							pinCodeDAO;
 	private CustomerService						customerService;
 
+	private FinanceMainDAO         				financeMainDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private List<FinanceMain> financeMainList;
 	@Autowired(required = false)
 	private Crm crm;
 	
@@ -543,7 +551,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	private CustomerDetails getCustomerById(long id, String type) {
 		logger.debug("Entering");
-
+		List<VASRecording> vasRecordingList = null;
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
 		customerDetails.setCustID(id);
@@ -571,6 +579,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomerExtLiabilityList(customerExtLiabilityDAO.getExtLiabilityByCustomer(id, type));
 		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 
+		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id));
+		customerDetails.setCollateraldetailList(getCollateralSetupDAO().getApprovedCollateralByCustId(id, type));
+
+		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {
+			if (vasRecordingList == null) {
+				vasRecordingList = new ArrayList<VASRecording>();
+			}
+			vasRecordingList
+					.addAll(getvASRecordingDAO().getVASRecordingsByLinkReff(financemain.getFinReference(), type));
+			customerDetails.setVasRecordingList(vasRecordingList);
+		}
+    
 		logger.debug("Leaving");
 		return customerDetails;
 	}
@@ -5545,5 +5565,33 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
 	}
-	
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+	public CollateralSetupDAO getCollateralSetupDAO() {
+		return collateralSetupDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+	public List<FinanceMain> getFinanceMainList() {
+		return financeMainList;
+	}
+
+	public void setFinanceMainList(List<FinanceMain> financeMainList) {
+		this.financeMainList = financeMainList;
+	}
+
+	public VASRecordingDAO getvASRecordingDAO() {
+		return vASRecordingDAO;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
 }

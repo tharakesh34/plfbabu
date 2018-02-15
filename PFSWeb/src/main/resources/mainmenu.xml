@@ -498,6 +498,7 @@
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry" >
+		<menuItem id="menu_Item_CustomersEnquiry" zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul?enqiryModule=X"  rightName="menuItem_CustomerEnquiry_CustomersEnquiry"/>
 		<menuItem id="menu_Item_CustomerDetailEnquiry" zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul?enqiryModule=Y"  rightName="menuItem_CustomerEnquiry_CustomerEnq"/>
 		<menuItem id="menu_Item_CustomerLimit" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitList.zul"  rightName="menuItem_CustomerEnquiry_CustomerLimitEnq"/>
 		<!-- <menuItem id="menu_Item_CreditApplicationReviewEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul" rightName="menuItem_CustomerEnquiry_CreditReviewEnq" /> -->

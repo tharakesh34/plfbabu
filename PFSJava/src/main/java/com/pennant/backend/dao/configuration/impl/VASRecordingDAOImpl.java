@@ -189,6 +189,37 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		logger.debug("Leaving");
 		return vasRecordingList;
 	}
+
+	public List<VASRecording> getVASRecordingsByLinkReff(String primaryLinkRef, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		List<VASRecording> vasRecordingList = new ArrayList<>();
+
+		sql = new StringBuilder(
+				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,");
+		sql.append(
+				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
+		sql.append(
+				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
+			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc ");
+		}
+		sql.append(" From VASRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PrimaryLinkRef =:PrimaryLinkRef");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+
+		source = new MapSqlParameterSource();
+		source.addValue("PrimaryLinkRef", primaryLinkRef);
+		vasRecordingList = this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return vasRecordingList;
+	}
 	
 	
 	/**

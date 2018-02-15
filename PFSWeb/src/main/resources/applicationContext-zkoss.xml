@@ -5012,4 +5012,11 @@
 	<bean id="cacheParameterDialogCtrl" class="com.pennanttech.pennapps.core.cache.CacheParameterDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="cacheAdmin" ref="cacheAdmin" />
 	</bean>
+	
+	<bean id="customerSummaryViewCtrl"
+		class="com.pennant.webui.customermasters.customer.CustomerSummaryViewCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="directorDetailService" ref="directorDetailService" />
+	</bean>
 </beans>
