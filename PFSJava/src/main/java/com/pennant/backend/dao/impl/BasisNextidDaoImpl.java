@@ -43,9 +43,8 @@
 package com.pennant.backend.dao.impl;
 
 import com.pennant.backend.dao.NextidviewDAO;
-import com.pennant.backend.model.Entity;
 
-public class BasisNextidDaoImpl<T extends Entity> {
+public class BasisNextidDaoImpl<T> {
 	private NextidviewDAO nextidviewDAO;
 
 	protected BasisNextidDaoImpl() {
