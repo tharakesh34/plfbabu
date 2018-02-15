@@ -44,7 +44,6 @@ package com.pennant.backend.model.administration;
 
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -53,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SecurityOperation table</b>.<br>
  *
  */
-public class SecurityOperation extends AbstractWorkflowEntity implements Entity {
+public class SecurityOperation extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long oprID = Long.MIN_VALUE;
 	private String oprCode;

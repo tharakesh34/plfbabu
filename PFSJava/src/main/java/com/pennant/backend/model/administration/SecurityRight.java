@@ -45,11 +45,10 @@ package com.pennant.backend.model.administration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SecurityRight extends AbstractWorkflowEntity implements Entity {
+public class SecurityRight extends AbstractWorkflowEntity  {
 	private static final long serialVersionUID = -1574628715506591010L;
 
 	private long           	rightID = Long.MIN_VALUE;

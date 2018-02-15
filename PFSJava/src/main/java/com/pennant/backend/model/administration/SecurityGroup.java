@@ -45,7 +45,6 @@ package com.pennant.backend.model.administration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -53,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SecurityGroup table</b>.<br>
  * 
  */
-public class SecurityGroup extends AbstractWorkflowEntity implements Entity {
+public class SecurityGroup extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long grpID = Long.MIN_VALUE;

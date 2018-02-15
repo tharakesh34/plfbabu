@@ -39,97 +39,109 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */package com.pennant.backend.model.administration;
+ */
+package com.pennant.backend.model.administration;
 
- import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
- public class SecurityRoleGroups extends AbstractWorkflowEntity implements Entity{
+public class SecurityRoleGroups extends AbstractWorkflowEntity {
 
+	private static final long serialVersionUID = 1L;
+	private long roleGrpID = Long.MIN_VALUE;
+	private long grpID;
+	private long roleID;
+	private String lovDescGrpDesc;
+	private String lovDescGrpCode;
+	private String lovDescRoleCode;
+	private LoggedInUser userDetails;
+	private SecurityRoleGroups befImage;
 
-	 private static final long serialVersionUID = 1L;
-	 private long        roleGrpID=Long.MIN_VALUE;
-	 private long        grpID;
-	 private long        roleID;
-	 private String      lovDescGrpDesc;
-	 private String      lovDescGrpCode;
-	 private String      lovDescRoleCode;
-	 private LoggedInUser    userDetails;
-	 private SecurityRoleGroups befImage;
-
-
-
-	 public SecurityRoleGroups() {
+	public SecurityRoleGroups() {
 		super();
 	}
+
 	public SecurityRoleGroups(long roleGrpId) {
 		super();
 		this.roleGrpID = roleGrpId;
 	}
-	
+
 	public long getRoleGrpID() {
-		 return roleGrpID;
-	 }
-	 public void setRoleGrpID(long roleGrpID) {
-		 this.roleGrpID = roleGrpID;
-	 }
-	 public long getGrpID() {
-		 return grpID;
-	 }
+		return roleGrpID;
+	}
 
-	 public void  setGrpID(long grpID) {
-		 this.grpID = grpID;
-	 }
-	 public long getRoleID() {
-		 return roleID;
-	 }
-	 public void setRoleID(long roleID) {
-		 this.roleID = roleID;
-	 }
-	 public String getLovDescGrpDesc() {
-		 return lovDescGrpDesc;
-	 }
-	 public void setLovDescGrpDesc(String lovDescGrpDesc) {
-		 this.lovDescGrpDesc = lovDescGrpDesc;
-	 }
-	 public String getLovDescGrpCode() {
-		 return lovDescGrpCode;
-	 }
-	 public void setLovDescGrpCode(String lovDescGrpCode) {
-		 this.lovDescGrpCode = lovDescGrpCode;
-	 }
-	 public void setUserDetails(LoggedInUser userDetails) {
-		 this.userDetails = userDetails;
-	 }
-	 public LoggedInUser getUserDetails() {
-		 return userDetails;
-	 }
-	 public void setBefImage(SecurityRoleGroups befImage) {
-		 this.befImage = befImage;
-	 }
-	 public SecurityRoleGroups getBefImage() {
-		 return befImage;
-	 }
-	 @Override
-	 public boolean isNew() {
+	public void setRoleGrpID(long roleGrpID) {
+		this.roleGrpID = roleGrpID;
+	}
 
-		 return false;
-	 }
-	 @Override
-	 public void  setId(long roleGrpID){
-		 this.roleGrpID = roleGrpID;
+	public long getGrpID() {
+		return grpID;
+	}
 
-	 }
-	 @Override
-	 public long getId() {
-		 return roleGrpID;
-	 }
-	 public void setLovDescRoleCode(String lovDescRoleCode) {
-		 this.lovDescRoleCode = lovDescRoleCode;
-	 }
-	 public String getLovDescRoleCode() {
-		 return lovDescRoleCode;
-	 }
+	public void setGrpID(long grpID) {
+		this.grpID = grpID;
+	}
 
- }
+	public long getRoleID() {
+		return roleID;
+	}
+
+	public void setRoleID(long roleID) {
+		this.roleID = roleID;
+	}
+
+	public String getLovDescGrpDesc() {
+		return lovDescGrpDesc;
+	}
+
+	public void setLovDescGrpDesc(String lovDescGrpDesc) {
+		this.lovDescGrpDesc = lovDescGrpDesc;
+	}
+
+	public String getLovDescGrpCode() {
+		return lovDescGrpCode;
+	}
+
+	public void setLovDescGrpCode(String lovDescGrpCode) {
+		this.lovDescGrpCode = lovDescGrpCode;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setBefImage(SecurityRoleGroups befImage) {
+		this.befImage = befImage;
+	}
+
+	public SecurityRoleGroups getBefImage() {
+		return befImage;
+	}
+
+	public boolean isNew() {
+
+		return false;
+	}
+
+	public void setId(long roleGrpID) {
+		this.roleGrpID = roleGrpID;
+
+	}
+
+	public long getId() {
+		return roleGrpID;
+	}
+
+	public void setLovDescRoleCode(String lovDescRoleCode) {
+		this.lovDescRoleCode = lovDescRoleCode;
+	}
+
+	public String getLovDescRoleCode() {
+		return lovDescRoleCode;
+	}
+
+}

@@ -50,7 +50,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -61,7 +60,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = {"roleCd","roleDesc"})
 @XmlAccessorType(XmlAccessType.NONE)
-public class SecurityRole extends AbstractWorkflowEntity implements Entity {
+public class SecurityRole extends AbstractWorkflowEntity  {
 	private static final long serialVersionUID = 1L;
 	
 	private long        roleID = Long.MIN_VALUE;

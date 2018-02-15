@@ -42,11 +42,10 @@
  */
 package com.pennant.backend.model.administration;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SecurityGroupRights extends AbstractWorkflowEntity implements Entity {
+public class SecurityGroupRights extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long grpRightID = Long.MIN_VALUE;
 	private long grpID;
@@ -148,9 +147,7 @@ public class SecurityGroupRights extends AbstractWorkflowEntity implements Entit
 		return befImage;
 	}
 
-	@Override
 	public boolean isNew() {
 		return false;
 	}
-
 }

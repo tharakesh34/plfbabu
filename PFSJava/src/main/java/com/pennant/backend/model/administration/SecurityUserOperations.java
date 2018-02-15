@@ -42,11 +42,10 @@
  */
 package com.pennant.backend.model.administration;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SecurityUserOperations extends AbstractWorkflowEntity implements Entity {
+public class SecurityUserOperations extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 3894711431224067299L;
 	private long usrOprID = Long.MIN_VALUE;
 	private long usrID;
@@ -115,19 +114,16 @@ public class SecurityUserOperations extends AbstractWorkflowEntity implements En
 		this.befImage = befImage;
 	}
 
-	@Override
 	public long getId() {
 		return usrOprID;
 
 	}
 
-	@Override
 	public void setId(long usrOprID) {
 
 		this.usrOprID = usrOprID;
 	}
 
-	@Override
 	public boolean isNew() {
 		return isNewRecord();
 	}

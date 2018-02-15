@@ -42,11 +42,10 @@
 */
 package com.pennant.backend.model.administration;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SecurityOperationRoles extends AbstractWorkflowEntity implements Entity {
+public class SecurityOperationRoles extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private  long       oprRoleID=Long.MIN_VALUE;
@@ -131,7 +130,7 @@ public class SecurityOperationRoles extends AbstractWorkflowEntity implements En
 	public void setBefImage(SecurityOperationRoles befImage) {
 		this.befImage = befImage;
 	}
-	@Override
+	
 	public boolean isNew() {
 		return false;
 	}
