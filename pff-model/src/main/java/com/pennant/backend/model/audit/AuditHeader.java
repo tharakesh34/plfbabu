@@ -50,11 +50,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class AuditHeader implements java.io.Serializable,Entity {
+public class AuditHeader implements java.io.Serializable  {
 	//private static final Logger logger = Logger.getLogger(AuditHeader.class);
 	private static final long serialVersionUID = -53442181146054373L;
 

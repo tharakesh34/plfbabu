@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlRootElement(name = "workFlow")
 @XmlAccessorType(XmlAccessType.NONE)
-public class WorkFlowDetails extends AbstractWorkflowEntity implements Entity {
+public class WorkFlowDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 5638930814989470679L;
 
 	@XmlElement

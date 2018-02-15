@@ -54,12 +54,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 
-public class AuditDetail implements java.io.Serializable, Entity {
+public class AuditDetail implements java.io.Serializable {
 	private static final Logger	logger				= Logger.getLogger(AuditDetail.class);
 	private static final long	serialVersionUID	= 4576632220854658678L;
 
@@ -179,17 +178,17 @@ public class AuditDetail implements java.io.Serializable, Entity {
 		this.modelData = modelData;
 	}
 
-	@Override
+	
 	public boolean isNew() {
 		return getId() == Long.MIN_VALUE;
 	}
 
-	@Override
+	
 	public long getId() {
 		return auditId;
 	}
 
-	@Override
+
 	public void setId(long id) {
 		this.auditId = id;
 	}
