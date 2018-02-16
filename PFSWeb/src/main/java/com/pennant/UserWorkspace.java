@@ -61,7 +61,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -309,19 +308,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 			}
 		return arrayRoleCode;
 	}
-
-	public ArrayList<String> getUserFinanceRoles(String[] moduleNames,String finEvent) {
-		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames,finEvent);
-		ArrayList<String> arrayRoleCode = new ArrayList<String>();;
-		Object[] roles= this.userRoleSet.toArray();
-		for (Object role : roles) {
-			if(finRoleSet.contains(role.toString())){
-				arrayRoleCode.add(role.toString());
-			}
-		}
-		return arrayRoleCode;
-	}
-	
 	
 	public Set<String> getUserRoleSet() {
 		return userRoleSet;

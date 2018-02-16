@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -77,6 +78,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -232,7 +234,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			requestSource = (String) arguments.get("requestSource");
 		}
 		
-		usrfinRolesList = getUserWorkspace().getUserFinanceRoles(new String[]{"FINANCE","PROMOTION"},requestSource);
+		usrfinRolesList = getUserFinanceRoles(new String[] { "FINANCE", "PROMOTION" }, requestSource);
 		
 		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators()
 				.getAlphaNumOperators()));
@@ -1296,6 +1298,19 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 		return false;
+	}
+	
+	
+	public ArrayList<String> getUserFinanceRoles(String[] moduleNames,String finEvent) {
+		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames,finEvent);
+		ArrayList<String> arrayRoleCode = new ArrayList<String>();;
+		Object[] roles= getUserWorkspace().getUserRoleSet().toArray();
+		for (Object role : roles) {
+			if(finRoleSet.contains(role.toString())){
+				arrayRoleCode.add(role.toString());
+			}
+		}
+		return arrayRoleCode;
 	}
 
 	// ******************************************************//
