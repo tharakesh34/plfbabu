@@ -21,10 +21,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.search.SearchResult;
 import com.pennant.webui.finance.financemain.model.QueueAssignmentListComparator;
 import com.pennant.webui.finance.financemain.model.QueueAssignmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHeader> {

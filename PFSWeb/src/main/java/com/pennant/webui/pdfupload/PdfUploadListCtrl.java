@@ -69,10 +69,10 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
-import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

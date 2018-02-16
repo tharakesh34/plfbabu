@@ -99,12 +99,12 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = 3257569537441008225L;

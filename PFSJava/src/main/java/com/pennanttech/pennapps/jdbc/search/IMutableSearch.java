@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.util.List;
 
 /**
- * <code>IMutableSearch</code> is an extension of <code>ISearch</code> that provides setters for all of the properties.
- * 
- * @author dwolverton
+ * <code>IMutableSearch</code> is an extension of <code>ISearch</code> that
+ * provides setters for all of the properties.
  * 
  */
 public interface IMutableSearch extends ISearch {

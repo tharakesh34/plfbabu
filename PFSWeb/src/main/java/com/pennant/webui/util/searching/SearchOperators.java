@@ -49,7 +49,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zul.Listbox;
 
-import com.pennant.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * This class represents a few types of search operators <br>

@@ -82,12 +82,12 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {

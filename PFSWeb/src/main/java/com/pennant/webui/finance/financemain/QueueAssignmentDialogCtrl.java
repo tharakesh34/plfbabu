@@ -78,7 +78,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -90,6 +89,7 @@ import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * This is the controller class for the

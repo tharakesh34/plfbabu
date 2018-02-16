@@ -48,19 +48,19 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import com.pennant.backend.dao.JdbcSearchSupport;
-import com.pennant.search.ISearch;
-import com.pennant.search.JdbcSearchProcessor;
-import com.pennant.search.SearchResult;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 	private static final long	serialVersionUID	= -3473489484821533407L;
 
-	private JdbcSearchProcessor	jdbcSearchProcessor;
+	private SearchProcessor	jdbcSearchProcessor;
 
 	public JdbcSearchSupportImpl(DataSource dataSource) {
 		super();
 
-		jdbcSearchProcessor = new JdbcSearchProcessor(dataSource);
+		jdbcSearchProcessor = new SearchProcessor(dataSource);
 	}
 
 	@Override

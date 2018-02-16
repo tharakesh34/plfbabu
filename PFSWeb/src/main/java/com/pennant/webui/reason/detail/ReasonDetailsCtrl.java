@@ -34,11 +34,11 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.component.Uppercasebox;
-import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 

@@ -44,8 +44,8 @@ package com.pennant.backend.dao;
 
 import java.util.List;
 
-import com.pennant.search.ISearch;
-import com.pennant.search.SearchResult;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public interface JdbcSearchSupport {
 	<T> List<T> search(ISearch search);

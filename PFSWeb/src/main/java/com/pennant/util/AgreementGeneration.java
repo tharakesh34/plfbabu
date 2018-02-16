@@ -85,10 +85,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.search.Filter;
-import com.pennant.search.Search;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;

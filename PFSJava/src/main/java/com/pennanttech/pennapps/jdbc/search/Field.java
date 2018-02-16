@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.io.Serializable;
 
 /**
  * Used to specify field selection in <code>Search</code>.
- * 
- * @see Search
  */
 public class Field implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Property string representing the root entity of the search. This is just the empty string ("").
+	 * Property string representing the root entity of the search. This is just
+	 * the empty string ("").
 	 */
 	public static final String ROOT_ENTITY = "";
 
@@ -51,15 +50,15 @@ public class Field implements Serializable {
 	protected int operator = 0;
 
 	/**
-	 * Possible value for <code>operator</code>. This is the default value
-	 * and does not apply any operator to the column. All the rows in the result
-	 * set are returned.
+	 * Possible value for <code>operator</code>. This is the default value and
+	 * does not apply any operator to the column. All the rows in the result set
+	 * are returned.
 	 */
 	public static final int OP_PROPERTY = 0;
 
 	/**
-	 * Possible value for <code>operator</code>. This returns the number of
-	 * rows in the result set where the given property is non-null.
+	 * Possible value for <code>operator</code>. This returns the number of rows
+	 * in the result set where the given property is non-null.
 	 */
 	public static final int OP_COUNT = 1;
 
@@ -70,14 +69,14 @@ public class Field implements Serializable {
 	public static final int OP_COUNT_DISTINCT = 2;
 
 	/**
-	 * Possible value for <code>operator</code>. This returns the maximum
-	 * value of the given property in the result set.
+	 * Possible value for <code>operator</code>. This returns the maximum value
+	 * of the given property in the result set.
 	 */
 	public static final int OP_MAX = 3;
 
 	/**
-	 * Possible value for <code>operator</code>. This returns the minimum
-	 * value of the given property in the result set.
+	 * Possible value for <code>operator</code>. This returns the minimum value
+	 * of the given property in the result set.
 	 */
 	public static final int OP_MIN = 4;
 
@@ -88,8 +87,8 @@ public class Field implements Serializable {
 	public static final int OP_SUM = 5;
 
 	/**
-	 * Possible value for <code>operator</code>. This returns the average
-	 * value of the given property in the result set.
+	 * Possible value for <code>operator</code>. This returns the average value
+	 * of the given property in the result set.
 	 */
 	public static final int OP_AVG = 6;
 
@@ -119,7 +118,7 @@ public class Field implements Serializable {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getProperty() {
 		return property;
 	}
@@ -143,11 +142,11 @@ public class Field implements Serializable {
 	public void setOperator(int operator) {
 		this.operator = operator;
 	}
-	
+
 	/**
 	 * Get the hashCode
 	 * 
-	 *  @return int
+	 * @return int
 	 */
 	@Override
 	public int hashCode() {
@@ -162,7 +161,7 @@ public class Field implements Serializable {
 	/**
 	 * Check object is equal or not with Other object
 	 * 
-	 *  @return boolean
+	 * @return boolean
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -199,7 +198,7 @@ public class Field implements Serializable {
 	/**
 	 * Get the String return type Value
 	 * 
-	 *  @return String
+	 * @return String
 	 */
 	@Override
 	public String toString() {
@@ -207,23 +206,31 @@ public class Field implements Serializable {
 
 		boolean parens = true;
 		switch (operator) {
-		case OP_AVG: sb.append("AVG(");
-		             break;
-		case OP_COUNT: sb.append("COUNT(");
-		  			 break;
-		case OP_COUNT_DISTINCT: sb.append("COUNT_DISTINCT(");
-				     break;
-		case OP_MAX: sb.append("MAX(");
-					 break;
-		case OP_MIN: sb.append("MIN(");
-					 break;
-		case OP_PROPERTY: parens = false; 
-					 break;
-		case OP_SUM: sb.append("SUM(");
-					 break;
-		  default: 	 sb.append("**INVALID OPERATOR: (" + operator + ")** "); 
-				     parens = false;
-				     break;
+		case OP_AVG:
+			sb.append("AVG(");
+			break;
+		case OP_COUNT:
+			sb.append("COUNT(");
+			break;
+		case OP_COUNT_DISTINCT:
+			sb.append("COUNT_DISTINCT(");
+			break;
+		case OP_MAX:
+			sb.append("MAX(");
+			break;
+		case OP_MIN:
+			sb.append("MIN(");
+			break;
+		case OP_PROPERTY:
+			parens = false;
+			break;
+		case OP_SUM:
+			sb.append("SUM(");
+			break;
+		default:
+			sb.append("**INVALID OPERATOR: (" + operator + ")** ");
+			parens = false;
+			break;
 		}
 
 		if (property == null) {
@@ -233,7 +240,7 @@ public class Field implements Serializable {
 			sb.append(property);
 			sb.append("`");
 		}
-		if (parens){
+		if (parens) {
 			sb.append(")");
 		}
 

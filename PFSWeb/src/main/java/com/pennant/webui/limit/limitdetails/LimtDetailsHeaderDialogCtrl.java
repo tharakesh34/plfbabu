@@ -19,9 +19,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 

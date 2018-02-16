@@ -32,9 +32,9 @@ import org.zkoss.zul.Textbox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.search.Filter;
 import com.pennanttech.framework.core.SearchOperator;
 import com.pennanttech.framework.core.SearchOperator.Operators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class SearchFilterControl implements Serializable {

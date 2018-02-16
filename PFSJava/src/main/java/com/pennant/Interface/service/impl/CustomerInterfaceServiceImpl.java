@@ -55,8 +55,8 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerRating;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
 import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
-import com.pennant.search.Filter;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.core.TableType;
 
 public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl implements CustomerInterfaceService{

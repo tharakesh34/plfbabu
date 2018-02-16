@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +50,9 @@ public class SearchUtil {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
-	 * the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>property</code> will also be used as the key for this value in the
+	 * map.
 	 */
 	public static void addField(IMutableSearch search, String property) {
 		if (property == null) {
@@ -61,8 +62,9 @@ public class SearchUtil {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
-	 * the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>property</code> will also be used as the key for this value in the
+	 * map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator) {
 		if (property == null) {
@@ -72,8 +74,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
-	 * for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>key</code> will be used as the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator, String key) {
 		if (property == null || key == null) {
@@ -83,8 +85,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
-	 * for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>key</code> will be used as the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, String key) {
 		if (property == null || key == null) {
@@ -165,7 +167,8 @@ public class SearchUtil {
 	 * Add a filter that uses the IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be specified.
+	 * This takes a variable number of parameters. Any number of values can be
+	 * specified.
 	 */
 	public static void addFilterIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.in(property, value));
@@ -210,7 +213,8 @@ public class SearchUtil {
 	 * Add a filter that uses the NOT IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be specified.
+	 * This takes a variable number of parameters. Any number of values can be
+	 * specified.
 	 */
 	public static void addFilterNotIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.notIn(property, value));
@@ -264,7 +268,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending
+	 * if <code>desc == true</code>.
 	 */
 	public static void addSort(IMutableSearch search, String property, boolean desc) {
 		if (property == null) {
@@ -412,7 +417,8 @@ public class SearchUtil {
 
 	// ---------- Merge ----------
 	/**
-	 * Modify the search by adding the given sorts before the current sorts in the search.
+	 * Modify the search by adding the given sorts before the current sorts in
+	 * the search.
 	 */
 	public static void mergeSortsBefore(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
@@ -444,14 +450,16 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given sorts before the current sorts in the search.
+	 * Modify the search by adding the given sorts before the current sorts in
+	 * the search.
 	 */
 	public static void mergeSortsBefore(IMutableSearch search, Sort... sorts) {
 		mergeSortsBefore(search, Arrays.asList(sorts));
 	}
 
 	/**
-	 * Modify the search by adding the given sorts after the current sorts in the search.
+	 * Modify the search by adding the given sorts after the current sorts in
+	 * the search.
 	 */
 	public static void mergeSortsAfter(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
@@ -484,14 +492,16 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given sorts after the current sorts in the search.
+	 * Modify the search by adding the given sorts after the current sorts in
+	 * the search.
 	 */
 	public static void mergeSortsAfter(IMutableSearch search, Sort... sorts) {
 		mergeSortsAfter(search, Arrays.asList(sorts));
 	}
 
 	/**
-	 * Modify the search by adding the given fetches to the current fetches in the search.
+	 * Modify the search by adding the given fetches to the current fetches in
+	 * the search.
 	 */
 	public static void mergeFetches(IMutableSearch search, List<String> fetches) {
 		List<String> list = search.getFetches();
@@ -508,7 +518,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fetches to the current fetches in the search.
+	 * Modify the search by adding the given fetches to the current fetches in
+	 * the search.
 	 */
 	public static void mergeFetches(IMutableSearch search, String... fetches) {
 		mergeFetches(search, Arrays.asList(fetches));
@@ -583,7 +594,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields before the current fields in the search.
+	 * Modify the search by adding the given fields before the current fields in
+	 * the search.
 	 */
 	public static void mergeFieldsBefore(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
@@ -596,14 +608,16 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields before the current fields in the search.
+	 * Modify the search by adding the given fields before the current fields in
+	 * the search.
 	 */
 	public static void mergeFieldsBefore(IMutableSearch search, Field... fields) {
 		mergeFieldsBefore(search, Arrays.asList(fields));
 	}
 
 	/**
-	 * Modify the search by adding the given fields after the current fields in the search.
+	 * Modify the search by adding the given fields after the current fields in
+	 * the search.
 	 */
 	public static void mergeFieldsAfter(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
@@ -616,7 +630,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields after the current fields in the search.
+	 * Modify the search by adding the given fields after the current fields in
+	 * the search.
 	 */
 	public static void mergeFieldsAfter(IMutableSearch search, Field... fields) {
 		mergeFieldsAfter(search, Arrays.asList(fields));
@@ -625,15 +640,16 @@ public class SearchUtil {
 	// ---------- Other Methods ----------
 
 	/**
-	 * Calculate the first result to use given the <code>firstResult</code>, <code>page</code> and
-	 * <code>maxResults</code> values of the search object.
+	 * Calculate the first result to use given the <code>firstResult</code>,
+	 * <code>page</code> and <code>maxResults</code> values of the search
+	 * object.
 	 * 
 	 * <p>
 	 * The calculation is as follows:
 	 * <ul>
 	 * <li>If <code>firstResult</code> is defined (i.e. > 0), use it.
-	 * <li>Otherwise if <code>page</code> and <code>maxResults</code> are defined (i.e. > 0), use
-	 * <code>page * maxResults</code>.
+	 * <li>Otherwise if <code>page</code> and <code>maxResults</code> are
+	 * defined (i.e. > 0), use <code>page * maxResults</code>.
 	 * <li>Otherwise, just use 0.
 	 * </ul>
 	 */
@@ -643,8 +659,9 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Copy the contents of the source search object to the destination search object, overriding any contents
-	 * previously found in the destination. All destination properties reference the same objects from the source
+	 * Copy the contents of the source search object to the destination search
+	 * object, overriding any contents previously found in the destination. All
+	 * destination properties reference the same objects from the source
 	 * properties.
 	 */
 	public static IMutableSearch shallowCopy(ISearch source, IMutableSearch destination) {
@@ -664,17 +681,9 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Copy the contents of the source search object to the destination search object, overriding any contents
-	 * previously found in the destination. All destination properties reference the same objects from the source
-	 * properties.
-	 */
-	public static IMutableSearch shallowCopy(ISearch source) {
-		return shallowCopy(source, new Search());
-	}
-
-	/**
-	 * Copy the contents of the source search object to the destination search object, overriding any contents
-	 * previously found in the destination. All collections are copied into new collections, but the items in those
+	 * Copy the contents of the source search object to the destination search
+	 * object, overriding any contents previously found in the destination. All
+	 * collections are copied into new collections, but the items in those
 	 * collections are not duplicated; they still point to the same objects.
 	 */
 	public static <T extends IMutableSearch> T copy(ISearch source, T destination) {
@@ -697,14 +706,6 @@ public class SearchUtil {
 		destination.setSorts(sorts);
 
 		return destination;
-	}
-
-	/**
-	 * Copy the contents of the source search object into a new search object. All collections are copied into new
-	 * collections, but the items in those collections are not duplicated; they still point to the same objects.
-	 */
-	public static IMutableSearch copy(ISearch source) {
-		return copy(source, new Search());
 	}
 
 	/**
@@ -763,7 +764,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Return a human-readable string describing the contents of the given search.
+	 * Return a human-readable string describing the contents of the given
+	 * search.
 	 */
 	public static String toString(ISearch search) {
 		StringBuilder sb = new StringBuilder("Search(");

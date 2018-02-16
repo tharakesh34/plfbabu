@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +35,7 @@ public class SearchResult<T> implements Serializable {
 	public SearchResult() {
 		super();
 	}
-	
+
 	/**
 	 * The results of the search.
 	 */

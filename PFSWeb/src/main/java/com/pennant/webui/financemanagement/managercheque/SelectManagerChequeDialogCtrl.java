@@ -62,9 +62,9 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
-import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.managercheque.ManagerChequeListCtrl.MCType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

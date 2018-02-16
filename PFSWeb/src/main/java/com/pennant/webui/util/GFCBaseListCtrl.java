@@ -56,10 +56,10 @@ import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
-import com.pennant.search.Filter;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.web.AbstractListController;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * Extended the GFCBase controller for a pagedListWrapper for a single type.

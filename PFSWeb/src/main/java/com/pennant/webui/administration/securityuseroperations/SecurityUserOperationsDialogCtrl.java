@@ -82,7 +82,6 @@ import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuser.SecurityUserDialogCtrl;
 import com.pennant.webui.administration.securityuser.SecurityUserListCtrl;
@@ -92,6 +91,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityUsersOperations

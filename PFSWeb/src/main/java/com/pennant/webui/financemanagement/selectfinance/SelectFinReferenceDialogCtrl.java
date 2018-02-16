@@ -76,13 +76,13 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceFlagsService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.search.Filter;
 import com.pennant.webui.finance.reinstatefinance.ReinstateFinanceListCtrl;
 import com.pennant.webui.financemanagement.financeFlags.FinanceFlagsListCtrl;
 import com.pennant.webui.financemanagement.liability.LiabilityRequestListCtrl;
 import com.pennant.webui.financemanagement.provision.ProvisionListCtrl;
 import com.pennant.webui.financemanagement.suspense.SuspenseListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

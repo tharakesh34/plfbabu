@@ -65,9 +65,9 @@ import com.pennant.backend.service.messages.MessagesService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

@@ -48,7 +48,7 @@ import java.util.List;
 import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.search.SearchResult;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class PagedListServiceImpl implements PagedListService, Serializable {
 	private static final long	serialVersionUID	= 317035964609683048L;

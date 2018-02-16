@@ -66,13 +66,13 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.finance/ManualAdvise/ManualAdviseList.zul file.

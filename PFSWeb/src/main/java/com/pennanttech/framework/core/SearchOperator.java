@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * <p>

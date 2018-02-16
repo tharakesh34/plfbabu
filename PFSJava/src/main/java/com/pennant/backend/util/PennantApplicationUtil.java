@@ -22,8 +22,8 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.search.Filter;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class PennantApplicationUtil {
 	

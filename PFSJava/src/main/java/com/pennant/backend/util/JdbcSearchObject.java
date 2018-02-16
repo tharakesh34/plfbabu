@@ -42,7 +42,7 @@
 */
 package com.pennant.backend.util;
 
-import com.pennant.search.Search;
+import com.pennanttech.pennapps.jdbc.search.Search;
 
 public class JdbcSearchObject<E> extends Search {
 

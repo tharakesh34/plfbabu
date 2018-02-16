@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.io.Serializable;
 
 public class Sort implements Serializable {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	protected String			property;
-	protected boolean			desc				= false;
+	protected String property;
+	protected boolean desc = false;
 
 	public Sort() {
 		super();

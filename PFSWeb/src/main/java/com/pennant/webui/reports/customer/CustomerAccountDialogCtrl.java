@@ -32,10 +32,10 @@ import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.search.Filter;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {

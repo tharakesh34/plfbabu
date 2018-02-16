@@ -62,8 +62,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;

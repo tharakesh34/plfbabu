@@ -61,10 +61,10 @@ import org.zkoss.zul.Textbox;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class ExtendedCombobox extends Hbox {
 	private static final long			serialVersionUID	= -4246285143621221275L;

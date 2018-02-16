@@ -45,7 +45,7 @@ package com.pennant.backend.service;
 import java.util.List;
 
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.search.SearchResult;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public interface PagedListService {
 	<T> List<T> getBySearchObject(JdbcSearchObject<T> so);

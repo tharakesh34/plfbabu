@@ -61,7 +61,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
@@ -69,6 +68,7 @@ import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.web.components.ButtonControl;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

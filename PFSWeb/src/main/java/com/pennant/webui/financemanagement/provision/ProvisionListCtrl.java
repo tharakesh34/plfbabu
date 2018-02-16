@@ -85,7 +85,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.provision.model.ProvisionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -97,6 +96,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/ProvisionList.zul

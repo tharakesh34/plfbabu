@@ -54,7 +54,7 @@ import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.search.SearchResult;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 /**
  * Helper class for getting a paged record list that can be sorted by DB. <br>

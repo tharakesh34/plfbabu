@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennant.search;
+package com.pennanttech.pennapps.jdbc.search;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -42,20 +42,15 @@ import com.pennanttech.pennapps.core.resource.Literal;
 /**
  * A singleton instance of this class is maintained for each SessionFactory.
  */
-public class JdbcSearchProcessor implements Serializable {
+public class SearchProcessor implements Serializable {
 	private static final long serialVersionUID = 4460401213988371185L;
-	private static final Logger logger = Logger.getLogger(JdbcSearchProcessor.class);
+	private static final Logger logger = Logger.getLogger(SearchProcessor.class);
 
 	private transient NamedParameterJdbcTemplate jdbcTemplate;
 
 	private enum Clause {
-		SELECT("SELECT "),
-		DISTINCT(" DISTINCT"),
-		FROM(" FROM"),
-		GROUP_BY(" GROUP BY"),
-		ORDER_BY(" ORDER BY"),
-		LIMIT(" LIMIT "),
-		OFFSET(" OFFSET ");
+		SELECT("SELECT "), DISTINCT(" DISTINCT"), FROM(" FROM"), GROUP_BY(" GROUP BY"), ORDER_BY(" ORDER BY"), LIMIT(
+				" LIMIT "), OFFSET(" OFFSET ");
 
 		private String key;
 
@@ -65,17 +60,19 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Creates a new <code>JdbcSearchProcessor</code> for the given {@link DataSource}.
+	 * Creates a new <code>JdbcSearchProcessor</code> for the given
+	 * {@link DataSource}.
 	 * 
 	 * @param dataSource
 	 *            The JDBC data source to access.
 	 */
-	public JdbcSearchProcessor(DataSource dataSource) {
+	public SearchProcessor(DataSource dataSource) {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
-	 * Get the results for the specified <code>ISearch</code> along with the number of records if requested.
+	 * Get the results for the specified <code>ISearch</code> along with the
+	 * number of records if requested.
 	 * 
 	 * @param search
 	 *            The search object that contains the parameters.
@@ -109,7 +106,8 @@ public class JdbcSearchProcessor implements Serializable {
 	 * 
 	 * @param search
 	 *            The search object that contains the parameters.
-	 * @return The results mapped to a <code>List</code> (one entry for each row).
+	 * @return The results mapped to a <code>List</code> (one entry for each
+	 *         row).
 	 * @throws IllegalArgumentException
 	 *             - If the given search object is <code>null</code>.
 	 */
@@ -168,7 +166,8 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Adds the given columns to the SELECT query. If no columns specified adds the ALL_SYMBOL (*).
+	 * Adds the given columns to the SELECT query. If no columns specified adds
+	 * the ALL_SYMBOL (*).
 	 * 
 	 * @param query
 	 *            The select query to which the columns to be added.
@@ -193,7 +192,8 @@ public class JdbcSearchProcessor implements Serializable {
 	 * @param query
 	 *            The select query to which the columns to be added.
 	 * @param selectList
-	 *            The columns to be added. The select list is a series of expressions separated by commas.
+	 *            The columns to be added. The select list is a series of
+	 *            expressions separated by commas.
 	 */
 	private void addSelectList(SelectQuery query, String selectList) {
 		query.addCustomColumns(new CustomSql(selectList));
@@ -222,14 +222,17 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Adds the search conditions of the WHERE clause to the SELECT query. The conditions will be prepared with named
-	 * parameters and stores the values for those named parameters in <code>MapSqlParameterSource</code> and return the
-	 * same.
+	 * Adds the search conditions of the WHERE clause to the SELECT query. The
+	 * conditions will be prepared with named parameters and stores the values
+	 * for those named parameters in <code>MapSqlParameterSource</code> and
+	 * return the same.
 	 * 
 	 * @param query
-	 *            The select query to which the WHERE clause search conditions to be added.
+	 *            The select query to which the WHERE clause search conditions
+	 *            to be added.
 	 * @param search
-	 *            The search object that contains the WHERE clause search conditions.
+	 *            The search object that contains the WHERE clause search
+	 *            conditions.
 	 * @return The container of arguments to bind to the query.
 	 */
 	private MapSqlParameterSource addWhereClause(SelectQuery query, ISearch search) {
@@ -263,8 +266,8 @@ public class JdbcSearchProcessor implements Serializable {
 	 *            The filter that contain the parameters of the condition.
 	 * @param paramSource
 	 *            The container of arguments to bind to the query.
-	 * @return The logical condition (<code>AND | OR</code>). <code>null</code> if invalid parameters specified for the
-	 *         condition.
+	 * @return The logical condition (<code>AND | OR</code>). <code>null</code>
+	 *         if invalid parameters specified for the condition.
 	 */
 	private ComboCondition getLogicalCondition(Op operator, Filter filter, MapSqlParameterSource paramSource) {
 		if (!(filter.getValue() instanceof List<?>)) {
@@ -292,10 +295,12 @@ public class JdbcSearchProcessor implements Serializable {
 	 * <code>=, <>, <, >, <=, >=, LIKE, IS NULL, IS NOT NULL, IN, and NOT IN</code>.
 	 * 
 	 * @param filter
-	 *            The filter object that contains the parameters of the condition.
+	 *            The filter object that contains the parameters of the
+	 *            condition.
 	 * @param paramSource
 	 *            The container of arguments to bind to the query.
-	 * @return The comparison condition. <code>null</code> if invalid operator specified.
+	 * @return The comparison condition. <code>null</code> if invalid operator
+	 *         specified.
 	 */
 	private Condition getComparisonCondition(Filter filter, MapSqlParameterSource paramSource) {
 		// Set the unique parameter name.
@@ -364,7 +369,8 @@ public class JdbcSearchProcessor implements Serializable {
 	 * Adds the order by expressions to the SELECT query.
 	 * 
 	 * @param query
-	 *            The select query to which the order by expressions to be added.
+	 *            The select query to which the order by expressions to be
+	 *            added.
 	 * @param search
 	 *            The search object that contains the order by expressions.
 	 */
@@ -376,13 +382,15 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Gets the SELECT query that limits the number of records that will be returned based on the specified offset and
-	 * number of records. If limits rows not specified returns the actual SELECT query.
+	 * Gets the SELECT query that limits the number of records that will be
+	 * returned based on the specified offset and number of records. If limits
+	 * rows not specified returns the actual SELECT query.
 	 * 
 	 * @param query
 	 *            The select query to fetch an ordered result set.
 	 * @param search
-	 *            The search object that contains the parameters of offset and number of records.
+	 *            The search object that contains the parameters of offset and
+	 *            number of records.
 	 * @return The SELECT query that limits the number of records.
 	 */
 	private String getLimitRowsSql(SelectQuery query, ISearch search) {
@@ -436,7 +444,8 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Gets the <code>Microsoft SQL Server</code> limit rows statement. e.g., <br/>
+	 * Gets the <code>Microsoft SQL Server</code> limit rows statement. e.g.,
+	 * <br/>
 	 * <code>with query as ( <br/>
 	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i><br/>
 	 * ) select * from query where row_nr between 21 and 30;</code>
