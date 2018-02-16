@@ -30,21 +30,21 @@
 	<changeSet id="1" author="Durga Prasad D">
 		<addColumn tableName="ChequeDetail_Temp">
 			<column name="documentName" type="nvarchar(200)"></column>
-			<column name="documentRef" type="number(64)"></column>
+			<column name="documentRef" type="decimal(38,0)"></column>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="2" author="Durga Prasad D">
 		<addColumn tableName="ChequeDetail">
 			<column name="documentName" type="nvarchar(200)"></column>
-			<column name="documentRef" type="number(64)"></column>
+			<column name="documentRef" type="decimal(38,0)"></column>
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="3" author="Durga Prasad D">
 		<sql>
-			drop view Chequedetail_aview cascade;
-			drop view Chequedetail_view cascade;
+			drop view Chequedetail_aview ;
+			drop view Chequedetail_view;
 		</sql>
 	</changeSet>
 
