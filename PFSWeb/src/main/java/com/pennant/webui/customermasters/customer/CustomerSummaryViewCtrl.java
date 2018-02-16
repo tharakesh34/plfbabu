@@ -471,7 +471,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.window_CustomerSummaryDialog.onClose();
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDetailsEnquiry.zul", null,
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null,
 					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);

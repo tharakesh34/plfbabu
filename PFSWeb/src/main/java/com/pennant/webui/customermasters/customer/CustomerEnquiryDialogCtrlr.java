@@ -87,7 +87,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	 * component with the same 'id' in the ZUL-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerDialog;
+	protected Window window_CustomerDialogg;
 	protected North north;
 	protected South south;
 	protected Label custCIF;
@@ -349,10 +349,10 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerDialogg(Event event) throws Exception {
 		logger.debug("Entering");
 
-		setPageComponents(window_CustomerDialog);
+		setPageComponents(window_CustomerDialogg);
 
 		try {
 
@@ -406,7 +406,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 
 			doShowDialog(customerDetails);
 			if (arguments.containsKey("ProspectCustomerEnq")) {
-				window_CustomerDialog.doModal();
+				window_CustomerDialogg.doModal();
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -443,7 +443,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
-			window_CustomerDialog.onClose();
+			window_CustomerDialogg.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
@@ -1131,7 +1131,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				try {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailDialog.zul",
-							window_CustomerDialog, map);
+							window_CustomerDialogg, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -2423,7 +2423,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		arg.put("customerEnquiryDialogCtrlr", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDetailsEnquiry.zul", null,
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null,
 					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);

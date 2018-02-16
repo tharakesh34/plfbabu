@@ -7,7 +7,7 @@
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_CustomerDialog" border="normal"
+	<window id="window_CustomerDialogg" border="normal"
 		style="overflow-y:hidden" apply="${customerDialogCtrlr}" width="100%"
 		height="100%" sizable="false">
 		<style src="http://fonts.googleapis.com/css?family=Roboto" />
