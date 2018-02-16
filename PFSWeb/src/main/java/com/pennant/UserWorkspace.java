@@ -61,7 +61,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -139,7 +138,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	 */
 	public Set<String> getGrantedAuthoritySet() {
 		if (this.grantedAuthoritySet == null) {
-			Authentication currentUser = SessionUserDetails.getAuthentication();
+			Authentication currentUser = AuthenticationManager.getAuthentication();
 
 			userDetails = (User) currentUser.getPrincipal();
 			grantedAuthoritySet = new HashSet<String>(grantedAuthorities.size());

@@ -206,7 +206,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	 * 
 	 * @return The Authentication or <code>null</code> if no authentication information is available.
 	 */
-	private static Authentication getAuthentication() {
+	public static Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
