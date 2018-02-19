@@ -26,6 +26,9 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-
-
+<changeSet id="1" author="Satyanarayana.G">
+	<addColumn tableName="ADTCustomers">
+		<column name="CUSTCLASSIFICATION" type="nvarchar2(8)" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
