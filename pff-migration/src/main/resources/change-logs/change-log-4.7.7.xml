@@ -277,4 +277,52 @@ SELECT t1.custid,
     
  </createView>
 	</changeSet>
+	<changeSet id="5" author="Satyanarayana.G">
+		<createView viewName="CUSTOMERS_AEVIEW" replaceIfExists="true">
+SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custshrtname,
+    t1.custfname,
+    t1.custlname,
+    t1.custdob,
+    t1.custnationality,
+    t1.custsector,
+    t1.custsubsector,
+    t2.phonenumber,
+    t2.phoneareacode,
+    t2.phonecountrycode,
+    t1.custcrcpr,
+    t1.custpassportno,
+    t3.custemail AS emailid,
+    t1.custaddlvar82,
+    t4.custtypedesc AS lovdesccusttypecodename,
+    t1.custbaseccy,
+    t4.custtypectg AS lovdesccustctgtype,
+    t5.custctgdesc AS lovdesccustctgcodename,
+    t6.custstsdescription AS lovdesccuststsname,
+    t1.custdftbranch,
+    t7.branchdesc AS lovdesccustdftbranchname,
+    T1.SubCategory,
+    T1.CasteId,
+    T1.ReligionId,
+    T8.CasteCode,
+    T8.CasteDesc, 
+    T9.ReligionCode,
+    T9.ReligionDesc,
+    COALESCE(t32.roledesc, fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage
+   FROM customers t1
+     LEFT JOIN customerphonenumbers t2 ON t1.custid = t2.phonecustid AND t2.phonetypecode = 'MOBILE'
+     LEFT JOIN customeremails t3 ON t1.custid = t3.custid AND t3.custemailtypecode = 'OFFICE'
+     LEFT JOIN rmtcusttypes t4 ON t1.custtypecode = t4.custtypecode
+     LEFT JOIN bmtcustcategories t5 ON t1.custctgcode = t5.custctgcode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN rmtbranches t7 ON t1.custdftbranch = t7.branchcode
+    LEFT JOIN Caste T8 ON T1.CasteId = T8.CasteId  LEFT OUTER JOIN
+    Religion T9 ON T1.ReligionId = T9.ReligionId
+     LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+     </createView>
+	</changeSet>
 </databaseChangeLog>
