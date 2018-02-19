@@ -1030,4 +1030,66 @@ UNION ALL
           WHERE customers_temp.custid = t1.custid))
 </createView>
 	</changeSet>
+	<changeSet id="9" author="Satyanarayana.G">
+		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
+  SELECT t1.custid,
+    t1.custcif,
+    t1.custfname,
+    t1.custlname,
+    t1.custcrcpr,
+    t1.custpassportno,
+    t1.custshrtname,
+    t1.custdob,
+    t1.custnationality,
+    t1.phonenumber AS mobilenumber,
+    t1.custctgcode,
+    t1.custdftbranch,
+    t1.custtypecode,
+    t1.custsector,
+    t1.custsubsector,
+    T1.SubCategory, 
+    T1.CasteId,
+    T1.ReligionId,
+    T3.CasteCode,
+    T3.CasteDesc,
+    T4.ReligionCode,
+    T4.ReligionDesc,
+    t2.custtypectg AS lovdesccustctgtype
+   FROM plf.customers_temp t1
+     LEFT JOIN plf.rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN Caste T3 ON T1.CasteId = T3.CasteId  LEFT OUTER JOIN 
+     Religion T4 ON T1.ReligionId = T4.ReligionId
+UNION ALL
+ SELECT t1.custid,
+    t1.custcif,
+    t1.custfname,
+    t1.custlname,
+    t1.custcrcpr,
+    t1.custpassportno,
+    t1.custshrtname,
+    t1.custdob,
+    t1.custnationality,
+    t1.phonenumber AS mobilenumber,
+    t1.custctgcode,
+    t1.custdftbranch,
+    t1.custtypecode,
+    t1.custsector,
+    t1.custsubsector,
+    T1.SubCategory,
+    T1.CasteId,
+    T1.ReligionId,
+    T3.CasteCode, 
+    T3.CasteDesc, 
+    T4.ReligionCode, 
+    T4.ReligionDesc,
+    t2.custtypectg AS lovdesccustctgtype
+   FROM plf.customers t1
+     LEFT JOIN plf.rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN Caste T3 ON T1.CasteId = T3.CasteId  LEFT OUTER JOIN 
+     Religion T4 ON T1.ReligionId = T4.ReligionId
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM plf.customers_temp
+          WHERE customers_temp.custid = t1.custid))
+</createView>
+	</changeSet>
 </databaseChangeLog>
