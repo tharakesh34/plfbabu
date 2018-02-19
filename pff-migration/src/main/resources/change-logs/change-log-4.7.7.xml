@@ -325,4 +325,67 @@ SELECT t1.custid,
      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
      </createView>
 	</changeSet>
+	<changeSet id="6" author="Satyanarayana.G">
+		<createView viewName="CUSTOMERS_LVIEW" replaceIfExists="true">
+  SELECT c.custid,
+    c.custcif,
+    c.custcorebank,
+    c.custctgcode,
+    c.custtypecode,
+    c.custshrtname,
+    c.custdftbranch,
+    c.recordstatus,
+    c.rolecode,
+    c.nextrolecode,
+    c.recordtype,
+    ct.custtypedesc AS lovdesccusttypecodename,
+    t1.custctgdesc AS lovdesccustctgcodename,
+    C.SubCategory,
+    C.CasteId, 
+    C.ReligionId,
+    T2.CasteCode,
+    T2.CasteDesc,
+    T3.ReligionCode, 
+    T3.ReligionDesc,
+    COALESCE(t2.roledesc, fn_get_roledesc(c.nextrolecode)) AS lovdescrequeststage
+   FROM customers_temp c
+     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+     LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+     LEFT OUTER JOIN Caste T2 ON C.CasteId = T2.CasteId  
+     LEFT OUTER JOIN Religion T3 ON C.ReligionId = T3.ReligionId
+UNION ALL
+ SELECT c.custid,
+    c.custcif,
+    c.custcorebank,
+    c.custctgcode,
+    c.custtypecode,
+    c.custshrtname,
+    c.custdftbranch,
+    c.recordstatus,
+    c.rolecode,
+    c.nextrolecode,
+    c.recordtype,
+    ct.custtypedesc AS lovdesccusttypecodename,
+    t1.custctgdesc AS lovdesccustctgcodename,
+    C.SubCategory,
+    C.CasteId,
+    C.ReligionId, 
+    T2.CasteCode,
+    T2.CasteDesc,
+    T3.ReligionCode,
+    T3.ReligionDesc,
+    COALESCE(t2.roledesc, fn_get_roledesc(c.nextrolecode)) AS lovdescrequeststage
+   FROM customers c
+     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+     LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+     LEFT OUTER JOIN Caste T2 ON C.CasteId = T2.CasteId  
+     LEFT OUTER JOIN Religion T3 ON C.ReligionId = T3.ReligionId
+  WHERE NOT (c.custid IN ( SELECT customers_temp.custid
+           FROM customers_temp
+          WHERE customers_temp.custid = c.custid))
+
+  </createView>
+	</changeSet>
 </databaseChangeLog>
