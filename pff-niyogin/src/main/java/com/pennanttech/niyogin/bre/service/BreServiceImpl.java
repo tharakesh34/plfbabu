@@ -401,7 +401,6 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setDepreciationYr1(getBigDecimalValue(ExtFieldMapConstants.DEPRECIATION_YR1));
 		financials.setDepreciationYr2(getBigDecimalValue(ExtFieldMapConstants.DEPRECIATION_YR2));
 		financials.setInterestOnCapitalToPartners(getBigDecimalValue(ExtFieldMapConstants.INTERST_CAPTIAL_PATNER_YR1));
-		financials.setPartnersOrDirectorsRemuneration(getBigDecimalValue(ExtFieldMapConstants.PARTNERS_DIRECTORS_REMUN_YR1));
 		financials.setIncomeTax(getBigDecimalValue(ExtFieldMapConstants.INCOME_TAX_YR1));
 		financials.setEquityAndPreferrenceShareCapital(getBigDecimalValue(ExtFieldMapConstants.EQUITYSHARECAPTIAL_YR1));
 		financials.setQuasiEquityDirectorsFriendsAndRelatives(getBigDecimalValue(ExtFieldMapConstants.QUASI_EQUITY_YR1));
@@ -419,7 +418,17 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setStock(getBigDecimalValue(ExtFieldMapConstants.STOCK_YR1));
 		financials.setInvestment(getBigDecimalValue(ExtFieldMapConstants.INVESTMENTS_YR1));
 		financials.setShorttermBorrowings(getBigDecimalValue(ExtFieldMapConstants.SHORT_TERM_BORROWING_YR1));
-		financials.setProvisions(getBigDecimalValue(ExtFieldMapConstants.PROVISIONS_YR1));
+		BigDecimal provisionsYr1 = getBigDecimalValue(ExtFieldMapConstants.PROVISIONS_YR1);
+		BigDecimal othCurntLiabilitiesYr1 = getBigDecimalValue(ExtFieldMapConstants.OTH_CURNT_LIABILITIES_YR1);
+		financials.setProvisions(provisionsYr1.add(othCurntLiabilitiesYr1));
+		financials.setInterestObligation(getBigDecimalValue(ExtFieldMapConstants.INTEREST_TO_BANKS_YR1));
+		financials.setNetProfitOrLoss(getBigDecimalValue(ExtFieldMapConstants.NET_PROFIT_YR1));
+		financials.setReservesAndSurPlus(getBigDecimalValue(ExtFieldMapConstants.RESERVES_AND_SURPLUS_YR1));
+		BigDecimal longTermBorwngYr1 = getBigDecimalValue(ExtFieldMapConstants.LONG_TERM_BORWNG_YR1);
+		BigDecimal shortTermBorwngYr1 = getBigDecimalValue(ExtFieldMapConstants.SHORT_TERM_BORWNG_YR1);
+		financials.setTotalLoans(longTermBorwngYr1.add(shortTermBorwngYr1));
+		financials.setSundryCreditorsForTradeAndExpensesBillsPayable(getBigDecimalValue(ExtFieldMapConstants.SUNDRY_CREDITORS_YR1));
+		financials.setCash(getBigDecimalValue(ExtFieldMapConstants.CASH_AND_BANK_YR1));
 		
 		//getting data from web or mobile
 		financials.setSumOfEmiAllLoans(getBigDecimalValue(ExtFieldMapConstants.SUM_EMI_ALL_LOANS));
@@ -453,15 +462,10 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setQuasiInterestFriendsOrRelativesIfAny(BigDecimal.ZERO);
 		financials.setDepreciation(BigDecimal.ZERO);
 		financials.setInterestToBanksOrFinancialInstitutionsOrFinanciers(BigDecimal.ZERO);
-		financials.setNetProfitOrLoss(BigDecimal.ZERO);
-		financials.setReservesAndSurPlus(BigDecimal.ZERO);
 		financials.setBorrowingFromGroupCompanies(BigDecimal.ZERO);
-		financials.setTotalLoans(BigDecimal.ZERO);
-		financials.setSundryCreditorsForTradeAndExpensesBillsPayable(BigDecimal.ZERO);
 		financials.setFixedAssetsNetBlock(BigDecimal.ZERO);
 		financials.setItReturnFilingDate(null);
 		financials.setLiveFinancialObligationsInEmiCcodBaleetc(BigDecimal.ZERO);
-		financials.setInterestObligation(BigDecimal.ZERO);
 		financials.setCashCreditorOverdraft(BigDecimal.ZERO);
 		financials.setDbtPosOfAlTheOutStndgLoansWhichAreNotClsInTheNext3M(BigDecimal.ZERO);
 		financials.setEquityTotAanGiblenetWorth(BigDecimal.ZERO);
@@ -477,9 +481,9 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setWorkingCapitalCycle(BigDecimal.ZERO);
 		financials.setAppliedTenor(BigDecimal.ZERO);
 		financials.setLatestDebtors(BigDecimal.ZERO);
-		financials.setCash(BigDecimal.ZERO);
 		financials.setBank(BigDecimal.ZERO);
 		financials.setSundryDebtors(BigDecimal.ZERO);
+		financials.setPartnersOrDirectorsRemuneration(BigDecimal.ZERO);
 
 		logger.debug(Literal.LEAVING);
 		return financials;
@@ -656,13 +660,13 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		codeMogs.setCoAppPanNumber(StringUtils.trimToNull(getPanNumber(documentList)));
+		codeMogs.setSalToPartnerOrDirector(getBigDecimalValue(ExtFieldMapConstants.PARTNERS_DIRECTORS_REMUN_YR1));
 		
 		//TODO:
 		codeMogs.setMinAge(0);
 		codeMogs.setMaxAge(0);
 		codeMogs.setAuthority(null);
 		codeMogs.setRelOfScndaryCoAppWithPrimaryCoApp(null);
-		codeMogs.setSalToPartnerOrDirector(BigDecimal.ZERO);
 		logger.debug(Literal.LEAVING);
 		return codeMogs;
 	}

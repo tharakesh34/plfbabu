@@ -70,6 +70,13 @@ public class ExtFieldMapConstants {
 	public static final String	SHORT_TERM_BORROWING_YR1					= "STBORWY1";
 	public static final String	PROVISIONS_YR1								= "PROVY1";
 	public static final String	ISSUE_DT_FOR_GSTN_DOC						= "ISDATEGSTN";
+	public static final String	INTEREST_TO_BANKS_YR1						= "INTRBY1";
+	public static final String	RESERVES_AND_SURPLUS_YR1					= "RESSURY1";
+	public static final String	LONG_TERM_BORWNG_YR1						= "LTBORWY1";
+	public static final String	SHORT_TERM_BORWNG_YR1						= "STBORWY1";
+	public static final String	SUNDRY_CREDITORS_YR1						= "SUNDRCREDY1";
+	public static final String	OTH_CURNT_LIABILITIES_YR1					= "OTHCURLIBY1";
+	public static final String	CASH_AND_BANK_YR1							= "CASBNKY1";
 	//PREFIOUS
 	public static final String	CC_OR_OD_UTILIZATION						= "CCODUTILIZATION";
 	public static final String	AVERAGE_BANK_BALANCE						= "AVERAGEBANKBAL";
