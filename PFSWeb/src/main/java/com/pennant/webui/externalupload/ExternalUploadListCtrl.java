@@ -100,7 +100,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private String extraHeader = null;
 	private String apiUrl = null;
 	private String sourceFileName = null;
-	
+	private Media media = null;
+
 	private BatchUploadConfigService batchUploadConfigService;
 
 	/**
@@ -124,19 +125,22 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	public void onCreate$window_ExternalUploadsList(Event event) {
 		setPageComponents(window_ExternalUploadsList);
 		String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
-		//String baseurl = "http://192.168.1.160:8080/pff-api/services";
+		// String baseurl = "http://192.168.1.160:8080/pff-api/services";
 
 		if (StringUtils.isBlank(baseurl)) {
 			MessageUtil.showError("Could not find configuration in system parameters.");
 			return;
 		}
-		
-		List<BatchUploadConfig>  batchUploadActiveConfig = batchUploadConfigService.getActiveConfiguration();
+
+		List<BatchUploadConfig> batchUploadActiveConfig = batchUploadConfigService.getActiveConfiguration();
 		fillComboBox(apiType, "", prepairDropDwnList(batchUploadActiveConfig, baseurl), "");
 	}
 
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		try {
+			if (media != null) {
+				writeFile(media);
+			}
 			if (file == null) {
 				MessageUtil.showError("Please select the file to upload.");
 				return;
@@ -156,8 +160,15 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 			}
 			return;
 		} finally {
+			if (file != null && file.exists()) {
+				if (!file.delete()) {
+					Thread.sleep(7000);
+					file.delete();
+				}
+			}
 			file = null;
 			fileName.setText("");
+			media = null;
 		}
 	}
 
@@ -171,15 +182,18 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	public void onChange$apiType(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {
-			String[] valueArray = org.apache.commons.lang3.StringUtils.split(this.apiType.getSelectedItem().getValue(),",");
+			String[] valueArray = org.apache.commons.lang3.StringUtils.split(this.apiType.getSelectedItem().getValue(),
+					",");
 			apiUrl = valueArray[0];
-			if(valueArray.length>1 && org.apache.commons.lang3.StringUtils.isNotBlank(valueArray[1]) && !"null".equals(valueArray[1])){
-			extraHeader = valueArray[1];
+			if (valueArray.length > 1 && org.apache.commons.lang3.StringUtils.isNotBlank(valueArray[1])
+					&& !"null".equals(valueArray[1])) {
+				extraHeader = valueArray[1];
 			}
 			sourceFileName = this.apiType.getSelectedItem().getLabel();
 			logger.info(apiUrl);
 			fileName.setValue("");
 			file = null;
+			media = null;
 
 			if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
 				row1.setVisible(true);
@@ -205,7 +219,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
-		Media media = event.getMedia();
+		media = event.getMedia();
 
 		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
 				|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
@@ -217,8 +231,6 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 		this.btnImport.setDisabled(false);
 		fileName.setText(media.getName());
-
-		writeFile(media);
 	}
 
 	private void writeFile(Media media) throws IOException {
@@ -238,7 +250,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private void doFileProcess() throws Exception {
 		logger.debug(Literal.ENTERING);
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
-			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader, sourceFileName);
+			BatchUploadProcessor batchProcessor = new BatchUploadProcessor(file, authorization, apiUrl, extraHeader,
+					sourceFileName);
 			batchProcessor.process();
 			fileName.setValue("");
 		}
@@ -284,7 +297,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private List<ValueLabel> prepairDropDwnList(List<BatchUploadConfig> batchUploadActiveConfig, String baseurl) {
 		List<ValueLabel> list = new ArrayList<ValueLabel>();
 		for (BatchUploadConfig batchUploadConfig : batchUploadActiveConfig) {
-			list.add(new ValueLabel(baseurl+batchUploadConfig.getUrl()+","+batchUploadConfig.getExtraHeader(), batchUploadConfig.getLabel()));
+			list.add(new ValueLabel(baseurl + batchUploadConfig.getUrl() + "," + batchUploadConfig.getExtraHeader(),
+					batchUploadConfig.getLabel()));
 		}
 		return list;
 	}
