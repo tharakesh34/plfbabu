@@ -1592,7 +1592,7 @@
 								</div>
 							</tabpanel>
 							<!-- financials -->
-							<tabpanel width="100%"
+							<tabpanel width="100%" height="600px"
 								style="background: #f3f3f3;">
 								<div id="financials" align="center">
 									<space />
@@ -1717,7 +1717,7 @@
 								</div>
 							</tabpanel>
 							<!-- share holder details -->
-							<tabpanel width="100%"
+							<tabpanel width="100%" height="600px"
 								style="background: #f3f3f3;">
 								<div id="shareHolder" align="center">
 									<space />
