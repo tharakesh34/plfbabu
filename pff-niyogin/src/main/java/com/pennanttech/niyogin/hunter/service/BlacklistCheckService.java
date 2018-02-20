@@ -125,7 +125,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 
 		CustomerBasicDetail customerBasicDetail = new CustomerBasicDetail();
 		customerBasicDetail.setName(customer.getCustShrtName());
-		customerBasicDetail.setLoanAmount(financeMain.getFinAmount());
+		customerBasicDetail.setLoanAmount(formateAmount(financeMain.getFinAmount()));
 		customerBasicDetail.setEmailId(NiyoginUtility.getEmail(customerDetails.getCustomerEMailList()));
 		customerBasicDetail.setPhone(NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
 				InterfaceConstants.PHONE_TYPE_PER));

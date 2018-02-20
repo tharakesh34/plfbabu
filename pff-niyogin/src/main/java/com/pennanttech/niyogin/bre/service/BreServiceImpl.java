@@ -181,7 +181,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		application.setApplicationId(StringUtils.trimToNull(finMain.getFinReference()));
 		application.setBureau(prepareBureau(financeDetail));
 		application.setSocialsc(prepareSocialsc(financeDetail));
-		application.setAppliedLoanAmount(finMain.getFinAmount());
+		application.setAppliedLoanAmount(formateAmount(finMain.getFinAmount()));
 		logger.debug(Literal.LEAVING);
 		return application;
 	}

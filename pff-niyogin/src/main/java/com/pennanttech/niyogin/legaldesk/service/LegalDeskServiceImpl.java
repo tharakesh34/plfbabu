@@ -148,7 +148,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		}
 		stampPaperData.setFirstPartyAddress(partyAddress);
 		List<FinFeeDetail> feeDetailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		stampPaperData.setStampAmount(getFeeAmount(feeDetailsList, STAMP_FEE));
+		stampPaperData.setStampAmount(formateAmount(getFeeAmount(feeDetailsList, STAMP_FEE)));
 		stampPaperData.setStampDutyPaidBy(customer.getCustShrtName());
 		logger.debug(Literal.LEAVING);
 		return stampPaperData;
@@ -281,7 +281,8 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			instType = App.getLabel("label_Flat_Convert_Reduce");
 		}
 		formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));
-		formData.setSactionAmt(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
+		BigDecimal sactionAmt = financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+		formData.setSactionAmt(formateAmount(sactionAmt));
 		formData.setIntrestType(instType);
 		formData.setRateOfIntrest(String.valueOf(extendedMap.get("RATE_LEGALDESK")));
 		extendedMap.remove("RATE_LEGALDESK");
@@ -296,10 +297,10 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setChargesForDihorner(App.getLabel("label_LegalDesk_ChargesForDihorner"));
 		formData.setDefaultEmiCharges(App.getLabel("label_LegalDesk_DefaultEmiCharges"));
 		formData.setInsuranceGstAmt(App.getLabel("label_LegalDesk_InsuranceGstAmt"));
-		formData.setDisbursementOfLoan(finMain.getCurDisbursementAmt());
+		formData.setDisbursementOfLoan(formateAmount(finMain.getCurDisbursementAmt()));
 		formData.setLoanType(finMain.getFinType());
 		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();;
-		formData.setInsuranceAmount(getFeeAmount(fereedetails, INSURANCE_FEE));
+		formData.setInsuranceAmount(formateAmount(getFeeAmount(fereedetails, INSURANCE_FEE)));
 		logger.debug(Literal.LEAVING);
 		return formData;
 	}

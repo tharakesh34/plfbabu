@@ -745,6 +745,21 @@ public abstract class NiyoginService {
 		return pannumber;
 	}
 
+	/**
+	 * Method for format the Amount Fields
+	 * 
+	 * @param amount
+	 * @return
+	 */
+	public static BigDecimal formateAmount(BigDecimal amount) {
+		BigDecimal bigDecimal = BigDecimal.ZERO;
+
+		if (amount != null) {
+			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, 2)));
+		}
+		return bigDecimal;
+	}
+
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
