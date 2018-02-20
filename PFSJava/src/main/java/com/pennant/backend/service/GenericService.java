@@ -93,7 +93,7 @@ public abstract class GenericService<T> {
 	
 	protected T getCachedEntity(String key) {
 		if (!CacheManager.isEnabled()) {
-			return null;
+			return getEntity(key);
 		}
 
 		if (cache == null) {
