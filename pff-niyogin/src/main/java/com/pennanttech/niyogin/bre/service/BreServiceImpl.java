@@ -356,7 +356,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		Customer customer = customerDetails.getCustomer();
 		
 		DeMogs deMogs = new DeMogs();
-		deMogs.setTypeOfIndustry(StringUtils.trimToNull(customer.getCustIndustry()));
+		deMogs.setTypeOfIndustry(StringUtils.trimToNull(customer.getLovDescCustSectorName()));
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
 			CustomerAddres address = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_OFF);
@@ -409,7 +409,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setSundryDebtorsLessThan6M(getBigDecimalValue(ExtFieldMapConstants.SUNDRY_DBTRS_LESSTHAN_6M_YR1));
 		financials.setSundrydebtorsgreatorthan6M(getBigDecimalValue(ExtFieldMapConstants.SUNDRY_DBTRS_LESSTHAN_6M_YR1));
 		financials.setTurnOverYr1(getBigDecimalValue(ExtFieldMapConstants.TURN_OVER_YR1));
-		financials.setTurnOverYr2(getBigDecimalValue(ExtFieldMapConstants.TURN_OVER_YR1));
+		financials.setTurnOverYr2(getBigDecimalValue(ExtFieldMapConstants.TURN_OVER_YR2));
 		financials.setTotalAssets(getBigDecimalValue(ExtFieldMapConstants.TOTAL_ASSETS_YR1));
 		financials.setTotalLiabilities(getBigDecimalValue(ExtFieldMapConstants.TOTAL_LIABILITIES_YR1));
 		financials.setProfitYr1(getBigDecimalValue(ExtFieldMapConstants.NET_PROFIT_YR1));
