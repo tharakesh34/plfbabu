@@ -17,7 +17,6 @@
 	<!-- Fee Types -->
 	<changeSet id="1" author="Kesav">
 		<addColumn tableName="AdtFeeTypes">
-		<column name="TaxApplicable" type="boolean" />
 		<column name="TaxComponent" type="Char(1)" />
 		</addColumn>
 	</changeSet>

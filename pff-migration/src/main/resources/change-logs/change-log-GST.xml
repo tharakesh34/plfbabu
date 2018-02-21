@@ -27,14 +27,12 @@
 	<!-- Fee Types -->
 	<changeSet id="1" author="Kesav">
 		<addColumn tableName="FeeTypes">
-			<column name="TaxApplicable" type="boolean" />
 			<column name="TaxComponent" type="Char(1)"/>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="2" author="Kesav">
 		<addColumn tableName="FeeTypes_Temp">
-		<column name="TaxApplicable" type="boolean" />
 		<column name="TaxComponent" type="Char(1)" />
 		</addColumn>
 	</changeSet>
