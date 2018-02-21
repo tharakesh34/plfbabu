@@ -169,9 +169,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		BureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-		//send request and log
 		String reference = financeMain.getFinReference();
+		BureauCommercial commercial = prepareCommercialRequestObj(customerDetails, reference);
+		//send request and log
 		String errorCode = null;
 		String errorDesc = null;
 		String reuestString = null;
@@ -226,9 +226,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		BureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-		//send request and log
 		String reference = financeMain.getFinReference();
+		BureauConsumer consumer = prepareConsumerRequestObj(customerDetails, reference);
+		//send request and log
 		String errorCode = null;
 		String errorDesc = null;
 		String reuestString = null;
@@ -274,14 +274,17 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * Method for prepare commercial request object.
 	 * 
 	 * @param customerDetails
+	 * @param finReference
 	 * @return
 	 */
-	private BureauCommercial prepareCommercialRequestObj(CustomerDetails customerDetails) {
+	private BureauCommercial prepareCommercialRequestObj(CustomerDetails customerDetails, String finReference) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		BureauCommercial commercial = new BureauCommercial();
 		commercial.setApplicationId(customer.getCustID());
 		commercial.setStgUnqRefId(customer.getCustID());
+		commercial.setCustCIF(customer.getCustCIF());
+		commercial.setFinReference(finReference);
 		commercial.setApplicant(prepareApplicant(customerDetails));
 		commercial.setCompanyName(customer.getCustShrtName());
 		commercial.setCompanyAddress(prepareCompanyAddress(customerDetails.getAddressList()));
@@ -398,14 +401,17 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * Method for prepare Consumer request object.
 	 * 
 	 * @param customerDetails
+	 * @param finReference
 	 * @return
 	 */
-	private BureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails) {
+	private BureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails, String finReference) {
 		logger.debug(Literal.ENTERING);
 		BureauConsumer bureauConsumer = new BureauConsumer();
 		Customer customer = customerDetails.getCustomer();
 		bureauConsumer.setStgUnqRefId(customer.getCustID());
 		bureauConsumer.setApplicationId(customer.getCustID());
+		bureauConsumer.setCustCIF(customer.getCustCIF());
+		bureauConsumer.setFinReference(finReference);
 		bureauConsumer.setAddress(prepareConsumerAddress(customerDetails.getAddressList()));
 		bureauConsumer.setPersonal(prepareConsumerPersonalDetails(customerDetails));
 

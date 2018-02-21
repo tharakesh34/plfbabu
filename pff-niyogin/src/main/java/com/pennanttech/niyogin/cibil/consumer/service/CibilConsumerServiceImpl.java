@@ -101,9 +101,9 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(customerDetails);
-		//send request and log
 		String reference = financeMain.getFinReference();
+		CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(customerDetails, reference);
+		//send request and log
 		String errorCode = null;
 		String errorDesc = null;
 		String reuestString = null;
@@ -168,7 +168,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		Map<String, Object> coApplicantsData = new HashMap<>();
 		for (CustomerDetails coAppCustomerDetails : coApplicantCustomers) {
 			Map<String, Object> appplicationdata = new HashMap<>();
-			CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(coAppCustomerDetails);
+			CibilConsumerRequest cibilConsumerRequest = prepareRequestObj(coAppCustomerDetails, reference);
 			//send request and log
 			String errorCode = null;
 			String errorDesc = null;
@@ -215,14 +215,17 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	 * method for prepare the CibilConsumerRequest request object.
 	 * 
 	 * @param financeDetail
+	 * @param finReference
 	 * @return cibilConsumerRequest
 	 */
-	private CibilConsumerRequest prepareRequestObj(CustomerDetails customerDetails) {
+	private CibilConsumerRequest prepareRequestObj(CustomerDetails customerDetails,String finReference) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		CibilConsumerRequest cibilConsumerRequest = new CibilConsumerRequest();
 		cibilConsumerRequest.setApplicationId(customer.getCustID());
 		cibilConsumerRequest.setStgUniqueRefId(customer.getCustID());
+		cibilConsumerRequest.setCustCIF(customer.getCustCIF());
+		cibilConsumerRequest.setFinReference(finReference);
 		CibilPersonalDetails personalDetails = new CibilPersonalDetails();
 		if (StringUtils.isNotBlank(customer.getCustFName())) {
 			personalDetails.setFirstName(customer.getCustFName());

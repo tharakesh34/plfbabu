@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "StgUnqRefId", "applicationId", "applicant", "companyName", "companyAddress", "companyMobile",
-		"companyPAN", "legalEntity" })
+@XmlType(propOrder = { "StgUnqRefId", "applicationId", "custCIF", "finReference", "applicant", "companyName",
+		"companyAddress", "companyMobile", "companyPAN", "legalEntity" })
 @XmlRootElement(name = "bureauconsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CriffBureauCommercial implements Serializable {
@@ -19,6 +19,9 @@ public class CriffBureauCommercial implements Serializable {
 	private long				applicationId;
 	@XmlElement(name = "STG_UNQ_REF_ID")
 	private long				StgUnqRefId;
+	@XmlElement(name = "CIF")
+	private String				custCIF;
+	private String				finReference;
 	@XmlElement(name = "company_name")
 	private String				companyName;
 	@XmlElement(name = "COMPANY_MOBILE")
@@ -96,4 +99,21 @@ public class CriffBureauCommercial implements Serializable {
 	public void setLegalEntity(String legalEntity) {
 		this.legalEntity = legalEntity;
 	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
 }

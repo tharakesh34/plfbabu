@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "applicationId", "StgUnqRefId", "address", "personal" })
+@XmlType(propOrder = { "StgUnqRefId", "applicationId", "custCIF", "finReference", "address", "personal" })
 @XmlRootElement(name = "bureauconsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BureauConsumer implements Serializable {
@@ -17,7 +17,10 @@ public class BureauConsumer implements Serializable {
 	@XmlElement(name = "APPLICATION_ID")
 	private long applicationId;
 	@XmlElement(name = "STG_UNQ_REF_ID")
-    private long StgUnqRefId;	
+    private long StgUnqRefId;
+	@XmlElement(name = "CIF")
+	private String custCIF;
+	private String finReference;
 	private ConsumerAddress address;
 	private PersonalDetails personal;
 
@@ -53,10 +56,20 @@ public class BureauConsumer implements Serializable {
 		this.personal = personal;
 	}
 
-	@Override
-	public String toString() {
-		return "BureauConsumer [applicationId=" + applicationId + ", StgUnqRefId=" + StgUnqRefId + ", address="
-				+ address + ", personal=" + personal + "]";
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
 	}
 
 }

@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "applicationId", "StgUnqRefId", "address", "personal" })
+@XmlType(propOrder = { "applicationId", "StgUnqRefId", "custCIF", "finReference", "address", "personal" })
 @XmlRootElement(name = "bureauconsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CriffBureauConsumer implements Serializable {
@@ -18,7 +18,9 @@ public class CriffBureauConsumer implements Serializable {
 	private long				applicationId;
 	@XmlElement(name = "STG_UNQ_REF_ID")
 	private long				StgUnqRefId;
-
+	@XmlElement(name = "CIF")
+	private String				custCIF;
+	private String				finReference;
 	@XmlElement(name = "address")
 	private PersonalAddress		address;
 
@@ -56,4 +58,21 @@ public class CriffBureauConsumer implements Serializable {
 	public void setApplicant(Applicant applicant) {
 		this.applicant = applicant;
 	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
 }

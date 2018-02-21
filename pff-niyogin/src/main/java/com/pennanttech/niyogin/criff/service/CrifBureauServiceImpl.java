@@ -244,9 +244,9 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails);
-		//send request and log
 		String reference = financeMain.getFinReference();
+		CriffBureauCommercial commercial = prepareCommercialRequestObj(customerDetails, reference);
+		//send request and log
 		String errorCode = null;
 		String errorDesc = null;
 		String reuestString = null;
@@ -304,9 +304,9 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails);
-		//send request and log
 		String reference = financeMain.getFinReference();
+		CriffBureauConsumer consumer = prepareConsumerRequestObj(customerDetails, reference);
+		//send request and log
 		String errorCode = null;
 		String errorDesc = null;
 		String reuestString = null;
@@ -428,15 +428,18 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * Method for prepare commercial request object
 	 * 
 	 * @param financeDetail
+	 * @param finReference
 	 * @return
 	 */
-	private CriffBureauCommercial prepareCommercialRequestObj(CustomerDetails customerDetails) {
+	private CriffBureauCommercial prepareCommercialRequestObj(CustomerDetails customerDetails, String finReference) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 
 		CriffBureauCommercial commercial = new CriffBureauCommercial();
 		commercial.setStgUnqRefId(customer.getCustID());
 		commercial.setApplicationId(customer.getCustID());
+		commercial.setCustCIF(customer.getCustCIF());
+		commercial.setFinReference(finReference);
 		// prepare applicant details
 		commercial.setApplicant(prepareApplicantDetails(customerDetails));
 		// prepare company address details
@@ -451,13 +454,21 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		return commercial;
 	}
 
-	private CriffBureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails) {
+	/**
+	 * Method for prepare the consumer request object.
+	 * 
+	 * @param customerDetails
+	 * @param finReference
+	 * @return
+	 */
+	private CriffBureauConsumer prepareConsumerRequestObj(CustomerDetails customerDetails, String finReference) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		CriffBureauConsumer consumer = new CriffBureauConsumer();
 		consumer.setStgUnqRefId(customer.getCustID());
 		consumer.setApplicationId(customer.getCustID());
-
+		consumer.setCustCIF(customer.getCustCIF());
+		consumer.setFinReference(finReference);
 		// prepare applicant details
 		consumer.setApplicant(prepareApplicantDetails(customerDetails));
 		consumer.getApplicant().setPersonalAddress(null);
