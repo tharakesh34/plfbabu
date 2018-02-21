@@ -1,3 +1,7 @@
+pff 4.7.14, 2018-02-21
+----------------------
+- Refactoring removed the additional layer JdbcSearchSupport on SearchProcessor 
+
 pff 4.7.14, 2018-02-15
 ----------------------
 - Refactoring jdbc search

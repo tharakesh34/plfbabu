@@ -60,7 +60,7 @@ public class SearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Creates a new <code>JdbcSearchProcessor</code> for the given
+	 * Creates a new <code>SearchProcessor</code> for the given
 	 * {@link DataSource}.
 	 * 
 	 * @param dataSource

@@ -45,31 +45,31 @@ package com.pennant.backend.service.impl;
 import java.io.Serializable;
 import java.util.List;
 
-import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class PagedListServiceImpl implements PagedListService, Serializable {
 	private static final long	serialVersionUID	= 317035964609683048L;
 
-	private JdbcSearchSupport	jdbcSearchSupport;
-
+	private SearchProcessor searchProcessor;
+	
 	public PagedListServiceImpl() {
 		super();
 	}
 
 	@Override
 	public <T> List<T> getBySearchObject(JdbcSearchObject<T> so) {
-		return jdbcSearchSupport.search(so);
+		return searchProcessor.getResults(so);
 	}
 
 	@Override
 	public <T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so) {
-		return jdbcSearchSupport.searchAndCount(so);
+		return searchProcessor.getResults(so, true);
 	}
 
-	public void setJdbcSearchSupport(JdbcSearchSupport jdbcSearchSupport) {
-		this.jdbcSearchSupport = jdbcSearchSupport;
+	public void setSearchProcessor(SearchProcessor searchProcessor) {
+		this.searchProcessor = searchProcessor;
 	}
 }

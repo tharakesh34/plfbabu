@@ -37,7 +37,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
-import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -89,6 +88,7 @@ import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;
@@ -106,7 +106,7 @@ public class AgreementGeneration implements Serializable {
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
-	private JdbcSearchSupport jdbcSearchSupport;
+	private SearchProcessor searchProcessor;
 
 	public AgreementGeneration() {
 		super();
@@ -1457,7 +1457,7 @@ public class AgreementGeneration implements Serializable {
 							filter1 = new Filter((String) condArray[0], extendedData.get(fieldName), Filter.OP_EQUAL);
 							filters.add(filter1);
 							search.setFilters(filters);
-							List<Object> result = jdbcSearchSupport.search(search);
+							List<Object> result = searchProcessor.getResults(search);
 							for (Object object2 : result) {
 								String descMethod = "get" + condArray[1];
 								String desc = object2.getClass().getMethod(descMethod).invoke(object2).toString();
