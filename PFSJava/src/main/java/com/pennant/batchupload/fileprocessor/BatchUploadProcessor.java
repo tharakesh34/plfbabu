@@ -610,6 +610,7 @@ public class BatchUploadProcessor {
 			}
 			FileOutputStream outputStream = new FileOutputStream(file);
 			workbook.write(outputStream);
+			outputStream.close();
 		} catch (Exception e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
 		}
