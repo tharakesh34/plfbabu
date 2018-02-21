@@ -1,6 +1,7 @@
 pff 4.7.14, 2018-02-21
 ----------------------
-- Refactoring removed the additional layer JdbcSearchSupport on SearchProcessor 
+- Refactoring removed the additional layer JdbcSearchSupport on SearchProcessor
+- Refactoring removed PagedBindingListWrapper and PagedGridWrapper 
 
 pff 4.7.14, 2018-02-15
 ----------------------

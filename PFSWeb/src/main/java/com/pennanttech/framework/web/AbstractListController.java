@@ -127,7 +127,8 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		if ("Y".equalsIgnoreCase(getArgument("enqiryModule")) || "Yes".equalsIgnoreCase(getArgument("enqiryModule"))) {
+		if ("Y".equalsIgnoreCase(getArgument("enqiryModule")) || "Yes".equalsIgnoreCase(getArgument("enqiryModule"))
+				|| "true".equalsIgnoreCase(getArgument("enqiryModule"))) {
 			enqiryModule = true;
 		}
 

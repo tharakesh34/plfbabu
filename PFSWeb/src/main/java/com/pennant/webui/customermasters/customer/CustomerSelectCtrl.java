@@ -523,11 +523,9 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	 * @param searchObj
 	 */
 	private void paging(JdbcSearchObject<Customer> searchObj) {
-		logger.debug("Entering");
 		this.pagingCustomerList.setDetailed(true);
 		this.listBoxCustomer.setItemRenderer(new CustomerSelectItemRenderer(PennantAppUtil.getCustTargetValues()));
-		getPagedBindingListWrapper().init(searchObj, this.listBoxCustomer, this.pagingCustomerList);
-		logger.debug("Leaving");
+		getPagedListWrapper().init(searchObj, this.listBoxCustomer, this.pagingCustomerList);
 	}
 
 	// when item double clicked

@@ -61,7 +61,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.security.core.service.UserService;
@@ -1104,22 +1103,13 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	private PagedListWrapper<T>			pagedListWrapper;
-	private PagedBindingListWrapper<T>	pagedBindingListWrapper;
-
+	
 	public PagedListWrapper<T> getPagedListWrapper() {
 		return pagedListWrapper;
 	}
 
 	public void setPagedListWrapper(PagedListWrapper<T> pagedListWrapper) {
 		this.pagedListWrapper = pagedListWrapper;
-	}
-
-	public void setPagedBindingListWrapper(PagedBindingListWrapper<T> pagedBindingListWrapper) {
-		this.pagedBindingListWrapper = pagedBindingListWrapper;
-	}
-
-	public PagedBindingListWrapper<T> getPagedBindingListWrapper() {
-		return pagedBindingListWrapper;
 	}
 
 	public JdbcSearchObject<T> getSearchFilter(JdbcSearchObject<T> searchObj, Listitem selectedItem, Object value,
@@ -1238,7 +1228,15 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	protected String getArgument(String argumentName) {
 		String argumentValue = null;
 		if (arguments != null) {
-			argumentValue = (String) arguments.get(argumentName);
+			Object object = arguments.get(argumentName);
+
+			if (object != null) {
+				if (object instanceof String) {
+					argumentValue = (String) arguments.get(argumentName);
+				} else if (object instanceof Boolean) {
+					argumentValue = String.valueOf(arguments.get(argumentName));
+				}
+			}
 		}
 		return argumentValue;
 	}

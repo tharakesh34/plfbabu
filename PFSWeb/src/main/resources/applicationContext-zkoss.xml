@@ -63,19 +63,11 @@
 
 	<bean id="basisListCtrl" abstract="true" scope="prototype"
 		class="com.pennant.webui.util.GFCBaseListCtrl" parent="basisCtrl"
-		p:pagedListWrapper-ref="pagedListWrapper"
-		p:pagedBindingListWrapper-ref="pagedBindingListWrapper">
+		p:pagedListWrapper-ref="pagedListWrapper">
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
 
 	<bean name="pagedListWrapper" class="com.pennant.webui.util.pagging.PagedListWrapper"
-		p:pagedListService-ref="pagedListService" scope="prototype" />
-
-	<bean name="pagedBindingListWrapper"
-		class="com.pennant.webui.util.pagging.PagedBindingListWrapper"
-		p:pagedListService-ref="pagedListService" scope="prototype" />
-
-	<bean name="pagedGridWrapper" class="com.pennant.webui.util.pagging.PagedGridWrapper"
 		p:pagedListService-ref="pagedListService" scope="prototype" />
 
 	<!-- ====================================================== -->
