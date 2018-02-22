@@ -1,17 +1,13 @@
 /**
- *  Copyright 2009 The Revere Group
+ * Copyright 2011 - Pennant Technologies
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 package com.pennanttech.pennapps.jdbc.search;
 
@@ -27,12 +23,14 @@ import com.pennanttech.pennapps.core.App.Database;
 /**
  * Utilities for working with searches {@link ISearch}, {@link IMutableSearch}.
  * 
- * @author dwolverton
  */
 public class SearchUtil {
-	// ---------- Add ---------- //
 
-	public static void addField(IMutableSearch search, Field field) {
+	private SearchUtil() {
+
+	}
+
+	protected static void addField(IMutableSearch search, Field field) {
 		List<Field> fields = search.getFields();
 		if (fields == null) {
 			fields = new ArrayList<Field>();
@@ -41,7 +39,7 @@ public class SearchUtil {
 		fields.add(field);
 	}
 
-	public static void addFields(IMutableSearch search, Field... fields) {
+	protected static void addFields(IMutableSearch search, Field... fields) {
 		if (fields != null) {
 			for (Field field : fields) {
 				addField(search, field);
@@ -49,53 +47,47 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
-	 */
-	public static void addField(IMutableSearch search, String property) {
+	protected static void addField(IMutableSearch search, String property) {
 		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property));
 	}
+	
+	
+	protected static void addFields(IMutableSearch search, String[] properties) {
+		if (properties == null) {
+			return; // null properties do nothing, don't bother to add them.
+		}
 
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
-	 */
-	public static void addField(IMutableSearch search, String property, int operator) {
+		for (String property : properties) {
+			addField(search, new Field(property));
+		}
+
+	}
+
+	protected static void addField(IMutableSearch search, String property, int operator) {
 		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, operator));
 	}
 
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
-	 */
-	public static void addField(IMutableSearch search, String property, int operator, String key) {
+	protected static void addField(IMutableSearch search, String property, int operator, String key) {
 		if (property == null || key == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, operator, key));
 	}
 
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
-	 */
-	public static void addField(IMutableSearch search, String property, String key) {
+	protected static void addField(IMutableSearch search, String property, String key) {
 		if (property == null || key == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, key));
 	}
 
-	public static void addFilter(IMutableSearch search, Filter filter) {
+	protected static void addFilter(IMutableSearch search, Filter filter) {
 		List<Filter> filters = search.getFilters();
 		if (filters == null) {
 			filters = new ArrayList<Filter>();
@@ -116,7 +108,7 @@ public class SearchUtil {
 		filters.add(filter);
 	}
 
-	public static void addFilters(IMutableSearch search, Filter... filters) {
+	protected static void addFilters(IMutableSearch search, Filter... filters) {
 		if (filters != null) {
 			for (Filter filter : filters) {
 				addFilter(search, filter);
@@ -124,129 +116,68 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Add a filter that uses the AND operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be specified.
-	 */
-	public static void addFilterAnd(IMutableSearch search, Filter... filters) {
+	protected static void addFilterAnd(IMutableSearch search, Filter... filters) {
 		addFilter(search, Filter.and(filters));
 	}
 
-	/**
-	 * Add a filter that uses the == operator.
-	 */
-	public static void addFilterEqual(IMutableSearch search, String property, Object value) {
+	protected static void addFilterEqual(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.equalTo(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the >= operator.
-	 */
-	public static void addFilterGreaterOrEqual(IMutableSearch search, String property, Object value) {
+	protected static void addFilterGreaterOrEqual(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.greaterOrEqual(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the > operator.
-	 */
-	public static void addFilterGreaterThan(IMutableSearch search, String property, Object value) {
+	protected static void addFilterGreaterThan(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.greaterThan(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the IN operator.
-	 */
-	public static void addFilterIn(IMutableSearch search, String property, Collection<?> value) {
+	protected static void addFilterIn(IMutableSearch search, String property, Collection<?> value) {
 		addFilter(search, Filter.in(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the IN operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
-	 */
-	public static void addFilterIn(IMutableSearch search, String property, Object... value) {
+	protected static void addFilterIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.in(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the <= operator.
-	 */
-	public static void addFilterLessOrEqual(IMutableSearch search, String property, Object value) {
+	protected static void addFilterLessOrEqual(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.lessOrEqual(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the < operator.
-	 */
-	public static void addFilterLessThan(IMutableSearch search, String property, Object value) {
+	protected static void addFilterLessThan(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.lessThan(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the LIKE operator.
-	 */
-	public static void addFilterLike(IMutableSearch search, String property, String value) {
+	protected static void addFilterLike(IMutableSearch search, String property, String value) {
+		value = "%" + value + "%";
 		addFilter(search, Filter.like(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the != operator.
-	 */
-	public static void addFilterNotEqual(IMutableSearch search, String property, Object value) {
+	protected static void addFilterNotEqual(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.notEqual(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the NOT IN operator.
-	 */
-	public static void addFilterNotIn(IMutableSearch search, String property, Collection<?> value) {
+	protected static void addFilterNotIn(IMutableSearch search, String property, Collection<?> value) {
 		addFilter(search, Filter.notIn(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the NOT IN operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
-	 */
-	public static void addFilterNotIn(IMutableSearch search, String property, Object... value) {
+	protected static void addFilterNotIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.notIn(property, value));
 	}
 
-	/**
-	 * Add a filter that uses the IS NOT NULL operator.
-	 */
-	public static void addFilterNotNull(IMutableSearch search, String property) {
+	protected static void addFilterNotNull(IMutableSearch search, String property) {
 		addFilter(search, Filter.isNotNull(property));
 	}
 
-	/**
-	 * Add a filter that uses the IS NULL operator.
-	 */
-	public static void addFilterNull(IMutableSearch search, String property) {
+	protected static void addFilterNull(IMutableSearch search, String property) {
 		addFilter(search, Filter.isNull(property));
 	}
 
-	/**
-	 * Add a filter that uses the OR operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be specified.
-	 */
-	public static void addFilterOr(IMutableSearch search, Filter... filters) {
+	protected static void addFilterOr(IMutableSearch search, Filter... filters) {
 		addFilter(search, Filter.or(filters));
 	}
 
-	// Sorts
-	public static void addSort(IMutableSearch search, Sort sort) {
+	protected static void addSort(IMutableSearch search, Sort sort) {
 		if (sort == null) {
 			return;
 		}
@@ -259,7 +190,7 @@ public class SearchUtil {
 		sorts.add(sort);
 	}
 
-	public static void addSorts(IMutableSearch search, Sort... sorts) {
+	protected static void addSorts(IMutableSearch search, Sort... sorts) {
 		if (sorts != null) {
 			for (Sort sort : sorts) {
 				addSort(search, sort);
@@ -267,46 +198,34 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
-	 */
-	public static void addSort(IMutableSearch search, String property, boolean desc) {
+	protected static void addSort(IMutableSearch search, String property, boolean desc) {
 		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addSort(search, new Sort(property, desc));
 	}
 
-	/**
-	 * Add ascending sort by property
-	 */
-	public static void addSortAsc(IMutableSearch search, String property) {
+	protected static void addSortAsc(IMutableSearch search, String property) {
 		addSort(search, property, false);
 	}
 
-	/**
-	 * Add descending sort by property
-	 */
-	public static void addSortDesc(IMutableSearch search, String property) {
+	protected static void addSortDesc(IMutableSearch search, String property) {
 		addSort(search, property, true);
 	}
 
-	// ---------- Remove ----------
-
-	public static void removeFetch(IMutableSearch search, String property) {
+	protected static void removeFetch(IMutableSearch search, String property) {
 		if (search.getFetches() != null) {
 			search.getFetches().remove(property);
 		}
 	}
 
-	public static void removeField(IMutableSearch search, Field field) {
+	protected static void removeField(IMutableSearch search, Field field) {
 		if (search.getFields() != null) {
 			search.getFields().remove(field);
 		}
 	}
 
-	public static void removeField(IMutableSearch search, String property) {
+	protected static void removeField(IMutableSearch search, String property) {
 		if (search.getFields() == null) {
 			return;
 		}
@@ -319,7 +238,7 @@ public class SearchUtil {
 		}
 	}
 
-	public static void removeField(IMutableSearch search, String property, String key) {
+	protected static void removeField(IMutableSearch search, String property, String key) {
 		if (search.getFields() == null) {
 			return;
 		}
@@ -333,17 +252,14 @@ public class SearchUtil {
 		}
 	}
 
-	public static void removeFilter(IMutableSearch search, Filter filter) {
+	protected static void removeFilter(IMutableSearch search, Filter filter) {
 		List<Filter> filters = search.getFilters();
 		if (filters != null) {
 			filters.remove(filter);
 		}
 	}
 
-	/**
-	 * Remove all filters on the given property.
-	 */
-	public static void removeFiltersOnProperty(IMutableSearch search, String property) {
+	protected static void removeFiltersOnProperty(IMutableSearch search, String property) {
 		if (property == null || search.getFilters() == null) {
 			return;
 		}
@@ -355,13 +271,13 @@ public class SearchUtil {
 		}
 	}
 
-	public static void removeSort(IMutableSearch search, Sort sort) {
+	protected static void removeSort(IMutableSearch search, Sort sort) {
 		if (search.getSorts() != null) {
 			search.getSorts().remove(sort);
 		}
 	}
 
-	public static void removeSort(IMutableSearch search, String property) {
+	protected static void removeSort(IMutableSearch search, String property) {
 		if (property == null || search.getSorts() == null) {
 			return;
 		}
@@ -373,9 +289,7 @@ public class SearchUtil {
 		}
 	}
 
-	// ---------- Clear ----------
-
-	public static void clear(IMutableSearch search) {
+	protected static void clear(IMutableSearch search) {
 		clearFilters(search);
 		clearSorts(search);
 		clearFields(search);
@@ -385,42 +299,37 @@ public class SearchUtil {
 		search.setDisjunction(false);
 	}
 
-	public static void clearFetches(IMutableSearch search) {
+	protected static void clearFetches(IMutableSearch search) {
 		if (search.getFetches() != null) {
 			search.getFetches().clear();
 		}
 	}
 
-	public static void clearFields(IMutableSearch search) {
+	protected static void clearFields(IMutableSearch search) {
 		if (search.getFields() != null) {
 			search.getFields().clear();
 		}
 	}
 
-	public static void clearFilters(IMutableSearch search) {
+	protected static void clearFilters(IMutableSearch search) {
 		if (search.getFilters() != null) {
 			search.getFilters().clear();
 		}
 	}
 
-	public static void clearPaging(IMutableSearch search) {
+	protected static void clearPaging(IMutableSearch search) {
 		search.setFirstResult(-1);
 		search.setPage(-1);
 		search.setMaxResults(-1);
 	}
 
-	public static void clearSorts(IMutableSearch search) {
+	protected static void clearSorts(IMutableSearch search) {
 		if (search.getSorts() != null) {
 			search.getSorts().clear();
 		}
 	}
 
-	// ---------- Merge ----------
-	/**
-	 * Modify the search by adding the given sorts before the current sorts in
-	 * the search.
-	 */
-	public static void mergeSortsBefore(IMutableSearch search, List<Sort> sorts) {
+	protected static void mergeSortsBefore(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
 		if (list == null) {
 			list = new ArrayList<Sort>();
@@ -449,19 +358,11 @@ public class SearchUtil {
 		list.addAll(0, sorts);
 	}
 
-	/**
-	 * Modify the search by adding the given sorts before the current sorts in
-	 * the search.
-	 */
-	public static void mergeSortsBefore(IMutableSearch search, Sort... sorts) {
+	protected static void mergeSortsBefore(IMutableSearch search, Sort... sorts) {
 		mergeSortsBefore(search, Arrays.asList(sorts));
 	}
 
-	/**
-	 * Modify the search by adding the given sorts after the current sorts in
-	 * the search.
-	 */
-	public static void mergeSortsAfter(IMutableSearch search, List<Sort> sorts) {
+	protected static void mergeSortsAfter(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
 		if (list == null) {
 			list = new ArrayList<Sort>();
@@ -491,19 +392,11 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Modify the search by adding the given sorts after the current sorts in
-	 * the search.
-	 */
-	public static void mergeSortsAfter(IMutableSearch search, Sort... sorts) {
+	protected static void mergeSortsAfter(IMutableSearch search, Sort... sorts) {
 		mergeSortsAfter(search, Arrays.asList(sorts));
 	}
 
-	/**
-	 * Modify the search by adding the given fetches to the current fetches in
-	 * the search.
-	 */
-	public static void mergeFetches(IMutableSearch search, List<String> fetches) {
+	protected static void mergeFetches(IMutableSearch search, List<String> fetches) {
 		List<String> list = search.getFetches();
 		if (list == null) {
 			list = new ArrayList<String>();
@@ -517,18 +410,11 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Modify the search by adding the given fetches to the current fetches in
-	 * the search.
-	 */
-	public static void mergeFetches(IMutableSearch search, String... fetches) {
+	protected static void mergeFetches(IMutableSearch search, String... fetches) {
 		mergeFetches(search, Arrays.asList(fetches));
 	}
 
-	/**
-	 * Modify the search by adding the given filters using AND semantics
-	 */
-	public static void mergeFiltersAnd(IMutableSearch search, List<Filter> filters) {
+	protected static void mergeFiltersAnd(IMutableSearch search, List<Filter> filters) {
 		List<Filter> list = search.getFilters();
 		if (list == null) {
 			list = new ArrayList<Filter>();
@@ -552,17 +438,11 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Modify the search by adding the given filters using AND semantics
-	 */
-	public static void mergeFiltersAnd(IMutableSearch search, Filter... filters) {
+	protected static void mergeFiltersAnd(IMutableSearch search, Filter... filters) {
 		mergeFiltersAnd(search, Arrays.asList(filters));
 	}
 
-	/**
-	 * Modify the search by adding the given filters using OR semantics
-	 */
-	public static void mergeFiltersOr(IMutableSearch search, List<Filter> filters) {
+	protected static void mergeFiltersOr(IMutableSearch search, List<Filter> filters) {
 		List<Filter> list = search.getFilters();
 		if (list == null) {
 			list = new ArrayList<Filter>();
@@ -586,18 +466,11 @@ public class SearchUtil {
 		}
 	}
 
-	/**
-	 * Modify the search by adding the given filters using OR semantics
-	 */
-	public static void mergeFiltersOr(IMutableSearch search, Filter... filters) {
+	protected static void mergeFiltersOr(IMutableSearch search, Filter... filters) {
 		mergeFiltersOr(search, Arrays.asList(filters));
 	}
 
-	/**
-	 * Modify the search by adding the given fields before the current fields in
-	 * the search.
-	 */
-	public static void mergeFieldsBefore(IMutableSearch search, List<Field> fields) {
+	protected static void mergeFieldsBefore(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
 		if (list == null) {
 			list = new ArrayList<Field>();
@@ -607,19 +480,11 @@ public class SearchUtil {
 		list.addAll(0, fields);
 	}
 
-	/**
-	 * Modify the search by adding the given fields before the current fields in
-	 * the search.
-	 */
-	public static void mergeFieldsBefore(IMutableSearch search, Field... fields) {
+	protected static void mergeFieldsBefore(IMutableSearch search, Field... fields) {
 		mergeFieldsBefore(search, Arrays.asList(fields));
 	}
 
-	/**
-	 * Modify the search by adding the given fields after the current fields in
-	 * the search.
-	 */
-	public static void mergeFieldsAfter(IMutableSearch search, List<Field> fields) {
+	protected static void mergeFieldsAfter(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
 		if (list == null) {
 			list = new ArrayList<Field>();
@@ -629,42 +494,16 @@ public class SearchUtil {
 		list.addAll(fields);
 	}
 
-	/**
-	 * Modify the search by adding the given fields after the current fields in
-	 * the search.
-	 */
-	public static void mergeFieldsAfter(IMutableSearch search, Field... fields) {
+	protected static void mergeFieldsAfter(IMutableSearch search, Field... fields) {
 		mergeFieldsAfter(search, Arrays.asList(fields));
 	}
 
-	// ---------- Other Methods ----------
-
-	/**
-	 * Calculate the first result to use given the <code>firstResult</code>,
-	 * <code>page</code> and <code>maxResults</code> values of the search
-	 * object.
-	 * 
-	 * <p>
-	 * The calculation is as follows:
-	 * <ul>
-	 * <li>If <code>firstResult</code> is defined (i.e. > 0), use it.
-	 * <li>Otherwise if <code>page</code> and <code>maxResults</code> are
-	 * defined (i.e. > 0), use <code>page * maxResults</code>.
-	 * <li>Otherwise, just use 0.
-	 * </ul>
-	 */
-	public static int calcFirstResult(ISearch search) {
+	protected static int calcFirstResult(ISearch search) {
 		return (search.getFirstResult() > 0) ? search.getFirstResult()
 				: (search.getPage() > 0 && search.getMaxResults() > 0) ? search.getPage() * search.getMaxResults() : 0;
 	}
 
-	/**
-	 * Copy the contents of the source search object to the destination search
-	 * object, overriding any contents previously found in the destination. All
-	 * destination properties reference the same objects from the source
-	 * properties.
-	 */
-	public static IMutableSearch shallowCopy(ISearch source, IMutableSearch destination) {
+	protected static IMutableSearch shallowCopy(ISearch source, IMutableSearch destination) {
 		destination.setSearchClass(source.getSearchClass());
 		destination.setDistinct(source.isDistinct());
 		destination.setDisjunction(source.isDisjunction());
@@ -680,13 +519,7 @@ public class SearchUtil {
 		return destination;
 	}
 
-	/**
-	 * Copy the contents of the source search object to the destination search
-	 * object, overriding any contents previously found in the destination. All
-	 * collections are copied into new collections, but the items in those
-	 * collections are not duplicated; they still point to the same objects.
-	 */
-	public static <T extends IMutableSearch> T copy(ISearch source, T destination) {
+	protected static <T extends IMutableSearch> T copy(ISearch source, T destination) {
 		shallowCopy(source, destination);
 
 		ArrayList<String> fetches = new ArrayList<String>();
@@ -708,10 +541,7 @@ public class SearchUtil {
 		return destination;
 	}
 
-	/**
-	 * Return true if the search objects have equivalent contents.
-	 */
-	public static boolean equals(ISearch search, Object obj) {
+	protected static boolean equals(ISearch search, Object obj) {
 		if (search.equals(obj)) {
 			return true;
 		}
@@ -745,10 +575,7 @@ public class SearchUtil {
 		return true;
 	}
 
-	/**
-	 * Return a hash code value for the given search.
-	 */
-	public static int hashCode(ISearch search) {
+	protected static int hashCode(ISearch search) {
 		int hash = 1;
 		hash = hash * 31 + (search.getSearchClass() == null ? 0 : search.getSearchClass().hashCode());
 		hash = hash * 31 + (search.getFields() == null ? 0 : search.getFields().hashCode());
@@ -763,11 +590,7 @@ public class SearchUtil {
 		return hash;
 	}
 
-	/**
-	 * Return a human-readable string describing the contents of the given
-	 * search.
-	 */
-	public static String toString(ISearch search) {
+	protected static String toString(ISearch search) {
 		StringBuilder sb = new StringBuilder("Search(");
 		sb.append(search.getSearchClass());
 		sb.append(")[first: ").append(search.getFirstResult());
@@ -807,6 +630,79 @@ public class SearchUtil {
 
 		return sb.toString();
 	}
+	
+	protected static void addFilterOrLike(IMutableSearch search, String property, List<String> listValues,
+			boolean emptyEqual) {
+		Filter[] filters = null;
+		int cnt = 0;
+
+		if (listValues != null && listValues.size() > 0) {
+			if (emptyEqual) {
+				filters = new Filter[listValues.size() + 1];
+				filters[0] = new Filter(property, "", Filter.OP_EQUAL);
+				cnt = 1;
+			} else {
+				filters = new Filter[listValues.size()];
+			}
+			for (int i = 0; i < listValues.size(); i++) {
+				filters[cnt + i] = new Filter(property, "%" + listValues.get(i) + "%", Filter.OP_LIKE);
+			}
+		}
+		addFilterOr(search, filters);
+	}
+	
+	protected static void addFilterIn(IMutableSearch search, String property, List<String> listValues, boolean emptyEqual) {
+		Object[] values = null;
+		int cnt = 0;
+
+		if (listValues != null && listValues.size() > 0) {
+			if (emptyEqual) {
+				values = new String[listValues.size() + 1];
+				values[0] = " ";
+				cnt = 1;
+			} else {
+				values = new String[listValues.size()];
+			}
+
+			for (int i = 0; i < listValues.size(); i++) {
+				values[cnt + i] = listValues.get(i);
+			}
+
+			Filter[] filters = null;
+
+			switch (App.DATABASE) {
+			case ORACLE:
+				if (emptyEqual) {
+					filters = new Filter[2];
+					filters[0] = Filter.isNull(property);
+					filters[1] = Filter.in(property, listValues);
+				} else {
+					filters = new Filter[1];
+					filters[0] = Filter.in(property, listValues);
+				}
+
+				addFilterOr(search, filters);
+				break;
+
+			case POSTGRES:
+				if (emptyEqual) {
+					filters = new Filter[3];
+					filters[0] = Filter.isNull(property);
+					filters[1] = Filter.equalTo(property, "");
+					filters[2] = Filter.in(property, listValues);
+				} else {
+					filters = new Filter[1];
+					filters[0] = Filter.in(property, listValues);
+				}
+				addFilterOr(search, filters);
+				break;
+
+			default:
+				addFilterIn(search, property, values);
+				break;
+			}
+		}
+	}
 
 	private static void appendList(StringBuilder sb, List<?> list, String separator) {
 		if (list == null) {
@@ -824,25 +720,19 @@ public class SearchUtil {
 			sb.append(o);
 		}
 	}
-
-	/**
-	 * Visitor for use with walkList()
-	 */
-	public static class ItemVisitor<T> {
-		public T visit(T item) {
+	
+	protected static class ItemVisitor<T> {
+		protected T visit(T item) {
 			return item;
 		}
 	}
 
-	/**
-	 * Visitor for use with walkFilter and walkFilters
-	 */
-	public static class FilterVisitor {
-		public Filter visitBefore(Filter filter) {
+	protected static class FilterVisitor {
+		protected Filter visitBefore(Filter filter) {
 			return filter;
 		}
 
-		public Filter visitAfter(Filter filter) {
+		protected Filter visitAfter(Filter filter) {
 			return filter;
 		}
 	}

@@ -793,23 +793,6 @@ public class PennantAppUtil {
 		return 0;
 	}
 	
-	/**
-	 * To convert the custom columns from a column separated list to  FIELD array  
-	 * @param columns
-	 * @return
-	 * @throws Exception
-	 */
-	public static Field[] getCustomColumns(String columns) throws Exception {
- 		StringTokenizer fieldsStr = new StringTokenizer(columns, ",");
-		Field[] fields = new Field[fieldsStr.countTokens()];
-
-		int i =0;
-		while (fieldsStr.hasMoreTokens()) {
-			fields[i] = new Field(fieldsStr.nextToken());
-			i++;
-		}	
-		return fields;
-	}
 	public static ArrayList<ValueLabel> getIncomeExpenseCategory() {
 		ArrayList<ValueLabel> documentTypes = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -1173,15 +1156,15 @@ public class PennantAppUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Field[] getQueryModuleCustomColumns(String columns) throws Exception {
+	public static String[] getQueryModuleCustomColumns(String columns) throws Exception {
 		String queryfileds[]=columns.split(",");
-		Field[] fields = new Field[queryfileds.length];
+		String[] fields = new String[queryfileds.length];
 		for (int i = 0; i < queryfileds.length; i++) {
 			String temp=queryfileds[i];
 			if (temp.contains(":")) {
-				fields[i] = new Field(temp.substring(0,temp.indexOf(':')));
+				fields[i] = new String(temp.substring(0,temp.indexOf(':')));
 			}else{
-				fields[i] = new Field(temp);
+				fields[i] = new String(temp);
 			}
 		}
 		return fields;

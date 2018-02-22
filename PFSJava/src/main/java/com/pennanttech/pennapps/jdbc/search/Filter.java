@@ -20,8 +20,16 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 
 /**
- * A <code>Filter</code> is used by the <code>Search</code> class to specify a
- * restriction on what results should be returned in the search.
+ * <p>
+ * A Filter is used by the Search class to specify a restriction on what results should be returned in the search.
+ * <p>
+ * For example, if a filter Filter.equal("name","Paul") were added to the search, only objects with the property "name"
+ * equal to the string "Paul" would be returned.
+ * 
+ * <p>
+ * Nested properties can also be specified, for example Filter.greaterThan("employee.age",65).
+ * 
+ *
  */
 public class Filter implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -47,13 +55,12 @@ public class Filter implements Serializable {
 	private String property;
 
 	/**
-	 * The value to compare the property with. Should be of a compatible type
-	 * with the property.
+	 * The value to compare the property with. Should be of a compatible type with the property.
 	 */
 	private Object value;
 
 	/**
-	 * The type of comparison to do between the property and the value.<br/>
+	 * The type of comparison to do between the property and the value.<br>
 	 * Operators:
 	 * <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, OP_LIKE,
 	 * OP_IN, OP_NOT_IN, OP_NULL, OP_NOT_NULL, OP_AND, OP_OR, OP_NOT</code>
@@ -86,11 +93,10 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Convenience method for generating a <code>Filter</code> for checking if a
-	 * property is equal to the value.
+	 * Convenience method for generating a <code>Filter</code> for checking if a property is equal to the value.
 	 * 
 	 * @param property
-	 *            The column to check.
+	 *            The column to filter.
 	 * @param value
 	 *            The value to compare with.
 	 * @return The <code>Filter</code> for the property.
@@ -100,111 +106,186 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Create a new Filter using the < operator.
+	 * Create a new Filter using the &lt; operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter lessThan(String property, Object value) {
 		return new Filter(property, value, OP_LESS_THAN);
 	}
 
 	/**
-	 * Create a new Filter using the > operator.
+	 * Create a new Filter using the &gt; operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter greaterThan(String property, Object value) {
 		return new Filter(property, value, OP_GREATER_THAN);
 	}
 
 	/**
-	 * Create a new Filter using the <= operator.
+	 * Create a new Filter using the &lt;= operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter lessOrEqual(String property, Object value) {
 		return new Filter(property, value, OP_LESS_OR_EQUAL);
 	}
 
 	/**
-	 * Create a new Filter using the >= operator.
+	 * Create a new Filter using the &gt;= operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter greaterOrEqual(String property, Object value) {
 		return new Filter(property, value, OP_GREATER_OR_EQUAL);
 	}
 
 	/**
-	 * Create a new Filter using the IN operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * Create a new Filter using the IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter in(String property, Collection<?> value) {
 		return new Filter(property, value, OP_IN);
 	}
 
 	/**
-	 * Create a new Filter using the IN operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * Create a new Filter using the IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter in(String property, Object... value) {
 		return new Filter(property, value, OP_IN);
 	}
 
 	/**
-	 * Create a new Filter using the NOT IN operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * Create a new Filter using the LIKE operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter notIn(String property, Collection<?> value) {
 		return new Filter(property, value, OP_NOT_IN);
 	}
 
 	/**
-	 * Create a new Filter using the NOT IN operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * Create a new Filter using the NOT IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter notIn(String property, Object... value) {
 		return new Filter(property, value, OP_NOT_IN);
 	}
 
 	/**
+	 * <p>
 	 * Create a new Filter using the LIKE operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Filter</code> for the property.
 	 */
 	public static Filter like(String property, String value) {
 		return new Filter(property, value, OP_LIKE);
 	}
 
 	/**
+	 * <p>
 	 * Create a new Filter using the != operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return <code>Filter</code> for the property.
 	 */
 	public static Filter notEqual(String property, Object value) {
 		return new Filter(property, value, OP_NOT_EQUAL);
 	}
 
 	/**
+	 * <p>
 	 * Create a new Filter using the IS NULL operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @return <code>Filter</code> for the property.
 	 */
 	public static Filter isNull(String property) {
 		return new Filter(property, true, OP_NULL);
 	}
 
 	/**
+	 * <p>
 	 * Create a new Filter using the IS NOT NULL operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @return <code>Filter</code> for the property.
 	 */
 	public static Filter isNotNull(String property) {
 		return new Filter(property, true, OP_NOT_NULL);
 	}
 
 	/**
-	 * Create a new Filter using the AND operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of
-	 * <code>Filter</code>s can be specified.
+	 * Create a new Filter using the AND operator.
+	 * <p>
+	 * This takes a variable number of parameters. Any number of Filters can be specified.
+	 * 
+	 * @param filters
+	 *            The filters to filter.
+	 * @return <code>Filter</code> for the filters.
 	 */
 	public static Filter and(Filter... filters) {
 		Filter filter = new Filter("AND", null, OP_AND);
@@ -215,11 +296,14 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Create a new Filter using the OR operator.
-	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of
-	 * <code>Filter</code>s can be specified.
+	 * Create a new Filter using the OR operator.
+	 * <p>
+	 * This takes a variable number of parameters. Any number of Filters can be specified.
+	 * 
+	 * @param filters
+	 *            The filters to filter.
+	 * @return <code>Filter</code> for the filters.
 	 */
 	public static Filter or(Filter... filters) {
 		Filter filter = and(filters);
@@ -229,8 +313,12 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Used with OP_OR and OP_AND filters. These filters take a collection of
-	 * filters as their value. This method adds a filter to that list.
+	 * <p>
+	 * Used with OP_OR and OP_AND filters. These filters take a collection of filters as their value. This method adds a
+	 * filter to that list.
+	 * 
+	 * @param filter
+	 *            The filter to filter.
 	 */
 	@SuppressWarnings("unchecked")
 	public void add(Filter filter) {

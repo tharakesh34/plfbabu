@@ -1671,8 +1671,7 @@ public class QueryBuilder extends Groupbox {
 		searchObject.addWhereClause(this.textbox.getValue());
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		try {
-			searchObject.addFields(PennantAppUtil.getQueryModuleCustomColumns(queryModule.getResultColumns()
-					.toLowerCase()));
+			searchObject.addFields(PennantAppUtil.getQueryModuleCustomColumns(queryModule.getResultColumns() .toLowerCase()));
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}

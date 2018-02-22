@@ -1,17 +1,13 @@
 /**
- * Copyright 2009 The Revere Group
+ * Copyright 2011 - Pennant Technologies
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 package com.pennanttech.pennapps.jdbc.search;
 
@@ -19,14 +15,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * This class is used to return the results of <code>searchAndCount()</code>
- * operations. It has just two properties: the results and the search and the
- * total (unpaged) count of the search.
- * 
- * @author dwolverton
+ * This class is used to return the results of <code>searchAndCount()</code> operations. It has just two properties: the
+ * results and the search and the total (unpaged) count of the search.
  */
 public class SearchResult<T> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	protected List<T> result;
@@ -38,6 +30,8 @@ public class SearchResult<T> implements Serializable {
 
 	/**
 	 * The results of the search.
+	 * 
+	 * @return The List of results
 	 */
 	public List<T> getResult() {
 		return result;
@@ -45,22 +39,31 @@ public class SearchResult<T> implements Serializable {
 
 	/**
 	 * The results of the search.
+	 * 
+	 * @param results
+	 *            The list of results
 	 */
 	public void setResult(List<T> results) {
 		this.result = results;
 	}
 
 	/**
-	 * The total number of results that would have been returned if no
-	 * maxResults had been specified. (-1 means unspecified.)
+	 * The total number of results that would have been returned if no maxResults had been specified. (-1 means
+	 * unspecified.)
+	 * 
+	 * @return The total number of results
 	 */
 	public int getTotalCount() {
 		return totalCount;
 	}
 
 	/**
-	 * The total number of results that would have been returned if no
-	 * maxResults had been specified. (-1 means unspecified.)
+	 * The total number of results that would have been returned if no maxResults had been specified. (-1 means
+	 * unspecified.)
+	 * 
+	 * @param totalCount
+	 *            The total number of results
+	 * 
 	 */
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;

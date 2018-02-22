@@ -74,8 +74,12 @@ public class SearchProcessor implements Serializable {
 	 * Get the results for the specified <code>ISearch</code> along with the
 	 * number of records if requested.
 	 * 
+	 * @param <T>
+	 *            This is the type parameter
 	 * @param search
 	 *            The search object that contains the parameters.
+	 * @param includeCount
+	 *            Whether to include search count or not
 	 * @return The {@link SearchResult} object.
 	 * @throws IllegalArgumentException
 	 *             - If the given search object is <code>null</code>.
@@ -104,6 +108,8 @@ public class SearchProcessor implements Serializable {
 	/**
 	 * Get the results for the specified <code>ISearch</code>.
 	 * 
+	 * @param <T>
+	 *            This is the type parameter
 	 * @param search
 	 *            The search object that contains the parameters.
 	 * @return The results mapped to a <code>List</code> (one entry for each

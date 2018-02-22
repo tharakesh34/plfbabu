@@ -1,17 +1,13 @@
 /**
- * Copyright 2009 The Revere Group
+ * Copyright 2011 - Pennant Technologies
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 package com.pennanttech.pennapps.jdbc.search;
 
@@ -20,31 +16,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 /**
  * A convenient fully-featured implementation of ISearch and IMutableSearch for
  * general use in Java code.
  * 
- * @author dwolverton
  */
 public class Search implements IMutableSearch, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	protected int firstResult = -1; // -1 stands for unspecified
-	protected int maxResults = -1; // -1 stands for unspecified
-	protected int page = -1; // -1 stands for unspecified
-	protected Class<?> searchClass;
+	private int firstResult = -1; // -1 stands for unspecified
+	private int maxResults = -1; // -1 stands for unspecified
+	private int page = -1; // -1 stands for unspecified
+	private Class<?> searchClass;
+	private boolean disjunction;
+	private boolean distinct;
+	private int resultMode = RESULT_AUTO;
+	private String tabelName;
+	private String whereClause;
 	private List<Filter> filters = new ArrayList<>();
-	protected boolean disjunction;
 	private List<Sort> sorts = new ArrayList<>();
 	private List<Field> fields = new ArrayList<>();
-	protected boolean distinct;
 	private List<String> fetches = new ArrayList<>();
-	protected int resultMode = RESULT_AUTO;
-	protected String tabelName = null;
-	protected String whereClause = null;
 
 	public Search() {
 		super();
@@ -53,6 +47,33 @@ public class Search implements IMutableSearch, Serializable {
 	public Search(Class<?> searchClass) {
 		this.tabelName = ModuleUtil.getTableName(searchClass.getSimpleName());
 		this.searchClass = searchClass;
+	}
+
+	public int getFirstResult() {
+		return firstResult;
+	}
+
+	public Search setFirstResult(int firstResult) {
+		this.firstResult = firstResult;
+		return this;
+	}
+
+	public int getMaxResults() {
+		return maxResults;
+	}
+
+	public Search setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
+		return this;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public Search setPage(int page) {
+		this.page = page;
+		return this;
 	}
 
 	public Search setSearchClass(Class<?> searchClass) {
@@ -64,299 +85,20 @@ public class Search implements IMutableSearch, Serializable {
 		return searchClass;
 	}
 
-	// Filters
-	public Search addFilter(Filter filter) {
-		SearchUtil.addFilter(this, filter);
-		return this;
-	}
-
-	public Search addFilters(Filter... filters) {
-		SearchUtil.addFilters(this, filters);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the == operator.
-	 */
-	public Search addFilterEqual(String property, Object value) {
-		SearchUtil.addFilterEqual(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the >= operator.
-	 */
-	public Search addFilterGreaterOrEqual(String property, Object value) {
-		SearchUtil.addFilterGreaterOrEqual(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the > operator.
-	 */
-	public Search addFilterGreaterThan(String property, Object value) {
-		SearchUtil.addFilterGreaterThan(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the IN operator.
-	 */
-	public Search addFilterIn(String property, Collection<?> value) {
-		SearchUtil.addFilterIn(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the IN operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
-	 */
-	public Search addFilterIn(String property, Object... value) {
-		SearchUtil.addFilterIn(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the NOT IN operator.
-	 */
-	public Search addFilterNotIn(String property, Collection<?> value) {
-		SearchUtil.addFilterNotIn(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the NOT IN operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
-	 */
-	public Search addFilterNotIn(String property, Object... value) {
-		SearchUtil.addFilterNotIn(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the <= operator.
-	 */
-	public Search addFilterLessOrEqual(String property, Object value) {
-		SearchUtil.addFilterLessOrEqual(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the < operator.
-	 */
-	public Search addFilterLessThan(String property, Object value) {
-		SearchUtil.addFilterLessThan(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the LIKE operator.
-	 */
-	public Search addFilterLike(String property, String value) {
-		SearchUtil.addFilterLike(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the != operator.
-	 */
-	public Search addFilterNotEqual(String property, Object value) {
-		SearchUtil.addFilterNotEqual(this, property, value);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the IS NULL operator.
-	 */
-	public Search addFilterNull(String property) {
-		SearchUtil.addFilterNull(this, property);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the IS NOT NULL operator.
-	 */
-	public Search addFilterNotNull(String property) {
-		SearchUtil.addFilterNotNull(this, property);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the AND operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be specified.
-	 */
-	public Search addFilterAnd(Filter... filters) {
-		SearchUtil.addFilterAnd(this, filters);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the OR operator.
-	 * 
-	 * <p>
-	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be specified.
-	 */
-	public Search addFilterOr(Filter... filters) {
-		SearchUtil.addFilterOr(this, filters);
-		return this;
-	}
-
-	public void removeFilter(Filter filter) {
-		SearchUtil.removeFilter(this, filter);
-	}
-
-	/**
-	 * Remove all filters on the given property.
-	 */
-	public void removeFiltersOnProperty(String property) {
-		SearchUtil.removeFiltersOnProperty(this, property);
-	}
-
-	public void clearFilters() {
-		SearchUtil.clearFilters(this);
-	}
-
 	public boolean isDisjunction() {
 		return disjunction;
 	}
 
-	/**
-	 * Filters added to a search are "ANDed" together if this is false (default)
-	 * and "ORed" if it is set to true.
-	 */
 	public Search setDisjunction(boolean disjunction) {
 		this.disjunction = disjunction;
 		return this;
-	}
-
-	// Sorts
-	public Search addSort(Sort sort) {
-		SearchUtil.addSort(this, sort);
-		return this;
-	}
-
-	public Search addSorts(Sort... sorts) {
-		SearchUtil.addSorts(this, sorts);
-		return this;
-	}
-
-	/**
-	 * Add ascending sort by property
-	 */
-	public Search addSortAsc(String property) {
-		SearchUtil.addSortAsc(this, property);
-		return this;
-	}
-
-	/**
-	 * Add descending sort by property
-	 */
-	public Search addSortDesc(String property) {
-		SearchUtil.addSortDesc(this, property);
-		return this;
-	}
-
-	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
-	 */
-	public Search addSort(String property, boolean desc) {
-		SearchUtil.addSort(this, property, desc);
-		return this;
-	}
-
-	public void removeSort(Sort sort) {
-		SearchUtil.removeSort(this, sort);
-	}
-
-	public void removeSort(String property) {
-		SearchUtil.removeSort(this, property);
-	}
-
-	public void clearSorts() {
-		SearchUtil.clearSorts(this);
-	}
-
-	// Fields
-	public Search addField(Field field) {
-		SearchUtil.addField(this, field);
-		return this;
-	}
-
-	public Search addFields(Field... fields) {
-		SearchUtil.addFields(this, fields);
-		return this;
-	}
-
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
-	 */
-	public Search addField(String property) {
-		SearchUtil.addField(this, property);
-		return this;
-	}
-
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
-	 */
-	public Search addField(String property, String key) {
-		SearchUtil.addField(this, property, key);
-		return this;
-	}
-
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
-	 */
-	public Search addField(String property, int operator) {
-		SearchUtil.addField(this, property, operator);
-		return this;
-	}
-
-	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
-	 */
-	public Search addField(String property, int operator, String key) {
-		SearchUtil.addField(this, property, operator, key);
-		return this;
-	}
-
-	public void removeField(Field field) {
-		SearchUtil.removeField(this, field);
-	}
-
-	public void removeField(String property) {
-		SearchUtil.removeField(this, property);
-	}
-
-	public void removeField(String property, String key) {
-		SearchUtil.removeField(this, property, key);
-	}
-
-	public void clearFields() {
-		SearchUtil.clearFields(this);
 	}
 
 	public boolean isDistinct() {
 		return distinct;
 	}
 
-	public IMutableSearch setDistinct(boolean distinct) {
+	public Search setDistinct(boolean distinct) {
 		this.distinct = distinct;
 		return this;
 	}
@@ -373,70 +115,33 @@ public class Search implements IMutableSearch, Serializable {
 		return this;
 	}
 
-	public void removeFetch(String property) {
-		SearchUtil.removeFetch(this, property);
+	public String getTabelName() {
+		return this.tabelName;
 	}
 
-	public void clearFetches() {
-		SearchUtil.clearFetches(this);
-	}
-
-	public void clear() {
-		SearchUtil.clear(this);
-	}
-
-	// Paging
-	public int getFirstResult() {
-		return firstResult;
-	}
-
-	public Search setFirstResult(int firstResult) {
-		this.firstResult = firstResult;
-		return this;
-	}
-
-	public int getPage() {
-		return page;
-	}
-
-	public Search setPage(int page) {
-		this.page = page;
-		return this;
-	}
-
-	public int getMaxResults() {
-		return maxResults;
-	}
-
-	public Search setMaxResults(int maxResults) {
-		this.maxResults = maxResults;
-		return this;
+	public void addTabelName(String tabelName) {
+		this.tabelName = tabelName;
 	}
 
 	/**
-	 * Create a copy of this search. All collections are copied into new
-	 * collections, but them items in those collections are not duplicated; they
-	 * still point to the same objects.
+	 * Return Where Clause which will be added directly to the SQL Query
+	 * 
+	 * @return The Where Clause which will be added directly to the SQL Query
+	 * 
 	 */
-	public Search copy() {
-		Search dest = new Search();
-		SearchUtil.copy(this, dest);
-		return dest;
+	public String getWhereClause() {
+		return this.whereClause;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return SearchUtil.equals(this, obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return SearchUtil.hashCode(this);
-	}
-
-	@Override
-	public String toString() {
-		return SearchUtil.toString(this);
+	/**
+	 * Set the where clause which will be added directly to the SQL Query
+	 * 
+	 * @param whereClause
+	 *            The where clause which will be added directly to the SQL Query
+	 * 
+	 */
+	public void addWhereClause(String whereClause) {
+		this.whereClause = whereClause;
 	}
 
 	public List<Filter> getFilters() {
@@ -476,32 +181,509 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Filering throw using LIKE condition
+	 * Add a filter.
+	 * 
+	 * @param filter
+	 *            The specified filter
+	 * @return The <code>Search</code>
 	 */
-	public Filter[] addFilterOrLike(String field, List<String> listValues, boolean emptyEqual) {
-		Filter[] filters = null;
-		int cnt = 0;
-
-		if (listValues != null && listValues.size() > 0) {
-			if (emptyEqual) {
-				filters = new Filter[listValues.size() + 1];
-				filters[0] = new Filter(field, "", Filter.OP_EQUAL);
-				cnt = 1;
-			} else {
-				filters = new Filter[listValues.size()];
-			}
-			for (int i = 0; i < listValues.size(); i++) {
-				filters[cnt + i] = new Filter(field, "%" + listValues.get(i) + "%", Filter.OP_LIKE);
-			}
-		}
-		this.addFilterOr(filters);
-		return filters;
+	public Search addFilter(Filter filter) {
+		SearchUtil.addFilter(this, filter);
+		return this;
 	}
 
 	/**
-	 * Filtering throw using IN condition
+	 * <p>
+	 * Add a filter.
+	 * <p>
+	 * This takes a variable number of parameters. Any number of Filters can be
+	 * specified.
+	 * 
+	 * @param filters
+	 *            The specified number of filter
+	 * @return The <code>Search</code>
 	 */
-	public void addFilterIn(String field, List<String> listValues, boolean emptyEqual) {
+	public Search addFilters(Filter... filters) {
+		SearchUtil.addFilters(this, filters);
+		return this;
+	}
+
+	/**
+	 * Add a filter that uses the == operator.
+	 * 
+	 * @param property
+	 *            The property to include in the filter
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterEqual(String property, Object value) {
+		SearchUtil.addFilterEqual(this, property, value);
+		return this;
+	}
+
+	/**
+	 * Add a filter that uses the == operator.
+	 * 
+	 * @param property
+	 *            The column to filter
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterGreaterOrEqual(String property, Object value) {
+		SearchUtil.addFilterGreaterOrEqual(this, property, value);
+		return this;
+	}
+
+	/**
+	 * Add a filter that uses the &lt;= operator.
+	 * 
+	 * @param property
+	 *            The column to filter
+	 * @param value
+	 *            The value to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterGreaterThan(String property, Object value) {
+		SearchUtil.addFilterGreaterThan(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterIn(String property, Collection<?> value) {
+		SearchUtil.addFilterIn(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterIn(String property, Object... value) {
+		SearchUtil.addFilterIn(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the NOT IN operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNotIn(String property, Collection<?> value) {
+		SearchUtil.addFilterNotIn(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the NOT IN operator.
+	 * <p>
+	 * This takes a variable number of parameters.
+	 * <p>
+	 * Any number of values can be specified.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNotIn(String property, Object... value) {
+		SearchUtil.addFilterNotIn(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the &lt;= operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterLessOrEqual(String property, Object value) {
+		SearchUtil.addFilterLessOrEqual(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the &gt;= operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterLessThan(String property, Object value) {
+		SearchUtil.addFilterLessThan(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the LIKE operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterLike(String property, String value) {
+		SearchUtil.addFilterLike(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the != operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @param value
+	 *            The value's to compare with.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNotEqual(String property, Object value) {
+		SearchUtil.addFilterNotEqual(this, property, value);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the IS NULL operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNull(String property) {
+		SearchUtil.addFilterNull(this, property);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the IS NOT NULL operator.
+	 * 
+	 * @param property
+	 *            The column to filter.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNotNull(String property) {
+		SearchUtil.addFilterNotNull(this, property);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the AND operator.
+	 * <p>
+	 * This takes a variable number of parameters. Any number of Filters can be
+	 * specified.
+	 * 
+	 * @param filters
+	 *            The filters to filter.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterAnd(Filter... filters) {
+		SearchUtil.addFilterAnd(this, filters);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the OR operator.
+	 * <p>
+	 * This takes a variable number of parameters. Any number of Filters can be
+	 * specified.
+	 * 
+	 * @param filters
+	 *            The filters to filter.
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterOr(Filter... filters) {
+		SearchUtil.addFilterOr(this, filters);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Removes the filter from the <code>Search</code>
+	 * 
+	 * @param filter
+	 *            The filter to remove from the <code>Search</code>.
+	 * @return The <code>Search</code>
+	 */
+	public Search removeFilter(Filter filter) {
+		SearchUtil.removeFilter(this, filter);
+		return this;
+	}
+
+	public Search removeFiltersOnProperty(String property) {
+		SearchUtil.removeFiltersOnProperty(this, property);
+		return this;
+	}
+
+	public Search clearFilters() {
+		SearchUtil.clearFilters(this);
+		return this;
+	}
+
+	public Search addSort(Sort sort) {
+		SearchUtil.addSort(this, sort);
+		return this;
+	}
+
+	public Search addSorts(Sort... sorts) {
+		SearchUtil.addSorts(this, sorts);
+		return this;
+	}
+
+	/**
+	 * Add ascending sort by property
+	 * 
+	 * @param property
+	 *            The column to sort by ascending
+	 * @return The <code>Search</code>
+	 */
+	public Search addSortAsc(String property) {
+		SearchUtil.addSortAsc(this, property);
+		return this;
+	}
+
+	/**
+	 * Add descending sort by property
+	 * 
+	 * @param property
+	 *            The column to sort by descending
+	 * @return The <code>Search</code>
+	 */
+	public Search addSortDesc(String property) {
+		SearchUtil.addSortDesc(this, property);
+		return this;
+	}
+
+	/**
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending
+	 * if <code>desc == true</code>.
+	 * 
+	 * @param property
+	 *            The column to sort by ascending or descending
+	 * @param desc
+	 *            ascending or descending
+	 * @return The <code>Search</code>
+	 */
+	public Search addSort(String property, boolean desc) {
+		SearchUtil.addSort(this, property, desc);
+		return this;
+	}
+
+	public Search removeSort(Sort sort) {
+		SearchUtil.removeSort(this, sort);
+		return this;
+	}
+
+	public Search removeSort(String property) {
+		SearchUtil.removeSort(this, property);
+		return this;
+	}
+
+	public Search clearSorts() {
+		SearchUtil.clearSorts(this);
+		return this;
+	}
+
+	protected Search addField(Field field) {
+		SearchUtil.addField(this, field);
+		return this;
+	}
+
+	protected Search addFields(Field... fields) {
+		SearchUtil.addFields(this, fields);
+		return this;
+	}
+
+	/**
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>property</code> will also be used as the key for this value in the
+	 * map.
+	 * 
+	 * @param property
+	 *            The property used as key
+	 * @return The <code>Search</code>
+	 */
+	public Search addField(String property) {
+		SearchUtil.addField(this, property);
+		return this;
+	}
+	
+	/**
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>property</code> will also be used as the key for this value in the
+	 * map.
+	 * 
+	 * @param property
+	 *            The property used as key
+	 * @return The <code>Search</code>
+	 */
+	public Search addFields(String[] properties) {
+		for (String property : properties) {
+			SearchUtil.addField(this, property);
+		}
+
+		return this;
+	}
+
+	/**
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>key</code> will be used as the key for this value in the map.
+	 * 
+	 * @param property
+	 *            The name of the column
+	 * 
+	 * @param key
+	 *            The key to use for the property
+	 * @return The <code>Search</code>
+	 * 
+	 */
+	public Search addField(String property, String key) {
+		SearchUtil.addField(this, property, key);
+		return this;
+	}
+
+	/**
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>property</code> will also be used as the key for this value in the
+	 * map.
+	 * 
+	 * @param property
+	 *            The name of the column
+	 * 
+	 * @param operator
+	 *            The operator to apply to the column
+	 * @return The <code>Search</code>
+	 * 
+	 */
+	public Search addField(String property, int operator) {
+		SearchUtil.addField(this, property, operator);
+		return this;
+	}
+
+	/**
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
+	 * <code>key</code> will be used as the key for this value in the map.
+	 * 
+	 * @param property
+	 *            The name of the column
+	 * 
+	 * @param operator
+	 *            The operator to apply to the column
+	 * 
+	 * @param key
+	 *            The key to use for the property
+	 * @return The <code>Search</code>
+	 */
+	public Search addField(String property, int operator, String key) {
+		SearchUtil.addField(this, property, operator, key);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the ILIKE operator.
+	 * 
+	 * <p>
+	 * This takes list of values to filter
+	 * 
+	 * @param property
+	 *            The property to include in the filter
+	 * 
+	 * @param listValues
+	 *            The list of values to filter
+	 * 
+	 * @param emptyEqual
+	 *            Whether this filter will consider the empty values or not
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterOrLike(String property, List<String> listValues, boolean emptyEqual) {
+		SearchUtil.addFilterOrLike(this, property, listValues, emptyEqual);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the IN operator.
+	 * 
+	 * <p>
+	 * This takes list of values to filter
+	 * 
+	 * @param property
+	 *            The property to include in the filter
+	 * 
+	 * @param listValues
+	 *            The list of values to filter
+	 * 
+	 * @param emptyEqual
+	 *            Whether this filter will consider the empty values or not
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterIn(String property, List<String> listValues, boolean emptyEqual) {
+		SearchUtil.addFilterIn(this, property, listValues, emptyEqual);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Add a filter that uses the NOT IN operator.
+	 * 
+	 * <p>
+	 * This takes list of values to filter
+	 * 
+	 * @param property
+	 *            The property to include in the filter
+	 * 
+	 * @param listValues
+	 *            The list of values to filter
+	 * 
+	 * @param emptyEqual
+	 *            Whether this filter will consider the empty values or not
+	 * @return The <code>Search</code>
+	 */
+	public Search addFilterNotIn(String property, List<String> listValues, boolean emptyEqual) {
 		Object[] values = null;
 		int cnt = 0;
 
@@ -518,87 +700,59 @@ public class Search implements IMutableSearch, Serializable {
 				values[cnt + i] = listValues.get(i);
 			}
 
-			Filter[] filters = null;
-
-			switch (App.DATABASE) {
-			case ORACLE:
-				if (emptyEqual) {
-					filters = new Filter[2];
-					filters[0] = Filter.isNull(field);
-					filters[1] = Filter.in(field, listValues);
-				} else {
-					filters = new Filter[1];
-					filters[0] = Filter.in(field, listValues);
-				}
-
-				this.addFilterOr(filters);
-				break;
-
-			case POSTGRES:
-				if (emptyEqual) {
-					filters = new Filter[3];
-					filters[0] = Filter.isNull(field);
-					filters[1] = Filter.equalTo(field, "");
-					filters[2] = Filter.in(field, listValues);
-				} else {
-					filters = new Filter[1];
-					filters[0] = Filter.in(field, listValues);
-				}
-				this.addFilterOr(filters);
-				break;
-
-			default:
-				this.addFilterIn(field, values);
-				break;
-			}
+			this.addFilterNotIn(property, values);
 		}
-	}
 
-	/**
-	 * Filtering throw using Not IN condition
-	 */
-	public void addFilterNotIn(String field, List<String> listValues, boolean emptyEqual) {
-		Object[] values = null;
-		int cnt = 0;
-
-		if (listValues != null && listValues.size() > 0) {
-			if (emptyEqual) {
-				values = new String[listValues.size() + 1];
-				values[0] = " ";
-				cnt = 1;
-			} else {
-				values = new String[listValues.size()];
-			}
-
-			for (int i = 0; i < listValues.size(); i++) {
-				values[cnt + i] = listValues.get(i);
-			}
-
-			this.addFilterNotIn(field, values);
-		}
-	}
-
-	public String getTabelName() {
-		return this.tabelName;
-	}
-
-	public Search addTabelName(String tabelName) {
-		this.tabelName = tabelName;
 		return this;
 	}
 
-	/**
-	 * Return Where Clause which will be added directly to the SQL Query
-	 */
-	public String getWhereClause() {
-		return this.whereClause;
+	public Search removeField(Field field) {
+		SearchUtil.removeField(this, field);
+		return this;
 	}
 
-	/**
-	 * Set the Where Clause which will be added directly to the SQL Query
-	 */
-	public Search addWhereClause(String whereClause) {
-		this.whereClause = whereClause;
+	public Search removeField(String property) {
+		SearchUtil.removeField(this, property);
 		return this;
+	}
+
+	public Search removeField(String property, String key) {
+		SearchUtil.removeField(this, property, key);
+		return this;
+	}
+
+	public Search clearFields() {
+		SearchUtil.clearFields(this);
+		return this;
+	}
+
+	public Search removeFetch(String property) {
+		SearchUtil.removeFetch(this, property);
+		return this;
+	}
+
+	public Search clearFetches() {
+		SearchUtil.clearFetches(this);
+		return this;
+	}
+
+	public Search clear() {
+		SearchUtil.clear(this);
+		return this;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return SearchUtil.equals(this, obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return SearchUtil.hashCode(this);
+	}
+
+	@Override
+	public String toString() {
+		return SearchUtil.toString(this);
 	}
 }
