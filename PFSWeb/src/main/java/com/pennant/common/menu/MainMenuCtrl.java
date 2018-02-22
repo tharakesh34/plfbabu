@@ -230,10 +230,10 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		MenuItem menuItem = (MenuItem) treeitem.getAttribute("data");
 
 		// Check whether user can access now.
-		/*if (!"Y".equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.ALLOW_ACCESS_TO_APP))) {
+		if (!"Y".equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.ALLOW_ACCESS_TO_APP))) {
 			MessageUtil.showInfo("ALLOW_ACCESS_RESTRICTION");
 			return;
-		}*/
+		}
 
 		LoggedInUser user = userWorkspace.getLoggedInUser();
 
