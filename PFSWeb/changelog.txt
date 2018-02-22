@@ -1,3 +1,7 @@
+pff 4.7.14, 2018-02-22
+----------------------
+- Upgraded pennapps-core version from 0.7.3 to 0.7.4
+
 pff 4.7.14, 2018-02-21
 ----------------------
 - Refactoring removed the additional layer JdbcSearchSupport on SearchProcessor
