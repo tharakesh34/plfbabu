@@ -48,7 +48,17 @@ public class CopyRightCtrl extends GenericForwardComposer<Component> implements 
 	 * @param event
 	 *            An event sent to the event handler of a component.
 	 */
-	public void onClick$close(Event event) {
+	public void onOK$close(Event event) {
+		window_Copyright.onClose();
+	}
+	
+	/**
+	 * The Click event is raised when the Close Button control is clicked.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of a component.
+	 */
+	public void onCancel$close(Event event) {
 		window_Copyright.onClose();
 	}
 
