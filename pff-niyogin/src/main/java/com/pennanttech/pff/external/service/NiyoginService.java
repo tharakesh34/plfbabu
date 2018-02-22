@@ -695,17 +695,13 @@ public abstract class NiyoginService {
 		return customerDetailList;
 	}
 
-	protected String getCustTypeDesc(String custTypeCode) {
-		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
-	}
-
 	/**
 	 * Method for Fetch the CustomerTypeCode description for given CustTypeCode.
 	 * 
 	 * @param custTypeCode
 	 * @return
 	 */
-	protected String getCustomerTypeDesc(String custTypeCode) {
+	protected String getCustTypeDesc(String custTypeCode) {
 		return niyoginDAOImpl.getCustTypeDesc(custTypeCode);
 	}
 

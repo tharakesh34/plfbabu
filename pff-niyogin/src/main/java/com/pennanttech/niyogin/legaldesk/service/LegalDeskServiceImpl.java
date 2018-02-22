@@ -109,7 +109,11 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private LegalDeskRequest prepareRequestObj(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		LegalDeskRequest legalDeskRequest = new LegalDeskRequest();
+		legalDeskRequest.setCustCIF(customer.getCustCIF());
+		legalDeskRequest.setFinReference(finMain.getFinReference());
 		legalDeskRequest.setStampPaperData(prepareStampPaperData(financeDetail));
 		legalDeskRequest.setSignersInfo(prepareSignersInfo(financeDetail));
 		legalDeskRequest.setFormData(prepareFormData(financeDetail));

@@ -344,7 +344,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		Applicant applicant = new Applicant();
 		applicant.setDemogs(prepareDemogs(financeDetail));
 		applicant.setFinancials(prepareFinancials(financeDetail));
-		applicant.setBusiness(oreoareBusiness(financeDetail));
+		applicant.setBusiness(preoareBusiness(financeDetail));
 		applicant.setPerfios(preparePerfios(financeDetail));
 		logger.debug(Literal.LEAVING);
 		return applicant;
@@ -513,14 +513,15 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		return forms;
 	}
 
-	private Business oreoareBusiness(FinanceDetail financeDetail) {
+	private Business preoareBusiness(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		Business business = new Business();
 		if (extendedMap != null) {
 			business.setBusPremisesOwnership(getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));
 		}
+		business.setOrgType(getCustTypeDesc(customer.getCustTypeCode()));
 		//TODO:
-		business.setOrgType(null);
 		business.setNumbOfOwnersOrShareholdingPattern(0);
 		business.setOperationalBusinessVintage(BigDecimal.ZERO);
 		logger.debug(Literal.LEAVING);

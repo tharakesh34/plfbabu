@@ -32,6 +32,7 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 */
 	@Override
 	public DocumentDetails getExternalDocument(String docExternalRefId, String sourceReference) {
+		logger.debug(Literal.ENTERING);
 		DocumentDetails detail = new DocumentDetails();
 		DocumentRequest dmsRequest = prepareRequestObj(docExternalRefId);
 
