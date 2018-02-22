@@ -45,6 +45,7 @@ package com.pennant.webui.customermasters.customer;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -66,9 +67,9 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -109,7 +110,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 
 	private transient CustomerDetailsService customerDetailsService;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
-
+	private String module = null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -124,6 +125,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		super.tableName = "Customers_AView";
 		super.queueTableName = "Customers_LView";
 		super.enquiryTableName = "Customers_TView";
+		
+		this.module = getArgument("enqiryModule");
 	}
 
 	/**
@@ -260,9 +263,12 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 
 		try {
 			if (enqiryModule) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
-			} else {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+			} else if(StringUtils.equals("X", module)){
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
+			}else{
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+				
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
