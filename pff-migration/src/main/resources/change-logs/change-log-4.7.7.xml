@@ -60,6 +60,31 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			<column name="CUSTCLASSIFICATION" type="nvarchar2(8)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="4.1" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view customers_aview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="4.2" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view customers_view cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="4.3" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view customers_lview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="4.4" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view customers_tview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="4.5" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view customers_aeview cascade;
+		</sql>
+	</changeSet>
 	<changeSet id="4" author="Satyanarayana.G">
 <createView viewName="CUSTOMERS_AVIEW" replaceIfExists="true">
 SELECT t1.custid,
@@ -1171,7 +1196,7 @@ UNION ALL
           WHERE customers_temp.custid = t1.custid))
 </createView>
 	</changeSet>
-	<changeSet id="12" author="Jayant" dbms="postgresql">
+	<!-- <changeSet id="12" author="Jayant" dbms="postgresql">
 		<modifyDataType tableName="POSTINGS_REQUESTS" columnName="type" newDataType="citext"/>
 	</changeSet>
 	<changeSet id="13" author="Jayant" dbms="postgresql">
@@ -1191,5 +1216,5 @@ UNION ALL
 	</changeSet>
 	<changeSet id="18" author="Jayant" dbms="postgresql">
 		<modifyDataType tableName="POSTINGS_REQUESTS" columnName="narration" newDataType="citext"/>
-	</changeSet>
+	</changeSet> -->
 </databaseChangeLog>
