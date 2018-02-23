@@ -1092,4 +1092,21 @@ UNION ALL
           WHERE customers_temp.custid = t1.custid))
 </createView>
 	</changeSet>
+	
+	<changeSet id="10" author="Durga Prasad D">
+	    <createTable tableName="POSTINGS_REQUESTS">			
+			<column name="ID"  	type="bigint" autoIncrement="true" incrementBy="1">
+			  <constraints primaryKey="true"  nullable="false" />
+			 </column>
+			<column name="date" 			type="datetime"/>
+			<column name="number" 			type="bigint"/>
+			<column name="type" 			type="VARCHAR(50)"/>
+			<column name="glcode" 			type="VARCHAR(50)"/>
+			<column name="description" 		type="VARCHAR(200)"/>
+			<column name="profit_center" 	type="VARCHAR(200)"/>
+			<column name="debit_credit" 	type="VARCHAR(20)"/>
+			<column name="amount" 		    type="VARCHAR(200)"/>
+			<column name="narration" 		type="VARCHAR(200)"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
