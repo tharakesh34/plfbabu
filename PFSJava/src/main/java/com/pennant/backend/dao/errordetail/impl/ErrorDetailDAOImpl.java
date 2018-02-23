@@ -249,7 +249,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select Code, Language, Severity, Message");
-		sql.append(", ExtendedMessage from Details where Code =:Code");
+		sql.append(", ExtendedMessage from ErrorDetails where Code =:Code");
 
 		log.trace(Literal.SQL + sql);
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
