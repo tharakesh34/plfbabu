@@ -43,7 +43,9 @@
 package com.pennant.webui.util;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -227,10 +229,10 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	 * @param event
 	 */
 	public void onClick$copyRightInfo(Event event) {
-		Executions.createComponents("~./pages/CopyRight.zul", null, null);
+		Map<String, String> arg = new HashedMap<>();
+		arg.put("productLogo", "images/plf_logo.png");
+		Executions.createComponents("~./pages/CopyRight.zul", null, arg);
 	}
-
-	// Setter/Getter
 
 	public void setMsg(String msg) {
 		this.msg = this.msg + "\n" + msg;

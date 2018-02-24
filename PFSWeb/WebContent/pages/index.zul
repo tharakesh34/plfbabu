@@ -30,9 +30,8 @@
 							<image id="imgsmallLogo" height="53px"
 								align="left" />
 						</div>
-						<div align="left" style="margin-top:8px;">
-							<label id="label_AppName"
-								style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif; " />
+						<div align="center" style="margin-top:8px;">
+							<label id="label_AppName" style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif; " visible="false"/>
 						</div>
 						<window id="winUserBar" apply="${userBarCtrl}"
 							border="none" width="500px" height="100%" sizable="false"

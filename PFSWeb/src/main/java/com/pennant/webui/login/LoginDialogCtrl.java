@@ -42,6 +42,9 @@
  */
 package com.pennant.webui.login;
 
+import java.util.Map;
+
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -127,7 +130,9 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	 * @param event
 	 */
 	public void onClick$copyRightInfo(Event event) {
-		Executions.createComponents("~./pages/CopyRight.zul", this, null);
+		Map<String, String> arg = new HashedMap<>();
+		arg.put("productLogo", "images/plf_logo.png");
+		Executions.createComponents("~./pages/CopyRight.zul", this, arg);
 	}
 	
 	

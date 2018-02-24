@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -26,7 +25,7 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
 import com.pennanttech.pennapps.lic.model.LicenseFile;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-@Component
+@org.springframework.stereotype.Component("licenseUploadCtrl")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LicenseUploadCtrl extends GFCBaseCtrl<LicenseFile> {
 	private static final long serialVersionUID = 1L;
