@@ -1,4 +1,4 @@
-package com.pennanttech.pennapps.core.lic;
+package com.pennanttech.pennapps.lic.web;
 
 import java.io.IOException;
 import java.sql.Timestamp;

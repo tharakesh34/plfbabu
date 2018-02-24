@@ -127,7 +127,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	 * @param event
 	 */
 	public void onClick$copyRightInfo(Event event) {
-		Executions.createComponents("/WEB-INF/pages/License/CopyRight.zul", this, null);
+		Executions.createComponents("~./pages/CopyRight.zul", this, null);
 	}
 	
 	

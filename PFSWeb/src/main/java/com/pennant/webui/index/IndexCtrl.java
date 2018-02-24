@@ -150,7 +150,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		} catch (LicenseException e) {
 			if (LicenseError.LIC001 == LicenseError.valueOf(e.getErrorCode())) {
 				if (UserType.valueOf(user.getUserType()) == UserType.ADMIN && getUserWorkspace().isAllowed("menuItem_License_LicenseUpload")) {
-					Executions.createComponents("/WEB-INF/pages/License/LicenseUpload.zul", null, null);
+					Executions.createComponents("~./pages/LicenseUpload.zul", null, null);
 				} else {
 					Executions.sendRedirect("default-error.jsp");
 				}

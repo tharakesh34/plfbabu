@@ -651,7 +651,7 @@
 
 	<!-- Administration Menu Tree -->
 	<menu id="menu_Category_Administration">
-		<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/WEB-INF/pages/License/LicenseUpload.zul"
+		<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/~./pages/LicenseUpload.zul"
 			rightName="menuItem_License_LicenseUpload" />
 		<menuItem id="menu_Item_SecurityUser"
 			zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USER"

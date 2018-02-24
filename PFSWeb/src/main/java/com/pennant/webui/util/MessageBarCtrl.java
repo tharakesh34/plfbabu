@@ -227,7 +227,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	 * @param event
 	 */
 	public void onClick$copyRightInfo(Event event) {
-		Executions.createComponents("/WEB-INF/pages/License/CopyRight.zul", null, null);
+		Executions.createComponents("~./pages/CopyRight.zul", null, null);
 	}
 
 	// Setter/Getter
