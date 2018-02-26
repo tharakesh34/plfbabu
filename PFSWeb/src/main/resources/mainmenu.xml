@@ -2,16 +2,60 @@
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
 	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
 
+	<!-- Administration -->
+	<menu id="menu_Category_Administration">
+		<menu id="menu_Category_UserSetup">
+			<menuItem id="menu_Item_SecurityUser"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USER"
+				rightName="menuItem_Administration_SecurityUser" />
+			<menuItem id="menu_Item_SecurityUserOperations"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USEROPR"
+				rightName="menuItem_Administration_SecurityUserOperations" />
+			<menuItem id="menu_Item_PasswordResetUser"
+				zulNavigation="/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordList.zul?moduleType=PSWDRST"
+				rightName="menuItem_Administration_UserpasswordReset" />
+		</menu>
+		<menu id="menu_Category_RoleSetup">
+			<menuItem id="menu_Item_SecurityOperation"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityOperations/SecurityOperationList.zul"
+				rightName="menuItem_Administration_SecurityOperation" />
+			<menuItem id="menu_Item_SecurityOperationRoles"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityOperationRoles/SecurityOperationRolesList.zul"
+				rightName="menuItem_Administration_SecurityOperationRoles" />
+			<menuItem id="menu_Item_SecurityRole"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityRole/SecurityRoleList.zul"
+				rightName="menuItem_Administration_SecurityRole" />
+			<menuItem id="menu_Item_SecurityRoleGroups"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityRole/SecurityRoleList.zul?moduleType=ROLEGROUPS"
+				rightName="menuItem_Administration_SecurityRoleGroups" />
+			<menuItem id="menu_Item_SecurityGroup"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityGroup/SecurityGroupList.zul"
+				rightName="menuItem_Administration_SecurityGroup" />
+			<menuItem id="menu_Item_SecurityGroupRights"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityGroup/SecurityGroupList.zul?moduleType=GRPRIGHT"
+				rightName="menuItem_Administration_SecurityGroupRights" />
+		</menu>
+		<menu id="menu_Category_SystemSetup">
+			<menuItem id="menu_Item_PFSParameter"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"
+				rightName="menuItem_SolutionFactory_PFSParameter" />
+			<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/~./pages/LicenseUpload.zul"
+				rightName="menuItem_License_LicenseUpload" />
+			<menuItem id="menu_Item_ReloadResources"
+				zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul"
+				rightName='menuItem_Reload_Resources' />
+			<menuItem id="menu_Item_CacheMonitor" zulNavigation="/WEB-INF/pages/Cache/CacheNodesList.zul"
+				rightName="menuItem_Cache_CacheMonitor" />
+		</menu>
+	</menu>
+
 	<!-- TODO -->
+
 	<!-- <menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" 
 		rightName="menuItem_EOD_CustomerEOD"/> -->
 
 	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
 		rightName="menuItem_EOD_CustomerEOD" />
-
-	<menuItem id="menu_Item_ReloadResources"
-		zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul"
-		rightName='menuItem_Reload_Resources' />
 
 	<!-- <menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" 
 		rightName="menuItem_DataExtraction"/> -->
@@ -560,9 +604,6 @@
 		<menuItem id="menu_Item_StepPolicy"
 			zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"
 			rightName="menuItem_SolutionFactory_StepPolicy" />
-		<menuItem id="menu_Item_PFSParameter"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"
-			rightName="menuItem_SolutionFactory_PFSParameter" />
 
 		<!-- <menuItem id="menu_Item_Calendar" zulNavigation="/WEB-INF/pages/SolutionFactory/Calendar/HolidayCalendar.zul" 
 			rightName="menuItem_SolutionFactory_Calendar"/> -->
@@ -647,41 +688,6 @@
 		<menuItem id="menuItem_Dashboard_DashboardConfiguration"
 			zulNavigation="/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationList.zul"
 			rightName="menuItem_Dashboard_DashboardConfiguration" />
-	</menu>
-
-	<!-- Administration Menu Tree -->
-	<menu id="menu_Category_Administration">
-		<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/~./pages/LicenseUpload.zul"
-			rightName="menuItem_License_LicenseUpload" />
-		<menuItem id="menu_Item_SecurityUser"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USER"
-			rightName="menuItem_Administration_SecurityUser" />
-		<menuItem id="menu_Item_SecurityUserOperations"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USEROPR"
-			rightName="menuItem_Administration_SecurityUserOperations" />
-		<menuItem id="menu_Item_SecurityOperation"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityOperations/SecurityOperationList.zul"
-			rightName="menuItem_Administration_SecurityOperation" />
-		<menuItem id="menu_Item_SecurityOperationRoles"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityOperationRoles/SecurityOperationRolesList.zul"
-			rightName="menuItem_Administration_SecurityOperationRoles" />
-		<menuItem id="menu_Item_SecurityRole"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityRole/SecurityRoleList.zul"
-			rightName="menuItem_Administration_SecurityRole" />
-		<menuItem id="menu_Item_SecurityRoleGroups"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityRole/SecurityRoleList.zul?moduleType=ROLEGROUPS"
-			rightName="menuItem_Administration_SecurityRoleGroups" />
-		<menuItem id="menu_Item_SecurityGroup"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityGroup/SecurityGroupList.zul"
-			rightName="menuItem_Administration_SecurityGroup" />
-		<menuItem id="menu_Item_SecurityGroupRights"
-			zulNavigation="/WEB-INF/pages/Administration/SecurityGroup/SecurityGroupList.zul?moduleType=GRPRIGHT"
-			rightName="menuItem_Administration_SecurityGroupRights" />
-		<menuItem id="menu_Item_PasswordResetUser"
-			zulNavigation="/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordList.zul?moduleType=PSWDRST"
-			rightName="menuItem_Administration_UserpasswordReset" />
-		<menuItem id="menu_Item_CacheMonitor" zulNavigation="/WEB-INF/pages/Cache/CacheNodesList.zul"
-			rightName="menuItem_Cache_CacheMonitor" />
 	</menu>
 
 	<!-- Static Parameter Menu Tree -->
