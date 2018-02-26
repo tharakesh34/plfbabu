@@ -1,8 +1,8 @@
 <!DOCTYPE XMLRootMenu>
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
-	<!---Message Sending Dialog For User -->
 	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
 
+	<!-- TODO -->
 	<!-- <menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" 
 		rightName="menuItem_EOD_CustomerEOD"/> -->
 
