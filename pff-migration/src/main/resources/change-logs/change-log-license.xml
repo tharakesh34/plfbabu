@@ -120,4 +120,7 @@
 			UPDATE SeqSecUserOperations set SEQNO= (SELECT MAX(usrOprId) FROM SecUserOperations);
 		</sql>
 	</changeSet>
+	<changeSet id="6" author="murthy.y">
+		<modifyDataType tableName="app_log" columnName="created_on" newDataType="datetime" />
+	</changeSet>
 </databaseChangeLog>
