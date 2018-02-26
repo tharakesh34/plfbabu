@@ -120,7 +120,33 @@
 			UPDATE SeqSecUserOperations set SEQNO= (SELECT MAX(usrOprId) FROM SecUserOperations);
 		</sql>
 	</changeSet>
-	<changeSet id="6" author="murthy.y">
-		<modifyDataType tableName="app_log" columnName="created_on" newDataType="datetime" />
+	<changeSet id="7" author="murthy.y">
+		<dropTable tableName="app_log"/>
+	</changeSet>
+	<changeSet id="8" author="murthy.y">
+		<createTable tableName="app_log">
+			<column name="id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="varchar(6)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="value" type="varchar(500)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="created_on" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated_on" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>	
+	<changeSet id="9" author="murthy.y">
+		<addPrimaryKey tableName="app_log" columnNames="id, code" constraintName="pk_app_log"/>
+	</changeSet>
+	<changeSet id="10" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_license_file" referencedTableName="license_file" 
+		baseColumnNames="id" baseTableName="app_log" referencedColumnNames="id"/>
 	</changeSet>
 </databaseChangeLog>
