@@ -1517,5 +1517,7 @@
 	<menu id="menu_Category_PdfUplaods" rightName="menu_Category_SystemMaster">
 		<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
+		<menuItem id="menu_Item_PostingDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
+			rightName="menuItem_SystemMaster_AddressType" />
 	</menu>
 </ns2:XMLRootMenu>

@@ -85,6 +85,13 @@
 		class="com.pennanttech.niyogin.bre.service.BreServiceImpl" parent="niyoginService">
 		<property name="serviceUrl" value="${niyogin.bre.url}" />
 	</bean>	
+	
+		<!-- PostingsDownload -->
+	<bean id="postingDownloadService"
+		class="com.pennanttech.niyogin.postings.service.PostingDownloadServiceImpl" parent="niyoginService">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="serviceUrl" value="${niyogin.tally.url}" />
+	</bean>	
 
 	
 </beans>

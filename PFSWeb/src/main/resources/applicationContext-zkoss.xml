@@ -5011,4 +5011,9 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
 	</bean>
+	
+	<!-- Daily posting downloads -->
+	<bean id="postingsDownloadCtrl" class="com.pennanttech.interfacebajaj.PostingsDownloadCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
 </beans>
