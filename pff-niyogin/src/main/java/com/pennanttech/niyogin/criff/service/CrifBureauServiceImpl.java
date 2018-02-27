@@ -47,40 +47,40 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger														= Logger.getLogger(CrifBureauServiceImpl.class);
+	private static final Logger	logger													= Logger.getLogger(CrifBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName									= "crifBureauCommercial.properties";
-	private final String		consumerConfigFileName										= "crifBureauConsumer.properties";
+	private final String		commercialConfigFileName								= "crifBureauCommercial.properties";
+	private final String		consumerConfigFileName									= "crifBureauConsumer.properties";
 
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	//CRIFF Bureau
-	public static final String	REQ_SEND													= "REQSENDCRIF";
-	public static final String	STATUSCODE													= "STATUSCRIF";
-	public static final String	RSN_CODE													= "REASONCRIF";
-	public static final String	REMARKS														= "REMARKSCRIF";
+	//Experian Bureau
+	public static final String	REQ_SEND												= "REQSENDCRIF";
+	public static final String	STATUSCODE												= "STATUSCRIF";
+	public static final String	RSN_CODE												= "REASONCRIF";
+	public static final String	REMARKS													= "REMARKSCRIF";
 
-	public static final String	OLDEST_LOANDISBURSED_DT										= "OLDESTLOANDISBUR";
-	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT									= "NOPREVIOUSLOANS";
-	public static final String	IS_APP_SUBSTANDARD_IN_L6M									= "ISAPPLICANTSUBST";
-	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M								= "ISAPPLICANTREPOR";
-	public static final String	IS_APP_DOUBTFUL_IN_L6M										= "ISAPPLICANTDOUBT";
-	public static final String	IS_APP_MENTIONED_AS_SMA										= "ISAPPMENTSMA";
-	public static final String	IS_APP_90PLUS_DPD_IN_L6M									= "ISAPPLICANT90DP";
-	public static final String	LAST_UPDATE_DT_IN_BUREAU									= "LASTUPDATEDATE";
-	public static final String	NOT_ENOUGH_INFO												= "NOTENOUGHINFO";
-	public static final String	COMB_OF_PREVS_LOANS_TAKEN									= "AMBOFPRVSLOANS";
-	public static final String	PRODUCT_INDEX												= "PROINDEXDETAILSHT";
-	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS					= "SUMOFDISBURSEDAMT";
-	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS			= "RATIOOFOVRDUEDIS";
-	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M								= "NOOFBUSILOANS";
-	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS				= "MAXPEROFAMTREPAID";
-	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M		= "MAXIMUMDISBURSED";
-	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS				= "MINIMUMPEROFAMT";
-	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN							= "AMBOFPRVSLOANS";
-	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M							= "MNTHSIN30DPDINALAS";
-
+	public static final String	OLDEST_LOANDISBURSED_DT									= "OLDESTLOANDISBUR";
+	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT								= "NOPREVIOUSLOANS";
+	public static final String	IS_APP_SUBSTANDARD_IN_L6M								= "ISAPPLICANTSUBST";
+	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M							= "ISAPPLICANTREPOR";
+	public static final String	IS_APP_DOUBTFUL_IN_L6M									= "ISAPPLICANTDOUBT";
+	public static final String	IS_APP_MENTIONED_AS_SMA									= "ISAPPMENTSMA";
+	public static final String	IS_APP_90PLUS_DPD_IN_L6M								= "ISAPPLICANT90DP";
+	public static final String	LAST_UPDATE_DT_IN_BUREAU								= "LASTUPDATEDATE";
+	public static final String	NOT_ENOUGH_INFO											= "NOTENOUGHINFO";
+	public static final String	COMB_OF_PREVS_LOANS_TAKEN								= "AMBOFPRVSLOANS";
+	public static final String	PRODUCT_INDEX											= "PROINDEXDETAILSHT";
+	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS				= "SUMOFDISBURSEDAMT";
+	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS		= "RATIOOFOVRDUEDIS";
+	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M							= "NOOFBUSILOANS";
+	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS			= "MAXPEROFAMTREPAID";
+	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "MAXIMUMDISBURSED";
+	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS			= "MINIMUMPEROFAMT";
+	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN						= "AMBOFPRVSLOANS";
+	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "MNTHSIN30DPDINALAS";
+	
 	//for CoAPP
 	private final String		COAPP_REQ_SEND												= "CAREQSENDCRIF";
 	private final String		COAPP_STATUSCODE											= "CASTATUSCRIF";
@@ -106,8 +106,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private final String		COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN					= "CAAMBOFPRVSLOANS";
 	private final String		COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "CAMNTHSIN30DPDINALAS";
 
-	private Date				appDate														= getAppDate();
-	private String				pincode														= null;
+	private Date				appDate													= getAppDate();
+	private String				pincode													= null;
 
 	/**
 	 * Method for execute CRIFF Bureau service<br>

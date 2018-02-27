@@ -44,34 +44,34 @@ import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianBureauServiceImpl extends NiyoginService implements ExperianBureauService {
-	private static final Logger	logger							= Logger.getLogger(ExperianBureauServiceImpl.class);
+	private static final Logger	logger						= Logger.getLogger(ExperianBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName		= "experianBureauCommercial.properties";
-	private final String		consumerConfigFileName			= "experianBureauConsumer.properties";
+	private final String		commercialConfigFileName	= "experianBureauCommercial.properties";
+	private final String		consumerConfigFileName		= "experianBureauConsumer.properties";
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	private String				CONSUMER_CAIS_HIST				= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
-	private String				COMMERCIAL_BPAYGRID				= "$.data.COMMCRED.BPAYGRID";
+	private String				CONSUMER_CAIS_HIST			= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
+	private String				COMMERCIAL_BPAYGRID			= "$.data.COMMCRED.BPAYGRID";
 
 	//Experian Bureau
-	public static final String	REQ_SEND						= "REQSENDEXPBURU";
-	public static final String	STATUSCODE						= "STATUSEXPBURU";
-	public static final String	RSN_CODE						= "REASONEXPBURU";
-	public static final String	REMARKS							= "REMARKSEXPBURU";
+	public static final String	REQ_SEND					= "REQSENDEXPBURU";
+	public static final String	STATUSCODE					= "STATUSEXPBURU";
+	public static final String	RSN_CODE					= "REASONEXPBURU";
+	public static final String	REMARKS						= "REMARKSEXPBURU";
 
-	public static final String	NO_OF_ENQUIRES					= "NOOFENQUIRES";
-	public static final String	RESTRUCTURED_FLAG				= "RESTRUCTUREDLOAN";
-	public static final String	SUIT_FILED_FLAG					= "SUITFILED";
-	public static final String	WILLFUL_DEFAULTER_FLAG			= "WILLFULDEFAULTER";
-	public static final String	WRITE_OFF_FLAG					= "EXPBWRUTEOFF";
-	public static final String	SETTLED_FLAG_FLAG				= "EXPBSETTLED";
-	public static final String	NO_EMI_BOUNCES_IN3M				= "EMI3MONTHS";
-	public static final String	NO_EMI_BOUNCES_IN6M				= "EMI6MNTHS";
-	public static final String	STATUS							= "STATUS";
-	public static final String	WRITEOFF						= "25";
-	public static final String	SETTLE							= "23";
-	public static final String	PANNUMBER						= "PANNUMBER";
+	public static final String	NO_OF_ENQUIRES				= "NOOFENQUIRES";
+	public static final String	RESTRUCTURED_FLAG			= "RESTRUCTUREDLOAN";
+	public static final String	SUIT_FILED_FLAG				= "SUITFILED";
+	public static final String	WILLFUL_DEFAULTER_FLAG		= "WILLFULDEFAULTER";
+	public static final String	WRITE_OFF_FLAG				= "EXPBWRUTEOFF";
+	public static final String	SETTLED_FLAG_FLAG			= "EXPBSETTLED";
+	public static final String	NO_EMI_BOUNCES_IN3M			= "EMI3MONTHS";
+	public static final String	NO_EMI_BOUNCES_IN6M			= "EMI6MNTHS";
+	public static final String	STATUS						= "STATUS";
+	public static final String	WRITEOFF					= "25";
+	public static final String	SETTLE						= "23";
+	public static final String	PANNUMBER					= "PANNUMBER";
 
 	public final String			COAPP_REQ_SEND					= "COAPPREQSENDEXPBURU";
 	public final String			COAPP_STATUSCODE				= "COAPPSTATUSEXPBURU";
@@ -88,7 +88,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	public final String			COAPP_STATUS					= "COAPPSTATUS";
 	public final String			COAPP_PANNUMBER					= "COAPPPANNUMBER";
 
-	private Date				appDate							= getAppDate();
+	private Date				appDate						= getAppDate();
 
 	/**
 	 * Method for execute Experian Bureau service<br>
