@@ -85,7 +85,7 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			drop view customers_aeview cascade;
 		</sql>
 	</changeSet>
-	<changeSet id="4" author="Satyanarayana.G">
+ 	<changeSet id="4" author="Satyanarayana.G">
 <createView viewName="CUSTOMERS_AVIEW" replaceIfExists="true">
 SELECT t1.custid,
     t1.custcif,
@@ -1217,4 +1217,81 @@ UNION ALL
 	<changeSet id="18" author="Jayant" dbms="postgresql">
 		<modifyDataType tableName="POSTINGS_REQUESTS" columnName="narration" newDataType="citext"/>
 	</changeSet> -->
+	
+	<changeSet id="12" author="Durga Prasad D">
+		<sql>
+			drop table POSTINGS_REQUESTS;
+		</sql>
+	</changeSet>
+
+	<changeSet id="13" author="Durga Prasad D">
+		<createView viewName="PostingDownloads_View" replaceIfExists="true">
+			select  T1.PostDate date, T1.LinkedTranId number, T1.AccountType Acctype, T1.TranCode glcode, T1.TranDesc description,
+					T4.profitCenterCode profit_center, T1.DrOrCr debit_credit, T1.PostAmount amount, 
+					T1.TranDesc narration  from Postings T1 
+			INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference
+			INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType
+			INNER JOIN Profitcenters T4 ON T3.profitCenterId = T4.profitCenterId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="14" author="Durga Prasad D">
+		<createView viewName="PostingDownloads_View" replaceIfExists="true">
+			select  T1.PostDate, T1.LinkedTranId number, T1.AccountType Acctype, T1.TranCode glcode, T1.TranDesc description,
+					T4.profitCenterCode profit_center, T1.DrOrCr debit_credit, T1.PostAmount amount, 
+					T1.TranDesc narration  from Postings T1 
+			INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference
+			INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType
+			INNER JOIN Profitcenters T4 ON T3.profitCenterId = T4.profitCenterId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="15" author="Durga Prasad D">
+		<sql>
+			Insert into plf.data_engine_config values((select MAX(id)+1 from plf.data_engine_config), 'POSTINGS_DOWNLOAD', 
+                                          'Daily posting downloads', 3, 'Postings', null, null, null, 0, 0, null,'ROW:{"date","number","type","glcode","description","profit_center","debit_credit","amount","narration"}', '','A', 'C:\pennant\PFF', 'NIYOGIN_POSTINGS', '.csv', 0, CURRENT_TIMESTAMP,
+                                         '${ddMMYYYYHms}', null, 0, null, 1, 1);
+
+Insert into plf.data_engine_table values((select MAX(id)+1 from plf.data_engine_table), 
+                                         (select id from plf.data_engine_config where name ='POSTINGS_DOWNLOAD'),
+                                        'PostingDownloads_View', 0, 'ID', 'POSTDATE =:POSTDATE', null, null, null, null, null, null,0,0,0);
+
+
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'PostDate', 0, 'N', null, null, null, null, 0, null, null, null, 'dd-MM-yyyy', 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'number', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'Acctype', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'glcode', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'description', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'profit_center', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'debit_credit', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'amount', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+										 
+Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
+                                         (select id from plf.data_engine_table where name ='PostingDownloads_View'),
+                                         'narration', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
