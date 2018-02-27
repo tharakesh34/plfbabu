@@ -311,4 +311,9 @@
 			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
 		</createView>
 	</changeSet>
+	<changeSet id="7" author="Srikanth">
+	<comment>we are not used this field in rmtfinanceTypes table</comment>
+	<dropForeignKeyConstraint baseTableName="rmtfinancetypes"
+			constraintName="FK_RMTFINTYPES_FINAEBUYORINCEP" />
+	</changeSet>
 </databaseChangeLog>
