@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -46,40 +47,40 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger													= Logger.getLogger(CrifBureauServiceImpl.class);
+	private static final Logger	logger														= Logger.getLogger(CrifBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName								= "crifBureauCommercial.properties";
-	private final String		consumerConfigFileName									= "crifBureauConsumer.properties";
+	private final String		commercialConfigFileName									= "crifBureauCommercial.properties";
+	private final String		consumerConfigFileName										= "crifBureauConsumer.properties";
 
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	//Experian Bureau
-	public static final String	REQ_SEND												= "REQSENDCRIF";
-	public static final String	STATUSCODE												= "STATUSCRIF";
-	public static final String	RSN_CODE												= "REASONCRIF";
-	public static final String	REMARKS													= "REMARKSCRIF";
+	//CRIFF Bureau
+	public static final String	REQ_SEND													= "REQSENDCRIF";
+	public static final String	STATUSCODE													= "STATUSCRIF";
+	public static final String	RSN_CODE													= "REASONCRIF";
+	public static final String	REMARKS														= "REMARKSCRIF";
 
-	public static final String	OLDEST_LOANDISBURSED_DT									= "OLDESTLOANDISBUR";
-	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT								= "NOPREVIOUSLOANS";
-	public static final String	IS_APP_SUBSTANDARD_IN_L6M								= "ISAPPLICANTSUBST";
-	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M							= "ISAPPLICANTREPOR";
-	public static final String	IS_APP_DOUBTFUL_IN_L6M									= "ISAPPLICANTDOUBT";
-	public static final String	IS_APP_MENTIONED_AS_SMA									= "ISAPPMENTSMA";
-	public static final String	IS_APP_90PLUS_DPD_IN_L6M								= "ISAPPLICANT90DP";
-	public static final String	LAST_UPDATE_DT_IN_BUREAU								= "LASTUPDATEDATE";
-	public static final String	NOT_ENOUGH_INFO											= "NOTENOUGHINFO";
-	public static final String	COMB_OF_PREVS_LOANS_TAKEN								= "AMBOFPRVSLOANS";
-	public static final String	PRODUCT_INDEX											= "PROINDEXDETAILSHT";
-	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS				= "SUMOFDISBURSEDAMT";
-	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS		= "RATIOOFOVRDUEDIS";
-	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M							= "NOOFBUSILOANS";
-	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS			= "MAXPEROFAMTREPAID";
-	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "MAXIMUMDISBURSED";
-	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS			= "MINIMUMPEROFAMT";
-	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN						= "AMBOFPRVSLOANS";
-	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "MNTHSIN30DPDINALAS";
-	
+	public static final String	OLDEST_LOANDISBURSED_DT										= "OLDESTLOANDISBUR";
+	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT									= "NOPREVIOUSLOANS";
+	public static final String	IS_APP_SUBSTANDARD_IN_L6M									= "ISAPPLICANTSUBST";
+	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M								= "ISAPPLICANTREPOR";
+	public static final String	IS_APP_DOUBTFUL_IN_L6M										= "ISAPPLICANTDOUBT";
+	public static final String	IS_APP_MENTIONED_AS_SMA										= "ISAPPMENTSMA";
+	public static final String	IS_APP_90PLUS_DPD_IN_L6M									= "ISAPPLICANT90DP";
+	public static final String	LAST_UPDATE_DT_IN_BUREAU									= "LASTUPDATEDATE";
+	public static final String	NOT_ENOUGH_INFO												= "NOTENOUGHINFO";
+	public static final String	COMB_OF_PREVS_LOANS_TAKEN									= "AMBOFPRVSLOANS";
+	public static final String	PRODUCT_INDEX												= "PROINDEXDETAILSHT";
+	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS					= "SUMOFDISBURSEDAMT";
+	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS			= "RATIOOFOVRDUEDIS";
+	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M								= "NOOFBUSILOANS";
+	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS				= "MAXPEROFAMTREPAID";
+	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M		= "MAXIMUMDISBURSED";
+	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS				= "MINIMUMPEROFAMT";
+	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN							= "AMBOFPRVSLOANS";
+	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M							= "MNTHSIN30DPDINALAS";
+
 	//for CoAPP
 	private final String		COAPP_REQ_SEND												= "CAREQSENDCRIF";
 	private final String		COAPP_STATUSCODE											= "CASTATUSCRIF";
@@ -105,8 +106,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private final String		COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN					= "CAAMBOFPRVSLOANS";
 	private final String		COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "CAMNTHSIN30DPDINALAS";
 
-	private Date				appDate													= getAppDate();
-	private String				pincode													= null;
+	private Date				appDate														= getAppDate();
+	private String				pincode														= null;
 
 	/**
 	 * Method for execute CRIFF Bureau service<br>
@@ -156,7 +157,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	}
 
 	/**
-	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
+	 * Method for prepare the CoApplicants data as a String value by separating each CoApplicant data with delimiter.
 	 * 
 	 * @param coAppplicantsdata
 	 * @param appplicationdata
@@ -361,18 +362,16 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @throws ParseException
 	 */
 	private Map<String, Object> prepareCommercialExtendedMap(CriffCommercialResponse commercialResponse,
-			Map<String, Object> extendedFieldMap) throws ParseException {
+			Map<String, Object> extendedFieldMap) {
+		logger.debug(Literal.ENTERING);
 		List<TradeLine> tradlineList = commercialResponse.getTradelines();
 		if (tradlineList != null && !tradlineList.isEmpty()) {
 			BigDecimal overDueAmt = BigDecimal.ZERO;
 			BigDecimal disBursedAmt = BigDecimal.ZERO;
 			BigDecimal disbursAmtSixMnths = BigDecimal.ZERO;
 			int noBusLoanOpened = 0;
-			Collections.sort(tradlineList, new SanctionDareComparator());
-			//for oldest loan disbursed date
-			Date disbursedDate = tradlineList.get(tradlineList.size() - 1).getSanctionDate();
-			extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, disbursedDate);
-
+			Date disbursedDate = tradlineList.get(0).getSanctionDate();
+			Date lastUpdatedDate = tradlineList.get(0).getLastReportedDate();
 			List<String> paymentList = new ArrayList<>();
 			BigDecimal closedloanDisbursAmt = BigDecimal.ZERO;
 
@@ -395,6 +394,24 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 				disBursedAmt = disBursedAmt.add(tradeline.getDisbursedAmount());
 				overDueAmt = overDueAmt.add(tradeline.getOverdueAmount());
+
+				//for oldest loan disbursed date
+				if (disbursedDate != null && tradeline.getSanctionDate() != null) {
+					if (disbursedDate.compareTo(tradeline.getSanctionDate()) > 0) {
+						disbursedDate = tradeline.getSanctionDate();
+					}
+				} else {
+					disbursedDate = null;
+				}
+
+				//for last update date in Bureau
+				if (lastUpdatedDate != null && tradeline.getLastReportedDate() != null) {
+					if (lastUpdatedDate.compareTo(tradeline.getLastReportedDate()) < 0) {
+						lastUpdatedDate = tradeline.getLastReportedDate();
+					}
+				} else {
+					lastUpdatedDate = null;
+				}
 			}
 
 			//for Sum of disbursed Amount of all closed loans
@@ -402,7 +419,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//Ratio of Overdue and Disbursement amount for all loans
 			BigDecimal ratioOfOverdue = BigDecimal.ZERO;
-			if (overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
+			if (overDueAmt.compareTo(BigDecimal.ZERO) > 0 && disBursedAmt.compareTo(BigDecimal.ZERO) > 0) {
 				ratioOfOverdue = overDueAmt.divide(disBursedAmt);
 			}
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -414,13 +431,13 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			setPaymentHistoryDetails(extendedFieldMap, paymentList);
 
 			//for last update date in Bureau
-			Collections.sort(tradlineList, new LastReportedDateComparator());
-			Date lastUpdatedDate = tradlineList.get(0).getLastReportedDate();
-			//long months = getMonthsBetween(lastUpdatedDate, appDate);
 			extendedFieldMap.put(LAST_UPDATE_DT_IN_BUREAU, lastUpdatedDate);
+			//for oldest loan disbursed date
+			extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, disbursedDate);
 		}
 
 		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
+		logger.debug(Literal.LEAVING);
 		return extendedFieldMap;
 	}
 
@@ -553,18 +570,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * @throws ParseException
 	 */
 	private Map<String, Object> prepareConsumerExtendedMap(CRIFConsumerResponse consumerResponse,
-			Map<String, Object> extendedFieldMap) throws ParseException {
+			Map<String, Object> extendedFieldMap) {
 
 		List<LoanDetail> loanDetailsList = new ArrayList<LoanDetail>();
 		for (LoanDetailsData loanData : consumerResponse.getLoanDetailsData()) {
 			loanDetailsList.add(loanData.getLoanDetail());
 		}
-
-		Collections.sort(loanDetailsList, new DisbursedDateComparator());
-
-		//for oldest loan disbursed date
-		Date disbursedDate = loanDetailsList.get(loanDetailsList.size() - 1).getDisbursedDate();
-		extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, disbursedDate);
 
 		List<String> paymentList = new ArrayList<>(1);
 		BigDecimal maxPerOfAmtRepaidOnSL = BigDecimal.ZERO;
@@ -574,6 +585,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		BigDecimal disBursedAmt = BigDecimal.ZERO;
 		BigDecimal disbursAmtSixMnths = BigDecimal.ZERO;
 		int noBusLoanOpened = 0;
+		BigDecimal tempValueForMaxAmt=BigDecimal.ZERO;
+		BigDecimal tempValueForMinAmt=BigDecimal.ZERO;
 
 		//for minimum checking take first one and compare
 		BigDecimal minPerOfAmtRepaidOnSL = loanDetailsList.get(0).getDisbursedAmt();
@@ -581,6 +594,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		String[] oneAccTypes = { "Business Loan General", "Business Loan Priority Sector Small Business", "Overdraft",
 				"Consumer Loan", "Two-Wheeler Loan", "Personal Loan" };
 		StringBuffer sb = new StringBuffer();
+		Date oldDisbursedDate = loanDetailsList.get(0).getDisbursedDate();
+		Date lastUpdatedDate = loanDetailsList.get(0).getInfoAsOn();
 		for (LoanDetail loanDetail : loanDetailsList) {
 			//for no previous loans as of application date
 			if (!loanDetail.getAccountStatus().equalsIgnoreCase("Closed")) {
@@ -589,10 +604,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//for max amount repaid across all active secured_loans
 			if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
-				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal()))
-						.divide(loanDetail.getDisbursedAmt());
-				if (value.compareTo(maxPerOfAmtRepaidOnSL) > 0) {
-					maxPerOfAmtRepaidOnSL = value;
+				BigDecimal paidAmt = loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
+				if (loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO) > 0 && paidAmt.compareTo(BigDecimal.ZERO) > 0) {
+					tempValueForMaxAmt = paidAmt.divide(loanDetail.getDisbursedAmt());
+				}
+				if (tempValueForMaxAmt.compareTo(maxPerOfAmtRepaidOnSL) > 0) {
+					maxPerOfAmtRepaidOnSL = tempValueForMaxAmt;
 				}
 			}
 
@@ -611,10 +628,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//for min per of amt repaid across all unsecure loans
 			if (loanDetail.getSecurityDetails() != null && loanDetail.getSecurityDetails().isEmpty()) {
-				BigDecimal value = (loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal()))
-						.divide(loanDetail.getDisbursedAmt());
-				if (value.compareTo(minPerOfAmtRepaidOnSL) < 0) {
-					minPerOfAmtRepaidOnSL = value;
+				BigDecimal paidAmt=loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
+				if(loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO)>0&&paidAmt.compareTo(BigDecimal.ZERO)>0){
+					tempValueForMinAmt=paidAmt.divide(loanDetail.getDisbursedAmt());
+				}
+				if (tempValueForMinAmt.compareTo(minPerOfAmtRepaidOnSL) < 0) {
+					minPerOfAmtRepaidOnSL = tempValueForMinAmt;
 				}
 			}
 
@@ -633,6 +652,22 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			if (NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
 				disbursAmtSixMnths = disbursAmtSixMnths.add(loanDetail.getDisbursedAmt());
 				noBusLoanOpened++;
+			}
+			//for oldest loan disbursed date
+			if (oldDisbursedDate != null && loanDetail.getDisbursedDate() != null) {
+				if (oldDisbursedDate.compareTo(loanDetail.getDisbursedDate()) > 0) {
+					oldDisbursedDate = loanDetail.getDisbursedDate();
+				}
+			} else {
+				oldDisbursedDate = null;
+			}
+			//for last update date in Bureau
+			if (lastUpdatedDate != null && loanDetail.getInfoAsOn() != null) {
+				if (lastUpdatedDate.compareTo(loanDetail.getInfoAsOn()) < 0) {
+					lastUpdatedDate = loanDetail.getInfoAsOn();
+				}
+			} else {
+				lastUpdatedDate = null;
 			}
 		}
 
@@ -658,7 +693,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 		//Ratio of Overdue and Disbursement amount for all loans
 		BigDecimal ratioOfOverdue = BigDecimal.ZERO;
-		if (overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (overDueAmt.compareTo(BigDecimal.ZERO) > 0 && disBursedAmt.compareTo(BigDecimal.ZERO) > 0) {
 			ratioOfOverdue = overDueAmt.divide(disBursedAmt);
 		}
 		extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -667,50 +702,59 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		setPaymentHistoryDetails(extendedFieldMap, paymentList);
 
 		//for last update date in Bureau
-		Collections.sort(loanDetailsList, new InfoAsOnComparator());
-		Date lastUpdatedDate = loanDetailsList.get(0).getInfoAsOn();
-		long months = NiyoginUtility.getMonthsBetween(lastUpdatedDate, appDate);
-		if (months > 36) {
-			extendedFieldMap.put(LAST_UPDATE_DT_IN_BUREAU, lastUpdatedDate);
+		if (lastUpdatedDate != null) {
+			long months = NiyoginUtility.getMonthsBetween(lastUpdatedDate, appDate);
+			if (months > 36) {
+				extendedFieldMap.put(LAST_UPDATE_DT_IN_BUREAU, lastUpdatedDate);
+			}
 		}
+		//for oldest loan disbursed date
+		extendedFieldMap.put(OLDEST_LOANDISBURSED_DT, oldDisbursedDate);
 
 		extendedFieldMap.put(PRODUCT_INDEX, getPincodeGroupId(pincode));
 		return extendedFieldMap;
 	}
 
-	private void setPaymentHistoryDetails(Map<String, Object> extendedFieldMap, List<String> paymentList)
-			throws ParseException {
+	/**
+	 * Method for calculate paymentHistory details.
+	 * 
+	 * @param extendedFieldMap
+	 * @param paymentList
+	 */
+	private void setPaymentHistoryDetails(Map<String, Object> extendedFieldMap, List<String> paymentList) {
 		List<PaymentHistory> paymentHistories = preparePaymentHistory(paymentList);
 		Collections.sort(paymentHistories, new PaymentHistoryComparator());
 		int zeroCount = 0;
 		int crossCount = 0;
 		for (PaymentHistory paymentHistory : paymentHistories) {
-			if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 6) {
-				try {
-					if (Long.valueOf(paymentHistory.getDpd()) >= 90) {
-						extendedFieldMap.put(IS_APP_90PLUS_DPD_IN_L6M, true);
+			if (paymentHistory.getPaymentDate() != null) {
+				if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 6) {
+					try {
+						if (Long.valueOf(paymentHistory.getDpd()) >= 90) {
+							extendedFieldMap.put(IS_APP_90PLUS_DPD_IN_L6M, true);
+						}
+					} catch (Exception e) {
+						//In case of DPD = XXX
 					}
-				} catch (Exception e) {
-					//In case of DPD = XXX
-				}
-				if (StringUtils.equals(paymentHistory.getType(), "SUB")) {
-					extendedFieldMap.put(IS_APP_SUBSTANDARD_IN_L6M, true);
+					if (StringUtils.equals(paymentHistory.getType(), "SUB")) {
+						extendedFieldMap.put(IS_APP_SUBSTANDARD_IN_L6M, true);
+					}
+
+					if (StringUtils.equals(paymentHistory.getType(), "LOS")) {
+						extendedFieldMap.put(IS_APP_REPORTED_AS_LOSS_IN_L6M, true);
+
+					}
+					if (StringUtils.equals(paymentHistory.getType(), "DBT")) {
+						extendedFieldMap.put(IS_APP_DOUBTFUL_IN_L6M, true);
+					}
 				}
 
-				if (StringUtils.equals(paymentHistory.getType(), "LOS")) {
-					extendedFieldMap.put(IS_APP_REPORTED_AS_LOSS_IN_L6M, true);
-
-				}
-				if (StringUtils.equals(paymentHistory.getType(), "DBT")) {
-					extendedFieldMap.put(IS_APP_DOUBTFUL_IN_L6M, true);
-				}
-			}
-
-			if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 12) {
-				if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "000")) {
-					zeroCount++;
-				} else if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "XXX")) {
-					crossCount++;
+				if (NiyoginUtility.getMonthsBetween(getAppDate(), paymentHistory.getPaymentDate()) <= 12) {
+					if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "000")) {
+						zeroCount++;
+					} else if (StringUtils.equalsIgnoreCase(paymentHistory.getDpd(), "XXX")) {
+						crossCount++;
+					}
 				}
 			}
 
@@ -744,14 +788,27 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		}
 	}
 
-	private List<PaymentHistory> preparePaymentHistory(List<String> paymentList) throws ParseException {
+	/**
+	 * Method for prepare the paymentHistory Response Object.
+	 * 
+	 * @param paymentList
+	 * @return
+	 */
+	private List<PaymentHistory> preparePaymentHistory(List<String> paymentList) {
 		List<PaymentHistory> paymentHistoryList = new ArrayList<PaymentHistory>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd:MMM:yyyy");
 		for (String payment : paymentList) {
 			String[] block = payment.split("\\|");
 			for (String field : block) {
 				PaymentHistory paymentHistory = new PaymentHistory();
-				paymentHistory.setPaymentDate(dateFormat.parse("01:" + field.substring(0, field.indexOf(","))));
+				Date paymentDate = null;
+				try {
+					paymentDate = dateFormat.parse("01:" + field.substring(0, field.indexOf(",")));
+				} catch (ParseException e) {
+					//In case of invalid Date format
+					logger.error("Exception: ", e);
+				}
+				paymentHistory.setPaymentDate(paymentDate);
 				paymentHistory.setDpd(field.substring(field.indexOf(",") + 1, field.indexOf("/")));
 				paymentHistory.setType(field.substring(field.indexOf("/") + 1, field.length()));
 				paymentHistoryList.add(paymentHistory);
@@ -762,59 +819,14 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 	/**
 	 * 
-	 * This Comparator class is used to sort the LoanDetailsData based on their DisbursedDate H to L
-	 */
-	public class DisbursedDateComparator implements Comparator<LoanDetail> {
-		@Override
-		public int compare(LoanDetail arg0, LoanDetail arg1) {
-
-			return arg1.getDisbursedDate().compareTo(arg0.getDisbursedDate());
-		}
-	}
-
-	/**
-	 * 
-	 * This Comparator class is used to sort the LoanDetailsData based on their InfoAsOnDate H to L
-	 */
-	public class InfoAsOnComparator implements Comparator<LoanDetail> {
-		@Override
-		public int compare(LoanDetail arg0, LoanDetail arg1) {
-
-			return arg1.getInfoAsOn().compareTo(arg0.getInfoAsOn());
-		}
-	}
-
-	/**
-	 * 
-	 * This Comparator class is used to sort the LoanDetailsData based on their DisbursedDate H to L
+	 * This Comparator class is used to sort the PaymentHistory Data based on their PaymentDate, Sorts from Latest Date
+	 * to Oldest Date.
 	 */
 	public class PaymentHistoryComparator implements Comparator<PaymentHistory> {
 		@Override
 		public int compare(PaymentHistory arg0, PaymentHistory arg1) {
 
-			return arg1.getPaymentDate().compareTo(arg0.getPaymentDate());
-		}
-	}
-
-	/**
-	 * 
-	 * This Comparator class is used to sort the LoanDetailsData based on their DisbursedDate H to L
-	 */
-	public class SanctionDareComparator implements Comparator<TradeLine> {
-		@Override
-		public int compare(TradeLine arg0, TradeLine arg1) {
-			return arg1.getSanctionDate().compareTo(arg0.getSanctionDate());
-		}
-	}
-
-	/**
-	 * 
-	 * This Comparator class is used to sort the LoanDetailsData based on their InfoAsOnDate H to L
-	 */
-	public class LastReportedDateComparator implements Comparator<TradeLine> {
-		@Override
-		public int compare(TradeLine arg0, TradeLine arg1) {
-			return arg1.getLastReportedDate().compareTo(arg0.getLastReportedDate());
+			return ObjectUtils.compare(arg1.getPaymentDate(), arg0.getPaymentDate());
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.pennanttech.niyogin.experian.service;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -44,34 +44,34 @@ import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianBureauServiceImpl extends NiyoginService implements ExperianBureauService {
-	private static final Logger	logger						= Logger.getLogger(ExperianBureauServiceImpl.class);
+	private static final Logger	logger							= Logger.getLogger(ExperianBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName	= "experianBureauCommercial.properties";
-	private final String		consumerConfigFileName		= "experianBureauConsumer.properties";
+	private final String		commercialConfigFileName		= "experianBureauCommercial.properties";
+	private final String		consumerConfigFileName			= "experianBureauConsumer.properties";
 	private String				consumerUrl;
 	private String				commercialUrl;
 
-	private String				CONSUMER_CAIS_HIST			= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
-	private String				COMMERCIAL_BPAYGRID			= "$.data.COMMCRED.BPAYGRID";
+	private String				CONSUMER_CAIS_HIST				= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
+	private String				COMMERCIAL_BPAYGRID				= "$.data.COMMCRED.BPAYGRID";
 
 	//Experian Bureau
-	public static final String	REQ_SEND					= "REQSENDEXPBURU";
-	public static final String	STATUSCODE					= "STATUSEXPBURU";
-	public static final String	RSN_CODE					= "REASONEXPBURU";
-	public static final String	REMARKS						= "REMARKSEXPBURU";
+	public static final String	REQ_SEND						= "REQSENDEXPBURU";
+	public static final String	STATUSCODE						= "STATUSEXPBURU";
+	public static final String	RSN_CODE						= "REASONEXPBURU";
+	public static final String	REMARKS							= "REMARKSEXPBURU";
 
-	public static final String	NO_OF_ENQUIRES				= "NOOFENQUIRES";
-	public static final String	RESTRUCTURED_FLAG			= "RESTRUCTUREDLOAN";
-	public static final String	SUIT_FILED_FLAG				= "SUITFILED";
-	public static final String	WILLFUL_DEFAULTER_FLAG		= "WILLFULDEFAULTER";
-	public static final String	WRITE_OFF_FLAG				= "EXPBWRUTEOFF";
-	public static final String	SETTLED_FLAG_FLAG			= "EXPBSETTLED";
-	public static final String	NO_EMI_BOUNCES_IN3M			= "EMI3MONTHS";
-	public static final String	NO_EMI_BOUNCES_IN6M			= "EMI6MNTHS";
-	public static final String	STATUS						= "STATUS";
-	public static final String	WRITEOFF					= "25";
-	public static final String	SETTLE						= "23";
-	public static final String	PANNUMBER					= "PANNUMBER";
+	public static final String	NO_OF_ENQUIRES					= "NOOFENQUIRES";
+	public static final String	RESTRUCTURED_FLAG				= "RESTRUCTUREDLOAN";
+	public static final String	SUIT_FILED_FLAG					= "SUITFILED";
+	public static final String	WILLFUL_DEFAULTER_FLAG			= "WILLFULDEFAULTER";
+	public static final String	WRITE_OFF_FLAG					= "EXPBWRUTEOFF";
+	public static final String	SETTLED_FLAG_FLAG				= "EXPBSETTLED";
+	public static final String	NO_EMI_BOUNCES_IN3M				= "EMI3MONTHS";
+	public static final String	NO_EMI_BOUNCES_IN6M				= "EMI6MNTHS";
+	public static final String	STATUS							= "STATUS";
+	public static final String	WRITEOFF						= "25";
+	public static final String	SETTLE							= "23";
+	public static final String	PANNUMBER						= "PANNUMBER";
 
 	public final String			COAPP_REQ_SEND					= "COAPPREQSENDEXPBURU";
 	public final String			COAPP_STATUSCODE				= "COAPPSTATUSEXPBURU";
@@ -88,7 +88,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	public final String			COAPP_STATUS					= "COAPPSTATUS";
 	public final String			COAPP_PANNUMBER					= "COAPPPANNUMBER";
 
-	private Date				appDate						= getAppDate();
+	private Date				appDate							= getAppDate();
 
 	/**
 	 * Method for execute Experian Bureau service<br>
@@ -98,7 +98,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param auditHeader
 	 */
 	@Override
-	public AuditHeader executeExperianBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
+	public AuditHeader executeExperianBureau(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isBlank(consumerUrl) && StringUtils.isBlank(commercialUrl)) {
@@ -488,10 +488,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * 
 	 * @param extendedFieldMap
 	 * @return
-	 * @throws ParseException
 	 */
-	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse)
-			throws ParseException {
+	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse) {
 		logger.debug(Literal.ENTERING);
 
 		List<BillPayGrid> billPayGridList = null;
@@ -546,11 +544,9 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * 
 	 * @param extendedFieldMap
 	 * @return
-	 * @throws ParseException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse)
-			throws ParseException {
+	private Map<String, Object> prepareConsumerExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse) {
 		logger.debug(Literal.ENTERING);
 		List<CAISAccountHistory> caisAccountHistories = null;
 		String jsonEmiBounceResponse = Objects.toString(getValueFromResponse(jsonResponse, CONSUMER_CAIS_HIST), "");
@@ -605,16 +601,21 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * 
 	 * @param bpayGridResponseList
 	 * @return
-	 * @throws ParseExceptionString
 	 */
-	private List<BillPayGrid> prepareBillpayGridList(List<BpayGridResponse> bpayGridResponseList)
-			throws ParseException {
+	private List<BillPayGrid> prepareBillpayGridList(List<BpayGridResponse> bpayGridResponseList) {
 		logger.debug(Literal.ENTERING);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		List<BillPayGrid> billPayGridList = new ArrayList<BillPayGrid>(1);
 		for (BpayGridResponse bpayGridRes : bpayGridResponseList) {
 			BillPayGrid bpayGrid = new BillPayGrid();
-			bpayGrid.setBillPayDate(dateFormat.parse("01-" + bpayGridRes.getMonth() + "-" + bpayGridRes.getYear()));
+			Date billpayDate = null;
+			try {
+				billpayDate = dateFormat.parse("01-" + bpayGridRes.getMonth() + "-" + bpayGridRes.getYear());
+			} catch (Exception e) {
+				//In case of Invalid Date Format
+				logger.error("Exception: ", e);
+			}
+			bpayGrid.setBillPayDate(billpayDate);
 			bpayGrid.setAssetClassification(bpayGridRes.getAssetClassification());
 			billPayGridList.add(bpayGrid);
 		}
@@ -629,15 +630,16 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param billPayGridList
 	 * @param bpayGridResponses.size()
 	 * @return
-	 * @throws ParseException
 	 */
-	private boolean isCommercialEMIBouncesInLastMonths(List<BillPayGrid> billPayGridList, int numbOfMnths)
-			throws ParseException {
+	private boolean isCommercialEMIBouncesInLastMonths(List<BillPayGrid> billPayGridList, int numbOfMnths) {
 		logger.debug(Literal.ENTERING);
 		Collections.sort(billPayGridList, new BpayGridResponseComparator());
 
 		for (int i = 0; i < billPayGridList.size(); i++) {
 			BillPayGrid bpayGrid = billPayGridList.get(i);
+			if (bpayGrid.getBillPayDate() == null) {
+				continue;
+			}
 			if (NiyoginUtility.getMonthsBetween(appDate, bpayGrid.getBillPayDate()) <= numbOfMnths) {
 				String assestClasification = billPayGridList.get(i).getAssetClassification();
 				if (assestClasification.equals("Blank") || assestClasification.equals("?")
@@ -663,16 +665,23 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param caisAccountHistories
 	 * @param no
 	 * @return
-	 * @throws ParseException
 	 */
-	private boolean isConsumerEMIBouncesInLastMonths(List<CAISAccountHistory> caisAccountHistories, int numbOfMnths)
-			throws ParseException {
+	private boolean isConsumerEMIBouncesInLastMonths(List<CAISAccountHistory> caisAccountHistories, int numbOfMnths) {
 		logger.debug(Literal.ENTERING);
 		Collections.sort(caisAccountHistories, new CAISAccountHistoryComparator());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		for (int i = 0; i < caisAccountHistories.size(); i++) {
 			CAISAccountHistory casisHistory = caisAccountHistories.get(i);
-			Date bpayDate = dateFormat.parse("01-" + casisHistory.getMonth() + "-" + casisHistory.getYear());
+			Date bpayDate=null;
+			try {
+				bpayDate = dateFormat.parse("01-" + casisHistory.getMonth() + "-" + casisHistory.getYear());
+			} catch (Exception e) {
+				//In case of Invalid Year or Month
+				logger.error("Exception: ", e);
+			}
+			if (bpayDate != null) {
+				continue;
+			}
 			if (NiyoginUtility.getMonthsBetween(appDate, bpayDate) <= numbOfMnths) {
 				String assestClasification = caisAccountHistories.get(i).getAssetClassification();
 				if (assestClasification.equals("Blank") || assestClasification.equals("?")
@@ -736,12 +745,13 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	
 	/**
 	 * 
-	 * This Comparator class is used to sort the BillPayGrid based on their bpayDate H to L
+	 * This Comparator class is used to sort the BillPayGrid based on their BillPayDate, Sorts from Latest date to
+	 * Oldest date.
 	 */
 	public class BpayGridResponseComparator implements Comparator<BillPayGrid> {
 		@Override
 		public int compare(BillPayGrid arg0, BillPayGrid arg1) {
-			return arg1.getBillPayDate().compareTo(arg0.getBillPayDate());
+			return ObjectUtils.compare(arg1.getBillPayDate(), arg0.getBillPayDate());
 		}
 
 	}

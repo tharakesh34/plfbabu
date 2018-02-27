@@ -6,5 +6,5 @@ import com.pennant.backend.model.mail.MailTemplate;
 
 public interface ShortMessageService {
 
-	public void sendMessage(List<MailTemplate> smsList ,String finReference);
+	void sendMessage(List<MailTemplate> smsList, String finReference);
 }

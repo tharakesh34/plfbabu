@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
@@ -30,8 +31,11 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldDetailsValidation {
+
+	private static final Logger		logger	= Logger.getLogger(ExtendedFieldDetailsValidation.class);
 
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
 	
@@ -144,6 +148,7 @@ public class ExtendedFieldDetailsValidation {
 	}
 
 	public List<ErrorDetail> validateExtendedFieldData(ExtendedFieldDetail exdConfigDetail, ExtendedFieldData exdFieldData) {
+		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		String fieldName = exdFieldData.getFieldName();
 		Object fieldValue = exdFieldData.getFieldValue();
@@ -311,31 +316,50 @@ public class ExtendedFieldDetailsValidation {
 			exdFieldData.setFieldValue(Objects.toString(fieldValue,"").substring(0, 8));
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
-			if(Objects.toString(fieldValue,"").length() >  exdConfigDetail.getFieldLength()) {
+			double reqValue = 0;
+			String decValue = Objects.toString(fieldValue, "");
+			if (decValue.contains(".")) {
+				String bfrPression = decValue.substring(0, decValue.indexOf("."));
+				String aftrPression = decValue.substring(decValue.indexOf(".") + 1, decValue.length());
+				//checking the before and after pression values
+				if (bfrPression.length() > exdConfigDetail.getFieldLength()
+						|| aftrPression.length() > exdConfigDetail.getFieldPrec()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = fieldName;
+					valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()) + ","
+							+ exdConfigDetail.getFieldPrec();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
+					return errors;
+				}
+			} else if (decValue.length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()) + "," + exdConfigDetail.getFieldPrec();
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 				return errors;
 			}
-			if(StringUtils.contains(Objects.toString(fieldValue,""), ".")){
-				String[] valueParm = new String[1];
+			try {
+				reqValue = Double.parseDouble(decValue);
+			} catch (Exception e) {
+				logger.error("Exception : ", e);
+				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
+				valueParm[0] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 				return errors;
 			}
-			exdFieldData.setFieldValue(Math.round(
-					(Integer.valueOf(Objects.toString(fieldValue,"")) / Math.pow(10, exdConfigDetail.getFieldPrec()))));
 			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
-				if (Integer.valueOf(Objects.toString(fieldValue,"")) > exdConfigDetail.getFieldMaxValue()
-						|| Integer.valueOf(Objects.toString(fieldValue,"")) < exdConfigDetail.getFieldMinValue()) {
+				if (Math.round(reqValue) > exdConfigDetail.getFieldMaxValue()
+						|| Math.round(reqValue) < exdConfigDetail.getFieldMinValue()) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm)));
+					return errors;
 				}
 			}
+			exdFieldData.setFieldValue(reqValue);
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
 			Boolean value;
@@ -571,6 +595,7 @@ public class ExtendedFieldDetailsValidation {
 		default:
 			break;
 		}
+		logger.debug(Literal.LEAVING);
 		return errors;
 	}
 
