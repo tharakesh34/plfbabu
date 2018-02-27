@@ -1292,6 +1292,12 @@ Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine
 Insert into plf.data_engine_column values((select MAX(id)+1 from plf.data_engine_column),
                                          (select id from plf.data_engine_table where name ='PostingDownloads_View'),
                                          'narration', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+	</sql>
+	</changeSet>
+
+	<changeSet id="16" author="Durga Prasad D">
+		<sql>
+			update plf.data_engine_config set uploadPath ='/opt/pennant/PFF/BASE/voucherdetails/request' where name ='POSTINGS_DOWNLOAD';
 		</sql>
 	</changeSet>
 </databaseChangeLog>
