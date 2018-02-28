@@ -49,6 +49,43 @@
 		</menu>
 	</menu>
 
+	<!-- Masters -->
+	<menu id="menu_Category_Masters">
+		<menu id="menu_Category_DemographicMasters">
+			<menuItem id="menu_Item_Country"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Country/CountryList.zul"
+				rightName="menuItem_SystemMaster_Country" />
+			<menuItem id="menu_Item_Province"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Province/ProvinceList.zul"
+				rightName="menuItem_SystemMaster_Province" />
+			<menuItem id="menu_Item_City" zulNavigation="/WEB-INF/pages/SystemMaster/City/CityList.zul"
+				rightName="menuItem_SystemMaster_City" />
+			<menuItem id="menu_Item_Locality"
+				zulNavigation="/WEB-INF/pages/masters/Locality/LocalityList.zul"
+				rightName="menuItem_masters_Locality" />
+			<menuItem id="menu_Item_PinCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"
+				rightName="menuItem_master_PinCode" />
+		</menu>
+		<menu id="menu_Category_EntityMasters">
+			<menuItem id="menu_Item_Entity"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/Entity/EntityList.zul"
+				rightName="menuItem_applicationmaster_Entity" />
+			<menuItem id="menu_Item_DivisionDetail"
+				zulNavigation="/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailList.zul"
+				rightName="menuItem_SystemMaster_DivisionDetail" />
+			<menuItem id="menu_Item_Branch"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/Branch/BranchList.zul"
+				rightName="menuItem_ApplicationMaster_Branch" />
+			<menuItem id="menu_Item_Department"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Department/DepartmentList.zul"
+				rightName="menuItem_SystemMaster_Department" />
+			<menuItem id="menu_Item_Designation"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
+				rightName="menuItem_SystemMaster_Designation" />
+		</menu>
+	</menu>
+
 	<!-- TODO -->
 
 	<!-- <menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" 
@@ -87,22 +124,8 @@
 			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderCompanyEnquiry"/> -->
 		<!-- <menuItem id="menu_Item_BlackListReasonCode" zulNavigation="/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeList.zul" 
 			rightName="menuItem_SystemMaster_BlackListReasonCode"/> -->
-		<menuItem id="menu_Item_City" zulNavigation="/WEB-INF/pages/SystemMaster/City/CityList.zul"
-			rightName="menuItem_SystemMaster_City" />
-		<menuItem id="menu_Item_Country"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Country/CountryList.zul"
-			rightName="menuItem_SystemMaster_Country" />
-		<menuItem id="menu_Item_Department"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Department/DepartmentList.zul"
-			rightName="menuItem_SystemMaster_Department" />
-		<menuItem id="menu_Item_Designation"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
-			rightName="menuItem_SystemMaster_Designation" />
 		<!-- <menuItem id="menu_Item_DispatchMode" zulNavigation="/WEB-INF/pages/SystemMaster/DispatchMode/DispatchModeList.zul" 
 			rightName="menuItem_SystemMaster_DispatchMode"/> -->
-		<menuItem id="menu_Item_DivisionDetail"
-			zulNavigation="/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailList.zul"
-			rightName="menuItem_SystemMaster_DivisionDetail" />
 		<menuItem id="menu_Item_DocumentType"
 			zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
 			rightName="menuItem_SystemMaster_DocumentType" />
@@ -136,9 +159,6 @@
 		<menuItem id="menu_Item_Industry"
 			zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"
 			rightName="menuItem_SystemMaster_Industry" />
-		<menuItem id="menu_Item_Locality"
-			zulNavigation="/WEB-INF/pages/masters/Locality/LocalityList.zul"
-			rightName="menuItem_masters_Locality" />
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
@@ -163,9 +183,6 @@
 			rightName="menuItem_SystemMaster_PRelationCode"/> -->
 		<!-- <menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
 			rightName="menuItem_SystemMaster_Profession"/> -->
-		<menuItem id="menu_Item_Province"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Province/ProvinceList.zul"
-			rightName="menuItem_SystemMaster_Province" />
 		<menuItem id="menu_Item_Salutation"
 			zulNavigation="/WEB-INF/pages/SystemMaster/Salutation/SalutationList.zul"
 			rightName="menuItem_SystemMaster_Salutation" />
@@ -217,9 +234,6 @@
 		<menuItem id="menu_Item_BlacklistCustomer"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerList.zul"
 			rightName="menuItem_ApplicationMaster_BlacklistCustomer" />
-		<menuItem id="menu_Item_Branch"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Branch/BranchList.zul"
-			rightName="menuItem_ApplicationMaster_Branch" />
 		<!-- <menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul" 
 			rightName="menuItem_ApplicationMaster_CommodityBrokerDetail"/> <menuItem 
 			id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul" 
@@ -229,9 +243,6 @@
 		<menuItem id="menu_Item_Currency"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"
 			rightName="menuItem_ApplicationMaster_Currency" />
-		<menuItem id="menu_Item_Entity"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Entity/EntityList.zul"
-			rightName="menuItem_applicationmaster_Entity" />
 		<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul"
 			rightName="menuItem_ErrorDetail_ErrorDetail" />
 		<menuItem id="menu_Item_FeeType" zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"
@@ -260,9 +271,6 @@
 			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
 			rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
-		<menuItem id="menu_Item_PinCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"
-			rightName="menuItem_master_PinCode" />
 		<menuItem id="menu_Item_RejectDetail"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"
 			rightName="menuItem_ApplicationMaster_RejectDetail" />
@@ -1517,7 +1525,8 @@
 	<menu id="menu_Category_PdfUplaods" rightName="menu_Category_SystemMaster">
 		<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
-		<menuItem id="menu_Item_PostingDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
+		<menuItem id="menu_Item_PostingDownloads"
+			zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
 	</menu>
 </ns2:XMLRootMenu>
