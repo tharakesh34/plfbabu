@@ -344,7 +344,7 @@ public class ExtendedFieldDetailsValidation {
 				logger.error("Exception : ", e);
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
-				valueParm[0] = "number";
+				valueParm[1] = "number";
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
 				return errors;
 			}
