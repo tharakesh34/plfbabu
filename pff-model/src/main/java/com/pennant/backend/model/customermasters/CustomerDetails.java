@@ -106,6 +106,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private Customer customer;
 
 	private CustEmployeeDetail custEmployeeDetail;
+	private CustomerDocument customerDocument;
 	
 	@XmlElement(name="extendedDetail")
 	private ExtendedFieldHeader	extendedFieldHeader;
@@ -558,5 +559,13 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setCollateraldetailList(List<CollateralSetup> collateraldetailList) {
 		this.collateraldetailList = collateraldetailList;
+	}
+
+	public CustomerDocument getCustomerDocument() {
+		return customerDocument;
+	}
+
+	public void setCustomerDocument(CustomerDocument customerDocument) {
+		this.customerDocument = customerDocument;
 	}
 }

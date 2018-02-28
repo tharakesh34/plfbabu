@@ -239,6 +239,8 @@ public class PennantConstants {
 	public static final String DOC_TYPE_DOC = "DOC";
 	public static final String DOC_TYPE_DOCX = "DOCX";
 	
+	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
+	
 
 	public static final String DOC_TYPE_PDF_EXT = ".pdf";
 	public static final String DOC_TYPE_WORD_EXT = ".docx";

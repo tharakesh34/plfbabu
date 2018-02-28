@@ -1042,7 +1042,7 @@
 
 	<menu id="menu_Category_CustomerEnquiry">
 		<menuItem id="menu_Item_CustomersEnquiry"
-			zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul?enqiryModule=X"
+			zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul?enqiryModule=360"
 			rightName="menuItem_CustomerEnquiry_CustomersEnquiry" />
 		<menuItem id="menu_Item_CustomerDetailEnquiry"
 			zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul?enqiryModule=Y"

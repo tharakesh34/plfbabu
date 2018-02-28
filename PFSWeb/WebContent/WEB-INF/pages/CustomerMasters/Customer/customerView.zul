@@ -128,7 +128,7 @@
 												style="background: white; border: 1px solid #d7d7d7;">
 												<hlayout>
 													<image
-														id="customerPic" />
+														id="customerPic" sclass="circular--square" />
 													<vlayout
 														style="padding-top:17px">
 														<label
@@ -169,7 +169,7 @@
 														<hlayout
 															style="padding-left :15px; padding-top: 8px;">
 															<image
-																id="customerPic1" />
+																id="customerPic1" sclass="circular--square" />
 															<vlayout>
 																<label
 																	id="custShrtName" sclass="customernamee" />
@@ -352,7 +352,7 @@
 														<hlayout
 															style="padding-left :15px; padding-top: 8px;">
 															<image
-																id="corpCustomerPic1" />
+																id="corpCustomerPic1" sclass="circular--square" />
 															<vlayout>
 																<label
 																	id="corpCustShrtName" sclass="customernamee" />
@@ -1225,7 +1225,7 @@
 												style="background: white; border: 1px solid #d7d7d7;">
 												<hlayout>
 													<image
-														id="customerPic2" />
+														id="customerPic2" sclass="circular--square" />
 													<vlayout
 														style="padding-top:17px">
 														<label
@@ -1630,7 +1630,7 @@
     border: 1px solid #d7d7d7;">
 												<hlayout>
 													<image
-														id="customerPic3" />
+														id="customerPic3" sclass="circular--square" />
 													<vlayout
 														style="padding-top:17px">
 														<label
@@ -1754,7 +1754,7 @@
 												style="background: white; border-top: 1px solid #d7d7d7;  border-bottom: 1px solid #d7d7d7;  border-right: 2px solid #d7d7d7;">
 												<hlayout>
 													<image
-														id="customerPic4" />
+														id="customerPic4" sclass="circular--square" />
 													<vlayout
 														style="padding-top:17px">
 														<label
@@ -1891,7 +1891,7 @@
 												style="background: white; border: 1px solid #d7d7d7;">
 												<hlayout>
 													<image
-														id="customerPic5" />
+														id="customerPic5" sclass="circular--square" />
 													<vlayout
 														style="padding-top:17px">
 														<label

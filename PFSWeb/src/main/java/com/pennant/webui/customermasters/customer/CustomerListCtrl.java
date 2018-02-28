@@ -143,11 +143,14 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		setItemRender(new CustomerListModelItemRenderer());
 
 		// Register buttons and fields.
-		if (enqiryModule) {
+		if (enqiryModule || StringUtils.equals("360", module)) {
 			button_CustomerList_NewCustomer.setVisible(false);
 		} else {
 			registerButton(button_CustomerList_NewCustomer,"button_CustomerList_NewCustomer",true);
 		}
+		/* if(StringUtils.equals("X", module)){
+			 button_CustomerList_NewCustomer.setVisible(false);
+		}*/
 		registerButton(button_CustomerList_CustomerSearchDialog);
 
 		registerField("custId");
@@ -260,11 +263,12 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerListCtrl", this);
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
+		arg.put("module", module);
 
 		try {
 			if (enqiryModule) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
-			} else if(StringUtils.equals("X", module)){
+			} else if(StringUtils.equals("360", module)){
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
 			}else{
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);

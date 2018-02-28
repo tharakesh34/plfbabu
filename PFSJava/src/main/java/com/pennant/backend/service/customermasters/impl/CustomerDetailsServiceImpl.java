@@ -587,7 +587,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				vasRecordingList = new ArrayList<VASRecording>();
 			}
 			vasRecordingList
-					.addAll(getvASRecordingDAO().getVASRecordingsByLinkReff(financemain.getFinReference(), type));
+					.addAll(getvASRecordingDAO().getVASRecordingsByLinkRef(financemain.getFinReference(), type));
 			customerDetails.setVasRecordingList(vasRecordingList);
 		}
     

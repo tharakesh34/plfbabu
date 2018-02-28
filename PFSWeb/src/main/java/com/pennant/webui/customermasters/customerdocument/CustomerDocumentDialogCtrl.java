@@ -1209,6 +1209,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocIsVerified.setDisabled(true);
 			this.custDocVerifiedBy.setReadonly(true);
 			this.custDocIsAcrive.setDisabled(true);
+			this.btnSearchPRCustid.setDisabled(true);
+			this.btnEdit.setVisible(false);
 		}
 	}
 

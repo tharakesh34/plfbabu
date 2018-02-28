@@ -69,6 +69,4 @@ public interface VASRecordingDAO {
 	void deleteByPrimaryLinkRef(String primaryLinkRef, String type);
 
 	List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type);
-
-	List<VASRecording> getVASRecordingsByLinkReff(String primaryLinkRef, String type);
 }

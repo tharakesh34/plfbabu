@@ -58,49 +58,49 @@
 				<div id="basicDetailDiv" align="center"
 					style="background: #f3f3f3;overflow: auto; border: none;">
 					<space />
-						<grid width="75%" style="border:0px;">
-							<columns>
-								<column width="20%" />
-								<column width="62%" />
-								<column width="8%" />
-							</columns>
-							<rows>
-								<row style="background: none;">
-									<hlayout>
-										<image
-											src="images/icons/customerenquiry/profilepic.png" />
-										<div sclass="profile-div">
-											<label
-												value="${c:l('label_CustomerDialog_Profile.value')}"
-												sclass="profileheadsection" />
-										</div>
-									</hlayout>
-									<label
-										value="${c:l('label_CustomerDialog_Status.value')}"
-										sclass="profileheadsection" />
-
-									<label id="recordStatus1"
-										style="padding-right: 25px;text-align:right"
-										sclass="profileheadsection" visible="true" />
-								</row>
-								<row height="70px"
-									style="background: white; border: 1px solid #d7d7d7;">
-									<hlayout>
-										<image id="customerPic" />
-										<vlayout
-											style="padding-top:17px">
-											<label id="custShrtName2"
-												sclass="customername" />
-										</vlayout>
-									</hlayout>
-									<progressmeter id="basicProgress"
-										sclass="progressmeter" width="100%" />
+					<grid width="75%" style="border:0px;">
+						<columns>
+							<column width="20%" />
+							<column width="62%" />
+							<column width="8%" />
+						</columns>
+						<rows>
+							<row style="background: none;">
+								<hlayout>
 									<image
-										style="align: right; padding-left: 25px;"
-										src="images/icons/customerenquiry/tickmark.png" />
-								</row>
-							</rows>
-						</grid>
+										src="images/icons/customerenquiry/profilepic.png" />
+									<div sclass="profile-div">
+										<label
+											value="${c:l('label_CustomerDialog_Profile.value')}"
+											sclass="profileheadsection" />
+									</div>
+								</hlayout>
+								<label
+									value="${c:l('label_CustomerDialog_Status.value')}"
+									sclass="profileheadsection" />
+
+								<label id="recordStatus1"
+									style="padding-right: 25px;text-align:right"
+									sclass="profileheadsection" visible="true" />
+							</row>
+							<row height="70px"
+								style="background: white; border: 1px solid #d7d7d7;">
+								<hlayout>
+									<image id="customerPic"
+										sclass="circular--square" />
+									<vlayout style="padding-top:17px">
+										<label id="custShrtName2"
+											sclass="customername" />
+									</vlayout>
+								</hlayout>
+								<progressmeter id="basicProgress"
+									sclass="progressmeter" width="100%" />
+								<image
+									style="align: right; padding-left: 25px;"
+									src="images/icons/customerenquiry/tickmark.png" />
+							</row>
+						</rows>
+					</grid>
 					<space />
 					<box
 						style="padding-left: 80px; padding-right: 80px;">
@@ -124,8 +124,9 @@
 								style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
 							</toolbar>
 						</hbox>
-						<listbox id="listBoxCustomerLoanDetails" mold="paging" pageSize="10"
-							span="true" sizedByContent="true" fixedLayout="true"
+						<listbox id="listBoxCustomerLoanDetails"
+							mold="paging" pageSize="10" span="true" sizedByContent="true"
+							fixedLayout="true"
 							style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 							width="100%" multiple="false"
@@ -189,8 +190,9 @@
 								style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
 							</toolbar>
 						</hbox>
-						<listbox id="listBoxCustomerCollateralDetails" mold="paging" pageSize="10"
-							span="true" sizedByContent="true" fixedLayout="true"
+						<listbox id="listBoxCustomerCollateralDetails"
+							mold="paging" pageSize="10" span="true" sizedByContent="true"
+							fixedLayout="true"
 							style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 							width="100%" multiple="false"
@@ -255,8 +257,8 @@
 								style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
 							</toolbar>
 						</hbox>
-						<listbox id="listBoxCustomerVasDetails" mold="paging" pageSize="10"
-							span="true" sizedByContent="true"
+						<listbox id="listBoxCustomerVasDetails"
+							mold="paging" pageSize="10" span="true" sizedByContent="true"
 							style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
 														box-shadow: 1px 1px 1px 1px #e6e6e6;"
 							width="100%" multiple="false"
@@ -311,8 +313,9 @@
 								style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
 							</toolbar>
 						</hbox>
-						<listbox id="listBoxCustomerCommitmentDetails" mold="paging" pageSize="10"
-							span="true" sizedByContent="true" fixedLayout="true"
+						<listbox id="listBoxCustomerCommitmentDetails"
+							mold="paging" pageSize="10" span="true" sizedByContent="true"
+							fixedLayout="true"
 							style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 							width="100%" multiple="false"
@@ -372,8 +375,9 @@
 								style="padding-right: 75px; padding-top: 15px; background: #f3f3f3;">
 							</toolbar>
 						</hbox>
-						<listbox id="listBoxCustomerLimitDetails" mold="paging" pageSize="10"
-							span="true" sizedByContent="true" fixedLayout="true"
+						<listbox id="listBoxCustomerLimitDetails"
+							mold="paging" pageSize="10" span="true" sizedByContent="true"
+							fixedLayout="true"
 							style="background: #F3F3F3; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 							width="100%" multiple="false"

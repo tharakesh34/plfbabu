@@ -1,5 +1,8 @@
 package com.pennant.webui.customermasters.customer;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -8,9 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -36,10 +42,13 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -102,6 +111,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private ExternalDocumentManager externalDocumentManager = null;
 
 	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private boolean isCustPhotoAvail = false;
 
 	/**
 	 * default constructor.<br>
@@ -200,9 +210,10 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * @param aCustomer
 	 *            Customer
+	 * @throws IOException 
 	 */
 
-	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
+	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) throws IOException {
 		logger.debug("Entering");
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
@@ -214,13 +225,43 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		recordStatus1.setValue(aCustomer.getRecordStatus() + s);
 		basicProgress.setValue((i * 100) / 15);
 		basicProgress.setStyle("image-height: 5px;");
+		
+		AMedia amedia = null;
+		for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
+			if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
+				if(customerDocument.getCustDocImage() == null) {
+					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
+						customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+					} 
+				}
+				amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
+				customerPic.setContent(img);
+				isCustPhotoAvail = true;
+				break;
+			}
+		}
+
+		if(!isCustPhotoAvail){
+			if (aCustomer.getLovDescCustGenderCodeName() != null
+					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
+					customerPic.setSrc("images/icons/customerenquiry/male.png");
+				}
+				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+					customerPic.setSrc("images/icons/customerenquiry/female.png");
+				}
+			}
+		}
+		
+		
 		if (aCustomer.getLovDescCustGenderCodeName() != null
 				&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
 			if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-				customerPic.setSrc("images/icons/customerenquiry/malepic_56_56.png");
+				customerPic.setSrc("images/icons/customerenquiry/male.png");
 			}
 				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-					customerPic.setSrc("images/icons/customerenquiry/customerimage.png");
+					customerPic.setSrc("images/icons/customerenquiry/female.png");
 				}
 		}
 		doFillCustomerLoanDetails(aCustomerDetails.getFinanceMainList());

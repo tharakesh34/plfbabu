@@ -1,5 +1,8 @@
 package com.pennant.webui.customermasters.customer;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -8,9 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -303,6 +309,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	protected Grid grid_BankDetails;
 
 	private boolean isRetailCustomer = false;
+	private boolean isCustPhotoAvail = false;
 
 	protected Tabpanel directorDetails;
 	// Customer Directory details List
@@ -325,6 +332,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerBankInfo> CustomerBankInfoList;
 	private ExternalDocumentManager externalDocumentManager = null;
 	private Object financeMainDialogCtrl;
+	private String module = "";
 
 	/**
 	 * default constructor.<br>
@@ -371,9 +379,14 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				customerDetails.setBefImage(befImage);
 			}
 
-			if (enqiryModule) {
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
+			}
+			
+			if (module.equals("360")) {
 				moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
+			
 			Customer customer = customerDetails.getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
 			old_ccyFormatter = ccyFormatter;
@@ -397,6 +410,10 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			// or delete customer here.
 			if (arguments.containsKey("customerListCtrl")) {
 				customerListCtrl = (CustomerListCtrl) arguments.get("customerListCtrl");
+			}
+			
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
 			}
 
 			if (StringUtils.isNotEmpty(customerDetails.getCustomer().getCustCtgCode()) && StringUtils
@@ -455,9 +472,10 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * @param aCustomer
 	 *            Customer
+	 * @throws IOException 
 	 */
 
-	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
+	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) throws IOException {
 		logger.debug("Entering");
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
@@ -720,25 +738,49 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			bankingProgress.setValue((i * 100) / 20);
 			bankingProgress.setStyle("image-height: 5px;");
 
-			if (aCustomer.getLovDescCustGenderCodeName() != null
-					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
-				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-					customerPic.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic1.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic2.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic3.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic4.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic5.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-				}
-				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-					customerPic.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic1.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic2.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic3.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic4.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic5.setSrc("images/icons/customerenquiry/customerimage.png");
+			AMedia amedia = null;
+			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
+				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
+					if(customerDocument.getCustDocImage() == null) {
+						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
+							customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						} 
+					}
+					amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
+					customerPic.setContent(img);
+					customerPic1.setContent(img);
+					customerPic2.setContent(img);
+					customerPic3.setContent(img);
+					customerPic4.setContent(img);
+					customerPic5.setContent(img);
+					isCustPhotoAvail = true;
+					break;
 				}
 			}
+
+			if(!isCustPhotoAvail){
+				if (aCustomer.getLovDescCustGenderCodeName() != null
+						&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
+						customerPic.setSrc("images/icons/customerenquiry/male.png");
+						customerPic1.setSrc("images/icons/customerenquiry/male.png");
+						customerPic2.setSrc("images/icons/customerenquiry/male.png");
+						customerPic3.setSrc("images/icons/customerenquiry/male.png");
+						customerPic4.setSrc("images/icons/customerenquiry/male.png");
+						customerPic5.setSrc("images/icons/customerenquiry/male.png");
+					}
+					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+						customerPic.setSrc("images/icons/customerenquiry/female.png");
+						customerPic1.setSrc("images/icons/customerenquiry/female.png");
+						customerPic2.setSrc("images/icons/customerenquiry/female.png");
+						customerPic3.setSrc("images/icons/customerenquiry/female.png");
+						customerPic4.setSrc("images/icons/customerenquiry/female.png");
+						customerPic5.setSrc("images/icons/customerenquiry/female.png");
+					}
+				}
+			}
+
 			if (isRetailCustomer) {
 				tabShareHoleder.setVisible(false);
 				tabFinancial.setVisible(true);
@@ -936,24 +978,47 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			shareHolderProgress.setStyle("image-height: 5px;");
 			bankingProgress.setValue((i * 100) / 20);
 			bankingProgress.setStyle("image-height: 5px;");
-
-			if (aCustomer.getLovDescCustGenderCodeName() != null
-					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
-				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-					customerPic.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					corpCustomerPic1.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic2.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic3.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic4.setSrc("images/icons/customerenquiry/malepic_56_56.png");
-					customerPic5.setSrc("images/icons/customerenquiry/malepic_56_56.png");
+			
+			AMedia amedia = null;
+			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
+				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
+					if(customerDocument.getCustDocImage() == null) {
+						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
+							customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						} 
+					}
+					amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
+					customerPic.setContent(img);
+					corpCustomerPic1.setContent(img);
+					customerPic2.setContent(img);
+					customerPic3.setContent(img);
+					customerPic4.setContent(img);
+					customerPic5.setContent(img);
+					isCustPhotoAvail = true;
+					break;
 				}
-				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-					customerPic.setSrc("images/icons/customerenquiry/customerimage.png");
-					corpCustomerPic1.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic2.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic3.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic4.setSrc("images/icons/customerenquiry/customerimage.png");
-					customerPic5.setSrc("images/icons/customerenquiry/customerimage.png");
+			}
+
+			if(!isCustPhotoAvail){
+				if (aCustomer.getLovDescCustGenderCodeName() != null
+						&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
+						customerPic.setSrc("images/icons/customerenquiry/male.png");
+						corpCustomerPic1.setSrc("images/icons/customerenquiry/male.png");
+						customerPic2.setSrc("images/icons/customerenquiry/male.png");
+						customerPic3.setSrc("images/icons/customerenquiry/male.png");
+						customerPic4.setSrc("images/icons/customerenquiry/male.png");
+						customerPic5.setSrc("images/icons/customerenquiry/male.png");
+					}
+					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+						customerPic.setSrc("images/icons/customerenquiry/female.png");
+						corpCustomerPic1.setSrc("images/icons/customerenquiry/female.png");
+						customerPic2.setSrc("images/icons/customerenquiry/female.png");
+						customerPic3.setSrc("images/icons/customerenquiry/female.png");
+						customerPic4.setSrc("images/icons/customerenquiry/female.png");
+						customerPic5.setSrc("images/icons/customerenquiry/female.png");
+					}
 				}
 			}
 			if (isRetailCustomer) {
