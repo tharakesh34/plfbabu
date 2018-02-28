@@ -316,4 +316,67 @@
 	<dropForeignKeyConstraint baseTableName="rmtfinancetypes"
 			constraintName="FK_RMTFINTYPES_FINAEBUYORINCEP" />
 	</changeSet>
+	<changeSet id="8" author="Satyanarayana.G">
+	 <createView viewName="VASRECORDING_VIEW" replaceIfExists="true">
+	 		SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference, T1.Fee, T1.RenewalFee, T1.FeePaymentMode,
+          T1.ValueDate, T1.AccrualTillDate, T1.RecurringDate, T1.DsaId, T1.DmaId, T1.FulfilOfficerId,T1.ReferralId,
+          T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+          T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T2.ProductDesc , T3.ROfficerDesc DsaIdDesc,
+          T4.ROfficerDesc DmaIdDesc,T5.ROfficerDesc FulfilOfficerIdDesc,T6.ROfficerDesc ReferralIdDesc,
+          T7.ProductType, T7.ProductTypeDesc,  T8.ProductCtg, T8.ProductCtgDesc ,T9.DealerName ManufacturerDesc,VasStatus,FinanceProcess,T2.FeeAccounting, T1.PaidAmt, T1.WaivedAmt
+          
+          FROM   VASRecording_Temp  T1 LEFT OUTER JOIN
+          VasStructure  T2 ON T1.ProductCode = T2.ProductCode LEFT OUTER JOIN
+          RelationshipOfficers  T3 ON T1.DsaId = T3.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T4 ON T1.DmaId = T4.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T5 ON T1.FulfilOfficerId = T5.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T6 ON T1.ReferralId = T6.ROfficerCode INNER JOIN 
+          VasProductType  T7 ON T7.ProductType = T2.ProductType INNER JOIN
+          VasProductCategory  T8 ON T7.ProductCtg = T8.ProductCtg  LEFT OUTER JOIN
+          AMTVehicleDealer T9 ON T2.ManufacturerId = T9.DealerId
+UNION ALL
+SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference, T1.Fee, T1.RenewalFee, T1.FeePaymentMode,
+          T1.ValueDate, T1.AccrualTillDate, T1.RecurringDate, T1.DsaId, T1.DmaId, T1.FulfilOfficerId,T1.ReferralId,
+          T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+          T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T2.ProductDesc , T3.ROfficerDesc DsaIdDesc,
+          T4.ROfficerDesc DmaIdDesc,T5.ROfficerDesc FulfilOfficerIdDesc,T6.ROfficerDesc ReferralIdDesc,
+          T7.ProductType, T7.ProductTypeDesc,  T8.ProductCtg, T8.ProductCtgDesc ,T9.DealerName ManufacturerDesc,VasStatus,FinanceProcess,T2.FeeAccounting, T1.PaidAmt, T1.WaivedAmt
+          
+          FROM   VASRecording  T1 LEFT OUTER JOIN
+          VasStructure  T2 ON T1.ProductCode = T2.ProductCode LEFT OUTER JOIN
+          RelationshipOfficers  T3 ON T1.DsaId = T3.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T4 ON T1.DmaId = T4.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T5 ON T1.FulfilOfficerId = T5.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T6 ON T1.ReferralId = T6.ROfficerCode INNER JOIN 
+          VasProductType  T7 ON T7.ProductType = T2.ProductType INNER JOIN
+          VasProductCategory  T8 ON T7.ProductCtg = T8.ProductCtg  LEFT OUTER JOIN
+          AMTVehicleDealer T9 ON T2.ManufacturerId = T9.DealerId
+          
+          WHERE     NOT EXISTS
+                    (SELECT     1  FROM          VASRecording_Temp WHERE      VasReference = T1.VasReference)
+	 
+	 </createView>
+	</changeSet>
+	<changeSet id="9" author="Satyanarayana.G">
+		<createView viewName="VASRECORDING_AVIEW" replaceIfExists="true">
+		
+		SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference, T1.Fee, T1.RenewalFee, T1.FeePaymentMode,
+          T1.ValueDate, T1.AccrualTillDate, T1.RecurringDate, T1.DsaId, T1.DmaId, T1.FulfilOfficerId,T1.ReferralId,
+          T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+          T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T2.ProductDesc , T3.ROfficerDesc DsaIdDesc,
+          T4.ROfficerDesc DmaIdDesc,T5.ROfficerDesc FulfilOfficerIdDesc,T6.ROfficerDesc ReferralIdDesc,
+          T7.ProductType, T7.ProductTypeDesc,  T8.ProductCtg, T8.ProductCtgDesc ,T9.DealerName ManufacturerDesc,VasStatus,FinanceProcess,T2.FeeAccounting, T1.PaidAmt, T1.WaivedAmt
+          
+          FROM   VASRecording  T1 LEFT OUTER JOIN
+          VasStructure  T2 ON T1.ProductCode = T2.ProductCode LEFT OUTER JOIN
+          RelationshipOfficers  T3 ON T1.DsaId = T3.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T4 ON T1.DmaId = T4.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T5 ON T1.FulfilOfficerId = T5.ROfficerCode LEFT OUTER JOIN
+          RelationshipOfficers  T6 ON T1.ReferralId = T6.ROfficerCode INNER JOIN 
+          VasProductType  T7 ON T7.ProductType = T2.ProductType INNER JOIN
+          VasProductCategory  T8 ON T7.ProductCtg = T8.ProductCtg LEFT OUTER JOIN
+          AMTVehicleDealer T9 ON T2.ManufacturerId = T9.DealerId
+		
+		</createView>
+	</changeSet>
 </databaseChangeLog>
