@@ -142,6 +142,20 @@
 				zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"
 				rightName="menuItem_SystemMaster_IncomeType" />
 		</menu>
+		<menu id="menu_Category_BusinessPartners">
+			<menuItem id="menu_Item_BuilderGroup"
+				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul"
+				rightName="menuItem_masters_BuilderGroup" />
+			<menuItem id="menu_Item_BuilderCompany"
+				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyList.zul"
+				rightName="menuItem_masters_BuilderCompany" />
+			<menuItem id="menu_Item_BuilderProjcet"
+				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetList.zul"
+				rightName="menuItem_SystemMaster_BuilderProjcet" />
+			<menuItem id="menu_Item_VehicleDealer"
+				zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=VASM"
+				rightName="menuItem_SystemMaster_VehicleDealer" />
+		</menu>
 		<menu id="menu_Category_BankMasters">
 			<menuItem id="menu_Item_BankDetail"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"
@@ -194,33 +208,16 @@
 
 	<!-- TODO -->
 
-	<!-- <menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" 
-		rightName="menuItem_EOD_CustomerEOD"/> -->
-
 	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
 		rightName="menuItem_EOD_CustomerEOD" />
-
-	<!-- <menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" 
-		rightName="menuItem_DataExtraction"/> -->
-
 	<menuItem id="menu_Item_DataEngine_MasterExport"
 		zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
 		rightName="menuItem_DataExtraction" />
-
 
 	<!-- System Masters Menu Tree -->
 	<menu id="menu_Category_SystemMaster">
 		<!-- <menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul" 
 			rightName="menuItem_SystemMaster_Academic"/> -->
-		<menuItem id="menu_Item_BuilderCompany"
-			zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyList.zul"
-			rightName="menuItem_masters_BuilderCompany" />
-		<menuItem id="menu_Item_BuilderGroup"
-			zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul"
-			rightName="menuItem_masters_BuilderGroup" />
-		<menuItem id="menu_Item_BuilderProjcet"
-			zulNavigation="/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetList.zul"
-			rightName="menuItem_SystemMaster_BuilderProjcet" />
 		<!-- <menuItem id="menu_Item_BuilderProjcetEnquiry" zulNavigation="/WEB-INF/pages/masters/BuilderProjcet/BuilderProjcetEnquiryList.zul?enqiryModule=Y" 
 			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderProjcetEnquiry"/> -->
 		<!-- <menuItem id="menu_Item_BuilderCompanyEnquiry" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyEnquiryList.zul?enqiryModule=Y" 
@@ -243,9 +240,6 @@
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
 		<!-- <menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" 
 			rightName="menuItem_SystemMaster_VehicleDealer"/> -->
-		<menuItem id="menu_Item_VehicleDealer"
-			zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=VASM"
-			rightName="menuItem_SystemMaster_VehicleDealer" />
 		<menuItem id="menu_Item_PartnerSource"
 			zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
 			rightName="menuItem_SystemMaster_VehicleDealer" />
@@ -256,7 +250,6 @@
 	</menu>
 
 	<!-- Application Masters Menu Tree -->
-
 	<menu id="menu_Category_ApplicationMaster">
 		<!-- <menuItem id="menu_Item_AccountMappingEnquiry" zulNavigation="/WEB-INF/pages/applicationmaster/AccountMapping/AccountMappingEnquiryList.zul?enqiryModule=Y" 
 			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_AccountMappingEnquiry"/> -->
@@ -1466,12 +1459,6 @@
 		zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul?enqiryModule=Y" 
 		rightName="menuItem_Limit_LimitStructureDetailEnquiry" /> </menu> -->
 
-	<!-- <menu id="menu_Category_DataEngine" rightName="menuCat_DataEngine"> 
-		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" 
-		rightName="menuItem_DataEngine_DataImport"/> <menuItem id="menu_Item_DataEngine_Export" 
-		zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" rightName="menuItem_DataEngine_DataExport"/> 
-		</menu> -->
-
 	<!-- CollateralType -->
 	<!-- <menu id="menu_Category_Collateral" rightName="menuCat_Collateral"> 
 		<menuItem id="menu_Item_CollateralType" zulNavigation="/WEB-INF/pages/Collateral/CollateralType/CollateralTypeList.zul" 
@@ -1538,5 +1525,17 @@
 		<menuItem id="menu_Item_PostingDownloads"
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
+	</menu>
+
+	<!-- TODO -->
+
+	<!-- <menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" 
+		rightName="menuItem_EOD_CustomerEOD"/> -->
+
+	<menu id="menu_Category_DataEngine" rightName="menuCat_DataEngine">
+		<!-- <menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" 
+			rightName="menuItem_DataEngine_DataImport" /> -->
+		<!-- <menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" 
+			rightName="menuItem_DataEngine_DataExport" /> -->
 	</menu>
 </ns2:XMLRootMenu>
