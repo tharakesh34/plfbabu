@@ -153,6 +153,43 @@
 				zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"
 				rightName="menuItem_partnerbank_PartnerBank" />
 		</menu>
+		<menu id="menu_Category_AccountingMasters">
+			<menuItem id="menu_Item_CostCenter"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CostCenter/CostCenterList.zul"
+				rightName="menuItem_applicationmaster_CostCenter" />
+			<menuItem id="menu_Item_ProfitCenter"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterList.zul"
+				rightName="menuItem_applicationmaster_ProfitCenter" />
+			<menuItem id="menu_Item_TransactionCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul"
+				rightName="menuItem_ApplicationMaster_TransactionCode" />
+			<menuItem id="menu_Item_AccountTypeGroup"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/AccountTypeGroup/AccountTypeGroupList.zul"
+				rightName="menuItem_accounttypegroup_AccountTypeGroup" />
+			<menuItem id="menu_Item_AccountType"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/AccountType/AccountTypeList.zul"
+				rightName="menuItem_SolutionFactory_AccountType" />
+			<menuItem id="menu_Item_AccountingSet"
+				zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"
+				rightName="menuItem_RulesFactory_AccountingSet" />
+			<menuItem id="menu_Item_AccountMapping"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/AccountMapping/AccountMappingList.zul"
+				rightName="menuItem_applicationmaster_AccountMapping" />
+		</menu>
+		<menu id="menu_Category_NpaMasters">
+			<menuItem id="menu_Item_DPDBucket"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul"
+				rightName="menuItem_applicationmaster_DPDBucket" />
+			<menuItem id="menu_Item_DPDBucketConfiguration"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul"
+				rightName="menuItem_applicationmaster_DPDBucketConfiguration" />
+			<menuItem id="menu_Item_NPABucket"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucket/NPABucketList.zul"
+				rightName="menuItem_applicationmaster_NPABucket" />
+			<menuItem id="menu_Item_NPABucketConfiguration"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"
+				rightName="menuItem_applicationmaster_NPABucketConfiguration" />
+		</menu>
 	</menu>
 
 	<!-- TODO -->
@@ -221,17 +258,11 @@
 	<!-- Application Masters Menu Tree -->
 
 	<menu id="menu_Category_ApplicationMaster">
-		<menuItem id="menu_Item_AccountMapping"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/AccountMapping/AccountMappingList.zul"
-			rightName="menuItem_applicationmaster_AccountMapping" />
 		<!-- <menuItem id="menu_Item_AccountMappingEnquiry" zulNavigation="/WEB-INF/pages/applicationmaster/AccountMapping/AccountMappingEnquiryList.zul?enqiryModule=Y" 
 			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_AccountMappingEnquiry"/> -->
 		<menuItem id="menu_Item_AgreementDefinition"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionList.zul"
 			rightName="menuItem_ApplicationMaster_AgreementDefinition" />
-		<menuItem id="menu_Item_AccountTypeGroup"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/AccountTypeGroup/AccountTypeGroupList.zul"
-			rightName="menuItem_accounttypegroup_AccountTypeGroup" />
 		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul" 
 			rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
 		<menuItem id="menu_Item_BaseRate"
@@ -297,9 +328,6 @@
 			rightName="menuItem_ApplicationMasters_SukukBond"/> <menuItem id="menu_Item_SukukBroker" 
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul" 
 			rightName="menuItem_ApplicationMasters_SukukBroker"/> -->
-		<menuItem id="menu_Item_TransactionCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul"
-			rightName="menuItem_ApplicationMaster_TransactionCode" />
 		<!-- <menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" 
 			rightName="menuItem_ApplicationMaster_TakafulProvider"/> -->
 		<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
@@ -318,29 +346,11 @@
 		<menuItem id="menu_Item_FinanceStatusCode"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"
 			rightName="menuItem_applicationmaster_FinanceStatusCodes" />
-		<menuItem id="menu_Item_DPDBucket"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul"
-			rightName="menuItem_applicationmaster_DPDBucket" />
 		<!-- <menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" 
 			iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
-		<menuItem id="menu_Item_NPABucket"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucket/NPABucketList.zul"
-			rightName="menuItem_applicationmaster_NPABucket" />
-		<menuItem id="menu_Item_DPDBucketConfiguration"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul"
-			rightName="menuItem_applicationmaster_DPDBucketConfiguration" />
-		<menuItem id="menu_Item_NPABucketConfiguration"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"
-			rightName="menuItem_applicationmaster_NPABucketConfiguration" />
 		<menuItem id="menu_Item_BounceReason"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul"
 			rightName="menuItem_applicationmaster_BounceReason" />
-		<menuItem id="menu_Item_CostCenter"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/CostCenter/CostCenterList.zul"
-			rightName="menuItem_applicationmaster_CostCenter" />
-		<menuItem id="menu_Item_ProfitCenter"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterList.zul"
-			rightName="menuItem_applicationmaster_ProfitCenter" />
 		<menuItem id="menu_Item_ReasonCategory"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul"
 			rightName="menuItem_ApplicationMaster_ReasonCategory" />
@@ -471,9 +481,6 @@
 
 	<!-- Rules Factory -->
 	<menu id="menu_Category_RulesFactory">
-		<menuItem id="menu_Item_AccountingSet"
-			zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"
-			rightName="menuItem_RulesFactory_AccountingSet" />
 		<menuItem id="menu_Item_AgrRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"
 			rightName="menuItem_RulesFactory_AgreementRules" />
@@ -546,9 +553,6 @@
 
 	<!-- Solution Factory -->
 	<menu id="menu_Category_SolutionFactory">
-		<menuItem id="menu_Item_AccountType"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/AccountType/AccountTypeList.zul"
-			rightName="menuItem_SolutionFactory_AccountType" />
 		<menuItem id="menu_Item_AssetType"
 			zulNavigation="/WEB-INF/pages/SolutionFactory/AssetType/AssetTypeList.zul"
 			rightName="menuItem_SolutionFactory_AssetType" />
