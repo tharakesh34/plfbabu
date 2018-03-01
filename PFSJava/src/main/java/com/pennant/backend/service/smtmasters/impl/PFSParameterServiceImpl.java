@@ -52,7 +52,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -61,6 +60,7 @@ import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 /**
  * Service implementation for methods that depends on <b>PFSParameter</b>.<br>

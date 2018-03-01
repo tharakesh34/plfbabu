@@ -45,9 +45,9 @@ package com.pennant.backend.service.smtmasters;
 
 import java.util.List;
 
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 /**
  * Service declaration for methods that depends on <b>PFSParameter</b>.<br>

@@ -52,7 +52,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.backend.model.ApplicationDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
@@ -364,6 +363,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 
 
@@ -1785,7 +1785,7 @@ public class PennantJavaUtil {
 						"DashboardCode", "DashboardDesc" }, null, 300));
 
 		ModuleUtil.register("GlobalVariable", new ModuleMapping("GlobalVariable", GlobalVariable.class, new String[] {
-				"GlobalVariable", "GlobalVariable" }, masterWF , new String[] { "VarCode", "VarName" }, null, 300));
+				"GlobalVariables", "GlobalVariables" }, masterWF , new String[] { "VarCode", "VarName" }, null, 300));
 
 		/************* Reports *************/
 

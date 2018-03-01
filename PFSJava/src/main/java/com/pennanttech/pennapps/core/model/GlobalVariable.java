@@ -41,64 +41,54 @@
  ********************************************************************************************
 */
 
-package com.pennant.backend.model;
+package com.pennanttech.pennapps.core.model;
 
 public class GlobalVariable implements java.io.Serializable {
 	private static final long serialVersionUID = 8273231076965887889L;
-	
-	private long vID = Long.MIN_VALUE;
-	private String varCode;
-	private String varName;
-	private String varValue;
-	private String varType;
-	
 
-	public GlobalVariable() {
+	private long id;
+	private String code;
+	private String name;
+	private String value;
+	private String Type;
 
-	}
-	
-	public GlobalVariable(long vId) {
-		super();
-		this.vID = vId;
+	public long getId() {
+		return id;
 	}
 
-	public long getvID() {
-		return vID;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public void setvID(long vID) {
-		this.vID = vID;
+	public String getCode() {
+		return code;
 	}
 
-	public String getVarCode() {
-		return varCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public void setVarCode(String varCode) {
-		this.varCode = varCode;
+	public String getName() {
+		return name;
 	}
 
-	public String getVarName() {
-		return varName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setVarName(String varName) {
-		this.varName = varName;
+	public String getValue() {
+		return value;
 	}
 
-	public String getVarValue() {
-		return varValue;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public void setVarValue(String varValue) {
-		this.varValue = varValue;
+	public String getType() {
+		return Type;
 	}
 
-	public String getVarType() {
-	    return varType;
-    }
-
-	public void setVarType(String varType) {
-	    this.varType = varType;
-    }
+	public void setType(String type) {
+		Type = type;
+	}
 }

@@ -81,7 +81,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.QBFieldDetail;
 import com.pennant.backend.model.applicationmaster.Query;
@@ -92,11 +91,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.StringReplacement;
 import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
 public class QueryBuilder extends Groupbox {
@@ -543,7 +543,7 @@ public class QueryBuilder extends Groupbox {
 
 	public String getGlobalExcludeFieldsByOperands(Combobox operand, String type, GlobalVariable globalVariable) {
 		String excludeFields = "";
-		String fieldType = globalVariable.getVarType();
+		String fieldType = globalVariable.getType();
 		if ((fieldType.equals(PennantConstants.DECIMAL)) || (fieldType.equals(PennantConstants.BIGINT))
 				|| (fieldType.equals(PennantConstants.NUMERIC))) {
 			if ("operator".equals(type)) {
@@ -754,7 +754,7 @@ public class QueryBuilder extends Groupbox {
 						GlobalVariable globalVariable = (GlobalVariable) ((Combobox) leftOperand).getSelectedItem()
 								.getAttribute("GlobalVariableDetails");
 						if (globalVariable != null) {
-							String fieldType = globalVariable.getVarType();
+							String fieldType = globalVariable.getType();
 							if ((fieldType.equals(PennantConstants.DECIMAL))
 									|| (fieldType.equals(PennantConstants.BIGINT))
 									|| (fieldType.equals(PennantConstants.NUMERIC))
@@ -948,13 +948,13 @@ public class QueryBuilder extends Groupbox {
 				for (int i = 0; i < globalVariableList.size(); i++) {
 					GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 					comboitem = new Comboitem();
-					comboitem.setLabel(globalVariable.getVarName());
-					comboitem.setValue(globalVariable.getVarName());
-					comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+					comboitem.setLabel(globalVariable.getName());
+					comboitem.setValue(globalVariable.getName());
+					comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 					comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 					comboitem.setAttribute("OperandType", operandtype);
 					operand.appendChild(comboitem);
-					if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+					if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 						operand.setSelectedItem(comboitem);
 					}
 					// comboitem=null;
@@ -971,13 +971,13 @@ public class QueryBuilder extends Groupbox {
 					for (int i = 0; i < globalVariableList.size(); i++) {
 						GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 						comboitem = new Comboitem();
-						comboitem.setLabel(globalVariable.getVarName());
-						comboitem.setValue(globalVariable.getVarName());
-						comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+						comboitem.setLabel(globalVariable.getName());
+						comboitem.setValue(globalVariable.getName());
+						comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 						comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 						comboitem.setAttribute("OperandType", operandtype);
 						operand.appendChild(comboitem);
-						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 							operand.setSelectedItem(comboitem);
 						}
 						// comboitem=null;
@@ -991,17 +991,17 @@ public class QueryBuilder extends Groupbox {
 							comboitem = new Comboitem();
 							if (leftOperand.getSelectedIndex() > 0) {
 								if (leftOperand.getSelectedItem().getTooltiptext()
-										.contains(globalVariable.getVarType().toUpperCase())) {
-									comboitem.setLabel(globalVariable.getVarName());
-									comboitem.setValue(globalVariable.getVarName());
+										.contains(globalVariable.getType().toUpperCase())) {
+									comboitem.setLabel(globalVariable.getName());
+									comboitem.setValue(globalVariable.getName());
 									comboitem
-											.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+											.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 									comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 									comboitem.setAttribute("OperandType", operandtype);
 									operand.appendChild(comboitem);
 									operand.setAttribute("GlobalVariableDetails", globalVariable);
 									if (StringUtils.trimToEmpty(value).equals(
-											StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+											StringUtils.trimToEmpty(globalVariable.getName()))) {
 										operand.setSelectedItem(comboitem);
 									}
 								}
@@ -1015,16 +1015,16 @@ public class QueryBuilder extends Groupbox {
 						for (int i = 0; i < globalVariableList.size(); i++) {
 							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 							comboitem = new Comboitem();
-							if (charDataTypes.contains(globalVariable.getVarType())) {
-								comboitem.setLabel(globalVariable.getVarName());
-								comboitem.setValue(globalVariable.getVarName());
-								comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+							if (charDataTypes.contains(globalVariable.getType())) {
+								comboitem.setLabel(globalVariable.getName());
+								comboitem.setValue(globalVariable.getName());
+								comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 								comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 								comboitem.setAttribute("OperandType", operandtype);
 								operand.appendChild(comboitem);
 								operand.setAttribute("GlobalVariableDetails", globalVariable);
 								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+										StringUtils.trimToEmpty(globalVariable.getName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}

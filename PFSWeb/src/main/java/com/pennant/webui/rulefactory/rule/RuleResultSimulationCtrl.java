@@ -25,11 +25,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.JavaScriptBuilder;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**

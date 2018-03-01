@@ -89,7 +89,6 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.LabelElement;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -109,13 +108,14 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/LimitFilterQuery/dedupParmDialog.zul file.
@@ -2259,8 +2259,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		for (int i = 0; i < globalVariableList.size(); i++) {
 			GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 			item = new Comboitem();
-			item.setLabel(globalVariable.getVarName());
-			item.setValue(globalVariable.getVarName());
+			item.setLabel(globalVariable.getName());
+			item.setValue(globalVariable.getName());
 			comboBox.appendChild(item);
 		}
 		comboBox.setWidth("100px");

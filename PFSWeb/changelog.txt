@@ -1,5 +1,9 @@
 pff 4.7.14, 2018-02-22
 ----------------------
+- Moved GlobalVariable.java from com.pennant.backend.model to com.pennanttech.pennapps.core.model package
+
+pff 4.7.14, 2018-02-22
+----------------------
 - Upgraded pennapps-core version from 0.7.3 to 0.7.4
 
 pff 4.7.14, 2018-02-21

@@ -59,10 +59,10 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 /**
  * DAO methods implementation for the <b>PFSParameter model</b> class.<br>
@@ -314,15 +314,13 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	/**
 	 * Method for get the list of Global Variable records
 	 */
-	public List<GlobalVariable> getGlobaVariables(){
-		logger.debug("Entering");
-		StringBuilder selectQry = new StringBuilder("Select  varCode,varName,varValue,varType " );
-		selectQry.append(" from GlobalVariable" );
-		logger.debug("selectSql: " + selectQry.toString());
+	public List<GlobalVariable> getGlobaVariables() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Id, Code, Name, Value, Type");
+		sql.append(" from GlobalVariables");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new GlobalVariable());
 		RowMapper<GlobalVariable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GlobalVariable.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectQry.toString(),beanParameters, typeRowMapper);
+		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 	
 }

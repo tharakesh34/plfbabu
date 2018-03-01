@@ -49,9 +49,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**

@@ -96,4 +96,5 @@
 <!-- 	<include file="change-logs/change-log-4.7.6.xml" /> -->
 	<include file="change-logs/change-log-4.7.7.xml" />
 	<include file="change-logs/change-log-license.xml" />
+	<include file="change-logs/change-log-refactor.xml" />
 </databaseChangeLog>

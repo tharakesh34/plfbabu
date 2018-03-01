@@ -83,7 +83,6 @@ import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Treerow;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.model.rulefactory.JSRuleReturnType;
@@ -95,10 +94,11 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.StringReplacement;
 import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class JavaScriptBuilder extends Groupbox {
 	private static final Logger logger = Logger.getLogger(JavaScriptBuilder.class);
@@ -1407,7 +1407,7 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Entering");
 
 		String excludeFields = "";
-		String fieldType = globalVariable.getVarType();
+		String fieldType = globalVariable.getType();
 
 		if ((StringUtils.equalsIgnoreCase(fieldType, PennantConstants.DECIMAL))
 				|| (StringUtils.equalsIgnoreCase(fieldType, PennantConstants.BIGINT))
@@ -1677,13 +1677,13 @@ public class JavaScriptBuilder extends Groupbox {
 				for (int i = 0; i < globalVariableList.size(); i++) {
 					GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 					comboitem = new Comboitem();
-					comboitem.setLabel(globalVariable.getVarName());
-					comboitem.setValue(globalVariable.getVarName());
-					comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+					comboitem.setLabel(globalVariable.getName());
+					comboitem.setValue(globalVariable.getName());
+					comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 					comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 					comboitem.setAttribute("OperandType", operandTypeValue);
 					operand.appendChild(comboitem);
-					if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+					if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 						operand.setSelectedItem(comboitem);
 					}
 				}
@@ -1695,13 +1695,13 @@ public class JavaScriptBuilder extends Groupbox {
 					for (int i = 0; i < globalVariableList.size(); i++) {
 						GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 						comboitem = new Comboitem();
-						comboitem.setLabel(globalVariable.getVarName());
-						comboitem.setValue(globalVariable.getVarName());
-						comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+						comboitem.setLabel(globalVariable.getName());
+						comboitem.setValue(globalVariable.getName());
+						comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 						comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 						comboitem.setAttribute("OperandType", operandTypeValue);
 						operand.appendChild(comboitem);
-						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 							operand.setSelectedItem(comboitem);
 						}
 					}
@@ -1715,16 +1715,16 @@ public class JavaScriptBuilder extends Groupbox {
 							comboitem = new Comboitem();
 							
 							if (leftOperand.getSelectedIndex() > 0) {
-								if (StringUtils.containsIgnoreCase(leftOperand.getSelectedItem().getTooltiptext(), globalVariable.getVarType())) {
-									comboitem.setLabel(globalVariable.getVarName());
-									comboitem.setValue(globalVariable.getVarName());
-									comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+								if (StringUtils.containsIgnoreCase(leftOperand.getSelectedItem().getTooltiptext(), globalVariable.getType())) {
+									comboitem.setLabel(globalVariable.getName());
+									comboitem.setValue(globalVariable.getName());
+									comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 									comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 									comboitem.setAttribute("OperandType", operandTypeValue);
 									operand.appendChild(comboitem);
 									operand.setAttribute("GlobalVariableDetails", globalVariable);
 									if (StringUtils.trimToEmpty(value).equals(
-											StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+											StringUtils.trimToEmpty(globalVariable.getName()))) {
 										operand.setSelectedItem(comboitem);
 									}
 								}
@@ -1739,16 +1739,16 @@ public class JavaScriptBuilder extends Groupbox {
 							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 							comboitem = new Comboitem();
 							
-							if (charDataTypes.contains(globalVariable.getVarType())) {
-								comboitem.setLabel(globalVariable.getVarName());
-								comboitem.setLabel(globalVariable.getVarName());
-								comboitem.setTooltiptext("Data Type : " + globalVariable.getVarType().toUpperCase());
+							if (charDataTypes.contains(globalVariable.getType())) {
+								comboitem.setLabel(globalVariable.getName());
+								comboitem.setLabel(globalVariable.getName());
+								comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 								comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 								comboitem.setAttribute("OperandType", operandTypeValue);
 								operand.appendChild(comboitem);
 								operand.setAttribute("GlobalVariableDetails", globalVariable);
 								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(globalVariable.getVarName()))) {
+										StringUtils.trimToEmpty(globalVariable.getName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}

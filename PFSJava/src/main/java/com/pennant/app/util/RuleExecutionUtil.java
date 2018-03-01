@@ -62,10 +62,10 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -107,8 +107,8 @@ public class RuleExecutionUtil implements Serializable {
 
 			for (int i = 0; i < globalList.size(); i++) {
 				GlobalVariable globalVariable = globalList.get(i);
-				String str = (globalVariable.getVarName()).substring(2, (globalVariable.getVarName()).length() - 1);
-				root.put(str, "(" + globalVariable.getVarValue() + ")");
+				String str = (globalVariable.getName()).substring(2, (globalVariable.getName()).length() - 1);
+				root.put(str, "(" + globalVariable.getValue() + ")");
 			}
 			// Prepare string template
 			t1 = new Template("RuleReplacement", new StringReader(templateStr), cfg);

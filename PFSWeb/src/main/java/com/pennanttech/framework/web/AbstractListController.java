@@ -230,6 +230,9 @@ public class AbstractListController<T> extends AbstractController<T> {
 		} else {
 			final SearchResult<?> searchResult = pagedListService.getSRBySearchObject(this.searchObject);
 			listbox.setModel(new GroupsModelArray(searchResult.getResult().toArray(), comparator));
+			if (paging != null) {
+				paging.setTotalSize(searchResult.getTotalCount());
+			}
 		}
 
 		logger.debug("Leaving");

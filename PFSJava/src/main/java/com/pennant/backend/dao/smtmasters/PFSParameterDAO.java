@@ -45,8 +45,8 @@ package com.pennant.backend.dao.smtmasters;
 
 import java.util.List;
 
-import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennanttech.pennapps.core.model.GlobalVariable;
 
 /**
  * DAO methods declaration for the <b>PFSParameter model</b> class.<br>
