@@ -84,6 +84,75 @@
 				zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
 				rightName="menuItem_SystemMaster_Designation" />
 		</menu>
+		<menu id="menu_Category_SegmentationMasters">
+			<menuItem id="menu_Item_CustomerType"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/CustomerType/CustomerTypeList.zul"
+				rightName="menuItem_SolutionFactory_CustomerType" />
+			<menuItem id="menu_Item_Sector"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Sector/SectorList.zul"
+				rightName="menuItem_SystemMaster_Sector" />
+			<menuItem id="menu_Item_SubSector"
+				zulNavigation="/WEB-INF/pages/SystemMaster/SubSector/SubSectorList.zul"
+				rightName="menuItem_SystemMaster_SubSector" />
+			<menuItem id="menu_Item_Industry"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"
+				rightName="menuItem_SystemMaster_Industry" />
+			<menuItem id="menu_Item_Segment"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Segment/SegmentList.zul"
+				rightName="menuItem_SystemMaster_Segment" />
+			<menuItem id="menu_Item_SubSegment"
+				zulNavigation="/WEB-INF/pages/SystemMaster/SubSegment/SubSegmentList.zul"
+				rightName="menuItem_SystemMaster_SubSegment" />
+		</menu>
+		<menu id="menu_Category_CustomerMasters">
+			<menuItem id="menu_Item_Gender"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Gender/GenderList.zul"
+				rightName="menuItem_SystemMaster_Gender" />
+			<menuItem id="menu_Item_Salutation"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Salutation/SalutationList.zul"
+				rightName="menuItem_SystemMaster_Salutation" />
+			<menuItem id="menu_Item_MaritalStatusCode"
+				zulNavigation="/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeList.zul"
+				rightName="menuItem_SystemMaster_MaritalStatusCode" />
+			<menuItem id="menu_Item_NationalityCode"
+				zulNavigation="/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeList.zul"
+				rightName="menuItem_SystemMaster_NationalityCode" />
+			<menuItem id="menu_Item_AddressType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/AddressType/AddressTypeList.zul"
+				rightName="menuItem_SystemMaster_AddressType" />
+			<menuItem id="menu_Item_PhoneType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeList.zul"
+				rightName="menuItem_SystemMaster_PhoneType" />
+			<menuItem id="menu_Item_EMailType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/EMailType/EMailTypeList.zul"
+				rightName="menuItem_SystemMaster_EMailType" />
+			<menuItem id="menu_Item_EmployerDetail"
+				zulNavigation="/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailList.zul"
+				rightName="menuItem_SystemMaster_EmployerDetail" />
+			<menuItem id="menu_Item_GeneralDepartment"
+				zulNavigation="/WEB-INF/pages/SystemMaster/GeneralDepartment/GeneralDepartmentList.zul"
+				rightName="menuItem_SystemMaster_GeneralDepartment" />
+			<menuItem id="menu_Item_GeneralDesignation"
+				zulNavigation="/WEB-INF/pages/SystemMaster/GeneralDesignation/GeneralDesignationList.zul"
+				rightName="menuItem_SystemMaster_GeneralDesignation" />
+			<menuItem id="menu_Item_EmploymentType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/EmploymentType/EmploymentTypeList.zul"
+				rightName="menuItem_SystemMaster_EmploymentType" />
+			<menuItem id="menu_Item_IncomeType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"
+				rightName="menuItem_SystemMaster_IncomeType" />
+		</menu>
+		<menu id="menu_Category_BankMasters">
+			<menuItem id="menu_Item_BankDetail"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"
+				rightName="menuItem_ApplicationMaster_BankDetail" />
+			<menuItem id="menu_Item_BankBranch"
+				zulNavigation="/WEB-INF/pages/BMTMasters/BankBranch/BankBranchList.zul"
+				rightName="menuItem_BMTMasters_BankBranch" />
+			<menuItem id="menu_Item_PartnerBank"
+				zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"
+				rightName="menuItem_partnerbank_PartnerBank" />
+		</menu>
 	</menu>
 
 	<!-- TODO -->
@@ -106,9 +175,6 @@
 	<menu id="menu_Category_SystemMaster">
 		<!-- <menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul" 
 			rightName="menuItem_SystemMaster_Academic"/> -->
-		<menuItem id="menu_Item_AddressType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/AddressType/AddressTypeList.zul"
-			rightName="menuItem_SystemMaster_AddressType" />
 		<menuItem id="menu_Item_BuilderCompany"
 			zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyList.zul"
 			rightName="menuItem_masters_BuilderCompany" />
@@ -129,36 +195,12 @@
 		<menuItem id="menu_Item_DocumentType"
 			zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
 			rightName="menuItem_SystemMaster_DocumentType" />
-		<menuItem id="menu_Item_EMailType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/EMailType/EMailTypeList.zul"
-			rightName="menuItem_SystemMaster_EMailType" />
-		<menuItem id="menu_Item_EmployerDetail"
-			zulNavigation="/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailList.zul"
-			rightName="menuItem_SystemMaster_EmployerDetail" />
-		<menuItem id="menu_Item_EmploymentType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/EmploymentType/EmploymentTypeList.zul"
-			rightName="menuItem_SystemMaster_EmploymentType" />
 		<!-- <menuItem id="menu_Item_EmpStsCode" zulNavigation="/WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeList.zul" 
 			rightName="menuItem_SystemMaster_EmpStsCode"/> -->
-		<menuItem id="menu_Item_Gender"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Gender/GenderList.zul"
-			rightName="menuItem_SystemMaster_Gender" />
-		<menuItem id="menu_Item_GeneralDepartment"
-			zulNavigation="/WEB-INF/pages/SystemMaster/GeneralDepartment/GeneralDepartmentList.zul"
-			rightName="menuItem_SystemMaster_GeneralDepartment" />
-		<menuItem id="menu_Item_GeneralDesignation"
-			zulNavigation="/WEB-INF/pages/SystemMaster/GeneralDesignation/GeneralDesignationList.zul"
-			rightName="menuItem_SystemMaster_GeneralDesignation" />
 		<!-- <menuItem id="menu_Item_GroupStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/GroupStatusCode/GroupStatusCodeList.zul" 
 			rightName="menuItem_SystemMaster_GroupStatusCode"/> -->
 		<!-- <menuItem id="menu_Item_IdentityDetails" zulNavigation="/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsList.zul" 
 			rightName="menuItem_SystemMaster_IdentityDetails"/> -->
-		<menuItem id="menu_Item_IncomeType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"
-			rightName="menuItem_SystemMaster_IncomeType" />
-		<menuItem id="menu_Item_Industry"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"
-			rightName="menuItem_SystemMaster_Industry" />
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
@@ -170,37 +212,10 @@
 		<menuItem id="menu_Item_PartnerSource"
 			zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
 			rightName="menuItem_SystemMaster_VehicleDealer" />
-		<menuItem id="menu_Item_MaritalStatusCode"
-			zulNavigation="/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeList.zul"
-			rightName="menuItem_SystemMaster_MaritalStatusCode" />
-		<menuItem id="menu_Item_NationalityCode"
-			zulNavigation="/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeList.zul"
-			rightName="menuItem_SystemMaster_NationalityCode" />
-		<menuItem id="menu_Item_PhoneType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeList.zul"
-			rightName="menuItem_SystemMaster_PhoneType" />
 		<!-- <menuItem id="menu_Item_PRelationCode" zulNavigation="/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeList.zul" 
 			rightName="menuItem_SystemMaster_PRelationCode"/> -->
 		<!-- <menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
 			rightName="menuItem_SystemMaster_Profession"/> -->
-		<menuItem id="menu_Item_Salutation"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Salutation/SalutationList.zul"
-			rightName="menuItem_SystemMaster_Salutation" />
-		<menuItem id="menu_Item_CustomerType"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/CustomerType/CustomerTypeList.zul"
-			rightName="menuItem_SolutionFactory_CustomerType" />
-		<menuItem id="menu_Item_Sector"
-			zulNavigation="/WEB-INF/pages/SystemMaster/Sector/SectorList.zul"
-			rightName="menuItem_SystemMaster_Sector" />
-		<menuItem id="menu_Item_SubSector"
-			zulNavigation="/WEB-INF/pages/SystemMaster/SubSector/SubSectorList.zul"
-			rightName="menuItem_SystemMaster_SubSector" />
-
-
-		<!-- <menuItem id="menu_Item_Segment" zulNavigation="/WEB-INF/pages/SystemMaster/Segment/SegmentList.zul" 
-			rightName="menuItem_SystemMaster_Segment"/> <menuItem id="menu_Item_SubSegment" 
-			zulNavigation="/WEB-INF/pages/SystemMaster/SubSegment/SubSegmentList.zul" 
-			rightName="menuItem_SystemMaster_SubSegment"/> -->
 	</menu>
 
 	<!-- Application Masters Menu Tree -->
@@ -219,12 +234,6 @@
 			rightName="menuItem_accounttypegroup_AccountTypeGroup" />
 		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul" 
 			rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
-		<menuItem id="menu_Item_BankDetail"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"
-			rightName="menuItem_ApplicationMaster_BankDetail" />
-		<menuItem id="menu_Item_BankBranch"
-			zulNavigation="/WEB-INF/pages/BMTMasters/BankBranch/BankBranchList.zul"
-			rightName="menuItem_BMTMasters_BankBranch" />
 		<menuItem id="menu_Item_BaseRate"
 			zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateList.zul"
 			rightName="menuItem_ApplicationMaster_BaseRate" />
@@ -264,9 +273,6 @@
 			rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
 		<!-- <menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" 
 			rightName="menuItem_ApplicationMaster_BlacklistCustomer"/> -->
-		<menuItem id="menu_Item_PartnerBank"
-			zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"
-			rightName="menuItem_partnerbank_PartnerBank" />
 		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" 
 			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
