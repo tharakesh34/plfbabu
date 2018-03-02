@@ -46,6 +46,9 @@
 				rightName='menuItem_Reload_Resources' />
 			<menuItem id="menu_Item_CacheMonitor" zulNavigation="/WEB-INF/pages/Cache/CacheNodesList.zul"
 				rightName="menuItem_Cache_CacheMonitor" />
+			<menuItem id="menu_Item_ErrorDetail"
+				zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul"
+				rightName="menuItem_ErrorDetail_ErrorDetail" />
 		</menu>
 	</menu>
 
@@ -204,175 +207,149 @@
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"
 				rightName="menuItem_applicationmaster_NPABucketConfiguration" />
 		</menu>
-	</menu>
-
-	<!-- TODO -->
-
-	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
-		rightName="menuItem_EOD_CustomerEOD" />
-	<menuItem id="menu_Item_DataEngine_MasterExport"
-		zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
-		rightName="menuItem_DataExtraction" />
-
-	<!-- System Masters Menu Tree -->
-	<menu id="menu_Category_SystemMaster">
-		<!-- <menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul" 
-			rightName="menuItem_SystemMaster_Academic"/> -->
-		<!-- <menuItem id="menu_Item_BuilderProjcetEnquiry" zulNavigation="/WEB-INF/pages/masters/BuilderProjcet/BuilderProjcetEnquiryList.zul?enqiryModule=Y" 
-			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderProjcetEnquiry"/> -->
-		<!-- <menuItem id="menu_Item_BuilderCompanyEnquiry" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyEnquiryList.zul?enqiryModule=Y" 
-			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderCompanyEnquiry"/> -->
-		<!-- <menuItem id="menu_Item_BlackListReasonCode" zulNavigation="/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeList.zul" 
-			rightName="menuItem_SystemMaster_BlackListReasonCode"/> -->
-		<!-- <menuItem id="menu_Item_DispatchMode" zulNavigation="/WEB-INF/pages/SystemMaster/DispatchMode/DispatchModeList.zul" 
-			rightName="menuItem_SystemMaster_DispatchMode"/> -->
-		<menuItem id="menu_Item_DocumentType"
-			zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
-			rightName="menuItem_SystemMaster_DocumentType" />
-		<!-- <menuItem id="menu_Item_EmpStsCode" zulNavigation="/WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeList.zul" 
-			rightName="menuItem_SystemMaster_EmpStsCode"/> -->
-		<!-- <menuItem id="menu_Item_GroupStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/GroupStatusCode/GroupStatusCodeList.zul" 
-			rightName="menuItem_SystemMaster_GroupStatusCode"/> -->
-		<!-- <menuItem id="menu_Item_IdentityDetails" zulNavigation="/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsList.zul" 
-			rightName="menuItem_SystemMaster_IdentityDetails"/> -->
+		<menu id="menu_Category_ApplicationMasters">
+			<menuItem id="menu_Item_AgreementDefinition"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionList.zul"
+				rightName="menuItem_ApplicationMaster_AgreementDefinition" />
+			<menuItem id="menu_Item_BaseRateCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRateCode/BaseRateCodeList.zul"
+				rightName="menuItem_ApplicationMaster_BaseRateCode" />
+			<menuItem id="menu_Item_BaseRate"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateList.zul"
+				rightName="menuItem_ApplicationMaster_BaseRate" />
+			<menuItem id="menu_Item_BounceReason"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul"
+				rightName="menuItem_applicationmaster_BounceReason" />
+			<menuItem id="menu_Item_Currency"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"
+				rightName="menuItem_ApplicationMaster_Currency" />
+			<menuItem id="menu_Item_DocumentType"
+				zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
+				rightName="menuItem_SystemMaster_DocumentType" />
+			<menuItem id="menu_Item_FeeType"
+				zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"
+				rightName="" />
+			<menuItem id="menu_Item_Flag"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul"
+				rightName="menuItem_ApplicationMaster_Flags" />
+			<menuItem id="menu_Item_TaxDetail"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
+				rightName="menuItem_applicationmaster_TaxDetail" />
+			<menuItem id="menu_Item_FinanceStatusCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"
+				rightName="menuItem_applicationmaster_FinanceStatusCodes" />
+			<menuItem id="menu_Item_BlacklistCustomer"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerList.zul"
+				rightName="menuItem_ApplicationMaster_BlacklistCustomer" />
+			<menuItem id="menu_Item_ReasonCategory"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul"
+				rightName="menuItem_ApplicationMaster_ReasonCategory" />
+			<menuItem id="menu_Item_ReasonCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeList.zul"
+				rightName="menuItem_ApplicationMaster_ReasonCode" />
+			<menuItem id="menu_Item_RejectDetail"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"
+				rightName="menuItem_ApplicationMaster_RejectDetail" />
+			<menuItem id="menu_Item_RelationshipOfficer"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"
+				rightName="menuItem_ApplicationMaster_RelationshipOfficer" />
+			<menuItem id="menu_Item_PartnerSource"
+				zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
+				rightName="menuItem_SystemMaster_VehicleDealer" />
+		</menu>
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
-		<!-- <menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" 
-			rightName="menuItem_SystemMaster_VehicleDealer"/> -->
-		<menuItem id="menu_Item_PartnerSource"
-			zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
-			rightName="menuItem_SystemMaster_VehicleDealer" />
-		<!-- <menuItem id="menu_Item_PRelationCode" zulNavigation="/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeList.zul" 
-			rightName="menuItem_SystemMaster_PRelationCode"/> -->
-		<!-- <menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
-			rightName="menuItem_SystemMaster_Profession"/> -->
+	</menu>
+	
+	<!-- Rules Factory -->
+
+	<!-- TODO -->
+	
+	<menu id="menu_Category_RulesFactory">
+		<menuItem id="menu_Item_AgrRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"
+			rightName="menuItem_RulesFactory_AgreementRules" />
+		<menuItem id="menu_Item_BlackListDedupParm"
+			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/BlackListDedupParmList.zul"
+			rightName="menuItem_RulesFactory_BlackListDedupParm" />
+		<menuItem id="menu_Item_BounceRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BounceRuleList.zul"
+			rightName="menuItem_RulesFactory_BounceRule" />
+		<menuItem id="menu_Item_CheckList"
+			zulNavigation="/WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul"
+			rightName="menuItem_RulesFactory_CheckList" />
+		<menuItem id="menu_Item_CheckRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"
+			rightName="menuItem_RulesFactory_CheckRules" />
+		<menuItem id="menu_Item_DedupParm"
+			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"
+			rightName="menuItem_RulesFactory_CustDedupParm" />
+		<menuItem id="menu_Item_DownpaymentRules"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DownpaymentRuleList.zul"
+			rightName="menuItem_RulesFactory_DownpaymentRules" />
+		<menuItem id="menu_Item_EligibilityRules"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"
+			rightName="menuItem_RulesFactory_DownpaymentRules" />
+		<menuItem id="menu_Item_MailTemplate"
+			zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
+		<menuItem id="menu_Item_FeeDetails"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"
+			rightName="menuItem_RulesFactory_FeeRules" />
+		<!-- <menuItem id="menu_Item_InsuranceRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/InsuranceRuleList.zul" 
+			rightName="menuItem_RulesFactory_InsuranceRules"/> -->
+		<!-- <menuItem id="menu_Item_RateRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RateRuleList.zul" 
+			rightName="menuItem_RulesFactory_RateRules" /> -->
+		<menuItem id="menu_Item_LoanDedupParm"
+			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"
+			rightName="menuItem_RulesFactory_LoanDedupParm" />
+		<menuItem id="menu_Item_Notifications"
+			zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul"
+			rightName="menuItem_RulesFactory_Notifications" />
+		<menuItem id="menu_Item_PoliceDedupParm"
+			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"
+			rightName="menuItem_RulesFactory_PoliceDedupParm" />
+		<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RulesFactory/OverdueCharge/OverdueChargeList.zul" 
+			rightName="menuItem_RuleFactory_OverdueCharge"/> -->
+		<menuItem id="menu_Item_ProvisionRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"
+			rightName="menuItem_RulesFactory_ProvisionRules" />
+		<menuItem id="menu_Item_RefundRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
+			rightName="menuItem_RulesFactory_RefundRules" />
+		<menuItem id="menu_Item_ScoringGroup"
+			zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"
+			rightName="menuItem_RulesFactory_Notifications" />
+		<menuItem id="menu_Item_ScoringMetrics"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"
+			rightName="menuItem_RulesFactory_Notifications" />
+		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul" 
+			rightName="menuItem_RulesFactory_Notifications"/> -->
+		<menuItem id="menu_Item_Query"
+			zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul"
+			rightName="menuItem_RulesFactory_Query" />
+		<menuItem id="menu_Item_SubHeadRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"
+			rightName="menuItem_RulesFactory_SubHeadRules" />
+		<!-- GST Rules -->
+		<menuItem id="menu_Item_GSTRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/GstRuleList.zul"
+			rightName="menuItem_RulesFactory_BounceRule" />
 	</menu>
 
-	<!-- Application Masters Menu Tree -->
-	<menu id="menu_Category_ApplicationMaster">
-		<!-- <menuItem id="menu_Item_AccountMappingEnquiry" zulNavigation="/WEB-INF/pages/applicationmaster/AccountMapping/AccountMappingEnquiryList.zul?enqiryModule=Y" 
-			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_AccountMappingEnquiry"/> -->
-		<menuItem id="menu_Item_AgreementDefinition"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionList.zul"
-			rightName="menuItem_ApplicationMaster_AgreementDefinition" />
-		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul" 
-			rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
-		<menuItem id="menu_Item_BaseRate"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateList.zul"
-			rightName="menuItem_ApplicationMaster_BaseRate" />
-		<menuItem id="menu_Item_BaseRateCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRateCode/BaseRateCodeList.zul"
-			rightName="menuItem_ApplicationMaster_BaseRateCode" />
-		<menuItem id="menu_Item_BlacklistCustomer"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerList.zul"
-			rightName="menuItem_ApplicationMaster_BlacklistCustomer" />
-		<!-- <menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul" 
-			rightName="menuItem_ApplicationMaster_CommodityBrokerDetail"/> <menuItem 
-			id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul" 
-			rightName="menuItem_ApplicationMaster_CommodityDetail"/> -->
-		<!-- <menuItem id="menu_Item_CorpRelationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeList.zul" 
-			rightName="menuItem_ApplicationMaster_CorpRelationCode"/> -->
-		<menuItem id="menu_Item_Currency"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"
-			rightName="menuItem_ApplicationMaster_Currency" />
-		<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul"
-			rightName="menuItem_ErrorDetail_ErrorDetail" />
-		<menuItem id="menu_Item_FeeType" zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"
-			rightName="" />
-		<menuItem id="menu_Item_Flag"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul"
-			rightName="menuItem_ApplicationMaster_Flags" />
-		<menuItem id="menu_Item_TaxDetail"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
-			rightName="menuItem_applicationmaster_TaxDetail" />
-		<!-- <menuItem id="menu_Item_CustomerCategory" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerCategory/CustomerCategoryList.zul" 
-			rightName="menuItem_ApplicationMaster_CustomerCategory"/> <menuItem id="menu_Item_CustomerNotesType" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerNotesType/CustomerNotesTypeList.zul" 
-			rightName="menuItem_ApplicationMaster_CustomerNotesType"/> -->
-		<menuItem id="menu_Item_CustomerStatusCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeList.zul"
-			rightName="menuItem_ApplicationMaster_CustomerStatusCode" />
-		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul" 
-			rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
-		<!-- <menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" 
-			rightName="menuItem_ApplicationMaster_BlacklistCustomer"/> -->
-		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" 
-			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
-		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
-			rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
-		<menuItem id="menu_Item_RejectDetail"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"
-			rightName="menuItem_ApplicationMaster_RejectDetail" />
-		<menuItem id="menu_Item_RelationshipOfficer"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"
-			rightName="menuItem_ApplicationMaster_RelationshipOfficer" />
-		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" 
-			rightName="menuItem_ApplicationMaster_ReturnedCheque" /> -->
-		<!-- <menuItem id="menu_Item_SalesOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/SalesOfficer/SalesOfficerList.zul" 
-			rightName="menuItem_ApplicationMaster_SalesOfficer"/> -->
-		<!-- <menuItem id="menu_Item_SplRate" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRate/SplRateList.zul" 
-			rightName="menuItem_ApplicationMaster_SplRate"/> <menuItem id="menu_Item_SplRateCode" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul" 
-			rightName="menuItem_ApplicationMaster_SplRateCode"/> -->
-		<!-- <menuItem id="menu_Item_CommodityInventory" zulNavigation="/WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryList.zul" 
-			rightName="menuItem_Commodity_CommodityInventory"/> <menuItem id="menu_Item_SukukBond" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBond/SukukBondList.zul" 
-			rightName="menuItem_ApplicationMasters_SukukBond"/> <menuItem id="menu_Item_SukukBroker" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul" 
-			rightName="menuItem_ApplicationMasters_SukukBroker"/> -->
-		<!-- <menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" 
-			rightName="menuItem_ApplicationMaster_TakafulProvider"/> -->
-		<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
-			rightName="menuItem_applicationmasters_InsuranceType"/> -->
-		<!-- <menuItem id="menu_Item_InsurancePolicy" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsurancePolicy/InsurancePolicyList.zul" 
-			rightName="menuItem_applicationmaster_InsurancePolicy"/> -->
-		<!-- <menuItem id="menu_Item_TargetDetails" zulNavigation="/WEB-INF/pages/ApplicationMaster/TargetDetails/TargetDetailList.zul" 
-			rightName="menuItem_ApplicationMaster_TargetDetail" /> -->
-		<!-- <menuItem id="menu_Item_VesselDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/VesselDetails/VesselDetailList.zul" 
-			rightName="menuItem_ApplicationMaster_Vessel"/> <menuItem id="menu_Item_ChequePurpose" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ChequePurpose/ChequePurposeList.zul" 
-			rightName="menuItem_ApplicationMaster_ChequePurpose"/> -->
-		<!-- <menuItem id="menu_Item_SysNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=N" 
-			/> <menuItem id="menu_Item_SendNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=Y" 
-			/> -->
-		<menuItem id="menu_Item_FinanceStatusCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"
-			rightName="menuItem_applicationmaster_FinanceStatusCodes" />
-		<!-- <menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" 
-			iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
-		<menuItem id="menu_Item_BounceReason"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul"
-			rightName="menuItem_applicationmaster_BounceReason" />
-		<menuItem id="menu_Item_ReasonCategory"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryList.zul"
-			rightName="menuItem_ApplicationMaster_ReasonCategory" />
-		<menuItem id="menu_Item_ReasonCategoryEnquiry"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryEnquiryList.zul?enqiryModule=Y"
-			rightName="menuItem_ApplicationMaster_ReasonCategoryEnquiry" />
-		<!-- <menuItem id="menu_Item_ReasonTypes" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesList.zul" 
-			rightName="menuItem_ApplicationMaster_ReasonTypes"/> -->
-		<menuItem id="menu_Item_ReasonTypesEnquiry"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesEnquiryList.zul?enqiryModule=Y"
-			rightName="menuItem_ApplicationMaster_ReasonTypesEnquiry" />
-		<menuItem id="menu_Item_ReasonCode"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeList.zul"
-			rightName="menuItem_ApplicationMaster_ReasonCode" />
-		<menuItem id="menu_Item_ReasonCodeEnquiry"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeEnquiryList.zul?enqiryModule=Y"
-			rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
-	</menu>
+	<menuItem id="menu_Item_CustomerStatusCode"
+		zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeList.zul"
+		rightName="menuItem_ApplicationMaster_CustomerStatusCode" />
+	<menuItem id="menu_Item_ReasonCategoryEnquiry"
+		zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryEnquiryList.zul?enqiryModule=Y"
+		rightName="menuItem_ApplicationMaster_ReasonCategoryEnquiry" />
+	<menuItem id="menu_Item_ReasonTypesEnquiry"
+		zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesEnquiryList.zul?enqiryModule=Y"
+		rightName="menuItem_ApplicationMaster_ReasonTypesEnquiry" />
+	<menuItem id="menu_Item_ReasonCodeEnquiry"
+		zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeEnquiryList.zul?enqiryModule=Y"
+		rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
 
-	<!-- Account Menu Tree -->
-	<!-- <menu id="menu_Category_Account" rightName="menuCat_Account"> <menuItem 
-		id="menu_Item_OpenCustomerAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/NewCustomerAccountsList.zul" 
-		rightName="menuItem_Account_OpenCustomerAccount"/> <menuItem id="menu_Item_OpenInternalAcount" 
-		zulNavigation="/WEB-INF/pages/Account/Accounts/NewInternalAccountsList.zul" 
-		rightName="menuItem_Account_OpenInternalAccount"/> <menuItem id="menu_Item_MaintainCustomerAcount" 
-		zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainCustomerAccountsList.zul" 
-		rightName="menuItem_Account_MaintainCustomerAccount"/> <menuItem id="menu_Item_MaintainInternalAcount" 
-		zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainInternalAccountsList.zul" 
-		rightName="menuItem_Account_MaintainInternalAccount"/> </menu> -->
 	<!-- CustomerMasters Menu Tree -->
 	<menu id="menu_Category_Customer">
 		<menuItem id="menu_Item_NewCustomer"
@@ -470,78 +447,6 @@
 		<menuItem id="menu_Item_CIBILFileDownloads"
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul"
 			rightName="menu_Item_CIBILFileDownloads" />
-	</menu>
-
-	<!-- Rules Factory -->
-	<menu id="menu_Category_RulesFactory">
-		<menuItem id="menu_Item_AgrRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"
-			rightName="menuItem_RulesFactory_AgreementRules" />
-		<menuItem id="menu_Item_BlackListDedupParm"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/BlackListDedupParmList.zul"
-			rightName="menuItem_RulesFactory_BlackListDedupParm" />
-		<menuItem id="menu_Item_BounceRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BounceRuleList.zul"
-			rightName="menuItem_RulesFactory_BounceRule" />
-		<menuItem id="menu_Item_CheckList"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul"
-			rightName="menuItem_RulesFactory_CheckList" />
-		<menuItem id="menu_Item_CheckRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"
-			rightName="menuItem_RulesFactory_CheckRules" />
-		<menuItem id="menu_Item_DedupParm"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"
-			rightName="menuItem_RulesFactory_CustDedupParm" />
-		<menuItem id="menu_Item_DownpaymentRules"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DownpaymentRuleList.zul"
-			rightName="menuItem_RulesFactory_DownpaymentRules" />
-		<menuItem id="menu_Item_EligibilityRules"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"
-			rightName="menuItem_RulesFactory_DownpaymentRules" />
-		<menuItem id="menu_Item_MailTemplate"
-			zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
-		<menuItem id="menu_Item_FeeDetails"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"
-			rightName="menuItem_RulesFactory_FeeRules" />
-		<!-- <menuItem id="menu_Item_InsuranceRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/InsuranceRuleList.zul" 
-			rightName="menuItem_RulesFactory_InsuranceRules"/> -->
-		<!-- <menuItem id="menu_Item_RateRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RateRuleList.zul" 
-			rightName="menuItem_RulesFactory_RateRules" /> -->
-		<menuItem id="menu_Item_LoanDedupParm"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"
-			rightName="menuItem_RulesFactory_LoanDedupParm" />
-		<menuItem id="menu_Item_Notifications"
-			zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul"
-			rightName="menuItem_RulesFactory_Notifications" />
-		<menuItem id="menu_Item_PoliceDedupParm"
-			zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"
-			rightName="menuItem_RulesFactory_PoliceDedupParm" />
-		<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RulesFactory/OverdueCharge/OverdueChargeList.zul" 
-			rightName="menuItem_RuleFactory_OverdueCharge"/> -->
-		<menuItem id="menu_Item_ProvisionRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"
-			rightName="menuItem_RulesFactory_ProvisionRules" />
-		<menuItem id="menu_Item_RefundRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
-			rightName="menuItem_RulesFactory_RefundRules" />
-		<menuItem id="menu_Item_ScoringGroup"
-			zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"
-			rightName="menuItem_RulesFactory_Notifications" />
-		<menuItem id="menu_Item_ScoringMetrics"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"
-			rightName="menuItem_RulesFactory_Notifications" />
-		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul" 
-			rightName="menuItem_RulesFactory_Notifications"/> -->
-		<menuItem id="menu_Item_Query"
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul"
-			rightName="menuItem_RulesFactory_Query" />
-		<menuItem id="menu_Item_SubHeadRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"
-			rightName="menuItem_RulesFactory_SubHeadRules" />
-		<!-- GST Rules -->
-		<menuItem id="menu_Item_GSTRule"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/GstRuleList.zul"
-			rightName="menuItem_RulesFactory_BounceRule" />
 	</menu>
 
 	<!-- Solution Factory -->
@@ -1519,13 +1424,19 @@
 	</menu>
 
 	<!-- External Uplaods -->
-	<menu id="menu_Category_PdfUplaods" rightName="menu_Category_SystemMaster">
+	<menu id="menu_Category_PdfUplaods">
 		<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
 		<menuItem id="menu_Item_PostingDownloads"
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
 			rightName="menuItem_SystemMaster_AddressType" />
 	</menu>
+
+	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
+		rightName="menuItem_EOD_CustomerEOD" />
+	<menuItem id="menu_Item_DataEngine_MasterExport"
+		zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
+		rightName="menuItem_DataExtraction" />
 
 	<!-- TODO -->
 
@@ -1537,5 +1448,100 @@
 			rightName="menuItem_DataEngine_DataImport" /> -->
 		<!-- <menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" 
 			rightName="menuItem_DataEngine_DataExport" /> -->
+	</menu>
+
+	<menu id="menu_Category_SystemMaster">
+		<!-- <menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul" 
+			rightName="menuItem_SystemMaster_Academic"/> -->
+		<!-- <menuItem id="menu_Item_BuilderProjcetEnquiry" zulNavigation="/WEB-INF/pages/masters/BuilderProjcet/BuilderProjcetEnquiryList.zul?enqiryModule=Y" 
+			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderProjcetEnquiry"/> -->
+		<!-- <menuItem id="menu_Item_BuilderCompanyEnquiry" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyEnquiryList.zul?enqiryModule=Y" 
+			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderCompanyEnquiry"/> -->
+		<!-- <menuItem id="menu_Item_BlackListReasonCode" zulNavigation="/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeList.zul" 
+			rightName="menuItem_SystemMaster_BlackListReasonCode"/> -->
+		<!-- <menuItem id="menu_Item_DispatchMode" zulNavigation="/WEB-INF/pages/SystemMaster/DispatchMode/DispatchModeList.zul" 
+			rightName="menuItem_SystemMaster_DispatchMode"/> -->
+		<!-- <menuItem id="menu_Item_EmpStsCode" zulNavigation="/WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeList.zul" 
+			rightName="menuItem_SystemMaster_EmpStsCode"/> -->
+		<!-- <menuItem id="menu_Item_GroupStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/GroupStatusCode/GroupStatusCodeList.zul" 
+			rightName="menuItem_SystemMaster_GroupStatusCode"/> -->
+		<!-- <menuItem id="menu_Item_IdentityDetails" zulNavigation="/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsList.zul" 
+			rightName="menuItem_SystemMaster_IdentityDetails"/> -->
+		<!-- <menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" 
+			rightName="menuItem_SystemMaster_VehicleDealer"/> -->
+		<!-- <menuItem id="menu_Item_PRelationCode" zulNavigation="/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeList.zul" 
+			rightName="menuItem_SystemMaster_PRelationCode"/> -->
+		<!-- <menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
+			rightName="menuItem_SystemMaster_Profession"/> -->
+	</menu>
+
+	<menu id="menu_Category_ApplicationMaster">
+		<!-- <menuItem id="menu_Item_AccountMappingEnquiry" zulNavigation="/WEB-INF/pages/applicationmaster/AccountMapping/AccountMappingEnquiryList.zul?enqiryModule=Y" 
+			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_AccountMappingEnquiry"/> -->
+		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul" 
+			rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
+		<!-- <menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul" 
+			rightName="menuItem_ApplicationMaster_CommodityBrokerDetail" /> -->
+		<!-- <menuItem id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul" 
+			rightName="menuItem_ApplicationMaster_CommodityDetail" /> -->
+		<!-- <menuItem id="menu_Item_CorpRelationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeList.zul" 
+			rightName="menuItem_ApplicationMaster_CorpRelationCode"/> -->
+		<!-- <menuItem id="menu_Item_CustomerCategory" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerCategory/CustomerCategoryList.zul" 
+			rightName="menuItem_ApplicationMaster_CustomerCategory" /> -->
+		<!-- <menuItem id="menu_Item_CustomerNotesType" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerNotesType/CustomerNotesTypeList.zul" 
+			rightName="menuItem_ApplicationMaster_CustomerNotesType" /> -->
+		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul" 
+			rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
+		<!-- <menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" 
+			rightName="menuItem_ApplicationMaster_BlacklistCustomer"/> -->
+		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" 
+			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
+		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
+			rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
+		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" 
+			rightName="menuItem_ApplicationMaster_ReturnedCheque" /> -->
+		<!-- <menuItem id="menu_Item_SalesOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/SalesOfficer/SalesOfficerList.zul" 
+			rightName="menuItem_ApplicationMaster_SalesOfficer"/> -->
+		<!-- <menuItem id="menu_Item_SplRate" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRate/SplRateList.zul" 
+			rightName="menuItem_ApplicationMaster_SplRate" /> -->
+		<!-- <menuItem id="menu_Item_SplRateCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul" 
+			rightName="menuItem_ApplicationMaster_SplRateCode" /> -->
+		<!-- <menuItem id="menu_Item_CommodityInventory" zulNavigation="/WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryList.zul" 
+			rightName="menuItem_Commodity_CommodityInventory" /> -->
+		<!-- <menuItem id="menu_Item_SukukBond" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBond/SukukBondList.zul" 
+			rightName="menuItem_ApplicationMasters_SukukBond" /> -->
+		<!-- <menuItem id="menu_Item_SukukBroker" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul" 
+			rightName="menuItem_ApplicationMasters_SukukBroker" /> -->
+		<!-- <menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" 
+			rightName="menuItem_ApplicationMaster_TakafulProvider"/> -->
+		<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
+			rightName="menuItem_applicationmasters_InsuranceType"/> -->
+		<!-- <menuItem id="menu_Item_InsurancePolicy" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsurancePolicy/InsurancePolicyList.zul" 
+			rightName="menuItem_applicationmaster_InsurancePolicy"/> -->
+		<!-- <menuItem id="menu_Item_TargetDetails" zulNavigation="/WEB-INF/pages/ApplicationMaster/TargetDetails/TargetDetailList.zul" 
+			rightName="menuItem_ApplicationMaster_TargetDetail" /> -->
+		<!-- <menuItem id="menu_Item_VesselDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/VesselDetails/VesselDetailList.zul" 
+			rightName="menuItem_ApplicationMaster_Vessel" /> -->
+		<!-- <menuItem id="menu_Item_ChequePurpose" zulNavigation="/WEB-INF/pages/ApplicationMaster/ChequePurpose/ChequePurposeList.zul" 
+			rightName="menuItem_ApplicationMaster_ChequePurpose" /> -->
+		<!-- <menuItem id="menu_Item_SysNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=N" 
+			/> -->
+		<!-- <menuItem id="menu_Item_SendNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=Y" 
+			/> -->
+		<!-- <menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" 
+			iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
+		<!-- <menuItem id="menu_Item_ReasonTypes" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonTypes/ReasonTypesList.zul" 
+			rightName="menuItem_ApplicationMaster_ReasonTypes"/> -->
+	</menu>
+
+	<menu id="menu_Category_Account">
+		<!-- <menuItem id="menu_Item_OpenCustomerAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/NewCustomerAccountsList.zul" 
+			rightName="menuItem_Account_OpenCustomerAccount" /> -->
+		<!-- <menuItem id="menu_Item_OpenInternalAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/NewInternalAccountsList.zul" 
+			rightName="menuItem_Account_OpenInternalAccount" /> -->
+		<!-- <menuItem id="menu_Item_MaintainCustomerAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainCustomerAccountsList.zul" 
+			rightName="menuItem_Account_MaintainCustomerAccount" /> -->
+		<!-- <menuItem id="menu_Item_MaintainInternalAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainInternalAccountsList.zul" 
+			rightName="menuItem_Account_MaintainInternalAccount" /> -->
 	</menu>
 </ns2:XMLRootMenu>
