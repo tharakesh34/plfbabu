@@ -45,6 +45,7 @@ package com.pennant.webui.index;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
@@ -117,9 +118,9 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		this.label_AppName.setValue(App.NAME);
 
 		if (App.NAME.contains("Lending")) {
-			this.imgsmallLogo.setSrc("/images/plf_logo.png");
+			this.imgsmallLogo.setSrc("/images/plf_product_logo.png");
 		} else {
-			this.imgsmallLogo.setSrc("/images/pff_logo.png");
+			this.imgsmallLogo.setSrc("/images/pff_product_logo");
 		}
 
 		LoggedInUser user = getUserWorkspace().getLoggedInUser();
@@ -150,7 +151,9 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		} catch (LicenseException e) {
 			if (LicenseError.LIC001 == LicenseError.valueOf(e.getErrorCode())) {
 				if (UserType.valueOf(user.getUserType()) == UserType.ADMIN && getUserWorkspace().isAllowed("menuItem_License_LicenseUpload")) {
-					Executions.createComponents("~./pages/LicenseUpload.zul", null, null);
+					Map<String, String> arg = new HashedMap<>();
+					arg.put("origin", "LoginPage");
+					Executions.createComponents("~./pages/lic/LicenseUpload.zul", null, arg);
 				} else {
 					Executions.sendRedirect("default-error.jsp");
 				}

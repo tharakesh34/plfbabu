@@ -15,7 +15,7 @@
 			</west>
 			<east border="0" size="37%" >
 				<vlayout>
-					<image src="/images/plf_logo.png" width="120px"
+					<image src="/images/plf_product_logo.png" width="120px"
 						height="50px" align="right"
 						style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;">

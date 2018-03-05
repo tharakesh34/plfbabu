@@ -16,7 +16,7 @@
 			</west>
 			<east border="0" size="35%" >
 				<vlayout>
-					<image src="/images/plf_logo.png"  height="53px" align="right" style="margin-right:6px; margin-top:4px" />
+					<image src="/images/plf_product_logo.png"  height="53px" align="right" style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;margin-left:50px;">
 						<h:form action="j_spring_security_check?${_csrf.parameterName}=${_csrf.token}" method="post">
 							<grid style="border:none;background:white;">
