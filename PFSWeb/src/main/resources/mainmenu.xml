@@ -46,9 +46,14 @@
 				rightName='menuItem_Reload_Resources' />
 			<menuItem id="menu_Item_CacheMonitor" zulNavigation="/WEB-INF/pages/Cache/CacheNodesList.zul"
 				rightName="menuItem_Cache_CacheMonitor" />
+			<menuItem id="menuItem_Dashboard_DashboardConfiguration"
+				zulNavigation="/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationList.zul"
+				rightName="menuItem_Dashboard_DashboardConfiguration" />
 			<menuItem id="menu_Item_ErrorDetail"
 				zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul"
 				rightName="menuItem_ErrorDetail_ErrorDetail" />
+			<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
+				rightName="menuItem_SystemMaster_AddressType" />
 		</menu>
 	</menu>
 
@@ -548,6 +553,9 @@
 			<menuItem id="menu_Item_ChequeHeader"
 				zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
+			<menuItem id="menu_Item_NOCIssuance"
+				zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
+				rightName="menuItem_FinanceManagement_NOCIssuance" />
 		</menu>
 		<menu id="menu_Category_LmsWriteoff">
 			<menuItem id="menu_Item_WriteOff"
@@ -572,32 +580,64 @@
 			rightName="menuItem_EOD_CustomerEOD" />
 	</menu>
 
+	<!-- Bulk Processes -->
+	<menu id="menu_Category_BulkProcesses">
+		<menu id="menu_Category_Disbursement">
+			<menuItem id="menu_Item_DisbursementRegistration"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul"
+				rightName="menuItem_DisbursementRegistration" />
+			<menuItem id="menu_Item_DisbursementFileDownlaods"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul"
+				rightName="menuItem_DisbursementFileDownlaods" />
+			<menuItem id="menu_Item_DisbursementDataEngine_Import"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul"
+				rightName="menuItem_DataEngine_DataImport" />
+		</menu>
+		<menu id="menu_Category_Mandates">
+			<menuItem id="menu_Item_MandateRegistration"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul"
+				rightName="menuItem_MandateRegistration" />
+			<menuItem id="menu_Item_MandatesFileDownlaods"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES"
+				rightName="menuItem_MandateFileDownlaods" />
+			<menuItem id="menu_Item_MandatesFileImport"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateDataImport.zul"
+				rightName="menuItem_DataEngine_DataImport" />
+		</menu>
+		<menu id="menu_Category_PresentmentDetails">
+			<menuItem id="menu_Item_PresentmentExtractDetail"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul"
+				rightName="menuItem_PresentmentDetail_PresentmentExtract" />
+			<menuItem id="menu_Item_PresentmentBatchCreation"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N"
+				rightName="menuItem_PresentmentDetail_PresentmentBatchCreation" />
+			<menuItem id="menu_Item_PresentmentHeaderApprove"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A"
+				rightName="menuItem_PresentmentDetail_PresentmentApprove" />
+			<menuItem id="menu_Item_PresentmentFileImport"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
+				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
+		</menu>
+		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
+			<menuItem id="menu_Item_FinanceTaxDetailUpload"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
+				rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
+			<menuItem id="menu_Item_PostingDownloads"
+				zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
+				rightName="menuItem_SystemMaster_AddressType" />
+			<menuItem id="menu_Item_DataEngine_MasterExport"
+				zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
+				rightName="menuItem_DataExtraction" />
+			<menuItem id="menu_Item_ExternalUplaods"
+				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
+				rightName="menuItem_SystemMaster_AddressType" />
+		</menu>
+	</menu>
+	
+	<!-- Enquiry -->
+
 	<!-- TODO -->
 
-	<!-- Interface bajaj Upload and downloads -->
-	<menu id="menu_Category_Mandates">
-		<menuItem id="menu_Item_MandateRegistration"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul"
-			rightName="menuItem_MandateRegistration" />
-		<menuItem id="menu_Item_MandatesFileDownlaods"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES"
-			rightName="menuItem_MandateFileDownlaods" />
-		<menuItem id="menu_Item_MandatesFileImport"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateDataImport.zul"
-			rightName="menuItem_DataEngine_DataImport" />
-
-	</menu>
-	<menu id="menu_Category_Disbursement">
-		<menuItem id="menu_Item_DisbursementRegistration"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul"
-			rightName="menuItem_DisbursementRegistration" />
-		<menuItem id="menu_Item_DisbursementFileDownlaods"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul"
-			rightName="menuItem_DisbursementFileDownlaods" />
-		<menuItem id="menu_Item_DisbursementDataEngine_Import"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul"
-			rightName="menuItem_DataEngine_DataImport" />
-	</menu>
 	<menu id="menu_Category_SAPGL">
 		<menuItem id="menu_Item_TrailBalanceFileDownloads"
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=TrailBalance"
@@ -611,43 +651,6 @@
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul"
 			rightName="menu_Item_CIBILFileDownloads" />
 	</menu>
-
-	<!--<menu id="menu_Category_Facility" rightName="menuCat_Facility" > <menuItem 
-		id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
-		rightName="menuItem_Facility_FacilityEnquiry"/> <menuItem id="menu_Item_Facility" 
-		zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" rightName="menuItem_Facility_Facility"/> 
-		<menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
-		rightName="menuItem_Facility_Corp"/> </menu> -->
-
-	<menu id="menu_Category_DashBoard">
-		<menuItem id="menuItem_Dashboard_DashboardConfiguration"
-			zulNavigation="/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationList.zul"
-			rightName="menuItem_Dashboard_DashboardConfiguration" />
-	</menu>
-
-	<!-- Static Parameter Menu Tree -->
-	<menu id="menu_Category_StaticParm">
-		<!-- <menuItem id="menu_Item_ExtendedFieldHeader" zulNavigation="/WEB-INF/pages/StaticParms/ExtendedFieldHeader/ExtendedFieldHeaderList.zul" 
-			rightName="menuItem_StaticParms_ExtendedFieldHeader" /> -->
-		<menuItem id="menu_Item_LovFieldCode"
-			zulNavigation="/WEB-INF/pages/StaticParms/LovFieldCode/LovFieldCodeList.zul"
-			rightName="menuItem_StaticParms_LovFieldCode" />
-		<!-- <menuItem id="menu_Item_InterestRateBasisCode" zulNavigation="/WEB-INF/pages/StaticParms/InterestRateBasisCode/InterestRateBasisCodeList.zul" 
-			rightName="menuItem_StaticParms_InterestRateBasisCode" /> <menuItem id="menu_Item_Frequency" 
-			zulNavigation="/WEB-INF/pages/StaticParms/Frequency/FrequencyList.zul" rightName="menuItem_StaticParms_Frequency"/> 
-			<menuItem id="menu_Item_Language" zulNavigation="/WEB-INF/pages/StaticParms/Language/LanguageList.zul" 
-			rightName="menuItem_StaticParms_Language" /> <menuItem id="menu_Item_ScheduleMethod" 
-			zulNavigation="/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodList.zul" 
-			rightName="menuItem_StaticParms_ScheduleMethod" /> -->
-	</menu>
-
-	<!-- Miscellaneous Menu Tree -->
-	<!-- <menu id="menu_Category_Miscellaneous" rightName="menuCat_Miscellaneous"> 
-		<menuItem id="menu_Item_RatingCode" zulNavigation="/WEB-INF/pages/BMTMasters/RatingCode/RatingCodeList.zul" 
-		iconName="/images/icons/console_view.gif" rightName="menuItem_BMTMasters_RatingCode" 
-		/> <menuItem id="menu_Item_RatingType" zulNavigation="/WEB-INF/pages/BMTMasters/RatingType/RatingTypeList.zul" 
-		iconName="/images/icons/console_view.gif" rightName="menuItem_BMTMasters_RatingType" 
-		/> </menu> -->
 
 	<!-- Finance Inquiry Details -->
 	<menu id="menu_Category_Enquiry">
@@ -1208,27 +1211,6 @@
 		zulNavigation="/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentEnquiryList.zul" 
 		rightName="menuItem_Collateral_CollateralAssignmentEnquiry"/> </menu> -->
 
-	<menu id="menu_Category_PresentmentDetails">
-		<menuItem id="menu_Item_PresentmentExtractDetail"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul"
-			rightName="menuItem_PresentmentDetail_PresentmentExtract" />
-		<menuItem id="menu_Item_PresentmentBatchCreation"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N"
-			rightName="menuItem_PresentmentDetail_PresentmentBatchCreation" />
-		<menuItem id="menu_Item_PresentmentHeaderApprove"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A"
-			rightName="menuItem_PresentmentDetail_PresentmentApprove" />
-		<menuItem id="menu_Item_PresentmentHeaderEnquiry"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E"
-			rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
-		<menuItem id="menu_Item_PresentmentFileImport"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
-			rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
-		<menuItem id="menu_Item_PresentmentFileImport_Report"
-			zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-			rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
-	</menu>
-
 	<!-- PaymentInstructions -->
 	<menu id="menu_Category_PaymentInstructions">
 		<menuItem id="menu_Item_PaymentInstructionsEnquiry"
@@ -1240,25 +1222,12 @@
 		zulNavigation="/WEB-INF/pages/DataExtraction/DataExtractionList.zul"
 		rightName="menuItem_gst_GSTDownload" />
 
-	<!-- Bulk Uplaods -->
-	<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
-		<menuItem id="menu_Item_ExternalUplaods"
-			zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
-			rightName="menuItem_SystemMaster_AddressType" />
-	</menu>
-
-	<!-- External Uplaods -->
-	<menu id="menu_Category_PdfUplaods">
-		<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
-			rightName="menuItem_SystemMaster_AddressType" />
-		<menuItem id="menu_Item_PostingDownloads"
-			zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul"
-			rightName="menuItem_SystemMaster_AddressType" />
-	</menu>
-
-	<menuItem id="menu_Item_DataEngine_MasterExport"
-		zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
-		rightName="menuItem_DataExtraction" />
+	<menuItem id="menu_Item_PresentmentHeaderEnquiry"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E"
+		rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
+	<menuItem id="menu_Item_PresentmentFileImport_Report"
+		zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+		rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
 
 	<!-- TODO -->
 
@@ -1536,9 +1505,6 @@
 	<menuItem id="menu_Item_SuspHead"
 		zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul?rightName=menuItem_FinanceManagement_SuspHead"
 		rightName="menuItem_FinanceManagement_SuspHead" />
-	<menuItem id="menu_Item_NOCIssuance"
-		zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
-		rightName="menuItem_FinanceManagement_NOCIssuance" />
 	<menuItem id="menu_Item_OverdueChargeRecovery"
 		zulNavigation="/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul"
 		rightName="menuItem_FinanceManagement_OverdueChargeRecovery" />
@@ -1575,9 +1541,41 @@
 		rightName="menuItem_FinanceManagement_SubSchedule"/> -->
 	<!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
 		rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
-	<menuItem id="menu_Item_FinanceTaxDetailUpload"
-		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
-		rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
+
+	<!-- Misc... -->
+	<menu id="menu_Category_Facility" rightName="menuCat_Facility">
+		<!-- <menuItem id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
+			rightName="menuItem_Facility_FacilityEnquiry" /> -->
+		<!-- <menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" 
+			rightName="menuItem_Facility_Facility" /> -->
+		<!-- <menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
+			rightName="menuItem_Facility_Corp" /> -->
+	</menu>
+
+	<menu id="menu_Category_StaticParm">
+		<!-- <menuItem id="menu_Item_ExtendedFieldHeader" zulNavigation="/WEB-INF/pages/StaticParms/ExtendedFieldHeader/ExtendedFieldHeaderList.zul" 
+			rightName="menuItem_StaticParms_ExtendedFieldHeader" /> -->
+		<!-- <menuItem id="menu_Item_LovFieldCode" zulNavigation="/WEB-INF/pages/StaticParms/LovFieldCode/LovFieldCodeList.zul" 
+			rightName="menuItem_StaticParms_LovFieldCode" /> -->
+		<!-- <menuItem id="menu_Item_InterestRateBasisCode" zulNavigation="/WEB-INF/pages/StaticParms/InterestRateBasisCode/InterestRateBasisCodeList.zul" 
+			rightName="menuItem_StaticParms_InterestRateBasisCode" /> -->
+		<!-- <menuItem id="menu_Item_Frequency" zulNavigation="/WEB-INF/pages/StaticParms/Frequency/FrequencyList.zul" 
+			rightName="menuItem_StaticParms_Frequency" /> -->
+		<!-- <menuItem id="menu_Item_Language" zulNavigation="/WEB-INF/pages/StaticParms/Language/LanguageList.zul" 
+			rightName="menuItem_StaticParms_Language" /> -->
+		<!-- <menuItem id="menu_Item_ScheduleMethod" zulNavigation="/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodList.zul" 
+			rightName="menuItem_StaticParms_ScheduleMethod" /> -->
+	</menu>
+
+	<!-- Miscellaneous Menu Tree -->
+	<menu id="menu_Category_Miscellaneous" rightName="menuCat_Miscellaneous">
+		<!-- <menuItem id="menu_Item_RatingCode" zulNavigation="/WEB-INF/pages/BMTMasters/RatingCode/RatingCodeList.zul" 
+			iconName="/images/icons/console_view.gif" rightName="menuItem_BMTMasters_RatingCode" 
+			/> -->
+		<!-- <menuItem id="menu_Item_RatingType" zulNavigation="/WEB-INF/pages/BMTMasters/RatingType/RatingTypeList.zul" 
+			iconName="/images/icons/console_view.gif" rightName="menuItem_BMTMasters_RatingType" 
+			/> -->
+	</menu>
 
 	<!--//APPEND AFTER THIS// -->
 </ns2:XMLRootMenu>
