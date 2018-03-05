@@ -39,7 +39,7 @@
 			<menuItem id="menu_Item_PFSParameter"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"
 				rightName="menuItem_SolutionFactory_PFSParameter" />
-			<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/~./pages/LicenseUpload.zul"
+			<menuItem id="menuItem_License_LicenseUpload" zulNavigation="/~./pages/lic/LicenseUpload.zul"
 				rightName="menuItem_License_LicenseUpload" />
 			<menuItem id="menu_Item_ReloadResources"
 				zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul"

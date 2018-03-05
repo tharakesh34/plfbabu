@@ -18,7 +18,7 @@
 		<spring.ws.version>2.1.0.RELEASE</spring.ws.version>
 		<spring.web.version>3.0.5</spring.web.version>
 		<zk.version>8.0.4</zk.version>
-		<atlantic.version>8.0.5</atlantic.version>
+		<atlantic.version>8.0.0</atlantic.version>
 		<jasperreports.version>6.5.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
 	</properties>
@@ -59,17 +59,17 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>0.7.4.1</version>
+				<version>0.7.4.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-lic</artifactId>
-				<version>1.0.0.4</version>
+				<version>1.0.0.5</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.4.3</version>
+				<version>0.5</version>
 			</dependency>
 			<!-- Logging Framework -->
 			<dependency>

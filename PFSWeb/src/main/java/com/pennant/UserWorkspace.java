@@ -42,7 +42,6 @@
  */
 package com.pennant;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +52,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -82,7 +80,7 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  * 1. Access the rights that the user have. <br>
  * 2. The office for that the user are logged in. <br>
  */
-public class UserWorkspace implements Serializable, DisposableBean {
+public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWorkspace {
 	private static final long serialVersionUID = -3936210543827830197L;
 	private static final Logger logger = Logger.getLogger(UserWorkspace.class);
 
@@ -105,6 +103,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	 */
 	@SuppressWarnings("deprecation")
 	public UserWorkspace() {
+		super(AuthenticationManager.getLoggedInUser().getUserId(), AuthenticationManager.getLoggedInUser().getLanguage());
+		
 		loggedInUser = AuthenticationManager.getLoggedInUser();
 		grantedAuthorities = AuthenticationManager.getGrantedAuthorities();
 		securityRoles = AuthenticationManager.getSecurityRoles();

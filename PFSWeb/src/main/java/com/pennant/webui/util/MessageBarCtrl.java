@@ -230,8 +230,14 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	 */
 	public void onClick$copyRightInfo(Event event) {
 		Map<String, String> arg = new HashedMap<>();
-		arg.put("productLogo", "images/plf_logo.png");
-		Executions.createComponents("~./pages/CopyRight.zul", null, arg);
+		
+		if (App.NAME.contains("Lending")) {
+			arg.put("productLogo", "images/plf_product_logo.png");
+		} else {
+			arg.put("productLogo", "images/pff_product_logo");
+		}
+		
+		Executions.createComponents("~./pages/lic/CopyRight.zul", null, arg);
 	}
 
 	public void setMsg(String msg) {
