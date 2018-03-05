@@ -1,7 +1,8 @@
 pff 4.7.14, 2018-03-05
 ----------------------
 - Upgraded pennapps-web version from 0.4.3 to 0.5, to use framework UserWorksapce.
-- Refer the framework zul files from pennapps-web.jar directly. 
+- Refer the framework zul files from pennapps-web.jar directly.
+- Refactor the class LdapContext and its dependents to promote to framework 
 
 pff 4.7.14, 2018-02-22
 ----------------------

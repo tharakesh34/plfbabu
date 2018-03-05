@@ -113,12 +113,12 @@ import com.pennant.webui.administration.securityuser.changepassword.ChangePasswo
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.framework.security.ldap.LdapContext;
-import com.pennanttech.framework.security.ldap.UserAttributes;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.security.LdapContext;
+import com.pennanttech.pennapps.core.security.UserAttributes;
 import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -390,10 +390,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (InterfaceException e) {
 			if (e.getErrorCode().equals(LdapContext.LDAP81)) {
 				ldapUser = true;
-				logger.warn(e.getMessage());
+				logger.warn(e.getErrorMessage());
 			} else if (e.getErrorCode().equals(LdapContext.LDAP64)) {
 				ldapUser = false;
-				throw new WrongValueException(this.usrLogin, "User not found in active directory");
+				throw new WrongValueException(this.usrLogin, e.getErrorMessage());
 			} else {
 				MessageUtil.showError(e);
 				ldapUser = false;
