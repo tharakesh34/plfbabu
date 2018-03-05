@@ -432,222 +432,147 @@
 			rightName="menuItem_Finance_VASCancel" />
 	</menu>
 
-	<!-- TODO -->
-
 	<!-- Loan Origination -->
 	<menu id="menu_Category_Finance">
-		<!-- <menuItem id="menu_Item_DealFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/DealFinanceList.zul" 
-			rightName="menuItem_Finance_InvestmentFinanceDeals"/> -->
 		<menuItem id="menu_Item_NewFinanceMain"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination"
 			rightName="menuItem_Finance_FinanceMain" />
-		<menuItem id="menu_Item_PaymentOrderIssue"
-			zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul"
-			rightName="menuItem_Finance_PaymentOrderIssue" />
-		<menuItem id="menu_Item_ChequeHeader"
-			zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
-			rightName="menuItem_pdc_ChequeHeader" />
-
-		<!-- <menuItem id="menu_Item_FinancePreApproval" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinancePreApprovalList.zul?requestSource=PreApproval" 
-			rightName="menuItem_Finance_FinancePreApproval" /> -->
-		<!-- <menuItem id="menu_Item_NewTreasuaryFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul" 
-			rightName="menuItem_Finance_InvestmentFinance" /> -->
-		<!-- <menuItem id="menu_Item_ManualAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ManualAssignmentList.zul" 
-			rightName="menuItem_Assignment"/> <menuItem id="menu_Item_QDEFinanceMain" 
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
-			rightName="menuItem_Finance_QDEFinanceMain" /> <menuItem id="menu_Item_QueueAssignment" 
-			zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentList.zul" 
-			rightName="menuItem_Reassignment"/> <menuItem id="menu_Item_FinanceDeviations" 
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
-			rightName="menuItem_Finance_FinanceDeviations" /> <menuItem id="menu_Item_PaymentOrderAuth" 
-			zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul" 
-			rightName="menu_Item_PaymentOrderAuth" /> <menuItem id="menu_Item_MMAgreementsGen" 
-			zulNavigation="/WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsList.zul" 
-			rightName="menu_Item_MMAgreements"/> <menuItem id="menu_Item_AgreementGeneration" 
-			zulNavigation="/WEB-INF/pages/Reports/AgreementGenerationDialog.zul" rightName="menu_Item_AgreementGeneration"/> 
-			<menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul" 
-			/> <menuItem id="menu_Item_ExtFinanceLimit" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceLimitUploadDialog.zul" 
-			/> -->
 	</menu>
 
 	<!-- Loan Management -->
 	<menu id="menu_Category_FinanceManagement">
-		<!-- <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_DatedSchedule"/> -->
-		<menuItem id="menu_Item_AddDisbursment"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_AddDisbursment" />
-		<menuItem id="menu_Item_AddRateChange"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_AddRateChange" />
-		<menuItem id="menu_Item_AddTerms"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_AddTerms" />
-		<!-- <menuItem id="menu_Item_AdvPftRateChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_AdvPftRateChange"/> -->
-		<menuItem id="menu_Item_BasicDetail"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_BasicDetail" />
-		<!-- <menuItem id="menu_Item_BulkDeferment" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeList.zul" 
-			rightName="menuItem_FinanceManagement_BulkDefermentChange"/> -->
-		<menuItem id="menu_Item_IjaraBulkRate"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul"
-			rightName="menuItem_FinanceManagement_BulkRateChange" />
-		<menuItem id="menu_Item_CancelDisbursement"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_CancelDisbursment" />
-		<menuItem id="menu_Item_CancelFinance"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_CancelFinance" />
-		<menuItem id="menu_Item_ChangeFrequency"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ChangeFrequency" />
-		<menuItem id="menu_Item_ChangeGestation"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ChangeGestation" />
-		<menuItem id="menu_Item_ChangeRepayment"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ChangeRepayment" />
-		<menuItem id="menu_Item_RpyBasicDetail"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_RpyBasicDetail" />
-		<menuItem id="menu_Item_ChangeProfit"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ChangeProfit" />
-		<!-- <menuItem id="menu_Item_ChequePrinting" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingList.zul" 
-			rightName="menuItem_FinanceManagement_ChequePrinting"/> -->
-		<menuItem id="menu_Item_CustSusp"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/CustSuspenseList.zul"
-			rightName="menuItem_FinanceManagement_CustSuspense" />
-		<!-- <menuItem id="menu_Item_EarlySettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_EarlySettlement" /> -->
-		<menuItem id="menu_Item_FinanceFlags"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/FinanceFlags/FinanceFlagsList.zul"
-			rightName="menuItem_FinanceManagement_FinanceFlags" />
-		<menuItem id="menu_Item_FinSuspHold"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldList.zul"
-			rightName="menuItem_FinanceManagement_FinSuspHold" />
-		<menuItem id="menu_Item_HoldEMI"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_HoldEMI" />
-		<menuItem id="menu_Item_JVPosting"
-			zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingList.zul"
-			rightName="menuItem_others_JVPosting" />
-		<menuItem id="menu_Item_FeePostings"
-			zulNavigation="/WEB-INF/pages/Fees/FeePostings/FeePostingsList.zul"
-			rightName="menuItem_FinanceManagement_FeePostings" />
-		<!-- <menuItem id="menu_Item_InventorySettlement" zulNavigation="/WEB-INF/pages/FinanceManagement/InventorySettlement/InventorySettlementList.zul" 
-			rightName="menuItem_FinanceManagement_CustSuspense"/> -->
-		<!-- <menuItem id="menu_Item_LiabilityRequest" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
-			rightName="menuItem_FinanceManagement_LiabilityRequest"/> -->
-		<menuItem id="menu_Item_SuspHead"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul?rightName=menuItem_FinanceManagement_SuspHead"
-			rightName="menuItem_FinanceManagement_SuspHead" />
-		<menuItem id="menu_Item_NOCIssuance"
-			zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
-			rightName="menuItem_FinanceManagement_NOCIssuance" />
-		<menuItem id="menu_Item_OverdueChargeRecovery"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul"
-			rightName="menuItem_FinanceManagement_OverdueChargeRecovery" />
-		<menuItem id="menu_Item_OverdraftSchedule"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_OverdraftSchedule" />
-		<!-- <menuItem id="menu_Item_PartialSettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_PartialSettlement" /> -->
-		<menuItem id="menu_Item_PlannedEMI"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_PlannedEMIH" />
-		<menuItem id="menu_Item_Postponement"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_Postponement" />
-		<menuItem id="menu_Item_Provision"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionList.zul?rightName=menuItem_FinanceManagement_Provision"
-			rightName="menuItem_FinanceManagement_Provision" />
-		<menuItem id="menu_Item_CoreProvision"
-			zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"
-			rightName="menuItem_FinanceManagement_CoreProvision" />
-		<menuItem id="menu_Item_ReAgeHolidays"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ReAgeHolidays" />
-		<menuItem id="menu_Item_ReceiptBounce"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B"
-			rightName="menuItem_FinanceManagement_ReceiptBounce" />
-		<menuItem id="menu_Item_ReceiptCancellation"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C"
-			rightName="menuItem_FinanceManagement_ReceiptCancellation" />
-		<menuItem id="menu_Item_FeeReceiptCancellation"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"
-			rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
-		<menuItem id="menu_Item_ReceiptRealization"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul"
-			rightName="menuItem_FinanceManagement_ReceiptRealization" />
-		<menuItem id="menu_Item_FeeReceipts"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"
-			rightName="menuItem_FinanceManagement_FeeReceipts" />
-		<menuItem id="menu_Item_Recalculate"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_Recalculate" />
-		<menuItem id="menu_Item_Receipts"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_Receipts" />
-		<!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
-			rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->
-		<menuItem id="menu_Item_RmvTerms"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_RmvTerms" />
-		<menuItem id="menu_Item_CancelRepay"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_RepayCancel" />
-		<menuItem id="menu_Item_ReSchedule"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ReSchedule" />
-		<!-- <menuItem id="menu_Item_RolloverFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_RolloverFinance"/> -->
-		<!-- <menuItem id="menu_Item_SchdRepayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_SchdlRepayment" /> -->
-		<!-- <menuItem id="menu_Item_SuplRentIncrCost" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_SuplRentIncrCost"/> -->
-		<!-- <menuItem id="menu_Item_InsClaim" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
-			rightName="menuItem_FinanceManagement_TakafulClaim"/> -->
-		<!-- <menuItem id="menu_Item_InsChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_TakafulRate"/> -->
-		<!-- <menuItem id="menu_Item_TimelyClosure" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
-			rightName="menuItem_FinanceManagement_TimelyClosure"/> -->
-		<menuItem id="menu_Item_UnPlannedEmi"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_UnPlannedEmi" />
-		<menuItem id="menu_Item_WriteOff"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_WriteOff" />
-		<menuItem id="menu_Item_WriteoffPayment"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_WriteoffPayment" />
-		<!-- <menuItem id="menu_Item_TakafulPremiumExclude" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_TakafulPremiumExclude"/> -->
-		<!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
-		<!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_SubSchedule"/> -->
-		<!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-			rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
-		<menuItem id="menu_Item_ManualAdvise"
-			zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul"
-			rightName="menuItem_finance_ManualAdvise" />
-		<menuItem id="menu_Item_FinanceTaxDetail"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul"
-			rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
-		<menuItem id="menu_Item_FinanceTaxDetailUpload"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
-			rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
-		<menuItem id="menu_Item_FinCovenants"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_FinCovenants" />
+		<menu id="menu_Category_LmsPayments">
+			<menuItem id="menu_Item_AddDisbursment"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_AddDisbursment" />
+			<menuItem id="menu_Item_CancelDisbursement"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_CancelDisbursment" />
+			<menuItem id="menu_Item_PaymentOrderIssue"
+				zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul"
+				rightName="menuItem_Finance_PaymentOrderIssue" />
+			<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul"
+				rightName="menuItem_payment_PaymentInstructions" />
+		</menu>
+		<menu id="menu_Category_LmsReceipts">
+			<menuItem id="menu_Item_Receipts"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_Receipts" />
+			<menuItem id="menu_Item_ReceiptRealization"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul"
+				rightName="menuItem_FinanceManagement_ReceiptRealization" />
+			<menuItem id="menu_Item_ReceiptBounce"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B"
+				rightName="menuItem_FinanceManagement_ReceiptBounce" />
+			<menuItem id="menu_Item_ReceiptCancellation"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C"
+				rightName="menuItem_FinanceManagement_ReceiptCancellation" />
+			<menuItem id="menu_Item_FeeReceipts"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"
+				rightName="menuItem_FinanceManagement_FeeReceipts" />
+			<menuItem id="menu_Item_FeeReceiptCancellation"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"
+				rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
+		</menu>
+		<menu id="menu_Category_LmsManualPostings">
+			<menuItem id="menu_Item_ManualAdvise"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul"
+				rightName="menuItem_finance_ManualAdvise" />
+			<menuItem id="menu_Item_FeePostings"
+				zulNavigation="/WEB-INF/pages/Fees/FeePostings/FeePostingsList.zul"
+				rightName="menuItem_FinanceManagement_FeePostings" />
+			<menuItem id="menu_Item_JVPosting"
+				zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingList.zul"
+				rightName="menuItem_others_JVPosting" />
+		</menu>
+		<menu id="menu_Category_LmsRescheduling">
+			<menuItem id="menu_Item_AddRateChange"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_AddRateChange" />
+			<menuItem id="menu_Item_AddTerms"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_AddTerms" />
+			<menuItem id="menu_Item_ChangeFrequency"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_ChangeFrequency" />
+			<menuItem id="menu_Item_ChangeGestation"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_ChangeGestation" />
+			<menuItem id="menu_Item_ChangeRepayment"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_ChangeRepayment" />
+			<menuItem id="menu_Item_OverdraftSchedule"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_OverdraftSchedule" />
+			<menuItem id="menu_Item_PlannedEMI"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_PlannedEMIH" />
+			<menuItem id="menu_Item_Postponement"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_Postponement" />
+			<menuItem id="menu_Item_ReAgeHolidays"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_ReAgeHolidays" />
+			<menuItem id="menu_Item_Recalculate"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_Recalculate" />
+			<menuItem id="menu_Item_RmvTerms"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_RmvTerms" />
+			<menuItem id="menu_Item_ReSchedule"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_ReSchedule" />
+			<menuItem id="menu_Item_UnPlannedEmi"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_UnPlannedEmi" />
+			<menuItem id="menu_Item_IjaraBulkRate"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul"
+				rightName="menuItem_FinanceManagement_BulkRateChange" />
+		</menu>
+		<menu id="menu_Category_LmsPostDisbursementEdit">
+			<menuItem id="menu_Item_BasicDetail"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_BasicDetail" />
+			<menuItem id="menu_Item_RpyBasicDetail"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_RpyBasicDetail" />
+			<menuItem id="menu_Item_FinCovenants"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_FinCovenants" />
+			<menuItem id="menu_Item_FinanceTaxDetail"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul"
+				rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
+			<menuItem id="menu_Item_HoldEMI"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_HoldEMI" />
+			<menuItem id="menu_Item_ChequeHeader"
+				zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
+				rightName="menuItem_pdc_ChequeHeader" />
+		</menu>
+		<menu id="menu_Category_LmsWriteoff">
+			<menuItem id="menu_Item_WriteOff"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_WriteOff" />
+			<menuItem id="menu_Item_WriteoffPayment"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_WriteoffPayment" />
+		</menu>
+		<menu id="menu_Category_LmsCancellation">
+			<menuItem id="menu_Item_CancelFinance"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_CancelFinance" />
+		</menu>
 	</menu>
 
+	<!-- End of Day -->
 	<menu id="menu_Category_EOD">
 		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/EOD/EODConfig/EODConfigList.zul"
 			rightName="menuItem_eod_EODConfig" />
+		<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
+			rightName="menuItem_EOD_CustomerEOD" />
 	</menu>
+
+	<!-- TODO -->
 
 	<!-- Interface bajaj Upload and downloads -->
 	<menu id="menu_Category_Mandates">
@@ -1306,8 +1231,6 @@
 
 	<!-- PaymentInstructions -->
 	<menu id="menu_Category_PaymentInstructions">
-		<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul"
-			rightName="menuItem_payment_PaymentInstructions" />
 		<menuItem id="menu_Item_PaymentInstructionsEnquiry"
 			zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 			rightName="menuItem_payment_PaymentInstructionsEnquiry" />
@@ -1333,8 +1256,6 @@
 			rightName="menuItem_SystemMaster_AddressType" />
 	</menu>
 
-	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"
-		rightName="menuItem_EOD_CustomerEOD" />
 	<menuItem id="menu_Item_DataEngine_MasterExport"
 		zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
 		rightName="menuItem_DataExtraction" />
@@ -1560,8 +1481,103 @@
 		rightName="menuItem_CustomerMasters_CustomerRating" /> -->
 
 	<!-- Loan Origination -->
+	<!-- <menuItem id="menu_Item_DealFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/DealFinanceList.zul" 
+		rightName="menuItem_Finance_InvestmentFinanceDeals"/> -->
+	<!-- <menuItem id="menu_Item_FinancePreApproval" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinancePreApprovalList.zul?requestSource=PreApproval" 
+		rightName="menuItem_Finance_FinancePreApproval" /> -->
+	<!-- <menuItem id="menu_Item_NewTreasuaryFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul" 
+		rightName="menuItem_Finance_InvestmentFinance" /> -->
+	<!-- <menuItem id="menu_Item_ManualAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ManualAssignmentList.zul" 
+		rightName="menuItem_Assignment" /> -->
+	<!-- <menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
+		rightName="menuItem_Finance_QDEFinanceMain" /> -->
+	<!-- <menuItem id="menu_Item_QueueAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentList.zul" 
+		rightName="menuItem_Reassignment" /> -->
+	<!-- <menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
+		rightName="menuItem_Finance_FinanceDeviations" /> -->
+	<!-- <menuItem id="menu_Item_PaymentOrderAuth" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul" 
+		rightName="menu_Item_PaymentOrderAuth" /> -->
+	<!-- <menuItem id="menu_Item_MMAgreementsGen" zulNavigation="/WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsList.zul" 
+		rightName="menu_Item_MMAgreements" /> -->
+	<!-- <menuItem id="menu_Item_AgreementGeneration" zulNavigation="/WEB-INF/pages/Reports/AgreementGenerationDialog.zul" 
+		rightName="menu_Item_AgreementGeneration" /> -->
+	<!-- <menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul" 
+		/> -->
+	<!-- <menuItem id="menu_Item_ExtFinanceLimit" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceLimitUploadDialog.zul" 
+		/> -->
 
 	<!-- Loan Management -->
+	<!-- <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_DatedSchedule"/> -->
+	<!-- <menuItem id="menu_Item_AdvPftRateChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_AdvPftRateChange"/> -->
+	<!-- <menuItem id="menu_Item_BulkDeferment" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeList.zul" 
+		rightName="menuItem_FinanceManagement_BulkDefermentChange"/> -->
+	<menuItem id="menu_Item_ChangeProfit"
+		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+		rightName="menuItem_FinanceManagement_ChangeProfit" />
+	<!-- <menuItem id="menu_Item_ChequePrinting" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingList.zul" 
+		rightName="menuItem_FinanceManagement_ChequePrinting"/> -->
+	<menuItem id="menu_Item_CustSusp"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/CustSuspenseList.zul"
+		rightName="menuItem_FinanceManagement_CustSuspense" />
+	<!-- <menuItem id="menu_Item_EarlySettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_EarlySettlement" /> -->
+	<menuItem id="menu_Item_FinanceFlags"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/FinanceFlags/FinanceFlagsList.zul"
+		rightName="menuItem_FinanceManagement_FinanceFlags" />
+	<menuItem id="menu_Item_FinSuspHold"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldList.zul"
+		rightName="menuItem_FinanceManagement_FinSuspHold" />
+	<!-- <menuItem id="menu_Item_InventorySettlement" zulNavigation="/WEB-INF/pages/FinanceManagement/InventorySettlement/InventorySettlementList.zul" 
+		rightName="menuItem_FinanceManagement_CustSuspense"/> -->
+	<!-- <menuItem id="menu_Item_LiabilityRequest" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
+		rightName="menuItem_FinanceManagement_LiabilityRequest"/> -->
+	<menuItem id="menu_Item_SuspHead"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul?rightName=menuItem_FinanceManagement_SuspHead"
+		rightName="menuItem_FinanceManagement_SuspHead" />
+	<menuItem id="menu_Item_NOCIssuance"
+		zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
+		rightName="menuItem_FinanceManagement_NOCIssuance" />
+	<menuItem id="menu_Item_OverdueChargeRecovery"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul"
+		rightName="menuItem_FinanceManagement_OverdueChargeRecovery" />
+	<!-- <menuItem id="menu_Item_PartialSettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_PartialSettlement" /> -->
+	<menuItem id="menu_Item_Provision"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionList.zul?rightName=menuItem_FinanceManagement_Provision"
+		rightName="menuItem_FinanceManagement_Provision" />
+	<menuItem id="menu_Item_CoreProvision"
+		zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"
+		rightName="menuItem_FinanceManagement_CoreProvision" />
+	<!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
+		rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->
+	<menuItem id="menu_Item_CancelRepay"
+		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+		rightName="menuItem_FinanceManagement_RepayCancel" />
+	<!-- <menuItem id="menu_Item_RolloverFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_RolloverFinance"/> -->
+	<!-- <menuItem id="menu_Item_SchdRepayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_SchdlRepayment" /> -->
+	<!-- <menuItem id="menu_Item_SuplRentIncrCost" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_SuplRentIncrCost"/> -->
+	<!-- <menuItem id="menu_Item_InsClaim" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
+		rightName="menuItem_FinanceManagement_TakafulClaim"/> -->
+	<!-- <menuItem id="menu_Item_InsChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_TakafulRate"/> -->
+	<!-- <menuItem id="menu_Item_TimelyClosure" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
+		rightName="menuItem_FinanceManagement_TimelyClosure"/> -->
+	<!-- <menuItem id="menu_Item_TakafulPremiumExclude" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_TakafulPremiumExclude"/> -->
+	<!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
+	<!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_SubSchedule"/> -->
+	<!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
+		rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
+	<menuItem id="menu_Item_FinanceTaxDetailUpload"
+		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul"
+		rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
 
 	<!--//APPEND AFTER THIS// -->
 </ns2:XMLRootMenu>
