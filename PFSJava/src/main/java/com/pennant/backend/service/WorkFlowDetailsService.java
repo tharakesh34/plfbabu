@@ -51,13 +51,22 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface WorkFlowDetailsService {
 
-	/*WorkFlowDetails getWorkFlowDetails ();
-	WorkFlowDetails getNewWorkFlowDetails ();*/
+	/*
+	 * WorkFlowDetails getWorkFlowDetails (); 
+	 * WorkFlowDetails getNewWorkFlowDetails ();
+	 */
+	
 	WorkFlowDetails getWorkFlowDetailsByID(long id);
+
 	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	List<WorkFlowDetails> getActiveWorkFlowDetails();
+
 	long getWorkFlowDetailsCountByID(long id);
-	List<ErrorDetail> doValidations(WorkFlowDetails aWorkFlowDetails, String flag);
+
+	List<ErrorDetail> doValidations(WorkFlowDetails aWorkFlowDetails, String flag, boolean isActive);
+
 	int getWorkFlowDetailsVersionByID(long id);
- }
+}
