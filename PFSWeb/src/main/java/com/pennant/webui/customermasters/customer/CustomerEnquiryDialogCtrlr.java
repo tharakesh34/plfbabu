@@ -479,7 +479,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		if (aCustomer.getCustCtgCode().equals("RETAIL")) {
+		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())){
 			Retails.setVisible(true);
 			Corporates.setVisible(false);
 			CustRetl.setVisible(true);
@@ -510,7 +510,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custFirstName.setValue("- - - - - - - - -");
 			}
 			custCoreBank.setValue(aCustomer.getCustCoreBank());
-			if (aCustomer.getCustCoreBank() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustCoreBank())) {
 				custCoreBank.setStyle("color:orange; font:12px");
 				custCoreBank.setValue("- - - - - - - - -");
 			}
@@ -536,7 +536,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			}
 			custTypeCodeDesc.setValue(aCustomer.getLovDescCustTypeCodeName());
 			custMiddleName.setValue(StringUtils.trimToEmpty(aCustomer.getCustMName()));
-			if (aCustomer.getCustMName() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustMName())) {
 				custMiddleName.setStyle("color:orange;");
 				custMiddleName.setValue("- - - - - - - - -");
 			}
@@ -555,8 +555,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custSts.setValue("- - - - - - - - -");
 			}
 			custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
-
-			if (aCustomer.getCustShrtNameLclLng() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustShrtNameLclLng())) {
 				custArabicName.setStyle("color:orange; font:12px");
 				custArabicName.setValue("- - - - - - - - -");
 			}
@@ -585,7 +584,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custMaritalStsDesc.setValue("- - - - - - - - -");
 			}
 			target.setValue(aCustomer.getLovDescTargetName());
-			if (aCustomer.getLovDescTargetName() == null) {
+			if (StringUtils.isEmpty(aCustomer.getLovDescTargetName())) {
 				target.setStyle("color:orange; font:12px");
 				target.setValue("- - - - - - - - -");
 			}
@@ -616,7 +615,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			custRelatedParty.setValue(aCustomer.getCustAddlVar83());
-			if (aCustomer.getCustAddlVar83() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustAddlVar83())) {
 				custRelatedParty.setStyle("color:orange; font:12px");
 				custRelatedParty.setValue("- - - - - - - - -");
 			}
@@ -633,19 +632,19 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custIsStaff.setSrc("images/icons/customerenquiry/inactivecheck.png");
 			}
 			custStaffID.setValue(aCustomer.getCustStaffID());
-			if (aCustomer.getCustStaffID() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustStaffID())) {
 				custStaffID.setStyle("color:orange; font:12px");
 				custStaffID.setValue("- - - - - - - - -");
 			}
 			custDSA.setValue(aCustomer.getCustDSA());
-			if (aCustomer.getCustDSA() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustDSA())) {
 				custDSA.setStyle("color:orange; font:12px");
 				custDSA.setValue("- - - - - - - - -");
 			}
 			custRiskCountry.setValue(aCustomer.getCustRiskCountry() + ", ");
 			custRiskCountryDesc.setValue(aCustomer.getLovDescCustRiskCountryName());
 			custDSADept.setValue(aCustomer.getLovDescCustDSADeptName());
-			if (aCustomer.getLovDescCustDSADeptName() == null) {
+			if (StringUtils.isEmpty(aCustomer.getLovDescCustDSADeptName())) {
 				custDSADept.setStyle("color:orange; font:12px");
 				custDSADept.setValue("- - - - - - - - -");
 			}
@@ -694,11 +693,18 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 						customerPhoneNumber.getPhoneNumber() == null ? "" : customerPhoneNumber.getPhoneNumber());
 			}
 			custCRCPR.setValue(aCustomer.getCustCRCPR());
+			if (StringUtils.isEmpty(aCustomer.getCustCRCPR())) {
+				custCRCPR.setStyle("color:orange; font:12px");
+				custCRCPR.setValue("- - - - - - - - -");
+			}
 			if (aCustomer.getCustCRCPR() != null) {
 				i++;
 			}
 			custCRCPR2.setValue(aCustomer.getCustCRCPR());
-
+			if (StringUtils.isEmpty(aCustomer.getCustCRCPR())) {
+				custCRCPR2.setStyle("color:orange; font:12px");
+				custCRCPR2.setValue("- - - - - - - - -");
+			}
 			custLng.setValue(aCustomer.getLovDescCustLngName());
 			if (aCustomer.getLovDescCustLngName() != null) {
 				i++;
@@ -835,7 +841,8 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				listBoxCustomerIncome.appendChild(listitem);
 			}
 
-		} else if (aCustomer.getCustCtgCode().equals("CORP")) {
+		} else if  (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerDetails.getCustomer().getCustCtgCode()) || 
+				StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customerDetails.getCustomer().getCustCtgCode())){
 			Corporates.setVisible(true);
 			Retails.setVisible(false);
 			CustRetails.setVisible(false);
@@ -846,7 +853,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			custCIFF2.setValue(aCustomer.getCustCIF());
 			corpCustShrtName.setValue(aCustomer.getCustShrtName());
 			custCoreBankk.setValue(aCustomer.getCustCoreBank());
-			if (aCustomer.getCustCoreBank() == null) {
+			if (StringUtils.isEmpty(aCustomer.getCustCoreBank())) {
 				custCoreBankk.setStyle("color:orange; font:12px");
 				custCoreBankk.setValue("- - - - - - - - -");
 			}
@@ -911,8 +918,8 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custGroupIdd.setStyle("color:orange; font:12px");
 				custGroupIdd.setValue("- - - - - - - - -");
 			}
-			custSubSectorr.setValue(aCustomer.getCustCoreBank());
-			if (aCustomer.getCustCoreBank() == null) {
+			custSubSectorr.setValue(aCustomer.getCustSubSector());
+			if (StringUtils.isEmpty(aCustomer.getCustSubSector())) {
 				custSubSectorr.setStyle("color:orange;");
 				custSubSectorr.setValue("- - - - - - - - -");
 			}
@@ -939,11 +946,23 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 						customerPhoneNumber.getPhoneNumber() == null ? "" : customerPhoneNumber.getPhoneNumber());
 			}
 			corpcustCRCPR.setValue(aCustomer.getCustCRCPR());
+			if (StringUtils.isEmpty(aCustomer.getCustCRCPR())) {
+				corpcustCRCPR.setStyle("color:orange; font:12px");
+				corpcustCRCPR.setValue("- - - - - - - - -");
+			}
 			if (aCustomer.getCustCRCPR() != null) {
 				i++;
 			}
 			custCRCPR2.setValue(aCustomer.getCustCRCPR());
+			if (StringUtils.isEmpty(aCustomer.getCustCRCPR())) {
+				custCRCPR2.setStyle("color:orange; font:12px");
+				custCRCPR2.setValue("- - - - - - - - -");
+			}
 			custCRCPR3.setValue(aCustomer.getCustCRCPR());
+			if (StringUtils.isEmpty(aCustomer.getCustCRCPR())) {
+				custCRCPR3.setStyle("color:orange; font:12px");
+				custCRCPR3.setValue("- - - - - - - - -");
+			}
 			corpcustLngg.setValue(aCustomer.getLovDescCustLngName());
 			if (aCustomer.getLovDescCustLngName() != null) {
 				i++;
@@ -1784,6 +1803,39 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			}
 			customerDocumentDetailList = custDocumentDetails;
 		}
+
+		if (this.listBoxCustomerDocuments.getItemCount() == 0) {
+
+			Listitem listitem = new Listitem();
+			listitem.setHeight("50px");
+			Listcell lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("-------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+			lc = new Listcell("--------");
+			lc.setStyle("color: #f39a36;");
+			listitem.appendChild(lc);
+
+			this.listBoxCustomerDocuments.appendChild(listitem);
+		}
+	
 		logger.debug("Leaving");
 	}
 

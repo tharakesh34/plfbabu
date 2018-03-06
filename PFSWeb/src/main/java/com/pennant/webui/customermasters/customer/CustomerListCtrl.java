@@ -148,9 +148,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		} else {
 			registerButton(button_CustomerList_NewCustomer,"button_CustomerList_NewCustomer",true);
 		}
-		/* if(StringUtils.equals("X", module)){
-			 button_CustomerList_NewCustomer.setVisible(false);
-		}*/
 		registerButton(button_CustomerList_CustomerSearchDialog);
 
 		registerField("custId");
