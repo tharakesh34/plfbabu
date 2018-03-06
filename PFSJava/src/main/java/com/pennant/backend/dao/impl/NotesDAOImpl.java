@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -135,6 +136,33 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	public List<Notes> getNotesListAsc(String reference, List<String> moduleNames) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, ");
+		selectSql.append(
+				" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 ");
+		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
+		selectSql.append(" Where Reference = :Reference and RemarkType != :RemarkType and (ModuleName = :ModuleName");
+
+		for (int i = 1; i < moduleNames.size(); i++) {
+			selectSql.append(" or ModuleName = :ModuleName" + i);
+			source.addValue("ModuleName" + i, moduleNames.get(i));
+		}
+
+		selectSql.append(") ORDER BY Version Desc,InputDate Asc ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		source.addValue("Reference", reference);
+		source.addValue("RemarkType", "R");
+		source.addValue("ModuleName", moduleNames.get(0));
+
+		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	public void setDataSource(DataSource dataSource) {

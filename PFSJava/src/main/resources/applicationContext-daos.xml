@@ -10670,4 +10670,30 @@
 	<bean id="errorUtil" class="com.pennant.app.util.ErrorUtil">
 		<property name="errorDetailService" ref="errorDetailService" />
 	</bean>
+	
+		<!--============ ActivityLog Details ============== -->
+	
+	<bean id="activityLogDAO" class="com.pennanttech.activity.log.ActivityLogDAOImpl">
+		<property name="dataSource" ref="auditDatasource" />
+	</bean>
+
+	<bean id="activityLogService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="auditTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="activityLogServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="activityLogServiceTarget"
+		class="com.pennanttech.activity.log.ActivityLogServiceImpl">
+		<property name="activityLogDAO" ref="activityLogDAO" />
+	</bean>
 </beans>

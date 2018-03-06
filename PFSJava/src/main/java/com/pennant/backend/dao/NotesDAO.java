@@ -58,4 +58,6 @@ public interface NotesDAO {
 	void delete(Notes notes);
 
 	void deleteAllNotes(Notes notes);
+
+	List<Notes> getNotesListAsc(String reference, List<String> moduleNames);
 }

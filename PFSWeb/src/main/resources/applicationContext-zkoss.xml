@@ -5016,4 +5016,23 @@
 	<bean id="postingsDownloadCtrl" class="com.pennanttech.interfacebajaj.PostingsDownloadCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
+	
+	
+	 <!-- ====================================================== -->
+	<!--  ProcessView PopUp Details Configuration -->
+	<!-- ====================================================== -->
+
+	<bean id="processViewCtrl" class="com.pennant.webui.util.ProcessViewCtrl"
+		scope="prototype">
+		<property name="designerUrl" value="${process.designer.url}" />
+	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- ActivityLog Details Configuration -->
+	<!-- ====================================================== -->
+
+	<bean id="activityLogCtrl" class="com.pennant.webui.ActivityLogCtrl"
+		scope="prototype">
+		<property name="activityLogService" ref="activityLogService" />
+	</bean>	
 </beans>

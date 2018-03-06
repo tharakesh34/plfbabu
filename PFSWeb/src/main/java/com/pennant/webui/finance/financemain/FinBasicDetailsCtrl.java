@@ -3,7 +3,9 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,6 +52,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	
 	private Object parentCtrl = null;
 	private String finEventCode = null;
+	private ArrayList<Object> finHeaderList;
 	
 	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
 
@@ -60,6 +63,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	@Override
 	protected void doSetProperties() {
+		super.moduleCode = "FinanceMain";
 		super.pageRightName = "";
 	}
 	
@@ -81,7 +85,8 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 		if (arguments.containsKey("finHeaderList")) {
-			doWriteBeanToComponents( (ArrayList<Object>) arguments.get("finHeaderList"));
+			finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
+			doWriteBeanToComponents(finHeaderList);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -153,31 +158,36 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	private void doUserActivityLog() throws Exception {
 		logger.debug("Entering ");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		CustomerFinanceDetail customerFinanceDetail=new CustomerFinanceDetail();		
-		
-		if(finBasic_finReference !=null && finBasic_finReference.getValue()!=null) {
-			if(StringUtils.isEmpty(finEventCode)){
-				customerFinanceDetail = getApprovalStatusEnquiryService().getCustomerFinanceById(this.finBasic_finReference.getValue(), finEventCode);
-			}else{
-				customerFinanceDetail = getApprovalStatusEnquiryService().getApprovedCustomerFinanceById(this.finBasic_finReference.getValue(), finEventCode);
-			}
-		}	
-		
-		if(customerFinanceDetail != null){
-			map.put("customerFinanceDetail", customerFinanceDetail);
-			map.put("userActivityLog", true);
-			try {
-				Executions.createComponents("/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryDialog.zul", null, map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}else{
-			MessageUtil.showError(Labels.getLabel("listbox.emptyMessage"));
-		}
-		
+		/*
+		 * final HashMap<String, Object> map = new HashMap<String, Object>(); CustomerFinanceDetail
+		 * customerFinanceDetail=new CustomerFinanceDetail();
+		 * 
+		 * if(finBasic_finReference !=null && finBasic_finReference.getValue()!=null) {
+		 * if(StringUtils.isEmpty(finEventCode)){ customerFinanceDetail =
+		 * getApprovalStatusEnquiryService().getCustomerFinanceById(this.finBasic_finReference.getValue(),
+		 * finEventCode); }else{ customerFinanceDetail =
+		 * getApprovalStatusEnquiryService().getApprovedCustomerFinanceById(this.finBasic_finReference.getValue(),
+		 * finEventCode); } }
+		 * 
+		 * if(customerFinanceDetail != null){ map.put("customerFinanceDetail", customerFinanceDetail);
+		 * map.put("userActivityLog", true); try { Executions.createComponents(
+		 * "/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryDialog.zul", null, map); } catch
+		 * (Exception e) { MessageUtil.showError(e); } }else{
+		 * MessageUtil.showError(Labels.getLabel("listbox.emptyMessage")); }
+		 * 
+		 */
+
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("label_FinanceMainDialog_FinType.value", finHeaderList.get(0));
+		map.put("label_FinanceMainDialog_FinCcy.value", finHeaderList.get(1));
+		map.put("label_FinanceMainDialog_ScheduleMethod.value", finHeaderList.get(2));
+		map.put("label_FinanceMainDialog_ProfitDaysBasis.value", finHeaderList.get(4));
+		map.put("label_FinanceMainDialog_FinReference.value", finHeaderList.get(3));
+		map.put("label_FinanceMainDialog_CustShrtName.value", finHeaderList.get(9));
+
+		doShowActivityLog(finHeaderList.get(3), map);
+
 		logger.debug("Leaving ");
-		
 	}
 	
 	private void doReasonDeatilsLog() {

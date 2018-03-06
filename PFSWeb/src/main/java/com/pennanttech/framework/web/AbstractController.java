@@ -1240,4 +1240,50 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 		return argumentValue;
 	}
+	
+	/**
+	 * Shows Workflow window.
+	 * 
+	 * @param workFlowId
+	 *            (long)
+	 * @param moduleCode
+	 *            (String)
+	 * @param keyValue
+	 *            (Object)
+	 * @param fromAuditId
+	 *            (long)
+	 * @param toAuditId
+	 *            (long).
+	 */
+	protected void doShowWorkflow(long workFlowId, String moduleCode, Object keyValue, long fromAuditId,
+			long toAuditId) {
+		HashMap<String, Object> arg = new HashMap<>();
+
+		arg.put("workFlowId", workFlowId);
+		arg.put("moduleCode", moduleCode);
+		arg.put("keyValue", keyValue);
+		arg.put("fromAuditId", fromAuditId);
+		arg.put("toAuditId", toAuditId);
+
+		Executions.createComponents("/WEB-INF/pages/util/ProcessView.zul", window, arg);
+	}
+
+	/**
+	 * Shows Activity Log Window
+	 * 
+	 * @param keyValue
+	 *            (Object)
+	 * @param map
+	 *            (Map<String, Object>).
+	 **/
+	protected void doShowActivityLog(Object keyValue, Map<String, Object> map) {
+		HashMap<String, Object> arg = new HashMap<>();
+
+		arg.put("moduleCode", moduleCode);
+		arg.put("keyValue", keyValue);
+		arg.put("map", map);
+
+		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/ActivityLog.zul", window, arg);
+	}
+	
 }
