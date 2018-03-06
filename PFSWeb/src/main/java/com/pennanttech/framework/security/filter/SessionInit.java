@@ -4,13 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 
 public class SessionInit implements org.zkoss.zk.ui.util.SessionInit {
-	private static final Logger	log	= LogManager.getLogger(SessionInit.class);
-	
+
 	public SessionInit() {
 		super();
 	}
@@ -27,8 +24,6 @@ public class SessionInit implements org.zkoss.zk.ui.util.SessionInit {
 		} else {
 			host = httpRequest.getRemoteHost();
 		}
-		
-		log.debug("Remote Host "+ host);
 
 		// Set session attributes for remote host and random key.
 		httpSession.setAttribute("SATTR_REMOTE_HOST", host);
