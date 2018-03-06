@@ -269,7 +269,7 @@ public class PennantConstants {
 	public static final String CUST_DEDUP_LISTFILED3 = "CustDocTitle";
 
 	// Notes Type Codes
-	public static final String NOTES_MODULE_FINANCEMAIN = "financeMain";
+	public static final String NOTES_MODULE_FINANCEMAIN = "FinanceMain";
 	public static final String NOTES_MODULE_FACILITY = "facility";
 	public static final String NOTES_TYPE_RECOMMEND = "R";
 	public static final String NOTES_TYPE_COMMENT = "C";
