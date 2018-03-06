@@ -227,7 +227,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	}
 
 	@Override
-	public List<ErrorDetail> doValidations(WorkFlowDetails workFlowDetails, String flag) {
+	public List<ErrorDetail> doValidations(WorkFlowDetails workFlowDetails, String flag,boolean isActive) {
 		List<ErrorDetail> errDetails = new ArrayList<ErrorDetail>();
 		Long workflowId = workFlowDetails.getWorkflowId();
 		if (workflowId == 0 && !"create".equals(flag)) {// empty check for workflowId in get
@@ -236,7 +236,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm), "EN");
 			errDetails.add(errorDetail);
 		}
-		if ((workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not found in get or update
+		if ((isActive == true) && (workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not found in get or update
 			String[] valueParm = new String[2];
 			valueParm[0] = "Workflow";
 			valueParm[1] = String.valueOf(workflowId);
