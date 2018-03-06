@@ -111,16 +111,6 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 	}
 
 	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	/*
-	 * public void doWriteBeanToComponents() throws InterruptedException { logger.debug(Literal.ENTERING);
-	 * this.processView_Workflow.setValue(workflow.getWorkFlowType());
-	 * this.processView_Version.setValue(Long.toString(workflow.getWorkFlowId())); logger.debug(Literal.LEAVING); }
-	 */
-	/**
 	 * Set the properties of the fields, like width and height.<br>
 	 */
 	private void doSetFieldProperties() {
