@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -25,17 +24,16 @@ import org.springframework.web.filter.GenericFilterBean;
  * session cookie.
  */
 public class SessionFixationProtectionFilter extends GenericFilterBean {
-	private static final Logger	logger	= Logger.getLogger(SessionFixationProtectionFilter.class);
-
 	@Override
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = (HttpServletRequest) sRequest;
 
-		String host = request.getRemoteHost();
-
+		String host;
 		if (request.getHeader("X-FORWARDED-FOR") != null) {
 			host = request.getHeader("X-FORWARDED-FOR");
+		} else {
+			host = request.getRemoteHost();
 		}
 
 		HttpServletResponse response = (HttpServletResponse) sResponse;
@@ -49,14 +47,14 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 		}
 
 		if (!StringUtils.equals(activeHost, host)) {
-			logger.warn("Invalid host logout the user. : " + host + " : " + activeHost);
-			abortUser(request, response);
+			logger.warn(String.format("Invalid host logout the user. actual %s expected %s", host, activeHost));
+			abortUser(request);
 		}
 
 		chain.doFilter(request, response);
 	}
 
-	private void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void abortUser(HttpServletRequest request) {
 		SecurityContextHolder.clearContext();
 		request.getSession().invalidate();
 	}
@@ -93,12 +91,12 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 	private HashMap<String, Object> createMigratedAttributeMap(HttpSession session) {
 		HashMap<String, Object> attributesToMigrate = null;
 
-		attributesToMigrate = new HashMap<String, Object>();
+		attributesToMigrate = new HashMap<>();
 
 		Enumeration<String> enumer = session.getAttributeNames();
 
 		while (enumer.hasMoreElements()) {
-			String key = (String) enumer.nextElement();
+			String key = enumer.nextElement();
 			if (key.startsWith("SPRING_SECURITY_")) {
 				continue;
 			}
