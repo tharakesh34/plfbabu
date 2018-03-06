@@ -812,7 +812,6 @@
 		</menu> -->
 
 	<!-- Report Details -->
-	<!-- Report Details -->
 	<menu id="menu_Category_Reports">
 		<!-- <menuItem id="menu_Item_AuditReports" zulNavigation="/WEB-INF/pages/Reports/AuditReport.zul" 
 			rightName="menuItem_Reports_AuditReports"/> -->
