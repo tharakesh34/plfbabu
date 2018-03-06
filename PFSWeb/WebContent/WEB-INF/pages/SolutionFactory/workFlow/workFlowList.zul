@@ -65,7 +65,7 @@
 									value="${c:l('label_WorkFlowSearch_WorkFlowType.value')}" />
 								<listbox id="sortOperator_workFlowType"
 									width="43px" mold="select" rows="1" />
-								<textbox id="workFlowType"
+								<uppercasebox id="workFlowType"
 									width="170px" />
 								<label
 									id="label_WorkFlowSearch_WorkFlowSubType"
