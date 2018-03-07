@@ -1,35 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. All
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
- * Technologies.
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
  * 
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
- * violation of copyright law.
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
  */
 
 /**
- ******************************************************************************************** 
- * FILE HEADER *
- ******************************************************************************************** 
- * 
- * FileName : OverDueRecoveryPostingsUtil.java *
- * 
- * Author : PENNANT TECHONOLOGIES *
- * 
- * Creation Date : 26-04-2011 *
- * 
- * Modified Date : 30-07-2011 *
- * 
- * Description : *
- * 
- ******************************************************************************************** 
- * Date Author Version Comments *
- ******************************************************************************************** 
- * 26-04-2011 Pennant 0.1 * * * * * * * * *
- ******************************************************************************************** 
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  AccrualService.java                                                  * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  11-06-2015    														*
+ *                                                                  						*
+ * Modified Date    :  11-06-2015    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 11-06-2015       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
  */
 package com.pennant.app.core;
 
@@ -37,6 +46,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +69,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class AccrualService extends ServiceHelper {
 
@@ -561,7 +570,7 @@ public class AccrualService extends ServiceHelper {
 		BigDecimal daysFactor = CalculationUtil.getInterestDays(pftDetail.getFinStartDate(),
 				pftDetail.getMaturityDate(), finMain.getProfitDaysBasis());
 		if (calPart2.compareTo(BigDecimal.ZERO) > 0) {
-			pftDetail.setCurFlatRate(calPart1.multiply(new BigDecimal(100)).divide(calPart2.multiply(daysFactor), 9,
+			pftDetail.setCurFlatRate(calPart1.divide((calPart2.multiply(new BigDecimal(100)).multiply(daysFactor)), 9,
 					RoundingMode.HALF_DOWN));
 		} else {
 			pftDetail.setCurFlatRate(BigDecimal.ZERO);
@@ -599,10 +608,10 @@ public class AccrualService extends ServiceHelper {
 		 * //Workaround solution to avoid another fields in the FinODDetails
 		 * pftDetail.setMaxODDays(finODDetails.getFinCurODDays()); } }
 		 */
-		int tenor = DateUtility.getMonthsBetween(valueDate, pftDetail.getMaturityDate());
+		int tenor = DateUtility.getMonthsBetween(valueDate, pftDetail.getMaturityDate(), true);
 		pftDetail.setRemainingTenor(tenor);
 
-		tenor = DateUtility.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate());
+		tenor = DateUtility.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate(), true);
 		pftDetail.setTotalTenor(tenor);
 
 		logger.debug("Leaving");
@@ -661,126 +670,6 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public static List<ProjectedAccrual> calAccrualsOnMonthEnd(FinanceMain finMain,
-			List<FinanceScheduleDetail> schdDetails, Date monthEnd) {
-
-		Date maturityDate = finMain.getMaturityDate();
-		String calRoundingMode = finMain.getCalRoundingMode();
-		int roundingTarget = finMain.getRoundingTarget();
-
-		// build month end till the maturity
-		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
-
-		Date newMonth = new Date(monthEnd.getTime());
-		newMonth = DateUtil.getDatePart(newMonth);
-		while (maturityDate.compareTo(newMonth) > 0) {
-			if (newMonth.compareTo(finMain.getFinStartDate()) >= 0) {
-				ProjectedAccrual prjAcc = new ProjectedAccrual();
-				prjAcc.setAccruedOn(newMonth);
-				list.add(prjAcc);
-			}
-			newMonth = DateUtility.addMonths(newMonth, 1);
-			newMonth = DateUtility.getMonthEnd(newMonth);
-			newMonth = DateUtil.getDatePart(newMonth);
-		}
-		// if maturity not found in the list add the maturity date to month end
-		if (!isDateExsists(list, maturityDate)) {
-			ProjectedAccrual prjAcc = new ProjectedAccrual();
-			prjAcc.setAccruedOn(maturityDate);
-			list.add(prjAcc);
-		}
-
-		BigDecimal cummAccAmt = BigDecimal.ZERO;
-
-		for (ProjectedAccrual prjAcc : list) {
-
-			Date curMntEndDate = prjAcc.getAccruedOn();
-
-			FinanceScheduleDetail prvSchd = null;
-			FinanceScheduleDetail curSchd = null;
-			FinanceScheduleDetail nextSchd = null;
-
-			Date prvSchdDate = null;
-			Date curSchdDate = null;
-			Date nextSchdDate = null;
-
-			for (int i = 0; i < schdDetails.size(); i++) {
-				curSchd = schdDetails.get(i);
-				curSchdDate = curSchd.getSchDate();
-
-				if (i == 0) {
-					prvSchd = curSchd;
-				} else {
-					prvSchd = schdDetails.get(i - 1);
-				}
-
-				prvSchdDate = prvSchd.getSchDate();
-
-				if (curSchdDate.compareTo(maturityDate) == 0 || i == schdDetails.size() - 1) {
-					nextSchd = curSchd;
-				} else {
-					nextSchd = schdDetails.get(i + 1);
-				}
-				nextSchdDate = nextSchd.getSchDate();
-				//due date
-				Date accMonthStart = DateUtility.getMonthStart(curMntEndDate);
-				accMonthStart = DateUtil.getDatePart(accMonthStart);
-				if (curSchdDate.compareTo(accMonthStart) >= 0 && curSchdDate.compareTo(curMntEndDate) <= 0) {
-					if (prjAcc.getSchdDate() == null && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
-						prjAcc.setSchdDate(curSchdDate);
-						prjAcc.setSchdPri(curSchd.getPrincipalSchd());
-						prjAcc.setSchdPft(curSchd.getProfitSchd());
-						prjAcc.setSchdTot(curSchd.getRepayAmount());
-					}
-				}
-
-				BigDecimal pftAmz = BigDecimal.ZERO;
-
-				if (curSchdDate.compareTo(curMntEndDate) <= 0) {
-					prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(curSchd.getProfitCalc()));
-					if (curSchdDate.compareTo(maturityDate) == 0) {
-						prjAcc.setPftAccrued(prjAcc.getPftAccrued().subtract(cummAccAmt));
-					}
-					continue;
-				}
-
-				if (curMntEndDate.compareTo(curSchdDate) < 0 && curMntEndDate.compareTo(prvSchdDate) > 0) {
-					int days = getNoDays(curMntEndDate, prvSchdDate);
-					int daysInCurPeriod = curSchd.getNoOfDays();
-					BigDecimal profitCalc = curSchd.getProfitCalc();
-					if (profitCalc.compareTo(BigDecimal.ZERO) != 0) {
-						pftAmz = profitCalc.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0,
-								RoundingMode.HALF_DOWN);
-						//rounding
-						pftAmz = CalculationUtil.roundAmount(pftAmz, calRoundingMode, roundingTarget);
-						prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(pftAmz));
-					}
-				}
-
-				if (nextSchdDate.compareTo(curMntEndDate) >= 0) {
-					prjAcc.setPftAccrued(prjAcc.getPftAccrued().subtract(cummAccAmt));
-					break;
-				}
-			}
-			cummAccAmt = cummAccAmt.add(prjAcc.getPftAccrued());
-			prjAcc.setCumulativeAccrued(cummAccAmt);
-			System.out.println(DateUtility.formatToShortDate(prjAcc.getAccruedOn()) + " ," + prjAcc.getPftAccrued()
-					+ "," + prjAcc.getCumulativeAccrued() + "," + DateUtility.formatToShortDate(prjAcc.getSchdDate())
-					+ "," + prjAcc.getSchdPri() + "," + prjAcc.getSchdPft());
-
-		}
-		return list;
-	}
-
-	private static boolean isDateExsists(List<ProjectedAccrual> list, Date schDate) {
-		for (ProjectedAccrual projectedAccrual : list) {
-			if (projectedAccrual.getAccruedOn().compareTo(schDate) == 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private static int getNoDays(Date date1, Date date2) {
 		return DateUtility.getDaysBetween(date1, date2);
 	}
@@ -791,5 +680,237 @@ public class AccrualService extends ServiceHelper {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+	
+	/**
+	 * Method for returning AccrualMonthEnd list from current MonthEnd to MaturityDate 
+	 * @param finMain
+	 * @param schdDetails
+	 * @param appDate
+	 * @return
+	 */
+	public static List<ProjectedAccrual> getAccrualsFromCurMonthEnd(FinanceMain finMain,
+			List<FinanceScheduleDetail> schdDetails, Date appDate, String fromFinStartDate) {
+		logger.debug(" Entering ");
+
+		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
+
+		// Calculate Month End Amortization From FinStartDate to Maturity
+		List<ProjectedAccrual> accrualList = calAccrualsOnMonthEnd(finMain, schdDetails, appDate, BigDecimal.ZERO, true);
+
+		// ALM Extraction configuration from SMT parameter
+		if ("Y".equals(fromFinStartDate)) {
+
+			list = accrualList;
+		} else {
+			for (ProjectedAccrual projectedAccrual : accrualList) {
+				if (projectedAccrual.getAccruedOn().compareTo(appDate) >= 0) {
+					list.add(projectedAccrual);
+				}
+			}
+		}
+
+		logger.debug(" Leaving ");
+		return list;
+	}
+
+	/**
+	 * Month End Amortization Calculation
+	 * @param finMain
+	 * @param schdDetails
+	 * @param appDate
+	 * @return
+	 */
+	public static List<ProjectedAccrual> calAccrualsOnMonthEnd(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+			Date appDate, BigDecimal prvMthAmz, boolean calFromFinStartDate) {
+		logger.debug(" Entering ");
+
+		HashMap<Date, ProjectedAccrual> map = new HashMap<Date, ProjectedAccrual>(1);
+		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
+		Date appDateMonthStart = DateUtility.getMonthStartDate(appDate);
+		Date appDateMonthEnd = DateUtility.getMonthEndDate(appDate);
+		BigDecimal totalProfit = BigDecimal.ZERO;
+		BigDecimal cummAccAmt = BigDecimal.ZERO;
+
+		if (getFormatDate(finMain.getMaturityDate()).compareTo(appDateMonthStart) < 0) {
+			return list;
+		}
+
+		FinanceScheduleDetail prvSchd	= null;
+		FinanceScheduleDetail curSchd	= null;
+		FinanceScheduleDetail nextSchd	= null;
+
+		Date prvSchdDate	= null;
+		Date curSchdDate	= null;
+		Date nextSchdDate	= null;
+		Date prvMonthEnd	= null;
+
+		List<Date> months = new ArrayList<Date>();
+		List<Date> monthsCopy = new ArrayList<Date>();
+		Date newMonth = null;
+
+		if (calFromFinStartDate
+				|| DateUtility.getMonthEndDate(getFormatDate(finMain.getFinStartDate())).compareTo(appDateMonthEnd) == 0) {
+
+			newMonth = new Date(DateUtility.getMonthEndDate(finMain.getFinStartDate()).getTime());
+		} else {
+
+			newMonth = new Date(appDateMonthEnd.getTime());
+			prvMonthEnd = DateUtility.addDays(appDateMonthStart, -1);
+			cummAccAmt = prvMthAmz;
+
+			ProjectedAccrual prjAcc = new ProjectedAccrual();
+			prjAcc.setFinReference(finMain.getFinReference());
+			prjAcc.setAccruedOn(prvMonthEnd);
+			prjAcc.setCumulativeAccrued(prvMthAmz);
+			map.put(prvMonthEnd, prjAcc);
+		}
+
+		// Prepare Months list From FinStartDate to MaturityDate
+		while (DateUtility.getMonthEndDate(finMain.getMaturityDate()).compareTo(newMonth) >= 0) {
+			months.add(getFormatDate((Date) newMonth.clone()));
+			newMonth = DateUtility.addMonths(newMonth, 1);
+			newMonth = DateUtility.getMonthEndDate(newMonth);
+		}
+		monthsCopy.addAll(months);
+
+		for (int i = 0; i < schdDetails.size(); i++) {
+
+			curSchd = schdDetails.get(i);
+			curSchdDate = curSchd.getSchDate();
+			totalProfit = totalProfit.add(curSchd.getProfitCalc());
+
+			if (i == 0) {
+				prvSchd = curSchd;
+			} else {
+				prvSchd = schdDetails.get(i - 1);
+			}
+			if (i == schdDetails.size() - 1) {
+				nextSchd = curSchd;
+			} else {
+				nextSchd = schdDetails.get(i + 1);
+			}
+
+			prvSchdDate = prvSchd.getSchDate();
+			nextSchdDate = nextSchd.getSchDate();
+
+			if (!calFromFinStartDate && curSchdDate.compareTo(appDateMonthStart) < 0) {
+				continue;
+			}
+
+			for (Date curMonthEnd : monthsCopy) {
+
+				BigDecimal schdPftAmz = BigDecimal.ZERO;
+				BigDecimal curPftAmz = BigDecimal.ZERO;
+				BigDecimal prvPftAmz = BigDecimal.ZERO;
+				BigDecimal pftAmz = BigDecimal.ZERO;
+				boolean isSchdPftAmz = false;
+				ProjectedAccrual prjAcc = null;
+
+				if (map.containsKey(curMonthEnd)) {
+					prjAcc = map.get(curMonthEnd);			
+				} else {
+					prjAcc = new ProjectedAccrual();
+					prjAcc.setFinReference(finMain.getFinReference());
+					prjAcc.setAccruedOn(curMonthEnd);
+				}
+
+				// ACCRUAL calculation includes current date
+				Date nextMonthStart = DateUtility.addDays(curMonthEnd, 1);
+				Date curMonthStart = DateUtility.getMonthStartDate(curMonthEnd);
+
+				// Schedules between Previous MonthEnd to CurMonthEnd
+				if (prvSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0) {
+
+					schdPftAmz = curSchd.getProfitCalc();
+					isSchdPftAmz = true;
+				}
+
+				if (curMonthEnd.compareTo(curSchdDate) < 0) {
+
+					// Months Between schedules
+					curPftAmz = calprofitAmz(curSchd, prvSchdDate, nextMonthStart, curMonthStart);
+				} else {
+
+					// Profit Calculation From MonthEnd to CurSchdDate 
+					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
+						curPftAmz = calprofitAmz(nextSchd, curSchdDate, nextMonthStart, curSchdDate);
+					}
+
+					// Profit Calculation From CurSchdDate to Previous MonthEnd
+					if (prvMonthEnd != null && !isSchdPftAmz) {
+						prvPftAmz = calprofitAmz(curSchd, prvSchdDate, curSchdDate, curMonthStart);
+					}
+				}
+
+				pftAmz = schdPftAmz.add(prvPftAmz).add(curPftAmz);
+
+				// Adjust remaining profit to maturity MonthEnd to avoid rounding issues
+				if (DateUtility.getMonthEndDate(getFormatDate(finMain.getMaturityDate())).compareTo(curMonthEnd) == 0) {
+					prjAcc.setPftAmz(totalProfit.subtract(cummAccAmt));
+				} else {
+					prjAcc.setPftAmz(prjAcc.getPftAmz().add(pftAmz));
+				}
+
+				if (curSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0) {
+					if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
+						prjAcc.setSchdDate(curSchdDate);
+						prjAcc.setSchdPri(curSchd.getPrincipalSchd().subtract(curSchd.getCpzAmount()));
+						prjAcc.setSchdPft(curSchd.getProfitSchd().add(curSchd.getCpzAmount()));
+						prjAcc.setSchdTot(curSchd.getRepayAmount());
+					}
+				}
+
+				// Current and Next Schedules are equal in Maturity
+				if (curMonthEnd.compareTo(nextSchdDate) < 0 || curSchdDate.compareTo(nextSchdDate) == 0) {
+
+					cummAccAmt = cummAccAmt.add(prjAcc.getPftAmz());
+					prjAcc.setPftAccrued(prjAcc.getPftAmz());
+					prjAcc.setCumulativeAccrued(cummAccAmt);
+
+					prvMonthEnd = curMonthEnd;
+					months.remove(curMonthEnd);
+					monthsCopy = new ArrayList<Date>(months);
+				}
+
+				// Prepare Map and List
+				if (!map.containsKey(curMonthEnd)) {
+					map.put(curMonthEnd, prjAcc);
+					list.add(map.get(curMonthEnd));
+				}
+
+				if (curMonthEnd.compareTo(curSchdDate) >= 0) {
+					break;
+				}
+			}
+		}
+
+		logger.debug(" Leaving ");
+		return list;
+	}
+	/**
+	 * Method for calculate part of the profit, Rounding calculation not required.
+	 * @param schdDetail
+	 * @param monthEnd
+	 * @return
+	 * 
+	 */
+	private static BigDecimal calprofitAmz(FinanceScheduleDetail schdDetail, Date prvSchdDate, Date date1, Date date2) {
+		BigDecimal pftAmz = BigDecimal.ZERO;
+
+		int days = DateUtility.getDaysBetween(date1, date2);
+		int daysInCurPeriod = DateUtility.getDaysBetween(schdDetail.getSchDate(), prvSchdDate);
+		pftAmz = schdDetail.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+
+		return pftAmz;
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private static Date getFormatDate(Date date) {
+		return DateUtility.getDBDate(DateUtility.formatDate(date, PennantConstants.DBDateFormat));
 	}
 }

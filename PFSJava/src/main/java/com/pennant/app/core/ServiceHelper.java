@@ -65,6 +65,7 @@ import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
@@ -131,6 +132,7 @@ abstract public class ServiceHelper implements Serializable {
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
 	private ProvisionDAO				provisionDAO;
+	private ProjectedAmortizationDAO 	projectedAmortizationDAO;
 
 	@Autowired
 	private EODConfigDAO				eodConfigDAO;
@@ -517,5 +519,11 @@ abstract public class ServiceHelper implements Serializable {
 		return eodConfig;
 	}
 
-
+	public ProjectedAmortizationDAO getProjectedAmortizationDAO() {
+		return projectedAmortizationDAO;
+	}
+ 
+	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
+		this.projectedAmortizationDAO = projectedAmortizationDAO;
+	}
 }

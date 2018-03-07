@@ -39,7 +39,8 @@ public class ImplementationConstants {
 	public static final String	REPAY_INTEREST_HIERARCHY		= "LI";
 	//Calculate PastDue on Day zero
 	public static final boolean	LP_MARK_FIRSTDAY				= false;
-
+	//penalty calculated on SOD i.e 
+	public static final boolean	LPP_CALC_SOD					=true;
 	//Re payment methods
 	public static final boolean	AUTO_ALLOWED					= false;
 	public static final boolean	DDA_ALLOWED						= false;
@@ -107,11 +108,15 @@ public class ImplementationConstants {
 
 	public static final boolean	ALLOW_INSURANCE					= false;		// Insurance Required or Not 
 	public static final boolean	ALLOW_RIA						= false;		// RIA Required or Not 
-	public static final boolean	ALLOW_ADDDBSF					= false;					// Add Disbursement future date Required or Not 
+	public static final boolean	ALLOW_ADDDBSF					= false;		// Add Disbursement future date Required or Not 
 	
 	public static final boolean FRQ_DATE_VALIDATION				= true;   //Constant to check Frequency and Date Match/Not
 
 	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// Excess upfront fees paid by customer to be created as Payable Advise/Excess.
 	public static final boolean	CO_APP_ENQ_SAME_AS_CUST_ENQ	    = true;		// Inquiry menu in the co-applicant should show screen as customer details
-	public static final boolean	PAN_DUPLICATE_NOT_ALLOWED	   	= false; 
+	public static final boolean	PAN_DUPLICATE_NOT_ALLOWED	   	= true; 
+	public static final boolean	ALLOW_AUTO_DISBURSEMENTS		= false;		// Allow Auto Disbursements which will be called during the EOD.
+	public static final boolean	VARTUAL_DPD						= true;
+	public static final boolean	ALLOW_COSTOFFUNDS	           	= true;		// Cost Of Funds For Loan Type.
+	public static final boolean	ALLOW_IRRCODES	           		= false;	// IRR Codes For Loan Type.
 }

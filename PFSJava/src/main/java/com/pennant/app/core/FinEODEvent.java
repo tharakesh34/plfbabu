@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -13,6 +14,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -65,6 +67,11 @@ public class FinEODEvent implements Serializable {
 	private boolean						updLBDPostings			= false;
 	private boolean						updMonthEndPostings		= false;
 	private List<String>				finMainUpdateFields		= new ArrayList<String>(1);
+	
+	private String						aMZMethod;
+	List<ProjectedAmortization> 		projectedAMZList 		= new ArrayList<ProjectedAmortization>(1);
+	List<ProjectedAccrual> 				ProjectedAccrualList 	= new ArrayList<ProjectedAccrual>(1);
+
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -390,6 +397,29 @@ public class FinEODEvent implements Serializable {
 		this.provisions = provisions;
 	}
 
+	public String getAMZMethod() {
+		return aMZMethod;
+	}
+	
+	public void setAMZMethod(String aMZMethod) {
+		this.aMZMethod = aMZMethod;
+	}
+
+	public List<ProjectedAmortization> getProjectedAMZList() {
+		return projectedAMZList;
+	}
+
+	public void setProjectedAMZList(List<ProjectedAmortization> projectedAMZList) {
+		this.projectedAMZList = projectedAMZList;
+	}
+	public List<ProjectedAccrual> getProjectedAccrualList() {
+		return ProjectedAccrualList;
+	}
+
+	public void setProjectedAccrualList(List<ProjectedAccrual> projectedAccrualList) {
+		ProjectedAccrualList = projectedAccrualList;
+	}
+	
 	public void destroy() {
 		this.financeMain = null;
 		this.finType = null;
@@ -405,5 +435,7 @@ public class FinEODEvent implements Serializable {
 		this.presentmentDetails.clear();
 		this.returnDataSet.clear();
 		this.provisions.clear();
+		this.projectedAMZList.clear();
+		this.ProjectedAccrualList.clear();
 	}
 }

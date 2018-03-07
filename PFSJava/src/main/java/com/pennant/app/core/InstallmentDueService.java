@@ -27,6 +27,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
@@ -153,7 +154,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, boolean post,String postBranch) {
+			FinanceProfitDetail profiDetails, Date appDate, boolean post,String postBranch)   throws InterfaceException{
 		logger.debug(" Entering ");
 		
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();

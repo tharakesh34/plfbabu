@@ -72,7 +72,7 @@ public class NPAService extends ServiceHelper {
 		logger.debug(" Entering ");
 		String prvRule = "";
 		Object object = SysParamUtil.getValue("PROVISION_RULE");
-		if (object != null) {
+		if (object == null) {
 			return custEODEvent;
 		}
 
@@ -120,15 +120,34 @@ public class NPAService extends ServiceHelper {
 		 */
 
 		if (StringUtils.isNotBlank(finStatus)) {
-			long bucketId = getBucketID(finStatus);
 			sortNPABucketConfig(list);
 			for (NPABucketConfiguration configuration : list) {
-				if (configuration.getBucketID() == bucketId && configuration.getDueDays() >= dueBucket) {
+				if (configuration.getDueDays() >= dueBucket) {
 					npaBucket = configuration.getBucketID();
 					break;
 				}
 			}
 		}
+		
+		if (npaBucket == 0) {
+			int size = list.size();
+			NPABucketConfiguration conigMin = null;
+			NPABucketConfiguration conigMax = null;
+
+			if (size == 1) {
+				conigMin = list.get(0);
+				conigMax = list.get(0);
+			} else {
+				conigMin = list.get(0);
+				conigMax = list.get(size - 1);
+			}
+
+			if (dueBucket > conigMin.getDueDays() && dueBucket > conigMax.getDueDays()) {
+				npaBucket = conigMax.getBucketID();
+			}
+
+		}
+		
 
 		provision.setFinReference(finReference);
 		provision.setFinBranch(pftDetail.getFinBranch());
@@ -139,7 +158,11 @@ public class NPAService extends ServiceHelper {
 		provision.setPriBal(pftDetail.getTotalPriBal());
 		provision.setPrincipalDue(pftDetail.getODPrincipal());
 		provision.setProfitDue(pftDetail.getODProfit());
-		provision.setLastFullyPaidDate(pftDetail.getFullPaidDate());
+		Date lastFullypaid = pftDetail.getFullPaidDate();
+		if (lastFullypaid==null) {
+			lastFullypaid=pftDetail.getFinStartDate();
+		}
+		provision.setLastFullyPaidDate(lastFullypaid);
 		provision.setDueFromDate(pftDetail.getPrvODDate());
 		provision.setDuedays(pftDetail.getCurODDays());
 
@@ -184,7 +207,8 @@ public class NPAService extends ServiceHelper {
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil
 				.executeRule(rule, dataMap, finCcy, RuleReturnType.DECIMAL);
 
-		pecentage = pecentage.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+		//since rule is considered as percentage we need have eight decimals 
+		pecentage = pecentage.divide(new BigDecimal(100), 8, RoundingMode.HALF_DOWN);
 		return pecentage;
 	}
 
@@ -195,15 +219,20 @@ public class NPAService extends ServiceHelper {
 		if (object != null) {
 			total = Integer.parseInt(object.toString());
 		}
-		BigDecimal dueAmount = provision.getPftBal();
+		BigDecimal dueAmount = provision.getPftBal().add(provision.getPriBal());
 
+		//0 - Principal+profit
+		//1 - Principal
+		//2 - profit
 		if (total == 1) {
-			dueAmount = provision.getPftBal().add(provision.getPriBal());
+			dueAmount = provision.getPriBal();
+		}else if (total==2) {
+			dueAmount = provision.getPftBal();
 		}
 		BigDecimal provisonAmt = BigDecimal.ZERO;
 		if (percentage.compareTo(BigDecimal.ZERO) != 0) {
 			provisonAmt = dueAmount.multiply(percentage);
-			provisonAmt = provisonAmt.setScale(0);
+			provisonAmt = provisonAmt.setScale(0,RoundingMode.HALF_DOWN);
 
 		}
 		return provisonAmt;

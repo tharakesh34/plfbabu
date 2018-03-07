@@ -45,15 +45,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 
 public class LatePayBucketService extends ServiceHelper {
@@ -78,20 +79,21 @@ public class LatePayBucketService extends ServiceHelper {
 	 */
 	public CustEODEvent processDPDBuketing(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
+		
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinanceScheduleDetails(),
-					finEODEvent.getFinanceMain(), valueDate);
+					finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(), valueDate);
 
 			if (isFinStsChanged) {
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("FinStatus");
 				finEODEvent.addToFinMianUpdate("DueBucket");
-				finEODEvent.getFinProfitDetail().setFinStatus(finEODEvent.getFinanceMain().getFinStatus());
-				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
 			}
+			finEODEvent.getFinProfitDetail().setFinStatus(finEODEvent.getFinanceMain().getFinStatus());
+			finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
 		}
 
 		logger.debug(" Leaving ");
@@ -104,11 +106,25 @@ public class LatePayBucketService extends ServiceHelper {
 	 * @param valueDate
 	 * @return
 	 */
-	public boolean updateDPDBuketing(List<FinanceScheduleDetail> listScheduleDetails, FinanceMain financeMain, Date valueDate) {
-		String finReference = financeMain.getFinReference();
-		
+	public boolean updateDPDBuketing(List<FinanceScheduleDetail> listScheduleDetails, FinanceMain financeMain,
+			FinanceProfitDetail finProfitDetail, Date valueDate) {
+		logger.debug(" Entering ");
+
 		Map<Date, BigDecimal> reallocationMap = new TreeMap<Date, BigDecimal>();
+		BigDecimal netSchdAmount = BigDecimal.ZERO;
+		BigDecimal netSchdDue = BigDecimal.ZERO;
 		BigDecimal totalPaid = BigDecimal.ZERO;
+		BigDecimal minDuePerc = BigDecimal.ZERO;
+		BigDecimal duePercentage = BigDecimal.ZERO;
+		Date firstDuedate = null;
+		int newCurODDays = 0;
+		long bucketID = 0;
+
+		String finStatus = StringUtils.trimToEmpty(financeMain.getFinStatus());
+		String newFinStatus = FinanceConstants.FINSTSRSN_SYSTEM;
+		int curODDays = finProfitDetail.getCurODDays();
+		int dueBucket = financeMain.getDueBucket();
+
 		//prepare the re allocation required records i.e. schedule Date with scheduled amount and total paid till today
 		for (FinanceScheduleDetail schDetail : listScheduleDetails) {
 			if (schDetail.getSchDate().compareTo(valueDate) > 0) {
@@ -120,19 +136,20 @@ public class LatePayBucketService extends ServiceHelper {
 				reallocationMap.put(schDetail.getSchDate(),
 						schDetail.getPrincipalSchd().add(schDetail.getProfitSchd()));
 			}
-
 		}
 
+		// fin excess amount
+		BigDecimal excessBalAmt = getDeductedAmt(financeMain.getFinReference());
+
+		// consider excess amount to calculate ODDays and DueBucket
+		totalPaid = totalPaid.add(excessBalAmt);
+
 		//reallocate and find the first due date.
-		Date firstDuedate = null;
-		// for due percentage calculation
-		BigDecimal netSchdAmount = BigDecimal.ZERO;
-		BigDecimal netSchdDue = BigDecimal.ZERO;
-		
 		for (Entry<Date, BigDecimal> entry : reallocationMap.entrySet()) {
-			if (totalPaid.compareTo(entry.getValue()) > 0) {
+			if (totalPaid.compareTo(entry.getValue()) >= 0) {
 				totalPaid = totalPaid.subtract(entry.getValue());
 			} else {
+
 				if (firstDuedate == null) {
 					firstDuedate = entry.getKey();
 				}
@@ -142,41 +159,16 @@ public class LatePayBucketService extends ServiceHelper {
 			}
 		}
 
-		int dueDays = 0;
 		if (firstDuedate != null) {
-			dueDays = DateUtility.getDaysBetween(firstDuedate, valueDate);
+			newCurODDays = DateUtility.getDaysBetween(firstDuedate, valueDate);
 		}
 
-		int newDueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
-		int dueBucket = financeMain.getDueBucket();
-		BigDecimal minDuePerc = BigDecimal.ZERO;
+		// calculate DueBucket
+		int newDueBucket = (new BigDecimal(newCurODDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
 
-		String newFinStatus = FinanceConstants.FINSTSRSN_SYSTEM;
-		String finStatus = StringUtils.trimToEmpty(financeMain.getFinStatus());
-		String productCode = financeMain.getFinCategory();
-
-		BigDecimal duePercentage = BigDecimal.ZERO;
-
-		//No current OD Days and No change in the Bucket Status and Number of Buckets
-		if (dueDays == 0) {
-			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-				return false;
-			}
-		}
-
-		//No current OD Buckets and No change in the Bucket Status and Number of Buckets
-		if (newDueBucket == 0) {
-			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-				return false;
-			}
-		}
-		
-		
-		BigDecimal netDueAmount = netSchdDue.subtract(getDeductedAmt(finReference));
-
+		// for due percentage calculation
 		if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
-			duePercentage = (netDueAmount.divide(netSchdAmount, 0, RoundingMode.HALF_DOWN))
-					.multiply(new BigDecimal(100));
+			duePercentage = (netSchdDue.multiply(new BigDecimal(100))).divide(netSchdAmount, 2, RoundingMode.HALF_DOWN);
 		}
 
 		//get ignore bucket configuration from SMT parameter
@@ -189,35 +181,67 @@ public class LatePayBucketService extends ServiceHelper {
 			newDueBucket = 0;
 		}
 
-		//No change in the Bucket Status and Number of Buckets
-		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-			return false;
+		//No current OD Days and No change in the Bucket Status and Number of Buckets
+		if (newCurODDays == 0 || newDueBucket == 0) {
+
+			// No change in the Bucket Status and Number of Buckets
+			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket && curODDays == newCurODDays) {
+				return false;
+			} else {
+				doWriteDPDBuketData(financeMain, finProfitDetail, newFinStatus, newDueBucket, newCurODDays);
+				return true;
+			}
 		}
 
-		long bucketID = 0;
-		List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
+		// DPD Configuration
+		List<DPDBucketConfiguration> list = getBucketConfigurations(financeMain.getFinCategory());
 		sortBucketConfig(list);
+
 		for (DPDBucketConfiguration dpdBucketConfiguration : list) {
 
-			if (dpdBucketConfiguration.getDueDays() > newDueBucket) {
+			if (dpdBucketConfiguration.getDueDays() >= newDueBucket) {
+				bucketID = dpdBucketConfiguration.getBucketID();
 				break;
 			}
-
-			bucketID = dpdBucketConfiguration.getBucketID();
 		}
 
+		// newFinStatus is BucketCode based on Bucket Configuration
 		if (bucketID != 0) {
 			newFinStatus = getBucket(bucketID);
 		}
 
-		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
+		//No change in the Bucket Status and Number of Buckets
+		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket && curODDays == newCurODDays) {
 			return false;
 		}
+
+		doWriteDPDBuketData(financeMain, finProfitDetail, newFinStatus, newDueBucket, newCurODDays);
+
+		logger.debug(" Leaving ");
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param financeMain
+	 * @param finProfitDetail
+	 * @param newFinStatus
+	 * @param newDueBucket
+	 * @param newCurODDays
+	 */
+	private void doWriteDPDBuketData(FinanceMain financeMain, FinanceProfitDetail finProfitDetail, String newFinStatus,
+			int newDueBucket, int newCurODDays) {
 
 		financeMain.setFinStatus(newFinStatus);
 		financeMain.setDueBucket(newDueBucket);
 
-		return true;
+		finProfitDetail.setFinStatus(newFinStatus);
+		finProfitDetail.setDueBucket(newDueBucket);
+
+		finProfitDetail.setActualODDays(finProfitDetail.getCurODDays());
+		if (ImplementationConstants.VARTUAL_DPD) {
+			finProfitDetail.setCurODDays(newCurODDays);
+		}
 	}
 	
 	/**
@@ -230,17 +254,11 @@ public class LatePayBucketService extends ServiceHelper {
 		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finReference);
 		if (finExcessAmounts.size() > 0) {
 			for (FinExcessAmount finExcessAmount : finExcessAmounts) {
-				if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-					balanceAmt.add(finExcessAmount.getBalanceAmt());
-				} 
-				/*else if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-					balanceAmt.add(finExcessAmount.getBalanceAmt());
-				}*/
 
+				// DPD calculation considering both balance amount and reserved amount
+				balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
 			}
 		}
 		return balanceAmt;
-
 	}
-
 }

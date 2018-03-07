@@ -12,11 +12,13 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -67,6 +69,44 @@ public class LoadFinanceData extends ServiceHelper {
 		custpftDet.clear();
 		custFinMains.clear();
 		// custSchdDetails.clear();
+		logger.debug(" Leaving ");
+		return custEODEvent;
+	}
+	
+	/**
+	 * 
+	 * @param custEODEvent
+	 * @param finReference
+	 * @param custID
+	 * @return
+	 * @throws Exception
+	 */
+	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, String finReference) throws Exception {
+		logger.debug(" Entering ");
+ 
+		FinEODEvent finEODEvent = new FinEODEvent();
+ 
+		FinanceMain finMain = getFinanceMainDAO().getFinMainsForEODByFinRef(finReference, false);
+		FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsByFinRef(finReference, false);
+ 
+		// FINANCE MAIN
+		finEODEvent.setFinanceMain(finMain);
+		String finType = finEODEvent.getFinanceMain().getFinType();
+ 
+		// FINANCE TYPE
+		FinanceType financeType = getFinanceType(finType);
+		finEODEvent.setFinType(financeType);
+ 
+		// FINPROFIT DETAILS
+		finEODEvent.setFinProfitDetail(finPftDetail);
+ 
+		// FINSCHDULE DETAILS
+		List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
+				TableType.MAIN_TAB.getSuffix(), false);
+		finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+ 
+		custEODEvent.getFinEODEvents().add(finEODEvent);
+ 
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
@@ -340,6 +380,9 @@ public class LoadFinanceData extends ServiceHelper {
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
 
+		// save or update the amortizations and ACCRUALS
+		processAMZDetails(custEODEvent);
+
 		// save postings
 		saveAccountingEOD(returnDataSets);
 
@@ -355,6 +398,55 @@ public class LoadFinanceData extends ServiceHelper {
 		 */
 		logger.debug(" Leaving ");
 		returnDataSets.clear();
+	}
+
+	/**
+	 * 
+	 * @param custEODEvent
+	 */
+	public void processAMZDetails(CustEODEvent custEODEvent) {
+
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			saveOrUpdateAMZDetails(finEODEvent);
+		}
+	}
+
+	/**
+	 * 
+	 * @param finEODEvent
+	 */
+	private void saveOrUpdateAMZDetails(FinEODEvent finEODEvent) {
+		logger.debug(" Entering ");
+
+		List<ProjectedAmortization> projSaveAMZList = new ArrayList<ProjectedAmortization>(1);
+		List<ProjectedAmortization> projUpdateAMZList = new ArrayList<ProjectedAmortization>(1);
+
+		List<ProjectedAccrual> accrualList = finEODEvent.getProjectedAccrualList();
+		List<ProjectedAmortization> projAMZList = finEODEvent.getProjectedAMZList();
+
+		if (accrualList != null && !accrualList.isEmpty()) {
+			getProjectedAmortizationDAO().saveBatchProjAccruals(accrualList);
+		}
+
+		for (ProjectedAmortization projectedAMZ : projAMZList) {
+			if (projectedAMZ.isUpdProjAMZ()) {
+				projUpdateAMZList.add(projectedAMZ);
+			} else {
+				projSaveAMZList.add(projectedAMZ);
+			}
+		}
+
+		if (!projSaveAMZList.isEmpty()) {
+			getProjectedAmortizationDAO().saveBatchIncomeAMZ(projSaveAMZList);
+		}
+
+		if (!projUpdateAMZList.isEmpty()) {
+			getProjectedAmortizationDAO().updateBatchIncomeAMZ(projUpdateAMZList);
+		}
+
+		logger.debug(" Leaving ");
 	}
 
 	public void updateCustomerDate(long custId, Date date, String newCustStatus) {
