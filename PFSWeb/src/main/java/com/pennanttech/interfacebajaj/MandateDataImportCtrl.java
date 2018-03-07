@@ -24,7 +24,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -33,6 +32,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.MandateProcess;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
@@ -212,7 +212,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showError("Please upload any file.");
 			return;
 		}
-
 		if (MandateProcess.MANDATES_IMPORT != null
 				&& ExecutionStatus.I.name().equals(MandateProcess.MANDATES_IMPORT.getStatus())) {
 			MessageUtil.showError("Export is in progress for the selected configuration.");

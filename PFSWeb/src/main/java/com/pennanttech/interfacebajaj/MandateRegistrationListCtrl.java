@@ -827,7 +827,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 						.getLoggedInUser().getUserId(), getUserWorkspace().getLoggedInUser().getUserName(),
 						this.branchDetails, this.entity);
 			} catch (Exception e) {
-
+				logger.error("Exception", e);
 			}
 		}
 

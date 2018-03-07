@@ -93,5 +93,10 @@
 		<property name="serviceUrl" value="${niyogin.tally.url}" />
 	</bean>	
 
+	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="mandateProcess" class="com.pennanttech.niyogin.mandate.MandateProcess"  parent="abstractMandateProcess"/>
 	
 </beans>

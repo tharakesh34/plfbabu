@@ -107,7 +107,7 @@ public class PostingDownloadServiceImpl extends NiyoginService implements Postin
 			}
 			file = status.getFileName();
 			if (config != null) {
-				file = config.getUploadPath() + "\\" + dataEngine.getDataEngineStatus().getFileName();
+				file = config.getUploadPath() + "//" + dataEngine.getDataEngineStatus().getFileName();
 			}
 		}
 		logger.debug(Literal.LEAVING);
