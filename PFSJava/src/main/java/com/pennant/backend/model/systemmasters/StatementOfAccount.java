@@ -61,6 +61,10 @@ public class StatementOfAccount {
 	private Date startDate;
 	private Date endDate;
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////		Loan Basic Details		////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	private BigDecimal loanAmount = BigDecimal.ZERO;
 	private String plrRate;
 	private BigDecimal variance = BigDecimal.ZERO;
@@ -84,17 +88,34 @@ public class StatementOfAccount {
 	private BigDecimal futurePri2 = BigDecimal.ZERO;
 	private BigDecimal futureRpyPft1 = BigDecimal.ZERO;
 	private BigDecimal futureRpyPft2 = BigDecimal.ZERO;
-	private BigDecimal charge_coll_cust = BigDecimal.ZERO;
-	private BigDecimal upfront_int_cust = BigDecimal.ZERO;
-	private int int_paid_Dealer_upfront = 0;
-	private int pre_emi_Int_Paid = 0;
-	private String repo_Status;
-	private String repo_Date;
-	private String sale_Date;
-	private String release_Date;
+	private BigDecimal chargeCollCust = BigDecimal.ZERO;
+	private BigDecimal upfrontIntCust = BigDecimal.ZERO;
+	private int intPaidDealerUpfront = 0;
+	private int preEmiIntPaid = 0;
+	private String repoStatus;
+	private String repoDate;
+	private String saleDate;
+	private String releaseDate;
 	private Date latestRpyDate;
 	private BigDecimal ccyMinorCcyUnits;
 	private int ccyEditField;
+	private Date                currentDate;
+	private Date				maturityDate;
+	private int					NOPaidInst			= 0;
+	private int					noOfOutStandInst	= 0;
+	private BigDecimal			totalPriPaid		= BigDecimal.ZERO;
+	private BigDecimal			totalPriBal			= BigDecimal.ZERO;
+	private BigDecimal			totalPftPaid		= BigDecimal.ZERO;
+	private BigDecimal			totalPftBal			= BigDecimal.ZERO;
+	private BigDecimal 			paidTotal			= BigDecimal.ZERO;;
+	private BigDecimal 			totalOutStanding 	= BigDecimal.ZERO;
+	private BigDecimal          finCurrAssetValue 	= BigDecimal.ZERO;
+
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////		Customer Details		////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	// Finance Profit Details
 	private String finPurpose;
@@ -127,6 +148,9 @@ public class StatementOfAccount {
 	private String custAddrCity;
 	private String custAddrProvince;
 	private String custAddrCountry;
+	private String custAddrLine1;
+	private String custAddrLine2;
+	private String custAddrZIP;
 	
 	//Customer Phone Number
 	private String phoneCountryCode;
@@ -136,40 +160,37 @@ public class StatementOfAccount {
 	//Customer E-mails
 	private String custEMail;
 	
+	private String loanPurpose;
+	
 	@SuppressWarnings("unused")
 	private BigDecimal emiReceived = BigDecimal.ZERO;
+	
 	@SuppressWarnings("unused")
 	private BigDecimal prvInstAmount = BigDecimal.ZERO;
+	
 	@SuppressWarnings("unused")
 	private BigDecimal futureInstAmount = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal futurePriAmount = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal futureIntComponent = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal chargeCollectedFrom = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal upfrontIntFrom = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal intPaidByDealer = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal preEMIIntPaid = BigDecimal.ZERO;
-	@SuppressWarnings("unused")
-	private BigDecimal calcLoanAmount = BigDecimal.ZERO;
 	
+	@SuppressWarnings("unused")
+	private BigDecimal futurePrincipalComponent = BigDecimal.ZERO;
+	
+	@SuppressWarnings("unused")
+	private BigDecimal futureInterestComponent = BigDecimal.ZERO;
+	
+	@SuppressWarnings("unused")
+	private BigDecimal intPaidByMfgrOrDealerUpfront = BigDecimal.ZERO;
+	
+	//Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
+	
+	//Transaction Reports List
 	private List<SOATransactionReport> transactionReports = new ArrayList<SOATransactionReport>();
 
+	/**
+	 * Default Constructor
+	 */
 	public StatementOfAccount() {
 		super();
-	}
-
-	public List<SOATransactionReport> getTransactionReports() {
-		return transactionReports;
-	}
-
-	public void setTransactionReports(List<SOATransactionReport> transactionReports) {
-		this.transactionReports = transactionReports;
 	}
 
 	public String getFinReference() {
@@ -197,10 +218,15 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getLoanAmount() {
-		return loanAmount;
+		return this.loanAmount;
 	}
 
 	public void setLoanAmount(BigDecimal loanAmount) {
+		
+		if (loanAmount == null) {
+			loanAmount = BigDecimal.ZERO;
+		}
+		
 		this.loanAmount = loanAmount;
 	}
 
@@ -213,26 +239,41 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getVariance() {
-		return variance;
+		return this.variance;
 	}
 
 	public void setVariance(BigDecimal variance) {
+		
+		if (variance == null) {
+			variance = BigDecimal.ZERO;
+		}
+		
 		this.variance = variance;
 	}
 
 	public BigDecimal getIrr() {
-		return irr;
+		return this.irr;
 	}
 
 	public void setIrr(BigDecimal irr) {
+		
+		if (irr == null) {
+			irr = BigDecimal.ZERO;
+		}
+		
 		this.irr = irr;
 	}
 
 	public BigDecimal getRoi() {
-		return roi;
+		return this.roi;
 	}
 
 	public void setRoi(BigDecimal roi) {
+
+		if (roi == null) {
+			roi = BigDecimal.ZERO;
+		}
+		
 		this.roi = roi;
 	}
 
@@ -245,42 +286,67 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getEmiReceivedPri() {
-		return emiReceivedPri;
+		return this.emiReceivedPri;
 	}
 
 	public void setEmiReceivedPri(BigDecimal emiReceivedPri) {
+
+		if (emiReceivedPri == null) {
+			emiReceivedPri = BigDecimal.ZERO;
+		}
+		
 		this.emiReceivedPri = emiReceivedPri;
 	}
 
 	public BigDecimal getEmiReceivedPft() {
-		return emiReceivedPft;
+		return this.emiReceivedPft;
 	}
 
 	public void setEmiReceivedPft(BigDecimal emiReceivedPft) {
+
+		if (emiReceivedPft == null) {
+			emiReceivedPft = BigDecimal.ZERO;
+		}
+		
 		this.emiReceivedPft = emiReceivedPft;
 	}
 
 	public BigDecimal getPreferredCardLimit() {
-		return preferredCardLimit;
+		return this.preferredCardLimit;
 	}
 
 	public void setPreferredCardLimit(BigDecimal preferredCardLimit) {
+
+		if (preferredCardLimit == null) {
+			preferredCardLimit = BigDecimal.ZERO;
+		}
+		
 		this.preferredCardLimit = preferredCardLimit;
 	}
 
 	public BigDecimal getPrevInstAmtPri() {
-		return prevInstAmtPri;
+		return this.prevInstAmtPri;
 	}
 
 	public void setPrevInstAmtPri(BigDecimal prevInstAmtPri) {
+
+		if (prevInstAmtPri == null) {
+			prevInstAmtPri = BigDecimal.ZERO;
+		}
+		
 		this.prevInstAmtPri = prevInstAmtPri;
 	}
 
 	public BigDecimal getPrevInstAmtPft() {
-		return prevInstAmtPft;
+		return this.prevInstAmtPft;
 	}
 
 	public void setPrevInstAmtPft(BigDecimal prevInstAmtPft) {
+
+		if (prevInstAmtPft == null) {
+			prevInstAmtPft = BigDecimal.ZERO;
+		}
+		
 		this.prevInstAmtPft = prevInstAmtPft;
 	}
 
@@ -349,99 +415,129 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getFuturePri1() {
-		return futurePri1;
+		return this.futurePri1;
 	}
 
 	public void setFuturePri1(BigDecimal futurePri1) {
+		
+		if (futurePri1 == null) {
+			futurePri1 = BigDecimal.ZERO;
+		}
+		
 		this.futurePri1 = futurePri1;
 	}
 
 	public BigDecimal getFuturePri2() {
-		return futurePri2;
+		return this.futurePri2;
 	}
 
 	public void setFuturePri2(BigDecimal futurePri2) {
+
+		if (futurePri2 == null) {
+			futurePri2 = BigDecimal.ZERO;
+		}
+		
 		this.futurePri2 = futurePri2;
 	}
 
 	public BigDecimal getFutureRpyPft1() {
-		return futureRpyPft1;
+		return this.futureRpyPft1;
 	}
 
 	public void setFutureRpyPft1(BigDecimal futureRpyPft1) {
+		
+		if (futureRpyPft1 == null) {
+			futureRpyPft1 = BigDecimal.ZERO;
+		}
+		
 		this.futureRpyPft1 = futureRpyPft1;
 	}
 
 	public BigDecimal getFutureRpyPft2() {
-		return futureRpyPft2;
+		return this.futureRpyPft2;
 	}
 
 	public void setFutureRpyPft2(BigDecimal futureRpyPft2) {
+
+		if (futureRpyPft2 == null) {
+			futureRpyPft2 = BigDecimal.ZERO;
+		}
+		
 		this.futureRpyPft2 = futureRpyPft2;
 	}
 
-	public BigDecimal getCharge_coll_cust() {
-		return charge_coll_cust;
+	public BigDecimal getChargeCollCust() {
+		return this.chargeCollCust;
 	}
 
-	public void setCharge_coll_cust(BigDecimal charge_coll_cust) {
-		this.charge_coll_cust = charge_coll_cust;
+	public void setChargeCollCust(BigDecimal chargeCollCust) {
+
+		if (chargeCollCust == null) {
+			chargeCollCust = BigDecimal.ZERO;
+		}
+		
+		this.chargeCollCust = chargeCollCust;
 	}
 
-	public BigDecimal getUpfront_int_cust() {
-		return upfront_int_cust;
+	public BigDecimal getUpfrontIntCust() {
+		return this.upfrontIntCust;
 	}
 
-	public void setUpfront_int_cust(BigDecimal upfront_int_cust) {
-		this.upfront_int_cust = upfront_int_cust;
+	public void setUpfrontIntCust(BigDecimal upfrontIntCust) {
+
+		if (upfrontIntCust == null) {
+			upfrontIntCust = BigDecimal.ZERO;
+		}
+		
+		this.upfrontIntCust = upfrontIntCust;
+	}
+	
+	public int getIntPaidDealerUpfront() {
+		return intPaidDealerUpfront;
 	}
 
-	public int getInt_paid_Dealer_upfront() {
-		return int_paid_Dealer_upfront;
+	public void setIntPaidDealerUpfront(int intPaidDealerUpfront) {
+		this.intPaidDealerUpfront = intPaidDealerUpfront;
 	}
 
-	public void setInt_paid_Dealer_upfront(int int_paid_Dealer_upfront) {
-		this.int_paid_Dealer_upfront = int_paid_Dealer_upfront;
+	public int getPreEmiIntPaid() {
+		return preEmiIntPaid;
 	}
 
-	public int getPre_emi_Int_Paid() {
-		return pre_emi_Int_Paid;
+	public void setPreEmiIntPaid(int preEmiIntPaid) {
+		this.preEmiIntPaid = preEmiIntPaid;
 	}
 
-	public void setPre_emi_Int_Paid(int pre_emi_Int_Paid) {
-		this.pre_emi_Int_Paid = pre_emi_Int_Paid;
+	public String getRepoStatus() {
+		return repoStatus;
+	}
+	
+	public void setRepoStatus(String repoStatus) {
+		this.repoStatus = repoStatus;
 	}
 
-	public String getRepo_Status() {
-		return repo_Status;
+	public String getRepoDate() {
+		return repoDate;
+	}
+	
+	public void setRepoDate(String repoDate) {
+		this.repoDate = repoDate;
 	}
 
-	public void setRepo_Status(String repo_Status) {
-		this.repo_Status = repo_Status;
+	public String getSaleDate() {
+		return saleDate;
+	}
+	
+	public void setSaleDate(String saleDate) {
+		this.saleDate = saleDate;
 	}
 
-	public String getRepo_Date() {
-		return repo_Date;
+	public String getReleaseDate() {
+		return releaseDate;
 	}
-
-	public void setRepo_Date(String repo_Date) {
-		this.repo_Date = repo_Date;
-	}
-
-	public String getSale_Date() {
-		return sale_Date;
-	}
-
-	public void setSale_Date(String sale_Date) {
-		this.sale_Date = sale_Date;
-	}
-
-	public String getRelease_Date() {
-		return release_Date;
-	}
-
-	public void setRelease_Date(String release_Date) {
-		this.release_Date = release_Date;
+	
+	public void setReleaseDate(String releaseDate) {
+		this.releaseDate = releaseDate;
 	}
 
 	public Date getLatestRpyDate() {
@@ -453,10 +549,15 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getCcyMinorCcyUnits() {
-		return ccyMinorCcyUnits;
+		return this.ccyMinorCcyUnits;
 	}
 
 	public void setCcyMinorCcyUnits(BigDecimal ccyMinorCcyUnits) {
+
+		if (ccyMinorCcyUnits == null) {
+			ccyMinorCcyUnits = BigDecimal.ZERO;
+		}
+		
 		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
 	}
 
@@ -485,18 +586,28 @@ public class StatementOfAccount {
 	}
 
 	public BigDecimal getLinkedFinRef() {
-		return linkedFinRef;
+		return this.linkedFinRef;
 	}
 
 	public void setLinkedFinRef(BigDecimal linkedFinRef) {
+
+		if (linkedFinRef == null) {
+			linkedFinRef = BigDecimal.ZERO;
+		}
+		
 		this.linkedFinRef = linkedFinRef;
 	}
 
 	public BigDecimal getClosedlinkedFinRef() {
-		return closedlinkedFinRef;
+		return this.closedlinkedFinRef;
 	}
 
 	public void setClosedlinkedFinRef(BigDecimal closedlinkedFinRef) {
+
+		if (closedlinkedFinRef == null) {
+			closedlinkedFinRef = BigDecimal.ZERO;
+		}
+		
 		this.closedlinkedFinRef = closedlinkedFinRef;
 	}
 
@@ -676,6 +787,90 @@ public class StatementOfAccount {
 		this.custEMail = custEMail;
 	}
 
+	public BigDecimal getEmiReceived() {
+		return this.emiReceivedPri.add(this.emiReceivedPft);
+	}
+
+	public BigDecimal getPrvInstAmount() {
+		return this.prevInstAmtPri.add(this.prevInstAmtPft);
+	}
+	
+	public String getStatus() {
+		String status = "";
+
+		if (this.finIsActive) {
+			status = "Active";
+		} else {
+			if ("C".equals(this.closingStatus)) {
+				status = "Cancelled";
+			} else {
+				status = "Closed";
+			}
+		}
+
+		return status;
+	}
+
+	public BigDecimal getFutureInstAmount() {
+		return (this.futurePri1.subtract(this.futurePri2)).add(this.futureRpyPft1.subtract(this.futureRpyPft2));
+	}
+
+	public BigDecimal getFuturePrincipalComponent() {
+		return this.futurePri1.subtract(this.futurePri2);
+	}
+	
+	public BigDecimal getFutureInterestComponent() {
+		return this.futureRpyPft1.subtract(this.futureRpyPft2);
+	}
+	
+	public BigDecimal getIntPaidByMfgrOrDealerUpfront() {
+		return this.intPaidDealerUpfront != 0 ? new BigDecimal(this.intPaidDealerUpfront) : BigDecimal.ZERO;
+	}
+	
+	public Date getClosureDate() {
+		Date closureDate = null;
+		
+		if (this.finIsActive) {
+			closureDate = this.endInstallmentDate;
+		} else {
+			closureDate = this.latestRpyDate;
+		}
+		
+		return closureDate;
+	}
+
+	public String getCustAddrLine1() {
+		return custAddrLine1;
+	}
+
+	public void setCustAddrLine1(String custAddrLine1) {
+		this.custAddrLine1 = custAddrLine1;
+	}
+
+	public String getCustAddrLine2() {
+		return custAddrLine2;
+	}
+
+	public void setCustAddrLine2(String custAddrLine2) {
+		this.custAddrLine2 = custAddrLine2;
+	}
+
+	public String getCustAddrZIP() {
+		return custAddrZIP;
+	}
+
+	public void setCustAddrZIP(String custAddrZIP) {
+		this.custAddrZIP = custAddrZIP;
+	}
+
+	public String getLoanPurpose() {
+		return loanPurpose;
+	}
+
+	public void setLoanPurpose(String loanPurpose) {
+		this.loanPurpose = loanPurpose;
+	}
+	
 	public List<SOASummaryReport> getSoaSummaryReports() {
 		return soaSummaryReports;
 	}
@@ -683,111 +878,100 @@ public class StatementOfAccount {
 	public void setSoaSummaryReports(List<SOASummaryReport> soaSummaryReports) {
 		this.soaSummaryReports = soaSummaryReports;
 	}
-
-	public BigDecimal getEmiReceived() {
-		BigDecimal emiReceived = BigDecimal.ZERO;
-
-		if (!(this.emiReceivedPri.compareTo(BigDecimal.ZERO) == 0
-				&& this.emiReceivedPft.compareTo(BigDecimal.ZERO) == 0) && this.ccyMinorCcyUnits != null
-				&& this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.emiReceivedPri != null
-				&& this.emiReceivedPft != null) {
-			emiReceived = (this.emiReceivedPri.add(this.emiReceivedPft)).divide(this.ccyMinorCcyUnits);
-		}
-
-		return emiReceived;
+	
+	public List<SOATransactionReport> getTransactionReports() {
+		return transactionReports;
 	}
 
-	public BigDecimal getPrvInstAmount() {
-		BigDecimal prvInstAmount = BigDecimal.ZERO;
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.prevInstAmtPri != null && this.prevInstAmtPft != null) {
-			prvInstAmount = (this.prevInstAmtPri.add(this.prevInstAmtPft)).divide(this.ccyMinorCcyUnits);
-		}
-
-		return prvInstAmount;
+	public void setTransactionReports(List<SOATransactionReport> transactionReports) {
+		this.transactionReports = transactionReports;
 	}
 
-	public BigDecimal getFutureInstAmount() {
-		BigDecimal futureInstAmount = BigDecimal.ZERO;
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.futurePri1 != null && this.futurePri2 != null
-			&& this.futureRpyPft1 != null && this.futureRpyPft2 != null) {
-			futureInstAmount = ((futurePri1.subtract(futurePri2)).add(this.futureRpyPft1.subtract(this.futureRpyPft2))).divide(this.ccyMinorCcyUnits);
-		}
-		return futureInstAmount;
+	public Date getCurrentDate() {
+		return currentDate;
 	}
 
-	public BigDecimal getFuturePriAmount() {
-		BigDecimal futurePriAmount = BigDecimal.ZERO;
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.futurePri1 != null && this.futurePri2 != null
-			) {
-			futurePriAmount = (futurePri1.subtract(futurePri2)).divide(this.ccyMinorCcyUnits);
-		}
-		return futurePriAmount;
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
 	}
 
-	public BigDecimal getFutureIntComponent() {
-		BigDecimal futureIntComponent = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.futureRpyPft1 != null && this.futureRpyPft2 != null) {
-			futureIntComponent = (this.futureRpyPft1.subtract(this.futureRpyPft2)).divide(this.ccyMinorCcyUnits);
-		}
-		
-		return futureIntComponent;
+	public Date getMaturityDate() {
+		return maturityDate;
 	}
 
-	public BigDecimal getChargeCollectedFrom() {
-		BigDecimal chargeCollectedFrom = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.charge_coll_cust != null) {
-			chargeCollectedFrom = (this.charge_coll_cust).divide(this.ccyMinorCcyUnits);
-		}
-		
-		return chargeCollectedFrom;
+	public void setMaturityDate(Date maturityDate) {
+		this.maturityDate = maturityDate;
 	}
 
-	public BigDecimal getUpfrontIntFrom() {
-		BigDecimal upfrontIntFrom = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.upfront_int_cust != null) {
-			upfrontIntFrom = (this.upfront_int_cust).divide(this.ccyMinorCcyUnits);
-		}
-		return upfrontIntFrom;
+	public int getNOPaidInst() {
+		return NOPaidInst;
 	}
 
-	public BigDecimal getIntPaidByDealer() {
-		BigDecimal intPaidByDealer = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.int_paid_Dealer_upfront != 0) {
-			BigDecimal int_paid_Dealer_upfront = new BigDecimal(this.int_paid_Dealer_upfront);
-			intPaidByDealer = (int_paid_Dealer_upfront).divide(this.ccyMinorCcyUnits);
-		}
-		return intPaidByDealer;
+	public void setNOPaidInst(int nOPaidInst) {
+		NOPaidInst = nOPaidInst;
 	}
 
-	public BigDecimal getPreEMIIntPaid() {
-		BigDecimal preEMIIntPaid = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.pre_emi_Int_Paid != 0) {
-			BigDecimal pre_emi_Int_Paid = new BigDecimal(this.pre_emi_Int_Paid);
-			preEMIIntPaid = (pre_emi_Int_Paid).divide(this.ccyMinorCcyUnits);
-		}
-		return preEMIIntPaid;
+	public BigDecimal getTotalPriPaid() {
+		return totalPriPaid;
 	}
 
-	public BigDecimal getCalcLoanAmount() {
-		BigDecimal calcLoanAmount = BigDecimal.ZERO;
-		
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
-				&& this.loanAmount != null) {
-			calcLoanAmount = (this.loanAmount).divide(this.ccyMinorCcyUnits);
-		}
-		return calcLoanAmount;
+	public void setTotalPriPaid(BigDecimal totalPriPaid) {
+		this.totalPriPaid = totalPriPaid;
+	}
+
+	public BigDecimal getTotalPriBal() {
+		return totalPriBal;
+	}
+
+	public void setTotalPriBal(BigDecimal totalPriBal) {
+		this.totalPriBal = totalPriBal;
+	}
+
+	public BigDecimal getTotalPftPaid() {
+		return totalPftPaid;
+	}
+
+	public void setTotalPftPaid(BigDecimal totalPftPaid) {
+		this.totalPftPaid = totalPftPaid;
+	}
+
+	public BigDecimal getTotalPftBal() {
+		return totalPftBal;
+	}
+
+	public void setTotalPftBal(BigDecimal totalPftBal) {
+		this.totalPftBal = totalPftBal;
+	}
+
+	public BigDecimal getPaidTotal() {
+		return paidTotal;
+	}
+
+	public void setPaidTotal(BigDecimal paidTotal) {
+		this.paidTotal = paidTotal;
+	}
+
+	public BigDecimal getTotalOutStanding() {
+		return totalOutStanding;
+	}
+
+	public void setTotalOutStanding(BigDecimal totalOutStanding) {
+		this.totalOutStanding = totalOutStanding;
+	}
+
+	public BigDecimal getFinCurrAssetValue() {
+		return finCurrAssetValue;
+	}
+
+	public void setFinCurrAssetValue(BigDecimal finCurrAssetValue) {
+		this.finCurrAssetValue = finCurrAssetValue;
+	}
+
+	public int getNoOfOutStandInst() {
+		return noOfOutStandInst;
+	}
+
+	public void setNoOfOutStandInst(int noOfOutStandInst) {
+		this.noOfOutStandInst = noOfOutStandInst;
 	}
 }

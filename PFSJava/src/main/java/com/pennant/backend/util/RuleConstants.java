@@ -23,6 +23,7 @@ public class RuleConstants {
 	public static final String MODULE_INSRULE = "INSRULE";
 	public static final String MODULE_BOUNCE = "BOUNCE";
 	public static final String MODULE_GSTRULE = "GSTRULE";	//GST Rules
+	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
 
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";
@@ -49,6 +50,7 @@ public class RuleConstants {
 	public static final String EVENT_BANK = "BANK";
 	public static final String EVENT_LTVRULE = "LTVRULE";
 	public static final String EVENT_BOUNCE = "BOUNCE";
+	public static final String EVENT_AMORTIZATIONMETHOD = "AMZMTH";
 
 	public static final String RETURNTYPE_DECIMAL = "D";
 	public static final String RETURNTYPE_STRING = "S";

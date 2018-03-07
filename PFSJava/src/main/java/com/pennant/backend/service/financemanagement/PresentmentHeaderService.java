@@ -69,4 +69,7 @@ public interface PresentmentHeaderService {
 	void updateFinanceDetails(String presentmentRef);
 	
 	long getSeqNumber(String tableNme);
+	
+	void processReceipts(PresentmentDetail detail, LoggedInUser userDetails) throws Exception;
+
 }

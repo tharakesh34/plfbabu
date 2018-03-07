@@ -125,7 +125,7 @@ public class DisbursementPostings {
 	
 	
 	
-	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch) {
+	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch)  throws InterfaceException {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();

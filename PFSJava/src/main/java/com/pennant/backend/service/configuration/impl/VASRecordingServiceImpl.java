@@ -539,7 +539,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException
 	 */
 
-	public AuditHeader doApprove(AuditHeader aAuditHeader) {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -1563,7 +1563,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
+	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException{
 		logger.debug("Entering");
 
 		VASRecording vASRecording = new VASRecording("");

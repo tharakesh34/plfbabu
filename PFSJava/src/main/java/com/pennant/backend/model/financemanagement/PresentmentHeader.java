@@ -94,6 +94,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private int processedRecords;
 	private int successRecords;
 	private int failedRecords;
+	private String entityCode;
 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schdate;
@@ -363,6 +364,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 
 	

@@ -61,6 +61,7 @@ public interface FinAdvancePaymentsService {
 	void processDisbursments(FinanceDetail financeDetail);
 	List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 	void doCancel(FinanceDetail financeDetail);
+	int getCountByFinReference(String finReference);
 	void Update(long paymentId, long linkedTranId);
 	int getMaxPaymentSeq(String finReference);
 	int getFinAdvCountByRef(String finReference, String type);

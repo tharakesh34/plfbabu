@@ -34,11 +34,13 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
+import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -84,12 +86,14 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -118,37 +122,41 @@ import com.pennanttech.pff.document.DocumentService;
 
 public class FinanceDataValidation {
 
-	private BaseRateDAO					baseRateDAO;
-	private SplRateDAO					splRateDAO;
-	private BranchDAO					branchDAO;
-	private CustomerDAO					customerDAO;
-	private FinanceMainDAO				financeMainDAO;
-	private FinanceDetailService		financeDetailService;
-	private BankDetailService			bankDetailService;
-	private BankBranchService			bankBranchService;
-	private DocumentTypeService			documentTypeService;
-	private CustomerDetailsService		customerDetailsService;
-	private FlagDAO						flagDAO;
-	private CollateralSetupService		collateralSetupService;
-	private MandateService				mandateService;
-	private StepPolicyService			stepPolicyService;
-	private RelationshipOfficerService	relationshipOfficerService;
-	private FinTypePartnerBankService	finTypePartnerBankService;
-	private VASConfigurationService		vASConfigurationService;
-	private ScriptValidationService		scriptValidationService;
-	private RuleExecutionUtil			ruleExecutionUtil;
-	private RuleService					ruleService;
-	private FinTypeVASProductsDAO		finTypeVASProductsDAO;
-	private ProvinceDAO					provinceDAO;
-	private CityDAO						cityDAO;
-	private FinanceDetail				financeDetail;
-	private CustomerDocumentService		customerDocumentService;
-	private PartnerBankDAO				partnerBankDAO;
-	private ExtendedFieldDetailsService	extendedFieldDetailsService;
-	private CurrencyDAO					currencyDAO;
-	private DocumentService				documentService;
-	private VehicleDealerService        vehicleDealerService;
 	
+	private BaseRateDAO						baseRateDAO;
+	private SplRateDAO						splRateDAO;
+	private BranchDAO						branchDAO;
+	private CustomerDAO						customerDAO;
+	private FinanceMainDAO					financeMainDAO;
+	private FinanceDetailService			financeDetailService;
+	private BankDetailService				bankDetailService;
+	private BankBranchService				bankBranchService;
+	private DocumentTypeService				documentTypeService;
+	private CustomerDetailsService			customerDetailsService;
+	private FlagDAO							flagDAO;
+	private CollateralSetupService			collateralSetupService;
+	private MandateService					mandateService;
+	private StepPolicyService				stepPolicyService;
+	private RelationshipOfficerService		relationshipOfficerService;
+	private FinTypePartnerBankService		finTypePartnerBankService;
+	private VASConfigurationService			vASConfigurationService;
+	private ScriptValidationService			scriptValidationService;
+	private ExtendedFieldDetailsService		extendedFieldDetailsService;
+	private DocumentService					documentService;
+	private VehicleDealerService        	vehicleDealerService;
+	private RuleExecutionUtil				ruleExecutionUtil;
+	private RuleService						ruleService;
+	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
+	private ProvinceDAO						provinceDAO;
+	private CityDAO							cityDAO;
+	private FinanceDetail					financeDetail;
+	private CustomerDocumentService			customerDocumentService;
+	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private PartnerBankDAO					partnerBankDAO;
+	private CurrencyDAO						currencyDAO;
+	private LoanPurposeDAO					loanPurposeDAO;
+
 	public FinanceDataValidation() {
 		super();
 	}
@@ -226,7 +234,14 @@ public class FinanceDataValidation {
 		}
 		
 		// Fee validations
-		errorDetails = doValidateFees(finScheduleData, financeDetail.isStp());
+		//TODO FIX
+		boolean stp;
+		if(financeDetail==null) {
+			stp =true;
+		} else {
+			stp = financeDetail.isStp();
+		}
+		errorDetails = doValidateFees(finScheduleData, stp);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -928,6 +943,21 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 		}
+		//FinReference
+		if(!finScheduleData.getFinanceType().isFinIsGenRef()) {
+			if(StringUtils.isBlank(financeDetail.getFinReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "FinReference";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			} else {
+				if (financeDetail.getFinReference().length() > LengthConstants.LEN_REF) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "FinReference";
+					valueParm[1] = LengthConstants.LEN_REF + " characters";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+				}
+			}
+		}
 		// Validate customer
 		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
@@ -1581,6 +1611,14 @@ public class FinanceDataValidation {
 		}
 		// Validate mandate details
 		if (mandate != null) {
+			if(StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(), 
+					FinanceConstants.REPAYMTH_MANUAL)){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Mandate";
+				valueParm[1] = "finRepayMethod is "+ FinanceConstants.REPAYMTH_MANUAL;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+				return errorDetails;
+			}
 			if (mandate.isUseExisting()) {
 				if (mandate.getMandateID() == Long.MIN_VALUE) {
 					String[] valueParm = new String[1];
@@ -1653,6 +1691,12 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					return errorDetails;
 				}
+				if(StringUtils.isBlank(mandate.getBarCodeNumber())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BarCodeNumber";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					 return errorDetails;
+				}
 				if (mandate.getAccNumber().length() > 50) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "accNumber length";
@@ -1688,7 +1732,17 @@ public class FinanceDataValidation {
 					}
 				}
 
-				if (mandate.getMaxLimit() == null) {
+				//barcode
+				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
+				Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
+				
+				if (matcher.matches() == false) {
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getBarCodeNumber();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
+					return errorDetails;
+				}
+				if(mandate.getMaxLimit() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "maxLimit";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90242", valueParm)));
@@ -1702,16 +1756,17 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 					return errorDetails;
 				}
-				if (mandate.getExpiryDate() != null) {
-					if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
-							|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Mandate ExpiryDate";
-						valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", valueParm)));
-						return errorDetails;
-					}
+
+				if(mandate.getExpiryDate() != null){
+				if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+						|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Mandate ExpiryDate";
+					valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
+					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", valueParm)));
+					return errorDetails;
+				}	
 				}
 				if (mandate.getStartDate() != null) {
 					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
@@ -1889,7 +1944,7 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 			}
-			
+		
 			if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "docContent";
@@ -1922,6 +1977,13 @@ public class FinanceDataValidation {
 					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
 				}
+			}
+		} else {
+			if(!StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(), 
+					FinanceConstants.REPAYMTH_MANUAL)){
+			String[] valueParm = new String[1];
+			valueParm[0] = "mandate";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 			}
 		}
 		return errorDetails;
@@ -2253,7 +2315,17 @@ public class FinanceDataValidation {
 				}
 			}
 		}
-
+		if(isCreateLoan) {
+			String finPurpose = finMain.getFinPurpose();
+			if(StringUtils.isNotBlank(finPurpose)) {
+			LoanPurpose loanPurpose=loanPurposeDAO.getLoanPurposeById(finPurpose, "");
+			if(loanPurpose == null || !loanPurpose.isLoanPurposeIsActive() ) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finPurpose;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+			}
+			}
+		}
 		return errorDetails;
 	}
 
@@ -4568,4 +4640,11 @@ public class FinanceDataValidation {
 		this.vehicleDealerService = vehicleDealerService;
 	}
 
+	public LoanPurposeDAO getLoanPurposeDAO() {
+		return loanPurposeDAO;
+	}
+
+	public void setLoanPurposeDAO(LoanPurposeDAO loanPurposeDAO) {
+		this.loanPurposeDAO = loanPurposeDAO;
+	}
 }

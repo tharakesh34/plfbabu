@@ -18,7 +18,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennanttech.pennapps.core.App.AuthenticationType;
+import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -220,6 +220,19 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> chequeTypesList;
 	
 	private static ArrayList<ValueLabel> feeTaxTypes;	//GST FeeTaxTypes
+	private static ArrayList<ValueLabel> collections;
+	private static ArrayList<ValueLabel> mandateMapping;
+	private static ArrayList<ValueLabel> presentmentMapping;
+	private static ArrayList<ValueLabel> responseStatus;
+	private static ArrayList<ValueLabel> expenseCalculatedOn;
+	
+	//Expense Upload
+	private static ArrayList<ValueLabel> uploadLevels;
+
+	
+	private static ArrayList<ValueLabel> subCategoriesList;
+
+	private static ArrayList<ValueLabel> statusCodes;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -916,6 +929,9 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("RECENQ", Labels.getLabel("label_RecommendationsEnquiry")));
 			enquiryTypes.add(new ValueLabel("DEVENQ", Labels.getLabel("label_DeviationEnquiry")));
 			enquiryTypes.add(new ValueLabel("COVENQ", Labels.getLabel("label_CovenantEnquiry")));
+			enquiryTypes.add(new ValueLabel("FEEENQ", Labels.getLabel("label_FinFeeEnquiry")));
+			enquiryTypes.add(new ValueLabel("EXPENQ", Labels.getLabel("label_ExpenseEnquiry")));
+			
 			if (ImplementationConstants.DDA_ALLOWED) {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
 			}
@@ -1717,6 +1733,8 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_REAGING,Labels.getLabel("label_FinSerEvent_ReAging")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_HOLDEMI,Labels.getLabel("label_FinSerEvent_HoldEMI")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COVENANTS,Labels.getLabel("label_FinSerEvent_Covenants")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD,Labels.getLabel("label_FinSerEvent_ChangeSchdMtd")));
+
 		}
 		return finServiceEvents;
 	}
@@ -1741,6 +1759,7 @@ public class PennantStaticListUtil {
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
 		if(addSwitchTransfer){
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,Labels.getLabel("label_PaymentType_CASH")));
+		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,Labels.getLabel("label_PaymentType_ESCROW")));
 		}
 		return paymentTypes;
 	}
@@ -1824,6 +1843,20 @@ public class PennantStaticListUtil {
 			transactionType.add(new ValueLabel(PennantConstants.OTHERS,Labels.getLabel("label_others")));
 		}
 		return transactionType;
+	}
+	
+	public static ArrayList<ValueLabel> getStatusCodes() {
+		if (statusCodes == null) {
+			statusCodes = new ArrayList<ValueLabel>();
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_SUCCESS, Labels.getLabel("label_StatusCode_Success")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_PENDING, Labels.getLabel("label_StatusCode_Pending")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_DUPLICATE, Labels.getLabel("label_StatusCode_Duplicate")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_ERROR, Labels.getLabel("label_StatusCode_Error")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_LOANCLOSED, Labels.getLabel("label_StatusCode_LoanClosed")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_HOLD_DAYS, Labels.getLabel("label_StatusCode_Holddays")));
+			statusCodes.add(new ValueLabel(RepayConstants.PRES_FAILED, Labels.getLabel("label_StatusCode_Failed")));
+		}
+		return statusCodes;
 	}
 
 	public static ArrayList<ValueLabel> getFinancingTypes(String finCategory) {
@@ -2185,6 +2218,7 @@ public class PennantStaticListUtil {
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE,Labels.getLabel("label_Mandate_RELEASE")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN,Labels.getLabel("label_Mandate_FINANCE")));
 			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL,Labels.getLabel("label_Mandate_CANCEL")));
+			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_INPROCESS,Labels.getLabel("label_Mandate_INPROCESS")));
 
 		}
 		return statusTypeList;
@@ -2607,6 +2641,7 @@ public class PennantStaticListUtil {
 			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
 			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
 			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
 		}
 		return receiptModes;
 	}
@@ -2739,8 +2774,8 @@ public class PennantStaticListUtil {
 
 		if (authTypes == null) {
 			authTypes = new ArrayList<ValueLabel>(3);
-			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), "External "));
-			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), "Internal"));
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name(), "External "));
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name(), "Internal"));
 		}
 		return authTypes;
 	}
@@ -2815,6 +2850,7 @@ public class PennantStaticListUtil {
 			custCreationFinoneStatus = new ArrayList<ValueLabel>(2);
 			custCreationFinoneStatus.add(new ValueLabel("S", Labels.getLabel("label_CustCreationFinone_Sucess")));
 			custCreationFinoneStatus.add(new ValueLabel("R", Labels.getLabel("label_CustCreationFinone_Rejected")));
+			custCreationFinoneStatus.add(new ValueLabel("P", Labels.getLabel("label_CustCreationFinone_Request_Timeout")));
 		}
 		return custCreationFinoneStatus;
 	}
@@ -2830,6 +2866,25 @@ public class PennantStaticListUtil {
 		return accountMapping;
 	}
 
+   public static ArrayList<ValueLabel> getMandateStatusTypeList() {
+	if(statusTypeList == null){
+		statusTypeList = new ArrayList<ValueLabel>(7);
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_AWAITCON,Labels.getLabel("label_Mandate_AWAITCON")));
+	}
+	return statusTypeList;
+}
+	
+	
+	public static ArrayList<ValueLabel> getUploadLevelsList() {
+		
+		if(uploadLevels == null){
+			uploadLevels = new ArrayList<ValueLabel>(2);
+			uploadLevels.add(new ValueLabel(PennantConstants.EXPENSE_UPLOAD_LOANTYPE, Labels.getLabel("label_ExpenseUpload_LoanType")));
+			uploadLevels.add(new ValueLabel(PennantConstants.EXPENSE_UPLOAD_LOAN, Labels.getLabel("label_ExpenseUpload_Loan")));
+		}
+		
+		return uploadLevels;
+	}
 	
 	public static ArrayList<ValueLabel> getMonthList() {
 		
@@ -2849,6 +2904,37 @@ public class PennantStaticListUtil {
 			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
 		}
 		return monthMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getMandateMapping() {
+		
+		if(mandateMapping == null){
+			mandateMapping = new ArrayList<ValueLabel>(2);
+			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_DDM,Labels.getLabel("label_Mandate_DD")));
+			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_NACH,Labels.getLabel("label_Mandate_Nach")));
+		}
+		return mandateMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getPresentmentMapping() {
+		
+		if(presentmentMapping == null){
+			presentmentMapping = new ArrayList<ValueLabel>(3);
+			presentmentMapping.add(new ValueLabel("A", Labels.getLabel("label_MandateMapping_DDM")));
+			presentmentMapping.add(new ValueLabel("N", Labels.getLabel("label_MandateMapping_NACH")));
+			presentmentMapping.add(new ValueLabel("E", Labels.getLabel("label_MandateMapping_ECS")));
+		}
+		return presentmentMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getResponseStatus() {
+
+		if(responseStatus == null){
+			responseStatus = new ArrayList<ValueLabel>(3);
+			responseStatus.add(new ValueLabel("0", Labels.getLabel("label_ResponseStatus_Success")));
+			responseStatus.add(new ValueLabel("99", Labels.getLabel("label_ResponseStatus_Bounce")));
+		}
+		return responseStatus;
 	}
 	
 	public static List<ValueLabel> getMontEnds() {
@@ -2969,5 +3055,34 @@ public class PennantStaticListUtil {
 		}
 		return feeTaxTypes;
 	}
+
+	public static ArrayList<ValueLabel> getCollectionTableNames() {
+
+		if (collections == null) {
+			collections = new ArrayList<ValueLabel>(1);
+			collections.add(new ValueLabel(CollectionConstants.INTERFACE_COLLECTION, Labels.getLabel("label_CollectionList_Collection")));
+		}
+		return collections;
+	}
+
+	public static ArrayList<ValueLabel> getExpenseCalculatedOnList(){
+		if(expenseCalculatedOn == null){
+			expenseCalculatedOn = new ArrayList<ValueLabel>(2);
+			expenseCalculatedOn.add(new ValueLabel(PennantConstants.EXPENSE_CALCULATEDON_ODLIMIT, Labels.getLabel("Expense_CalculatedOn_ODLimit")));
+			expenseCalculatedOn.add(new ValueLabel(PennantConstants.EXPENSE_UPLOAD_LOAN, Labels.getLabel("Expense_CalculatedOn_LoanAmount")));
+		}
+		return expenseCalculatedOn;
+	}
+	
+
+	public static ArrayList<ValueLabel> getSubCategoriesList() {
+		if (subCategoriesList == null) {
+			subCategoriesList = new ArrayList<ValueLabel>(2);
+			subCategoriesList.add(new ValueLabel(PennantConstants.SUBCATEGORY_DOMESTIC, Labels.getLabel("label_Subcategory_Domestic")));
+			subCategoriesList.add(new ValueLabel(PennantConstants.SUBCATEGORY_NRI, Labels.getLabel("label_Subcategory_NRI")));
+		}
+		return subCategoriesList;
+	}
+
 }
 

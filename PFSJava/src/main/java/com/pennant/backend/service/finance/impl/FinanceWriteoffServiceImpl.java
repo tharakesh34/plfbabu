@@ -678,7 +678,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader) {
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader)  throws InterfaceException{
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();

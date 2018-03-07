@@ -79,6 +79,7 @@ import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -308,7 +309,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) {
+	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException {
 		logger.info(Literal.ENTERING);
 
 		String tranType = "";
@@ -663,7 +664,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				eventMapping.put("pi_emiInAdvance", emiInAdavance);
 				eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 				aeEvent.setDataMap(eventMapping);
-				long accountsetId = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_PAYMTINS, AccountEventConstants.ACCEVENT_PAYMTINS);
+				
+				long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+						AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+				
 				aeEvent.getAcSetIDList().add(accountsetId);
 
 				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);

@@ -54,4 +54,5 @@ public interface FeeTypeService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	long getFinFeeTypeIdByFeeType(String feeTypeCode);
 }

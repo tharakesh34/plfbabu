@@ -1310,7 +1310,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param vasRecordingList
 	 * @return
 	 */
-	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList, boolean doPostings) {
+	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList, boolean doPostings)  throws InterfaceException{
 
 		List<ReturnDataSet> datasetList = new ArrayList<>();
 		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
@@ -1444,7 +1444,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param curBDay
 	 * @return
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException{
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();

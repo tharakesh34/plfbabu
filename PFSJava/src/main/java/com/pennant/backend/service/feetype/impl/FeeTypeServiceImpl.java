@@ -354,4 +354,10 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			logger.debug("Leaving");
 			return auditDetail;
 		}
+
+	@Override
+	public long getFinFeeTypeIdByFeeType(String feeTypeCode) {
+		
+		return feeTypeDAO.getFinFeeTypeIdByFeeType(feeTypeCode, "_View");
+	}
 }

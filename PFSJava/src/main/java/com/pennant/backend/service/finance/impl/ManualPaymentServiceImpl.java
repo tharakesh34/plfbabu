@@ -43,6 +43,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -866,9 +867,16 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
+			
 			FinanceDetail finDetails = repayData.getFinanceDetail();
-			getLimitManagement().processLoanRepay(financeMain, finDetails.getCustomerDetails().getCustomer(),
-					repayData.getFinRepayHeader().getPriAmount(),
+			FinRepayHeader header = repayData.getFinRepayHeader();
+			BigDecimal priAmt = BigDecimal.ZERO;
+
+			for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+				priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+			}
+			
+			getLimitManagement().processLoanRepay(financeMain, finDetails.getCustomerDetails().getCustomer(), priAmt,
 					StringUtils.trimToEmpty(finDetails.getFinScheduleData().getFinanceType().getProductCategory()));
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.AMENDEMENT);

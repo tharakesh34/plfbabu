@@ -54,8 +54,8 @@ public class PennantConstants {
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
-		SeqFinMaintainInstructions,SeqServiceTaskDetails,SeqMailTemplate,SeqCustomerAddresses,SeqFinASSETTYPES,
-		SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping,SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure
+		SeqFinMaintainInstructions,SeqCustomerAddresses,SeqFinASSETTYPES,SeqReceiptAllocationDetail,SeqInterfaceMapping,SeqMasterMapping,SeqUploadHeader,
+		SeqChequeHeader,SeqChequeDetail,SeqFinTaxDetails,seqCollateralStructure, SeqFinExpenseDetails,SeqFinExpenseMovements,SeqFinTypeExpense, SeqCaste, SeqReligion
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -698,4 +698,23 @@ public class PennantConstants {
 	
 	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
 	public static final String FINANCE_INQUIRY_LOAN = "LOAN";
+
+	// Expense Uploads
+	public static final String EXPENSE_UPLOAD_LOAN 			= "Loan";
+	public static final String EXPENSE_UPLOAD_LOANTYPE 		= "LoanType";
+	public static final String UPLOAD_INCOMETYPE_EXPENSE 	= "E";
+	public static final String UPLOAD_STATUS_SUCCESS 		= "SUCCESS";
+	public static final String UPLOAD_STATUS_FAIL 			= "FAILED";
+	public static final String EXPENSE_UPLOAD_ADD			= "A";
+	public static final String EXPENSE_UPLOAD_OVERRIDE 		= "O";
+	public static final String EXPENSE_MODE_SCREEN 			= "Screen";
+	public static final String EXPENSE_MODE_UPLOAD 			= "Upload";
+
+	//FinTypeExpenses
+	public static final String EXPENSE_CALCULATEDON_LOAN 	= "LOAN";
+	public static final String EXPENSE_CALCULATEDON_ODLIMIT = "ODLIMIT";
+
+	// Sub Category Constants
+	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC";	//Domestic
+	public static final String SUBCATEGORY_NRI 		= "NRI";		//NRI
 }

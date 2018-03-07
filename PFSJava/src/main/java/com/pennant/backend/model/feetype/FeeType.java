@@ -76,6 +76,8 @@ private static final long serialVersionUID = 1L;
 	private boolean taxApplicable;
 	private String	taxComponent;
 	
+	private boolean amortzReq;
+		
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -218,6 +220,13 @@ private static final long serialVersionUID = 1L;
 
 	public void setTaxApplicable(boolean taxApplicable) {
 		this.taxApplicable = taxApplicable;
+	}
+	public boolean isAmortzReq() {
+		return amortzReq;
+	}
+
+	public void setAmortzReq(boolean amortzReq) {
+		this.amortzReq = amortzReq;
 	}
 
 	public String getTaxComponent() {

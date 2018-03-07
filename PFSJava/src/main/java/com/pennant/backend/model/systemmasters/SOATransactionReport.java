@@ -54,20 +54,30 @@ public class SOATransactionReport {
 	private String finReference;
 	private Date transactionDate;
 	private String event;
-	private BigDecimal transactionAmount;
-	private String drOrCr;
+	private BigDecimal debitAmount;
+	private BigDecimal creditAmount;
 	
 	private BigDecimal ccyMinorCcyUnits;
 	private Date fromDate;
 	private Date toDate;
 	private int ccyEditField;
-	@SuppressWarnings("unused")
-	private BigDecimal calTransactionAmount;
+	private int priority;
 
+	/**
+	 * default Constructor
+	 */
 	public SOATransactionReport() {
 		super();
 	}
 	
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
 	public Date getTransactionDate() {
 		return transactionDate;
 	}
@@ -82,26 +92,20 @@ public class SOATransactionReport {
 		this.event = event;
 	}
 
-	public BigDecimal getTransactionAmount() {
-		return transactionAmount;
-	}
-	public void setTransactionAmount(BigDecimal transactionAmount) {
-		this.transactionAmount = transactionAmount;
+	public BigDecimal getDebitAmount() {
+		return debitAmount;
 	}
 
-	public String getDrOrCr() {
-		return drOrCr;
-	}
-	public void setDrOrCr(String drOrCr) {
-		this.drOrCr = drOrCr;
+	public void setDebitAmount(BigDecimal debitAmount) {
+		this.debitAmount = debitAmount;
 	}
 
-	public String getFinReference() {
-		return finReference;
+	public BigDecimal getCreditAmount() {
+		return creditAmount;
 	}
 
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
+	public void setCreditAmount(BigDecimal creditAmount) {
+		this.creditAmount = creditAmount;
 	}
 
 	public BigDecimal getCcyMinorCcyUnits() {
@@ -136,13 +140,11 @@ public class SOATransactionReport {
 		this.ccyEditField = ccyEditField;
 	}
 
-	public BigDecimal getCalTransactionAmount() {
-		BigDecimal calTransactionAmount = BigDecimal.ZERO;
+	public int getPriority() {
+		return priority;
+	}
 
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.transactionAmount != null) {
-			calTransactionAmount = (this.transactionAmount).divide(this.ccyMinorCcyUnits);
-		}
-		
-		return calTransactionAmount;
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 }

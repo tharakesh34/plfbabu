@@ -55,6 +55,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -433,27 +434,47 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
-		Province province = provinceDAO.getProvinceById(customerAddres.getCustAddrCountry(),
-				customerAddres.getCustAddrProvince(), "");
-		if (province == null) {
-			 errorDetail = new ErrorDetail();
-			String[] valueParm = new String[2];
-			valueParm[0] = customerAddres.getCustAddrProvince();
-			valueParm[1] = customerAddres.getCustAddrCountry();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;
-		}
-		City city = cityDAO.getCityById(customerAddres.getCustAddrCountry(), customerAddres.getCustAddrProvince(),
-				customerAddres.getCustAddrCity(), "");
-		if (city == null) {
-			errorDetail = new ErrorDetail();
-			String[] valueParm = new String[2];
-			valueParm[0] = customerAddres.getCustAddrCity();
-			valueParm[1] = customerAddres.getCustAddrProvince();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;
+		PinCode pincode = pinCodeDAO.getPinCode(customerAddres.getCustAddrZIP(), "_AView");
+		if (pincode != null) {
+			if (StringUtils.isNotBlank(customerAddres.getCustAddrCountry())
+					&& !customerAddres.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+		
+				String[] valueParm = new String[2];
+				valueParm[0] = customerAddres.getCustAddrCountry();
+				valueParm[1] = customerAddres.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			} else {
+				customerAddres.setCustAddrCountry(pincode.getpCCountry());
+			}
+
+			Province province = provinceDAO.getProvinceById(customerAddres.getCustAddrCountry(),
+					pincode.getpCProvince(), "");
+			if (province != null && StringUtils.isNotBlank(customerAddres.getCustAddrProvince())
+					&& !customerAddres.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = customerAddres.getCustAddrProvince();
+				valueParm[1] = customerAddres.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			} else {
+				customerAddres.setCustAddrProvince(pincode.getpCProvince());
+			}
+
+			if (StringUtils.isNotBlank(customerAddres.getCustAddrCity())
+					&& !customerAddres.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
+				
+				String[] valueParm = new String[2];
+				valueParm[0] = customerAddres.getCustAddrCity();
+				valueParm[1] = customerAddres.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+
+			} else {
+				customerAddres.setCustAddrCity(pincode.getCity());
+			}
+
 		}
 		if(!(customerAddres.getCustAddrPriority()>=1 && customerAddres.getCustAddrPriority()<=5)){
 			String[] valueParm = new String[1];

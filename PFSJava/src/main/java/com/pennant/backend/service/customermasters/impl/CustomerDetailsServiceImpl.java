@@ -58,6 +58,7 @@ import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
@@ -129,6 +130,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -2232,6 +2234,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
 			}
+			if (customer.getCasteId() > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Caste";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
+			}
+			if (customer.getReligionId() > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Religion";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
+			}
+			if (StringUtils.isNotBlank(customer.getSubCategory())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "SubCategory";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm), "EN"));
+			}
 		}
 		auditDetail.setErrorDetail(validateMasterCode("CustomerType", customer.getCustTypeCode()));
 
@@ -2286,6 +2306,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (StringUtils.isNotBlank(customer.getCustDSADept())) {
 			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
+		}
+		
+		if (customer.getCasteId() > 0) {
+			auditDetail.setErrorDetail(validateMasterCode("Caste", String.valueOf(customer.getCasteId())));
+		}
+		if (customer.getReligionId() > 0) {
+			auditDetail.setErrorDetail(validateMasterCode("Religion", String.valueOf(customer.getReligionId())));
+		}
+		if (StringUtils.isNotBlank(customer.getSubCategory())) {
+			List<ValueLabel> subCategories = PennantStaticListUtil.getSubCategoriesList();
+			boolean categorieSts = false;
+			for (ValueLabel value : subCategories) {
+				if (StringUtils.equals(value.getValue(), customer.getSubCategory())) {
+					categorieSts = true;
+					break;
+				}
+			}
+			if (!categorieSts) {
+				ErrorDetail errorDetail = new ErrorDetail();
+				String[] valueParm = new String[2];
+				valueParm[0] = customer.getSubCategory();
+				valueParm[1] = PennantConstants.SUBCATEGORY_DOMESTIC+", "+PennantConstants.SUBCATEGORY_NRI;
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustDSA())) {
 			Pattern pattern = Pattern
@@ -2664,6 +2709,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 				return auditHeader;
 			}
+
 		} catch (InterfaceException e) {
 			errorParm[1] = e.getMessage();
 			auditDetail.setErrorDetail(

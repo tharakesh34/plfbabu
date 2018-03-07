@@ -8,8 +8,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.interfacebajaj.fileextract.service.AbstractFileExtractService;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 
-public class PresentmentExtractService extends AbstractFileExtractService implements
-		FileExtractService<PresentmentDetailExtract> {
+public class PresentmentExtractService extends AbstractFileExtractService implements FileExtractService<PresentmentDetailExtract> {
 
 	private DataSource dataSource;
 	private PresentmentHeaderService presentmentHeaderService;

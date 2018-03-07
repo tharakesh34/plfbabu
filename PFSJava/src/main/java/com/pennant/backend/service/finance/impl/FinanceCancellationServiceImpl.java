@@ -160,7 +160,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
     @Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader){
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException{
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");

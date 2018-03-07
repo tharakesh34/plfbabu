@@ -408,6 +408,10 @@ public class BankDetailServiceImpl extends
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+	@Override
+	public String getBankCodeByName(String bankName) {
+		return bankDetailDAO.getBankCodeByName(bankName);
+	}
 
 	public BankBranchDAO getBankBranchDAO() {
 		return bankBranchDAO;

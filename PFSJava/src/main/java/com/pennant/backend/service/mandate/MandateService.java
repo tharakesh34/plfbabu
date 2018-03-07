@@ -45,10 +45,12 @@ package com.pennant.backend.service.mandate;
 
 import java.util.List;
 
+import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface MandateService {
 	
@@ -69,4 +71,7 @@ public interface MandateService {
 	List<Mandate>getApprovedMandatesByCustomerId(long custID);
 	void getDocumentImage(Mandate mandate);
 	byte[] getDocumentManImage(String mandateRef);
+	MandateCheckDigit getLookUpValueByCheckDigit(int rem);
+	List<ErrorDetail>  doValidations(Mandate mandate);
+	int getSecondaryMandateCount(long mandateID);
 }

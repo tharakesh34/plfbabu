@@ -91,6 +91,8 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private String				hostGLCode;
 	private String				profitCenterID;
 	private String				costCenterID;
+	private String              entity;
+	private String              entityDesc;
 	
 	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
 	private List<PartnerBranchModes>partnerBranchModesList = new ArrayList<PartnerBranchModes>();
@@ -114,6 +116,7 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		excludeFields.add("bankCodeName");
 		excludeFields.add("bankBranchCodeName");
 		excludeFields.add("acTypeName");
+		excludeFields.add("entityDesc");
 		return excludeFields;
 	}
 
@@ -373,6 +376,22 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
 	}
 
 

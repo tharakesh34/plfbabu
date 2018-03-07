@@ -82,6 +82,7 @@ public class RepayConstants {
 	public static final String	RECEIPTMODE_RTGS		= "RTGS";
 	public static final String	RECEIPTMODE_IMPS		= "IMPS";
 	public static final String	RECEIPTMODE_EXCESS		= "EXCESS";
+	public static final String  RECEIPTMODE_ESCROW		= "ESCROW";
 	
 	// Allocation Methods
 	public static final String	ALLOCATIONTYPE_AUTO		= "A";
@@ -161,6 +162,15 @@ public class RepayConstants {
 	public static final String PAYMENT_DOWNLOAD = "D";
 	public static final String PAYMENT_SUCCESS = "S";
 	public static final String PAYMENT_FAILURE = "F";
+	
+	//presentmentResponse statuscodes
+	public static final String	PRES_SUCCESS			= "PR000";
+	public static final String	PRES_PENDING			= "PR001";
+	public static final String	PRES_DUPLICATE			= "PR002";
+	public static final String	PRES_ERROR				= "PR004";
+	public static final String	PRES_LOANCLOSED			= "PR005";
+	public static final String	PRES_HOLD_DAYS			= "PR006";
+	public static final String	PRES_FAILED				= "PR007";
 
 
 }

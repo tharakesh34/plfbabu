@@ -465,7 +465,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 
 
-		if("delete".equals(StringUtils.trimToEmpty(method))){
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, securityUser.getRecordType())) {
 			/*check whether userId assigned to any Roles by calling SecurityUsersRolesDAO's getUserIdCount()*/
 			int roleIdCount =getSecurityUserOperationsDAO().getUserIdCount(securityUser.getUsrID());
 			/*if roleId assigned for any user or group show error message*/

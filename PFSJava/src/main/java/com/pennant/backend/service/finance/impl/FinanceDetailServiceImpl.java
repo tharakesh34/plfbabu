@@ -41,6 +41,7 @@ import java.util.Set;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
@@ -70,6 +71,7 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
+import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
@@ -84,6 +86,7 @@ import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeExpenseDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -93,7 +96,6 @@ import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
-import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -112,6 +114,7 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.BulkDefermentChange;
@@ -164,6 +167,7 @@ import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
+import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -203,7 +207,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -272,7 +275,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CustomerService 				customerService;
 	
 	private ReasonDetailDAO 				reasonDetailDAO;
-	
+
+	private FinTypeExpenseDAO				finTypeExpenseDAO;
+	private FinExpenseDetailsDAO 			finExpenseDetailsDAO;
+
 	@Autowired(required = false)
 	private Crm crm;
 		
@@ -1720,7 +1726,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException{
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -2898,20 +2904,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 		
-		//process to send FIN-one request and create or update the cust data.
-		if (!isWIF) {
-			createOrUpdateCrmCustomer(aAuditHeader);
+		Cloner cloner = new Cloner();
+		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		
+		// process to send FIN-one request and create or update the cust data.
+		if (!isWIF && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+			createOrUpdateCrmCustomer(financeDetail);
 		}
 
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
 		}
-
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		
 		Date curBDay = DateUtility.getAppDate();
@@ -3344,6 +3350,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							VASConsatnts.MODULE_NAME, "");
 					auditDetails.addAll(exdDetails);
 				}
+				
+				saveFinExpenseDetails(financeMain);
+				
 
 			} else {
 
@@ -3877,12 +3886,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
 				.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(auditDetails);
-
 		// Adding audit as Insert/Update/deleted into main table
 		if (!isWIF) {
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
-
+		
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
@@ -4129,16 +4137,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 	}
 	
-	private AuditHeader createOrUpdateCrmCustomer(AuditHeader auditHeader) {
+	private FinanceDetail createOrUpdateCrmCustomer(FinanceDetail financeDetail ) {
 		logger.debug(Literal.ENTERING);
 
 		if (crm == null) {
-			return auditHeader;
+			return financeDetail;
 		}
-
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		AuditDetail auditDetail = auditHeader.getAuditDetail();
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Customer";
@@ -4146,38 +4151,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		try {
 			customerService.prepareGCDCustomerData(customerDetails);
 			crm.create(customerDetails);
-
-			WSReturnStatus status = customerDetails.getReturnStatus();
-
-			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
-				errorParm[1] = status.getReturnText();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
-						auditHeader.getUsrLanguage()));
-				auditDetail.setErrorDetails(
-						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-				auditHeader.setAuditDetail(auditDetail);
-				auditHeader.setErrorList(auditDetail.getErrorDetails());
-				auditHeader.setNextProcess(false);
-
-				return auditHeader;
-			}
-		} catch (InterfaceException e) {
-			errorParm[1] = e.getMessage();
-			auditDetail.setErrorDetail(
-					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-			auditDetail.setErrorDetails(
-					ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader.setNextProcess(false);
-			return auditHeader;
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return auditHeader;
+		return financeDetail;
 	}
 
 	/**
@@ -5630,6 +5610,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, financeMain.getRecordType()) && !isWIF
+				&& ((financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SUBMITTED)
+						|| financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED))
+				|| (StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)))) {
+			String befAppNo = getFinanceMainDAO().getApplicationNoById(financeMain.getFinReference(), "_Temp");
+			if (befAppNo == null || !StringUtils.equals(befAppNo, financeMain.getApplicationNo())) {
+				if (StringUtils.isNotBlank(financeMain.getApplicationNo())) {
+					boolean isDuplicate = getFinanceMainDAO().isAppNoExists(financeMain.getApplicationNo(), TableType.BOTH_TAB);
+					if (isDuplicate) {
+						String[] errParmFinMain = new String[1];
+						String[] valueParmFinMain = new String[1];
+						valueParmFinMain[0] = financeMain.getApplicationNo();
+						errParmFinMain[0] = PennantJavaUtil.getLabel("label_FinanceMainDialog_ApplicationNo.value")
+								+ ": " + valueParmFinMain[0];
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParmFinMain, valueParmFinMain),
+								usrLanguage));
+					}
+				}
+			}
+		}
 		if (auditDetail.getErrorDetails() == null || auditDetail.getErrorDetails().isEmpty()) {
 			if (!isWIF && !method.equals(PennantConstants.method_doReject)
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_RESUBMITTED)
@@ -6506,6 +6507,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Repay instructions
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+		
+		//od penality details
+		finSchData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		if (summaryRequired) {
 
@@ -6545,7 +6549,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//commented because we are fetching total fees from FinfeeDeatail table
 /*			summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
 			summary = getFinFeeDetailDAO().getTotalFeeCharges(summary);*/
-			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
+			summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
 			finSchData.setFinanceSummary(summary);
 
 			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);
@@ -8484,6 +8488,72 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return financeDetail;
 	}
+
+	
+	/**
+	 * Method for Add loan type Expense to the loan
+	 */
+	private List<FinTypeExpense> saveFinExpenseDetails(FinanceMain financeMain) {
+
+		List<FinTypeExpense> finTypeExpenseList = getFinTypeExpenseDAO()
+				.getFinTypeExpenseListByFinType(financeMain.getFinType(), "");
+
+		if (CollectionUtils.isNotEmpty(finTypeExpenseList)) {
+
+			for (FinTypeExpense finTypeExpense : finTypeExpenseList) {
+				// Expense Amount calculation
+				BigDecimal txnAmount = getFinExpenseAmount(finTypeExpense, financeMain);
+
+				FinExpenseDetails finExpenseDetails = new FinExpenseDetails();
+				finExpenseDetails.setFinReference(financeMain.getFinReference());
+				finExpenseDetails.setExpenseTypeId(finTypeExpense.getExpenseTypeID());
+				finExpenseDetails.setLastMntOn(financeMain.getLastMntOn());
+				finExpenseDetails.setLastMntBy(financeMain.getLastMntBy());
+				finExpenseDetails.setAmount(txnAmount);
+
+				getFinExpenseDetailsDAO().saveFinExpenseDetails(finExpenseDetails);
+			}
+		}
+		return finTypeExpenseList;
+	}
+	
+	/**
+	 * Method for Return the amount,calculate the amount for expenses also.
+	 */
+	private BigDecimal getFinExpenseAmount(FinTypeExpense finTypeExpense, FinanceMain financeMain) {
+		BigDecimal txnAmount = BigDecimal.ZERO;
+
+		if (PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT.equals(finTypeExpense.getCalculationType())) {
+			txnAmount = finTypeExpense.getAmount();
+		} else if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(finTypeExpense.getCalculationType())) {
+
+			BigDecimal percentage = finTypeExpense.getPercentage();
+			int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+
+			if (percentage != null && percentage.compareTo(BigDecimal.ZERO) != 0) {
+
+				BigDecimal assetValue = BigDecimal.ZERO;
+
+				if (PennantConstants.EXPENSE_CALCULATEDON_ODLIMIT.equals(finTypeExpense.getCalculateOn())) {
+					if (financeMain.getFinAssetValue() != null
+							&& financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) != 0) {
+						assetValue = PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter);
+					}
+				} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(finTypeExpense.getCalculateOn())) {
+					if (financeMain.getFinCurrAssetValue() != null
+							&& financeMain.getFinCurrAssetValue().compareTo(BigDecimal.ZERO) != 0) {
+						assetValue = PennantApplicationUtil.formateAmount(financeMain.getFinCurrAssetValue(),
+								formatter);
+					}
+				}
+
+				txnAmount = (percentage.multiply(assetValue)).divide(new BigDecimal(100));
+
+				txnAmount = PennantApplicationUtil.unFormateAmount(txnAmount, formatter);
+			}
+		}
+		return txnAmount;
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -9058,4 +9128,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
 		this.finChequeHeaderService = finChequeHeaderService;
 	}
+	
+	public FinTypeExpenseDAO getFinTypeExpenseDAO() {
+		return finTypeExpenseDAO;
+	}
+
+	public void setFinTypeExpenseDAO(FinTypeExpenseDAO finTypeExpenseDAO) {
+		this.finTypeExpenseDAO = finTypeExpenseDAO;
+	}
+
+	public FinExpenseDetailsDAO getFinExpenseDetailsDAO() {
+		return finExpenseDetailsDAO;
+	}
+
+	public void setFinExpenseDetailsDAO(FinExpenseDetailsDAO finExpenseDetailsDAO) {
+		this.finExpenseDetailsDAO = finExpenseDetailsDAO;
+	}
+
 }

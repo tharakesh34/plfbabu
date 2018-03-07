@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.fees.feepostings.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,6 +80,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.FinanceConstants;
@@ -302,6 +304,10 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		if (StringUtils.equals(feePostings.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
+		
+		if (!auditHeader.isNextProcess()) {
+			return auditHeader;
+		}
 
 		if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -358,8 +364,11 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException {
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay)  {
 		logger.debug("Entering");
+		
+		
+		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
 		FeePostings feePostings = new FeePostings("");
 		BeanUtils.copyProperties((FeePostings) auditHeader.getAuditDetail().getModelData(), feePostings);
@@ -412,6 +421,9 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
 				getPostingsPreparationUtil().postAccounting(aeEvent);
 				
+				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+				
+				validateCreditandDebitAmounts(aeEvent);
 			}
 
 		} catch (Exception e) {
@@ -420,6 +432,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
 					"Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
+			auditHeader.setNextProcess(false);
+			return auditHeader;
 		}
 
 		logger.debug("Leaving");
@@ -666,6 +680,27 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			}
 		}
 		return isMutiValues;
+	}
+	
+	
+	public void validateCreditandDebitAmounts(AEEvent aeEvent) {
+
+		BigDecimal creditAmt = BigDecimal.ZERO;
+		BigDecimal debitAmt = BigDecimal.ZERO;
+
+		List<ReturnDataSet> dataset = aeEvent.getReturnDataSet();
+
+		for (ReturnDataSet returnDataSet : dataset) {
+			if (StringUtils.equals(returnDataSet.getDrOrCr(), "C")) {
+				creditAmt = creditAmt.add(returnDataSet.getPostAmount());
+			} else {
+				debitAmt = debitAmt.add(returnDataSet.getPostAmount());
+			}
+		}
+		if (creditAmt.compareTo(debitAmt) != 0) {
+			throw new InterfaceException("9998",
+					"Total credits and Total debits are not matched.Please check accounting configuration.");
+		}
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {

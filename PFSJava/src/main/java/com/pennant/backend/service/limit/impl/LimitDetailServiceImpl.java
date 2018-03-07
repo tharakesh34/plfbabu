@@ -47,7 +47,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,6 +81,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerGroup;
+import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
+import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.model.limit.LimitHeader;
@@ -98,8 +99,12 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 
 /**
  * Service implementation for methods that depends on <b>LimitDetail</b>.<br>
@@ -121,6 +126,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	private LimitRebuild limitRebuild;
 	private FinanceMainDAO financeMainDAO; 
+
+	private CustomerQueuingDAO customerQueuingDAO;
+	private CustomerGroupQueuingDAO	customerGroupQueuingDAO;
 
 	protected long userID;
 	private String userLangauge;
@@ -263,12 +271,48 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	@Override
 	public LimitHeader getCustomerLimits(long limitHeaderId) {
+		logger.debug("Entering");
+
 		LimitHeader limitHeader;
-		limitHeader= getLimitHeaderDAO().getLimitHeaderById(limitHeaderId,"_View");		
-		if(limitHeader!=null){
-			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_View"));
+		limitHeader = getLimitHeaderDAO().getLimitHeaderById(limitHeaderId, "_View");		
+
+		if (limitHeader != null) {
+			List<LimitDetails> limitDetailList = getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_View");
+			updateLatestLimitExposures(limitHeader.getHeaderId(), limitDetailList);
+			limitHeader.setCustomerLimitDetailsList(limitDetailList);
 		}
+
+		logger.debug("Leaving");
 		return limitHeader;
+	}
+
+	/**
+	 * 
+	 * @param limitHeaderId
+	 * @param limitDetailList
+	 */
+	private void updateLatestLimitExposures(long limitHeaderId, List<LimitDetails> limitDetailList) {
+		logger.debug("Entering");
+
+		if (limitDetailList != null && !limitDetailList.isEmpty()) {
+
+			// Update with Latest ReservedLimit, UtilisedLimit and NonRvlUtilised
+			List<LimitDetails> mainLimits = getLimitDetailDAO().getLatestLimitExposures(limitHeaderId, "");
+
+			if (mainLimits != null && !mainLimits.isEmpty()) {
+				for (LimitDetails limitDetail : limitDetailList) {
+					for (LimitDetails detail : mainLimits) {
+						if (limitDetail.getDetailId() == detail.getDetailId()) {
+							limitDetail.setReservedLimit(detail.getReservedLimit());
+							limitDetail.setUtilisedLimit(detail.getUtilisedLimit());
+							limitDetail.setNonRvlUtilised(detail.getNonRvlUtilised());
+							break;
+						}
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -278,12 +322,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @return LimitDetail
 	 */
 
-	public LimitHeader getApprovedCustomerLimits(long id) {
+	public LimitHeader getApprovedCustomerLimits(long headerId) {
+		logger.debug("Entering");
+
 		LimitHeader limitHeader;
-		limitHeader= getLimitHeaderDAO().getLimitHeaderById(id,"_AView");		
-		if(limitHeader!=null){
+		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "_AView");
+		if (limitHeader != null) {
 			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
+		logger.debug("Leaving");
 		return limitHeader;
 	}	
 
@@ -408,6 +455,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				if (count >0 ) {
 					limitRebuild.processCustomerRebuild(limitHeader.getCustomerId(), false);
 				}
+
 			}
 		}
 		
@@ -424,6 +472,149 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Leaving");		
 
 		return auditHeader;
+	}
+
+	/**
+	 * Customer Limit Rebuild process
+	 * 
+	 * @param custID
+	 * @param custGroupID
+	 */
+	public List<Object> processCustomerRebuild(long custId) {
+		logger.debug("Entering");
+
+		List<Object> returnList = new ArrayList<Object>();
+
+		// Validate Customer is in EOD process or not
+		int custQueuingCount = this.customerQueuingDAO.getCountByCustId(custId);
+		if (custQueuingCount > 0) {
+			returnList.add(custQueuingCount);
+			returnList.add(true);
+			return returnList;
+		}
+
+		try {
+			CustomerQueuing custQueuing = prepareCustomerQueue(custId);
+			this.customerQueuingDAO.insertCustQueueForRebuild(custQueuing);
+
+			// Customer Rebuild process
+			this.limitRebuild.processCustomerRebuild(custId, true);
+
+			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
+		} catch (Exception e) {
+
+			returnList.add(0);
+			returnList.add(false);	// Customer Rebuild Failed
+			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_FAILED);
+			logger.debug("Exception: ", e);
+
+		} finally {
+
+			this.customerQueuingDAO.logCustomerQueuingByCustId(custId);
+			this.customerQueuingDAO.deleteByCustId(custId);
+		}
+
+		logger.debug("Leaving");
+		return returnList;
+	}
+
+	/**
+	 * Customer Group Limit Rebuild process
+	 * 
+	 * @param custId
+	 * @param groupId
+	 */
+	public List<Object> processCustomerGroupRebuild(long groupId) {
+		logger.debug("Entering");
+
+		List<Object> returnList = new ArrayList<Object>();
+
+		//  Validate customer group is in EOD process or not
+		int custGrpQueuingCount = this.customerGroupQueuingDAO.getCountByGrpId(groupId);
+		if (custGrpQueuingCount > 0) {
+			returnList.add(custGrpQueuingCount);
+			returnList.add(true);
+			return returnList;
+		}
+
+		try {
+			// Prepare and insert	
+			CustomerGroupQueuing custGrpQueuing = prepareCustomerGroupQueue(groupId);
+			this.customerGroupQueuingDAO.insertCustGrpQueueForRebuild(custGrpQueuing);
+			this.customerQueuingDAO.insertCustomerQueueing(groupId, false);
+
+			// Customer Group Rebuild
+			this.limitRebuild.processCustomerGroupRebuild(groupId, false, false);
+
+			this.customerGroupQueuingDAO.updateStatus(groupId, EodConstants.PROGRESS_SUCCESS);
+			this.customerQueuingDAO.updateCustomerQueuingStatus(groupId, EodConstants.PROGRESS_SUCCESS);
+		} catch (Exception e) {
+
+			returnList.add(0);
+			returnList.add(false);	// Customer Group Rebuild Failed
+			this.customerGroupQueuingDAO.updateStatus(groupId, EodConstants.PROGRESS_FAILED);
+			//this.customerQueuingDAO.updateCustomerQueuingStatus(groupId, EodConstants.PROGRESS_FAILED); // Check Required or Not ?
+			logger.debug("Exception: ", e);
+
+		} finally {
+			this.customerGroupQueuingDAO.logCustomerGroupQueuingByGrpId(groupId);
+			this.customerGroupQueuingDAO.deleteByGrpId(groupId);
+
+			this.customerQueuingDAO.logCustomerQueuingByGrpId(groupId);
+			this.customerQueuingDAO.deleteByGroupId(groupId);
+		}
+
+		logger.debug("Leaving");
+		return returnList;
+	}
+
+	/**
+	 * 
+	 * @param custId
+	 * @return
+	 */
+	private CustomerQueuing prepareCustomerQueue(long custId) {
+		logger.debug("Entering");
+
+		// check customer active finance before calling the rebuild
+		boolean loanExist = false;
+		int count = getFinanceMainDAO().getFinCountByCustId(custId);
+		if (count > 0) {
+			loanExist = true;
+		}
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setThreadId(0);
+		customerQueuing.setEodDate(DateUtility.getAppValueDate());
+		customerQueuing.setLoanExist(loanExist);
+		customerQueuing.setLimitRebuild(true);
+		customerQueuing.setEodProcess(false);
+
+		customerQueuing.setStartTime(DateUtility.getSysDate());
+		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+
+		logger.debug("Leaving");
+		return customerQueuing;
+	}
+
+	/**
+	 * 
+	 * @param groupId
+	 * @return
+	 */
+	private CustomerGroupQueuing prepareCustomerGroupQueue(long groupId) {
+		logger.debug("Entering");
+
+		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing(); 
+		custGrpQueuing.setGroupId(groupId);
+		custGrpQueuing.setEodDate(DateUtility.getAppValueDate());
+		custGrpQueuing.setStartTime(DateUtility.getSysDate());
+		custGrpQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+		custGrpQueuing.setEodProcess(false);
+
+		logger.debug("Leaving");
+		return custGrpQueuing;
 	}
 
 	/**
@@ -1294,9 +1485,10 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
 			}
 		}
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 1); // to get previous year add -1
-		Date nextYear = cal.getTime();
+
+		// Validate ReviewDate
+		Date appDate = DateUtility.getAppDate();
+		Date nextYear = DateUtility.addYears(appDate, 1);
 		if (limitHeader.getLimitRvwDate() != null) {
 			if (limitHeader.getLimitRvwDate().before(DateUtility.getAppDate())
 					|| limitHeader.getLimitRvwDate().after(nextYear)) {
@@ -1308,8 +1500,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
+		// Validate ExpiryDate
 		if (limitHeader.getLimitExpiryDate() != null) {
-			if (limitHeader.getLimitExpiryDate().compareTo(DateUtility.getAppDate()) <= 0
+			if (limitHeader.getLimitExpiryDate().compareTo(DateUtility.getAppDate()) < 0
 					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Limit expiry date";
@@ -1423,7 +1616,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90803", "", valueParm)));
 				}
 				if (detail.getExpiryDate() != null) {
-					if (detail.getExpiryDate().before(DateUtility.getAppDate())
+					if (detail.getExpiryDate().compareTo(DateUtility.getAppDate()) < 0
 							|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Limit expiry date";
@@ -1654,6 +1847,10 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		this.financeMainDAO = financeMainDAO;
 	}
 
-
-
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
+	}
+	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
+		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
+	}
 }

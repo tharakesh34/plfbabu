@@ -58,4 +58,5 @@ public interface BankBranchService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	BankBranch getBankBrachByIFSC(String ifsc);
 	BankBranch getBankBrachByCode(String bankCode, String branchCode);
+	BankBranch getBankBrachByMicr(String micr);
 }

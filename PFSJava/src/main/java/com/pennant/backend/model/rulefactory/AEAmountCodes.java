@@ -53,12 +53,11 @@ public class AEAmountCodes {
 	private BigDecimal	pftDuePaid			= BigDecimal.ZERO;
 	private BigDecimal	priDuePaid			= BigDecimal.ZERO;
 	private BigDecimal	accruedPaid			= BigDecimal.ZERO;
-	private BigDecimal	unAccruedPaid			= BigDecimal.ZERO;
+	private BigDecimal	unAccruedPaid		= BigDecimal.ZERO;
 	private BigDecimal	futurePriPaid		= BigDecimal.ZERO;
+	private BigDecimal	lastSchPftPaid		= BigDecimal.ZERO;
+	private BigDecimal	lastSchPftWaived	= BigDecimal.ZERO;
 	
-	private BigDecimal	rpExcessTds			= BigDecimal.ZERO;
-	private BigDecimal	rpEmiAdvTds			= BigDecimal.ZERO;
-	private BigDecimal	rpPayableTds		= BigDecimal.ZERO;
 	private BigDecimal	rpPri				= BigDecimal.ZERO;
 	private BigDecimal	rpTot				= BigDecimal.ZERO;
 	private BigDecimal	instpft				= BigDecimal.ZERO;
@@ -86,44 +85,11 @@ public class AEAmountCodes {
 
 	private BigDecimal	penaltyPaid			= BigDecimal.ZERO;
 	private BigDecimal	penaltyDue			= BigDecimal.ZERO;
-	private BigDecimal	exPenaltyPaid		= BigDecimal.ZERO;
-	private BigDecimal	eAPenaltyPaid		= BigDecimal.ZERO;
-	private BigDecimal	pAPenaltyPaid		= BigDecimal.ZERO;
 	private BigDecimal	penaltyWaived		= BigDecimal.ZERO;
 	private BigDecimal	accrueTsfd			= BigDecimal.ZERO;
 	private BigDecimal	prvAccrueTsfd		= BigDecimal.ZERO;
 
 	private BigDecimal	totalWriteoff		= BigDecimal.ZERO;
-	private BigDecimal	excessAmt			= BigDecimal.ZERO;
-	private BigDecimal	exPft				= BigDecimal.ZERO;
-	private BigDecimal	exPri				= BigDecimal.ZERO;
-	private BigDecimal	exPftDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	exPriDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	exSchFeePay			= BigDecimal.ZERO;
-	private BigDecimal	exSchInsPay			= BigDecimal.ZERO;
-	private BigDecimal	exAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	exUnAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	exFuturePriPaid		= BigDecimal.ZERO;
-	private BigDecimal	emiInAdvance		= BigDecimal.ZERO;
-	private BigDecimal	eAPft				= BigDecimal.ZERO;
-	private BigDecimal	eAPri				= BigDecimal.ZERO;
-	private BigDecimal	eAPftDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	eAPriDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	eASchFeePay			= BigDecimal.ZERO;
-	private BigDecimal	eASchInsPay			= BigDecimal.ZERO;
-	private BigDecimal	eAAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	eAUnAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	eAFuturePriPaid		= BigDecimal.ZERO;
-	private BigDecimal	payableAdvise		= BigDecimal.ZERO;
-	private BigDecimal	pAPft				= BigDecimal.ZERO;
-	private BigDecimal	pAPri				= BigDecimal.ZERO;
-	private BigDecimal	pAPftDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	pAPriDuePaid		= BigDecimal.ZERO;
-	private BigDecimal	pASchFeePay			= BigDecimal.ZERO;
-	private BigDecimal	pASchInsPay			= BigDecimal.ZERO;
-	private BigDecimal	pAAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	pAUnAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	pAFuturePriPaid		= BigDecimal.ZERO;
 	private BigDecimal	excessBal			= BigDecimal.ZERO;
 	private BigDecimal	toExcessAmt			= BigDecimal.ZERO;
 	private BigDecimal	toEmiAdvance		= BigDecimal.ZERO;
@@ -149,6 +115,8 @@ public class AEAmountCodes {
 	private BigDecimal	accrueWaived		= BigDecimal.ZERO;
 	private BigDecimal	unAccrueWaived		= BigDecimal.ZERO;
 	private BigDecimal	futurePriWaived		= BigDecimal.ZERO;
+	private BigDecimal	dueTds				= BigDecimal.ZERO;
+	private BigDecimal	lastSchTds		= BigDecimal.ZERO;
 
 	//For Disbursement Instructions used in SUBHEAD
 	private String		partnerBankAcType;
@@ -703,30 +671,6 @@ public class AEAmountCodes {
 		this.totalWriteoff = totalWriteoff;
 	}
 
-	public BigDecimal getExcessAmt() {
-		return excessAmt;
-	}
-
-	public void setExcessAmt(BigDecimal excessAmt) {
-		this.excessAmt = excessAmt;
-	}
-
-	public BigDecimal getEmiInAdvance() {
-		return emiInAdvance;
-	}
-
-	public void setEmiInAdvance(BigDecimal emiInAdvance) {
-		this.emiInAdvance = emiInAdvance;
-	}
-
-	public BigDecimal getPayableAdvise() {
-		return payableAdvise;
-	}
-
-	public void setPayableAdvise(BigDecimal payableAdvise) {
-		this.payableAdvise = payableAdvise;
-	}
-
 	public BigDecimal getExcessBal() {
 		return excessBal;
 	}
@@ -935,54 +879,6 @@ public class AEAmountCodes {
 		this.toEmiAdvance = toEmiAdvance;
 	}
 
-	public BigDecimal getRpExcessTds() {
-		return rpExcessTds;
-	}
-
-	public void setRpExcessTds(BigDecimal rpExcessTds) {
-		this.rpExcessTds = rpExcessTds;
-	}
-
-	public BigDecimal getRpEmiAdvTds() {
-		return rpEmiAdvTds;
-	}
-
-	public void setRpEmiAdvTds(BigDecimal rpEmiAdvTds) {
-		this.rpEmiAdvTds = rpEmiAdvTds;
-	}
-
-	public BigDecimal getRpPayableTds() {
-		return rpPayableTds;
-	}
-
-	public void setRpPayableTds(BigDecimal rpPayableTds) {
-		this.rpPayableTds = rpPayableTds;
-	}
-
-	public BigDecimal getExPenaltyPaid() {
-		return exPenaltyPaid;
-	}
-
-	public void setExPenaltyPaid(BigDecimal exPenaltyPaid) {
-		this.exPenaltyPaid = exPenaltyPaid;
-	}
-
-	public BigDecimal getEAPenaltyPaid() {
-		return eAPenaltyPaid;
-	}
-
-	public void setEAPenaltyPaid(BigDecimal eAPenaltyPaid) {
-		this.eAPenaltyPaid = eAPenaltyPaid;
-	}
-
-	public BigDecimal getPAPenaltyPaid() {
-		return pAPenaltyPaid;
-	}
-
-	public void setPAPenaltyPaid(BigDecimal pAPenaltyPaid) {
-		this.pAPenaltyPaid = pAPenaltyPaid;
-	}
-
 	public BigDecimal getAccruedPaid() {
 		return accruedPaid;
 	}
@@ -997,166 +893,6 @@ public class AEAmountCodes {
 
 	public void setFuturePriPaid(BigDecimal futurePriPaid) {
 		this.futurePriPaid = futurePriPaid;
-	}
-
-	public BigDecimal geteAPenaltyPaid() {
-		return eAPenaltyPaid;
-	}
-
-	public void seteAPenaltyPaid(BigDecimal eAPenaltyPaid) {
-		this.eAPenaltyPaid = eAPenaltyPaid;
-	}
-
-	public BigDecimal getpAPenaltyPaid() {
-		return pAPenaltyPaid;
-	}
-
-	public void setpAPenaltyPaid(BigDecimal pAPenaltyPaid) {
-		this.pAPenaltyPaid = pAPenaltyPaid;
-	}
-
-	public BigDecimal getExPft() {
-		return exPft;
-	}
-
-	public void setExPft(BigDecimal exPft) {
-		this.exPft = exPft;
-	}
-
-	public BigDecimal getExPri() {
-		return exPri;
-	}
-
-	public void setExPri(BigDecimal exPri) {
-		this.exPri = exPri;
-	}
-
-	public BigDecimal getExSchFeePay() {
-		return exSchFeePay;
-	}
-
-	public void setExSchFeePay(BigDecimal exSchFeePay) {
-		this.exSchFeePay = exSchFeePay;
-	}
-
-	public BigDecimal getExSchInsPay() {
-		return exSchInsPay;
-	}
-
-	public void setExSchInsPay(BigDecimal exSchInsPay) {
-		this.exSchInsPay = exSchInsPay;
-	}
-
-	public BigDecimal getExAccruedPaid() {
-		return exAccruedPaid;
-	}
-
-	public void setExAccruedPaid(BigDecimal exAccruedPaid) {
-		this.exAccruedPaid = exAccruedPaid;
-	}
-
-	public BigDecimal getExFuturePriPaid() {
-		return exFuturePriPaid;
-	}
-
-	public void setExFuturePriPaid(BigDecimal exFuturePriPaid) {
-		this.exFuturePriPaid = exFuturePriPaid;
-	}
-
-	public BigDecimal getEAPft() {
-		return eAPft;
-	}
-
-	public void setEAPft(BigDecimal eAPft) {
-		this.eAPft = eAPft;
-	}
-
-	public BigDecimal getEAPri() {
-		return eAPri;
-	}
-
-	public void setEAPri(BigDecimal eAPri) {
-		this.eAPri = eAPri;
-	}
-
-	public BigDecimal getEASchFeePay() {
-		return eASchFeePay;
-	}
-
-	public void setEASchFeePay(BigDecimal eASchFeePay) {
-		this.eASchFeePay = eASchFeePay;
-	}
-
-	public BigDecimal getEASchInsPay() {
-		return eASchInsPay;
-	}
-
-	public void setEASchInsPay(BigDecimal eASchInsPay) {
-		this.eASchInsPay = eASchInsPay;
-	}
-
-	public BigDecimal getEAAccruedPaid() {
-		return eAAccruedPaid;
-	}
-
-	public void setEAAccruedPaid(BigDecimal eAAccruedPaid) {
-		this.eAAccruedPaid = eAAccruedPaid;
-	}
-
-	public BigDecimal getEAFuturePriPaid() {
-		return eAFuturePriPaid;
-	}
-
-	public void setEAFuturePriPaid(BigDecimal eAFuturePriPaid) {
-		this.eAFuturePriPaid = eAFuturePriPaid;
-	}
-
-	public BigDecimal getPAPft() {
-		return pAPft;
-	}
-
-	public void setPAPft(BigDecimal pAPft) {
-		this.pAPft = pAPft;
-	}
-
-	public BigDecimal getPAPri() {
-		return pAPri;
-	}
-
-	public void setPAPri(BigDecimal pAPri) {
-		this.pAPri = pAPri;
-	}
-
-	public BigDecimal getPASchFeePay() {
-		return pASchFeePay;
-	}
-
-	public void setPASchFeePay(BigDecimal pASchFeePay) {
-		this.pASchFeePay = pASchFeePay;
-	}
-
-	public BigDecimal getPASchInsPay() {
-		return pASchInsPay;
-	}
-
-	public void setPASchInsPay(BigDecimal pASchInsPay) {
-		this.pASchInsPay = pASchInsPay;
-	}
-
-	public BigDecimal getPAAccruedPaid() {
-		return pAAccruedPaid;
-	}
-
-	public void setPAAccruedPaid(BigDecimal pAAccruedPaid) {
-		this.pAAccruedPaid = pAAccruedPaid;
-	}
-
-	public BigDecimal getPAFuturePriPaid() {
-		return pAFuturePriPaid;
-	}
-
-	public void setPAFuturePriPaid(BigDecimal pAFuturePriPaid) {
-		this.pAFuturePriPaid = pAFuturePriPaid;
 	}
 
 	public BigDecimal getAccrueWaived() {
@@ -1207,54 +943,6 @@ public class AEAmountCodes {
 		this.unAccrueWaived = unAccrueWaived;
 	}
 
-	public BigDecimal getExUnAccruedPaid() {
-		return exUnAccruedPaid;
-	}
-
-	public void setExUnAccruedPaid(BigDecimal exUnAccruedPaid) {
-		this.exUnAccruedPaid = exUnAccruedPaid;
-	}
-
-	public BigDecimal getEAUnAccruedPaid() {
-		return eAUnAccruedPaid;
-	}
-
-	public void setEAUnAccruedPaid(BigDecimal eAUnAccruedPaid) {
-		this.eAUnAccruedPaid = eAUnAccruedPaid;
-	}
-
-	public BigDecimal getPAUnAccruedPaid() {
-		return pAUnAccruedPaid;
-	}
-
-	public void setPAUnAccruedPaid(BigDecimal pAUnAccruedPaid) {
-		this.pAUnAccruedPaid = pAUnAccruedPaid;
-	}
-
-	public BigDecimal getExPftDuePaid() {
-		return exPftDuePaid;
-	}
-
-	public void setExPftDuePaid(BigDecimal exPftDuePaid) {
-		this.exPftDuePaid = exPftDuePaid;
-	}
-
-	public BigDecimal getEAPftDuePaid() {
-		return eAPftDuePaid;
-	}
-
-	public void setEAPftDuePaid(BigDecimal eAPftDuePaid) {
-		this.eAPftDuePaid = eAPftDuePaid;
-	}
-
-	public BigDecimal getPAPftDuePaid() {
-		return pAPftDuePaid;
-	}
-
-	public void setPAPftDuePaid(BigDecimal pAPftDuePaid) {
-		this.pAPftDuePaid = pAPftDuePaid;
-	}
-
 	public BigDecimal getPriDuePaid() {
 		return priDuePaid;
 	}
@@ -1263,36 +951,44 @@ public class AEAmountCodes {
 		this.priDuePaid = priDuePaid;
 	}
 
-	public BigDecimal getExPriDuePaid() {
-		return exPriDuePaid;
-	}
-
-	public void setExPriDuePaid(BigDecimal exPriDuePaid) {
-		this.exPriDuePaid = exPriDuePaid;
-	}
-
-	public BigDecimal getEAPriDuePaid() {
-		return eAPriDuePaid;
-	}
-
-	public void setEAPriDuePaid(BigDecimal eAPriDuePaid) {
-		this.eAPriDuePaid = eAPriDuePaid;
-	}
-
-	public BigDecimal getPAPriDuePaid() {
-		return pAPriDuePaid;
-	}
-
-	public void setPAPriDuePaid(BigDecimal pAPriDuePaid) {
-		this.pAPriDuePaid = pAPriDuePaid;
-	}
-
 	public BigDecimal getPriDueWaived() {
 		return priDueWaived;
 	}
 
 	public void setPriDueWaived(BigDecimal priDueWaived) {
 		this.priDueWaived = priDueWaived;
+	}
+
+	public BigDecimal getLastSchPftPaid() {
+		return lastSchPftPaid;
+	}
+
+	public void setLastSchPftPaid(BigDecimal lastSchPftPaid) {
+		this.lastSchPftPaid = lastSchPftPaid;
+	}
+
+	public BigDecimal getLastSchPftWaived() {
+		return lastSchPftWaived;
+	}
+
+	public void setLastSchPftWaived(BigDecimal lastSchPftWaived) {
+		this.lastSchPftWaived = lastSchPftWaived;
+	}
+
+	public BigDecimal getDueTds() {
+		return dueTds;
+	}
+
+	public void setDueTds(BigDecimal dueTds) {
+		this.dueTds = dueTds;
+	}
+
+	public BigDecimal getLastSchTds() {
+		return lastSchTds;
+	}
+
+	public void setLastSchTds(BigDecimal lastSchTds) {
+		this.lastSchTds = lastSchTds;
 	}
 	
 }

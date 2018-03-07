@@ -413,6 +413,22 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 				}
 			}
+			//Unique Validation For MICR Code
+			if (StringUtils.isNotBlank(bankBranch.getMICR())
+				&& !StringUtils.trimToEmpty(bankBranch.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
+				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
+				
+				String[] errParmMICR = new String[1];
+				String[] valueParmMICR = new String[1];
+				valueParmMICR[0]=bankBranch.getMICR();
+				errParmMICR[0]=PennantJavaUtil.getLabel("label_MICR")+" : "+valueParmMICR[0];
+				
+				int MICRCount = getBankBranchDAO().getBankBranchByMICR(bankBranch.getMICR(), bankBranch.getId(), "_View");
+				
+				if (MICRCount != 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParmMICR, valueParmMICR), usrLanguage));
+				}
+			}
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			if(StringUtils.trimToEmpty(method).equals("doApprove") || !bankBranch.isWorkflow()){
@@ -443,6 +459,12 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		@Override
 		public BankBranch getBankBrachByCode(String bankCode, String branchCode) {
 			return getBankBranchDAO().getBankBrachByCode(bankCode, branchCode, "");
+		}
+
+
+		@Override
+		public BankBranch getBankBrachByMicr(String micr) {
+			return getBankBranchDAO().getBankBrachByMicr(micr, "");
 		}
 
 		public MandateDAO getMandateDAO() {

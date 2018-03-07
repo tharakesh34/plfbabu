@@ -42,12 +42,16 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -68,6 +72,9 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private EntityDAO entityDAO;
+	private DivisionDetailDAO divisionDetailDAO;
+	private PartnerBankDAO partnerBankDAO;
+	private MandateDAO mandateDAO;
 
 
 	// ******************************************************//
@@ -98,6 +105,14 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 */
 	public void setEntityDAO(EntityDAO entityDAO) {
 		this.entityDAO = entityDAO;
+	}
+	
+	public MandateDAO getMandateDAO() {
+		return mandateDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 	/**
@@ -295,7 +310,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		public AuditHeader  doReject(AuditHeader auditHeader) {
 			logger.info(Literal.ENTERING);
 			
-			auditHeader = businessValidation(auditHeader,"doApprove");
+			auditHeader = businessValidation(auditHeader,"doReject");
 			if (!auditHeader.isNextProcess()) {
 				logger.info(Literal.LEAVING);
 				return auditHeader;
@@ -325,7 +340,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 			logger.debug(Literal.ENTERING);
 			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(),method);
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
@@ -344,21 +359,20 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		 * @return
 		 */
 		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 			logger.debug(Literal.ENTERING);
 			
 			// Write the required validation over hear.
 			// Get the model object.
 			Entity entity = (Entity) auditDetail.getModelData();
-
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entity.getEntityCode();
 
 			// Check the unique keys.
 			if (entity.isNew()
 					&& PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType())
 					&& entityDAO.count( entity.getEntityCode(),null,
 							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entity.getEntityCode();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 			}
 
@@ -367,15 +381,59 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 					&& PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType())
 					&& entityDAO.count( null,entity.getPANNumber(),
 							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + entity.getPANNumber();
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+
+				String[] param = new String[2];
+				param[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + entity.getPANNumber();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", param, null));
 			}
+			
+			// Checking Dependency Validation Mandate Level 
+			if (!StringUtils.equals(method, PennantConstants.method_doReject)
+					&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(entity.getRecordType())) {
+				// Entity
+				boolean isEntityExists = getMandateDAO().entityExistMandate(entity.getEntityCode(), "_View");
+				if (isEntityExists) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				}
+			}
+		// Checking Dependency Validation
+			if (!StringUtils.equals(method, PennantConstants.method_doReject)
+					&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(entity.getRecordType())) {
+			//Division Details
+			boolean isdivisionExists =getDivisionDetailDAO().isEntityCodeExistsInDivisionDetails(entity.getEntityCode(),"_View");
+			
+			if(isdivisionExists){
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}else{
+				
+				//Partner Bank
+				boolean isPartnerBankExits =getPartnerBankDAO().isEntityCodeExistsInPartnerBank(entity.getEntityCode(),"_View");
+				if(isPartnerBankExits){
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				}
+			}
+		}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public DivisionDetailDAO getDivisionDetailDAO() {
+			return divisionDetailDAO;
+		}
+
+		public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+			this.divisionDetailDAO = divisionDetailDAO;
+		}
+
+		public PartnerBankDAO getPartnerBankDAO() {
+			return partnerBankDAO;
+		}
+
+		public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+			this.partnerBankDAO = partnerBankDAO;
 		}
 
 }

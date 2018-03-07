@@ -79,5 +79,5 @@ public interface DedupParmService {
             String queryCode);
 	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws InterfaceException;
 	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException;
-	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail,String finType) throws Exception; 
+	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail,String finType,String ref) throws Exception; 
 }

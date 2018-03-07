@@ -298,7 +298,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -327,7 +327,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -346,7 +346,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
@@ -359,16 +359,18 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 						dPDBucketConfiguration.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": "
-					+ dPDBucketConfiguration.getProductCode();
-			parameters[1] = PennantJavaUtil.getLabel("label_BucketID") + ": " + dPDBucketConfiguration.getBucketID();
+			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : "
+					+ dPDBucketConfiguration.getProductCode() + " and ";
+			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : " + dPDBucketConfiguration.getBucketCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		
-		if (!StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL) && StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
-			int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
-					dPDBucketConfiguration.getDueDays(), "");
+		if (!(StringUtils.equals(method, PennantConstants.method_doReject)
+				|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(dPDBucketConfiguration.getRecordType()))) {
+
+ 			int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
+ 					dPDBucketConfiguration.getDueDays(), "");
 
 			if (count != 0) {
 
@@ -376,8 +378,8 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				String[] valueParm = new String[2];
 				valueParm[0] = dPDBucketConfiguration.getProductCode();
 				valueParm[1] = String.valueOf(dPDBucketConfiguration.getDueDays());
-				errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
-				errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + ":" + valueParm[1];
+				errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : " + valueParm[0];
+				errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + "  : " + valueParm[1];
 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015",
 						errParm, valueParm), usrLanguage));

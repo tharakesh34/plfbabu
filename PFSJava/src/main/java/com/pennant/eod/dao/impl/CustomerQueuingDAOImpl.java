@@ -56,29 +56,37 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setProgress(0);
 		customerQueuing.setEodDate(date);
 		customerQueuing.setActive(true);
+		customerQueuing.setLoanExist(true);
+		customerQueuing.setLimitRebuild(false);
+		customerQueuing.setEodProcess(true);
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
-		insertSql.append("SELECT  DISTINCT CustID, ");
-		
-		if (App.DATABASE.name() == Database.POSTGRES.name()) {
-			insertSql.append(" to_date(:EodDate, '");
-			insertSql.append(PennantConstants.DBDateFormat);
-			insertSql.append("'),   ");
-		}else{
-			insertSql.append(":EodDate,   ");
-		}
-		
-		insertSql.append(" :ThreadId, :Progress FROM FinanceMain where FinIsActive = :Active");
+		StringBuilder insertSql = new StringBuilder(
+				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+		insertSql.append(
+				" SELECT  DISTINCT CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
 
 		logger.debug("updateSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		int records = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		int financeRecords = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		
+		customerQueuing.setLoanExist(false);
+		
+		insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+		insertSql.append(" select DISTINCT CustomerID, :EodDate, :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess from LimitHeader T1 ");
+		insertSql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
+		insertSql.append(" Where T2.Rebuild = '1' and CustomerID Not IN (Select Distinct CustId from CustomerQueuing) and CustomerID <> 0");
+		
+		logger.debug("updateSql: " + insertSql.toString());
+		
+		beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		
+		int nonFinacerecords = this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-		return records;
 
+		return financeRecords + nonFinacerecords;
 	}
 
 	@Override
@@ -214,20 +222,20 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public void updateSucess(long custID) {
+	public void updateStatus(long custID, int progress) {
 		logger.debug("Entering");
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
-		source.addValue("Progress", EodConstants.PROGRESS_SUCCESS);
+		source.addValue("Progress", progress);
 		source.addValue("EndTime", DateUtility.getSysDate());
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
-		updateSql.append(" EndTime = :EndTime,");
-		updateSql.append(" Progress = :Progress Where CustID=:CustID ");
+		updateSql.append(" EndTime = :EndTime, Progress = :Progress");
+		updateSql.append(" Where CustID = :CustID ");
 		logger.debug("updateSql: " + updateSql.toString());
 
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
-
 		logger.debug("Leaving");
 	}
 
@@ -333,5 +341,187 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		List<Customer> customers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		return customers;
+	}
+	
+	@Override
+	public int insertCustomerQueueing(long groupId, boolean eodProcess) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("EodDate", DateUtility.getAppValueDate());
+		source.addValue("ThreadId", 0);
+		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
+		source.addValue("LoanExist", false);
+		source.addValue("StartTime", DateUtility.getSysDate());
+		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("LimitRebuild", false);
+		source.addValue("Active", true);
+		source.addValue("CustGroupId", groupId);
+		source.addValue("EodProcess", eodProcess);
+
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime, LimitRebuild, EodProcess)");
+		insertSql.append(" SELECT Distinct CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :StartTime, :EndTime, :LimitRebuild, :EodProcess FROM Customers Where CustGroupId = :CustGroupId");
+		insertSql.append(" And CustId NOT IN (Select Distinct CustId from CUSTOMERQUEUING)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing Set Progress = :Progress ");
+		updateSql.append(" Where CustId IN (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		int count = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+		return count;
+	}
+	
+	@Override
+	public void updateCustomerQueuingStatus(long custGroupId, int progress) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Progress", progress);
+		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("CustGroupId", custGroupId);
+
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
+		updateSql.append(" EndTime = :EndTime, Progress = :Progress" );
+		updateSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * update the Rebuild flag as true if the structure has been changed.
+	 */
+	@Override
+	public void updateLimitRebuild() {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set LimitRebuild = '1'");
+		updateSql.append(" Where CUSTID in (Select  T1.CUSTOMERID from LimitHeader T1");
+		updateSql.append(" Inner Join LimitStructure T2 on T2.STRUCTURECODE = T1.LIMITSTRUCTURECODE and T2.REBUILD = '1')");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Insert into CustomerQueuing for Customer Rebuild
+	 */
+	@Override
+	public void insertCustQueueForRebuild(CustomerQueuing customerQueuing) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, StartTime, Progress, LoanExist, LimitRebuild, EodProcess)");
+		insertSql.append(" values (:CustID, :EodDate, :ThreadId, :StartTime, :Progress, :LoanExist, :LimitRebuild, :EodProcess)");
+
+		logger.debug("updateSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Count by Customer ID for Customer Rebuild
+	 */
+	@Override
+	public int getCountByCustId(long custID) {
+		logger.debug("Entering");
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Count(CustID), 0) from CustomerQueuing ");
+		selectSql.append(" Where CustID = :CustID");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		int records = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+
+		logger.debug("Leaving");
+		return records;
+	}
+
+	/**
+	 * Insert into CustomerQueuing_Log after Customer Rebuild
+	 */
+	@Override
+	public void logCustomerQueuingByCustId(long custID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custID);
+
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
+		insertSql.append(" SELECT * FROM CustomerQueuing Where CustID = :CustID");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Delete Customer after customer Rebuild Process
+	 */
+	@Override
+	public void deleteByCustId(long custID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custID);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From CustomerQueuing Where CustID = :CustID");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * insert into CustomerQueuing_Log for Customer Group Rebuild
+	 */
+	@Override
+	public void logCustomerQueuingByGrpId(long groupId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustGroupId", groupId);
+
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
+		insertSql.append(" SELECT * FROM CustomerQueuing ");
+		insertSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Delete from CustomerQueuing after Customer Group Rebuild
+	 */
+	@Override
+	public void deleteByGroupId(long groupId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustGroupId", groupId);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From CustomerQueuing");
+		deleteSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		logger.debug("Leaving");
 	}
 }

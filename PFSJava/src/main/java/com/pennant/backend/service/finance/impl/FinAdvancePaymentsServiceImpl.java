@@ -754,5 +754,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public int getFinAdvCountByRef(String finReference, String type) {
 		return finAdvancePaymentsDAO.getFinAdvCountByRef(finReference, type);
 	}
+	
+	@Override
+	public int getCountByFinReference(String finReference) {
+		return finAdvancePaymentsDAO.getCountByFinReference(finReference);
+	}
 
 }

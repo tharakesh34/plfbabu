@@ -48,9 +48,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.ProcessingException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.ErrorUtil;
@@ -60,6 +63,7 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1454,17 +1458,29 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	
 	@Override
-	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details,String finType) throws Exception {
-		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details,finType);
+	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details,String finType,String ref) {
+		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details,finType,ref);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
 			response = customerDedupService.invokeDedup(dedupCustomerDetail);
+			if(response.getErrorCode()!=null && response.getErrorCode()!="00"){
+				throw new InterfaceException(response.getErrorCode(), Labels.getLabel("Dedupe_other_system_Error_Response") + response.getErrorDesc());
+			}
 		} catch (Exception e) {
-			logger.error(e);
-			throw e;
+			if(e instanceof ProcessingException){
+				throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
+			}else{
+				throw new InterfaceException("9999", e.getMessage());
+			}
 		}
 
 		List<CustomerDedup> customerDedup = getDedupData(response,details);
+		//incase of No match we need to show the same to user to proceed further.
+		if(StringUtils.equalsIgnoreCase(response.getErrorDesc(), "No Match")){
+			WSReturnStatus status=	new WSReturnStatus();
+			status.setReturnText("No Match");
+			details.setReturnStatus(status);
+		}
 		return customerDedup;
 	}
 	
@@ -1510,12 +1526,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return custDedupList;
 	}
 	
-	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails,String finType) {
+	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails,String finType,String ref) {
 
 		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails != null && customer != null) {
-			dedupCustomerDetail.setFinReference("");
+			dedupCustomerDetail.setFinReference(ref);
 			dedupCustomerDetail.setCustID(customer.getCustID());
 			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
 

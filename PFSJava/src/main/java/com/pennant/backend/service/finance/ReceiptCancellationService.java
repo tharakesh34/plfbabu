@@ -11,8 +11,8 @@ public interface ReceiptCancellationService {
 
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment);
 	AuditHeader saveOrUpdate(AuditHeader auditHeader) ;
-	AuditHeader doApprove(AuditHeader auditHeader) ;
+	AuditHeader doApprove(AuditHeader auditHeader) throws Exception ;
 	AuditHeader doReject(AuditHeader auditHeader) ;
 	List<ReturnDataSet> getPostingsByTranIdList(List<Long> tranIdList);
-	PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) ;
+	PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception ;
 }

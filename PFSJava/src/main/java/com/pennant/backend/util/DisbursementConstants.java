@@ -51,6 +51,7 @@ public class DisbursementConstants {
 	public static final String	PAYMENT_TYPE_CHEQUE			= "CHEQUE";
 	public static final String	PAYMENT_TYPE_DD				= "DD";
 	public static final String  PAYMENT_TYPE_CASH			= "CASH";
+	public static final String  PAYMENT_TYPE_ESCROW         = "ESCROW";
 
 	// Disbursement Status	
 	public static final String	STATUS_NEW					= "NEW";

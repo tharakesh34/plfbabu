@@ -59,5 +59,6 @@ public interface BankDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	int getAccNoLengthByCode(String bankCode);
+	String getBankCodeByName(String bankName);
 
 }

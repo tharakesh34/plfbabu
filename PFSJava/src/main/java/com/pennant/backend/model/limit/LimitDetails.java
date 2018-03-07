@@ -97,6 +97,8 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	
 	private BigDecimal utilisedLimit = BigDecimal.ZERO;
 	
+	private BigDecimal nonRvlUtilised = BigDecimal.ZERO;
+	
 	@XmlElement
 	private boolean limitCheck;
 	
@@ -747,6 +749,14 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	public void setLimitReservedexposure(BigDecimal limitReservedexposure) {
 		this.limitReservedexposure = limitReservedexposure;
+	}
+	
+	public BigDecimal getNonRvlUtilised() {
+		return nonRvlUtilised;
+	}
+
+	public void setNonRvlUtilised(BigDecimal nonRvlUtilised) {
+		this.nonRvlUtilised = nonRvlUtilised;
 	}
 
 }

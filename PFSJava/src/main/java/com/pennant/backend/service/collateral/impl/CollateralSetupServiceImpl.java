@@ -2220,6 +2220,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90207", "", valueParm)));
 				}
 			}
+			//maxLimit
+			if (collateralSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "maxCollateralValue";
+				valueParm[1] = "0";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
+			}
+			
 			// validate third party customers
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
 			if (thirdPartyCollateral != null) {

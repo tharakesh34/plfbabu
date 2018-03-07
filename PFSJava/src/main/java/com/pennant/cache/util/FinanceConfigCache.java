@@ -1,7 +1,6 @@
 package com.pennant.cache.util;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -133,7 +132,7 @@ public class FinanceConfigCache {
 		FinanceType financeType=null;
 		try {
 			financeType =  financeTypeCache.get(finType);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from FinanceType cache: ", e);
 			financeType =  getFinanceTypeByID(finType);
 		}
@@ -171,7 +170,7 @@ public class FinanceConfigCache {
 		
 		try {
 			dpdBucket =  dPDBucketCache.get(bucketID);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from DPDBucket cache: ", e);
 			dpdBucket =  getDPDBucketByID(bucketID);
 		}
@@ -210,7 +209,7 @@ public class FinanceConfigCache {
 		
 		try {
 			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from DPDBucket cache: ", e);
 			dpdBucket =  getDPDBucketByCode(bucketCode);
 		}
@@ -249,7 +248,7 @@ public class FinanceConfigCache {
 		
 		try {
 			return  dPDBucketConfigurationCache.get(productCode);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
 			return  getDPDBucketConfigurationById(productCode);
 		}
@@ -317,7 +316,7 @@ public class FinanceConfigCache {
 	public static List<NPABucketConfiguration> getCacheNPABucketConfiguration(String productCode) {
 		try {
 			return nPABucketConfigurationCache.get(productCode);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
 			return getNPABucketConfigurationByCode(productCode);
 		}

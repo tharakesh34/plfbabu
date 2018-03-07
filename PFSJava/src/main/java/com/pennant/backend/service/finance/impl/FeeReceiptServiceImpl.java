@@ -29,9 +29,11 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
@@ -265,8 +267,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		amountCodes.setFinType(receiptHeader.getFinType());
 		
 		// Fetch Accounting Set ID
-		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
-				AccountEventConstants.ACCEVENT_FEEPAY);
+		long accountingSetID = AccountingConfigCache.getAccountSetID(receiptHeader.getFinType(),
+				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 		if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");

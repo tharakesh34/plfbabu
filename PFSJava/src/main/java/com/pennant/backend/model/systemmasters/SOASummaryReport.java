@@ -58,17 +58,10 @@ public class SOASummaryReport {
 	private BigDecimal due;
 	private BigDecimal receipt;
 	private BigDecimal overDue;
+	private int ccyEditField;
 	
 	private BigDecimal ccyMinorCcyUnits;
-	
-	@SuppressWarnings("unused")
 	private Date appDate;
-	@SuppressWarnings("unused")
-	private BigDecimal calDue;
-	@SuppressWarnings("unused")
-	private BigDecimal calReceipt;
-	@SuppressWarnings("unused")
-	private BigDecimal calOverDue;
 	
 	public SOASummaryReport() {
 		super();
@@ -118,41 +111,26 @@ public class SOASummaryReport {
 		return DateUtility.getAppDate();
 	}
 
-	public BigDecimal getCalDue() {
-		BigDecimal calDue = BigDecimal.ZERO;
-
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.due != null) {
-			calDue = (this.due).divide(this.ccyMinorCcyUnits);
-		}
-
-		return calDue;
-	}
-
-	public BigDecimal getCalReceipt() {
-		BigDecimal calReceipt = BigDecimal.ZERO;
-
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.receipt != null) {
-			calReceipt = (this.receipt).divide(this.ccyMinorCcyUnits);
-		}
-
-		return calReceipt;
-	}
-
-	public BigDecimal getCalOverDue() {
-		BigDecimal calOverDue = BigDecimal.ZERO;
-
-		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.overDue != null) {
-			calOverDue = (this.overDue).divide(this.ccyMinorCcyUnits);
-		}
-
-		return calOverDue;
-	}
-
 	public BigDecimal getCcyMinorCcyUnits() {
 		return ccyMinorCcyUnits;
 	}
 
 	public void setCcyMinorCcyUnits(BigDecimal ccyMinorCcyUnits) {
 		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
+	}
+
+	public int getCcyEditField() {
+		return ccyEditField;
+	}
+
+	public void setCcyEditField(int ccyEditField) {
+		this.ccyEditField = ccyEditField;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
+	public Date getAppDate(Date appDate) {
+		return appDate;
 	}
 }

@@ -42,11 +42,13 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -68,6 +70,8 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	private AuditHeaderDAO auditHeaderDAO;
 	
 	private DivisionDetailDAO divisionDetailDAO;
+	
+	private FinanceTypeDAO financeTypeDAO;
 
 	public DivisionDetailServiceImpl() {
 		super();
@@ -290,7 +294,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	
 		public AuditHeader  doReject(AuditHeader auditHeader) {
 			logger.debug("Entering");
-			auditHeader = businessValidation(auditHeader,"doApprove");
+			auditHeader = businessValidation(auditHeader,"doReject");
 			if (!auditHeader.isNextProcess()) {
 				return auditHeader;
 			}
@@ -320,7 +324,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 		
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		    AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
@@ -338,28 +342,47 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * @param usrLanguage
 	 * @return auditHeader
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
 		logger.debug("Entering");
 
 		// Get the model object.
 		DivisionDetail divisionDetail = (DivisionDetail) auditDetail.getModelData();
 		String code = divisionDetail.getDivisionCode();
 
+		String[] parameters = new String[1];
+		parameters[0] = PennantJavaUtil.getLabel("label_DivisionCode") + ": " + code;
+		
 		// Check the unique keys.
 		if (divisionDetail.isNew()
 				&& PennantConstants.RECORD_TYPE_NEW.equals(divisionDetail.getRecordType())
 				&& divisionDetailDAO.isDuplicateKey(code, divisionDetail.isWorkflow() ? TableType.BOTH_TAB
 						: TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_DivisionCode") + ": " + code;
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+		
+		if (!StringUtils.equals(method, PennantConstants.method_doReject)
+				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(divisionDetail.getRecordType())) {
+			//FinanceType Details
+			boolean isdivisionExists = getFinanceTypeDAO().isDivisionCodeExistsInFinanceTypes(divisionDetail.getDivisionCode(), "_View");
+
+			if (isdivisionExists) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 
 }

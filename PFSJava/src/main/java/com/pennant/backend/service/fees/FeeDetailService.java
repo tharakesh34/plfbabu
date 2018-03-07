@@ -129,8 +129,7 @@ public class FeeDetailService {
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 					.subtract(finFeeDetail.getWaivedAmount()));
 		}
-		if (StringUtils.isBlank(financeDetail.getModuleDefiner()) ||
-				StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
 			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}

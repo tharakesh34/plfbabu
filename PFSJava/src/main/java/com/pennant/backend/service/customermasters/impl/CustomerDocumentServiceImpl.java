@@ -570,6 +570,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 			
+			
 			if (StringUtils.isNotBlank(docName) || customerDocument.isDocIsMandatory()) {
 
 				if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
@@ -599,7 +600,30 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
-			
+			String docFormate = customerDocument.getCustDocName()
+					.substring(customerDocument.getCustDocName().lastIndexOf(".") + 1);
+			if (StringUtils.equals(customerDocument.getCustDocName(), docFormate)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "docName: " + docFormate;
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+			boolean isImage = false;
+			if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
+				if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
+						|| StringUtils.equals(docFormate, "png")) {
+					isImage = true;
+				}
+			}
+			if (!isImage) {
+				if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + customerDocument.getCustDocName();
+					valueParm[1] = customerDocument.getCustDocType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+			}
 			Date appStartDate = DateUtility.getAppDate();
 			Date endDate = DateUtility.addDays(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), -1);
 			Date startDate = null;

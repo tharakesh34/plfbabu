@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -877,13 +878,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
+	 * @throws Exception 
 	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -929,6 +928,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setWorkflowId(0);
 		
 		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+		scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
 			int size = scheduleData.getFinanceScheduleDetails().size();
 			for (int i = size - 1; i >= 0; i--) {
@@ -970,14 +970,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		scheduleData.setFinanceScheduleDetails(schdList);
 		List<FinODDetails> overdueList = null;
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
-			Date reqMaxODDate = DateUtility.addDays(valueDate, -1);
+			Date reqMaxODDate = valueDate;
+			if(!ImplementationConstants.LPP_CALC_SOD){
+				reqMaxODDate = DateUtility.addDays(valueDate, -1);
+			}
 			overdueList = calCurDatePenalties(scheduleData, rceiptData, reqMaxODDate);
 			if (overdueList != null && !overdueList.isEmpty()) {
 				getFinODDetailsDAO().updateList(overdueList);
 			}
 		} else {
 			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
-			List<FinODDetails> curODList = new ArrayList<FinODDetails>();
 			List<FinanceScheduleDetail> schedules = scheduleData.getFinanceScheduleDetails();
 			for(FinanceScheduleDetail curSchd: schedules) {
 				for(FinODDetails fod: overdueList) {
@@ -989,21 +991,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							fod.setFinCurODDays(0);
 							fod.setFinODTillDate(valueDate);
 						}
-						fod.setFinLMdfDate(valueDate);
-						curODList.add(fod);
+						//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+						fod.setFinLMdfDate(DateUtility.getAppDate());
 					}
 				}
 			}
 			
 			// update current overdue list
-			getFinODDetailsDAO().updateODDetails(curODList);
+			if (overdueList != null && !overdueList.isEmpty()) {
+				getFinODDetailsDAO().updateODDetails(overdueList);
+			}
 		}
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 
 		// Update Status Details and Profit Details
-		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, receiptHeader.getReceiptPurpose());
+		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, overdueList, receiptHeader.getReceiptPurpose());
 
 		//Finance Main Updation
 		//=======================================
@@ -1166,7 +1170,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
 				for (FinRepayHeader header : finReceiptDetail.getRepayHeaders()) {
-					priAmt=priAmt.add(header.getPriAmount());
+					if(CollectionUtils.isNotEmpty(header.getRepayScheduleDetails())){
+						for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+							priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+						}
+					}else{
+						priAmt=priAmt.add(header.getPriAmount());
+					}
 				}
 			}
 			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
@@ -1887,11 +1897,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				aFinanceMain.setPftIntact(true);
 			}
 
+			if (receiptData.getRepayMain().getEarlyRepayNewSchd() != null) {
+				if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
+					receiptData.getRepayMain().getEarlyRepayNewSchd().setRepayOnSchDate(false);
+					receiptData.getRepayMain().getEarlyRepayNewSchd().setPftOnSchDate(false);
+					receiptData.getRepayMain().getEarlyRepayNewSchd().setRepayAmount(BigDecimal.ZERO);
+				}
+				finScheduleData.getFinanceScheduleDetails().add(receiptData.getRepayMain().getEarlyRepayNewSchd());
+			}
+			
 			receiptData.getRepayMain().setEarlyPayOnSchDate(curBussniessDate);
 			boolean isSchdDateFound = false;
 			FinanceScheduleDetail prvSchd = null;
 			for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0) {
+					if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+						detail.setPartialPaidAmt(detail.getPartialPaidAmt().add(detail.getEarlyPaid().add(receiptData.getRepayMain().getEarlyPayAmount())));
+					}
 					if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
 						detail.setEarlyPaid(detail.getEarlyPaid().add(receiptData.getRepayMain().getEarlyPayAmount())
 								.subtract(detail.getRepayAmount()));
@@ -1902,10 +1924,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
 					}
 					isSchdDateFound = true;
-					if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-						detail.setPartialPaidAmt(detail.getPartialPaidAmt().add(detail.getEarlyPaid().add(receiptData.getRepayMain().getEarlyPayAmount())
-								.subtract(detail.getRepayAmount())));
-					}
 				}
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
 					detail.setEarlyPaid(BigDecimal.ZERO);
@@ -1918,7 +1936,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			finScheduleData.setFinanceType(finScheduleData.getFinanceType());
 
-			// Finding Next Repay Schedule on date
+/*			// Finding Next Repay Schedule on date
 			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
 			if(!isSchdDateFound){
 				FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(finScheduleData.getFinanceMain().getFinReference());
@@ -1935,7 +1953,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				newSchdlEP.setActRate(prvSchd.getActRate());
 				newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
 				newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
-				newSchdlEP.setPartialPaidAmt(receiptData.getRepayMain().getEarlyPayAmount());
 				finScheduleData.getFinanceScheduleDetails().add(newSchdlEP);
 				sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
 			}
@@ -1983,6 +2000,48 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						nextRepaySchDate = curSchd.getSchDate();
 						break;
 					}
+				}
+			}*/
+
+			// Finding Next Repay Schedule on date
+			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
+			if(nextRepaySchDate == null){
+				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
+					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
+						if(curSchd.isRepayOnSchDate()){
+							finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+							if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PFT)){
+								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+							}
+							if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+								if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PRI)){
+									finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+								}
+							}
+						}else if(curSchd.isPftOnSchDate()){
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+						}else{
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+							if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+							}
+						}
+						
+						if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
+							if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+								receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(curSchd.getProfitSchd()));
+							}
+						}
+					}else{
+						nextRepaySchDate = curSchd.getSchDate();
+						break;
+					}
+				}
+			}else{
+				if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+				}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
 				}
 			}
 
@@ -2129,7 +2188,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
-				schdList, repayments, resetReq,false);
+				schdList, repayments, resetReq,true);
 
 		logger.debug("Leaving");
 		return overdueList;
@@ -2155,7 +2214,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return overdueList;
 		}
 		
-		Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
 		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
 		List<FinanceRepayments> repayments = 	getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
 		
@@ -2167,11 +2225,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
-				schdList, repayments,true,false);
-		
-		// Re-Create OD Details
-		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, curBusDate, 
-				schdList, repayments, false,false);
+				schdList, repayments,true,true);
 		
 		for (FinODDetails fod : overdueList) {
 			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);

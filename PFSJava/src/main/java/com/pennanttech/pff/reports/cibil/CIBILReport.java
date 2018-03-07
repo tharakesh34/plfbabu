@@ -152,14 +152,20 @@ public class CIBILReport {
 			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
 			AmazonS3Bucket bucket = null;
 			if (properties != null && properties.getStorageType().equals("S3")) {
-				bucket = new AmazonS3Bucket(properties.getRegionName(), properties.getBucketName(),
-						EncryptionUtil.decrypt(properties.getAccessKey()),
-						EncryptionUtil.decrypt(properties.getSecretKey()));
+				String accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
+				String secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
+				String bucketName = properties.getBucketName();
+				
+				bucket = new AmazonS3Bucket(properties.getRegionName(), bucketName, accessKey, secretKey);				
+				bucket.setSseAlgorithm(properties.getSseAlgorithm());
+				
 				bucket.putObject(cibilFile, properties.getPrefix());
 			}
 
 			EXTRACT_STATUS.setStatus("S");
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			EXTRACT_STATUS.setRemarks(e.getMessage());
 			EXTRACT_STATUS.setStatus("F");
 		}
 		

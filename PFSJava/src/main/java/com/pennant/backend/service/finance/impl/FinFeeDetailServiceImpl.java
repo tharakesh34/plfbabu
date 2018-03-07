@@ -68,6 +68,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -982,6 +983,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public FinTaxDetailsDAO getFinTaxDetailsDAO() {
 		return finTaxDetailsDAO;
 	}
+	@Override
+	public void updateTaxPercent(UploadTaxPercent taxPercent) {
+
+		this.finFeeDetailDAO.updateTaxPercent(taxPercent);
+		
+	}
+
 
 	public void setFinTaxDetailsDAO(FinTaxDetailsDAO finTaxDetailsDAO) {
 		this.finTaxDetailsDAO = finTaxDetailsDAO;

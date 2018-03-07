@@ -48,9 +48,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface ExpenseTypeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ExpenseType getExpenseTypeById(long id);
+
 	ExpenseType getApprovedExpenseTypeById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	long getFinExpenseIdByExpType(String expTypeCode, String type);
 }

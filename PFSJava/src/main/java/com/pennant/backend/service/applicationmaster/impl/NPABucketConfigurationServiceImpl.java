@@ -298,7 +298,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -327,7 +327,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -346,7 +346,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
@@ -359,21 +359,24 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 						nPABucketConfiguration.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": "
-					+ nPABucketConfiguration.getProductCode();
-			parameters[1] = PennantJavaUtil.getLabel("label_BucketID") + ": " + nPABucketConfiguration.getBucketID();
+			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : "
+					+ nPABucketConfiguration.getProductCode() + " and ";
+			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : " + nPABucketConfiguration.getBucketCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		if (!StringUtils.trimToEmpty(nPABucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL) && StringUtils.trimToEmpty(nPABucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
+		
+		if (!(StringUtils.equals(method, PennantConstants.method_doReject)
+				|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(nPABucketConfiguration.getRecordType()))) {
+			
 			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(), nPABucketConfiguration.getDueDays(), "");
 
 			if (count != 0) {
 				String[] parameters = new String[2];
 				String[] parametersDueDays = new String[2];
 				
-				parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": " + nPABucketConfiguration.getProductCode();
-				parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + ": " + nPABucketConfiguration.getDueDays();
+				parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : " + nPABucketConfiguration.getProductCode();
+				parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + " : " + nPABucketConfiguration.getDueDays();
 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, parametersDueDays), usrLanguage));
 			}

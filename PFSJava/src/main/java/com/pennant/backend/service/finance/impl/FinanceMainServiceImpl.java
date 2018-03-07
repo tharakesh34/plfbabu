@@ -159,6 +159,10 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.getFinReferencesByCustID(custId,finActiveStatus);
 	}
 
+	@Override
+	public List<String> getFinanceMainbyCustId(long custID) {
+		return financeMainDAO.getFinReferencesByCustID(custID);
+	}
 	/**
 	 * @param financeMainDAO
 	 *            the financeMainDAO to set
@@ -166,6 +170,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
 
 	
 }

@@ -97,4 +97,8 @@ public interface LimitDetailService {
 	List<String> getLinesForGroup(String groupCode);
 
 	LimitHeader getCustomerLimitsById(long headerId);
+	
+	// Limit Rebuild Process
+	List<Object> processCustomerRebuild(long custId);
+	List<Object> processCustomerGroupRebuild(long groupId);
 }

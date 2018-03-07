@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -42,6 +43,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -49,6 +51,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -106,6 +109,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private LimitManagement	limitManagement;
 	private CustomerDAO		customerDAO;
 	private FinFeeReceiptDAO		finFeeReceiptDAO;
+	private LatePayMarkingService latePayMarkingService; 
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -299,12 +303,13 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
+	 * @throws Exception 
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader){
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception{
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -355,7 +360,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
 				for (FinRepayHeader header : finReceiptDetail.getRepayHeaders()) {
-					priAmt = priAmt.add(header.getPriAmount());
+					for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+						priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+					}
 				}
 			}
 			if (priAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -526,9 +533,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @param receiptId
 	 * @param returnCode
 	 * @return errorMsg
+	 * @throws Exception 
 	 */
 	@Override
-	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
@@ -569,10 +577,34 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 		receiptHeader.setBounceDate(DateUtility.getAppDate());
 		
+		// Receipts Cancellation Process
 		String errorMsg = procReceiptCancellation(receiptHeader);
 		
 		if (StringUtils.trimToNull(errorMsg) == null) {
+
+			// Update ReceiptHeader 
 			getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+
+			// Limits update against PresentmentCancellation 
+			if (ImplementationConstants.LIMIT_INTERNAL) {
+
+				BigDecimal priAmt = BigDecimal.ZERO;
+				for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+					for (FinRepayHeader header : receiptDetail.getRepayHeaders()) {
+						for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+							priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+						}
+					}
+				}
+				if (priAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+					FinanceMain main = getFinanceMainDAO().getFinanceMainForBatch(receiptHeader.getReference());
+					Customer customer = getCustomerDAO().getCustomerByID(main.getCustID());
+
+					// Update Limit Exposures
+					getLimitManagement().processLoanRepayCancel(main, customer, priAmt, StringUtils.trimToEmpty(main.getProductCategory()));
+				}
+			}
 		}
 		 
 		presentmentDetail.setErrorDesc(errorMsg);
@@ -630,11 +662,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * 
 	 * @param receiptHeader
 	 * @return String(Error Description)
+	 * @throws Exception 
 	 * @throws InterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String procReceiptCancellation(FinReceiptHeader receiptHeader) {
+	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws Exception {
 		logger.debug("Entering");
 		
 		boolean alwSchdReversalByLog = false;
@@ -767,6 +800,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(
 						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "");
 				if (advMovements != null && !advMovements.isEmpty()) {
+					isRcdFound = true;
 					for (ManualAdviseMovements movement : advMovements) {
 						
 						if((movement.getPaidAmount().add(movement.getWaivedAmount())).compareTo(BigDecimal.ZERO) == 0){
@@ -997,8 +1031,24 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				// Check Current Finance Max Status For updation
 				// ============================================
-				getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(),
-						scheduleData.getFinanceScheduleDetails(), pftDetail, null);
+				
+				Date valueDate = DateUtility.getAppDate();
+				if(!ImplementationConstants.LPP_CALC_SOD){
+					valueDate = DateUtility.addDays(valueDate, -1);
+				}
+				List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+				List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+				overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
+						scheduleData.getFinanceScheduleDetails(), repayments, true,true);
+				
+				// Status Updation
+				getRepaymentPostingsUtil().updateStatus(financeMain, valueDate,	scheduleData.getFinanceScheduleDetails(), pftDetail,overdueList, null);
+				
+				// Overdue Details Updation after Recalculation with Current Data
+				if (overdueList != null && !overdueList.isEmpty()) {
+					getFinODDetailsDAO().updateList(overdueList);
+				}
+				
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					// Finance Main Details Update
@@ -1402,6 +1452,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
 		this.finFeeReceiptDAO = finFeeReceiptDAO;
+	}
+
+	public LatePayMarkingService getLatePayMarkingService() {
+		return latePayMarkingService;
+	}
+
+	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
+		this.latePayMarkingService = latePayMarkingService;
 	}
 
 }

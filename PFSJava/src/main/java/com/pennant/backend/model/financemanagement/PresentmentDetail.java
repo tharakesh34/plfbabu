@@ -96,6 +96,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String acType;
 	private String errorCode;
 	private String errorDesc;
+	private String entityCode;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -441,6 +442,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setManualAdviseId(long manualAdviseId) {
 		this.manualAdviseId = manualAdviseId;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 
 }

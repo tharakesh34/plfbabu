@@ -67,4 +67,6 @@ public interface FinanceMainService {
 	List<String> getFinReferencesByMandateId(long mandateId);
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
+
+	List<String> getFinanceMainbyCustId(long custID);
 }

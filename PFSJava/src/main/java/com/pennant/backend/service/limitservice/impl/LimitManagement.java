@@ -95,10 +95,10 @@ public class LimitManagement {
 				return ErrorUtil.getErrorDetails(errors, usrlang);
 			} else {
 				if (!custHeader.isActive()) {
-					StringBuilder key = new StringBuilder(custHeader.getLimitStructureCode());
+					StringBuilder key = new StringBuilder(custHeader.getCustCIF());
 					key.append("-");
-					key.append(custHeader.getStructureName());
-					errors.add(new ErrorDetail("60313", new String[] { key.toString() }));
+					key.append(custHeader.getLimitStructureCode());
+					errors.add(new ErrorDetail("60316", new String[] { key.toString() }));
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
 			}
@@ -111,6 +111,7 @@ public class LimitManagement {
 			allowOverride = false;
 		}
 
+		//to validate maximum disbursement date
 		Date dateToValidate = DateUtility.getAppDate();
 
 		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
@@ -120,25 +121,31 @@ public class LimitManagement {
 		}
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
+		BigDecimal reservTranAmt = BigDecimal.ZERO;
+		
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();
 		} else if (LimitConstants.APPROVE.equals(tranType)) {
+			
 			for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
 				tranAmt = tranAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
 				if (disbursement.getDisbDate().getTime() == finMain.getFinStartDate().getTime()) {
 					tranAmt = tranAmt.subtract(finMain.getDownPayment());
 				}
 			}
+			
+			reservTranAmt = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue());
 		}
 
-		//loop through disbursements
 		int disbSeq = 0;
 		//Customer limit process
 		if (custHeader != null) {
+		
 			// check already mapping available or not 
 			LimitReferenceMapping mapping = identifyLine(finMain, finType, custHeader.getHeaderId());
+			
 			if (mapping != null) {
-				if (mapping.isNewRecord()) {
+				if (!validateOnly && mapping.isNewRecord()) {
 					limitReferenceMappingDAO.save(mapping);
 				}
 
@@ -147,26 +154,48 @@ public class LimitManagement {
 						custHeader.getHeaderId(), LimitConstants.BLOCK, disbSeq);
 
 				BigDecimal blockAmount = BigDecimal.ZERO;
-
+				BigDecimal reservLimitAmt = BigDecimal.ZERO;
+				boolean logReservedTrans = false;
+				
 				if (limitTranDetail != null) {
 					blockAmount = limitTranDetail.getLimitAmount();
 				}
+				
+				if (LimitConstants.APPROVE.equals(tranType)) {
 
-				if (LimitConstants.UNBLOCK.equals(tranType)) {
+					// Max. Disbursement Check available
+					if (reservTranAmt.compareTo(BigDecimal.ZERO) > 0) {
+						reservLimitAmt = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), reservTranAmt);
+						if (limitTranDetail == null) {
+							logReservedTrans = true;
+						}
+					}
+				} else if (LimitConstants.UNBLOCK.equals(tranType)) {
+
+					// in unblock then we should reverse the reserved amount
 					tranAmt = blockAmount;
 				}
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
-						validateOnly, dateToValidate, limitTranDetail, blockAmount));
+				
+				List<ErrorDetail> errorsList = updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
+						validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt);
+				
+				errors.addAll(errorsList);
+				
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
 				if (!mapping.isProceeed()) {
 					return errors;
 				}
+
+				//log transactions
 				if (!validateOnly) {
-					//log transaction
+					// Max. Disbursement Check available but reserved limit not configured in process editor
+					if (logReservedTrans) {
+						logFinanceTransasction(finMain, custHeader, disbSeq, LimitConstants.BLOCK, overide, reservTranAmt, reservLimitAmt);
+					}
 					logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
 				}
 			}
@@ -174,27 +203,48 @@ public class LimitManagement {
 
 		//Customer group limit process
 		if (groupHeader != null) {
+			
 			// check already mapping available or not 
 			LimitReferenceMapping mapping = identifyLine(finMain, finType, groupHeader.getHeaderId());
+			
 			if (mapping != null) {
-				if (mapping.isNewRecord()) {
+				if (!validateOnly && mapping.isNewRecord()) {
 					limitReferenceMappingDAO.save(mapping);
 				}
+				
 				//in origination there should be one block
 				LimitTransactionDetail limitTranDetail = getFinTransaction(finMain.getFinReference(),
 						groupHeader.getHeaderId(), LimitConstants.BLOCK, disbSeq);
+				
 				BigDecimal blockAmount = BigDecimal.ZERO;
+				BigDecimal reservLimitAmt = BigDecimal.ZERO;
+				boolean logReservedTrans = false;
+				
 				if (limitTranDetail != null) {
 					blockAmount = limitTranDetail.getLimitAmount();
 				}
 
-				if (LimitConstants.UNBLOCK.equals(tranType)) {
+				if (LimitConstants.APPROVE.equals(tranType)) {
+
+					// Max. Disbursement Check available
+					if (reservTranAmt.compareTo(BigDecimal.ZERO) > 0) {
+						reservLimitAmt = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), reservTranAmt);
+						if (limitTranDetail == null) {
+							logReservedTrans = true;
+						}
+					}
+				} else if (LimitConstants.UNBLOCK.equals(tranType)) {
+
+					// in unblock then we should reverse the reserved amount
 					tranAmt = blockAmount;
 				}
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
-						validateOnly, dateToValidate, limitTranDetail, blockAmount));
+				
+				List<ErrorDetail> errorsList = updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
+						validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt);
+				
+				errors.addAll(errorsList);
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -204,8 +254,12 @@ public class LimitManagement {
 					return errors;
 				}
 
+				//log transaction
 				if (!validateOnly) {
-					//log transaction
+					// Max. Disbursement Check available but reserved limit not configured in process editor
+					if (logReservedTrans) {
+						logFinanceTransasction(finMain, groupHeader, disbSeq, LimitConstants.BLOCK, overide, reservTranAmt, reservLimitAmt);
+					}
 					logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
 				}
 			}
@@ -225,11 +279,14 @@ public class LimitManagement {
 	 */
 	private List<ErrorDetail> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
 			boolean allowOverride, BigDecimal limitAmount, boolean override, boolean validateOnly, Date disbDate,
-			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount) {
+			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount, BigDecimal reservLimitAmt) {
 		logger.debug(" Entering ");
 
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
+
+		// check revolving or non revolving
+		boolean revolving = isRevolving(mapping, limitDetails);
 
 		ArrayList<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 
@@ -252,8 +309,17 @@ public class LimitManagement {
 			}
 
 		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
+
 			if (!override) {
-				errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
+
+				BigDecimal amoutToValidate = BigDecimal.ZERO;
+				if (reservLimitAmt.compareTo(BigDecimal.ZERO) > 0) {
+					amoutToValidate = blockAmount.subtract(reservLimitAmt); // if blockAmount ZERO also VALID no issue.. 
+				} else {
+					amoutToValidate = blockAmount;
+				}
+				errors.addAll(validate(limitDetails, limitAmount, amoutToValidate, allowOverride, disbDate));
+
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -272,44 +338,69 @@ public class LimitManagement {
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
+					
 					details.setReservedLimit(details.getReservedLimit().add(limitAmount));
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
 				break;
+				
 			// loan rejected
 			case LimitConstants.UNBLOCK:
 
 				if (limitTranDetail != null) {
 					for (LimitDetails details : limitDetails) {
 						details.setVersion(details.getVersion() + 1);
+						
 						//reverse the utilization in case of loan reject
 						details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
 						limitDetailDAO.updateReserveUtilise(details, "");
 					}
 				}
 				break;
+				
 			case LimitConstants.APPROVE:
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
-					if (blockAmount.compareTo(BigDecimal.ZERO) != 0) {
-						if (blockAmount.compareTo(limitAmount) < 0) {
-							details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
-						} else {
-							details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
-						}
+					
+					// previous block amount
+					if (blockAmount.compareTo(BigDecimal.ZERO) > 0) {
+						details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
 					}
-
-					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
+					
+					// Max. Disbursement Check available
+					if (reservLimitAmt.compareTo(BigDecimal.ZERO) > 0) {
+						details.setReservedLimit(details.getReservedLimit().add(reservLimitAmt));
+					}
+					
+					// check revolving or non revolving
+					if (revolving) {
+						details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
+ 					} else {
+						details.setLimitSanctioned(details.getLimitSanctioned().subtract(limitAmount));
+						details.setNonRvlUtilised(details.getNonRvlUtilised().add(limitAmount));
+ 					}
+					
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
 				break;
+				
 			default:
 				break;
 			}
 		}
 
 		return errors;
+	}
+	
+	private boolean isRevolving(LimitReferenceMapping mapping, List<LimitDetails> limitDetails) {
+
+		for (LimitDetails limitDetail : limitDetails) {
+			if (StringUtils.equals(limitDetail.getLimitLine(), mapping.getLimitLine())) {
+				return limitDetail.isRevolving();
+			}
+		}
+		return true;
 	}
 
 	public List<ErrorDetail> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType,
@@ -327,6 +418,7 @@ public class LimitManagement {
 		long groupId = customer.getCustGroupID();
 		LimitHeader custHeader = null;
 		LimitHeader groupHeader = null;
+		boolean limitrequired = finType.isLimitRequired();
 		boolean allowOverride = finType.isOverrideLimit();
 
 		if (custId != 0) {
@@ -335,6 +427,25 @@ public class LimitManagement {
 
 		if (groupId != 0) {
 			groupHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(groupId, "_AView");
+		}
+		
+		// If limit required is true in Finance type			
+		if (limitrequired) {
+			if (custHeader == null) {
+				errors.add(new ErrorDetail("60310", null));
+				return ErrorUtil.getErrorDetails(errors, usrlang);
+			} else {
+				if (!custHeader.isActive()) {
+					StringBuilder key = new StringBuilder(custHeader.getCustCIF());
+					key.append("-");
+					key.append(custHeader.getLimitStructureCode());
+					errors.add(new ErrorDetail("60316", new String[] { key.toString() }));
+					return ErrorUtil.getErrorDetails(errors, usrlang);
+				}
+			}
+		} else {
+			//if limit is not required in the loan type
+			allowOverride = true;
 		}
 
 		if (StringUtils.trimToEmpty(finMain.getFinSourceID()).equals(PennantConstants.FINSOURCE_ID_API)) {
@@ -988,7 +1099,7 @@ public class LimitManagement {
 			}
 
 			if (limitDetail.getExpiryDate() != null) {
-				if (limitDetail.getExpiryDate().compareTo(date) <= 0) {
+				if (limitDetail.getExpiryDate().compareTo(date) < 0) {
 					return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
 				}
 			}

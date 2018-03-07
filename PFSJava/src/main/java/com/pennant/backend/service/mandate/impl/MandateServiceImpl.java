@@ -43,35 +43,52 @@
 
 package com.pennant.backend.service.mandate.impl;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
+import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
+import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.MandateProcess;
 
 /**
  * Service implementation for methods that depends on <b>Mandate</b>.<br>
@@ -86,7 +103,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateStatusDAO		mandateStatusDAO;
 	private MandateStatusUpdateDAO	mandateStatusUpdateDAO;
 	private FinanceMainDAO			financeMainDAO;
-	private DocumentManagerDAO documentManagerDAO;
+	private DocumentManagerDAO 		documentManagerDAO;
+	private MandateCheckDigitDAO	mandateCheckDigitDAO;
+	private BankBranchDAO			bankBranchDAO;
+	
+	@Autowired
+	private MandateProcess mandateProcess;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -141,6 +163,21 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		this.mandateStatusDAO = mandateStatusDAO;
 	}
 
+	/**
+	 * mandateCheckDigitDAO
+	 * @return
+	 */
+	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
+		return mandateCheckDigitDAO;
+	}
+	/**
+	 * 
+	 * @param mandateCheckDigitDAO
+	 */
+	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
+		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+	
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -326,6 +363,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				tranType = PennantConstants.TRAN_UPD;
 				mandate.setRecordType("");
 				getMandateDAO().update(mandate, "");
+				mandate.setModificationDate(new Timestamp(System.currentTimeMillis()));
 			}
 
 			MandateStatus mandateStatus = new MandateStatus();
@@ -336,9 +374,43 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			
 			getMandateStatusDAO().save(mandateStatus, "");
 
+			// Mandate Registration purpose
+
+			try {
+				
+				BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),
+						CurrencyUtil.getFormat(mandate.getMandateCcy()));
+				mandate.setAmountInWords(NumberToEnglishWords.getNumberToWords(maxlimt.toBigInteger()));
+				
+				if (StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)
+						|| mandate.isSecondaryMandate()) {
+					BankBranch bankBranch = bankBranchDAO.getBankBrachByMicr(mandate.getMICR(), "");
+					mandate.setBankName(bankBranch.getBankName());
+					mandate.setBranchDesc(bankBranch.getBranchDesc());
+					if (!mandate.isSecondaryMandate()) {
+						mandate.setApprovalID(String.valueOf(mandate.getUserDetails().getUserId()));
+					}
+				}
+
+				boolean register = mandateProcess.registerMandate(mandate);
+				if (register) {
+					mandate.setStatus(MandateConstants.STATUS_INPROCESS);
+					getMandateDAO().updateStatusAfterRegistration(mandate.getMandateID(), MandateConstants.STATUS_INPROCESS);
+					mandateStatus.setMandateID(mandate.getMandateID());
+					mandateStatus.setStatus(mandate.getStatus());
+					mandateStatus.setReason(mandate.getReason());
+					mandateStatus.setChangeDate(mandate.getInputDate());
+					getMandateStatusDAO().save(mandateStatus, "");
+				}
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+			
 		}
 
-		if(!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if ((!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)
+				&& !mandate.isSecondaryMandate())) {
 			getMandateDAO().delete(mandate, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);
@@ -404,6 +476,24 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	public List<ErrorDetail> doValidations(Mandate mandate) {
+		List<ErrorDetail> details = null;
+		if(StringUtils.isNotBlank(mandate.getBarCodeNumber()))
+		{
+			details = new ArrayList<>();
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
+			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
+			
+			if (matcher.matches() == false) {
+				String[] valueParm = new String[1];
+				valueParm[0] = mandate.getBarCodeNumber();
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber","90404",valueParm, valueParm)));
+			}
+		}
+		return details;
+
 	}
 
 	/**
@@ -487,11 +577,88 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
+		String barCode = mandate.getBarCodeNumber();
+		if (!barCode.isEmpty() && !StringUtils.trimToEmpty(mandate.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
+				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
+			String[] errParm1 = new String[1];
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = barCode;
+			errParm1[0] = PennantJavaUtil.getLabel("label_BarCodeNumber") + " : " + valueParm1[0];
+
+			char lastchar = (char) barCode.charAt(barCode.length() - 1);
+			int reminder = checkSum(barCode);
+
+			MandateCheckDigit checkDigit = mandateCheckDigitDAO.getMandateCheckDigit(reminder, "");
+			//Validation For BarCode CheckSum
+			if (checkDigit != null) {
+				if (checkDigit.getLookUpValue().charAt(0) != lastchar) {
+
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
+				}
+			} else {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
+			}
+			/*//BarCode Unique Validation
+			int count = getMandateDAO().getBarCodeCount(barCode, mandate.getMandateID(), "_View");
+			if (count > 0) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage));
+			}*/
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !mandate.isWorkflow()) {
 			auditDetail.setBefImage(befMandate);
 		}
+		
+
+		if (!StringUtils.equals(mandate.getRecordType(), PennantConstants.RECORD_TYPE_NEW)&& 
+				!((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED) || 
+						(StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED) || 
+								(StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_HOLD))))))) {
+			boolean exists = getMandateDAO().checkMandateStatus(mandate.getMandateID());
+			if (exists) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = String.valueOf(mandate.getMandateID());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41021", valueParm1)));
+			}
+
+		}
+		
+		if (StringUtils.equals(mandate.getRecordType(),PennantConstants.RECORD_TYPE_DEL)
+				&& StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)) {
+			String[] valueParm3 = new String[1];
+			valueParm3[0] = String.valueOf(mandate.getMandateID());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41023", valueParm3)));
+		}	
+
+		
+		if (!StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)
+				&& !StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_NEW)
+				&& !mandate.isSecondaryMandate()
+				&& !((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
+						|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED))))
+				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
+			boolean exists = getMandateDAO().checkMandates(mandate.getOrgReference(), mandate.getMandateID());
+			if (exists) {
+				String[] valueParm2 = new String[1];
+				valueParm2[0] = String.valueOf(mandate.getOrgReference());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41022", valueParm2)));
+			}
+
+		}
+		
+		
+		if(mandate.isSwapIsActive() && (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, mandate.getRecordStatus()))) {
+			BigDecimal repayAmount = getMandateDAO().getMaxRepayAmount(mandate.getOrgReference(), "_View");
+			if(mandate.getMaxLimit().compareTo(repayAmount) < 0) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90320", null)));
+			}
+			
+		}
+		
 		return auditDetail;
 	}
 
@@ -614,4 +781,32 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+
+	@Override
+	public MandateCheckDigit getLookUpValueByCheckDigit(int rem) {
+
+		return getMandateCheckDigitDAO().getMandateCheckDigit(rem, "_View");
+	}
+
+	private int checkSum(String barCode) {
+		int value = 0;
+		for (int i = 0; i < barCode.length() - 1; i++) {
+			value += Integer.parseInt(barCode.charAt(i) + "");
+		}
+		PFSParameter parameter = SysParamUtil.getSystemParameterObject("BARCODE_DIVISOR");
+		int divisor = Integer.parseInt(parameter.getSysParmValue().trim());
+		int remainder = value % divisor;
+
+		return remainder;
+	}
+
+	@Override
+	public int getSecondaryMandateCount(long mandateID) {
+		return mandateDAO.getSecondaryMandateCount(mandateID);
+	}
+
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
 }
