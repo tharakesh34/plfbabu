@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -86,6 +87,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -130,7 +132,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listheader listheader_Disbursement_BenAcctno;
 	protected Listheader listheader_Disbursement_Branch;
 	protected Listheader listheader_Disbursement_Channel;
-
+	protected Listheader listheader_Disbursement_Entity;
+	
 	protected Combobox disbTypes;
 	protected ExtendedCombobox partnerBank;
 	protected Datebox fromDate;
@@ -141,6 +144,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Checkbox qdp;
 	protected Combobox channelTypes;
 	protected Textbox  finRef;
+	protected ExtendedCombobox entity;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -150,6 +154,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_Branch;
 	protected Listbox sortOperator_Channel;
 	protected Listbox sortOperator_FinRef;
+	protected Listbox sortOperator_Entity;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -254,6 +259,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("AMTTOBERELEASED");
 		registerField("channel", listheader_Disbursement_Channel, SortOrder.NONE, channelTypes, sortOperator_Channel,
 				Operators.STRING);
+		registerField("entityCode",listheader_Disbursement_Entity,SortOrder.NONE,entity,sortOperator_Entity,Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
@@ -328,13 +334,23 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
-		this.partnerBank.setMandatoryStyle(true);
+		this.partnerBank.setMandatoryStyle(false);
 
 		this.branch.setModuleName("BankBranch");
 		this.branch.setDisplayStyle(2);
 		this.branch.setValueColumn("BranchCode");
 		this.branch.setDescColumn("BranchDesc");
 		this.branch.setValidateColumns(new String[] { "BranchCode" });
+		
+		this.entity.setModuleName("Entity");
+		this.entity.setMandatoryStyle(true);
+		this.entity.setDisplayStyle(2);
+		this.entity.setValueColumn("EntityCode");
+		this.entity.setDescColumn("EntityDesc");
+		this.entity.setValidateColumns(new String[] { "EntityCode" });
+		
+		this.partnerBank.setButtonDisabled(true);
+		
 	}
 
 	/**
@@ -405,7 +421,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				list_CheckBox.setChecked(disbursementMap.containsKey(payments.getPaymentId()));
 			}
 			lc.setParent(item);
-
+            
+			lc = new Listcell(payments.getEntityCode());
+			lc.setParent(item);
+			
 			lc = new Listcell(payments.getPaymentType());
 			lc.setParent(item);
 
@@ -455,6 +474,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("PARTNERBANKCODE");
 		searchObject.addField("alwFileDownload");
 		searchObject.addField("finReference");
+		searchObject.addField("entityCode");
 		searchObject.addTabelName(this.tableName);
 		
 		setFilters(searchObject);
@@ -507,11 +527,14 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (!this.partnerBank.isReadonly())
-				this.partnerBank.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_DisbursementList_PartnerBank.value"),
-								PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.partnerBank.getValue();
+			if (StringUtils.isNotEmpty(this.entity.getValidatedValue())) {
+				if (!this.partnerBank.isReadonly()) {
+					this.partnerBank.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_DisbursementList_PartnerBank.value"),
+									PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					this.partnerBank.getValue();
+				}
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -525,7 +548,19 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (!this.entity.isReadonly()) {
+				this.entity.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbursementList_Entity.value"),
+								PennantRegularExpressions.REGEX_ALPHANUM, true));
+				this.entity.getValue();
+			}
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			Date date = DateUtility.addDays(DateUtility.getAppDate(), futureDays);
 			if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
@@ -559,6 +594,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.partnerBank.setConstraint("");
 		this.finType.setConstraint("");
 		this.toDate.setConstraint("");
+		this.entity.setConstraint("");
 
 		logger.debug("Leaving ");
 	}
@@ -574,6 +610,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.clearFilters();
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);
+		this.partnerBank.setButtonDisabled(true);
+		this.partnerBank.setMandatoryStyle(false);
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		this.listheader_Disbursement_DisbTypes.setSort("none");
@@ -583,6 +621,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.listheader_Disbursement_BenName.setSort("none");
 		this.listheader_Disbursement_BenAcctno.setSort("none");
 		this.listheader_Disbursement_Branch.setSort("none");
+		this.listheader_Disbursement_Entity.setSort("none");
 		this.listBoxDisbursementRegistration.getItems().clear();
 
 		if (listBoxDisbursementRegistration.getItems().size() > 0) {
@@ -682,5 +721,39 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
+	}
+	
+	/**
+	 * Based On Entity field,Partner Bank will be Filtered 
+	 * @param event
+	 */
+	public void onFulfill$entity(Event event){
+		logger.debug("Entering");
+
+		Object dataObject = entity.getObject();
+		if (dataObject instanceof String) {
+			this.partnerBank.setButtonDisabled(true);
+			this.partnerBank.setMandatoryStyle(false);
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+		} else {
+			Entity details = (Entity) dataObject;
+			this.partnerBank.setObject("");
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+			if (details != null) {
+				this.partnerBank.setButtonDisabled(false);
+				this.partnerBank.setMandatoryStyle(true);
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
+				this.partnerBank.setFilters(filters);
+			}else{
+				this.partnerBank.setValue("");
+				this.partnerBank.setDescription("");
+				this.partnerBank.setButtonDisabled(true);
+				this.partnerBank.setMandatoryStyle(false);
+			}
+
+		}
 	}
 }

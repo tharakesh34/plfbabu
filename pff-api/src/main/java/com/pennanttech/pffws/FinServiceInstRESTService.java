@@ -71,5 +71,10 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/updateLoanPenaltyDetails")
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	@POST
+	@Path("/loanInstructionService/scheduleMethodChange")
+	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
 
 }

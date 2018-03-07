@@ -366,6 +366,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 	private void setUserDetails() throws Exception {
 		try {
+			doRemoveValidation();
+			doClearMessage();
 			ldapUser = false;
 			if (authType.getValue().equals("Internal") && StringUtils.isNotBlank(usrLogin.getValue())) {
 								
@@ -577,6 +579,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Entering ");
 
 		doSetLOVValidation();
+		
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -798,7 +801,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 		
 		
-		if (!ldapUser && getSecurityUser().isNew()) {
+		if (!ldapUser && getSecurityUser().isNew()&&aSecurityUser.getUsrLogin()!= null) {
 			 wve.add(new WrongValueException(this.usrLogin, "User not found in active directory"));
 		} else {
 			this.usrLogin.setErrorMessage("");
@@ -910,7 +913,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private void doSetValidation() throws InterruptedException {
 		logger.debug("Entering ");
 		setValidationOn(true);
-
 		if (!this.usrLogin.isReadonly()) {
 			this.usrLogin.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_SecurityUserDialog_UsrLogin.value"), null, true));

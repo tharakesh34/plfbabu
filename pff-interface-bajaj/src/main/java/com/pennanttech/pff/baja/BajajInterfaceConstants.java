@@ -20,9 +20,6 @@ public class BajajInterfaceConstants {
 	public static String			autoDisbFileLoaction;
 	public static boolean			autoMandateResFileJob;
 
-	public static DataEngineStatus	MANDATE_INMPORT_STATUS		= new DataEngineStatus("MANDATES_IMPORT");
-	
-
 	public static DataEngineStatus POSIDEX_RESPONSE_STATUS = new DataEngineStatus("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
 	
 }

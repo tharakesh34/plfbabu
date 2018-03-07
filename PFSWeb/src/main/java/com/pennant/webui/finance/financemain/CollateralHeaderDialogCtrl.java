@@ -316,6 +316,13 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public void onClick$btnNew_CollateralAssignment(Event event) throws InterruptedException, SecurityException,
 	IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
+		
+		// If Record is processing with Prospect Customer and not yet created in Application
+		// Same Customer should not eligible to assign Collateral Details
+		if(customerId <= 0){
+			MessageUtil.showError(Labels.getLabel("label_FinCollateralHeaderDialog_NotFound_Customer"));
+			return;
+		}
 
 		CollateralAssignment assignment = new CollateralAssignment();
 		assignment.setNewRecord(true);

@@ -10,6 +10,7 @@ public class ManualAdviseMovements {
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
 	private String feeTypeCode;
+	private String feeTypeDesc;	//Added for SOA
 	private Date movementDate;
 	private BigDecimal movementAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
@@ -95,6 +96,12 @@ public class ManualAdviseMovements {
 	}
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
+	}
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
 	}
 
 }

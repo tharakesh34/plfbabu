@@ -137,14 +137,14 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	@Override
 	protected void doPrintResults() {
 		try {
-			
-			if (limitLine !=null && !StringUtils.isEmpty(limitLine.getValue())) {
-				new PTListReportUtils(StringUtils.trimToEmpty(this.ruleModule.getValue())+StringUtils.trimToEmpty(limitLine.getValue()), super.searchObject, this.pagingRuleList.getTotalSize() + 1);
-			}else{
+
+			if (limitLine != null && !StringUtils.isEmpty(limitLine.getValue())) {
+				new PTListReportUtils(StringUtils.trimToEmpty(this.ruleModule.getValue()) + StringUtils.trimToEmpty(limitLine.getValue()),
+						super.searchObject, this.pagingRuleList.getTotalSize() + 1);
+			} else {
 				new PTListReportUtils(this.ruleModuleName, super.searchObject, this.pagingRuleList.getTotalSize() + 1);
 			}
-			
-			
+
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
@@ -178,12 +178,12 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "AgreementRule";
 		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_DOWNPAYRULE)) {
 			this.ruleModuleName = "DownpaymentRule";
-		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_LMTLINE)){
-			this.ruleModuleName="LimitDefRule";
-		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_INSRULE)){
-			this.ruleModuleName="InsuranceRule";
-		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_BOUNCE)){
-			this.ruleModuleName="BOUNCE";
+		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_LMTLINE)) {
+			this.ruleModuleName = "LimitDefRule";
+		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_INSRULE)) {
+			this.ruleModuleName = "InsuranceRule";
+		} else if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_BOUNCE)) {
+			this.ruleModuleName = "BOUNCE";
 		}else if(ruleModule.getValue().equals(RuleConstants.MODULE_GSTRULE)){
 			this.ruleModuleName="GSTRULE";
 		}
@@ -193,8 +193,14 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		setItemRender(new RuleListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_RuleList_NewRule, "button_RuleList_New" + this.ruleModuleName, true);
 		registerButton(button_RuleList_RuleSearchDialog);
+		
+		if (StringUtils.equals(ruleModule.getValue(), RuleConstants.MODULE_AMORTIZATIONMETHOD)) {
+			this.ruleModuleName = "AmortizationMethodRule"; // FIXME Rule Module name
+			button_RuleList_NewRule.setVisible(false);
+		} else {
+			registerButton(button_RuleList_NewRule, "button_RuleList_New" + this.ruleModuleName, true);
+		}
 
 		registerField("ruleCode", listheader_RuleCode, SortOrder.ASC, ruleCode, sortOperator_ruleCode, Operators.STRING);
 		registerField("ruleCodeDesc", listheader_RuleCodeDesc, SortOrder.NONE, ruleCodeDesc, sortOperator_ruleCodeDesc,
@@ -331,7 +337,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		arg.put("rule", rule);
 		arg.put("ruleListCtrl", this);
 		arg.put("ruleModuleName", this.ruleModuleName);
-//		arg.put("ruleModule", this.ruleModule.getValue());
+		//arg.put("ruleModule", this.ruleModule.getValue());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleDialog.zul", null, arg);

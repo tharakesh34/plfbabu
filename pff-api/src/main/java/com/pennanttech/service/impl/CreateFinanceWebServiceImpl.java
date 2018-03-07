@@ -82,9 +82,15 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-
+			
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
-					financeDetail.getFinScheduleData(), true);
+						financeDetail.getFinScheduleData(), true);
+				if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+					return getErrorMessage(financeDetail.getFinScheduleData());
+				}
+				//validate FinanceDetail Validations
+				financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+				
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}

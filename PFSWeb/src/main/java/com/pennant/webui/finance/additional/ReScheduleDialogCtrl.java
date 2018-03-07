@@ -449,6 +449,19 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					prvSchd = curSchd;
 					continue;
 				}
+				
+				// If Presentment Exists, should not consider for recalculation
+				if (curSchd.getPresentmentId() > 0) {
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
+					
+					prvSchd = curSchd;
+					isPrvShcdAdded = false;
+					continue;
+				}
 
 				if(i == financeScheduleDetails.size() -1){
 					continue;
@@ -761,6 +774,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RESCHD);
 
 		// Service details calling for Schedule calculation
+		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(reScheduleService.doReSchedule(getFinScheduleData(), finServiceInstruction));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);

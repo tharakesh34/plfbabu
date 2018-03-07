@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -92,6 +93,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private boolean 							isPromotion;
 	private boolean 							alwCopyOption;
 	private boolean 							isOverdraft;
+	protected ExtendedCombobox					finDivision;
 
 	/**
 	 * default constructor.<br>
@@ -185,6 +187,24 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCcy.setDescColumn("CcyDesc");
 		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
 		
+		if (isPromotion) {
+		this.finDivision.setMaxlength(8);
+		this.finDivision.setMandatoryStyle(true);
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+		Filter[] finDivisionFilters = new Filter[1];
+		finDivisionFilters[0] = new Filter("AlwPromotion", 1, Filter.OP_EQUAL);
+		this.finDivision.setFilters(finDivisionFilters);
+		}
+		this.finDivision.setMaxlength(8);
+		this.finDivision.setMandatoryStyle(true);
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+		
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
 		this.finCcy.setValue(parameter.getSysParmValue().trim());
 		this.finCcy.setDescription(parameter.getSysParmDescription());
@@ -261,6 +281,8 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true, true));
 		
+		this.finDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true, true));
+		
 		logger.debug("Leaving");
 	}
 	
@@ -273,6 +295,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finType.setConstraint("");
 		this.finCcy.setConstraint("");
+		this.finDivision.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -302,6 +325,14 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// FinCcy
 		try {
 			aFinanceType.setFinCcy(this.finCcy.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Fin Division
+		try {
+			aFinanceType.setLovDescFinDivisionName(this.finDivision.getDescription());
+			aFinanceType.setFinDivision(this.finDivision.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -29,5 +29,9 @@ public interface FinStatementRestService {
 	@POST
 	@Path("/statementService/getForeclosureLetter")
 	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException;
+	
+	@POST
+	@Path("/statementService/getStatement")
+	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException;
 
 }

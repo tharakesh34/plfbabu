@@ -176,8 +176,12 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 
 			if (com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
 				String prefix = loadS3Bucket(fileDownlaod.getConfigId());
+				try {
 
-				downloadFromS3Bucket(prefix, fileDownlaod.getFileName());
+					downloadFromS3Bucket(prefix, fileDownlaod.getFileName());
+				} catch (Exception e) {
+					downloadFromServer(fileDownlaod);
+				}
 			} else {
 				downloadFromServer(fileDownlaod);
 			}

@@ -782,11 +782,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
-		Filter[] filters = new Filter[4];
+		Filter[] filters = new Filter[5];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setConstraint("");
 		this.partnerBankID.setErrorMessage("");
@@ -847,11 +848,13 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	}
 
 	public void doaddFilter(String payMode) {
-		Filter[] filters = new Filter[4];
+		Filter[] filters = new Filter[5];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
+		
 		this.partnerBankID.setFilters(filters);
 
 	}

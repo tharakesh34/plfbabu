@@ -1215,7 +1215,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException,InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

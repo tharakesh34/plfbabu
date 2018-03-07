@@ -100,15 +100,17 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -485,8 +487,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		}
 		if (!onLoadProcess) {
-			accountsetId = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_PAYMTINS,
-					AccountEventConstants.ACCEVENT_PAYMTINS);
+			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
+					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
 			final HashMap<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
 			map.put("acSetID", accountsetId);
@@ -890,6 +892,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		} catch (final DataAccessException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
+		}catch (final InterfaceException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -917,7 +922,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PaymentHeader aPaymentHeader, String tranType) {
+	private boolean doProcess(PaymentHeader aPaymentHeader, String tranType) throws InterfaceException{
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1006,7 +1011,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException{
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

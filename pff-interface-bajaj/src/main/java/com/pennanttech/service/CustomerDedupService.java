@@ -60,7 +60,7 @@ public class CustomerDedupService extends BajajService {
 	private DedupeRequest prepareRequest(DedupCustomerDetail dedupCustomerDetail) {
 
 		DedupeRequest request = new DedupeRequest();
-		//request.setDealId(dealId);
+		request.setDealId(dedupCustomerDetail.getFinReference());
 		request.setOrg("PLF");
 		request.setRequestType("Q");
 		request.setDataSource("E");
@@ -177,6 +177,9 @@ public class CustomerDedupService extends BajajService {
 			for (DemographicDetail detail : response.getDemographicDetails()) {
 				details.add(prepareCustomerDetail(detail));
 			}
+		}
+		if(response.getCustomerStatusResponse()!=null && response.getCustomerStatusResponse().getCustomerStatus()!=null){
+			customerResponse.setErrorDesc(response.getCustomerStatusResponse().getCustomerStatus());
 		}
 
 		customerResponse.setDedupCustomerDetails(details);

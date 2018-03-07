@@ -72,6 +72,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -154,6 +155,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
+			financeMain.setFinReference(financeDetail.getFinReference());
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
 				finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateNewFinRef(false, financeMain)));
 			} else {
@@ -364,17 +366,14 @@ public class CreateFinanceController extends SummaryDetailService {
 				logger.debug("Leaving");
 				return response;
 			}
-
-		} catch (InterfaceException intfcexp) {
-			logger.error("Exception: ", intfcexp);
-			APIErrorHandlerService.logUnhandledException(intfcexp);
+		} 
+		catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(
-					APIErrorHandlerService.getFailedStatus(intfcexp.getErrorCode(), intfcexp.getErrorMessage()));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
-		}
-
+		}  
 		catch (Exception e) {
 			logger.error("Exception: ", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -495,6 +494,13 @@ public class CreateFinanceController extends SummaryDetailService {
 		// process disbursement details
 		doProcessDisbInstructions(financeDetail);
 
+		
+		// set finAssetValue = FinCurrAssetValue when there is no maxDisbCheck
+		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+		if(!finType.isAlwMaxDisbCheckReq()) {
+			financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());//FIXME: override actual finAsset value
+		}
+		
 		//vas Details
 		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);

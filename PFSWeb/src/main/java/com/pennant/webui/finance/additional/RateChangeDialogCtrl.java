@@ -409,10 +409,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			changeRecalType();
 
-			this.fromDateRow.setVisible(false);
-			if("TILLMDT".equals(StringUtils.trimToEmpty(aFinSchData.getFinanceMain().getRecalType()))){
-				this.fromDateRow.setVisible(true);
-			}
 		}else{
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		}
@@ -798,6 +794,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
 					lastPaidDate = curSchd.getSchDate();
 				}
+			}
+			
+			// If presentment Exists not allowed to do Rate Change
+			if(curSchd.getPresentmentId() > 0){
+				lastPaidDate = curSchd.getSchDate();
 			}
 		}
 		

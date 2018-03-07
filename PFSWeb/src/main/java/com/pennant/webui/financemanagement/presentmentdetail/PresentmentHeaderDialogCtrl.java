@@ -197,10 +197,18 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBank.setMandatoryStyle(true);
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
-		this.partnerBank.setFilters(filters);
 		
+		Filter[] filters = null;
+		if (StringUtils.isNotEmpty(presentmentHeader.getEntityCode())) {
+			filters = new Filter[2];
+			filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("Entity", presentmentHeader.getEntityCode(), Filter.OP_EQUAL);
+		} else {
+			filters = new Filter[1];
+			filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
+		}
+		this.partnerBank.setFilters(filters);	
+			
 		this.listBox_Include.setHeight(getListBoxHeight(5));
 		this.listBox_ManualExclude.setHeight(getListBoxHeight(5));
 		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));

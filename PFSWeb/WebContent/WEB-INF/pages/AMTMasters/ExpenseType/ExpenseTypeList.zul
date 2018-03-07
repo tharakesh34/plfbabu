@@ -56,29 +56,36 @@
 							<column width="160px" />
 							<column width="50px" />
 							<column />
-							<column width="130px" />
+							<column width="180px" />
 							<column width="50px" />
 							<column />
 						</columns>
 						<rows>
-							<row visible="false">
+							<row>
 								<label
-									id="label_ExpenseTypeSearch_ExpenceTypeId"
-									value="${c:l('label_ExpenseTypeSearch_ExpenceTypeId.value')}" />
-								<listbox id="sortOperator_expenceTypeId"
-									width="43px" mold="select" rows="1" />
-								<textbox id="expenceTypeId"
-									width="171px" maxlength="19" />
+									id="label_ExpenseTypeSearch_ExpenseTypeCode"
+									value="${c:l('label_ExpenseTypeSearch_ExpenseTypeCode.value')}" />
+								<listbox
+									id="sortOperator_expenceTypeCode" width="43px" mold="select"
+									rows="1" />
+								<textbox id="expenceTypeCode"
+									width="100px" maxlength="8" />
+								<label
+									id="label_ExpenseTypeSearch_ExpenseTypeDesc"
+									value="${c:l('label_ExpenseTypeSearch_ExpenseTypeDesc.value')}" />
+								<listbox
+									id="sortOperator_expenceTypeDesc" width="43px" mold="select"
+									rows="1" />
+								<textbox id="expenceTypeDesc"
+									width="250px" maxlength="200" />
 							</row>
 							<row>
 								<label
-									id="label_ExpenseTypeSearch_ExpenceTypeName"
-									value="${c:l('label_ExpenseTypeSearch_ExpenceTypeName.value')}" />
-								<listbox
-									id="sortOperator_expenceTypeName" width="43px" mold="select"
-									rows="1" />
-								<textbox id="expenceTypeName"
-									width="250px" maxlength="100" />
+									id="label_ExpenseTypeSearch_Active"
+									value="${c:l('label_ExpenseTypeSearch_Active.value')}" />
+								<listbox id="sortOperator_Active"
+									width="43px" mold="select" rows="1" />
+								<checkbox id="active" />
 							</row>
 							<row id="row_AlwWorkflow">
 								<label
@@ -103,11 +110,14 @@
 						height="100%" sizedByContent="true" multiple="false" span="true"
 						emptyMessage="${c:l('listbox.emptyMessage')}">
 						<listhead sizable="true">
-							<listheader id="listheader_ExpenceTypeName"
-								label="${c:l('listheader_ExpenceTypeName.label')}" sort="auto"
+							<listheader id="listheader_ExpenceTypeCode"
+								label="${c:l('listheader_ExpenceTypeCode.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_ExpenceRelated"
-								label="${c:l('listheader_ExpenceRelated.label')}" sort="auto"
+							<listheader id="listheader_ExpenceTypeDesc"
+								label="${c:l('listheader_ExpenceTypeDesc.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Active"
+								label="${c:l('listheader_Active.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"

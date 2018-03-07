@@ -46,13 +46,13 @@ package com.pennant.webui.amtmasters.expensetype.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -70,10 +70,15 @@ public class ExpenseTypeListModelItemRenderer implements ListitemRenderer<Expens
 	public void render(Listitem item, ExpenseType expenseType, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(expenseType.getExpenceTypeName());
+		lc = new Listcell(expenseType.getExpenseTypeCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(expenseType.getExpenseFor(),
-				PennantStaticListUtil.getExpenseForList()));
+		lc = new Listcell(expenseType.getExpenseTypeDesc());
+		lc.setParent(item);
+		lc = new Listcell();
+		Checkbox check = new Checkbox();
+		check.setDisabled(true);
+		check.setChecked(expenseType.isActive());
+		lc.appendChild(check);
 		lc.setParent(item);
 		lc = new Listcell(expenseType.getRecordStatus());
 		lc.setParent(item);

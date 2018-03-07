@@ -94,6 +94,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listheader listheader_Status;
 	protected Listheader listheader_MandateType;
 	protected Listheader listheader_Schdate;
+	protected Listheader listheader_Entity;
 
 	// checkRights
 	protected Button button_PresentmentHeaderList_NewPresentmentHeader;
@@ -107,6 +108,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Datebox schdate; 
 	protected Datebox presentmentDate;
 	protected Textbox bankCode;
+	protected ExtendedCombobox entityCode;
 	
 	protected Listbox sortOperator_Reference;
 	protected Listbox sortOperator_PresentmentDate;
@@ -115,6 +117,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_MandateType;
 	protected Listbox sortOperator_Schdate;
 	protected Listbox sortOperator_BankCode;
+	protected Listbox sortOperator_Entity;
 	
 	private transient PresentmentHeaderService presentmentHeaderService;
 
@@ -165,6 +168,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		doSetFieldProperties();
 		registerButton(button_PresentmentHeaderList_PresentmentHeaderSearch);
 		registerField("reference", listheader_Reference, SortOrder.NONE, reference, sortOperator_Reference, Operators.STRING);
+		registerField("entityCode", listheader_Entity, SortOrder.NONE, entityCode, sortOperator_Entity,Operators.STRING);
 		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate, sortOperator_PresentmentDate, Operators.DATE);
 		registerField("bankCode",bankCode,SortOrder.NONE,sortOperator_BankCode,Operators.STRING);
 		registerField("bankName", listheader_BankCode, SortOrder.NONE);
@@ -192,6 +196,13 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		
+		this.entityCode.setModuleName("Entity");
+		this.entityCode.setMandatoryStyle(false);
+		this.entityCode.setDisplayStyle(2);
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 		
 		fillComboBox(this.status, "", PennantStaticListUtil.getPresentmentBatchStatusList(), "");
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");

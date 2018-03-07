@@ -769,6 +769,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Schedule Calculator method calling
+		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction));
 		
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

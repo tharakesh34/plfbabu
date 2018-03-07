@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -192,6 +191,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	private transient LimitDetailService	limitDetailService;
 	private transient PagedListService		pagedListService;
 	int										ccyFormat			= 0;
+	private boolean							validationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -721,12 +721,14 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 */
 	public void doWriteComponentsToBean(LimitHeader aLimitHeader) {
 		logger.debug("Entering");
+		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		if (aLimitHeader.isNewRecord()) {
 			aLimitHeader.setNewRecord(true);
 			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitHeader.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
+		
 		if (custDftBranchCode.getValue() != null)
 			aLimitHeader.setResponsibleBranch(custDftBranchCode.getValue());
 		else {
@@ -742,7 +744,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		// Currency
 		try {
 			if (this.currency.getValue().equals("")) {
-				if (active.isChecked()) {
+				if (validationReq && active.isChecked()) {
 					throw new WrongValueException(this.currency, Labels.getLabel("FIELD_IS_MAND",
 							new String[] { Labels.getLabel("label_LimitHeaderDialog_Currency.value") }));
 				} else {
@@ -763,7 +765,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		// Review Date
 		try {
 			aLimitHeader.setLimitRvwDate(this.reviewDate.getValue());
-			if (reviewDate.getValue() != null && expiryDate.getValue() != null) {
+			if (validationReq && (reviewDate.getValue() != null && expiryDate.getValue() != null)) {
 				if (reviewDate.getValue().after(expiryDate.getValue())) {
 					wve.add(new WrongValueException(reviewDate, "Review Date should be before the Expiry Date"));
 				}
@@ -775,7 +777,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 		try {
 
-			if (this.limitStructureCode.getValue().equals("")) {
+			if (validationReq && this.limitStructureCode.getValue().equals("")) {
 				throw new WrongValueException(this.limitStructureCode, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_LimitHeaderDialog_LimitStructureCode.value") }));
 			} else {
@@ -787,7 +789,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		// Limit filter check
 		if (gb_RuleBased.isVisible()) {
 			try {
-				if (this.limiDialogRule.getValue().equals("")) {
+				if (validationReq && this.limiDialogRule.getValue().equals("")) {
 					throw new WrongValueException(this.limiDialogRule, Labels.getLabel("FIELD_IS_MAND",
 							new String[] { Labels.getLabel("label_LimitDetailsList_RuleCode.value") }));
 				} else {
@@ -810,9 +812,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 		ccyFormat = CurrencyUtil.getFormat(aLimitHeader.getLimitCcy());
-		validateLimitSetup(aLimitHeader, wve);
+		
+		if (validationReq) {
+			validateLimitSetup(aLimitHeader, wve);
+		}
+		
 		if (wve.isEmpty()) {
 			setCustomerLimitList(aLimitHeader);
 		}
@@ -834,21 +839,20 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
+
 		doClearMessage();
-		// Expiry Date
+
+		// ExpiryDate
 		if (!this.expiryDate.isReadonly() && active.isChecked()) {
-			this.expiryDate.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
+			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
 		}
 		// Review Date
 		if (!this.reviewDate.isReadonly() && active.isChecked()) {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, 1); // to get previous year add -1
-			Date nextYear = cal.getTime();
-			this.reviewDate.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, false));
+
+			Date appDate = DateUtility.getAppDate();
+			Date nextYear = DateUtility.addYears(appDate, 1);
+			this.reviewDate.setConstraint(new PTDateValidator(Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, true));
 		}
-		currency.setMandatoryStyle(active.isChecked());
 
 		logger.debug("Leaving");
 	}
@@ -984,9 +988,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				expryDate.setParent(lc);
 
 				expryDate.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
-				if (!expryDate.isReadonly() && active.isChecked()) {
+				if (active.isChecked()) {
 					expryDate.setConstraint(new PTDateValidator(
-							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
+							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
 				}
 				lc.setParent(item);
 				//=================
@@ -1161,25 +1165,35 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 */
 	public void doSave() throws InterruptedException, DatatypeConfigurationException {
 		logger.debug("Entering");
+		
 		final LimitHeader aLimitHeader = new LimitHeader();
 		BeanUtils.copyProperties(getLimitHeader(), aLimitHeader);
 		boolean isNew = false;
+		validationReq = false;
+		
 		if (isWorkFlowEnabled()) {
 			aLimitHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitHeader.getNextTaskId(), aLimitHeader);
+		}
+		
+		// force validation, if on, than execute by component.getValue()
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aLimitHeader.getRecordType()) && isValidation()
+				&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+				&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+				&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+			
+			validationReq = true;
+			doSetValidation();
 		}
 
 		// *************************************************************
 		// force validation, if on, than execute by component.getValue()
 		// *************************************************************
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(aLimitHeader.getRecordType()) && isValidation()) {
-			doSetValidation();
 			// fill the LimitHeader object with the components data
 			doWriteComponentsToBean(aLimitHeader);
 		}
-		// Write the additional validations as per below example
-		// get the selected branch object from the listbox
-		// Do data level validations here
+		
 		isNew = aLimitHeader.isNew();
 		String tranType = "";
 
@@ -1207,6 +1221,18 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		try {
 			if (doProcess(aLimitHeader, tranType)) {
 				refreshList();
+
+				// Confirmation message
+				String reference = "";
+				if (StringUtils.isNotBlank(aLimitHeader.getCustCIF())) {
+					reference = aLimitHeader.getCustCIF();
+				} else {
+					reference = aLimitHeader.getCustGrpCode();
+				}
+				String msg = PennantApplicationUtil.getSavingStatus(aLimitHeader.getRoleCode(),aLimitHeader.getNextRoleCode(), 
+						reference, " Limit Setup ", aLimitHeader.getRecordStatus());
+				Clients.showNotification(msg,  "info", null, null, -1);
+
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {

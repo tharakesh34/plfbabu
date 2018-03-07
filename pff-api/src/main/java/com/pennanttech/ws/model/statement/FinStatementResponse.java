@@ -12,7 +12,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "customer", "finance", "returnStatus" })
+@XmlType(propOrder = { "customer", "finance","finReference","docImage", "returnStatus" })
 public class FinStatementResponse {
 	@XmlElement
 	private CustomerDetails		customer;
@@ -20,6 +20,11 @@ public class FinStatementResponse {
 	private List<FinanceDetail>	finance	= null;
 	@XmlElement
 	private WSReturnStatus		returnStatus;
+	@XmlElement
+	private String 				finReference;
+	@XmlElement(name="docContent")
+	private byte[] docImage;
+
 
 	public CustomerDetails getCustomer() {
 		return customer;
@@ -43,5 +48,20 @@ public class FinStatementResponse {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
 	}
 }

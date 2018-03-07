@@ -53,15 +53,6 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder list = new StringBuilder();
-
-		for (FinAdvancePayments fa : disbursements) {
-			if (list.length() > 0) {
-				list.append(",");
-			}
-			list.append(fa.getPaymentId());
-		}
-
 		generateRequest(finType, userId, disbursements, fileNamePrefix);
 		logger.debug(Literal.LEAVING);
 	}

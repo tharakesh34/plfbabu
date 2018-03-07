@@ -120,6 +120,7 @@ public class PTListReportUtils implements Serializable {
 			
 			//Set Report Images to parameter Fields
 			parameters.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			parameters.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 			parameters.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");

@@ -11,6 +11,7 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
@@ -18,15 +19,34 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
 import com.pennanttech.pennapps.core.scheduler.Job;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.external.AbstractInterface;
+import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.PresentmentProcess;
 
 public class BajajJobScheduler extends AbstractJobScheduler {
 	private static final Logger logger = Logger.getLogger(BajajJobScheduler.class);
 
 	protected DataSource dataSource;
 	private DataEngineConfig datEngine = null;
+		
+	@Autowired
+	protected DataSource		finOneDatasource;
+	
+	@Autowired
+	private MandateProcess mandateProcess;
+	
+	@Autowired
+	private PresentmentProcess presementProcess;
+	
+	@Autowired
+	private AbstractInterface abstractInterface;
 
 	public BajajJobScheduler() {
 		super();
+
+		abstractInterface = (AbstractInterface)mandateProcess;
+		abstractInterface = (AbstractInterface)presementProcess;
+
 	}
 
 	@Override
@@ -38,10 +58,14 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		impsDisbursementRespJob();
 		posidexCustomerUpdateRespJob();
 		masterExtractJob();
-		CustomerCrudOpretion();
+		customerCrudOpretion();
+		
+		
+		
 
 		logger.debug(Literal.LEAVING);
 	}
+	
 
 	private void masterExtractJob() {
 		logger.debug(Literal.ENTERING);
@@ -163,7 +187,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void CustomerCrudOpretion() {
+	private void customerCrudOpretion() {
 		logger.debug(Literal.ENTERING);
 
 		Configuration configuration = loadConfiguration("CUSTOMER_CURD_OPERATIONS");

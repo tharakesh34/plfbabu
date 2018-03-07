@@ -68,8 +68,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
+import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -307,6 +309,19 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 				}
 			}
 			
+			List<IRRFinanceType> irrFinTypes = sourceFin.getIrrFinanceTypeList();
+			if (irrFinTypes != null && !irrFinTypes.isEmpty()) {
+				aFinanceType.setIrrFinanceTypeList(new ArrayList<IRRFinanceType>());
+				for (IRRFinanceType irrFinanceType : irrFinTypes) {
+					IRRFinanceType aIRRFinType = new IRRFinanceType();
+					aIRRFinType.setFinType(irrFinanceType.getFinType());
+					aIRRFinType.setIRRID(irrFinanceType.getIRRID());
+					aIRRFinType.setVersion(1);
+					aIRRFinType.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceType.getIrrFinanceTypeList().add(aIRRFinType);
+				}
+			}
+			
 			List<FinTypeAccounting> fintypeAccountingList = sourceFin.getFinTypeAccountingList();
 			if (fintypeAccountingList != null && !fintypeAccountingList.isEmpty()) {
 				aFinanceType.setFinTypeAccountingList(new ArrayList<FinTypeAccounting>());
@@ -337,6 +352,18 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					finTypePartnerBank.setRecordStatus("");
 					finTypePartnerBank.setRecordType(PennantConstants.RCD_ADD);
 					aFinanceType.getFinTypePartnerBankList().add(finTypePartnerBank);
+				}
+			}
+			//FinType Expenses
+			List<FinTypeExpense> finTypeExpensesList = sourceFin.getFinTypeExpenseList();
+			if (finTypeExpensesList != null && !finTypeExpensesList.isEmpty()) {
+				aFinanceType.setFinTypeExpenseList(new ArrayList<FinTypeExpense>());
+				for (FinTypeExpense finTypeExpense : finTypeExpensesList) {
+					finTypeExpense.setId(Long.MIN_VALUE);
+					finTypeExpense.setVersion(1);
+					finTypeExpense.setRecordStatus("");
+					finTypeExpense.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceType.getFinTypeExpenseList().add(finTypeExpense);
 				}
 			}
 		}

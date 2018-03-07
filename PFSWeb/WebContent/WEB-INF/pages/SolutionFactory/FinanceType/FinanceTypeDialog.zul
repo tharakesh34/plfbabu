@@ -542,6 +542,38 @@
 													value="${c:l('label_FinanceTypeDialog_ProfitCenter.value')}" />
 												<extendedcombobox
 													id="profitCenter" />
+												<label
+													id="label_FinanceTypeDialog_DeveloperFinance"
+													value="${c:l('label_FinanceTypeDialog_DeveloperFinance.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="developerFinance"/>
+												</hbox>
+											</row>
+											<row id="row_Custoffunds"
+												visible="false">
+												<label
+													id="label_FinanceTypeDialog_CostOfFunds" visible="false"
+													value="${c:l('label_FinanceTypeDialog_CostOfFunds.value')}" />
+												<hbox
+													id="hb_CostOfFunds" visible="false">
+													<extendedcombobox
+														id="costOfFunds" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_AlwIRRDetails"
+													value="${c:l('label_FinanceTypeDialog_AlwIRRDetails.value')}" />
+												<hbox id="hbox_IRRDetails">
+													<space spacing="2px"
+														sclass="mandatory"/>
+														<textbox
+															id="alwdIRRDetails" width="170px" readonly="true" />
+														<button
+															id="btnAlwIRRDetails"
+															image="/images/icons/LOVSearch.png" />
+												</hbox>
 											</row>
 										</rows>
 									</grid>

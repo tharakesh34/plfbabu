@@ -109,7 +109,7 @@
 	<!-- Loan Services gateway -->
 	<!-- rest container -->
 	<bean id="wsFinInstructionService" class="com.pennanttech.service.impl.FinInstructionServiceImpl" />
-	<jaxrs:server id="finInstructionRESTService" address="/finInstructionRest">
+	<jaxrs:server id="finInstructionRESTService" address="/finInstructionRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsFinInstructionService" />
 		</jaxrs:serviceBeans>
@@ -136,7 +136,7 @@
 	<!-- FinanceType API gateway -->
 	<bean id="wsFinanceTypeService" class="com.pennanttech.service.impl.FinanceTypeWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="financeTypeRestService" address="/financeTypeRest">
+	<jaxrs:server id="financeTypeRestService" address="/financeTypeRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsFinanceTypeService" />
 		</jaxrs:serviceBeans>
@@ -163,7 +163,7 @@
 	<bean id="wsPromotionTypeService"
 		class="com.pennanttech.service.impl.PromotionTypeWebServiceImpl" />
 	<!-- Rest container -->
-	<jaxrs:server id="promotionTypeRestService" address="/promotionTypeRest">
+	<jaxrs:server id="promotionTypeRestService" address="/promotionTypeRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsPromotionTypeService" />
 		</jaxrs:serviceBeans>
@@ -218,7 +218,7 @@
 	<bean id="wsMandateServices" class="com.pennanttech.service.impl.MandateWebServiceImpl" />
 
 	<!-- rest container -->
-	<jaxrs:server id="mandateRestService" address="/mandateRest">
+	<jaxrs:server id="mandateRestService" address="/mandateRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsMandateServices" />
 		</jaxrs:serviceBeans>
@@ -244,7 +244,7 @@
 	<!-- Limits API gateway -->
 	<bean id="wsLimitService" class="com.pennanttech.service.impl.LimitWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="limitRestService" address="/limitRest">
+	<jaxrs:server id="limitRestService" address="/limitRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsLimitService" />
 		</jaxrs:serviceBeans>
@@ -270,7 +270,7 @@
 	<!-- Beneficiary API gateway -->
 	<bean id="wsBeneficiaryService" class="com.pennanttech.service.impl.BeneficiaryWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="beneficiaryRestService" address="/beneficiaryRest">
+	<jaxrs:server id="beneficiaryRestService" address="/beneficiaryRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsBeneficiaryService" />
 		</jaxrs:serviceBeans>
@@ -323,7 +323,7 @@
 	<!-- FinFlag API gateway -->
 	<bean id="wsFinanceFlagsService" class="com.pennanttech.service.impl.FinanceFlagsWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="flagRestService" address="/flagRest">
+	<jaxrs:server id="flagRestService" address="/flagRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsFinanceFlagsService" />
 		</jaxrs:serviceBeans>
@@ -349,7 +349,7 @@
 	<!-- Rest container for SecRoles -->
 	<bean id="wsSecRolessService" class="com.pennanttech.service.impl.SecRolesWebServiceImpl" />
 
-	<jaxrs:server id="secRolesRestService" address="/secRolesRest">
+	<jaxrs:server id="secRolesRestService" address="/secRolesRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsSecRolessService" />
 		</jaxrs:serviceBeans>
@@ -403,7 +403,7 @@
 	<!-- Statement API gateway -->
 	<bean id="wsStatementService" class="com.pennanttech.service.impl.FinStatementWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="statementRestService" address="/statementRest">
+	<jaxrs:server id="statementRestService" address="/statementRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsStatementService" />
 		</jaxrs:serviceBeans>
@@ -429,7 +429,7 @@
 <!-- VAS API gateway -->
 	<bean id="wsVASService" class="com.pennanttech.service.impl.VASWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="vasRestService" address="/vasRest">
+	<jaxrs:server id="vasRestService" address="/vasRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsVASService" />
 		</jaxrs:serviceBeans>
@@ -455,7 +455,7 @@
 	<!-- Fee Posting API gateway -->
 	<bean id="wsFeePostingService" class="com.pennanttech.service.impl.FeePostingWebServiceImpl" />
 	<!-- rest container -->
-	<jaxrs:server id="feePostingRestService" address="/feePostingRest">
+	<jaxrs:server id="feePostingRestService" address="/feePostingRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsFeePostingService" />
 		</jaxrs:serviceBeans>
@@ -481,7 +481,7 @@
 	<!-- GET System Date API gateway -->
 	<bean id="wsSystemDateService" class="com.pennanttech.service.impl.SystemDateWebServiceImpl"/>
 	<!-- rest container -->
-	<jaxrs:server id="systemDateRestService" address="/systemDateRest">
+	<jaxrs:server id="systemDateRestService" address="/systemDateRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsSystemDateService"/>
 		</jaxrs:serviceBeans>
@@ -509,7 +509,7 @@
 	<bean id="wsExtendedFieldDetailService"
 		class="com.pennanttech.service.impl.ExtendedFieldDetailWebServiceImpl" />
 
-	<jaxrs:server id="extendedFieldDetailRestService" address="/extendedFieldDetailRest">
+	<jaxrs:server id="extendedFieldDetailRestService" address="/extendedFieldDetailRest" publish="false">
 		<jaxrs:serviceBeans>
 			<ref bean="wsExtendedFieldDetailService" />
 		</jaxrs:serviceBeans>

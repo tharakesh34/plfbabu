@@ -289,6 +289,11 @@
 										checked="false" />
 								</hlayout>
 								</row>
+								<row>
+   						 	<label id="label_Entity"
+   						 		value="${c:l('label_PartnerBankDialog_Entity.value')}" />
+   						 	<extendedcombobox id="entity" />
+   						 </row>
 						</rows>
 					</grid>
 				</groupbox>

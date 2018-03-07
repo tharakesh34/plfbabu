@@ -78,7 +78,7 @@
 											sort="false" hflex="min" />
 										<listheader
 											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											hflex="min" />
+											hflex="min"/>
 										<listheader
 											label="${c:l('listheader_RecordType.label')}" sort="false"
 											hflex="min" />

@@ -260,6 +260,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		}
 
 		reportArgumentsMap.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		reportArgumentsMap.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		reportArgumentsMap.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("searchCriteria", "");
 		String reportName=reportConfiguration.getReportJasperName();//This will come dynamically

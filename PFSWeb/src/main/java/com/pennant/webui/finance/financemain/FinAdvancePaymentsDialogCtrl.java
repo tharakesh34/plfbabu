@@ -1673,6 +1673,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+		//filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
@@ -1752,6 +1753,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+		//filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 
 	}

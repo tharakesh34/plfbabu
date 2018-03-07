@@ -92,6 +92,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			FirstRepayAmt		= BigDecimal.ZERO;
 	private BigDecimal			finalRepayAmt		= BigDecimal.ZERO;
 	private int					curODDays			= 0;
+	private int					actualODDays		= 0;
 	private int					dueBucket			= 0;
 
 	private Date				firstODDate;
@@ -1290,6 +1291,14 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setDueBucket(int dueBucket) {
 		this.dueBucket = dueBucket;
+	}
+	
+	public int getActualODDays() {
+		return actualODDays;
+	}
+
+	public void setActualODDays(int actualODDays) {
+		this.actualODDays = actualODDays;
 	}
 
 }

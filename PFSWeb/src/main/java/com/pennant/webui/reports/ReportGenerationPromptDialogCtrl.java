@@ -197,6 +197,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	
 	private String moduleType;
 	
+	private boolean isEntity = false;
+	private String entityValue = "";
+	
 	public ReportGenerationPromptDialogCtrl() {
 		super();
 	}
@@ -229,6 +232,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			if (arguments.containsKey("dialogWindow")) {
 				dialogWindow = (Window) arguments.get("dialogWindow");
 				
+			}
+			
+			if (arguments.containsKey("entity")) {
+				if ("Y".equalsIgnoreCase(getArgument("entity"))) {
+					isEntity = true;
+				}
 			}
 
 			if (arguments.containsKey("ReportConfiguration")) {
@@ -886,6 +895,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									}
 									searchCriteriaDesc.append(aReportFieldsDetails.getFieldLabel() + " "
 											+ filterDescMap.get(filter.trim()) + " ");
+									
+									if (this.isEntity && StringUtils.equalsIgnoreCase("EntityCode", aReportFieldsDetails.getFieldDBName())
+											&& StringUtils.equalsIgnoreCase("Entity", aReportFieldsDetails.getModuleName())) {
+										this.entityValue = textbox.getValue();
+									}
+									
 								} else {
 									String inCondition = getINCondition(textbox.getValue());
 									whereCondition.append(aReportFieldsDetails.getFieldDBName() + " in " + inCondition);
@@ -1189,6 +1204,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									throw new WrongValueException(fromDateBox,
 											Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
 								}
+							}else if (StringUtils.equals("menu_Item_PresentmentStatusReport", reportMenuCode)){//FIXME
+								int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
+								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),((Datebox) toDateBox).getValue()) > diffentDays) {
+									throw new WrongValueException(toDateBox,Labels.getLabel("label_Difference_between_days")+" "+ diffentDays);
+								}
+							
 							}
 							if (!excludeDates) {
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
@@ -1281,11 +1302,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 
 		}
+		
 		if (!isWhereCondition && wve.size() == 0) {
 			return reportSearchTemplateList;
 		}
 
 		doRemoveValidation();
+		
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			/* if any Exception Occurs make password and new password Fields empty */
@@ -1302,7 +1325,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (!"where".equals(whereCondition.toString().trim()) && !(saticValuesWhereCondition.length() == 0)) {
 			whereCondition.append(" and " + saticValuesWhereCondition.toString());
 		}
+		
 		logger.debug("where Condition :" + whereCondition.toString());
+		
 		return whereCondition;
 	}
 
@@ -1571,6 +1596,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1604,6 +1630,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1641,8 +1668,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (!reportConfiguration.isPromptRequired()) {
 			reportArgumentsMap.put("whereCondition", "");
 		}
-
-		reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		
+		if (this.isEntity) {
+			String path = PathUtil.REPORTS_IMAGE_CLIENT_PATH + PathUtil.REPORTS_IMAGE_CLIENT_IMAGE + this.entityValue + PathUtil.REPORTS_IMAGE_PNG_FORMAT;
+			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(path));
+		} else {
+			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		}
+		
+		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
 
@@ -2208,6 +2242,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			doShowReport("where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString(),
 					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), fromDate, toDate);
+			
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_DelinquencyVariance")) {
 			String fromDate = null;
 			String toDate = null;
@@ -2414,9 +2449,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				} else if (getParentFlag() != null && aReportFieldsDetails.getFilterFileds() != null) {
 					valuestextBox.setValue("");
 				}
-				  Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  valuestextBox.getValue(), filters, searchValue);
-				  
-				  if (dataObject instanceof String) {
+				Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl, button.getId(), valuestextBox.getValue(), filters, searchValue);
+
+				if (dataObject instanceof String) {
 					valuestextBox.setValue(dataObject.toString());
 					labelstextBox.setValue("");
 					doClearFields(aReportFieldsDetails);
@@ -2437,6 +2472,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						labelstextBox.setTooltiptext(label);
 					}
 				}
+				
+				if (this.isEntity && StringUtils.equalsIgnoreCase("EntityCode", aReportFieldsDetails.getFieldDBName())
+						&& StringUtils.equalsIgnoreCase("Entity", aReportFieldsDetails.getModuleName())) {
+					this.entityValue = valuestextBox.getValue();
+				}
+				
 				valueMap.put(aReportFieldsDetails.getFieldDBName(), valuestextBox.getValue());
 			}
 		} catch (Exception e) {

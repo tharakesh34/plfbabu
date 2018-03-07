@@ -19,23 +19,29 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" 
+							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnEdit" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnDelete" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnSave" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnCancel" 
-								tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnNotes" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -48,13 +54,15 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" 
+							<button id="btnHelp" visible="false"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -71,24 +79,49 @@
 						<rows>
 							<row visible="true">
 								<label
-									id="label_ExpenseTypeDialog_ExpenceTypeName"
-									value="${c:l('label_ExpenseTypeDialog_ExpenceTypeName.value')}" />
+									id="label_ExpenseTypeDialog_ExpenseTypeCode"
+									value="${c:l('label_ExpenseTypeDialog_ExpenseTypeCode.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="expenceTypeName"
-										maxlength="100" width="250px" />
+									<uppercasebox id="expenseTypeCode"
+										width="100px" />
 								</hbox>
 							</row>
 							<row visible="true">
 								<label
-									id="label_ExpenseTypeDialog_ExpenceFor"
-									value="${c:l('label_ExpenseTypeDialog_ExpenceFor.value')}" />
+									id="label_ExpenseTypeDialog_ExpenseTypeDesc"
+									value="${c:l('label_ExpenseTypeDialog_ExpenseTypeDesc.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<combobox id="cb_expenceFor"
-										maxlength="100" width="250px" />
+									<textbox id="expenseTypeDesc"
+										width="250px" />
+								</hbox>
+							</row>
+							<row id="row_AmzTax">
+								<label
+									id="label_ExpenseTypeDialog_AmortReq"
+									value="${c:l('label_ExpenseTypeDialog_AmortReq.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="amortReq" checked="true"/>
+								</hbox>
+								<label
+									id="label_ExpenseTypeDialog_TaxApplicable"
+									value="${c:l('label_ExpenseTypeDialog_TaxApplicable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxApplicable" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_ExpenseTypeDialog_Active"
+									value="${c:l('label_ExpenseTypeDialog_Active.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<checkbox id="active" />
 								</hbox>
 							</row>
 						</rows>

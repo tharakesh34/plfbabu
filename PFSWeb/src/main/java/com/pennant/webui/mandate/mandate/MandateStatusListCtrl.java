@@ -45,6 +45,7 @@ package com.pennant.webui.mandate.mandate;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -108,6 +109,13 @@ public class MandateStatusListCtrl extends GFCBaseCtrl<MandateStatus> implements
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
 		List<MandateStatus> list = pagedListService.getBySearchObject(jdbcSearchObject);
+		list.sort(new Comparator<MandateStatus>() {
+			@Override
+			public int compare(MandateStatus obj1, MandateStatus obj2) {
+				
+				return obj1.getChangeDate().compareTo(obj2.getChangeDate());
+			}
+		});
 		doFillListbox(list);
 		this.window_MandateStatusList.doModal();
 

@@ -533,7 +533,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws WrongValueException, InterruptedException {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
 
 		//Duplicate Creation of Object
@@ -1344,9 +1344,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
+	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws Exception {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -1446,9 +1446,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

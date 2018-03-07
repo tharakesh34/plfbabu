@@ -80,7 +80,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="entityCode"
+									<uppercasebox id="entityCode"
 										maxlength="8" width="120px" />
 								</hbox>
 								<label id="label_EntityDesc"
@@ -176,6 +176,13 @@
 								<label id="label_PinCode"
 									value="${c:l('label_EntityDialog_PinCode.value')}" />
 								<extendedcombobox id="pinCode" />
+								<label
+									id="label_EntityDialog_CINNumber"
+									value="${c:l('label_EntityDialog_CINNumber.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"   />
+									<uppercasebox id="cINNumber" width="180px" />
+								</hbox>
 							</row>
 							<row>
 								<label id="label_Active"

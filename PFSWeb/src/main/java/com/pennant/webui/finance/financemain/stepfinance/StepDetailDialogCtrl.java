@@ -222,12 +222,12 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 						BigDecimal tenurePerc = (new BigDecimal(stepPolicy.getInstallments()).multiply(new BigDecimal(100))).divide(new BigDecimal(totalTerms), 2, RoundingMode.HALF_DOWN);
 						stepPolicy.setTenorSplitPerc(tenurePerc);
 						sumTenurePerc = sumTenurePerc.add(tenurePerc);
-						if(i == (finStepPolicyList.size()-1)){
+						sumInstallments = sumInstallments + stepPolicy.getInstallments();
+						if(i == (finStepPolicyList.size()-1) && sumInstallments == totalTerms){
 							if(sumTenurePerc.compareTo(new BigDecimal(100)) != 0){
 								stepPolicy.setTenorSplitPerc(stepPolicy.getTenorSplitPerc().add(new BigDecimal(100)).subtract(sumTenurePerc));
 							}
 						}
-						sumInstallments = sumInstallments + stepPolicy.getInstallments();
 						
 					}else if(stepPolicy.getTenorSplitPerc().compareTo(BigDecimal.ZERO) > 0){
 						
@@ -363,11 +363,10 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 				
-				//FIXME Temporary fix for bajaj Release - Bug ID : 16637
-				/*lc = new Listcell();
-				lc.setLabel(PennantAppUtil.amountFormate(financeStepPolicyDetail.getSteppedEMI(), getFinanceMain().getLovDescFinFormatter()));
+				lc = new Listcell();
+				lc.setLabel(PennantApplicationUtil.amountFormate(financeStepPolicyDetail.getSteppedEMI(), ccyFormatter));
 				lc.setParent(listItem);
-				lc.setStyle("text-align:right;");*/
+				lc.setStyle("text-align:right;");
 				
 				tenorPerc = tenorPerc.add(financeStepPolicyDetail.getTenorSplitPerc());
 				totInstallments = totInstallments + financeStepPolicyDetail.getInstallments();

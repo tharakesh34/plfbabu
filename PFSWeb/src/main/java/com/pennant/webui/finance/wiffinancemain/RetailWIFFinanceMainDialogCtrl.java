@@ -4694,7 +4694,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws JaxenException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws JaxenException, IllegalAccessException, InvocationTargetException,InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

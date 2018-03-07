@@ -62,6 +62,14 @@ public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements
 				String reference = apiLogDetail.getReference();
 				apiLogDetail.setReference(reference.substring(0, 18));
 			}
+			if (StringUtils.isNotBlank(apiLogDetail.getRequest()) && apiLogDetail.getRequest().length() > 2000) {
+				String reference = apiLogDetail.getRequest();
+				apiLogDetail.setRequest(reference.substring(0, 2000));
+			}
+			if (StringUtils.isNotBlank(apiLogDetail.getResponse()) && apiLogDetail.getResponse().length() > 2000) {
+				String reference = apiLogDetail.getResponse();
+				apiLogDetail.setResponse(reference.substring(0, 2000));
+			}
 		}
 	}
 

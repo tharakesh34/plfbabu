@@ -45,7 +45,6 @@ package com.pennant.webui.amtmasters.expensetype;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -56,55 +55,54 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.amtmasters.ExpenseTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMaster/ExpenseType/expenseTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/AMTMaster/ExpenseType/expenseTypeDialog.zul file.
  */
 public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
+	private static final long							serialVersionUID	= 1L;
+	private static final Logger							logger				= Logger
 			.getLogger(ExpenseTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ExpenseTypeDialog; // autowired
-	protected Textbox expenceTypeName; // autowired
-	protected Combobox cb_expenceFor; // autowired
+	protected Window									window_ExpenseTypeDialog;												// autowired
+	protected Uppercasebox								expenseTypeCode;														// autowired
+	protected Textbox									expenseTypeDesc;														// autowired
+	protected Checkbox									amortReq;																// autowired
+	protected Checkbox									taxApplicable;															// autowired
+	protected Checkbox									active;																	// autowired
+	protected Row										row_AmzTax;
 
 	// not auto wired vars
-	private ExpenseType expenseType; // overhanded per param
-	private transient ExpenseTypeListCtrl expenseTypeListCtrl; // overhanded per
-																// param
+	private ExpenseType									expenseType;															// overhanded per param
+	private transient ExpenseTypeListCtrl				expenseTypeListCtrl;													// overhanded per
+																
 
-	private transient boolean validationOn;
+	private transient boolean							validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient ExpenseTypeService expenseTypeService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
-	private List<ValueLabel> expenseForList = PennantStaticListUtil
-			.getExpenseForList();
+	private transient ExpenseTypeService				expenseTypeService;
+	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -121,9 +119,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected ExpenseType object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected ExpenseType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,7 +133,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 
 		try {
 			/* set components visible dependent of the users rights */
-			doCheckRights();
+			
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("expenseType")) {
@@ -150,14 +147,12 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 				setExpenseType(null);
 			}
 
-			doLoadWorkFlow(this.expenseType.isWorkflow(),
-					this.expenseType.getWorkflowId(),
+			doLoadWorkFlow(this.expenseType.isWorkflow(), this.expenseType.getWorkflowId(),
 					this.expenseType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ExpenseTypeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ExpenseTypeDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -166,15 +161,13 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 			// or
 			// delete expenseType here.
 			if (arguments.containsKey("expenseTypeListCtrl")) {
-				setExpenseTypeListCtrl((ExpenseTypeListCtrl) arguments
-						.get("expenseTypeListCtrl"));
+				setExpenseTypeListCtrl((ExpenseTypeListCtrl) arguments.get("expenseTypeListCtrl"));
 			} else {
 				setExpenseTypeListCtrl(null);
 			}
-
+			doCheckRights();
 			// set Field Properties
 			doSetFieldProperties();
-			fillComboBox(cb_expenceFor, "", expenseForList, "");
 			doShowDialog(getExpenseType());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -188,8 +181,9 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
-		this.expenceTypeName.setMaxlength(100);
+
+		this.expenseTypeCode.setMaxlength(8);
+		this.expenseTypeDesc.setMaxlength(200);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -207,22 +201,15 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_ExpenseTypeDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_ExpenseTypeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_ExpenseTypeDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_ExpenseTypeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -319,9 +306,17 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 */
 	public void doWriteBeanToComponents(ExpenseType aExpenseType) {
 		logger.debug("Entering");
-		this.expenceTypeName.setValue(aExpenseType.getExpenceTypeName());
-		fillComboBox(this.cb_expenceFor, aExpenseType.getExpenseFor(),
-				PennantStaticListUtil.getExpenseForList(), "");
+
+		if (aExpenseType.isNewRecord()) {
+			this.active.setChecked(true);
+			this.amortReq.setChecked(true);
+		} else {
+			this.active.setChecked(aExpenseType.isActive());
+			this.amortReq.setChecked(aExpenseType.isAmortReq());
+		}
+		this.expenseTypeCode.setValue(aExpenseType.getExpenseTypeCode());
+		this.expenseTypeDesc.setValue(aExpenseType.getExpenseTypeDesc());
+		this.taxApplicable.setChecked(aExpenseType.isTaxApplicable());
 		this.recordStatus.setValue(aExpenseType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -337,18 +332,41 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		// Expense Code
 		try {
-			aExpenseType.setExpenceTypeName(this.expenceTypeName.getValue());
+			aExpenseType.setExpenseTypeCode(this.expenseTypeCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		// Expense Description
 		try {
-			aExpenseType.setExpenseFor(this.cb_expenceFor.getSelectedItem()
-					.getValue().toString());
+			aExpenseType.setExpenseTypeDesc(this.expenseTypeDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		// Amortization Flag
+		try {
+			aExpenseType.setAmortReq(this.amortReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// TaxApplicable Flag
+		try {
+			aExpenseType.setTaxApplicable(this.taxApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Expense Is Active
+		try {
+			aExpenseType.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -368,8 +386,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExpenseType
 	 * @throws Exception
@@ -382,9 +399,9 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.expenceTypeName.focus();
+			this.expenseTypeCode.focus();
 		} else {
-			this.expenceTypeName.focus();
+			this.expenseTypeDesc.focus();
 			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
@@ -416,17 +433,14 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.expenceTypeName.isReadonly()) {
-			this.expenceTypeName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ExpenseTypeDialog_ExpenceTypeName.value"),
-					PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		if (!this.expenseTypeCode.isReadonly()) {
+			this.expenseTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.cb_expenceFor.isDisabled()) {
-			this.cb_expenceFor
-					.setConstraint(new StaticListValidator(
-							PennantStaticListUtil.getExpenseForList(),
-							Labels.getLabel("label_ExpenseTypeDialog_ExpenceFor.value")));
+		if (!this.expenseTypeDesc.isReadonly()) {
+			this.expenseTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeDesc.value"),
+					PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 
 		logger.debug("Leaving");
@@ -438,8 +452,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		setValidationOn(false);
-		this.expenceTypeName.setConstraint("");
-		this.cb_expenceFor.setConstraint("");
+		this.expenseTypeCode.setConstraint("");
+		this.expenseTypeDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -457,11 +471,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_ExpenseTypeDialog_ExpenceTypeName.value")
-				+ " : " + aExpenseType.getExpenceTypeName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+			+ Labels.getLabel("label_ExpenceTypeCode") + " : " + aExpenseType.getExpenseTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aExpenseType.getRecordType())) {
 				aExpenseType.setVersion(aExpenseType.getVersion() + 1);
@@ -496,14 +507,19 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Entering");
 
 		if (getExpenseType().isNewRecord()) {
-			this.expenceTypeName.setReadonly(false);
+			this.expenseTypeCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
 		} else {
 			this.btnCancel.setVisible(true);
-			this.expenceTypeName.setReadonly(true);//isReadOnly("ExpenseTypeDialog_expenceTypeName")
+			this.expenseTypeCode.setReadonly(true);// isReadOnly("ExpenseTypeDialog_expenceTypeName")
 		}
 
-		this.cb_expenceFor.setDisabled(isReadOnly("ExpenseTypeDialog_expenceFor"));
+		this.expenseTypeDesc.setReadonly(isReadOnly("ExpenseTypeDialog_Description"));
+		this.amortReq.setDisabled(isReadOnly("ExpenseTypeDialog_AmortizationReq"));
+		this.taxApplicable.setDisabled(isReadOnly("ExpenseTypeDialog_TaxApplicable"));
+		this.active.setDisabled(isReadOnly("ExpenseTypeDialog_Active"));
+		
+		this.row_AmzTax.setVisible(!isReadOnly("ExpenseTypeDialog_RowAmortTaxApplicable"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -528,9 +544,9 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.expenceTypeName.setReadonly(true);
-		this.cb_expenceFor.setDisabled(true);
-
+		this.expenseTypeCode.setReadonly(true);
+		this.expenseTypeDesc.setReadonly(true);
+		this.active.setDisabled(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -551,8 +567,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 
-		this.expenceTypeName.setValue("");
-		this.cb_expenceFor.setValue("");
+		this.expenseTypeCode.setValue("");
+		this.expenseTypeDesc.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -584,11 +600,9 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 			if (StringUtils.isBlank(aExpenseType.getRecordType())) {
 				aExpenseType.setVersion(aExpenseType.getVersion() + 1);
 				if (isNew) {
-					aExpenseType
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aExpenseType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aExpenseType
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aExpenseType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aExpenseType.setNewRecord(true);
 				}
 			}
@@ -622,22 +636,19 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aExpenseType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aExpenseType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aExpenseType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aExpenseType.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aExpenseType.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aExpenseType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aExpenseType
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aExpenseType.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -685,8 +696,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aExpenseType,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aExpenseType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -709,57 +719,44 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		ExpenseType aExpenseType = (ExpenseType) auditHeader.getAuditDetail()
-				.getModelData();
+		ExpenseType aExpenseType = (ExpenseType) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getExpenseTypeService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getExpenseTypeService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getExpenseTypeService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getExpenseTypeService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getExpenseTypeService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getExpenseTypeService().doApprove(auditHeader);
 
-						if (aExpenseType.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aExpenseType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getExpenseTypeService().doReject(
-								auditHeader);
-						if (aExpenseType.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getExpenseTypeService().doReject(auditHeader);
+						if (aExpenseType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_ExpenseTypeDialog, auditHeader);
+
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ExpenseTypeDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_ExpenseTypeDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_ExpenseTypeDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -824,21 +821,17 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	}
 
 	private AuditHeader getAuditHeader(ExpenseType aExpenseType, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aExpenseType.getBefImage(), aExpenseType);
-		return new AuditHeader(String.valueOf(aExpenseType.getExpenceTypeId()),
-				null, null, null, auditDetail, aExpenseType.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aExpenseType.getBefImage(), aExpenseType);
+		return new AuditHeader(String.valueOf(aExpenseType.getExpenseTypeId()), null, null, null, auditDetail,
+				aExpenseType.getUserDetails(), getOverideMap());
 	}
 
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ExpenseTypeDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_ExpenseTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -858,8 +851,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-		this.expenceTypeName.setErrorMessage("");
-		this.cb_expenceFor.setErrorMessage("");
+		this.expenseTypeCode.setErrorMessage("");
+		this.expenseTypeDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -869,14 +862,14 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	private void refreshList() {
 		getExpenseTypeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
-		return String.valueOf(this.expenseType.getExpenceTypeId());
+		return String.valueOf(this.expenseType.getExpenseTypeId());
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

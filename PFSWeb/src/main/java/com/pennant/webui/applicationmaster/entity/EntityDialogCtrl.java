@@ -109,7 +109,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 	private transient EntityListCtrl entityListCtrl; // overhanded per param
 	private transient EntityService entityService;
-
+	
+	//Adding the CIN NO Field
+	private Uppercasebox cINNumber;
 	/**
 	 * default constructor.<br>
 	 */
@@ -222,6 +224,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityAddrStreet.setMaxlength(50);
 		this.entityPOBox.setMaxlength(8);
 
+		this.cINNumber.setMaxlength(21);
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -607,6 +611,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		
+		this.cINNumber.setValue(aEntity.getcINNumber());
+		
 		this.recordStatus.setValue(aEntity.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -705,6 +712,12 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		// Active
 		try {
 			aEntity.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// CIN Number
+		try {
+			aEntity.setcINNumber(this.cINNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -829,6 +842,11 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityAddrStreet.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
+		//CIN Number Validation
+		if (!this.cINNumber.isReadonly()) {
+			this.cINNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_CINNumber.value"),
+					null, true));
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -852,6 +870,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityAddrHNbr.setConstraint("");
 		this.entityFlatNbr.setConstraint("");
 		this.entityAddrStreet.setConstraint("");
+		
+		this.cINNumber.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -975,6 +995,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(isReadOnly("EntityDialog_EntityFlatNbr"), this.entityAddrStreet);
 		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrStreet"), this.entityPOBox);
 		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
+		
+		readOnlyComponent(isReadOnly("EntityDialog_CINNumber"),this.cINNumber);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1015,7 +1037,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(true, this.entityPOBox);
 
 		// readOnlyComponent(true, this.active);
-
+		readOnlyComponent(true,this.cINNumber);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1052,7 +1075,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityAddrStreet.setValue("");
 
 		this.active.setChecked(false);
-
+		
+		this.cINNumber.setValue("");
+		
 		logger.debug("Leaving");
 	}
 

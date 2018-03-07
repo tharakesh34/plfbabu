@@ -38,26 +38,26 @@
         
 	<bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestServiceImpl" scope="prototype" parent="bajajService"/>
 	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseServiceImpl" parent="bajajService"/>
-	<bean id="disbursementResponseFileService" class="com.pennanttech.bajaj.services.DisbursementResponseFileService" parent="bajajService"/>
-		
-	<bean id="mandateRequest" class="com.pennanttech.bajaj.services.MandateRequestServiceImpl" scope="prototype" parent="bajajService"/>
-	<bean id="mandateResponse" class="com.pennanttech.bajaj.services.MandateResponseServiceImpl" parent="bajajService"/>
-	<bean id="mandateResponseFileService" class="com.pennanttech.bajaj.services.MandateResponseFileService" scope="prototype" parent="bajajService"/>
-	
+	<bean id="disbursementResponseFileService" class="com.pennanttech.bajaj.services.DisbursementResponseFileService" parent="bajajService"/>	
 	<bean id="posidexResponseService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/>
-	<bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/>
+
+	<!--Presentment Request And Response Processes -->
+	<bean id="presentmentProcess" class="com.pennanttech.bajaj.process.AbstractPresentmentProcess" scope="prototype" parent="abstractInterface" />
 		
 	<!-- Disbursement Imps Response  -->
 	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>
 	
 	<!-- CustomerCrudOperation -->
-	<bean id="customerCurdOperationService" class="com.pennanttech.bajaj.services.CustomerCurdOperationService" scope="prototype" parent="bajajService"/>	
+	<!-- <bean id="customerCurdOperationService" class="com.pennanttech.bajaj.services.CustomerCurdOperationService" scope="prototype" parent="bajajService"/>	
 	<bean id="customerCrudOperationJob" class="com.pennanttech.pff.bajaj.schedule.jobs.CustomerCrudOperationJob">
 	<property name="customerCurdOperationService" ref="customerCurdOperationService"/>
-	</bean>
+	</bean> -->
 	
 	<bean id="crm" class="com.pennanttech.pff.external.customer.FinnOneCustomer"  parent="bajajService">
 		<property name="finOneDatasource" ref="finOneDatasource" />
 	</bean>
+	
+	<bean id="mandateProcess" class="com.pennanttech.bajaj.services.BajajMandateProcess"  parent="abstractMandateProcess"/>
+	<bean id="mandateAutoDownloadJob" class="com.pennanttech.pff.bajaj.schedule.jobs.MandateAutoDownloadJob"  scope="prototype" parent="abstractInterface"/>
 	
 </beans>

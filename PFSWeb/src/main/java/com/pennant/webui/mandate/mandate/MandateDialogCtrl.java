@@ -55,10 +55,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.text.MessageFormats;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -82,6 +84,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -91,6 +94,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
@@ -98,6 +102,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -161,6 +166,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Space									space_Expirydate;
 
 	protected Row									mandateRow;
+
+	//Added BarCode and Reg Status
+	protected Uppercasebox							barCodeNumber;
+	protected Label									amountInWords;
+	protected Label									regStatus;
+	protected ExtendedCombobox						finReference;
+	protected Checkbox								swapIsActive;
+	protected Label									label_RegStatus;
+	
+	//Adding Entity reelated to HFC
+	private ExtendedCombobox						entityCode;
 
 	private boolean									enqModule				= false;
 	private boolean									flag					= false;
@@ -277,6 +293,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					financemain = financeDetail.getFinScheduleData().getFinanceMain();
 					if (financeDetail.getMandate() != null) {
 						this.mandate = financeDetail.getMandate();
+						if(!StringUtils.equals(financemain.getFinReference(),mandate.getOrgReference())){
+							mandate.setUseExisting(true);
+						}
 
 					} else {
 						this.mandate = new Mandate();
@@ -284,12 +303,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						mandate.setCustID(financemain.getCustID());
 						mandate.setCustCIF(getCIFForCustomer(financeDetail));
 						mandate.setMandateType(financemain.getFinRepayMethod());
+						
+						FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+						mandate.setEntityCode(financeType.getLovDescEntityCode());
+						mandate.setEntityDesc(financeType.getLovDescEntityDesc());
 					}
 					this.mandate.setWorkflowId(0);
 				}
 
 				if (arguments.containsKey("roleCode")) {
-					getUserWorkspace().allocateRoleAuthorities(arguments.get("roleCode").toString(), "MandateDialog");
+					//getUserWorkspace().allocateRoleAuthorities(arguments.get("roleCode").toString(), this.pageRightName);
+					setRole(arguments.get("roleCode").toString()); //FIXME For Rights Allocation
 				}
 
 				if (arguments.containsKey("tab")) {
@@ -312,10 +336,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "MandateDialog");
+				//getUserWorkspace().allocateRoleAuthorities(getRole(), "MandateDialog");
 			} else {
-				getUserWorkspace().allocateAuthorities(super.pageRightName);
+				//getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
+			getUserWorkspace().allocateAuthorities( super.pageRightName, getRole()); //FIXME For Rights Allocation
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -396,10 +421,33 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.reason.setMaxlength(60);
 		this.umrNumber.setReadonly(true);
 		this.documentName.setMaxlength(150);
+
+		//Finance Main
+		this.finReference.setMaxlength(20);
+		this.finReference.setTextBoxWidth(120);
+		this.finReference.setModuleName("FinanceManagement");
+		this.finReference.setValueColumn("FinReference");
+		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		
-		if(StringUtils.isNotBlank(this.mandate.getBankCode())){
+
+		if (StringUtils.isNotBlank(this.mandate.getBankCode())) {
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
 		}
+
+		this.barCodeNumber.setMaxlength(10);
+		
+		//Adding Entity 
+		this.entityCode.setMaxlength(8);
+		this.entityCode.setDisplayStyle(2);
+		this.entityCode.setMandatoryStyle(true);
+		this.entityCode.setModuleName("Entity");
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+		Filter[] filter = new Filter[1] ;
+		filter[0]= new Filter("Active", 1, Filter.OP_EQUAL);
+		this.entityCode.setFilters(filter);
+		
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -467,8 +515,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
+	 * @throws Exception 
+	 * @throws WrongValueException 
 	 */
-	public void onClick$btnCancel(Event event) {
+	public void onClick$btnCancel(Event event) throws WrongValueException, Exception {
 		logger.debug("Entering" + event.toString());
 		doCancel();
 		logger.debug("Leaving" + event.toString());
@@ -543,7 +593,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	}
 
-	public void onCheck$useExisting(Event event) {
+	public void onCheck$useExisting(Event event) throws WrongValueException, Exception {
 		logger.debug("Entering" + event.toString());
 		doClearMessage();
 		useExisting();
@@ -551,6 +601,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (!this.useExisting.isChecked() && financeDetail != null) {
 			Mandate man = financeDetail.getMandate();
 			if (man != null && !man.isUseExisting()) {
+				this.label_RegStatus.setVisible(true);
 				doWriteData(man);
 			} else{
 				this.mandateRef.setAttribute("mandateID", Long.MIN_VALUE);
@@ -599,6 +650,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.openMandate);
 			readOnlyComponent(true, this.approvalID);
 			readOnlyComponent(true, this.btnUploadDoc);
+			readOnlyComponent(true, this.barCodeNumber);
+			readOnlyComponent(true, swapIsActive);
+			readOnlyComponent(true, this.entityCode);
 		} else {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
@@ -615,6 +669,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_BtnUploadDoc"), this.btnUploadDoc);
 			readOnlyComponent(true, this.approvalID);
 			this.maxLimit.setMandatory(true);
+			readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), swapIsActive);
 		}
 		clearMandatedata();
 	}
@@ -642,6 +698,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.approvalID.setValue("");
 		this.documentName.setValue("");
 		this.mandatedoc.setContent(null);
+		this.barCodeNumber.setValue("");
+		this.finReference.setValue("");
+		this.regStatus.setValue("");
+		this.amountInWords.setValue("");
+		this.swapIsActive.setChecked(false);
 	}
 
 	public void onChange$mandateType(Event event) {
@@ -764,7 +825,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, reason);
 		}
 
-		if (mandateStatus.equals(MandateConstants.STATUS_NEW)) {
+		if (mandateStatus.equals(MandateConstants.STATUS_NEW) || mandateStatus.equals(MandateConstants.STATUS_INPROCESS)) {
 			readOnlyComponent(true, status);
 			readOnlyComponent(true, reason);
 			this.reason.setValue("");
@@ -788,8 +849,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.expiryDate);
 			readOnlyComponent(true, this.openMandate);
 			readOnlyComponent(true, this.approvalID);
+			readOnlyComponent(true, this.barCodeNumber);
+			readOnlyComponent(true, this.swapIsActive);
+			readOnlyComponent(true, this.entityCode);
 		}
-
+		
 	}
 
 	private void doDesignByMode() {
@@ -820,6 +884,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.mandateType);
 			this.rowStatus.setVisible(false);
 			this.rowReason.setVisible(false);
+			readOnlyComponent(true, this.finReference);
+			readOnlyComponent(true, this.entityCode);
 
 		}
 
@@ -842,10 +908,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (getMandate().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.custID.setReadonly(false);
+			this.label_RegStatus.setVisible(false);
+			//readOnlyComponent(false, finReference);
 		} else {
 			this.btnCancel.setVisible(true);
 			this.custID.setReadonly(true);
+			this.label_RegStatus.setVisible(true);
 		}
+		readOnlyComponent(true, finReference);
 
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.useExisting);
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
@@ -864,8 +934,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_ApprovalID"), this.approvalID);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.status);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.reason);
-		readOnlyComponent(true,this.umrNumber);
-
+		readOnlyComponent(true, this.umrNumber);
+		readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
+		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
+		
+		if (!this.mandate.isNew() && StringUtils.isEmpty(this.mandate.getRecordType())
+				|| StringUtils.equals(this.mandate.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+			readOnlyComponent(true, this.entityCode);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_EntityCode"), this.entityCode);
+		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -897,9 +975,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Cancel the actual operation. <br>
 	 * <br>
 	 * Resets to the original status.<br>
+	 * @throws Exception 
+	 * @throws WrongValueException 
 	 * 
 	 */
-	private void doCancel() {
+	private void doCancel() throws WrongValueException, Exception {
 		logger.debug("Entering ");
 
 		doWriteBeanToComponents(this.mandate.getBefImage());
@@ -934,6 +1014,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.status);
 		readOnlyComponent(true, this.approvalID);
 		readOnlyComponent(true, this.umrNumber);
+		readOnlyComponent(true, this.finReference);
+		readOnlyComponent(true, this.barCodeNumber);
+		readOnlyComponent(true, this.swapIsActive);
+		readOnlyComponent(true, this.entityCode);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -953,8 +1037,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @param aMandate
 	 *            Mandate
 	 * @param tab
+	 * @throws Exception 
+	 * @throws WrongValueException 
 	 */
-	public void doWriteBeanToComponents(Mandate aMandate) {
+	public void doWriteBeanToComponents(Mandate aMandate) throws WrongValueException, Exception {
 		logger.debug("Entering");
 		if (fromLoan) {
 			this.useExisting.setChecked(aMandate.isUseExisting());
@@ -985,6 +1071,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			excludeList.add(MandateConstants.STATUS_AWAITCON);
 			excludeList.add(MandateConstants.STATUS_REJECTED);
 			excludeList.add(MandateConstants.STATUS_CANCEL);
+			excludeList.add(MandateConstants.STATUS_INPROCESS);
 
 			// get previous mandate status from main
 			Mandate oldMnadate = getMandateService().getApprovedMandateById(aMandate.getMandateID());
@@ -1011,7 +1098,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	private void doWriteData(Mandate aMandate) {
+	private void doWriteData(Mandate aMandate) throws WrongValueException, Exception {
 
 		ccyFormatter = CurrencyUtil.getFormat(aMandate.getMandateCcy());
 
@@ -1056,10 +1143,23 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		
 		setMandateDocument(aMandate);
 
+		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
+		this.finReference.setValue(aMandate.getOrgReference());
+
+		if (!StringUtils.equals(aMandate.getStatus(), PennantConstants.List_Select)) {
+			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+		} 
+
+		this.amountInWords.setValue(AmtInitialCap());
+		this.swapIsActive.setChecked(aMandate.isSwapIsActive());
 		if (!enqModule && !registration) {
 			checkOpenMandate();
 		}
-
+		//Entity Field
+		if (StringUtils.isNotBlank(aMandate.getEntityCode())) {
+			this.entityCode.setValue(StringUtils.trimToEmpty(aMandate.getEntityCode()),
+					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
+		}
 	}
 
 	/**
@@ -1256,6 +1356,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// For Mandate Registration
+        aMandate.setApprovalID(String.valueOf((getUserWorkspace().getLoggedInUser().getUserId())));
+		// Bar Code
+		try {
+			aMandate.setBarCodeNumber(this.barCodeNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		// DocumentName
 		try {
@@ -1271,6 +1379,36 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 
+		// Fin Reference
+		try {
+			aMandate.setOrgReference(this.finReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// Swap Flag
+		try {
+			aMandate.setSwapIsActive(this.swapIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		List<ErrorDetail> errors = mandateService.doValidations(aMandate);
+		if (errors != null && errors.size() > 0) {
+			for (ErrorDetail error : errors) {
+				WrongValueException wa = new WrongValueException(
+						Path.getComponent("/outerIndexWindow/window_MandateDialog/" + error.getField()),
+						MessageFormats.format(error.getMessage(),
+								new String[] { Labels.getLabel("label_MandateDialog_BarCodeNumber.value") }));
+				wve.add(wa);
+			}
+		}
+		
+		//Entity
+		try {
+			aMandate.setEntityCode(this.entityCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		logger.debug("Leaving");
 		return wve;
 	}
@@ -1373,6 +1511,24 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					PennantRegularExpressions.REGEX_DESCRIPTION, flag));
 		}
 
+		// Bar Code
+		if (!this.barCodeNumber.isReadonly()) {
+			
+			this.barCodeNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_BarCodeNumber.value"),
+							PennantRegularExpressions.REGEX_BARCODE_NUMBER, validate));
+		}
+
+		// Loan Reference
+		if (!this.finReference.isReadonly()) {
+			this.finReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"), null, validate));
+		}
+		//Entity
+		if (!this.entityCode.isReadonly()){
+			this.entityCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, validate,true));
+		}
 		// Status
 		//		if (!this.status.isDisabled()) {
 		//			this.status.setConstraint(new StaticListValidator(statusTypeList, Labels.getLabel("label_MandateDialog_Status.value")));
@@ -1400,6 +1556,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.status.setConstraint("");
 		this.approvalID.setConstraint("");
 		this.reason.setConstraint("");
+		this.barCodeNumber.setConstraint("");
+		this.finReference.setConstraint("");
+		this.entityCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1426,6 +1585,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.approvalID.setErrorMessage("");
 		this.reason.setErrorMessage("");
 		this.documentName.setErrorMessage("");
+		this.barCodeNumber.setErrorMessage("");
+		this.finReference.setErrorMessage("");
+		this.entityCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1487,14 +1649,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			Customer details = (Customer) dataObject;
 			if (details != null) {
 				this.custID.setAttribute("custID", details.getCustID());
-
 			}
 		}
-
+		getFinReferences();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFulfill$mandateRef(Event event) {
+	public void onFulfill$mandateRef(Event event) throws WrongValueException, Exception {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = mandateRef.getObject();
@@ -1502,18 +1663,68 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (dataObject instanceof String) {
 			this.mandateRef.setValue(dataObject.toString());
 			this.mandateRef.setAttribute("mandateID", Long.MIN_VALUE);
+			this.label_RegStatus.setVisible(false);
 			clearMandatedata();
 		} else {
 			Mandate details = (Mandate) dataObject;
 			if (details != null) {
 				this.mandateRef.setAttribute("mandateID", details.getMandateID());
 				mandateService.getDocumentImage(details);
+				this.label_RegStatus.setVisible(true);
 				doWriteData(details);
+			}else{
+				this.mandateRef.setValue("");
+				this.mandateRef.setAttribute("mandateID", Long.MIN_VALUE);
+				this.label_RegStatus.setVisible(false);
+				clearMandatedata();
 			}
 		}
 
 		logger.debug("Leaving" + event.toString());
 	}
+
+	public void onFulfill$finReference(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = finReference.getObject();
+
+		if (dataObject instanceof String) {
+			this.finReference.setValue(dataObject.toString());
+		} else {
+			FinanceMain details = (FinanceMain) dataObject;
+			if (details != null) {
+				this.finReference.setValue(details.getFinReference());
+			}else{
+				this.finReference.setValue("");
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfill$maxLimit(Event event) throws WrongValueException, Exception {
+		logger.debug("Entering" + event.toString());
+
+		this.amountInWords.setValue(AmtInitialCap());
+
+		logger.debug("Leaving" + event.toString());
+	}
+	private String AmtInitialCap() throws WrongValueException, Exception {
+		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
+	    
+		String[] words = amtInWords.split(" ");
+	    StringBuffer AmtInWord = new StringBuffer();
+
+		for (int i = 0; i < words.length; i++) {
+			if (!words[i].isEmpty()) {
+				AmtInWord.append(Character.toUpperCase(words[i].charAt(0))).append(words[i].substring(1)).append(" ");
+
+			}
+
+		}
+	    return AmtInWord.toString().trim();
+	}  
+	
 
 	// *****************************************************************
 	// ************************+ crud operations ***********************
@@ -1870,11 +2081,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (StringUtils.isEmpty(repaymethod)) {
 				repaymethod = financemain.getFinRepayMethod();
 			}
-			Filter[] filters = new Filter[4];
+			Filter[] filters = new Filter[5];
 			filters[0] = new Filter("CustID", financemain.getCustID(), Filter.OP_EQUAL);
 			filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 			filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 			filters[3] = new Filter("STATUS", MandateConstants.STATUS_REJECTED, Filter.OP_NOT_EQUAL);
+			filters[4] = new Filter("EntityCode", mandate.getEntityCode(),Filter.OP_EQUAL);
 			this.mandateRef.setFilters(filters);
 			this.mandateRef.setWhereClause("(OpenMandate = 1 or OrgReference is null)");
 		}
@@ -1905,6 +2117,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		getMandate().setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setMandate(getMandate());
+		
 		logger.debug("Leaving");
 	}
 	
@@ -1913,6 +2126,19 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			return StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		}
 		return "";
+	}
+	
+	public void onFulfill$entityCode(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = entityCode.getObject();
+
+		if (dataObject instanceof String) {
+			this.entityCode.setValue(dataObject.toString());
+		}
+		getFinReferences();
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// Process for Document uploading
@@ -1957,6 +2183,33 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		logger.debug("Leaving");
 	}
+
+	private void getFinReferences() {
+		//Build Where Clause For FinRef
+		
+		if (StringUtils.isNotBlank(this.custID.getValue()) && StringUtils.isNotBlank(this.entityCode.getValue())) {
+			this.finReference.setObject("");
+			this.finReference.setValue("");	
+			StringBuilder sql = new StringBuilder();
+			sql.append(" FinType in(Select FinType from RMTFinanceTypes where FinDivision IN ");
+			sql.append(" (Select DivisionCode from SMTDivisionDetail where EntityCode = '"+this.entityCode.getValue()+"'))");
+			readOnlyComponent(false, this.finReference);
+			this.finReference.setMandatoryStyle(true);
+			this.finReference.setWhereClause(sql.toString());
+			
+			Filter[] filter = new Filter[2];
+			Object obj = this.custID.getAttribute("custID");
+			filter[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			filter[1] = new Filter("CustID", Long.valueOf(obj.toString()), Filter.OP_EQUAL);
+			this.finReference.setFilters(filter);
+		} else {
+			this.finReference.setValue("");
+			readOnlyComponent(true, this.finReference);
+			this.finReference.setMandatoryStyle(false);
+		}
+	
+	}
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

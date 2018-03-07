@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
+import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -179,6 +180,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	
 	private String	roundingMode;
 	private int	roundingTarget = 0;
+	private boolean developerFinance;
 
 	// Advised profit Rates
 	private String grcAdvBaseRate;
@@ -238,6 +240,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String profitcenterCode;
 	private String profitCenterDesc;
 	
+	private String lovDescEntityCode;
+	private String lovDescEntityDesc;
+	
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -273,6 +278,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private Map<String,Long> finTypeAccountingMap = new HashMap<String,Long>();
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
+	private List<FinTypeExpense> finTypeExpenseList = new ArrayList<FinTypeExpense>();
+	
+	//Cost of funds
+	private String costOfFunds;
+	private List<IRRFinanceType> irrFinanceTypeList =new ArrayList<IRRFinanceType>();
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -1922,4 +1932,51 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setFinCategoryDesc(String finCategoryDesc) {
 		this.finCategoryDesc = finCategoryDesc;
 	}
+	
+	public boolean isDeveloperFinance() {
+		return developerFinance;
+	}
+	public void setDeveloperFinance(boolean developerFinance) {
+		this.developerFinance = developerFinance;
+	}
+	
+	public List<IRRFinanceType> getIrrFinanceTypeList() {
+		return irrFinanceTypeList;
+	}
+
+	public void setIrrFinanceTypeList(List<IRRFinanceType> irrFinanceTypeList) {
+		this.irrFinanceTypeList = irrFinanceTypeList;
+	}
+	
+	public List<FinTypeExpense> getFinTypeExpenseList() {
+		return finTypeExpenseList;
+	}
+	public void setFinTypeExpenseList(List<FinTypeExpense> finTypeExpenseList) {
+		this.finTypeExpenseList = finTypeExpenseList;
+	}
+	
+	public String getLovDescEntityCode() {
+		return lovDescEntityCode;
+	}
+
+	public void setLovDescEntityCode(String lovDescEntityCode) {
+		this.lovDescEntityCode = lovDescEntityCode;
+	}
+
+	public String getLovDescEntityDesc() {
+		return lovDescEntityDesc;
+	}
+
+	public void setLovDescEntityDesc(String lovDescEntityDesc) {
+		this.lovDescEntityDesc = lovDescEntityDesc;
+	}
+	
+	public String getCostOfFunds() {
+		return costOfFunds;
+	}
+
+	public void setCostOfFunds(String costOfFunds) {
+		this.costOfFunds = costOfFunds;
+	}
+	
 }

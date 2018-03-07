@@ -22,4 +22,11 @@
     <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestServiceImpl" scope="prototype" parent="bajajService"/>     
 	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/> 	 
 	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/> 
+	 
+	<!--  <bean id="collectionProcess" class="com.pennanttech.bajaj.process.collections.CollectionProcess" scope="prototype">
+	 	<property name="dataSource" ref="dataSource" />
+	 </bean> 
+	 <bean id="CollectionDAO" class="com.pennanttech.bajaj.process.collections.model.CollectionDAOImpl" scope="prototype">
+	 	<property name="dataSource" ref="dataSource" />
+	 </bean>  -->
 </beans>

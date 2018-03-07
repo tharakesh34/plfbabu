@@ -423,6 +423,17 @@ public class CollateralController {
 		int totalUnits = 0;
 		BigDecimal totalValue = BigDecimal.ZERO;
 		List<ExtendedField> extendedFields = collateralSetup.getExtendedDetails();
+		if(StringUtils.equals(procType, PROCESS_TYPE_DELETE)) {
+			if(collateralSetup.getExtendedFieldRenderList()!=null && !collateralSetup.getExtendedFieldRenderList().isEmpty()) {
+				for(ExtendedFieldRender exdFieldRender: collateralSetup.getExtendedFieldRenderList()) {
+					exdFieldRender.setReference(collateralSetup.getCollateralRef());
+					exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					exdFieldRender.setLastMntBy(userDetails.getUserId());
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+		}
+		}
 		if(extendedFields != null) {
 			List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 			int seqNo = 0;

@@ -410,7 +410,13 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		LimitHeader aLimitHeader = limitDetailService.getCustomerLimits(id);
+		
+		LimitHeader aLimitHeader = null;
+		if (StringUtils.equals(limitType.getValue(), LimitConstants.LIMIT_UTILIZATION)) {
+			aLimitHeader = limitDetailService.getApprovedCustomerLimits(id);
+		} else {
+			aLimitHeader = limitDetailService.getCustomerLimits(id);
+		}
 
 		if (aLimitHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -549,7 +555,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			if (StringUtils.equals(limitType.getValue(), "LTUZ")) {
+			if (StringUtils.equals(limitType.getValue(), LimitConstants.LIMIT_UTILIZATION)) {
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitUtilizationDialog.zul", null, arg);
 			} else {
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitDetailsDialog.zul", null, arg);

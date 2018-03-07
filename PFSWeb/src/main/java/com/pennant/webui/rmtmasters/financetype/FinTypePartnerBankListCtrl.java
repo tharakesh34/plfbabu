@@ -94,6 +94,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 	private String finTypeDesc = "";
 	protected boolean isOverdraft = false;
 	private boolean isCompReadonly = false;
+	private String finDivision=null;
 	
 	
 	private Object mainController;
@@ -160,6 +161,9 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 			}
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+			}
+			if (arguments.containsKey("finDivision")) {
+				this.finDivision =  (String)arguments.get("finDivision");
 			}
 			doCheckRights();
 			doShowDialog();
@@ -308,6 +312,11 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		map.put("fintypepartnerbankListCtrl", this);
 		map.put("role", roleCode);
 		map.put("amountFormatter", CurrencyUtil.getFormat(this.finCcy));
+		
+		if(StringUtils.isNotEmpty(finDivision)){
+		map.put("finDivision",finDivision);
+		}
+			
 		
 		// call the ZUL-file with the parameters packed in a map
 		try {

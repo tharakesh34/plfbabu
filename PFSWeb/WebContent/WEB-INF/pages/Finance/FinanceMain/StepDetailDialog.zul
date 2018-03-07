@@ -76,10 +76,10 @@
 									id="listheader_StepFinance_EMIStepPercent" align="right"
 									label="${c:l('listheader_StepFinance_EMIStepPercent.label')}"
 									sort="false" hflex="min" />
-								<!-- <listheader
-									id="listheader_StepFinance_SteppedEMI" align="right"
+								<listheader
+									id="listheader_StepFinance_SteppedEMI" align="right" visible="false"
 									label="${c:l('listheader_StepFinance_SteppedEMI.label')}"
-									sort="false" hflex="min" /> -->
+									sort="false" hflex="min" />
 							</listhead>
 						</listbox>
 					</groupbox>

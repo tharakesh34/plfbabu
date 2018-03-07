@@ -1196,10 +1196,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					Labels.getLabel("label_CollateralSetupDialog_SpecialLTV.value"), 2, true, false, 100));
 		}
 		//Collateral Loc
-		if (!this.collateralLoc.isReadonly()) {
+		/*if (!this.collateralLoc.isReadonly()) {
 			this.collateralLoc.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralLoc.value"), 
 					PennantRegularExpressions.REGEX_NAME, true));
-		}
+		}*/
 		//Valuator
 		if (!this.valuator.isReadonly()) {
 			this.valuator.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Valuator.value"), 
@@ -1217,10 +1217,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					false, true, appEndDate, false));
 		}
 		//Remarks
-		if (!this.remarks.isReadonly()) {
+		/*if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Remarks.value"),
 					PennantRegularExpressions.REGEX_NAME, false));
-		}
+		}*/
 
 		/* Display fields validation */
 

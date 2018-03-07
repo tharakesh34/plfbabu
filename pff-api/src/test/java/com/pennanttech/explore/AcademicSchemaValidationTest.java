@@ -1,4 +1,4 @@
-package com.pennanttech.explore;
+/*package com.pennanttech.explore;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,13 +13,13 @@ import javax.xml.validation.Validator;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-/*
+
  * This is a test program check the validations of XML with the XSD schema.
  * We can configure the XSD to validate the data based on the service. 
  * In this Test the XML validations for academic are different for save and update,
  * While saving the details ID should not required and while update ID is mandatory.
  * similarly the mandatory fields for save and update are different in schema.
- */
+ 
 
 public class AcademicSchemaValidationTest {
 
@@ -111,9 +111,9 @@ public class AcademicSchemaValidationTest {
 		return true;
 	}
 
-	/*
+	
 	 * This method is to set the XSD for this test.
-	 */
+	 
 	@BeforeTest
 	private void setXSD() {
 		xsd.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -156,3 +156,4 @@ public class AcademicSchemaValidationTest {
 	}
 
 }
+*/

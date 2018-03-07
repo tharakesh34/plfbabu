@@ -42,6 +42,7 @@
  */
 package com.pennanttech.gcd;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -71,7 +72,7 @@ public class GcdCustomer {
 	private String mpAkerId = "PENNANT"; // Shall be hard coded value "PENNANT"
 	private Date makerDate; // Shall be the current business date
 	private String authId = "PENNANT"; // Shall be hard coded value "PENNANT"
-	private Date authDate; // Shall be the current business date
+	private Timestamp authDate; // Shall be the current business date
 	private String accType; // Shall be blank
 	private String apCcocatg; // Shall be blank
 	private Date dateLastUpdate; // Shall be blank
@@ -110,7 +111,7 @@ public class GcdCustomer {
 	private long sfdcCustomerId; // Shall be populated with PLF CustomerID
 	private long branchId; // Shall be populated with FinnOne BranchID. FinnOne BranchID shall be fetched on the basis
 							// of Customer's PLF Branch Code
-	
+	private int requestSeq=0;
 	public GcdCustomer(){
 		super();
 	}
@@ -283,11 +284,11 @@ public class GcdCustomer {
 		this.authId = authId;
 	}
 
-	public Date getAuthDate() {
+	public Timestamp getAuthDate() {
 		return authDate;
 	}
 
-	public void setAuthDate(Date authDate) {
+	public void setAuthDate(Timestamp authDate) {
 		this.authDate = authDate;
 	}
 
@@ -518,4 +519,13 @@ public class GcdCustomer {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public int getRequestSeq() {
+		return requestSeq;
+	}
+
+	public void setRequestSeq(int requestSeq) {
+		this.requestSeq = requestSeq;
+	}
+	
 }

@@ -135,7 +135,7 @@
 									<decimalbox id="eMIStepPerc" />
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
 								<label
 									id="label_FinStepPolicyDialog_SteppedEMI"
 									value="${c:l('label_FinStepPolicyDialog_SteppedEMI.value')}" />

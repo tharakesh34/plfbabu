@@ -1011,12 +1011,12 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			if (!limitGroupItems.isNew()) {
 				limitLineCode.setDisabled(true);
 				limitGroupCode.setDisabled(true);
-				/*
-				 * readOnlyComponent(!getUserWorkspace().isAllowed( "button_LimitGroupDialog_NewLimitGroupItem") ||
-				 * active.isDisabled(), delete);
-				 */
+
+				readOnlyComponent(isReadOnly("button_LimitGroupDialog_NewLimitGroupItem") || active.isDisabled()
+						|| !(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, limitGroupItems.getRecordType())), delete);
 			}
-			readOnlyComponent(!getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"), delete);
+			//readOnlyComponent(!getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"), delete);
+			
 			if (limitGroupItems.getKey() == 0) {
 				key += 1;
 				limitGroupItems.setKey(key);

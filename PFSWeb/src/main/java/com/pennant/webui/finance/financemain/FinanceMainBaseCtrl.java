@@ -338,7 +338,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected CurrencyBox									securityDeposit;
 	protected Row											row_securityDeposit;
 	protected Row											row_accountsOfficer;
-	protected Row											row_salesDept;
+	//protected Row											row_salesDept;
 	protected Row											row_ReferralId;
 	protected ExtendedCombobox								accountsOfficer;
 	protected ExtendedCombobox								dsaCode;
@@ -999,7 +999,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.finLimitRef);
 			readOnlyComponent(true, this.mMAReference);
 		}
-		this.finPurpose.setProperties("PurposeDetail", "PurposeCode", "PurposeDesc", true, 8);
+		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc", false, 8);
 		this.finBranch.setProperties("UserDivBranch", "UsrID", "UserBranchDesc", true, LengthConstants.LEN_BRANCH);
 		whereClause.append("usrID = ");
 		whereClause.append(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1210,7 +1210,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
 			this.row_accountsOfficer.setVisible(false);
 			this.row_ReferralId.setVisible(false);
-			this.row_salesDept.setVisible(false);
+			label_FinanceMainDialog_SalesDepartment.setVisible(false);
+			this.salesDepartment.setVisible(false);
 		}
 		if (financeType.isQuickDisb()) {
 			this.quickDisb.setVisible(true);
@@ -4704,7 +4705,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							continue;
 						}
 
-						if (financeMain.getNextGrcCpzDate() != null && financeMain.isAllowGrcCpz()
+						/*if (financeMain.getNextGrcCpzDate() != null && financeMain.isAllowGrcCpz()
 								&& curSchd.getSchDate().compareTo(financeMain.getNextGrcCpzDate()) <= 0) {
 							validFrom = curSchd.getSchDate();
 							continue;
@@ -4718,7 +4719,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								&& curSchd.getSchDate().compareTo(financeMain.getNextGrcPftDate()) <= 0) {
 							validFrom = curSchd.getSchDate();
 							continue;
-						}
+						}*/
 					}
 					validFrom = DateUtility.addDays(validFrom, 1);
 					this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
@@ -5079,8 +5080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceMainDialog_FinPurpose.value"), null, true, true));
+			this.finPurpose.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"), null, false, true));
 		}
 
 		if (!this.finDivision.equals(FinanceConstants.FIN_DIVISION_CORPORATE) && !recSave && !buildEvent) {
@@ -5887,8 +5887,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setStageAccountingList(null);
 		} else {
 			
+			boolean accVerificationReq = true;
+			if(isOverdraft && StringUtils.isEmpty(moduleDefiner)){
+				accVerificationReq = false;
+			}
+			
+			if(StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)){
+				accVerificationReq=false;
+			}
+			
 			//Finance Accounting Details Tab
-			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !isOverdraft) {
+			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && accVerificationReq) {
 
 				// check if accounting rules executed or not
 				if (accountingDetailDialogCtrl == null || !accountingDetailDialogCtrl.isAccountingsExecuted()) {
@@ -6037,6 +6046,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 						logger.debug("Posidex Id:" + dedup.getCustCoreBank());
 					}
+				}
+				
+				//in case of no match found from posidex the same message has to be shown for the user
+				if(aFinanceDetail.getCustomerDetails().getReturnStatus()!=null && aFinanceDetail.getCustomerDetails().getReturnStatus().getReturnText()!=null &&
+				   StringUtils.equalsIgnoreCase(aFinanceDetail.getCustomerDetails().getReturnStatus().getReturnText(), "No Match")){
+					MessageUtil.showMessage(Labels.getLabel("Label_Dedupe_NoMatch"));
 				}
 
 				// Limits Checking with ACP Interface
@@ -6748,11 +6763,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
 			doProcess_Assets(aFinanceDetail);
 			auditHeader.getAuditDetail().setModelData(aFinanceDetail);
-			processCompleted = doSaveProcess(auditHeader);
+			processCompleted = doSaveProcess(auditHeader, null);
 		} else {
 			doProcess_Assets(aFinanceDetail);
 			auditHeader = getAuditHeader(aFinanceDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
@@ -6767,7 +6782,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader) throws InterruptedException {
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -8454,6 +8470,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					errorList.add(new ErrorDetail("StepFinance", "30555", new String[] { Labels
 							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}
+				
+				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
+						FinanceConstants.STEPTYPE_EMI)
+						&& !StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
+								CalculationConstants.SCHMTHD_EQUAL)) {
+					errorList.add(new ErrorDetail("StepFinance", "30703", new String[] { Labels
+							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
+				}
 
 				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 					if (StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
@@ -9874,7 +9898,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-			aFinanceMain.setFinRepaymentAmount(PennantAppUtil.unFormateAmount(
+			aFinanceMain.setReqRepayAmount(PennantAppUtil.unFormateAmount(
 					this.finRepaymentAmount.isReadonly() ? this.finRepaymentAmount.getActualValue()
 							: this.finRepaymentAmount.getValidateValue(), formatter));
 
@@ -12299,6 +12323,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			isOverDraft = true;
 		}
 		//FinanceMain Details Tab ---> 1. Basic Details
+		readOnlyComponent(isReadOnly("FinanceMainDialog_finPurpose"), this.finPurpose);
 		if (financeMain.isNewRecord()) {
 			doEditGenFinRef(financeType);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_finBranch"), this.finBranch);
@@ -12901,7 +12926,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finLimitRef.setReadonly(true);
 		this.mMAReference.setReadonly(true);
-		this.finPurpose.setReadonly(true);
+		//this.finPurpose.setReadonly(true);
 
 		//AHB: External Limits and Commitments
 		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)
@@ -14028,6 +14053,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (finCollateralHeaderDialogCtrl != null) {
 			finCollateralHeaderDialogCtrl.closeDialog();
 		}
+		
+		//Closing Mandate Details Window
+		if (mandateDialogCtrl != null) {
+			mandateDialogCtrl.closeDialog();
+		}
 
 		super.closeDialog();
 	}
@@ -14846,6 +14876,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					
 					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
 						validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
+						getFinanceDetail().getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.changeGraceEnd(getFinanceDetail().getFinScheduleData()));
 						
@@ -15317,6 +15348,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& isReadOnly("FinanceMainDialog_finStartDate"), this.finStartDate);
 			this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd_QDP")
 					|| getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
+
+			readOnlyComponent(false, this.nextRepayPftDate);
+			readOnlyComponent(false, this.nextRepayRvwDate);
+			readOnlyComponent(false, this.nextRepayDate);
+			readOnlyComponent(false, this.repayPftFrq);
+			readOnlyComponent(false, this.repayRvwFrq);
+			readOnlyComponent(false, this.repayFrq);
+			
+			if(StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, finmain.getRecordStatus())){
+				this.nextRepayPftDate.setText("");
+				this.nextRepayRvwDate.setText("");
+				this.nextRepayDate.setText("");
+			}
+			gb_repaymentDetails.setVisible(true);
+			this.rpyPftFrqRow.setVisible(true);
+			this.rpyRvwFrqRow.setVisible(true);
+			this.rpyFrqRow.setVisible(true);
 		}
 	}
 

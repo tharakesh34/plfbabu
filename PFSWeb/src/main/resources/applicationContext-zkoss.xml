@@ -2635,6 +2635,7 @@
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="branchService" ref="branchService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<bean id="feePaymentDetailDialogCtrl"
@@ -3270,6 +3271,7 @@
 		<property name="deviationDetailsService" ref="deviationDetailsService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl"
@@ -5003,6 +5005,182 @@
 	
 	<bean id="cacheParameterDialogCtrl" class="com.pennanttech.pennapps.core.cache.CacheParameterDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="cacheAdmin" ref="cacheAdmin" />
+	</bean>
+
+	<!-- Collection -->
+	<bean id="collectionDialogCtrl" class="com.pennant.webui.collections.CollectionDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="collectionService" ref="collectionService"/>
+		<property name="collectionProcess" ref="collectionProcess"/>
+	</bean>
+	
+	<!-- Interface Mapping -->
+
+	<bean id="interfaceMappingListCtrl"
+		class="com.pennant.webui.interfacemapping.InterfaceMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="interfaceMappingService" ref="interfaceMappingService" />
+	</bean>
+
+	<bean id="interfaceMappingDialogCtrl"
+		class="com.pennant.webui.interfacemapping.InterfaceMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="interfaceMappingService" ref="interfaceMappingService" />
+	</bean>
+
+	<!-- Limit Rebuild Process -->
+	<bean id="limitRebuildListCtrl" class="com.pennant.webui.limit.limitdetails.LimitRebuildListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="limitDetailService" ref="limitDetailService" />
+	</bean>
+
+	<!-- MandateCheckDigit -->
+	<bean id="mandateCheckDigitListCtrl"
+		class="com.pennant.webui.applicationmaster.mandatecheckdigit.MandateCheckDigitListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="mandateCheckDigitService" ref="mandateCheckDigitService" />
+	</bean>
+	<bean id="mandateCheckDigitDialogCtrl"
+		class="com.pennant.webui.applicationmaster.mandatecheckdigit.MandateCheckDigitDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="mandateCheckDigitService" ref="mandateCheckDigitService" />
+	</bean>
+		
+	<!-- SecondryMandate -->
+	<bean id="uploadSecondaryMandateListCtrl"
+		class="com.pennant.webui.mandate.mandate.UploadSecondaryMandateListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="mandateService" ref="mandateService" />
+		<property name="financeMainService" ref="financeMainService" />
+		<property name="bankBranchService" ref="bankBranchService" />
+		<property name="uploadSecondaryMandateService" ref="uploadSecondaryMandateService" />
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
+
+	<!--  Finance Expense Uploads	-->
+	<bean id="expenseUploadCtrl" class="com.pennant.webui.finance.expenses.ExpenseUplaodCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+	</bean>
+	<!-- Expense Type -->
+	<bean id="finTypeExpenseDialogCtrl"
+		class="com.pennant.webui.rmtmasters.financetype.FinTypeExpenseDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="finTypeExpenseListCtrl"
+		class="com.pennant.webui.rmtmasters.financetype.FinTypeExpenseListCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!-- FinFee -->
+	<bean id="feeEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.FeeEnquiryDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+	
+	<!-- Expense  -->
+	<bean id="expenseEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.ExpenseEnquiryDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+	</bean>
+	
+	<bean id="expenseMovementDialogCtrl" class="com.pennant.webui.finance.enquiry.ExpenseMovementDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+	
+	  <bean id="uploadFinTypeExpenseCtrl"
+		class="com.pennant.webui.finance.fintypeexpenses.UploadFinTypeExpenseCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+	</bean>
+	
+	<bean id="uploadTaxPercentCtrl"
+		class="com.pennant.webui.finance.finfeefactor.UploadTaxPercentCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+	</bean>
+	
+	
+	<!-- IRRCode -->
+	<bean id="iRRCodeListCtrl" class="com.pennant.webui.applicationmaster.irrcode.IRRCodeListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="iRRCodeService" ref="iRRCodeService" />
+	</bean>
+	
+	<bean id="iRRCodeDialogCtrl" class="com.pennant.webui.applicationmaster.irrcode.IRRCodeDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="iRRCodeService" ref="iRRCodeService"/>
+	</bean>
+
+	<!-- IRRFeeType -->
+	<bean id="iRRFeeTypeDialogCtrl" class="com.pennant.webui.applicationmaster.irrfeetype.IRRFeeTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!--============ Cost Of Fund Code Details ============== -->
+
+	<bean id="costOfFundCodeListCtrl"
+		class="com.pennant.webui.applicationmaster.costoffundcode.CostOfFundCodeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="costOfFundCodeService" ref="costOfFundCodeService" />
+	</bean>
+
+	<bean id="costOfFundCodeDialogCtrl"
+		class="com.pennant.webui.applicationmaster.costoffundcode.CostOfFundCodeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="costOfFundCodeService" ref="costOfFundCodeService" />
+	</bean>
+
+	<!--============ Cost Of Fund Rate Details ============== -->
+
+	<bean id="costOfFundListCtrl"
+		class="com.pennant.webui.applicationmaster.costoffund.CostOfFundListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="costOfFundService" ref="costOfFundService" />
+	</bean>
+
+	<bean id="costOfFundDialogCtrl"
+		class="com.pennant.webui.applicationmaster.costoffund.CostOfFundDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="costOfFundService" ref="costOfFundService" />
+	</bean> 
+	
+	<!--============ Caste Details ============== -->
+
+	<bean id="casteListCtrl"
+		class="com.pennant.webui.systemmasters.caste.CasteListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="casteService" ref="casteService" />
+	</bean>
+
+	<bean id="casteDialogCtrl"
+		class="com.pennant.webui.systemmasters.caste.CasteDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="casteService" ref="casteService" />
+	</bean>
+	
+	<!-- Religion -->
+	<bean id="religionListCtrl" class="com.pennant.webui.systemmasters.religion.ReligionListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="religionService" ref="religionService" />
+	</bean>
+	<bean id="religionDialogCtrl" class="com.pennant.webui.systemmasters.religion.ReligionDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="religionService" ref="religionService"/>
+	</bean>
+	
+	<!--============ Loan Purpose Details ============== -->
+
+	<bean id="loanPurposeListCtrl"
+		class="com.pennant.webui.systemmasters.loanpurpose.LoanPurposeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="loanPurposeService" ref="loanPurposeService" />
+	</bean>
+
+	<bean id="loanPurposeDialogCtrl"
+		class="com.pennant.webui.systemmasters.loanpurpose.LoanPurposeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		 <property name="loanPurposeService" ref="loanPurposeService" />
+	</bean>
+	<!--============ Chnage Scheduling Finance Maintainance Details ============== -->
+
+	<bean id="changeScheduleMethodDialogCtrl"
+		class="com.pennant.webui.finance.additional.ChangeScheduleMethodDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="changeScheduleMethodService" ref="changeScheduleMethodService" />
 	</bean>
 	
 	<bean id="customerSummaryViewCtrl"

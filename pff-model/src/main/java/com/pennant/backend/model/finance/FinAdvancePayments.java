@@ -165,6 +165,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private boolean				alwFileDownload;
 	private String				fileNamePrefix;
 	private String				channel;
+	private String              entityCode;
 	
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -201,6 +202,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("alwFileDownload");
 		excludeFields.add("fileNamePrefix");
 		excludeFields.add("channel");
+		excludeFields.add("entityCode");
 		return excludeFields;
 	}
 
@@ -651,5 +653,13 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setChannel(String channel) {
 		this.channel = channel;
 	}
-	
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
 }

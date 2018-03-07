@@ -215,6 +215,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Button btnReAgeHolidays; // autoWired
 	protected Button btnHoldEMI; // autoWired
 	protected Button btnPrintSchedule; // autoWired
+	protected Button btnSchdChng; // autoWired
+	
 
 	protected Listheader listheader_ScheduleDetailDialog_Date;
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
@@ -550,6 +552,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 		this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
+		this.btnSchdChng.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
 		this.btnSuplRentIncrCost.setVisible(false);
 
 		this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
@@ -568,6 +571,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 		this.btnReAgeHolidays.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
+		this.btnSchdChng.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
 		this.btnSuplRentIncrCost.setDisabled(true);
 		
 		if(StringUtils.isBlank(moduleDefiner)){
@@ -1476,6 +1480,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setVisible(false);
 		this.btnHoldEMI.setVisible(false);
 		this.btnSuplRentIncrCost.setVisible(false);
+		this.btnSchdChng.setVisible(false);
 
 		this.btnAddReviewRate.setDisabled(true);
 		this.btnAdvPftRateChange.setDisabled(true);
@@ -1494,6 +1499,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setDisabled(true);
 		this.btnHoldEMI.setDisabled(true);
 		this.btnSuplRentIncrCost.setDisabled(true);
+		this.btnSchdChng.setDisabled(true);
 
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG)) {
 			this.btnAddReviewRate.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
@@ -1570,6 +1576,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 			this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 			
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
+			this.btnSchdChng.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
+			this.btnSchdChng.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
 		}
 		logger.debug("Leaving");
 	}
@@ -2099,6 +2108,30 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 	
 	/**
+	 * when the button Scheduling method Change button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnSchdChng(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		map.put("appDateValidationReq", isAppDateValidationReq());
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeScheduleMethodDialog.zul",
+					window_ScheduleDetailDialog, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
 	 * Method to open child window based on selected menu item
 	 * 
 	 * */
@@ -2195,6 +2228,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Events.postEvent("onClick$btnHoldEMI", this.window_ScheduleDetailDialog, null);
 			}else{
 				this.btnHoldEMI.setVisible(false);
+			}
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
+			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng")) {
+				Events.postEvent("onClick$btnSchdChng", this.window_ScheduleDetailDialog, null);
+			} else {
+				this.btnSchdChng.setVisible(false);
 			}
 		}
 		logger.debug("Leaving");

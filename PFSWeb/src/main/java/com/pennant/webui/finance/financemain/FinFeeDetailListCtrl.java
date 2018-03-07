@@ -67,6 +67,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -91,6 +92,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -108,6 +110,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
@@ -211,6 +214,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String	eventCode	   = "";
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
+	private FeeTypeService								feeTypeService;
 
 	/**
 	 * default constructor.<br>
@@ -1547,7 +1551,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 				
 				//Fee Type
-				lc = new Listcell(feeType);
+				if (finFeeDetail.getFeeTypeID() <= 0) {
+					lc = new Listcell(feeType);		//For VAS Fees
+				} else {
+					A feeTypeLink = new A();			//For Normal Fees
+					feeTypeLink.setLabel(feeType);
+					lc = new Listcell();
+					feeTypeLink.addForward("onClick", self, "onClickFeeType", finFeeDetail);
+					feeTypeLink.setStyle("text-decoration:none;");
+					lc.appendChild(feeTypeLink);
+				}
 				lc.setParent(item);
 
 				// Calculate Amount
@@ -1859,6 +1872,31 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * onClick FeeType Hyper Link it will redirect to FeeType Master
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClickFeeType(ForwardEvent event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		
+		FinFeeDetail details = (FinFeeDetail) event.getData();
+		
+		FeeType feeType = feeTypeService.getFeeTypeById(details.getFeeTypeID());
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("feeType", feeType);
+		map.put("feeTypeEnquiry", true);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/FeeType/FeeType/FeeTypeDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -3441,6 +3479,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void setReceiptsProcess(boolean isReceiptsProcess) {
 		this.isReceiptsProcess = isReceiptsProcess;
+	}
+	
+	public FeeTypeService getFeeTypeService() {
+		return feeTypeService;
+	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
 	}
 
 	public BranchService getBranchService() {

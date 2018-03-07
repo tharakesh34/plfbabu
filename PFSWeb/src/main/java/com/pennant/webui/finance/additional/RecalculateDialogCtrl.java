@@ -297,6 +297,17 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				// Presentment Exists
+				if (curSchd.getPresentmentId() > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+				
 				// Dont add Zero Payment terms after Actual maturity
 				if(isMaturityDone){
 					continue;
@@ -454,6 +465,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finServiceInstruction.setToDate(finMain.getMaturityDate());
 		}
 		// Service details calling for Schedule calculation
+		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
 		
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

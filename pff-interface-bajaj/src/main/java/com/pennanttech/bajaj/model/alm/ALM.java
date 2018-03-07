@@ -11,23 +11,25 @@ import com.pennant.backend.model.finance.ProjectedAccrual;
 public class ALM implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	long agreementId;
-	String agreementNo;
-	String productFlag;
-	String npaStageId;
-	BigDecimal installment;
-	BigDecimal prinComp;
-	BigDecimal intComp;
-	Date dueDate;
-	BigDecimal accruedAmt;
-	Date accruedOn;
-	BigDecimal cumulativeAccrualAmt;
-	String advFlag;
-	Date finStartDate;
-	Date maturityDate;
-	BigDecimal ccyMinorCcyUnits;
-	int ccyEditField;
-
+	private long agreementId;
+	private String agreementNo;
+	private String productFlag;
+	private String npaStageId;
+	private BigDecimal installment;
+	private BigDecimal prinComp;
+	private BigDecimal intComp;
+	private Date dueDate;
+	private BigDecimal accruedAmt;
+	private Date accruedOn;
+	private BigDecimal cumulativeAccrualAmt;
+	private String advFlag;
+	private Date finStartDate;
+	private Date maturityDate;
+	private BigDecimal ccyMinorCcyUnits;
+	private int ccyEditField;
+	private String	calRoundingMode;
+	private int	roundingTarget;
+	private String entityCode;
 
 	private List<ProjectedAccrual> accrualList = new ArrayList<>();
 
@@ -173,4 +175,27 @@ public class ALM implements Serializable {
 		this.ccyEditField = ccyEditField;
 	}
 
+	public String getCalRoundingMode() {
+		return calRoundingMode;
+	}
+
+	public void setCalRoundingMode(String calRoundingMode) {
+		this.calRoundingMode = calRoundingMode;
+	}
+
+	public int getRoundingTarget() {
+		return roundingTarget;
+	}
+
+	public void setRoundingTarget(int roundingTarget) {
+		this.roundingTarget = roundingTarget;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
 }

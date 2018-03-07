@@ -49,7 +49,7 @@
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end"
 								style="float:right; border-style: none;">
-								<button id="btnHelp" label="${c:l('label_Help')}"
+								<button id="btnHelp" label="${c:l('label_Help')}" visible="false"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									sclass="z-toolbarbutton" />
@@ -127,6 +127,24 @@
 									</hbox>
 								</row>
 								<row id="row3">
+									<label id="label_AmortzReq"
+										value="${c:l('label_FeeTypeDialog_AmortzReq.value')}" />
+									<hbox id="hlayout_AmortzReq">
+										<space id="space_AmortzReq"
+											spacing="2px" />
+										<checkbox id="amortzReq" />
+									</hbox>
+								</row>
+								<row id="row4">
+									<label id="label_TAXApplicable"
+										value="${c:l('label_FeeTypeDialog_TAXApplicable.value')}" />
+									<hbox id="hlayout_TAXApplicable">
+										<space id="space_TAXApplicable"
+											spacing="2px" />
+										<checkbox id="TAXApplicable" />
+									</hbox>
+								</row>
+								<row id="row5">
 									<label id="label_Active"
 										value="${c:l('label_FeeTypeDialog_Active.value')}" />
 									<hbox id="hlayout_Active">

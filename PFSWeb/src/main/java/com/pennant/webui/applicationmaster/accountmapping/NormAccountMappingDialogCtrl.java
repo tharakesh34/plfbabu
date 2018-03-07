@@ -114,8 +114,8 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		this.account.setMaxlength(15);
-		this.hostAccount.setMaxlength(15);
+		this.account.setMaxlength(50);
+		this.hostAccount.setMaxlength(50);
 
 		this.profitCenter.setModuleName("ProfitCenter");
 		this.profitCenter.setValueColumn("ProfitCenterCode");

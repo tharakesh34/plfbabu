@@ -64,10 +64,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Mandate table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custCIF", "useExisting", "mandateID", "mandateRef", "mandateType", "bankCode", "branchCode",
+@XmlType(propOrder = { "custCIF", "orgReference","useExisting", "mandateID", "mandateRef", "mandateType", "bankCode", "branchCode",
 		"iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate", "startDate",
 		"expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "status", "active",
-		"totEMIAmount", "documentName", "docImage", "externalRef", "returnStatus" })
+		"totEMIAmount","barCodeNumber","amountInWords","entityCode","returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity implements Entity {
@@ -148,7 +148,6 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String				mandateCcy;
 	private String				orgReference;
 	private String				sourceId;
-	private String				finReference;
 	@XmlElement
 	private String				documentName;
 	private long				documentRef			= Long.MIN_VALUE;
@@ -156,6 +155,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private byte[]				docImage;
 	@XmlElement(name = "docRefId")
 	private String				externalRef;
+
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -165,7 +165,37 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private BigDecimal			totEMIAmount;
 	private String				pccityName;
-
+	@XmlElement
+	private String barCodeNumber;
+	@XmlElement
+	private String amountInWords;
+	private boolean swapIsActive;
+	private long primaryMandateId = 0;
+	private boolean secondaryMandate;
+	
+	private String	finReference;	
+	private long applId;
+	private Date diDate;
+	private String sponsorBankCode;
+	private String utilityCode;
+	private String companyId;
+	private String appFormNo;
+	private String emailId;
+	private String mandateBarCode;
+	private Date modificationDate;
+	private String processFlag = "N";
+	private Date processDate;
+	private String finType;
+	private String finBranch;
+	private String machineFlag = "N";
+	private Date firstDueDate;
+	private String loanBranch;
+	private Date machineFlagUploadDate;
+	private boolean activeFlag = true;
+	@XmlElement
+	private String entityCode;
+	private String entityDesc;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -200,9 +230,31 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("returnStatus");
 		excludeFields.add("totEMIAmount");
 		excludeFields.add("pccityName");
-		excludeFields.add("finReference");
 		excludeFields.add("requestID");
 		excludeFields.add("docImage");
+		excludeFields.add("amountInWords");
+		excludeFields.add("secondaryMandate");
+		excludeFields.add("applId");
+		excludeFields.add("diDate");
+		excludeFields.add("sponsorBankCode");
+		excludeFields.add("utilityCode");
+		excludeFields.add("companyId");
+		excludeFields.add("appFormNo");
+		excludeFields.add("emailId");
+		excludeFields.add("mandateBarCode");
+		excludeFields.add("modificationDate");
+		excludeFields.add("processFlag");
+		excludeFields.add("processDate");
+		excludeFields.add("finType");
+		excludeFields.add("finBranch");
+		excludeFields.add("machineFlag");
+		excludeFields.add("firstDueDate");
+		excludeFields.add("activeFlag");
+		excludeFields.add("loanBranch");
+		excludeFields.add("machineFlagUploadDate");
+		excludeFields.add("amountInWords");
+		excludeFields.add("finReference");
+		excludeFields.add("entityDesc");
 		return excludeFields;
 	}
 
@@ -581,6 +633,77 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.pccityName = pccityName;
 	}
 
+	public long getRequestID() {
+		return requestID;
+	}
+
+	public void setRequestID(long requestID) {
+		this.requestID = requestID;
+	}
+	public String getBarCodeNumber() {
+		return barCodeNumber;
+	}
+
+	public void setBarCodeNumber(String barCodeNumber) {
+		this.barCodeNumber = barCodeNumber;
+	}
+
+	public String getAmountInWords() {
+		return amountInWords;
+	}
+
+	public void setAmountInWords(String amountInWords) {
+		this.amountInWords = amountInWords;
+	}
+	
+	public boolean isSwapIsActive() {
+		return swapIsActive;
+	}
+
+	public void setSwapIsActive(boolean swapIsActive) {
+		this.swapIsActive = swapIsActive;
+	}
+
+	public long getPrimaryMandateId() {
+		return primaryMandateId;
+	}
+
+	public void setPrimaryMandateId(long primaryMandateId) {
+		this.primaryMandateId = primaryMandateId;
+	}
+
+	public boolean isSecondaryMandate() {
+		return secondaryMandate;
+	}
+
+	public void setSecondaryMandate(boolean secondaryMandate) {
+		this.secondaryMandate = secondaryMandate;
+	}
+
+	public String getmICR() {
+		return mICR;
+	}
+
+	public void setmICR(String mICR) {
+		this.mICR = mICR;
+	}
+
+	public String getiFSC() {
+		return iFSC;
+	}
+
+	public void setiFSC(String iFSC) {
+		this.iFSC = iFSC;
+	}
+
+	public Mandate getValidateMandate() {
+		return validateMandate;
+	}
+
+	public void setValidateMandate(Mandate validateMandate) {
+		this.validateMandate = validateMandate;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -589,12 +712,160 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.finReference = finReference;
 	}
 
-	public long getRequestID() {
-		return requestID;
+	public long getApplId() {
+		return applId;
 	}
 
-	public void setRequestID(long requestID) {
-		this.requestID = requestID;
+	public void setApplId(long applId) {
+		this.applId = applId;
+	}
+
+	public Date getDiDate() {
+		return diDate;
+	}
+
+	public void setDiDate(Date diDate) {
+		this.diDate = diDate;
+	}
+
+	public String getSponsorBankCode() {
+		return sponsorBankCode;
+	}
+
+	public void setSponsorBankCode(String sponsorBankCode) {
+		this.sponsorBankCode = sponsorBankCode;
+	}
+
+	public String getUtilityCode() {
+		return utilityCode;
+	}
+
+	public void setUtilityCode(String utilityCode) {
+		this.utilityCode = utilityCode;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getAppFormNo() {
+		return appFormNo;
+	}
+
+	public void setAppFormNo(String appFormNo) {
+		this.appFormNo = appFormNo;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
+	public String getMandateBarCode() {
+		return mandateBarCode;
+	}
+
+	public void setMandateBarCode(String mandateBarCode) {
+		this.mandateBarCode = mandateBarCode;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public String getProcessFlag() {
+		return processFlag;
+	}
+
+	public void setProcessFlag(String processFlag) {
+		this.processFlag = processFlag;
+	}
+
+	public Date getProcessDate() {
+		return processDate;
+	}
+
+	public void setProcessDate(Date processDate) {
+		this.processDate = processDate;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public String getMachineFlag() {
+		return machineFlag;
+	}
+
+	public void setMachineFlag(String machineFlag) {
+		this.machineFlag = machineFlag;
+	}
+
+	public Date getFirstDueDate() {
+		return firstDueDate;
+	}
+
+	public void setFirstDueDate(Date firstDueDate) {
+		this.firstDueDate = firstDueDate;
+	}
+
+	public String getLoanBranch() {
+		return loanBranch;
+	}
+
+	public void setLoanBranch(String loanBranch) {
+		this.loanBranch = loanBranch;
+	}
+
+	public Date getMachineFlagUploadDate() {
+		return machineFlagUploadDate;
+	}
+
+	public void setMachineFlagUploadDate(Date machineFlagUploadDate) {
+		this.machineFlagUploadDate = machineFlagUploadDate;
+	}
+
+	public boolean isActiveFlag() {
+		return activeFlag;
+	}
+
+	public void setActiveFlag(boolean activeFlag) {
+		this.activeFlag = activeFlag;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
 	}
 
 	public String getDocumentName() {
@@ -628,4 +899,9 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	public void setExternalRef(String externalRef) {
 		this.externalRef = externalRef;
 	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+	
 }

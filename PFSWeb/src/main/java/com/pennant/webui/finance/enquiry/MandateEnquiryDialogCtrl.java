@@ -51,12 +51,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -72,12 +74,14 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -139,6 +143,15 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected Button						btnProcess;
 	protected Button						btnView;
+	
+	//Added BarCode and Reg Status
+	protected Uppercasebox					barCodeNumber;
+	protected Label							amountInWords;
+	protected Label							regStatus;
+	protected ExtendedCombobox				finReference;
+	protected Checkbox						swapIsActive;
+	protected Label							label_RegStatus;
+	private ExtendedCombobox				entityCode;
 
 	// ServiceDAOs / Domain Classes
 	private transient MandateService		mandateService;
@@ -255,7 +268,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneAreaCode.setMaxlength(3);
 		this.phoneAreaCode.setWidth("50px");
 		this.phoneNumber.setMaxlength(10);
-		this.phoneNumber.setWidth("100px");
+		this.phoneNumber.setWidth("180px");
 		this.approvalID.setMaxlength(50);
 
 		this.custID.setModuleName("Customer");
@@ -282,6 +295,21 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.umrNumber.setReadonly(true);
 
 		this.active.setChecked(true);
+		
+		this.barCodeNumber.setMaxlength(10);
+		
+		this.finReference.setMaxlength(20);
+		this.finReference.setTextBoxWidth(120);
+		this.finReference.setModuleName("FinanceManagement");
+		this.finReference.setValueColumn("FinReference");
+		this.finReference.setValidateColumns(new String[] { "FinReference" });
+		
+		this.entityCode.setMaxlength(8);
+		this.entityCode.setMandatoryStyle(false);
+		this.entityCode.setModuleName("Entity");
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 		logger.debug("Leaving");
 	}
 
@@ -375,6 +403,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.status);
 		readOnlyComponent(true, this.approvalID);
 		readOnlyComponent(true, this.umrNumber);
+		readOnlyComponent(true, this.barCodeNumber);
+		readOnlyComponent(true, this.finReference);
+		readOnlyComponent(true, this.swapIsActive);
+		readOnlyComponent(true, this.entityCode);
 
 		logger.debug("Leaving ");
 	}
@@ -385,8 +417,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @param aMandate
 	 *            Mandate
 	 * @param tab
+	 * @throws Exception 
+	 * @throws WrongValueException 
 	 */
-	public void doWriteBeanToComponents(Mandate aMandate) {
+	public void doWriteBeanToComponents(Mandate aMandate) throws WrongValueException, Exception {
 		logger.debug("Entering");
 		mandateID = aMandate.getMandateID();
 
@@ -407,7 +441,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	private void doWriteData(Mandate aMandate) {
+	private void doWriteData(Mandate aMandate) throws WrongValueException, Exception {
 
 		if (aMandate.getMandateID() != 0 && aMandate.getMandateID() != Long.MIN_VALUE) {
 			this.mandateRef.setAttribute("mandateID", aMandate.getMandateID());
@@ -441,6 +475,14 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getDocumentName() == null || aMandate.getDocumentName().equals("")) {
 			this.btnViewMandateDoc.setVisible(false);
 		}
+		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
+		this.finReference.setValue(aMandate.getOrgReference());
+		this.swapIsActive.setChecked(aMandate.isSwapIsActive());
+		this.amountInWords.setValue(AmtInitialCap());
+		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+		
+		//Entity
+		this.entityCode.setValue(aMandate.getEntityCode(),aMandate.getEntityDesc());
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
@@ -506,6 +548,22 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	private String AmtInitialCap() throws WrongValueException, Exception {
+		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
+	    
+		String[] words = amtInWords.split(" ");
+	    StringBuffer AmtInWord = new StringBuffer();
+
+	    for (int i = 0; i < words.length; i++) {
+	    	if (!words[i].isEmpty()) {
+				
+	    		AmtInWord.append(Character.toUpperCase(words[i].charAt(0)))
+	    		.append(words[i].substring(1)).append(" ");
+			}
+	    }          
+	    return AmtInWord.toString().trim();
+	} 
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

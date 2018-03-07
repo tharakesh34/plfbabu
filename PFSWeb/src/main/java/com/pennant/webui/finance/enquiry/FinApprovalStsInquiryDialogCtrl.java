@@ -345,10 +345,10 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		for (int i = 0; i < auditTransactionsList.size(); i++) {
 			auditTransaction = auditTransactionsList.get(i);
 			
-			if(auditTransaction.getUsrName().equals(prvUsrName) && 
+			/*if(auditTransaction.getUsrName().equals(prvUsrName) && 
 					auditTransaction.getRoleCode().equals(prvRoleCode)) {
 				continue; 
-			}
+			}*/
 			prvUsrName = auditTransaction.getUsrName();
 			prvRoleCode = auditTransaction.getRoleCode();
 			

@@ -56,7 +56,7 @@ public class FetchFinCustomerDedupDetails {
 
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				// get customer dedup details from interface
-				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails,finType);
+				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails,finType,ref);
 				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,custCoreBank,address,override";
 			} 
 

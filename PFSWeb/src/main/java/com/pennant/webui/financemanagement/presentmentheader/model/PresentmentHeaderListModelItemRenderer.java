@@ -76,6 +76,9 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 	  	lc = new Listcell(presentmentHeader.getReference());
 		lc.setParent(item);
 		
+		lc = new Listcell(presentmentHeader.getEntityCode());
+		lc.setParent(item);
+		
 		lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
 		lc.setParent(item);
 

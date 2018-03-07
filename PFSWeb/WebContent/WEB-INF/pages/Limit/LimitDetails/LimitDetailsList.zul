@@ -76,7 +76,7 @@
 									
 									<label id="label_LimitDetailsList_Currency" value="${c:l('label_LimitDetailsList_Currency.value')}" />
 									<listbox id="sortOperator_Currency" width="43px" mold="select" rows="1" />
-									<textbox id="currency" width="27px" maxlength="3" />
+									<textbox id="currency" width="45px" maxlength="3" />
 								</row>
 								<row>									
 									<label id="label_LimitDetailsList_ExpiryDate" value="${c:l('label_LimitDetailsList_ExpiryDate.value')}" />

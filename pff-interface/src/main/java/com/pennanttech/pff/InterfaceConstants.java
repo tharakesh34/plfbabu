@@ -49,4 +49,6 @@ public class InterfaceConstants {
 	public static final String method_LegalDesk = "executeLegalDesk";
 	public static final String method_HoldFinance = "executeHold";
 	public static final String method_bre = "executeBRE";	
+	public static String automaticMandate = "N";
+	
 }

@@ -16,6 +16,9 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -34,14 +37,17 @@ import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -60,6 +66,7 @@ public class FinStatementController extends SummaryDetailService {
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private ManualAdviseDAO				manualAdviseDAO;
 	private ReceiptService				receiptService;
+	private SOAReportGenerationService 	soaReportGenerationService;	
 
 
 	/**
@@ -684,7 +691,53 @@ public class FinStatementController extends SummaryDetailService {
 
 		return financeScheduleDetail;
 	}
+	/**
+	 * Method for generating SOA  report
+	 * @param statementRequest
+	 * @return stmtResponse
+	 */
+	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest)  {
+		logger.debug("Entering");
 
+		FinStatementResponse stmtResponse;
+		try {
+			String reportName = statementRequest.getTemplate();
+			Date fromdate =statementRequest.getFromDate();
+			Date todate = statementRequest.getToDate();
+			String finReference = statementRequest.getFinReference();
+			String envVariable = System.getenv("APP_ROOT_PATH");
+			PathUtil.setRootPath(envVariable);
+			StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate,
+					todate);
+
+			List<Object> list = new ArrayList<Object>();
+			list.add(soa.getSoaSummaryReports());
+			list.add(soa.getTransactionReports());
+			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			String userName = userDetails.getUserName();
+
+			byte[] document = ReportCreationUtil.reportGeneration(reportName, soa, list, reportSrc, userName, false);
+			if (document != null) {
+				stmtResponse = new FinStatementResponse();
+				stmtResponse.setFinReference(statementRequest.getFinReference());
+				stmtResponse.setDocImage(document);
+				stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				logger.debug("Leaving");
+				return stmtResponse;
+			} else {
+				stmtResponse = new FinStatementResponse();
+				stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				logger.debug("Leaving");
+				return stmtResponse;
+			}
+		} catch (Exception e) {
+			stmtResponse = new FinStatementResponse();
+			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.debug("Leaving");
+			return stmtResponse;
+		}
+	}
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -715,5 +768,8 @@ public class FinStatementController extends SummaryDetailService {
 
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
+		this.soaReportGenerationService = soaReportGenerationService;
 	}
 }

@@ -50,6 +50,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -69,31 +70,34 @@ import com.pennanttech.framework.core.constants.SortOrder;
  * This is the controller class for the /WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeList.zul file.
  */
 public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ExpenseTypeListCtrl.class);
+	private static final long				serialVersionUID	= 1L;
+	private static final Logger				logger				= Logger.getLogger(ExpenseTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ExpenseTypeList;
-	protected Borderlayout borderLayout_ExpenseTypeList;
-	protected Paging pagingExpenseTypeList;
-	protected Listbox listBoxExpenseType;
+	protected Window						window_ExpenseTypeList;
+	protected Borderlayout					borderLayout_ExpenseTypeList;
+	protected Paging						pagingExpenseTypeList;
+	protected Listbox						listBoxExpenseType;
 
-	protected Listheader listheader_ExpenceTypeName;
-	protected Listheader listheader_ExpenceRelated;
+	protected Listheader					listheader_ExpenceTypeCode;
+	protected Listheader					listheader_ExpenceTypeDesc;
+	protected Listheader					listheader_Active;
 
-	protected Button button_ExpenseTypeList_NewExpenseType;
-	protected Button button_ExpenseTypeList_ExpenseTypeSearchDialog;
+	protected Button						button_ExpenseTypeList_NewExpenseType;
+	protected Button						button_ExpenseTypeList_ExpenseTypeSearchDialog;
 
-	protected Textbox expenceTypeId;
-	protected Textbox expenceTypeName;
+	protected Textbox						expenceTypeCode;
+	protected Textbox						expenceTypeDesc;
+	protected Checkbox						active;
 
-	protected Listbox sortOperator_expenceTypeId;
-	protected Listbox sortOperator_expenceTypeName;
+	protected Listbox						sortOperator_expenceTypeCode;
+	protected Listbox						sortOperator_expenceTypeDesc;
+	protected Listbox						sortOperator_Active;
 
-	private transient ExpenseTypeService expenseTypeService;
+	private transient ExpenseTypeService	expenseTypeService;
 
 	/**
 	 * default constructor.<br>
@@ -106,8 +110,8 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 	protected void doSetProperties() {
 		super.moduleCode = "ExpenseType";
 		super.pageRightName = "ExpenseTypeList";
-		super.tableName = "AMTExpenseType_AView";
-		super.queueTableName = "AMTExpenseType_View";
+		super.tableName = "ExpenseTypes_AView";
+		super.queueTableName = "ExpenseTypes_View";
 	}
 
 	/**
@@ -126,10 +130,12 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 		registerButton(button_ExpenseTypeList_NewExpenseType, "button_ExpenseTypeList_NewExpenseType", true);
 		registerButton(button_ExpenseTypeList_ExpenseTypeSearchDialog);
 
-		registerField("expenceTypeId", expenceTypeId, SortOrder.NONE, sortOperator_expenceTypeId, Operators.STRING);
-		registerField("expenceTypeName", listheader_ExpenceTypeName, SortOrder.ASC, expenceTypeName,
-				sortOperator_expenceTypeName, Operators.STRING);
-		registerField("expenseFor", listheader_ExpenceRelated, SortOrder.NONE);
+		registerField("expenseTypeId");
+		registerField("expenseTypeCode", listheader_ExpenceTypeCode, SortOrder.ASC, expenceTypeCode,
+				sortOperator_expenceTypeCode, Operators.STRING);
+		registerField("expenseTypeDesc", listheader_ExpenceTypeDesc, SortOrder.NONE, expenceTypeDesc,
+				sortOperator_expenceTypeDesc, Operators.STRING);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -200,7 +206,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ExpenceTypeId=" + expenseType.getExpenceTypeId() + " AND version="
+		String whereCond = " AND ExpenceTypeId=" + expenseType.getExpenseTypeId() + " AND version="
 				+ expenseType.getVersion() + " ";
 
 		if (doCheckAuthority(expenseType, whereCond)) {

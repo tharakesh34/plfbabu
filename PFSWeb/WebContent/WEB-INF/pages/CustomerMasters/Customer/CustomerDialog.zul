@@ -73,8 +73,7 @@
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto"
-								ca:data-scrollable="true">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true">
 								<div id="divKeyDetails">
 									<groupbox id="gb_keyDetails">
 										<grid
@@ -409,6 +408,32 @@
 														value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
 													<extendedcombobox
 														id="custSubSegment" />
+												</row>
+											</rows>
+										</grid>
+										<grid id="grid_ExtendedDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label value="${c:l('label_CustomerDialog_SubCategory.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="subCategory" readonly="true" width="155px" />
+													</hbox>
+													<label value="${c:l('label_CustomerDialog_Religion.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<extendedcombobox id="religion" />
+													</hbox>
+												</row>
+												<row>
+													<label value="${c:l('label_CustomerDialog_Caste.value')}" />
+													<extendedcombobox id="caste" />
 												</row>
 											</rows>
 										</grid>

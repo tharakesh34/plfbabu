@@ -853,7 +853,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) {
+	private boolean doProcess(VASRecording aVASRecording, String tranType)  throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1016,7 +1016,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

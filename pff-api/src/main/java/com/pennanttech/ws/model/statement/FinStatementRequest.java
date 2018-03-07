@@ -21,6 +21,11 @@ public class FinStatementRequest {
 	private Date	toDate;
 	@XmlElement
 	private int		days;
+	@XmlElement
+	private String  type;
+	@XmlElement
+	private String template;
+
 
 	public String getCif() {
 		return cif;
@@ -68,5 +73,20 @@ public class FinStatementRequest {
 
 	public void setDays(int days) {
 		this.days = days;
+	}
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 }

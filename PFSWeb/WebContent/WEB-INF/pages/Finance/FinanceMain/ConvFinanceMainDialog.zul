@@ -519,16 +519,14 @@
 												</row>
 												<row id="row_salesDept">
 													<label
+														id="label_FinanceMainDialog_FinPurpose"
+														value="${c:l('label_FinanceMainDialog_FinPurpose.value')}" />
+													<extendedcombobox id="finPurpose" />
+													<label
 														id="label_FinanceMainDialog_SalesDepartment"
 														value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
 													<extendedcombobox
 														id="salesDepartment" />
-													<label
-														id="label_FinanceMainDialog_FinPurpose"
-														visible="false"
-														value="${c:l('label_FinanceMainDialog_FinPurpose.value')}" />
-													<extendedcombobox
-														visible="false" id="finPurpose" />
 												</row>
 												<!-- Facility Details Start-->
 												<row

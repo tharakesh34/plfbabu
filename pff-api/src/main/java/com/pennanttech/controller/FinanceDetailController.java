@@ -57,6 +57,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
@@ -210,7 +211,14 @@ public class FinanceDetailController extends SummaryDetailService {
 				
 				logger.debug("Leaving");
 				return response;
-			} catch (Exception e) {
+			} catch (InterfaceException ex) {
+				logger.error("InterfaceException", ex);
+				FinScheduleData response = new FinScheduleData();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+				return response;
+			}  
+			catch (Exception e) {
 				logger.error("Exception", e);
 				APIErrorHandlerService.logUnhandledException(e);
 				FinScheduleData response = new FinScheduleData();

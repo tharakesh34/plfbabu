@@ -95,6 +95,9 @@
 										<uppercasebox id="branchDetails" width = "132px"/>
 										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
 										</cell>
+										<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
+										<listbox id="sortOperator_entityCode" width="43px" mold="select" rows="1" />
+										<extendedcombobox id = "entityCode"/>
 								</row>
 								
 						 	<row>

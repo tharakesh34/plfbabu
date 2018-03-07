@@ -82,7 +82,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="account"
-										maxlength="15" width="80px" />
+										 width="120px" />
 								</hbox>
 								<label
 									id="label_NormAccountMappingDialog_HostAccount"
@@ -91,7 +91,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="hostAccount"
-										maxlength="15" width="80px" />
+										 width="120px" />
 								</hbox>
 							</row>
 							<row visible="true">

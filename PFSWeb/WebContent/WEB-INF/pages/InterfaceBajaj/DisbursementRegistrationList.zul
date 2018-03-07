@@ -52,12 +52,12 @@
 										<combobox id="disbTypes"
 											width="171px" />
 									</hbox>
-									<label
-										value="${c:l('label_DisbursementList_PartnerBank.value')}" />
-									<listbox
-										id="sortOperator_PartnerBank" width="43px" mold="select"
+									<label id="label_Entity"
+										value="${c:l('label_DisbursementList_Entity.value')}" />
+										<listbox
+										id="sortOperator_Entity" width="43px" mold="select"
 										rows="1" />
-									<extendedcombobox id="partnerBank" />
+									<extendedcombobox id="entity" />
 								</row>
 								<row>
 									<label
@@ -78,11 +78,11 @@
 										</hlayout>
 									</hbox>
 									<label
-										value="${c:l('label_DisbursementList_Branch.value')}" />
-									<listbox id="sortOperator_Branch"
-										width="43px" mold="select" rows="1" />
-									<extendedcombobox id="branch"
-										width="125px" />
+										value="${c:l('label_DisbursementList_PartnerBank.value')}" />
+									<listbox
+										id="sortOperator_PartnerBank" width="43px" mold="select"
+										rows="1" />
+									<extendedcombobox id="partnerBank" />
 								</row>
 								<row>
 									<label
@@ -125,7 +125,13 @@
 									</hbox>
 								</row>
 								<row>
-									<label
+								<label
+									value="${c:l('label_DisbursementList_Branch.value')}" />
+								<listbox id="sortOperator_Branch"
+									width="43px" mold="select" rows="1" />
+								<extendedcombobox id="branch"
+									width="125px" />
+								<label
 										value="${c:l('label_DisbursementList_QDP.value')}" />
 									<listbox id="sortOperator_QDP"
 										width="43px" mold="select" visible="false" rows="1" />
@@ -142,6 +148,10 @@
 							<listhead sizable="true">
 								<listheader
 									id="listHeader_CheckBox_Name" hflex="min" align="center" />
+								<listheader
+									id="listheader_Disbursement_Entity"
+									label="${c:l('listheader_Disbursement_Entity.label')}"
+									hflex="min" />
 								<listheader
 									id="listheader_Disbursement_DisbTypes"
 									label="${c:l('listheader_Disbursement_DisbType.label')}"

@@ -198,6 +198,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean isPaymentToBank;
 	private boolean isPayToDevSelCust;
 	private boolean scheduleChange;
+	
+	
+	private BigDecimal adjOrgBal = BigDecimal.ZERO;
+	private BigDecimal remBalForAdj = BigDecimal.ZERO;
+	private boolean devFinCalReq = true;
+	private boolean resetNxtRpyInstReq = false;
+	private boolean resetOrgBal = true;
+	private String lovDescEntityCode;
 
 	// Deviation Process
 	private boolean deviationApproval;
@@ -744,6 +752,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("dedupMatch");
 		excludeFields.add("hunterGo");
 		excludeFields.add("bureau");
+		excludeFields.add("adjOrgBal");
+		excludeFields.add("remBalForAdj");
+		excludeFields.add("devFinCalReq");
+		excludeFields.add("resetOrgBal");
+		excludeFields.add("resetNxtRpyInstReq");
 
 		//GST
 		excludeFields.add("recalCGSTFee");
@@ -3266,6 +3279,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.eventFromDate = null;
 		this.eventToDate = null;
 		this.pftIntact = false;
+		this.resetNxtRpyInstReq = false;
+		this.procMethod = null;
 	}
 
 	public Date getFirstDisbDate() {
@@ -3512,6 +3527,53 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRecalUGSTFee(BigDecimal recalUGSTFee) {
 		this.recalUGSTFee = recalUGSTFee;
+	}
+	
+	public boolean isResetOrgBal() {
+		return resetOrgBal;
+	}
+
+	public void setResetOrgBal(boolean resetOrgBal) {
+		this.resetOrgBal = resetOrgBal;
+	}
+	public boolean isResetNxtRpyInstReq() {
+		return resetNxtRpyInstReq;
+	}
+
+	public void setResetNxtRpyInstReq(boolean resetNxtRpyInstReq) {
+		this.resetNxtRpyInstReq = resetNxtRpyInstReq;
+	}
+	
+	public boolean isDevFinCalReq() {
+		return devFinCalReq;
+	}
+
+	public void setDevFinCalReq(boolean devFinCalReq) {
+		this.devFinCalReq = devFinCalReq;
+	}
+	
+	public BigDecimal getAdjOrgBal() {
+		return adjOrgBal;
+	}
+
+	public void setAdjOrgBal(BigDecimal adjOrgBal) {
+		this.adjOrgBal = adjOrgBal;
+	}
+
+	public BigDecimal getRemBalForAdj() {
+		return remBalForAdj;
+	}
+
+	public void setRemBalForAdj(BigDecimal remBalForAdj) {
+		this.remBalForAdj = remBalForAdj;
+	}
+	
+	public String getLovDescEntityCode() {
+		return lovDescEntityCode;
+	}
+
+	public void setLovDescEntityCode(String lovDescEntityCode) {
+		this.lovDescEntityCode = lovDescEntityCode;
 	}
 
 }

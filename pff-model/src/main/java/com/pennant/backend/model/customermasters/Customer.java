@@ -69,7 +69,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
-		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "returnStatus" })
+		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1","subCategory","casteId","religionId", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -312,6 +312,17 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String branchRefno;
 	private String lovDescRequestStage;
 	private String custSourceID = null;
+	
+	@XmlElement
+	private String subCategory;
+	@XmlElement(name="caste")
+	private long casteId;
+	@XmlElement(name="religion")
+	private long religionId;
+	private String casteCode;
+	private String religionCode;
+	private String casteDesc;
+	private String religionDesc;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -352,6 +363,10 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custSwiftBrnCode");
 		excludeFields.add("sourceSystem");
 		excludeFields.add("branchRefno");
+		excludeFields.add("casteCode");
+		excludeFields.add("religionCode");
+		excludeFields.add("casteDesc");
+		excludeFields.add("religionDesc");
 		return excludeFields;
 	}
 
@@ -1819,4 +1834,61 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setLovDescCustRO1City(String lovDescCustRO1City) {
 		this.lovDescCustRO1City = lovDescCustRO1City;
 	}
+
+	public String getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(String subCategory) {
+		this.subCategory = subCategory;
+	}
+
+	public long getCasteId() {
+		return casteId;
+	}
+
+	public void setCasteId(long casteId) {
+		this.casteId = casteId;
+	}
+
+	public long getReligionId() {
+		return religionId;
+	}
+
+	public void setReligionId(long religionId) {
+		this.religionId = religionId;
+	}
+
+	public String getCasteDesc() {
+		return casteDesc;
+	}
+
+	public void setCasteDesc(String casteDesc) {
+		this.casteDesc = casteDesc;
+	}
+
+	public String getReligionDesc() {
+		return religionDesc;
+	}
+
+	public void setReligionDesc(String religionDesc) {
+		this.religionDesc = religionDesc;
+	}
+
+	public String getCasteCode() {
+		return casteCode;
+	}
+
+	public void setCasteCode(String casteCode) {
+		this.casteCode = casteCode;
+	}
+
+	public String getReligionCode() {
+		return religionCode;
+	}
+
+	public void setReligionCode(String religionCode) {
+		this.religionCode = religionCode;
+	}
+
 }

@@ -344,6 +344,17 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
+				
+				// Excluding Present generated file Schedule Terms
+				if(curSchd.getPresentmentId() > 0){
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
 
 				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
 					continue;
@@ -623,6 +634,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().setFeeEvent(moduleDefiner);
 		
 		// Service details calling for Schedule calculation
+		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doPostponement(getFinScheduleData(), finServiceInstruction,
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
@@ -898,11 +910,13 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						(Date) this.cbToDate.getSelectedItem().getValue(), false);
 			}
 		}else {
-			this.cbReCalType.setSelectedIndex(0);
-			this.cbReCalType.setDisabled(true);
+			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+				this.cbReCalType.setSelectedIndex(0);
+				this.cbReCalType.setDisabled(true);
+				this.cbRecalFromDate.setSelectedIndex(0);
+				this.cbRecalToDate.setSelectedIndex(0);
+			}
 			this.recallFromDateRow.setVisible(false);
-			this.cbRecalFromDate.setSelectedIndex(0);
-			this.cbRecalToDate.setSelectedIndex(0);
 			this.recallToDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(false);
 		}

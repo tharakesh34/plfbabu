@@ -106,6 +106,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected boolean isOverdraft = false;
 	private boolean isCompReadonly = false;
 	
+	
 	/**
 	 * default constructor.<br>
 	 */

@@ -26,6 +26,7 @@
 					<value>com.pennant.validation.ReSchedulingGroup</value>
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -46,6 +47,7 @@
 					<value>com.pennant.validation.ReSchedulingGroup</value>
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>	
 				</groups>  
 				<element name="max">20</element>
 			</constraint>
@@ -64,6 +66,7 @@
 					<value>com.pennant.validation.EarlySettlementGroup</value>
 					<value>com.pennant.validation.ChangeInstallmentFrequencyGroup</value>
 					<value>com.pennant.validation.ReSchedulingGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
 			</constraint>
 		</field>
@@ -131,13 +134,13 @@
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 				</groups>
 				<element name="max">8</element>
-			</constraint>
+			</constraint>-->
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>schdMthd is Mandatory</message>
 				<groups>
-					<value>com.pennant.validation.ChangeRepaymentGroup</value>
+						<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
-			</constraint> -->
+			</constraint> 
 		</field>
 		
 		<field name="amount">
@@ -293,6 +296,7 @@
 					<value>com.pennant.validation.EarlySettlementGroup</value>
 					<value>com.pennant.validation.ChangeInstallmentFrequencyGroup</value>
 					<value>com.pennant.validation.ReSchedulingGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -311,6 +315,7 @@
 					<value>com.pennant.validation.EarlySettlementGroup</value>
 					<value>com.pennant.validation.ChangeInstallmentFrequencyGroup</value>
 					<value>com.pennant.validation.ReSchedulingGroup</value>
+					<value>com.pennant.validation.ScheduleMethodGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>

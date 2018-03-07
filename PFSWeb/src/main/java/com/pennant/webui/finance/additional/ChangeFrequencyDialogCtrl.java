@@ -322,7 +322,13 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				
 				//Change Frequency is not allowed for the schedule which has the presentment
 				if(curSchd.getPresentmentId() > 0){
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
 					prvSchd = curSchd;
+					isPrvShcdAdded = false;
 					continue;
 				}
 				//Not Review Date

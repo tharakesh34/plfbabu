@@ -263,7 +263,7 @@
 															id="pftServicingODLimit" checked="false" />
 													</hbox>
 												</row>
-												<row visible="false">
+												<row>
 													<label
 														id="label_FinanceMainDialog_ODPurpose"
 														value="${c:l('label_FinanceMainDialog_ODPurpose.value')}" />

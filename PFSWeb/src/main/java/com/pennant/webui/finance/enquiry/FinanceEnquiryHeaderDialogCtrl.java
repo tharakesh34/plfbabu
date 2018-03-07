@@ -78,6 +78,7 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
@@ -110,6 +111,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ScoringDetailService;
+import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -178,6 +180,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private SuspenseService					suspenseService;
 	private FinanceDeviationsService		deviationDetailsService;
 	private FinFeeDetailService				finFeeDetailService;
+	private UploadHeaderService				uploadHeaderService;
 
 	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
 	private List<ValueLabel>	         mandateList	        = PennantStaticListUtil.getMandateTypeList();
@@ -542,7 +545,31 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			map.put("finCovenants", finCovenants);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
+		} else if ("FEEENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinFeeEnquiry.value"));
+			List<FinFeeDetail> feeDetails;
+			if (fromApproved) {
+				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_AView");
+			} else {
+				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_View");
+			}
+
+			map.put("feeDetails", feeDetails);
+			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FeeEnquiryDialog.zul";
+
+		} else if ("EXPENQ".equals(this.enquiryType)) {
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExpenseEnquiry.value"));
+			List<FinExpenseDetails> finExpenseDetails;
+			
+			finExpenseDetails = getUploadHeaderService().getFinExpenseDetailById(this.finReference);
+
+			map.put("finExpenseDetails", finExpenseDetails);
+			map.put("finReference", this.finReference);
+			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExpenseEnquiryDialog.zul";
 		} else if ("LOANEXTDET".equals(this.enquiryType)) {
 			logger.debug("Entering");
 			try {
@@ -559,7 +586,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				logger.error("Exception", e);
 			}
 			logger.debug("Leaving");
-
 		}
 		if (StringUtils.isNotEmpty(path)) {
 
@@ -917,6 +943,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public UploadHeaderService getUploadHeaderService() {
+		return uploadHeaderService;
+	}
+
+	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
+		this.uploadHeaderService = uploadHeaderService;
 	}
 
 }

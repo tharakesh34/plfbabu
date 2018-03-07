@@ -1057,6 +1057,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
+			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' AND StepFinance = 0 " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'");  
 		}
 	
 		//Written Off Finance Reference Details Condition
@@ -2588,7 +2591,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner	= FinanceConstants.FINSER_EVENT_COVENANTS;
 					workflowCode	= FinanceConstants.FINSER_EVENT_COVENANTS;
 				}
-				
+				else if ("tab_ChangeSchdMethod".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
+					eventCodeRef  = AccountEventConstants.ACCEVENT_SCDCHG;
+					workflowCode =  FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
+				}
 				return;
 			}
 		}else{

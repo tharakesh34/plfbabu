@@ -270,6 +270,18 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				
+				// Presentment Exists
+				if (curSchd.getPresentmentId() > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+				
 				if (curSchd.isRepayOnSchDate()  
 						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && 
 						curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
@@ -398,9 +410,10 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 
 		getFinScheduleData().getErrorDetails().clear();
-
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		
 		// call change frequency method to calculate new schedules(Service details calling for Schedule calculation)
+		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		if (isAddTerms()) {
 			getFinScheduleData().getFinanceMain().setEventFromDate(
 					getFinScheduleData().getFinanceMain().getFinStartDate());
@@ -551,6 +564,17 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+				
+				// Presentment Exists
+				if (curSchd.getPresentmentId() > 0) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");

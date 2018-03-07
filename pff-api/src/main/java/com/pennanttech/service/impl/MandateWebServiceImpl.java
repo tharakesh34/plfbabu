@@ -15,11 +15,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -50,6 +52,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private BankDetailService			bankDetailService;
 	private FinanceMainService			financeMainService;
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private EntityService 				entityService;
+	
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -346,8 +350,9 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		// validate customer
 		String custCIF = mandate.getCustCIF();
+		Customer customer = null;
 		if (StringUtils.isNotBlank(custCIF)) {
-			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			 customer = customerDetailsService.getCustomerByCIF(custCIF);
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
@@ -355,6 +360,50 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 		}
 
+		// validate the entityCode
+		if (StringUtils.isBlank(mandate.getEntityCode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Entity";
+			return getErrorDetails("90502", valueParm);
+		}
+		Entity entity = entityService.getApprovedEntity(mandate.getEntityCode());
+		if (entity == null || !entity.isActive()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Entity";
+			valueParm[1] = mandate.getEntityCode();
+			return getErrorDetails("90701", valueParm);
+
+		}
+		
+		//validate finance reference
+		/*if(StringUtils.isBlank(mandate.getOrgReference())){
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			return getErrorDetails("90502", valueParm);
+		}*/
+		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
+			int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = mandate.getOrgReference();
+				return getErrorDetails("90201", valueParm);
+			}
+			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID());
+			boolean validFinrefernce = true;
+			for (String finReference : finRefList) {
+				if (StringUtils.equals(finReference, mandate.getOrgReference())) {
+					validFinrefernce = false;
+				}
+			}
+			if (validFinrefernce) {
+				returnStatus = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = mandate.getCustCIF();
+				valueParm[1] = mandate.getOrgReference();
+				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
+			}
+		}
+			
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
 			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
@@ -526,6 +575,21 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return getErrorDetails("90318", valueParm);
 			}
 		}
+		//barCode validation
+		if(StringUtils.isBlank(mandate.getBarCodeNumber())){
+			String[] valueParm = new String[1];
+			valueParm[0] = "barCode";
+			return getErrorDetails("90502", valueParm);
+		}
+		List<ErrorDetail> errors = mandateService.doValidations(mandate);
+		if (errors != null && !errors.isEmpty()) {
+			for (ErrorDetail errorDetails : errors) {
+				if (StringUtils.isNotBlank(errorDetails.getCode())) {
+					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),errorDetails.getError()));
+					return returnStatus;
+				}
+			}
+		}
 		logger.debug("Leaving");
 
 		return returnStatus;
@@ -610,5 +674,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-
+	@Autowired
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
 }

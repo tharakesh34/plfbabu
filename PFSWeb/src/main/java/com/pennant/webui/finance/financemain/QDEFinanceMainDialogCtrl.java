@@ -1982,7 +1982,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -93,6 +93,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
@@ -109,10 +110,11 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -818,7 +820,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(isReadOnly("JVPostingDialog_Batch"), this.batch);
 		readOnlyComponent(true, this.batchReference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchCcy"), this.baseCCy);
-		readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
+		//readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
 		readOnlyComponent(isReadOnly("JVPostingDialog_PostingAgainst"), this.postingAgainst);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.reference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.postingDivision);
@@ -912,10 +914,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.postingBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.postingBranch.setMandatoryStyle(true);
 		this.postingBranch.setTextBoxWidth(40);
-		this.postingBranch.setModuleName("Branch");
-		this.postingBranch.setValueColumn("BranchCode");
-		this.postingBranch.setDescColumn("BranchDesc");
-		this.postingBranch.setValidateColumns(new String[] { "BranchCode" });		
+		this.postingBranch.setModuleName("UserDivBranch");
+		this.postingBranch.setValueColumn("UserBranch");
+		this.postingBranch.setDescColumn("UserBranchDesc");
+		Filter[] postingBranch = new Filter[1];
+		postingBranch[0] = Filter.in("usrId", getUserWorkspace().getLoggedInUser().getUserId());
+		this.postingBranch.setFilters(postingBranch);
+		this.postingBranch.setValidateColumns(new String[] { "UserBranch" });		
 
 		this.exchangeRateType.setMaxlength(8);
 		this.exchangeRateType.setMandatoryStyle(true);
@@ -962,7 +967,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (aJVPosting.isNewRecord()) {
 			this.batchReference.setValue("");
 			this.baseCCy.setValue(aJVPosting.getCurrency());
-			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
 			getJVPosting().setPostingDate(DateUtility.getAppDate());
 			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		} else {
@@ -971,6 +975,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
+			this.postingBranch.setReadonly(true);
 			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), "");
 		}
 		
@@ -1027,17 +1032,51 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.reference.setValue("", "");
 		} else {
 			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_LOAN)) {				
-				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
-				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
-				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
-				this.postingDivision.setReadonly(true);
-			}else{
-				this.postingDivision.setReadonly(false);
+					FinanceConstants.POSTING_AGAINST_LOAN)) {
+				if (this.reference.getObject() != null) {
+					FinanceMain financeMain = (FinanceMain) this.reference.getObject();
+					this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
+					this.postingDivision.setValue(financeMain.getLovDescFinDivision());
+					this.postingDivision.setReadonly(true);
+					this.postingBranch.setValue(financeMain.getFinBranch());
+					this.postingBranch.setReadonly(true);
+				}
+			}
+			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+					FinanceConstants.POSTING_AGAINST_CUST)) {
+				Customer customer = (Customer) this.reference.getObject();
+				this.reference.setValue(customer.getCustCIF(), customer.getCustShrtName());
+				this.postingBranch.setValue(customer.getCustDftBranch());
+				this.postingBranch.setReadonly(true);
 			}
 		}
 		logger.debug("Leaving");
 
+	}
+	
+	
+	public void onFulfill$postingBranch(Event event) {
+		if (!StringUtils.isEmpty(this.postingBranch.getValue())) {
+			this.postingBranch.setReadonly(true);
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_LOAN)
+				&& this.postingBranch.getValue() != null) {
+			Filter[] reference = new Filter[1];
+			reference[0] = Filter.in("finbranch", this.postingBranch.getValue());
+			this.reference.setFilters(reference);
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_CUST)
+				&& this.postingBranch.getValue() != null) {
+			Filter[] reference = new Filter[1];
+			reference[0] = Filter.in("custdftbranch", this.postingBranch.getValue());
+			this.reference.setFilters(reference);
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_LIMIT)
+				&& this.postingBranch.getValue() != null) {
+			Filter[] reference = new Filter[1];
+			reference[0] = Filter.in("ResponsibleBranch", this.postingBranch.getValue());
+			this.reference.setFilters(reference);
+		}
 	}
 
 	/**
@@ -1947,6 +1986,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.reference.setValue("", "");
 		this.postingDivision.setValue("","");
 		this.postingDivision.setReadonly(false);
+		this.postingBranch.setValue("");
+		this.postingBranch.setReadonly(false);
+		this.reference.setFilters(null);
+		this.reference.setObject(null);
+		this.postingBranch.setObject(null);
 		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
 	}
 

@@ -306,7 +306,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Check if schedule header is null or not and set the recal type
 		// fields.
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinSchData.getFinanceMain().getProductCategory())){
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinSchData.getFinanceMain().getProductCategory()) || 
+				aFinSchData.getFinanceType().isDeveloperFinance()){
 			this.reCalTypeRow.setVisible(false);
 			this.fromDateRow.setVisible(false);
 			this.schdMthdRow.setVisible(false);
@@ -374,18 +375,23 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinanceMain finMain = aFinScheduleData.getFinanceMain();
 		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
 		boolean isOverdraft = false;
+		boolean isDevFinance = false;
 		
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,finMain.getProductCategory())){
 			isOverdraft = true;
 		}
+		if(aFinScheduleData.getFinanceType().isDeveloperFinance()){
+			isDevFinance = true;
+		}
 		
 		boolean isValidDate = true;
 		Date maturityDate = finMain.getMaturityDate();
+		Date recalFrom = finMain.getFinStartDate();
 		try {
 
 			// Closing Balance Maturity Date
 			int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
-			if(!isOverdraft){
+			if(!isOverdraft && !isDevFinance){
 				for (int i = sdSize -1; i > 0; i--) {
 					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
 					if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) != 0){
@@ -394,6 +400,17 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					maturityDate = curSchd.getSchDate();
 				}
 			}
+			if(isDevFinance){
+				for (int i = 0; i <= sdSize -1; i++) {
+					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
+					if(DateUtility.compare(curSchd.getSchDate(), this.fromDate.getValue()) <= 0){
+						continue;
+					}
+					recalFrom = curSchd.getSchDate();
+					break;
+				}
+			}
+			
 
 			Date appDate = DateUtility.getAppDate();
 			if (DateUtility.compare(this.fromDate.getValue(), appDate) < 0 || DateUtility.compare(this.fromDate.getValue(),maturityDate) >= 0) {
@@ -663,14 +680,18 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			getFinFeeDetailListCtrl().doExecuteFeeCharges(true, getFinScheduleData());
 		}
 		
-		if(isOverdraft){
+		if(isOverdraft || isDevFinance){
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finMain.setEventFromDate(this.fromDate.getValue());
 			finMain.setRecalFromDate(this.fromDate.getValue());
+			finServiceInstruction.setRecalFromDate(this.fromDate.getValue());
+			if(isDevFinance){
+				finMain.setRecalFromDate(recalFrom);
+				finServiceInstruction.setRecalFromDate(recalFrom);
+			}
 			finMain.setRecalToDate(maturityDate);
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finServiceInstruction.setFromDate(this.fromDate.getValue());
-			finServiceInstruction.setRecalFromDate(this.fromDate.getValue());
 			finServiceInstruction.setRecalToDate(maturityDate);
 		}
 		
@@ -997,12 +1018,18 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				checkForLastPaid = false;
-				
 				// Excluding Present generated file Schedule Terms
 				if(curSchd.getPresentmentId() > 0){
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
+				
+				checkForLastPaid = false;
 
 				// New Disbursement Date Checking
 				if (this.fromDate.getValue() != null

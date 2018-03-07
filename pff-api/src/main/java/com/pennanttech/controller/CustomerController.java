@@ -160,16 +160,10 @@ public class CustomerController {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
-		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
-		if (customer != null) {
-			customerDetails.setCustCIF(custCIF);
-			doEmptyResponseObject(customerDetails);
-			customerDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		} else {
-			doEmptyResponseObject(customerDetails);
-			customerDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90104"));
-		}
+		customerDetails.setCustCIF(custCIF);
+		doEmptyResponseObject(customerDetails);
+		customerDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		logger.debug("Leaving");
 		return customerDetails;
@@ -211,14 +205,14 @@ public class CustomerController {
 		}
 		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
 			curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
-		}
+		} 
 		if (StringUtils.isNotBlank(customerDetails.getCustCoreBank())) {
 			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
 		}
 		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		}
-		if (customerDetails.getPrimaryRelationOfficer() != 0) {
+		if (StringUtils.isNotBlank(Long.toString(customerDetails.getPrimaryRelationOfficer()))) {
 			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		}
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustLng())){
@@ -261,6 +255,7 @@ public class CustomerController {
 			curCustomer.setVersion((prvCustomer.getVersion()) + 1);
 			curCustomer.setLastMntBy(userDetails.getUserId());
 			curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			curCustomer.setCustCoreBank(prvCustomer.getCustCoreBank());
 			// copy properties
 			BeanUtils.copyProperties(curCustomer, prvCustomer);
 		}

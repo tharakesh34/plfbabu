@@ -25,23 +25,22 @@
 				</groups>
 			</constraint>
 		</field>
-
 		<field name="fieldValue">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
+			<!--  <constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>fieldValue should have maximum 200 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">200</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			</constraint> -->
+			<!-- <constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>fieldValue is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-			</constraint>
+			</constraint> -->
 		</field>
 
 	</bean>

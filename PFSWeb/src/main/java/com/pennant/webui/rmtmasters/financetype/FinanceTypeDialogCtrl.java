@@ -112,6 +112,7 @@ import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -221,6 +222,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox droppingMethod;
 	protected Checkbox manualSchedule;
 	protected Row row_Commitment;
+	protected Checkbox developerFinance; // autoWired
 
 	// Grace Period Schedule Details Tab
 	protected Space space_cbfinGrcRateType;
@@ -507,6 +509,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 	protected FinTypePartnerBankListCtrl finTypePartnerBankListCtrl;
 	private ProductService productService;
+	protected FinTypeExpenseListCtrl finTypeExpenseListCtrl;
+	
+	// Cost of funds
+	protected Row row_Custoffunds;
+	protected ExtendedCombobox costOfFunds;
+	protected Label label_FinanceTypeDialog_CostOfFunds;
+	protected Hbox hb_CostOfFunds;
+	protected Label label_FinanceTypeDialog_AlwIRRDetails;
+	protected Hbox hbox_IRRDetails;
+	protected Textbox alwdIRRDetails;
+	protected Button btnAlwIRRDetails;
+	private List<IRRFinanceType> irrFinanceTypeList = null;
 
 	/** default constructor.<br> */
 	public FinanceTypeDialogCtrl() {
@@ -843,6 +857,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.unPlannedEmiHLockPeriod.setMaxlength(3);
 		this.maxReAgeHolidays.setMaxlength(3);
 		this.maxUnplannedEmi.setMaxlength(3);
+		
+		//Cost of funds
+		this.costOfFunds.setModuleName("CostOfFundCode");
+		this.costOfFunds.setValueColumn("CofCode");
+		this.costOfFunds.setDescColumn("CofDesc");
+		this.costOfFunds.setValidateColumns(new String[] { "CofCode" });
+		this.costOfFunds.setMandatoryStyle(true);
 
 		this.space_PftDueSchdOn.setSclass("");
 
@@ -899,6 +920,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		finDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
 		label_FinanceTypeDialog_FinDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		
+		this.hbox_IRRDetails.setVisible(ImplementationConstants.ALLOW_IRRCODES);
+		this.label_FinanceTypeDialog_AlwIRRDetails.setVisible(ImplementationConstants.ALLOW_IRRCODES);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -906,6 +930,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.groupboxWf.setVisible(false);
 		}
 
+		this.finDivision.setButtonDisabled(true);
+		this.finDivision.setReadonly(false);
 		logger.debug("Leaving");
 		
 	}
@@ -1074,6 +1100,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.tDSApplicable.setChecked(aFinanceType.isTDSApplicable());
 		this.alwMaxDisbCheckReq.setChecked(aFinanceType.isAlwMaxDisbCheckReq());
 		this.quickDisb.setChecked(aFinanceType.isQuickDisb());
+		
+		this.developerFinance.setChecked(aFinanceType.isDeveloperFinance());
+		setDeveloperFinanceFlagDetail();
 
 		doCheckRollOverFrq();
 		doCheckRIA(aFinanceType.getProductCategory());
@@ -1344,6 +1373,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowedRpyMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwdRpyMethods()));
 		fillComboBox(this.roundingMode, aFinanceType.getRoundingMode(), PennantStaticListUtil.getRoundingModes(), "");
 		fillRoundingTarget(this.roundingTarget, aFinanceType.getRoundingTarget(), PennantStaticListUtil.getRoundingTargetList());
+		
+		if (ImplementationConstants.ALLOW_COSTOFFUNDS) {
+			this.row_Custoffunds.setVisible(true);
+			this.label_FinanceTypeDialog_CostOfFunds.setVisible(true);
+			this.hb_CostOfFunds.setVisible(true);
+			this.costOfFunds.setValue(aFinanceType.getCostOfFunds());
+			setCofRate();
+		}
 
 		// Overdue Penalty Details
 		this.applyODPenalty.setChecked(aFinanceType.isApplyODPenalty());
@@ -1418,6 +1455,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// FinTypeVasProducts
 		doFillAlwVasProductDetails(aFinanceType.getFinTypeVASProductsList());
 
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			doFillAlwIRRCodesDetails(aFinanceType.getIrrFinanceTypeList());
+		}
+		
 		this.finSuspRemarks.setValue(aFinanceType.getFinSuspRemarks());
 		doChangeSuspTrigger();
 
@@ -1431,6 +1472,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.profitCenter.setObject(new ProfitCenter(aFinanceType.getProfitCenterID()));
 
 		appendFeeDetailTab();
+		appendExpenseDetailTab();
 		appendAccountingDetailsTab();
 		appendPartnerBankTab();
 
@@ -1559,7 +1601,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("isOverdraft", isOverdraft);
 			map.put("finTypeFeesList", this.financeType.getFinTypeFeesList());
-
+			map.put("finTypeExpenseList", this.financeType.getFinTypeExpenseList());
 			feeDetailWindow = Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FEES), map);
@@ -1590,6 +1632,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("isOverdraft", isOverdraft);
 			map.put("finTypePartnerBankList", this.financeType.getFinTypePartnerBankList());
+			map.put("finDivision",this.finDivision.getValidatedValue());
 
 			partnerBankDetailWindow = Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankList.zul",
@@ -1917,6 +1960,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setProfitCenterID(profitCenter.getId());
 			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
 			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Cost Of Fund
+		try {
+			aFinanceType.setCostOfFunds(this.costOfFunds.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3116,6 +3166,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aFinanceType.setDeveloperFinance(this.developerFinance.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		// Fees
 		if (getFinTypeFeesListCtrl() != null) {
@@ -3132,6 +3187,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// PartnerBank
 		if (getFinTypePartnerBankListCtrl() != null) {
 			aFinanceType.setFinTypePartnerBankList(getFinTypePartnerBankListCtrl().getFinTypePartnerBankList());
+		}
+		
+		// Expenses
+		if (getFinTypeExpenseListCtrl() != null) {
+			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
 		}
 
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
@@ -3453,6 +3513,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.profitCenter.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FinanceTypeDialog_ProfitCenter.value"), null,true, true));
 		}
+		
+		if (!this.costOfFunds.isButtonDisabled()) {
+			this.costOfFunds.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_CostOfFunds.value"), null, true, true));
+		}
+
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			if (!this.btnAlwIRRDetails.isDisabled()) {
+				this.alwdIRRDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_AlwIRRDetails.value"), null, true));
+			}
+		}
 
 		logger.debug("Leaving");
 	}
@@ -3497,6 +3567,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxReAgeHolidays.setConstraint("");
 		this.roundingMode.setConstraint("");
 		this.roundingTarget.setConstraint("");
+		this.costOfFunds.setConstraint("");
+		this.alwdIRRDetails.setConstraint("");
+		
 		logger.debug("Leaving");
 	}
 
@@ -3711,7 +3784,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finType.setReadonly(true);
 		this.finCcy.setReadonly(true);
 		this.finTypeDesc.setReadonly(isTrue);
-		this.finDivision.setReadonly(isTrue);
+		this.finDivision.setReadonly(true);
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
 			row_finAcType.setVisible(true);
 			this.finAcType.setReadonly(isTrue);
@@ -3754,6 +3827,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finContingentAcType.setReadonly(true);
 			this.finContingentAcType.setMandatoryStyle(false);
 		}
+		
+		this.costOfFunds.setReadonly(isTrue);
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			this.alwdIRRDetails.setReadonly(isTrue);
+			this.btnAlwIRRDetails.setDisabled(isTrue);
+		}
+		
 		this.finIsGenRef.setDisabled(isTrue);
 		this.finMaxAmount.setReadonly(isTrue);
 		this.finMinAmount.setReadonly(isTrue);
@@ -3805,6 +3885,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.roundingTarget.setDisabled(isTrue);
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
 		this.quickDisb.setDisabled(isTrue);
+		this.developerFinance.setDisabled(isTrue);
 
 		// Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
@@ -4122,7 +4203,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cpzAtUnPlannedEmi.setChecked(false);
 		this.cpzAtReAge.setChecked(false);
 		this.fddLockPeriod.setValue(0);
-
+		
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			this.alwdIRRDetails.setValue("");
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -4162,6 +4247,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinTypeVASProductsList(null);
 		}
 
+		//IRR codes
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			fetchIRRCodeDetals();
+			
+			if (getIrrFinanceTypeList() != null && !getIrrFinanceTypeList().isEmpty()) {
+				aFinanceType.setIrrFinanceTypeList(getIrrFinanceTypeList());
+			} else {
+				aFinanceType.setIrrFinanceTypeList(null);
+			}
+		}
+		
 		isNew = aFinanceType.isNew();
 		String tranType = "";
 
@@ -4304,7 +4400,31 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
+		
+		if (aFinanceType.getIrrFinanceTypeList() != null && !aFinanceType.getIrrFinanceTypeList().isEmpty()) {
+			for (IRRFinanceType details : irrFinanceTypeList) {
+				if (StringUtils.isNotBlank(details.getRecordType())) {
+					details.setFinType(aFinanceType.getFinType());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(aFinanceType.getRecordStatus());
+					details.setWorkflowId(aFinanceType.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aFinanceType.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(aFinanceType.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+		}
+		
 		logger.debug("Leaving");
+		
 		return processCompleted;
 	}
 
@@ -4841,6 +4961,42 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onCheck$developerFinance(Event event) {//FIXME
+		logger.debug("Entering" + event.toString());
+		setDeveloperFinanceFlagDetail();		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for Setting Deafult Developer Finance Details
+	 */
+	private void setDeveloperFinanceFlagDetail(){
+		if (this.developerFinance.isChecked()) {
+			this.cbfinSchdMthd.setDisabled(true);
+			fillComboBox(this.cbfinSchdMthd, CalculationConstants.SCHMTHD_PRI_PFT, PennantStaticListUtil.getScheduleMethods(),"");
+			this.cbFinScheduleOn.setDisabled(true);
+			fillComboBox(this.cbFinScheduleOn, CalculationConstants.EARLYPAY_PRIHLD, PennantStaticListUtil.getEarlyPayEffectOn(),"");
+			this.btnSearchAlwEarlyMethod.setDisabled(true);
+			this.alwEarlyPayMethods.setValue(CalculationConstants.EARLYPAY_PRIHLD);
+		} else {
+			this.cbfinSchdMthd.setDisabled(false);
+			this.cbFinScheduleOn.setDisabled(false);
+			this.btnSearchAlwEarlyMethod.setDisabled(false);
+			if (isOverdraft) {
+				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,");
+			} else {
+				fillComboBox(this.cbfinSchdMthd,this.financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods(),",NO_PAY,GRCNDPAY,");
+			}
+			
+			String cbFinScheduleOn=this.financeType.getFinScheduleOn();
+			if (isOverdraft) {
+				cbFinScheduleOn = CalculationConstants.EARLYPAY_RECRPY;
+			}
+			fillComboBox(this.cbFinScheduleOn,cbFinScheduleOn, PennantStaticListUtil.getEarlyPayEffectOn(),"");
+			this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(this.financeType.getAlwEarlyPayMethods()));
+		}
+	}
+	
 	public void onChange$cbfinProductType(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -5976,6 +6132,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setErrorMessage("");
 		this.finSuspRemarks.setErrorMessage("");
 
+		if (ImplementationConstants.ALLOW_IRRCODES) {
+			this.alwdIRRDetails.setErrorMessage("");
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -6832,9 +6992,265 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
+	/*
+	 * Cost Of Funds
+	 */
+	private void setCofRate() throws InterruptedException {
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.costOfFunds.getValue())) {
+			this.costOfFunds.setDescription(PennantApplicationUtil.formatRate(BigDecimal.ZERO.doubleValue(), 2));
+			return;
+		}
+
+		RateDetail cofRateDetail = RateUtil.cofRate(this.costOfFunds.getValue(), this.finCcy.getValue());
+
+		if (cofRateDetail.getErrorDetails() == null) {
+			this.costOfFunds.setDescription(PennantAppUtil.amountFormate(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
+		} else {
+			MessageUtil.showError(ErrorUtil.getErrorDetail(cofRateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+			this.costOfFunds.setDescription("");
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * 	Cost of funds assignment 
+	 * @throws InterruptedException 
+	 */
+	public void onFulfill$costOfFunds(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		
+		Object dataObject = costOfFunds.getObject();
+		
+		if (dataObject instanceof String) {
+			this.costOfFunds.setValue(dataObject.toString());
+			this.costOfFunds.setDescription("");
+		} else {
+			setCofRate();
+		}
+		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for selecting IRRCodes for the IRRFinance Type
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnAlwIRRDetails(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		
+		setIRRCodesDetails(true);
+		
+		logger.debug("Leaving  " + event.toString());
+	}
+	
+	/**
+	 * Method for processing IRR codes details
+	 * 
+	 * @param isVasAlwd
+	 */
+	private void setIRRCodesDetails(boolean isVasAlwd) {
+		logger.debug("Entering");
+
+		this.alwdIRRDetails.setConstraint("");
+		this.alwdIRRDetails.setErrorMessage("");
+
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("IRRID", null, Filter.OP_NOT_EQUAL);
+
+		String selectedValues = null;
+		if (isVasAlwd) {
+			selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog,
+					"IRRCode", this.alwdIRRDetails.getValue(), filter);
+		} 
+		if (selectedValues != null) {
+
+			if (isVasAlwd) {
+				this.alwdIRRDetails.setValue(selectedValues);
+			} else {
+				if (StringUtils.isNotEmpty(selectedValues)) {
+					List<String> mandVasList = Arrays.asList(this.alwdIRRDetails.getValue().split(","));
+					List<String> addList = new ArrayList<>();
+					for (int i = 0; i < mandVasList.size(); i++) {
+						if (!("," + this.alwdIRRDetails.getValue() + ",").contains("," + mandVasList.get(i) + ",")) {
+							addList.add(mandVasList.get(i));
+						}
+					}
+
+					if (!addList.isEmpty()) {
+						String alwdVasValue = this.alwdIRRDetails.getValue();
+						for (int i = 0; i < addList.size(); i++) {
+							if (StringUtils.isEmpty(alwdVasValue)) {
+								alwdVasValue = addList.get(i);
+							} else {
+								alwdVasValue = alwdVasValue + "," + addList.get(i);
+							}
+						}
+						this.alwdIRRDetails.setValue(alwdVasValue);
+					}
+				}
+			}
+
+		}
+		
+		logger.debug("Leaving");
+	}
+
+	
+	/**
+	 * Method Used for set list of values been class to components IRRCodes list
+	 * 
+	 * @param IRRCodes
+	 */
+	private void doFillAlwIRRCodesDetails(List<IRRFinanceType> irrFinanceTypeList) {
+		logger.debug("Entering");
+
+		if(!isCopyProcess){
+			setIrrFinanceTypeList(irrFinanceTypeList);
+		}
+		if (irrFinanceTypeList == null || irrFinanceTypeList.isEmpty()) {
+			return;
+		}
+
+		String tempvasProduct = "";
+		for (IRRFinanceType irrFinanceType : irrFinanceTypeList) {
+			if (!StringUtils.equals(irrFinanceType.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.isEmpty(tempvasProduct)) {
+					tempvasProduct = String.valueOf(irrFinanceType.getiRRID());
+				} else {
+					tempvasProduct = tempvasProduct.concat(",").concat(String.valueOf(irrFinanceType.getiRRID()));
+				}
+			}
+		}
+		this.alwdIRRDetails.setValue(tempvasProduct);
+
+		logger.debug("Entering");
+	}
+	
+	/**
+	 * Method for Used for render the Data from List
+	 * 
+	 * @param fetchIRRCodeDetals
+	 */
+	private void fetchIRRCodeDetals() {
+		logger.debug("Entering");
+
+		Map<Long, IRRFinanceType> irrCodeMap = new HashMap<>();
+
+		List<String> finvasList = Arrays.asList(this.alwdIRRDetails.getValue().split(","));
+		if (this.irrFinanceTypeList == null) {
+			this.irrFinanceTypeList = new ArrayList<>();
+		}
+
+		// Prepare Map with Existing List
+		for (IRRFinanceType irrFinanceType : irrFinanceTypeList) {
+			irrCodeMap.put(irrFinanceType.getIRRID(), irrFinanceType);
+		}
+
+		for (String irrID : finvasList) {
+			if (StringUtils.isEmpty(irrID)) {
+				continue;
+			}
+
+			// Check object is already exists in saved list or not
+			if (irrCodeMap.containsKey(Long.valueOf(irrID))) {
+				// Do Nothing
+
+				// Removing from map to identify existing modifications
+				boolean isDelete = false;
+				if (this.userAction.getSelectedItem() != null) {
+					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+						isDelete = true;
+					}
+				}
+
+				if (!isDelete) {
+					irrCodeMap.remove(Long.valueOf(irrID));
+				}
+			} else {
+				IRRFinanceType aIRRFinanceType = new IRRFinanceType();
+
+				aIRRFinanceType.setIRRID(Long.valueOf(irrID));
+				aIRRFinanceType.setNewRecord(true);
+				aIRRFinanceType.setVersion(1);
+				aIRRFinanceType.setRecordType(PennantConstants.RCD_ADD);
+
+				this.irrFinanceTypeList.add(aIRRFinanceType);
+			}
+		}
+
+		// Removing unavailable records from DB by using Workflow details
+		for (int i = 0; i < irrFinanceTypeList.size(); i++) {
+			IRRFinanceType irrFinanceType = irrFinanceTypeList.get(i);
+
+			boolean oldVasMand = irrFinanceType.isNew();
+
+			if (irrCodeMap.containsKey(irrFinanceType.getIRRID())) {
+
+				if (StringUtils.isBlank(irrFinanceType.getRecordType())) {
+					irrFinanceType.setNewRecord(true);
+					irrFinanceType.setVersion(irrFinanceType.getVersion() + 1);
+					irrFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else {
+					if (!StringUtils.equals(irrFinanceType.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+						irrFinanceType.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					}
+				}
+			} else {
+
+				if (StringUtils.isEmpty(irrFinanceType.getRecordType())
+						&& !StringUtils.equals(irrFinanceType.getRecordType(), PennantConstants.RCD_ADD)) {
+					if (oldVasMand != irrFinanceType.isNewRecord()) {
+						irrFinanceType.setNewRecord(true);
+						irrFinanceType.setVersion(irrFinanceType.getVersion() + 1);
+						irrFinanceType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+				}
+			}
+		}
+		
+		logger.debug("Leaving");
+	}
+	
 	public List<FinTypeAccount> getFinTypeAccountList() {
 		return finTypeAccountList;
 	}
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendExpenseDetailTab() {
+		logger.debug("Entering");
+
+		try {
+			createTab(AssetConstants.UNIQUE_ID_EXPENSES, true);
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_EXPENSES));
+			map.put("roleCode", getRole());
+			map.put("finType", finType.getValue());
+			map.put("finCcy", this.finCcy.getValue());
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("isOverdraft", isOverdraft);
+			map.put("finTypeExpenseList", this.financeType.getFinTypeExpenseList());
+			feeDetailWindow = Executions.createComponents(
+					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeExpenseList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_EXPENSES), map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
+	}
+	
 
 	public void setFinTypeAccountList(List<FinTypeAccount> finTypeAccountList) {
 		this.finTypeAccountList = finTypeAccountList;
@@ -6887,5 +7303,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
 	}
+	
+	public List<IRRFinanceType> getIrrFinanceTypeList() {
+		return irrFinanceTypeList;
+	}
 
+	public FinTypeExpenseListCtrl getFinTypeExpenseListCtrl() {
+		return finTypeExpenseListCtrl;
+	}
+
+	public void setFinTypeExpenseListCtrl(FinTypeExpenseListCtrl finTypeExpenseListCtrl) {
+		this.finTypeExpenseListCtrl = finTypeExpenseListCtrl;
+	}
+
+	public void setIrrFinanceTypeList(List<IRRFinanceType> irrFinanceTypeList) {
+		this.irrFinanceTypeList = irrFinanceTypeList;
+	}
 }

@@ -2027,7 +2027,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 			this.finWriteoffAmount.setReadonly(true);
 			this.finWriteoffPaidAmount.setReadonly(true);
-			this.writeoffDate.setReadonly(true);
+			this.writeoffDate.setDisabled(true);
 		}
 		this.finWriteoffPayAccount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAccount"));
 		this.flagDetails.setReadonly(true);

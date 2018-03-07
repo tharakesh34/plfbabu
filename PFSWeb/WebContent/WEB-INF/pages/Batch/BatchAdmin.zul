@@ -146,9 +146,10 @@
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
 
 											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="true" />
-											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="true" />
+											
 										</hbox>
 									</row>
 									<row>
@@ -164,6 +165,9 @@
 											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="false" />
 										</hbox>
+										<exePannel id="profitDetailsUpdate" border="normal" title="${c:l('label_profitDetailsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="processInActiveFinances" border="normal" title="${c:l('label_processInActiveFinances')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="incomeAmortization" border="normal" title="${c:l('label_IncomeAmortization')}" imgSrc="/images/icons/send.gif" visible="false" />
 									</row>
 								</rows>
 							</grid>

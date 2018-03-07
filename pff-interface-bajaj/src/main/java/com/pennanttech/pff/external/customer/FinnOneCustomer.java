@@ -1,5 +1,6 @@
 package com.pennanttech.pff.external.customer;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -11,8 +12,12 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
@@ -126,27 +131,35 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		
 
 		try {
+			customerproc.setQueryTimeout((Integer)getSMTParameter("GCD_PROC_TIMEOUT", Integer.class));
 			Map<String, Object> output = customerproc.execute(params);
 
 			if (output != null && !output.isEmpty()) {
-				WSReturnStatus status = customerDetails.getReturnStatus();
-
 				if (((String) output.get("P_SUCCESS_REJECT")).equals("R")) {
-					status.setReturnCode("99014");
-					status.setReturnText((String) output.get("P_REJECTION_REASON"));
+					gcdCustomer.setStatusFromFinnOne(String.valueOf(output.get("P_SUCCESS_REJECT")));
+					gcdCustomer.setRejectionReason(String.valueOf(output.get("P_REJECTION_REASON")));
+					updateFailStatus(gcdCustomer);
 				} else {
-					status.setReturnCode(InterfaceConstants.SUCCESS_CODE);
-					gcdCustomer.setFinnCustId(String.valueOf(output.get("P_FINN_CUST_ID")));
 					customerDetails.getCustomer().setCustCoreBank(String.valueOf(output.get("P_FINN_CUST_ID")));
+					gcdCustomer.setFinnCustId(String.valueOf(output.get("P_FINN_CUST_ID")));
+					gcdCustomer.setStatusFromFinnOne(String.valueOf(output.get("P_SUCCESS_REJECT")));
+					gcdCustomer.setRejectionReason(String.valueOf(output.get("P_REJECTION_REASON")));
+					updateSuccessStatus(gcdCustomer);
 				}
 
-				updateSuccessStatus(gcdCustomer);
 			}
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			updateFailStatus(gcdCustomer);
-			throw new InterfaceException("99014", e.getMessage());
+				gcdCustomer.setStatusFromFinnOne("P");
+			if(e instanceof QueryTimeoutException){
+				gcdCustomer.setRejectionReason("Request Timed Out");
+				updateFailStatus(gcdCustomer);
+			}else{
+				gcdCustomer.setRejectionReason(StringUtils.substring(e.getMessage(), 0,50));
+				updateFailStatus(gcdCustomer);
+			}
+			
 		}
 		
 		logger.debug(Literal.LEAVING);
@@ -183,12 +196,13 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		if ("RETAIL".equalsIgnoreCase(customer.getCustCtgCode())) {
 			gcdCustomer.setIndvCorpFlag("I");
 			gcdCustomer.setDOB(customer.getCustDOB());
-
-			for (CustomerEmploymentDetail custEmplymentDetail : customerDetail.getEmploymentDetailsList()) {
-				if (custEmplymentDetail.isCurrentEmployer()) {
-					gcdCustomer.setYearsOfCurrJob(custEmplymentDetail.getCustEmpFrom());
+				if(customerDetail.getEmploymentDetailsList() != null) {
+					for (CustomerEmploymentDetail custEmplymentDetail : customerDetail.getEmploymentDetailsList()) {
+						if (custEmplymentDetail.isCurrentEmployer()) {
+							gcdCustomer.setYearsOfCurrJob(custEmplymentDetail.getCustEmpFrom());
+						}
+					}
 				}
-			}
 		} else if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			gcdCustomer.setIndvCorpFlag("C");
 			gcdCustomer.setDOI(customer.getCustDOB());
@@ -198,8 +212,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		gcdCustomer.setmName(StringUtils.isEmpty(customer.getCustMName()) ? null : customer.getCustMName());
 		gcdCustomer.setLname(StringUtils.isEmpty(customer.getCustLName()) ? null : customer.getCustLName());
 		gcdCustomer.setSex(customer.getCustGenderCode());
-		gcdCustomer.setMakerDate(getAppDate());
-		gcdCustomer.setAuthDate(getAppDate());
+		gcdCustomer.setMakerDate(new Timestamp(System.currentTimeMillis()));
+		gcdCustomer.setAuthDate(new Timestamp(System.currentTimeMillis()));
 		gcdCustomer
 				.setPassportNo(StringUtils.isEmpty(customer.getCustPassportNo()) ? null : customer.getCustPassportNo());
 		gcdCustomer.setPanNo(customer.getCustCRCPR());
@@ -294,6 +308,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 
 	public void logRequest(GcdCustomer gcdCustomer) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
+		
+		setRequsetSeq(gcdCustomer);
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" Insert Into GCDCUSTOMERS");
@@ -304,7 +320,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			sql.append(" DateLastUpdate, NationalId, PassportNo, Nationality, PanNo, RegionId, BankType, EntityFlag,");
 			sql.append(" ContactPerson, CustSearchId, SectorId, FraudFlag, FraudScore, EmiCardElig, AddressDetail,");
 			sql.append(" BankDetail, NomineeName, NomineeAddress, NomineeRelationship, Field9, Field10,");
-			sql.append(" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId)");
+			sql.append(" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId, RequestSeq)");
 			sql.append(
 					" Values(:CustId, :FinCustId, :SourceSystem, :CustomerName, :ConstId, :IndustryId, :CategoryId, :Spousename,");
 			sql.append(" :IndvCorpFlag, :FName, :MName, :Lname, :DOB, :Sex,");
@@ -315,7 +331,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			sql.append(
 					" :EmiCardElig, :AddressDetail, :BankDetail, :NomineeName, :NomineeAddress, :NomineeRelationship,");
 			sql.append(
-					" :Field9, :Field10, :InsertUpdateFlag, :StatusFromFinnOne, :RejectionReason, :FinnCustId, :SfdcCustomerId, :BranchId)");
+					" :Field9, :Field10, :InsertUpdateFlag, :StatusFromFinnOne, :RejectionReason, :FinnCustId, :SfdcCustomerId, :BranchId,:RequestSeq)");
 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
 			this.namedJdbcTemplate.update(sql.toString(), beanParameters);
@@ -326,12 +342,51 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		logger.debug(Literal.LEAVING);
 
 	}
+	/*setting the requestSeq  to the gcdcustomer to maintain sequence if the same customer hit the procedure 
+	 * more than one time.
+	 */
+	private void setRequsetSeq(GcdCustomer gcdCustomer) {
+		logger.debug("Entering");
+		int count = 0;
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From GCDCUSTOMERS");
+		selectSql.append(" Where custId = :custId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
+
+		try {
+			count = this.namedJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+		}
+		if (count > 0) {
+			GcdCustomer finoneCust = new GcdCustomer() ;
+			finoneCust.setCustId(gcdCustomer.getCustId());
+			StringBuilder sql = new StringBuilder("SELECT MAX(requestSeq) requestSeq");
+			sql.append(" From GCDCUSTOMERS");
+			sql.append(" Where custId = :custId");
+
+			logger.debug("selectSql: " + sql.toString());
+			SqlParameterSource beanparms = new BeanPropertySqlParameterSource(finoneCust);
+			RowMapper<GcdCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GcdCustomer.class);
+
+			try {
+				finoneCust=this.namedJdbcTemplate.queryForObject(sql.toString(), beanparms, typeRowMapper);
+			} catch (EmptyResultDataAccessException dae) {
+				logger.debug(dae);
+			}
+			gcdCustomer.setRequestSeq(finoneCust.getRequestSeq()+1);
+		}
+
+		logger.debug("Leaving");
+	}
 
 	private void updateFailStatus(GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE GCDCUSTOMERS SET IsSuccess = 0");
-		sql.append(" Where custId =:custId");
+		sql.append("UPDATE GCDCUSTOMERS  SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, IsSuccess = 0");
+		sql.append(" Where custId =:custId and RequestSeq =:RequestSeq");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
 		this.namedJdbcTemplate.update(sql.toString(), beanParameters);
@@ -342,7 +397,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE GCDCUSTOMERS SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, FinnCustId = :FinnCustId, IsSuccess = 1");
-		sql.append(" Where custId = :custId");
+		sql.append(" Where custId = :custId and RequestSeq =:RequestSeq");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
 		this.namedJdbcTemplate.update(sql.toString(), beanParameters);

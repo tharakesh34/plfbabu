@@ -113,10 +113,11 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -970,6 +971,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
 				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
 				this.postingDivision.setReadonly(true);
+				this.partnerBankID.setValue("");
+				this.partnerBankID.setDescription("");
+				Filter[] partnerBank = new Filter[1];
+				partnerBank[0] = new Filter("ENTITY",financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
+				this.partnerBankID.setFilters(partnerBank);
 			}else{
 				this.postingDivision.setReadonly(false);
 			}
@@ -984,6 +990,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.reference.setValue("", "");
 		this.postingDivision.setValue("","");
 		this.postingDivision.setReadonly(false);
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
+		this.partnerBankID.setFilters(null);
 		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
 	}
 

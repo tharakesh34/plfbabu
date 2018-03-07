@@ -315,6 +315,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				unitCount.setFieldMandatory(true);
 				unitCount.setRecordType(PennantConstants.RCD_ADD);
 				unitCount.setVersion(1);
+				unitCount.setInputElement(true);
 
 				ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
 				unitPrice.setFieldName("UNITPRICE");
@@ -325,6 +326,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				unitPrice.setFieldMandatory(true);
 				unitPrice.setRecordType(PennantConstants.RCD_ADD);
 				unitPrice.setVersion(1);
+				unitPrice.setInputElement(true);
 
 				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
 				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);

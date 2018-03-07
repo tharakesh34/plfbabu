@@ -117,6 +117,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	private ModuleMapping moduleMapping=null;
 	private Filter[] filters;
 	Map<String, Object> selectedValuesMap = new HashMap<String, Object>();
+	boolean selectAll=false;
 
 
 	public ExtendedMultipleSearchListBox() {
@@ -258,7 +259,20 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		btnClear.setId("clear");
 		btnClear.addForward("onClick", this, "onClick$clear");
 		btnClear.setParent(divSouth);
-
+		
+		
+		if(StringUtils.equals(getModuleMapping().getModuleName(), "Branch")){
+		Space space= new Space();
+		space.setSpacing("10px");
+		space.setParent(divSouth);
+		
+		final Button btnSelectAll= new Button();
+		btnSelectAll.setStyle("padding-left: 1px");
+		btnSelectAll.setLabel("select All");
+		btnSelectAll.setId("selectAll");
+		btnSelectAll.addForward("onClick", this, "onClick$selectAll");
+		btnSelectAll.setParent(divSouth);
+		}
 		/**
 		 * init the model.<br>
 		 * The ResultObject is a helper class that holds the generic list and
@@ -424,6 +438,31 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		setObject(selectedValuesMap);
 		onClose();
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void onClick$selectAll(Event event) throws Exception {
+		selectAll = true;
+		//select already loaded records.
+		for (Listitem item : this.listbox.getItems()) {
+			item.setSelected(true);
+		}
+		getJdbcSearchObject().setMaxResults(this._paging.getTotalSize());
+		final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
+		List list = searchResult.getResult();
+		for (Object data : list) {
+			String fieldValue = "";
+			String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase() + fieldString[0].substring(1);
+
+			if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+				fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
+			} else {
+				fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
+			}
+			selectedValuesMap.put(fieldValue, data);
+		}
+
+	}
+	
 	public void onClick$close(Event event){
 		setObject(selectedValuesMap);
 		onClose();

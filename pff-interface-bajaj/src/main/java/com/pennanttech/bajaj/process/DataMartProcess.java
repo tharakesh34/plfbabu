@@ -39,7 +39,6 @@ public class DataMartProcess extends DatabaseDataEngine {
 	public long totalThreads;
 	private int btachSize = 5000;
 	private Date appDate;
-	private Date valueDate;
 	public static boolean running = false;
 	public AtomicLong processedRecords;
 	private MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -47,7 +46,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 	public DataMartProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
-
+		this.appDate = appDate;
 		this.totalThreads = 0;
 		this.completedThreads = new AtomicLong(0L);
 		this.processedRecords = new AtomicLong(0L);

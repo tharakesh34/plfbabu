@@ -92,6 +92,9 @@
 									<uppercasebox id="branches" width="250px" />
 									<button id="btnBranches" image="/images/icons/LOVSearch.png" />
 									</hbox>
+									<label id="label_Entity"
+										value="${c:l('label_PresentmentDetailList_Entity.value')}" />
+									<extendedcombobox id="entity" />
 								</row>
 							</rows>
 						</grid>

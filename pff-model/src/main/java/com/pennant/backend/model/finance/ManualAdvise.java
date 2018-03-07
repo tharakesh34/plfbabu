@@ -79,6 +79,7 @@ private static final long serialVersionUID = 1L;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
+	private BigDecimal taxPercent = BigDecimal.ZERO;
 	private String remarks;
 	private Date   valueDate;
 	private Date   postDate;
@@ -117,6 +118,7 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("bounceCode");
 		excludeFields.add("bounceCodeDesc");
+		excludeFields.add("taxPercent");
 		return excludeFields;
 	}
 
@@ -311,6 +313,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setBounceCodeDesc(String bounceCodeDesc) {
 		this.bounceCodeDesc = bounceCodeDesc;
+	}
+	
+	public BigDecimal getTaxPercent() {
+		return taxPercent;
+	}
+
+	public void setTaxPercent(BigDecimal taxPercent) {
+		this.taxPercent = taxPercent;
 	}
 
 }

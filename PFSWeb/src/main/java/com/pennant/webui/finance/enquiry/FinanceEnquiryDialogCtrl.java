@@ -104,6 +104,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -317,6 +318,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox				finODTotPenaltyBal;
 	protected Label						label_FinanceMainDialog_CollRef;
 	protected Space						space_CollRef;
+	
+	
+	// Overdue Penalty Details
+	protected Checkbox 					applyODPenalty;
+	protected Checkbox 					oDIncGrcDays; 
+	protected Combobox 					oDChargeType; 
+	protected Intbox 					oDGraceDays; 
+	protected Combobox 					oDChargeCalOn; 
+	protected Decimalbox 				oDChargeAmtOrPerc; 
+	protected Checkbox 					oDAllowWaiver; 
+	protected Decimalbox 				oDMaxWaiverPerc;
 
 	protected Space						space_DepriFrq;
 	// Graph Details
@@ -350,10 +362,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// Profit Details
 	protected Label						totalPriSchd;
+	protected Label						totalcapz;
 	protected Label						totalPftSchd;
 	protected Label						totalOriginal;
 
 	protected Label						outStandPrincipal;
+	protected Label						totalcapzOnOs;
 	protected Label						outStandProfit;
 	protected Label						totalOutStanding;
 
@@ -1173,16 +1187,25 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (finSummary != null) {
 			//profit Deatils
-			this.totalPriSchd.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPriSchd(),
+			this.totalPriSchd.setValue(
+					PennantAppUtil.amountFormate(finSummary.getTotalPriSchd().subtract(finSummary.getTotalCpz()),
+							CurrencyUtil.getFormat(finSummary.getFinCcy())));
+			this.totalcapz.setValue(PennantAppUtil.amountFormate(finSummary.getTotalCpz(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalPriSchd.setStyle("text-align:right");
 			this.totalPftSchd.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPftSchd(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalPftSchd.setStyle("text-align:right");
-			this.totalOriginal.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOriginal(),
-					CurrencyUtil.getFormat(finSummary.getFinCcy())));
+			this.totalOriginal
+					.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOriginal(),
+							CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalOriginal.setStyle("text-align:right");
-			this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandPrincipal(),
+			
+			
+			this.outStandPrincipal.setValue(
+					PennantAppUtil.amountFormate(finSummary.getOutStandPrincipal().subtract(finSummary.getTotalCpz()),
+							CurrencyUtil.getFormat(finSummary.getFinCcy())));
+			this.totalcapzOnOs.setValue(PennantAppUtil.amountFormate(finSummary.getTotalCpz(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.outStandProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandProfit(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
@@ -1337,11 +1360,40 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setMandatoryStyle(false);
 			this.row_downPayBank.setVisible(false);
 		}
+		//fill od penality details
+		dofillOdPenalityDetails(getFinScheduleData().getFinODPenaltyRate());
 		
 
 		logger.debug("Leaving");
 	}
 	
+	private void dofillOdPenalityDetails(FinODPenaltyRate finODPenaltyRate) {
+		logger.debug("Entering");
+		// Overdue Penalty Details
+		this.applyODPenalty.setChecked(finODPenaltyRate.isApplyODPenalty());
+		this.oDIncGrcDays.setChecked(finODPenaltyRate.isODIncGrcDays());
+		fillComboBox(this.oDChargeCalOn, finODPenaltyRate.getODChargeCalOn(), PennantStaticListUtil.getODCCalculatedOn(),
+				"");
+		this.oDGraceDays.setValue(finODPenaltyRate.getODGraceDays());
+		fillComboBox(this.oDChargeType, finODPenaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(), "");
+
+		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
+				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
+			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(),
+					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
+		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
+			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+		}
+
+		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
+		this.oDMaxWaiverPerc.setValue(finODPenaltyRate.getODMaxWaiverPerc());
+		
+		
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Method for Rendering Joint account and Guaranteer Details Data in finance
 	 */
@@ -1747,6 +1799,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.profitPaid.setReadonly(true);
 		this.priDueForPayment.setReadonly(true);
 		this.pftDueForPayment.setReadonly(true);
+		
+		//protected 
+		this.applyODPenalty.setDisabled(true);;
+		this.oDIncGrcDays.setDisabled(true);
+		this.oDChargeType.setDisabled(true);
+		this.oDGraceDays.setReadonly(true);
+		this.oDChargeCalOn.setDisabled(true);
+		this.oDChargeAmtOrPerc.setReadonly(true); 
+		this.oDAllowWaiver.setDisabled(true); 
+		this.oDMaxWaiverPerc.setReadonly(true);
+		
 		// Contribution Details
 		this.minContributors.setReadonly(true);
 		this.maxContributors.setReadonly(true);

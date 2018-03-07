@@ -63,6 +63,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final String CON_INTRA = "INTRA";
 	private static final String ADDR_DELIMITER = " ";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
+	private static final String CON_DEBIT = "D"; //
 
 	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
@@ -591,10 +592,15 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setReverseChargeApplicable(revChargeApplicable ? CON_YES : CON_NO);
 		// InvoiceType
 		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
-		if (oldTransactionID != 0) {
+		
+		//if (oldTransactionID != 0) {
+		if(rs.getString("DRORCR").equals(CON_DEBIT)){
 			taxDownload.setInvoiceType(CON_C);
-			taxDownload.setOriginalInvoiceNo(
+			
+			if (oldTransactionID != 0) {
+				taxDownload.setOriginalInvoiceNo(
 					String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
+			}
 		} else {
 			taxDownload.setInvoiceType(CON_I);
 			taxDownload.setOriginalInvoiceNo(null);

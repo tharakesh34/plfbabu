@@ -63,15 +63,18 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
@@ -101,6 +104,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Datebox toDate;
 	protected Uppercasebox branches;
 	protected Button btnBranches;
+	protected ExtendedCombobox entity;
 
 	private transient PresentmentHeaderService presentmentHeaderService;
 
@@ -146,6 +150,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
+		
+		this.entity.setModuleName("Entity");
+		this.entity.setMandatoryStyle(true);
+		this.entity.setDisplayStyle(2);
+		this.entity.setValueColumn("EntityCode");
+		this.entity.setDescColumn("EntityDesc");
+		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -181,7 +192,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.mandateType.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),PennantStaticListUtil.getMandateTypeList(), true));
 		this.fromdate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
 		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_ToDate.value"), true));
-
+		this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_Entity.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -227,6 +239,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
 				throw new WrongValueException(this.toDate, " From Date and To Date difference should be less than or equal to " + diffentDays);
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			detailHeader.setEntityCode(this.entity.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

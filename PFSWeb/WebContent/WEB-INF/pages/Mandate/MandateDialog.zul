@@ -72,6 +72,13 @@
 									</cell>
 								</row>
 								<row visible="true">
+								<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
+								<extendedcombobox id = "entityCode"/>
+								
+								<label id="label_FinanceReference" value="${c:l('label_MandateDialog_FinReference.value')}" />
+								<extendedcombobox id="finReference" />
+								</row>
+								<row visible="true">
 									<label id="label_MandateType"
 										value="${c:l('label_MandateDialog_MandateType.value')}" />
 									<hbox>
@@ -168,6 +175,11 @@
 									<hbox>
 										<currencyBox id="maxLimit" />
 									</hbox>
+									<label id = "label_AmountInWords" value="${c:l('label_MandateDialog_AmtInWords.value')}"/>
+									<hbox>
+										<space spacing="2px"/>
+										<label id = "amountInWords" style="font-weight:bold;"/>
+									</hbox>
 								</row>
 								<row visible="true">
 									<label id="label_OpenMandate"
@@ -262,12 +274,29 @@
 									</hbox>
 								</row>
 								<row>
+								<label id = "label_BarCodeNumber" value="${c:l('label_MandateDialog_BarCodeNumber.value')}"/>
+									<hbox>
+									<space spacing="2px" sclass = "mandatory"/>
+									<uppercasebox id = "barCodeNumber" width="200px"/>
+									</hbox>
 									<label id="label_UmrNumber"
 										value="${c:l('label_MandateDialog_UmrNumber.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="umrNumber"
 											maxlength="50" width="200px" readonly="true" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_SwapActive" value="${c:l('label_MandateDialog_SwapActive.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="swapIsActive" />
+									</hbox>
+									<label id = "label_RegStatus" value="${c:l('label_MandateDialog_RegStatus.value')}"/>
+									<hbox>
+									<space spacing="2px"/>
+									<label id = "regStatus" style="font-weight:bold;"/>
 									</hbox>
 								</row>
 							</rows>

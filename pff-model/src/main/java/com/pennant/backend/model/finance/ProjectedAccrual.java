@@ -14,9 +14,6 @@ public class ProjectedAccrual implements Serializable {
 	private BigDecimal schdPri = BigDecimal.ZERO;
 	private BigDecimal schdPft = BigDecimal.ZERO;
 	private BigDecimal schdTot = BigDecimal.ZERO;
-	private BigDecimal pftAmz = BigDecimal.ZERO;
-	private BigDecimal pftAccrued = BigDecimal.ZERO;
-	private BigDecimal cumulativeAccrued = BigDecimal.ZERO;
 
 	private int schSeq;
 	private boolean pftOnSchDate;
@@ -25,7 +22,6 @@ public class ProjectedAccrual implements Serializable {
 	private boolean rvwOnSchDate;
 	private BigDecimal balanceForPftCal = BigDecimal.ZERO;
 	private BigDecimal calculatedRate = BigDecimal.ZERO;
-	private int noOfDays;
 	private BigDecimal profitCalc = BigDecimal.ZERO;
 	private BigDecimal profitSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
@@ -45,6 +41,17 @@ public class ProjectedAccrual implements Serializable {
 	private BigDecimal ccyMinorCcyUnits;
 	private Date finStartDate;
 	private Date maturityDate;
+
+	private long projAccrualID = Long.MIN_VALUE;
+	private BigDecimal pftAmz = BigDecimal.ZERO;
+	private BigDecimal pftAccrued = BigDecimal.ZERO;
+	private BigDecimal cumulativeAccrued = BigDecimal.ZERO;
+	private BigDecimal pOSAccrued = BigDecimal.ZERO;
+	private BigDecimal cumulativePOS = BigDecimal.ZERO;
+	private int noOfDays = 0;
+	private int cumulativeDays = 0;
+	private BigDecimal aMZPercentage = BigDecimal.ZERO;
+
 	public ProjectedAccrual() {
 
 	}
@@ -260,7 +267,7 @@ public class ProjectedAccrual implements Serializable {
 	public void setSchdPriPaid(BigDecimal schdPriPaid) {
 		this.schdPriPaid = schdPriPaid;
 	}
-	
+
 	public boolean isSchPftPaid() {
 		return schPftPaid;
 	}
@@ -347,6 +354,46 @@ public class ProjectedAccrual implements Serializable {
 
 	public void setSchdPftPaid(BigDecimal schdPftPaid) {
 		this.schdPftPaid = schdPftPaid;
+	}
+
+	public int getCumulativeDays() {
+		return cumulativeDays;
+	}
+
+	public void setCumulativeDays(int cumulativeDays) {
+		this.cumulativeDays = cumulativeDays;
+	}
+
+	public BigDecimal getAMZPercentage() {
+		return aMZPercentage;
+	}
+
+	public void setAMZPercentage(BigDecimal aMZPercentage) {
+		this.aMZPercentage = aMZPercentage;
+	}
+
+	public long getProjAccrualID() {
+		return projAccrualID;
+	}
+
+	public void setProjAccrualID(long projAccrualID) {
+		this.projAccrualID = projAccrualID;
+	}
+
+	public BigDecimal getPOSAccrued() {
+		return pOSAccrued;
+	}
+
+	public void setPOSAccrued(BigDecimal pOSAccrued) {
+		this.pOSAccrued = pOSAccrued;
+	}
+
+	public BigDecimal getCumulativePOS() {
+		return cumulativePOS;
+	}
+
+	public void setCumulativePOS(BigDecimal cumulativePOS) {
+		this.cumulativePOS = cumulativePOS;
 	}
 
 }

@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -20,6 +23,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
@@ -33,6 +37,8 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
@@ -99,12 +105,23 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		sapGL;
 	protected ProcessExecution		cibil;
 	protected ProcessExecution		gstTaxDownload;
+	protected ProcessExecution		limitsUpdate;
+	protected ProcessExecution		limitCustomerGroupsUpdate;
+	protected ProcessExecution		prepareCustomerGroupQueue;
+	protected ProcessExecution		profitDetailsUpdate;
 	protected ProcessExecution		dmLoanDetailsMonthly;
 	protected ProcessExecution		dmLoanBalancesMonthly;
 	protected ProcessExecution		dmDisbDetailsMonthly;
+	protected ProcessExecution		processInActiveFinances;
+	protected ProcessExecution		incomeAmortization;
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
+
+	private DataSource 				dataSource;
+	
+	// Collection Process
+	private boolean collectionProcess = false;
 	
 	public enum PFSBatchProcessess {
 		beforeEOD,
@@ -124,9 +141,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		sapGL,
 		cibil,
 		gstTaxDownload,
+		limitsUpdate,
+		limitCustomerGroupsUpdate,
+		prepareCustomerGroupQueue,
 		dmLoanDetailsMonthly,
 		dmLoanBalancesMonthly,
-		dmDisbDetailsMonthly
+		dmDisbDetailsMonthly,
+		profitDetailsUpdate,
+		processInActiveFinances,
+		incomeAmortization
 	}
 
 	public BatchAdminCtrl() {
@@ -137,11 +160,13 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
 		// databaseBackupBeforEod.setVisible(false);
 		// panelCustomerMicroEOD.setVisible(true);
+		
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
 			this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
 			isInitialise = true;
+			collectionProcess = false;
 		}
 
 		this.jobExecution = BatchMonitor.getJobExecution();
@@ -184,7 +209,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 				this.timer.stop();
 				this.lock.setDisabled(true);
-				BatchUtil.EXECUTING = null;
+				//BatchUtil.EXECUTING = null;
 				PFSBatchAdmin.destroy();
 			}
 
@@ -194,7 +219,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			this.batchStatus.appendChild(status);
-			setRunningStatus();
+			setRunningStatus(collectionProcess);
 
 		} else {
 			if (this.timer.isRunning()) {
@@ -209,6 +234,42 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 	}
+	
+	/**
+	 * used for Collections
+	 * @param uri
+	 * @param tabName
+	 * @param args
+	 */
+	protected void createNewPage(String uri, String tabName, Map<String, Object> args) {
+		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Center center = bl.getCenter();
+		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
+				.getFellow("tabsIndexCenter");
+
+		Tab tab = null;
+		if (tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_")) != null) {
+			tab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
+			if (tab != null) {
+				tab.close();
+			}
+		}
+		tab = new Tab();
+		tab.setId(tabName.trim().replace("menu_Item_", "tab_"));
+		tab.setLabel(Labels.getLabel(tabName));
+		tab.setClosable(true);
+		tab.setParent(tabs);
+		tab.setLabel(Labels.getLabel("menu_Item_CollectionsExtract"));
+
+		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
+		final Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setHeight("100%");
+		tabpanel.setStyle("padding: 0px;");
+		tabpanel.setParent(tabpanels);
+
+		Executions.createComponents(uri, tabpanel, args);
+		tab.setSelected(true);
+	}
 
 	private void setDates() {
 		lable_Value_Date.setValue(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
@@ -218,7 +279,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 	}
 
-	private void setRunningStatus() {
+	private void setRunningStatus(boolean collectionProcess) {
 		String jobStatus = this.jobExecution.getStatus().toString();
 
 		try {
@@ -238,6 +299,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setTooltiptext("Restart Job");
 			estimatedTime.setValue("");
 		}
+		
 		if ("COMPLETED".equals(jobStatus)) {
 			this.btnStartJob.setLabel("Start");
 			this.btnStartJob.setTooltiptext("Start");
@@ -272,6 +334,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			BatchMonitor.jobExecutionId = 0;
+			
+			//Collection Interfaces Execution
+			if (collectionProcess) {
+				try {
+					Map<String, Object> arguments = new HashMap<String, Object>();
+					arguments.put("EOD", "EOD");
+					
+					Clients.showNotification("Collection process initiated.", "info", null, null, -1);
+					createNewPage("/WEB-INF/pages/Collections/CollectionDialog.zul", "menu_Item_CollectionsExtract", arguments);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
 		}
 	}
 
@@ -313,11 +388,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				Thread thread = new Thread(new EODJob());
 				thread.start();
 				Thread.sleep(1000);
+				collectionProcess = true;
 
 			} catch (Exception e) {
 				timer.stop();
 				MessageUtil.showError(e);
 			}
+		} else {
+			collectionProcess = false;
 		}
 
 		// Event for Recreation Of Window
@@ -481,10 +559,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				renderDetials(this.alm, status);
 				break;
 				
-			case controlDump:
-				renderDetials(this.controlDump, status);
-				break;
-				
 			case posidex:
 				renderDetials(this.posidex, status);
 				break;
@@ -503,6 +577,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case gstTaxDownload:
 				renderDetials(this.gstTaxDownload, status);
 				break;
+			case controlDump:
+				renderDetials(this.controlDump, status);
+				break;
 			case dmLoanDetailsMonthly:
 				renderDetials(this.dmLoanDetailsMonthly, status);
 				break;
@@ -512,6 +589,25 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case dmDisbDetailsMonthly:
 				renderDetials(this.dmDisbDetailsMonthly, status);
 				break;
+			case limitsUpdate:
+				renderDetials(this.limitsUpdate, status);
+				break;
+			case limitCustomerGroupsUpdate:
+				renderDetials(this.limitCustomerGroupsUpdate, status);
+				break;
+			case prepareCustomerGroupQueue:
+				renderDetials(this.prepareCustomerGroupQueue, status);
+				break;		
+			case profitDetailsUpdate:
+				renderDetials(this.profitDetailsUpdate, status);
+				break;
+			case processInActiveFinances:
+				renderDetials(this.processInActiveFinances, status);
+				break;
+			case incomeAmortization:
+				renderDetials(this.incomeAmortization, status);
+				break;
+				
 			default:
 				break;
 				
@@ -557,6 +653,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		clearChilds(sapGL);
 		clearChilds(cibil);
 		clearChilds(gstTaxDownload);
+		clearChilds(limitsUpdate);
+		clearChilds(limitCustomerGroupsUpdate);
+		clearChilds(prepareCustomerGroupQueue);
+		clearChilds(profitDetailsUpdate);
+		clearChilds(processInActiveFinances);
+		clearChilds(incomeAmortization);
 
 		if (listBoxThread.getItems() != null) {
 			this.listBoxThread.getItems().clear();

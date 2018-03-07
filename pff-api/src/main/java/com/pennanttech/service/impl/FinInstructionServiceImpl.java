@@ -19,6 +19,7 @@ import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.financeservice.ChangeProfitService;
+import com.pennant.backend.financeservice.ChangeScheduleMethodService;
 import com.pennant.backend.financeservice.PostponementService;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
@@ -49,6 +50,7 @@ import com.pennant.validation.PartialSettlementGroup;
 import com.pennant.validation.ReSchedulingGroup;
 import com.pennant.validation.RecalculateGroup;
 import com.pennant.validation.RemoveTermsGroup;
+import com.pennant.validation.ScheduleMethodGroup;
 import com.pennant.validation.UpdateLoanBasicDetailsGroup;
 import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.ValidationUtility;
@@ -78,6 +80,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private RemoveTermsService			rmvTermsService;
 	private PostponementService			postponementService;
 	private AddTermsService				addTermsService;
+	private ChangeScheduleMethodService changeScheduleMethodService;
 
 	private FinanceMainDAO				financeMainDAO;
 	private ValidationUtility			validationUtility;
@@ -1040,7 +1043,81 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.debug("Leaving");
 		return financeDetail;
 	}
+	/**
+	 * Method for perform Schedule method Change action by taking specified instructions. 
+	 * 
+	 * @param finServiceInstruction
+	 * @return FinanceDetail
+	 */
+	@Override
+	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		logger.debug("Entering");
 
+		// bean validations
+		validationUtility.validate(finServiceInstruction, ScheduleMethodGroup.class);
+		FinanceDetail financeDetail = null;
+
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
+		// validate ReqType
+		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+		//Step Loan not accepted FIXME
+		FinanceMain finMain = financeMainDAO.getFinanceMainById(finServiceInstruction.getFinReference(), "",finServiceInstruction.isWif());
+		if (finMain.isStepFinance()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Step Loan";
+			valueParm[1] = "Schedule Change Method";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90329", valueParm);
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+		// validate service instruction data
+		AuditDetail auditDetail = changeScheduleMethodService.doValidations(finServiceInstruction);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getError()));
+
+				return financeDetail;
+			}
+		}
+		// validate fees
+		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail errorDetails : errors) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
+						errorDetails.getError()));
+				return financeDetail;
+			}
+		}
+		// call change repay amount service
+		financeDetail = finServiceInstController.doChangeScheduleMethod(finServiceInstruction, eventCode);
+
+		logger.debug("Leaving");
+		return financeDetail;
+	}
 	/**
 	 * Method for validate instruction details
 	 * 
@@ -1401,4 +1478,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	public void setAddTermsService(AddTermsService addTermsService) {
 		this.addTermsService = addTermsService;
 	}
+	@Autowired
+	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
+		this.changeScheduleMethodService = changeScheduleMethodService;
+	}
+
 }

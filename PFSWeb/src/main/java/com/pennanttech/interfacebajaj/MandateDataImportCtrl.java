@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.file.service.FileService;
+import com.pennanttech.pff.external.MandateProcess;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final long	serialVersionUID	= 1297405999029019920L;
@@ -62,7 +62,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private Configuration		config				= null;
 
 	@Autowired
-	private FileService			mandateResponseFileService;
+	private MandateProcess mandateProcess;
 
 	/**
 	 * default constructor.<br>
@@ -103,7 +103,11 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			if ((StringUtils.equals(configName, "MANDATES_IMPORT"))) {
 				this.config = config;
 				menuList.add(valueLabel);
-				BajajInterfaceConstants.MANDATE_INMPORT_STATUS = dataEngineConfig.getLatestExecution(config.getName());
+				DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
+				
+				if (status != null) {
+					BeanUtils.copyProperties(MandateProcess.MANDATES_IMPORT, status);
+				}
 				doFillPanel();
 				break;
 			}
@@ -209,15 +213,15 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			return;
 		}
 
-		if (BajajInterfaceConstants.MANDATE_INMPORT_STATUS != null
-				&& ExecutionStatus.I.name().equals(BajajInterfaceConstants.MANDATE_INMPORT_STATUS.getStatus())) {
+		if (MandateProcess.MANDATES_IMPORT != null
+				&& ExecutionStatus.I.name().equals(MandateProcess.MANDATES_IMPORT.getStatus())) {
 			MessageUtil.showError("Export is in progress for the selected configuration.");
 			return;
 		}
 
 		this.btnImport.setDisabled(true);
 		try {
-			Thread thread = new Thread(new ProcessData(userId, BajajInterfaceConstants.MANDATE_INMPORT_STATUS));
+			Thread thread = new Thread(new ProcessData(userId));
 			thread.start();
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
@@ -266,7 +270,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-					pe.setProcess(BajajInterfaceConstants.MANDATE_INMPORT_STATUS);
+					pe.setProcess(MandateProcess.MANDATES_IMPORT);
 
 					String status = pe.getProcess().getStatus();
 					if (ExecutionStatus.I.name().equals(status)) {
@@ -293,7 +297,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		pannelExecution.setBorder("normal");
 		pannelExecution.setTitle(config.getName());
 		pannelExecution.setWidth("480px");
-		pannelExecution.setProcess(BajajInterfaceConstants.MANDATE_INMPORT_STATUS);
+		pannelExecution.setProcess(MandateProcess.MANDATES_IMPORT);
 		pannelExecution.render();
 
 		Row rows = (Row) panelRows.getLastChild();
@@ -326,11 +330,9 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	public class ProcessData implements Runnable {
 		private long				userId;
-		private DataEngineStatus	status;
-
-		public ProcessData(long userId, DataEngineStatus status) {
+		
+		public ProcessData(long userId) {
 			this.userId = userId;
-			this.status = status;
 		}
 
 		byte[]	fileData;
@@ -338,7 +340,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				mandateResponseFileService.processFile(userId, status, file, media, false);
+				mandateProcess.processResponseFile(userId, file, media);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

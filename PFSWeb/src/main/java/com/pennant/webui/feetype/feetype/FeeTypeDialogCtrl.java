@@ -160,7 +160,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Hbox						hlayout_HostFeeTypeCode;
 	protected Space						space_HostFeeTypeCode;
 	protected Textbox					hostFeeTypeCode;
+	
+	protected Checkbox					amortzReq;
+	protected Checkbox 					TAXApplicable;
 
+	private Boolean						feeTypeEnquiry				= false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -184,14 +188,17 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	public void onCreate$window_FeeTypeDialog(Event event) throws Exception {
 		logger.debug("Entring" + event.toString());
+		
 		try {
-			setPageComponents(window_FeeTypeDialog);
+			setPageComponents(this.window_FeeTypeDialog);
+			
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
 			} else {
 				enqModule = false;
 			}
+			
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("feeType")) {
@@ -204,6 +211,15 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			} else {
 				setFeeType(null);
 			}
+			
+			if (arguments.containsKey("feeTypeEnquiry")) {
+				this.feeTypeEnquiry = true;
+				enqiryModule = true;
+				this.feeType.setWorkflowId(0);
+			} else {
+				this.feeTypeEnquiry = false;
+			}
+			
 			doLoadWorkFlow(this.feeType.isWorkflow(), this.feeType.getWorkflowId(), this.feeType.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqModule) {
@@ -366,7 +382,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(aFeeType);
-		setDialog(DialogType.EMBEDDED);
+		
+		if (feeTypeEnquiry) {
+			this.window_FeeTypeDialog.setHeight("70%");
+			this.window_FeeTypeDialog.setWidth("60%");
+			this.window_FeeTypeDialog.doModal();
+		} else {
+			setDialog(DialogType.EMBEDDED);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -383,6 +406,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(true, this.accountingSetID);
 		readOnlyComponent(true, this.active);
 		readOnlyComponent(true, this.adviseType);
+		readOnlyComponent(true,this.amortzReq);
+		readOnlyComponent(true,this.TAXApplicable);
+		readOnlyComponent(true,this.hostFeeTypeCode);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -490,7 +516,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
 			this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
 		}
-		
+		if(aFeeType.isNewRecord()){
+			this.amortzReq.setChecked(true);
+		}else{
+			
+			this.amortzReq.setChecked(aFeeType.isAmortzReq());
+		}
+		this.TAXApplicable.setChecked(aFeeType.isTaxApplicable());	
 		this.active.setChecked(aFeeType.isActive());
 		
 		if (aFeeType.isTaxApplicable()) {
@@ -507,6 +539,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		
+		
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -596,6 +630,20 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			wve.add(we);
 		}
 
+		
+		//Amortization Required
+		try {
+			aFeeType.setAmortzReq(this.amortzReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//GST Applicable
+		try {
+			aFeeType.setTaxApplicable(this.TAXApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -738,7 +786,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setReadonly(isReadOnly("FeeTypeDialog_HostFeeTypeCode"));
 		this.taxApplicable.setDisabled(isReadOnly("FeeTypeDialog_TaxApplicable"));
 		this.taxComponent.setDisabled(isReadOnly("FeeTypeDialog_TaxComponent"));
-		
+
+		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.amortzReq);
+		readOnlyComponent(isReadOnly("FeeTypeDialog_TAXApplicable"), this.TAXApplicable);
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -862,9 +913,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setValue("");
 		this.adviseType.setSelectedIndex(0);
 		this.active.setValue("");
+
 		this.taxApplicable.setValue("");
 		this.taxComponent.setSelectedIndex(0);
-		
+
+		this.amortzReq.setValue("");
+		this.TAXApplicable.setValue("");
 		logger.debug("Leaving");
 	}
 

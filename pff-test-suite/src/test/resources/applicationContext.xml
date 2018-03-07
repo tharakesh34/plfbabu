@@ -16,7 +16,7 @@
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
 	</bean>
-	<bean id="pfsDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
 		<property name="url" value="${pfsjdbc.url}" />
@@ -52,7 +52,7 @@
 	
 	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="extDataSource" ref="pfsExtDatasource" />
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>

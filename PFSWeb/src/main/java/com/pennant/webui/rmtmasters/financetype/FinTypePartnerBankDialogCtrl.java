@@ -101,6 +101,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	
 	private String						userRole			= "";
 	private Label						label_finTypeDesc;
+	private String									finDivision			= null;
 	
 	List<ValueLabel>  purposeList = PennantStaticListUtil.getPurposeList();
 	List<ValueLabel>  paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
@@ -166,6 +167,10 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
+		}
+		
+		if (arguments.containsKey("finDivision")) {
+			this.finDivision =  (String)arguments.get("finDivision");
 		}
 
 		doCheckRights();
@@ -689,9 +694,18 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			String purposeValue = getComboboxValue(this.purpose);
 			String paymentModeValue = getComboboxValue(this.paymentMode);
 			
-			Filter[] filters = new Filter[2];
-			filters[0] = new Filter("Purpose", purposeValue, Filter.OP_EQUAL);
-			filters[1] = new Filter("PaymentMode", paymentModeValue, Filter.OP_EQUAL);
+			Filter[] filters = null;
+			
+			if(StringUtils.isNotEmpty(finDivision)){
+				filters=new Filter[3];
+				filters[0] = new Filter("Purpose", purposeValue, Filter.OP_EQUAL);
+				filters[1] = new Filter("PaymentMode", paymentModeValue, Filter.OP_EQUAL);
+				filters[2] = new Filter("DIVISIONCODE", finDivision, Filter.OP_EQUAL);
+			}else{
+				filters=new Filter[2];
+				filters[0] = new Filter("Purpose", purposeValue, Filter.OP_EQUAL);
+				filters[1] = new Filter("PaymentMode", paymentModeValue, Filter.OP_EQUAL);
+			}
 			
 			this.partnerBankID.setValue("");
 			this.partnerBankID.setDescription("");

@@ -111,6 +111,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
@@ -1066,8 +1067,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setFinType(getReceiptHeader().getFinType());
 		
 		// Fetch Accounting Set ID
-		long accountingSetID = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
-				AccountEventConstants.ACCEVENT_FEEPAY);
+		long accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
+				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 		if(accountingSetID != 0 && accountingSetID != Long.MIN_VALUE){
 			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());

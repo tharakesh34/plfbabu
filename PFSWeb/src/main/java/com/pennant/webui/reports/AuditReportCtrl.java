@@ -140,6 +140,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		
 		map.put("whereCondition",where);
 		map.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		map.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		map.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		map.put("userName", getUserWorkspace().getLoggedInUser().getUserName());
 		

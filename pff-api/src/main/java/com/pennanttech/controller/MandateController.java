@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WSReturnStatus;
@@ -26,6 +29,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -110,6 +114,10 @@ public class MandateController {
 		try {
 			response = mandateService.getApprovedMandateById(mandateId);
 			if (response != null) {
+				
+				BigDecimal maxlimt = PennantApplicationUtil.formateAmount(response.getMaxLimit(),
+						CurrencyUtil.getFormat(response.getMandateCcy()));
+				response.setAmountInWords(NumberToEnglishWords.getNumberToWords(maxlimt.toBigInteger()));
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				response = new Mandate();
@@ -240,6 +248,12 @@ public class MandateController {
 		try {
 			List<Mandate> mandatesList = mandateService.getApprovedMandatesByCustomerId(customer.getCustID());
 			if (!mandatesList.isEmpty()) {
+				//set the amount in words for response
+				for (Mandate mandate : mandatesList) {
+					BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),
+							CurrencyUtil.getFormat(mandate.getMandateCcy()));
+					mandate.setAmountInWords(NumberToEnglishWords.getNumberToWords(maxlimt.toBigInteger()));
+				}
 				response = new MandateDetial();
 				response.setMandateList(mandatesList);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -346,6 +360,10 @@ public class MandateController {
 		response.setPhoneAreaCode(null);
 		response.setPhoneCountryCode(null);
 		response.setPhoneNumber(null);
+		response.setBarCodeNumber(null);
+		response.setOrgReference(null);
+		response.setAmountInWords(null);
+		response.setEntityCode(null);
 	}
 
 	/**

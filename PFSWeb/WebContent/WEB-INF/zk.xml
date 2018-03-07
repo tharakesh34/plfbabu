@@ -260,4 +260,12 @@
          </script>
       ]]></embed>
 	</device-config>
+	<!-- <system-config>
+		<id-generator-class>com.pennant.util.ComponentIdGenerator
+		</id-generator-class>
+	</system-config>
+	<library-property>
+		<name>org.zkoss.zk.ui.uuidRecycle.disabled </name>
+		<value>true</value>
+	</library-property> -->
 </zk>

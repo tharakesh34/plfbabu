@@ -82,7 +82,7 @@
 														spacing="2px" />
 													<textbox
 														id="finStatus" width="170px" visible="true" />
-																		<textbox
+													<textbox
 													id="finStatus_Reason" readonly="true" width="170px"
 													visible="true" style="border:none; background-color:white;"/>
 												</hbox>
@@ -1084,7 +1084,7 @@
 											<column />
 										</columns>
 										<rows>
-											<row visible="false">
+											<!-- <row visible="true">
 												<label
 													id="label_FinanceMainDialog_TotalCapitalize"
 													value="${c:l('label_FinanceMainDialog_TotalCapitalize.value')}" />
@@ -1095,7 +1095,7 @@
 														id="totalCapitalize" width="198px" maxlength="25"
 														style="text-align:right" />
 												</hbox>
-											</row>
+											</row> -->
 											<row visible="false">
 												<label
 													id="label_FinanceMainDialog_TotalSchdPrincipal"
@@ -1199,6 +1199,18 @@
 											<column />
 										</columns>
 										<rows>
+										<row visible="true">
+												<label
+													id="label_FinanceMainDialog_TotalCapitalize"
+													value="${c:l('label_FinanceMainDialog_TotalCapitalize.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="totalCapitalize" width="198px" maxlength="25"
+														style="text-align:right" />
+												</hbox>
+											</row>
 											<row visible="true">
 												<label
 													id="label_FinanceMainDialog_TotalDisbursement"
@@ -1243,6 +1255,10 @@
 													value="${c:l('label_FinProfitEnqDialog_Principal.value')}"
 													style="font-weight:bold;" />
 												<label
+													id="label_FinProfitEnqDialog_totalcpz"
+													value="${c:l('label_FinProfitEnqDialog_totalcpz.value')}"
+													style="font-weight:bold;" />	
+												<label
 													id="label_FinProfitEnqDialog_Profit"
 													value="${c:l('label_FinProfitEnqDialog_Profit.value')}"
 													style="font-weight:bold;" />
@@ -1258,6 +1274,8 @@
 												<label
 													id="totalPriSchd" />
 												<label
+													id="totalcapz" style="text-align:right" />	
+												<label
 													id="totalPftSchd" />
 												<label
 													id="totalOriginal" />
@@ -1269,6 +1287,8 @@
 												<label
 													id="outStandPrincipal" style="text-align:right" />
 												<label
+													id="totalcapzOnOs" style="text-align:right"  />	
+												<label
 													id="outStandProfit" style="text-align:right" />
 												<label
 													id="totalOutStanding" style="text-align:right" />
@@ -1279,6 +1299,7 @@
 													value="${c:l('label_FinProfitEnqDialog_PaidAmount.value')}" />
 												<label id="schdPriPaid"
 													style="text-align:right" />
+												<label value=""/>	
 												<label id="schdPftPaid"
 													style="text-align:right" />
 												<label id="totalPaid"
@@ -1290,6 +1311,7 @@
 													value="${c:l('label_FinProfitEnqDialog_UnPaidAmount.value')}" />
 												<label
 													id="unPaidPrincipal" style="text-align:right" />
+												<label value=""/>		
 												<label id="unPaidProfit"
 													style="text-align:right" />
 												<label id="totalUnPaid"
@@ -1301,6 +1323,7 @@
 													value="${c:l('label_FinProfitEnqDialog_OverDueAmount.value')}" />
 												<label
 													id="overDuePrincipal" style="text-align:right" />
+												<label value=""/>		
 												<label
 													id="overDueProfit" style="text-align:right" />
 												<label id="totalOverDue"
@@ -1313,6 +1336,7 @@
 												<label
 													id="earnedPrincipal" style="text-align:right"
 													visible="false" />
+												<label value=""/>		
 												<label id="earnedProfit"
 													style="text-align:right" />
 												<label id="totalEarned"
@@ -1325,6 +1349,7 @@
 												<label
 													id="unEarnedPrincipal" style="text-align:right"
 													visible="false" />
+												<label value=""/>		
 												<label
 													id="unEarnedProfit" style="text-align:right" />
 												<label
@@ -1337,6 +1362,7 @@
 													value="${c:l('label_FinProfitEnqDialog_PayOffAmount.value')}" />
 												<label
 													id="payOffPrincipal" style="text-align:right" />
+												<label value=""/>		
 												<label id="payOffProfit"
 													style="text-align:right" />
 												<label id="totalPayOff"
@@ -1431,6 +1457,99 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="gb_OverDuePenalty">
+								<caption
+									label="${c:l('label_FinanceMainDialog_ODPenalty')}" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="true">
+											<label
+												id="label_FinanceMainDialog_ApplyODPenalty"
+												value="${c:l('label_FinanceMainDialog_ApplyODPenalty.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="applyODPenalty" checked="false" />
+											</hbox>
+											<label
+												id="label_FinanceMainDialog_ODIncGrcDays"
+												value="${c:l('label_FinanceMainDialog_ODIncGrcDays.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="oDIncGrcDays" checked="false" />
+											</hbox>
+										</row>
+										<row visible="true">
+											<label
+												id="label_FinanceMainDialog_ODChargeType"
+												value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
+											<hbox>
+												<space spacing="2px"
+													id="space_oDChargeType" sclass="mandatory" />
+												<combobox
+													id="oDChargeType" width="200px" readonly="true" />
+											</hbox>
+											<label
+												id="label_FinanceMainDialog_GraceDays"
+												value="${c:l('label_FinanceMainDialog_ODGraceDays.value')}" />
+											<hbox>
+												<space spacing="2px"
+													id="space_oDGraceDays" />
+												<intbox id="oDGraceDays"
+													width="45px" maxlength="3" />
+											</hbox>
+										</row>
+										<row visible="true">
+											<label
+												id="label_FinanceMainDialog_ODChargeCalOn"
+												value="${c:l('label_FinanceMainDialog_ODChargeCalOn.value')}" />
+											<hbox>
+												<space spacing="2px"
+													id="space_oDChargeCalOn" sclass="mandatory" />
+												<combobox
+													id="oDChargeCalOn" width="200px" readonly="true" />
+											</hbox>
+											<label
+												id="label_FinanceMainDialog_ODChargeAmtOrPerc"
+												value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
+											<hbox>
+												<space spacing="2px"
+													id="space_oDChargeAmtOrPerc" sclass="mandatory" />
+												<decimalbox
+													id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+											</hbox>
+										</row>
+										<row visible="true">
+											<label
+												id="label_FinanceMainDialog_ODAllowWaiver"
+												value="${c:l('label_FinanceMainDialog_ODAllowWaiver.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="oDAllowWaiver" checked="false" />
+											</hbox>
+											<label
+												id="label_FinanceMainDialog_ODMaxWaiver"
+												value="${c:l('label_FinanceMainDialog_ODMaxWaiver.value')}" />
+											<hbox>
+												<space
+													id="space_oDMaxWaiverPerc" spacing="2px"
+													sclass="mandatory" />
+												<decimalbox
+													id="oDMaxWaiverPerc" width="120px" maxlength="5" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
 								<groupbox id="gb_installmentDetails">
 									<caption
 										label="${c:l('finInstallmentDetails')}" />

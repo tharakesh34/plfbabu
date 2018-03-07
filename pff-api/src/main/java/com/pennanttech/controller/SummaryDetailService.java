@@ -72,6 +72,9 @@ public class SummaryDetailService {
 			FinScheduleData curSchd = resetScheduleDetail(financeDetail.getFinScheduleData());
 			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(), 
 					finPftDetail, DateUtility.getAppDate());
+			
+			// override repay profit rate with FinProfitdetail calculated value(which is latest).
+			financeMain.setRepayProfitRate(finPftDetail.getCurReducingRate());
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));

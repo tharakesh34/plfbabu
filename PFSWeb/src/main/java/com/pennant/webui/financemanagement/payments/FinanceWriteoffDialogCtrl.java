@@ -524,7 +524,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void doEdit() {
 		logger.debug("Entering");
 
-		this.writeoffDate.setDisabled(isReadOnly("FinWriteoffDialog_writeoffDate"));
+		this.writeoffDate.setDisabled(true);//isReadOnly("FinWriteoffDialog_writeoffDate")
 		this.writeoffPriAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPriAmt"));
 		this.writeoffPftAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPftAmt"));
 		/*
@@ -1558,7 +1558,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	private boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType)
-			throws InterruptedException {
+			throws InterruptedException,InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1673,7 +1673,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException , InterfaceException{
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

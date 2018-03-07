@@ -36,6 +36,12 @@
 										width="122px" />
 								</hbox>
 							</row>
+							<row id="finDivisionRow" spans="1,3">
+								<label
+									id="label_FinanceTypeDialog_FinDivision"
+									value="${c:l('label_FinanceTypeDialog_FinDivision.value')}" />
+								<extendedcombobox id="finDivision" />
+							</row>
 							<row id="currencyRow" spans="1,3">
 								<label
 									id="label_SelectFinTypeDialog_FinCcy"

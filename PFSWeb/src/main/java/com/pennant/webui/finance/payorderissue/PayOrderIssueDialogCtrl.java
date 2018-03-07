@@ -98,6 +98,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssueHeader/PayOrderIssueDialog.zul file.
@@ -719,7 +720,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) {
+	private boolean doProcess(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -807,7 +808,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)  throws InterfaceException{
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

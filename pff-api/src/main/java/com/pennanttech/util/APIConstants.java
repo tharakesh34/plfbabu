@@ -36,5 +36,8 @@ public class APIConstants {
 	public static final String STMT_FORECLOSURE = "FORECLOSURE";
 	public static final String SERVICE_TYPE_CREATE = "Create";
 	public static final String SERVICE_TYPE_UPDATE = "Update";
-	
+	public static final String REPORT_SOA = "SOA";
+	public static final String REPORT_TEMPLATE_APPLICATION = "Format1";
+	public static final String REPORT_TEMPLATE_API = "Format2";
+
 }

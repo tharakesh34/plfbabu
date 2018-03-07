@@ -107,6 +107,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal remainingFeeGST = BigDecimal.ZERO;
 	@XmlElement(name= "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
+	private BigDecimal taxPercent = BigDecimal.ZERO;
 	
 	@XmlElement
 	private String feeCategory;
@@ -180,6 +181,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("validateFinFeeDetail");
 		excludeFields.add("feeCategory");
 		excludeFields.add("schdDate");
+		excludeFields.add("taxPercent");
 		
 		excludeFields.add("finTaxDetails");
 		excludeFields.add("igst");
@@ -619,6 +621,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCgst(BigDecimal cgst) {
 		this.cgst = cgst;
+	}
+	
+	public BigDecimal getTaxPercent() {
+		return taxPercent;
+	}
+
+	public void setTaxPercent(BigDecimal taxPercent) {
+		this.taxPercent = taxPercent;
 	}
 
 }
