@@ -63,10 +63,12 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinFeeDetail model</b> class.<br>
@@ -198,6 +200,36 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		logger.debug("Leaving");
 		
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
+	 * 
+	 * @param reference
+	 * @param type
+	 * @return
+	 */
+	public List<FinFeeDetail> getAMZFinFeeDetails(String finRef, String type) {
+		logger.debug("Entering");
+
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setFinReference(finRef);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount," );
+		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.VasReference, T1.Status, " );
+		selectSql.append(" T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.TaxPercent" );
+
+		selectSql.append(" From FinFeeDetail T1 ");
+		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where T1.FinReference = :FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		logger.debug("Leaving");
+
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
@@ -647,5 +679,23 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	@Override
+	public void updateTaxPercent(UploadTaxPercent taxPercent) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("Update FinFeeDetail");
+		selectSql.append("  Set TaxPercent = :TaxPercent");
+		selectSql.append(" Where FinReference =:FinReference And FeeTypeId = :FeeTypeId ");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxPercent);
+		int recordCount = this.namedParameterJdbcTemplate.update(selectSql.toString(), paramSource);
+		
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

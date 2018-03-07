@@ -210,9 +210,11 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			selectSql.append(" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
 			selectSql.append(" lovDescCustRejectedRsnName, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName" );
 			selectSql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
+			selectSql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc," );
 		}
 			
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" , CasteId, ReligionId, SubCategory" );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID =:CustID");
@@ -248,6 +250,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustCOB, CustCtgCode, CustIndustry," );
 		selectSql.append(" CustIsStaff, CustNationality, CustParentCountry, CustResdCountry," );
 		selectSql.append(" CustRiskCountry, CustSector, CustSubSector, CustTypeCode" );
+		selectSql.append(" , CasteId, ReligionId, SubCategory" );
 		
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
@@ -350,7 +353,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
         insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer," );
         
-        insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+        insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+        insertSql.append(" ,CasteId, ReligionId, SubCategory)" );
         insertSql.append(" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName," );
         insertSql.append(" :CustLName, :CustShrtName, :CustFNameLclLng, :CustMNameLclLng, :CustLNameLclLng, :CustShrtNameLclLng, :CustDftBranch," );
         insertSql.append(" :CustGenderCode, :CustDOB, :CustPOB, :CustCOB, :CustPassportNo, :CustMotherMaiden, :CustIsMinor, :CustReferedBy," );
@@ -368,7 +372,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5," );
         insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR,:CustSourceID," );
         insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer," );
-        insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+        insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+        insertSql.append(" ,:CasteId, :ReligionId, :SubCategory)" );
 
         logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
@@ -433,6 +438,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		updateSql.append(" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber, SalariedCustomer = :SalariedCustomer," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory" );
 		updateSql.append(" Where CustID =:CustID");
 		
 		if (!type.endsWith("_Temp")){
@@ -482,8 +488,10 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
 		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
+		selectSql.append(" , CasteId, ReligionId, SubCategory" );
 		if(type.contains("View")){
 			selectSql.append(" ,LovDescCustStsName");
+			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc" );
 		}
 		selectSql.append(" FROM  Customers");
 		selectSql.append(StringUtils.trimToEmpty(type) ); 
@@ -1235,6 +1243,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		customer.setId(id);		
 		
 		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR,CustDftBranch ");
+		selectSql.append(" , CasteId, ReligionId, SubCategory" );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
 		
@@ -1593,8 +1602,9 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT CustID, CustCIF, CustShrtName, CustDftBranch, CustSts, CustStsChgDate, custSuspSts,");
+		selectSql.append(" CasteId, ReligionId, SubCategory," );
 		selectSql.append(" custSuspDate, custSuspTrigger From Customers ");
-		selectSql.append(" Where CustID =:CustID AND custSuspTrigger = 'M'");
+		selectSql.append(" Where CustID = :CustID AND custSuspTrigger = 'M'");
 		
 		logger.debug("insertSql: " + selectSql.toString());
 		
@@ -1779,6 +1789,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustEmpSts, CustSegment, CustSubSegment, CustAppDate, " );
 		selectSql.append(" CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, " );
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
+		selectSql.append(" , CasteId, ReligionId, SubCategory" );
 		
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
@@ -1865,6 +1876,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
+		selectSql.append(" , CasteId, ReligionId, SubCategory " );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 		
@@ -1909,7 +1921,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustGroupID", custGrpID);
 
-		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  Customers");
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(CustGroupID)  FROM  Customers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustGroupID = :CustGroupID");
 
@@ -1944,5 +1956,63 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			logger.debug("Exception: ", dae);
 			return 0;
 		}
+	}
+	
+	/**
+	 * Method for validating customers in Caste
+	 * 
+	 */
+	@Override
+	public boolean isCasteExist(long casteId, String type) {
+		logger.debug("Entering");
+		
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("CasteId", casteId);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(CasteId)  FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CasteId = :CasteId");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		
+		logger.debug("Leaving");
+		
+		return count > 0 ? true : false;
+	}
+	
+	/**
+	 * Method for validating customers in Religion
+	 * 
+	 */
+	@Override
+	public boolean isReligionExist(long religionId, String type) {
+		logger.debug("Entering");
+		
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("ReligionId", religionId);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(ReligionId)  FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ReligionId = :ReligionId");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		
+		logger.debug("Leaving");
+		
+		return count > 0 ? true : false;
 	}
 }	

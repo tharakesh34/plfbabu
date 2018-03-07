@@ -53,8 +53,10 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
+import com.pennant.backend.dao.applicationmaster.CostOfFundDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennant.backend.model.applicationmaster.CostOfFund;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -70,6 +72,7 @@ public class RateUtil implements Serializable {
 
 	private static BaseRateDAO	baseRateDAO;
 	private static SplRateDAO	splRateDAO;
+	private static CostOfFundDAO		costOfFundDAO;
 
 	/**
 	 * To Calculate Effective Rate Based on Base rate and Special rate Codes.
@@ -329,6 +332,110 @@ public class RateUtil implements Serializable {
 		logger.debug("Leaving");
 		return effRate;
 	}
+	
+	/**
+	 * Calculates The Rate and Shows the value in the rateBox
+	 * 
+	 * @param baseRateCode
+	 *            BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
+	 */
+	public static RateDetail cofRate(String cofRateCode, String currency) {
+		logger.debug("Entering");
+		
+		RateDetail rate = new RateDetail();
+		rate.setBaseRateCode(cofRateCode);
+		rate.setCurrency(currency);
+		rate.setSplRateCode(null);
+		rate.setMargin(BigDecimal.ZERO);
+		rate.setValueDate(DateUtility.getAppDate());
+		rate = getCofRefRate(rate);
+		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), null, null));
+		logger.debug("Leaving");
+		
+		return rate;
+	}
+	
+	/**
+	 * To Calculate Effective Rate Based on Base rate and Special rate Codes.
+	 * 
+	 * parameters are base rate code , Special rate code , Date and action. date will compared as less than or equal to
+	 * the given date returns Base rate,Special rate ,Reference Rate in a HashMap
+	 */
+	public static RateDetail getCofRefRate(RateDetail rateDetail) {
+		logger.debug("Entering");
+		boolean error = false;
+
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+
+		if (rateDetail == null) {
+			rateDetail = new RateDetail();
+			errorDetails.add(new ErrorDetail(" ", "30561",
+					new String[] { PennantJavaUtil.getLabel("label_BaseRate") }, new String[] { "null" }));
+			error = true;
+		}
+
+		if (!error
+				&& StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode()))) {
+			errorDetails.add(new ErrorDetail("Rate", "30559", new String[] {
+					PennantJavaUtil.getLabel("label_BaseRate")},
+					new String[] { "null" }));
+			error = true;
+		}
+
+		if (!error && rateDetail.getValueDate() == null) {
+			errorDetails.add(new ErrorDetail("Date", "30559", new String[] { PennantJavaUtil.getLabel("label_Date") },
+					new String[] { "null" }));
+			error = true;
+		}
+
+		if (!error) {
+			String[] valueParm = new String[2];
+			valueParm[1] = DateUtility.formatUtilDate(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
+
+			String[] errorParm = new String[2];
+			errorParm[1] = PennantJavaUtil.getLabel("label_Date") + ": " + valueParm[1];
+
+			if (StringUtils.isNotEmpty(rateDetail.getBaseRateCode())
+					&& StringUtils.isNotEmpty(rateDetail.getCurrency())) {
+				CostOfFund cofRate = getCostOfFundDAO().getCostOfFundByType(rateDetail.getBaseRateCode(),
+						rateDetail.getCurrency(), rateDetail.getValueDate());
+				if (cofRate == null) {
+					rateDetail.setBaseRefRate(BigDecimal.ZERO);
+				} else {
+					rateDetail.setBaseRefRate(cofRate.getCofRate());
+				}
+			} else {
+				rateDetail.setBaseRefRate(BigDecimal.ZERO);
+			}
+
+			if (rateDetail.getBaseRefRate() == null) {
+
+				valueParm[0] = rateDetail.getBaseRateCode();
+				errorParm[0] = PennantJavaUtil.getLabel("label_BaseRate") + ": " + valueParm[0];
+
+				errorDetails.add(new ErrorDetail("BaseRate", "41002", errorParm, valueParm));
+				rateDetail.setBaseRefRate(BigDecimal.ZERO);
+				error = true;
+			}
+		}
+
+		if (error) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, SessionUserDetails.getUserLanguage());
+		} else {
+			// NET RATE.
+			// FOR Loans: Base Rate - Special Rate + Margin
+			// FOR Deposits: Base Rate + Special Rates - Margin
+			rateDetail.setNetRefRateDeposit(rateDetail.getBaseRefRate());
+			rateDetail.setNetRefRateLoan(rateDetail.getBaseRefRate());
+		}
+
+		if (errorDetails.size() > 0) {
+			rateDetail.setErrorDetails(errorDetails.get(0));
+		}
+
+		logger.debug("Leaving");
+		return rateDetail;
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -349,5 +456,12 @@ public class RateUtil implements Serializable {
 	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		RateUtil.splRateDAO = splRateDAO;
 	}
+	
+	public static CostOfFundDAO getCostOfFundDAO() {
+		return costOfFundDAO;
+	}
 
+	public static void setCostOfFundDAO(CostOfFundDAO costOfFundDAO) {
+		RateUtil.costOfFundDAO = costOfFundDAO;
+	}
 }

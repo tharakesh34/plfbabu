@@ -388,4 +388,62 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+
+	@Override
+	public BankBranch getBankBrachByMicr(String micr, String type) {
+		logger.debug("Entering");
+
+		BankBranch bankBranch = getBankBranch();
+		bankBranch.setMICR(micr);
+
+		bankBranch.setActive(true);
+		StringBuilder selectSql = new StringBuilder("Select b.BankCode,bb.micr,bb.branchcode,bb.bankbranchId,b.accnolength,b.BankName, bb.BranchDesc From BMTBankDetail b ");
+		selectSql.append("Inner Join BankBranches bb on b.Bankcode = bb.bankCode");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where MICR =:MICR AND bb.ACTIVE = :Active");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
+		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+
+		try {
+			bankBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			bankBranch = null;
+		}
+
+		logger.debug("Leaving");
+		return bankBranch;
+	}
+	
+	/**
+	 * Fetch the Record  Bank Branch details by key field
+	 * 
+	 * @param id (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return BankBranch
+	 */
+	@Override
+	public int getBankBranchByMICR(final String mICR,long id, String type) {
+		logger.debug("Entering");
+		BankBranch bankBranch = getBankBranch();
+		
+		bankBranch.setMICR(mICR);
+		bankBranch.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From BankBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where MICR =:MICR AND BankBranchID !=:BankBranchID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+	}
+	
 }

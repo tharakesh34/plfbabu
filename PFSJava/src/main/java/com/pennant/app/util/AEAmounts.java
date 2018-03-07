@@ -132,10 +132,6 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmzPD(pftDetail.getPftAmzPD());
 
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
-		amountCodes.setEmiInAdvance(pftDetail.getEmiInAdvance());
-		amountCodes.setExcessAmt(pftDetail.getExcessAmt());
-		amountCodes.setPayableAdvise(pftDetail.getPayableAdvise());
-		
 		aeEvent.setAeAmountCodes(amountCodes);
 
 		logger.debug("Leaving");

@@ -177,4 +177,8 @@ public interface CustomerDAO {
 	boolean customerExistingCustGrp(long custGrpID, String type) ;
 	
 	int getCustCountByDealerId(long dealerId);
+
+	boolean isCasteExist(long casteId, String type);
+
+	boolean isReligionExist(long religionId, String type);
 }

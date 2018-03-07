@@ -50,6 +50,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -59,16 +60,19 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>ExpenseType model</b> class.<br>
  * 
  */
 public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implements ExpenseTypeDAO {
-	private static Logger logger = Logger.getLogger(ExpenseTypeDAOImpl.class);
+	private static Logger				logger	= Logger.getLogger(ExpenseTypeDAOImpl.class);
 
 	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public ExpenseTypeDAOImpl() {
 		super();
@@ -90,12 +94,12 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		expenseType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select ExpenceTypeId, ExpenceTypeName, ExpenseFor, ");
+		selectSql.append("Select ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc, AmortReq, TaxApplicable, Active,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From AMTExpenseType");
+		selectSql.append(" From ExpenseTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ExpenceTypeId =:ExpenceTypeId");
+		selectSql.append(" Where ExpenseTypeId =:ExpenseTypeId");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
@@ -122,10 +126,8 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 	}
 
 	/**
-	 * This method Deletes the Record from the AMTExpenseType or
-	 * AMTExpenseType_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Expense Type Details by key
-	 * ExpenceTypeId
+	 * This method Deletes the Record from the AMTExpenseType or AMTExpenseType_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Expense Type Details by key ExpenceTypeId
 	 * 
 	 * @param Expense
 	 *            Type Details (expenseType)
@@ -139,9 +141,9 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From AMTExpenseType");
+		deleteSql.append("Delete From ExpenseTypes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where ExpenceTypeId =:ExpenceTypeId ");
+		deleteSql.append(" Where ExpenseTypeId =:ExpenseTypeId ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
@@ -158,8 +160,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 	}
 
 	/**
-	 * This method insert new Records into AMTExpenseType or
-	 * AMTExpenseType_Temp. it fetches the available Sequence form
+	 * This method insert new Records into AMTExpenseType or AMTExpenseType_Temp. it fetches the available Sequence form
 	 * SeqAMTExpenseType by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Expense Type Details
@@ -182,12 +183,12 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		}
 
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into AMTExpenseType");
+		insertSql.append("Insert Into ExpenseTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ExpenceTypeId, ExpenceTypeName, ExpenseFor, ");
+		insertSql.append(" (ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc , AmortReq, TaxApplicable, Active, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ExpenceTypeId, :ExpenceTypeName, :ExpenseFor, ");
+		insertSql.append(" Values(:ExpenseTypeId, :ExpenseTypeCode, :ExpenseTypeDesc, :AmortReq, :TaxApplicable, :Active,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -199,9 +200,8 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 	}
 
 	/**
-	 * This method updates the Record AMTExpenseType or AMTExpenseType_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Expense Type Details by key ExpenceTypeId and Version
+	 * This method updates the Record AMTExpenseType or AMTExpenseType_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Expense Type Details by key ExpenceTypeId and Version
 	 * 
 	 * @param Expense
 	 *            Type Details (expenseType)
@@ -217,15 +217,16 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
 
-		updateSql.append("Update AMTExpenseType");
+		updateSql.append("Update ExpenseTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set ExpenceTypeId = :ExpenceTypeId, ExpenceTypeName = :ExpenceTypeName, ExpenseFor = :ExpenseFor, ");
+		updateSql.append(" Set ExpenseTypeId = :ExpenseTypeId, ExpenseTypeCode = :ExpenseTypeCode,");
+		updateSql.append(
+				"  ExpenseTypeDesc = :ExpenseTypeDesc, AmortReq = :AmortReq, TaxApplicable = :TaxApplicable, Active = :Active, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, ");
 		updateSql.append(" WorkflowId = :WorkflowId");
-		updateSql.append(" Where ExpenceTypeId =:ExpenceTypeId");
+		updateSql.append(" Where ExpenseTypeId =:ExpenseTypeId");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
@@ -238,5 +239,66 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public boolean isDuplicateKey(long expenseTypeId, String expenseTypeCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "ExpenseTypeCode = :ExpenseTypeCode and ExpenseTypeId != :ExpenseTypeId";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("ExpenseTypes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("ExpenseTypes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "ExpenseTypes_Temp", "ExpenseTypes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ExpenseTypeId", expenseTypeId);
+		paramSource.addValue("ExpenseTypeCode", expenseTypeCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public long getFinExpenseIdByExpType(String expTypeCode, String type) {
+		logger.debug("Entering");
+		
+		long finExpenseId = Long.MIN_VALUE;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT ExpenseTypeId From ExpenseTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE  ExpenseTypeCode = :ExpenseTypeCode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExpenseTypeCode", expTypeCode);
+		
+		try {
+			finExpenseId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			finExpenseId = Long.MIN_VALUE;
+		}
+
+		logger.debug("Leaving");
+		
+		return finExpenseId;
 	}
 }

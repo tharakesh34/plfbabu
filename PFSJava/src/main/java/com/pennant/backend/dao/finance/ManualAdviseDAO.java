@@ -78,5 +78,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
 	FinanceMain getFinanceDetails(String finReference);
 	
+	List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type);
+	
 	
 }

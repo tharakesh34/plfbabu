@@ -625,6 +625,7 @@ public class CalculationUtil implements Serializable {
 		//amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(BigDecimal.valueOf(roundingTarget));
 
 		amount = amount.divide(bdRoundTarget);
+		roundingMode = StringUtils.trimToEmpty(roundingMode);
 
 		if (StringUtils.equals(roundingMode, RoundingMode.HALF_DOWN.name())) {
 			amount = amount.setScale(0, RoundingMode.HALF_DOWN);

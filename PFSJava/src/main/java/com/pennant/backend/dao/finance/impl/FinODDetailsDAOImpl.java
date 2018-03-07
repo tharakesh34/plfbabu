@@ -710,8 +710,8 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		finODDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				" SELECT COALESCE(Sum(TotPenaltyAmt),0) TotPenaltyAmt, COALESCE(Sum(TotPenaltyPaid),0) TotPenaltyPaid, ");
-		selectSql.append(" COALESCE(sum(LPIAmt),0) LPIAmt, COALESCE(Sum(LPIPaid),0) LPIPaid ");
+				" SELECT COALESCE(Sum(TotPenaltyAmt),0) TotPenaltyAmt, COALESCE(Sum(TotPenaltyPaid),0) TotPenaltyPaid, COALESCE(Sum(TotWaived),0) TotWaived, ");
+		selectSql.append(" COALESCE(sum(LPIAmt),0) LPIAmt, COALESCE(Sum(LPIPaid),0) LPIPaid,  COALESCE(Sum(LPIWaived),0) LPIWaived ");
 		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());

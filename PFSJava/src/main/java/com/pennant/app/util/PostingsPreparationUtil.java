@@ -612,6 +612,11 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setFlagCreateIfNF(true);
 			returnDataSet.setFlagCreateNew(false);
 			returnDataSet.setPostBranch(jVPosting.getBranch());
+			returnDataSet.setRevTranCode("010");
+			returnDataSet.setPostToSys("E");
+			returnDataSet.setAmountType("D");
+			returnDataSet.setUserBranch(jVPosting.getUserDetails().getBranchCode());
+			returnDataSet.setCustAppDate(DateUtility.getAppDate());
 			
 			String ref = returnDataSet.getFinReference() + "/" + returnDataSet.getFinEvent()+ "/";
 			returnDataSet.setPostingId(ref);
@@ -650,7 +655,9 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 
 		getEngineExecution().getAccEngineExecResults(aeEvent);
-
+		
+		validateCreditandDebitAmounts(aeEvent);
+		
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;
@@ -807,6 +814,27 @@ public class PostingsPreparationUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return returnDataSets;
+	}
+	
+	public void validateCreditandDebitAmounts(AEEvent aeEvent) {
+
+		BigDecimal creditAmt = BigDecimal.ZERO;
+		BigDecimal debitAmt = BigDecimal.ZERO;
+
+		List<ReturnDataSet> dataset = aeEvent.getReturnDataSet();
+
+		for (ReturnDataSet returnDataSet : dataset) {
+			if (StringUtils.equals(returnDataSet.getDrOrCr(), "C")) {
+				creditAmt = creditAmt.add(returnDataSet.getPostAmount());
+			} else {
+				debitAmt = debitAmt.add(returnDataSet.getPostAmount());
+			}
+		}
+
+		if (creditAmt.compareTo(debitAmt) != 0) {
+			throw new InterfaceException("9998",
+					"Total credits and Total debits are not matched.Please check accounting configuration.");
+		}
 	}
 
 

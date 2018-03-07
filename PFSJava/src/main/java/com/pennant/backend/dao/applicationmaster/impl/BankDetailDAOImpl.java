@@ -266,4 +266,27 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 			return 0;
 		}
 	}
+
+	@Override
+	public String getBankCodeByName(String bankName) {
+		logger.debug("Entering");
+
+		BankDetail bankDetail =new BankDetail();
+		bankDetail.setBankName(bankName);
+
+		StringBuilder selectSql = new StringBuilder("Select BankCode");
+		
+		selectSql.append(" From BMTBankDetail");
+		selectSql.append(" Where bankName =:bankName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			return null;
+		}
+	}
 }

@@ -66,4 +66,6 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 
 	int getAccountingSetIdCount(long accountSetId, String type);
 	
+	long getFinFeeTypeIdByFeeType(String feeTypeCode, String type);
+	
 }

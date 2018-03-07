@@ -46,6 +46,8 @@ import com.pennanttech.pennapps.core.App;
 
 public class PathUtil {
 	
+	public static String		APP_ROOT_PATH				= "";
+	
 	// Mail Attachment & Reports Download path
 	public static final String	DOWNLOAD					= "Downloads";
 	public static final String	MAIL_ATTACHMENT_DOWNLOAD	= "Downloads/Mail";
@@ -66,13 +68,30 @@ public class PathUtil {
 	public static final String	REPORTS_FINANCE				= "Reports/Finance";
 	public static final String	REPORTS_LIST				= "Reports/List";
 	public static final String	REPORTS_ORGANIZATION		= "Reports/Client";
+	public static final String	REPORTS_FONT				= "/Reports/Fonts/";
 
 	// Images
-	public static final String	REPORTS_IMAGE_CLIENT		= "Reports/images/OrgLogo.png";
-	public static final String	REPORTS_IMAGE_PRODUCT		= "Reports/images/ProductLogo.jpg";
-	public static final String	MAIL_ATTACHMENT_AGGREMENT	= "Downloads/Mail/MailAttachments/Aggrements/";
-	public static final String	MAIL_ATTACHMENT_REPORT		= "Downloads/Mail/Attachments/Reports/";
-	public static final String	MAIL_BODY					= "Downloads/Mail/body/";
+	public static final String	REPORTS_IMAGE_CLIENT		= "/Reports/images/OrgLogo.png";
+	public static final String	REPORTS_IMAGE_CLIENT_PATH	= "/Reports/images";
+	public static final String	REPORTS_IMAGE_CLIENT_IMAGE	= "/OrgLogo";
+	public static final String	REPORTS_IMAGE_PNG_FORMAT	= ".png";
+	public static final String	REPORTS_IMAGE_SIGN		    = "/Reports/images/signimage.png";
+
+	public static final String	REPORTS_IMAGE_CLIENT_DIGITAL= "/Reports/images/OrgLogo1.png";
+
+	public static final String	REPORTS_IMAGE_PRODUCT		= "/Reports/images/ProductLogo.jpg";
+	public static final String	MAIL_ATTACHMENT_AGGREMENT	= "/Downloads/Mail/MailAttachments/Aggrements/";
+	public static final String	MAIL_ATTACHMENT_REPORT		= "/Downloads/Mail/Attachments/Reports/";
+	public static final String	MAIL_BODY					= "/Downloads/Mail/body/";
+
+	/**
+	 * Method for Set Environment Variable to Root Path Location
+	 * 
+	 * @param envVarPath
+	 */
+	public static void setRootPath(String envVarPath) {
+		APP_ROOT_PATH = envVarPath;
+	}
 
 	/**
 	 * Method for Fetch the application Configuration's path

@@ -762,5 +762,33 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
+	/**
+	 * 
+	 * @param reference
+	 * @param type
+	 * @return
+	 */
+	public List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type) {
+		logger.debug("Entering");
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finRef);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT ");
+		selectSql.append(" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID, ");
+		selectSql.append(" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt");
+
+		selectSql.append(" From ManualAdvise T1 ");
+		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where T1.AdviseType = 1 AND T1.FinReference = :FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		logger.debug("Leaving");
+
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
 }	

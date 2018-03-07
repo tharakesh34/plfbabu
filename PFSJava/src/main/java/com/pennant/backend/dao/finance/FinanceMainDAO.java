@@ -258,6 +258,7 @@ public interface FinanceMainDAO {
 			String statusReason);
 	
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
+	FinanceMain getFinMainsForEODByFinRef(String finReference, boolean isActive);
 
 	int getFinanceMainByBank(String bankCode, String type);
 
@@ -278,4 +279,19 @@ public interface FinanceMainDAO {
 	
 	//GST Added TODO : need to move into BranchDao
 	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
+
+	int getFinanceCountById(String finReference);
+
+	boolean  isAppNoExists(String applicationNo,TableType type);
+
+	String getApplicationNoById(String finReference, String type);
+
+	List<String> getFinReferencesByCustID(long custID);
+
+	List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate);
+
+	boolean isFinTypeExistsInFinanceMain(String finType, String string);
+	
+	boolean isLoanPurposeExits(String purposeCode, String string);
+
 }

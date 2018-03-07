@@ -319,9 +319,9 @@ public class CIBILDAOImpl implements CIBILDAO {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		StringBuilder sql = null;
 		try {
-			sql = new StringBuilder("SELECT DEP.* FROM DATA_ENGINE_EVENT_PROPERTIES DEP ");
-			sql.append(" INNER DATA_ENGINE_CONFIG DC ON DC.CONFIG_ID = DEP.ID");
-			sql.append(" Where DC.NAME = :NAME AND DEP.STORAGE_TYPE = :STORAGE_TYPE");
+			sql = new StringBuilder("SELECT DEP.* FROM DATA_ENGINE_EVENT_PROPERTIES DEP");
+			sql.append(" INNER JOIN DATA_ENGINE_CONFIG DC ON DC.ID = DEP.CONFIG_ID");
+			sql.append("  Where DC.NAME = :NAME AND DEP.STORAGE_TYPE = :STORAGE_TYPE");
 
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EventProperties.class);
 			parameterSource.addValue("NAME", configName);

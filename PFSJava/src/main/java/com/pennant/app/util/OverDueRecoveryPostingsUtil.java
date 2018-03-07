@@ -64,7 +64,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 
@@ -134,21 +133,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			amountCodes = aeEvent.getAeAmountCodes();
 		}
 
-		amountCodes.setExPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setEAPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setPAPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setPenaltyPaid(BigDecimal.ZERO);
-		amountCodes.setPenaltyWaived(BigDecimal.ZERO);
-
-		if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
-			amountCodes.setExPenaltyPaid(penaltyPaidNow);
-		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
-			amountCodes.setEAPenaltyPaid(penaltyPaidNow);
-		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
-			amountCodes.setPAPenaltyPaid(penaltyPaidNow);
-		}else {
-			amountCodes.setPenaltyPaid(penaltyPaidNow);
-		}
+		amountCodes.setPenaltyPaid(penaltyPaidNow);
 		amountCodes.setPenaltyWaived(penaltyWaived);
 
 		aeEvent.setSchdDate(schDate);
@@ -162,7 +147,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
-
+		aeEvent.getAcSetIDList().clear();
+		
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
 					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
@@ -173,6 +159,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		// Posting details calling
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		aeEvent.getAeAmountCodes().setPenaltyPaid(BigDecimal.ZERO);
+		aeEvent.getAeAmountCodes().setPenaltyWaived(BigDecimal.ZERO);
 
 		//Overdue Details Updation for Paid Penalty
 		if (aeEvent.isPostingSucess()) {
@@ -601,7 +589,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		if (isAfterRecovery) {
 			details.setFinCurODDays(details.getFinCurODDays() + 1);
 		}
-		details.setFinLMdfDate(valueDate);
+		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+		details.setFinLMdfDate(DateUtility.getAppDate());
 
 		logger.debug("Leaving");
 		return details;

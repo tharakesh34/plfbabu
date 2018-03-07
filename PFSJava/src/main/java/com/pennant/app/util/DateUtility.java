@@ -133,6 +133,15 @@ public final class DateUtility extends DateUtil {
 	public static java.util.Date getNextBusinessdate() {
 		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 	}
+	
+	/**
+	 * Returns a {@link java.util.Date} object that represents the Next business date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the Next business date.
+	 */
+	public static java.util.Date getLastBusinessdate() {
+		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST);
+	}
 
 	/**
 	 * Returns the string representation with the specified pattern of the value date.

@@ -1252,7 +1252,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		financeScheduleDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(" Select Sum(ProfitSchd) ProfitSchd, Sum(SchdPftPaid) SchdPftPaid,");
-		selectSql.append("  Sum(PrincipalSchd) PrincipalSchd, Sum(SchdPriPaid) SchdPriPaid ");
+		selectSql.append(" Sum(PrincipalSchd) PrincipalSchd, Sum(SchdPriPaid) SchdPriPaid,");
+		selectSql.append(" Sum(ProfitCalc) ProfitCalc, Sum(ClosingBalance) ClosingBalance");
 		selectSql.append(" FROM FinScheduleDetails Where FinReference =:FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());

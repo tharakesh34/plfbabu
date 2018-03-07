@@ -48,6 +48,8 @@ public class ReportUtil implements Serializable {
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		reportArgumentsMap.put("whereCondition","");
 		reportArgumentsMap.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		reportArgumentsMap.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		reportArgumentsMap.put("client",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT_DIGITAL));
 		reportArgumentsMap.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("chequeDate",appDate);
 

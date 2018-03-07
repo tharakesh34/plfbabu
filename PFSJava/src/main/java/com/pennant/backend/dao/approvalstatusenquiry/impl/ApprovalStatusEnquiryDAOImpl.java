@@ -84,11 +84,12 @@ public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
 		selectSql.append("SELECT AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, RecordType, UsrName "); 
  		if (facility) {
 	        selectSql.append(" from FacilityStsAprvlInquiry_View ");
+	        selectSql.append(" Where AuditReference =:FinReference  ");
         }else {
         	selectSql.append(" from FinStsAprvlInquiry_View ");
+        	selectSql.append(" Where AuditReference =:FinReference and AUDITTRANTYPE='W' ");
 			
 		}
-		selectSql.append(" Where AuditReference =:FinReference  ");
 		if(StringUtils.isNotEmpty(auditEvent)){
 			selectSql.append(" and AuditEvent = :FinEvent ");
 		}

@@ -64,4 +64,6 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 	 */
 	boolean isDuplicateKey(String bankCode, TableType tableType);
 	int getAccNoLengthByCode(String bankCode, String type);
+
+	String getBankCodeByName(String bankName);
 }

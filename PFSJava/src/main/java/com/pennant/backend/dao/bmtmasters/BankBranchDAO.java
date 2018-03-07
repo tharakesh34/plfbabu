@@ -64,4 +64,8 @@ public interface BankBranchDAO {
 	BankBranch getBankBrachByCode(String bankCode, String branchCode, String type);
 
 	int getBankBrachByBank(String bankCode, String type);
+
+	BankBranch getBankBrachByMicr(String micr, String type);
+	
+	int getBankBranchByMICR(final String mICR,long id, String type);
 }

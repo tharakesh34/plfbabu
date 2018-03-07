@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance;
 import java.util.List;
 
+import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 
 
@@ -64,4 +65,8 @@ public interface FinFeeDetailDAO {
 	FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type);
 	void statusUpdate(long feeID, String status, boolean isWIF, String type);
 	void deleteServiceFeesByFinRef(String loanReference, boolean isWIF, String tableType);
+	
+	void updateTaxPercent(UploadTaxPercent taxPercent);
+	
+	List<FinFeeDetail> getAMZFinFeeDetails(String finRef, String type);
 }

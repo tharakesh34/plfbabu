@@ -102,7 +102,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		if(type.contains("View")){
 			selectSql.append(" AccountSetCode, AccountSetCodeName," );
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode");
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, TaxApplicable");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FeeTypeID =:FeeTypeID");
@@ -167,10 +167,10 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		StringBuilder sql = new StringBuilder("insert into FeeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode)");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq, TaxApplicable)");
 		sql.append(" values(");
 		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq, :TaxApplicable)");
 		
 		// Get the identity sequence number.
 		if (feeType.getId() == Long.MIN_VALUE) {
@@ -200,7 +200,9 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
 		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
-		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode");
+		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+		sql.append(" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq, TaxApplicable = :TaxApplicable");
 		sql.append(" where FeeTypeID =:FeeTypeID");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -270,7 +272,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		feeType.setFeeTypeCode(feeTypeCode);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, TaxComponent, TaxApplicable");
+		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId,HostFeeTypeCode,AmortzReq,TaxApplicable");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(" Where FeeTypeCode =:FeeTypeCode");
 
@@ -316,6 +318,31 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		logger.debug("Leaving");
 
 		return count;
+	}
+	
+	@Override
+	public long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
+		logger.debug("Entering");
+
+		long feeTypeId = Long.MIN_VALUE;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT feeTypeID From FeeTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeTypeCode", feeTypeCode);
+
+		try {
+			feeTypeId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			feeTypeId = Long.MIN_VALUE;
+		}
+
+		logger.debug("Leaving");
+
+		return feeTypeId;
 	}
 	
 }

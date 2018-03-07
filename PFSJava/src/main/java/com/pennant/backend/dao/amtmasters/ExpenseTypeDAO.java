@@ -41,11 +41,21 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.amtmasters;
+
 import com.pennant.backend.model.amtmasters.ExpenseType;
+import com.pennanttech.pff.core.TableType;
 
 public interface ExpenseTypeDAO {
+
 	ExpenseType getExpenseTypeById(long id, String type);
+
 	void update(ExpenseType expenseType, String type);
+
 	void delete(ExpenseType expenseType, String type);
+
 	long save(ExpenseType expenseType, String type);
+	
+	boolean isDuplicateKey(long expenseTypeId, String expenseTypeCode, TableType tableType);
+	
+	long getFinExpenseIdByExpType(String expTypeCode, String type);
 }

@@ -250,6 +250,9 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
 				curSchd.setSchdMethod(newGrcSchdMethod);
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
+				if(curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0){
+					curSchd.setSchdMethod(CalculationConstants.SCHMTHD_PFT);
+				}
 			} else {
 				curSchd.setActRate(financeMain.getRepayProfitRate());
 				curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
@@ -265,7 +268,7 @@ public class ScheduleGenerator {
 							financeMain.getRepayMargin(), financeMain.getRpyMinRate(), financeMain.getRpyMaxRate()).getNetRefRateLoan();
 					curSchd.setCalculatedRate(calrate);
 				}else{
-					curSchd.setCalculatedRate(financeMain.getGrcPftRate());
+					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
 				}
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {

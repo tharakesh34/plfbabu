@@ -387,8 +387,7 @@ public class RepaymentProcessUtil {
 			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
-						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
 						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
 					isSchdLogReq = true;
 				}
@@ -454,7 +453,11 @@ public class RepaymentProcessUtil {
 			}
 			
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-				//extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
+				if(extDataMap.containsKey(receiptDetail.getFeeTypeCode()+"_P")){
+					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", extDataMap.get(receiptDetail.getFeeTypeCode()+"_P").add(receiptDetail.getAmount()));
+				}else{
+					extDataMap.put(receiptDetail.getFeeTypeCode()+"_P", receiptDetail.getAmount());
+				}
 			}
 
 			boolean rpyProcessed = false;
@@ -466,6 +469,10 @@ public class RepaymentProcessUtil {
 
 				FinRepayHeader repayHeader = repayHeaderList.get(rcph);
 				
+				if(rcph != 0){
+					extDataMap.clear();
+				}
+								
 				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) || 
 							StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) ||
@@ -565,6 +572,10 @@ public class RepaymentProcessUtil {
 							feesExecuted = true;
 							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, receiptDetail.getPaymentType());
 						}
+						
+						// Receipt Detail external usage Fields Insertion into DataMap
+						dataMap.putAll(extDataMap);
+						
 						aeEvent.setDataMap(dataMap);
 
 						// Accounting Entry Execution
@@ -572,7 +583,8 @@ public class RepaymentProcessUtil {
 						repayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 						repayHeader.setValueDate(postDate);
 						
-						if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
+						if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE) && 
+								receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
 							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
 									repayHeader.getRepayAmount());
 						} else {
@@ -674,12 +686,18 @@ public class RepaymentProcessUtil {
 					String errParm = (String) returnList.get(1);
 					throw new InterfaceException("9999", errParm);
 				}
+				
+				// Preparing Total Principal Amount
+				BigDecimal totPriPaid = BigDecimal.ZERO;
+				for (RepayScheduleDetail rpySchd : repaySchdList) {
+					totPriPaid = totPriPaid.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+				}
 
 				//Update Linked Transaction ID
 				linkedTranId = (long) returnList.get(1);
 				repayHeader.setLinkedTranId(linkedTranId);
 				repayHeader.setValueDate(postDate);
-				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
+				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(totPriPaid));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 				repaySchdList = null;
 			}
@@ -687,7 +705,13 @@ public class RepaymentProcessUtil {
 			// Manual Advise Postings
 			List<ManualAdviseMovements> movements = receiptDetail.getAdvMovements();
 			if(movements != null && !movements.isEmpty()){
-				procManualAdvPostings(receiptDetail, financeMain, movements, receiptHeader.getPostBranch());
+				
+				// If Repay header exists on Receipt Detail, no need to re-execute external map data
+				if(receiptDetail.getRepayHeaders() != null && !receiptDetail.getRepayHeaders().isEmpty()){
+					extDataMap.clear();
+				}
+				
+				procManualAdvPostings(receiptDetail, financeMain, movements, receiptHeader.getPostBranch(), extDataMap, valueDate);
 			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
@@ -704,12 +728,14 @@ public class RepaymentProcessUtil {
 	 * @param financeMain
 	 * @param movements
 	 * @param postBranch
+	 * @param dateValueDate 
+	 * @param postDate 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 * @throws InterfaceException 
 	 */
 	private void procManualAdvPostings(FinReceiptDetail receiptDetail, FinanceMain financeMain,
-			List<ManualAdviseMovements> movements, String postBranch) throws InterfaceException, IllegalAccessException, InvocationTargetException{
+			List<ManualAdviseMovements> movements, String postBranch,Map<String, BigDecimal> extDataMap, Date dateValueDate) throws InterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
 		// Summing Same Type of Fee Types to Single Field
@@ -718,41 +744,30 @@ public class RepaymentProcessUtil {
 			ManualAdviseMovements movement = movements.get(m);
 			
 			BigDecimal amount = BigDecimal.ZERO;
-			if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
-				amount = movementMap.get(movement.getFeeTypeCode() + "_P");
-			}
-			movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
-			
-			amount = BigDecimal.ZERO;
-			if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
-				amount = movementMap.get(movement.getFeeTypeCode() + "_W");
-			}
-			movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
-			
-			String payType = "";
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
-				payType = "EX_";
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
-				payType = "EA_";
-			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-				payType = "PA_";
+			if(StringUtils.isEmpty(movement.getFeeTypeCode())){
+				
+				if(movementMap.containsKey("bounceChargePaid")){
+					amount = movementMap.get("bounceChargePaid");
+				}
+				movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
+
+				amount = BigDecimal.ZERO;
+				if(movementMap.containsKey("bounceChargeWaived")){
+					amount = movementMap.get("bounceChargeWaived");
+				}
+				movementMap.put("bounceChargeWaived",  amount.add(movement.getWaivedAmount()));
 			}else{
-				payType = "PB_";
+				if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
+					amount = movementMap.get(movement.getFeeTypeCode() + "_P");
+				}
+				movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
+
+				amount = BigDecimal.ZERO;
+				if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
+					amount = movementMap.get(movement.getFeeTypeCode() + "_W");
+				}
+				movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 			}
-			
-			// Paid Amounts
-			amount = BigDecimal.ZERO;
-			if(movementMap.containsKey(payType+movement.getFeeTypeCode() + "_P")){
-				amount = movementMap.get(payType+movement.getFeeTypeCode() + "_P");
-			}
-			movementMap.put(payType+movement.getFeeTypeCode() + "_P",  amount.add(movement.getPaidAmount()));
-			
-			// Waiver Amounts
-			amount = BigDecimal.ZERO;
-			if(movementMap.containsKey(payType + movement.getFeeTypeCode() + "_W")){
-				amount = movementMap.get(payType + movement.getFeeTypeCode() + "_W");
-			}
-			movementMap.put(payType + movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 		}
 
 		// Accounting Postings Process Execution
@@ -771,6 +786,7 @@ public class RepaymentProcessUtil {
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setLinkedTranId(0);
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		aeEvent.setValueDate(dateValueDate);
 		
 		aeEvent.getAcSetIDList().clear();
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
@@ -787,6 +803,9 @@ public class RepaymentProcessUtil {
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 		dataMap.putAll(movementMap);
+		if(extDataMap != null){
+			dataMap.putAll(extDataMap);
+		}
 		aeEvent.setDataMap(dataMap);
 
 		// Accounting Entry Execution
@@ -1243,10 +1262,11 @@ public class RepaymentProcessUtil {
 	 * @param scheduleDetails
 	 * @param profitDetail
 	 * @return
+	 * @throws Exception 
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail, String receiptPurpose) {
-		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, receiptPurpose);
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail, List<FinODDetails> overdueList, String receiptPurpose) throws Exception {
+		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList, receiptPurpose);
 	}
 
 	/**
@@ -1287,42 +1307,31 @@ public class RepaymentProcessUtil {
 					finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 					finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 					finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
-							.subtract(repaySchdList.get(i).getPenaltyPayNow()));
+					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 					// Total Repayments Calculation for Principal, Profit 
-					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(
-							repaySchdList.get(i).getPrincipalSchdPayNow()).subtract(repaySchdList.get(i).getPriSchdWaivedNow()));
-					rpyQueueHeader
-							.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()).subtract(repaySchdList.get(i).getPftSchdWaivedNow()));
+					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
+					rpyQueueHeader.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
 					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(repaySchdList.get(i).getTdsSchdPayNow()));
-					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(
-							repaySchdList.get(i).getLatePftSchdPayNow()));
+					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
-					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(repaySchdList.get(i).getSchdFeePayNow()).subtract(repaySchdList.get(i).getSchdFeeWaivedNow()));
-					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(
-							repaySchdList.get(i).getSchdInsPayNow()).subtract(repaySchdList.get(i).getSchdInsWaivedNow()));
-					rpyQueueHeader.setSuplRent(rpyQueueHeader.getSuplRent().add(
-							repaySchdList.get(i).getSchdSuplRentPayNow()));
-					rpyQueueHeader.setIncrCost(rpyQueueHeader.getIncrCost().add(
-							repaySchdList.get(i).getSchdIncrCostPayNow()));
+					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
+					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
+					rpyQueueHeader.setSuplRent(rpyQueueHeader.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
+					rpyQueueHeader.setIncrCost(rpyQueueHeader.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
 
 					// Waiver Amounts
 					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(finRepayQueue.getSchdPriWaivedNow()));
 					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(finRepayQueue.getSchdPftWaivedNow()));
-					rpyQueueHeader.setLatePftWaived(rpyQueueHeader.getLatePftWaived().add(
-							finRepayQueue.getLatePayPftWaivedNow()));
-					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(
-							finRepayQueue.getWaivedAmount()));
+					rpyQueueHeader.setLatePftWaived(rpyQueueHeader.getLatePftWaived().add(finRepayQueue.getLatePayPftWaivedNow()));
+					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(finRepayQueue.getWaivedAmount()));
 					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(finRepayQueue.getSchdFeeWaivedNow()));
 					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(finRepayQueue.getSchdInsWaivedNow()));
-					rpyQueueHeader.setSuplRentWaived(rpyQueueHeader.getSuplRentWaived().add(
-							finRepayQueue.getSchdSuplRentWaivedNow()));
-					rpyQueueHeader.setIncrCostWaived(rpyQueueHeader.getIncrCostWaived().add(
-							finRepayQueue.getSchdIncrCostWaivedNow()));
+					rpyQueueHeader.setSuplRentWaived(rpyQueueHeader.getSuplRentWaived().add(finRepayQueue.getSchdSuplRentWaivedNow()));
+					rpyQueueHeader.setIncrCostWaived(rpyQueueHeader.getIncrCostWaived().add(finRepayQueue.getSchdIncrCostWaivedNow()));
 
 					finRepayQueues.add(finRepayQueue);
 				}

@@ -81,4 +81,6 @@ public interface FinAdvancePaymentsDAO {
 	int getFinAdvCountByRef(String finReference, String type);
 	
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
+	
+	int getCountByFinReference(String finReference);
 }

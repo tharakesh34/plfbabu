@@ -56,9 +56,9 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.util.PennantConstants;
 
 public class NumberToEnglishWords {
 	private static Logger logger = Logger.getLogger(NumberToEnglishWords.class);
@@ -89,7 +89,7 @@ public class NumberToEnglishWords {
 		if(number.compareTo(BigInteger.ZERO)<0){
 			sign="-";
 		}
-		if("C".equals(PennantConstants.DFTNUMCONVFMT)){
+		if(ImplementationConstants.INDIAN_IMPLEMENTATION){
 			return StringUtils.trimToEmpty(sign+" "+convertWordToCrores(number));
 		}
 		logger.debug("Leaving ");
@@ -210,8 +210,7 @@ public class NumberToEnglishWords {
 			if(j==count-1){
 				result=formatInLakhs(df.format(Long.valueOf(numString[j])),result);
 			} else {
-				result=" crores ,"+formatInLakhs(df.format(Long.valueOf(numString[j])),result);
-
+				result=" crores "+formatInLakhs(df.format(Long.valueOf(numString[j])),result);
 			}
 		}
 		logger.debug("Leaving ");
@@ -240,11 +239,11 @@ public class NumberToEnglishWords {
 			break;
 		case 1 :
 			tradLakhs = convertThousands(lakhs) 
-			+ " lakh ,";
+			+ " lakh ";
 			break;
 		default :
 			tradLakhs = convertThousands(lakhs) 
-			+ " lakh ,";
+			+ " lakh ";
 		}
 		result =  result + tradLakhs;
 		String tradThousands;
@@ -256,7 +255,7 @@ public class NumberToEnglishWords {
 			tradThousands = convertThousands(thousands);
 			break;
 		default :
-			tradThousands = convertThousands(thousands)+" Thousand ,"; 
+			tradThousands = convertThousands(thousands)+" Thousand "; 
 		}
 		result =    result + tradThousands;
 		String tradhundreds;
