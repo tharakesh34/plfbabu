@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  BankBranch.java                                                   * 	  
+ * FileName    		:  BaseRate.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  17-10-2016    														*
+ * Creation Date    :  03-05-2011    														*
  *                                                                  						*
- * Modified Date    :  17-10-2016    														*
+ * Modified Date    :  03-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 17-10-2016       Pennant	                 0.1                                            * 
+ * 03-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,217 +39,147 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
+package com.pennant.backend.model.applicationmaster;
 
-package com.pennant.backend.model.bmtmasters;
-
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>BankBranch table</b>.<br>
- *
+ * Model class for the <b>BaseRate table</b>.<br>
+ * 
  */
-public class BankBranch extends AbstractWorkflowEntity implements Entity {
-	private static final long serialVersionUID = 1L;
-	
-	private long bankBranchID = Long.MIN_VALUE;
-	private String bankCode;
-	private String bankName;
-	private String branchCode;
-	private String branchDesc;
-	private String city;
-	private String PCCityName;
-	private String mICR;
-	private String iFSC;
-	private String addOfBranch;
-	private boolean cheque;
-	private boolean dd;
-	private boolean ecs;
-	private boolean nach;
-	private boolean dda;
-	private boolean active;
+public class CostOfFund extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = -8806339094908245173L;
+
+	private String cofCode;
+	private String lovDescCofTypeName;
+	private String currency;
+	private Date cofEffDate;
+	private Date lastMdfDate;
+	private BigDecimal cofRate;
+	private boolean delExistingRates;
 	private boolean newRecord;
 	private String lovValue;
-	private BankBranch befImage;
+	private CostOfFund befImage;
 	private LoggedInUser userDetails;
-		
-	public boolean isNew() {
-		return isNewRecord();
-	}
+	private boolean active;
 
-	public BankBranch() {
+	public CostOfFund() {
 		super();
 	}
-
-	public BankBranch(long id) {
+	
+	public CostOfFund(String id) {
 		super();
 		this.setId(id);
 	}
 
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("bankName");
-			excludeFields.add("PCCityName");
-	return excludeFields;
+		return excludeFields;
 	}
 	
-	public long getId() {
-		return bankBranchID;
-	}
 	
-	public void setId (long id) {
-		this.bankBranchID = id;
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public String getId() {
+		return cofCode;
 	}
-	
-	public long getBankBranchID() {
-		return bankBranchID;
+	public void setId(String id) {
+		this.cofCode = id;
 	}
-	public void setBankBranchID(long bankBranchID) {
-		this.bankBranchID = bankBranchID;
+
+	public String getCofCode() {
+		return cofCode;
 	}
-	
-	public String getBankCode() {
-		return bankCode;
+	public void setCofCode(String cofCode) {
+		this.cofCode = cofCode;
 	}
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
+
+	public String getLovDescCofTypeName() {
+		return this.lovDescCofTypeName;
 	}
-	public String getBranchCode() {
-		return branchCode;
+	public void setLovDescCofTypeName(String lovDescCofTypeName) {
+		this.lovDescCofTypeName = lovDescCofTypeName;
 	}
-	public void setBranchCode(String branchCode) {
-		this.branchCode = branchCode;
+
+	public String getCurrency() {
+		return currency;
 	}
-	
-	public String getBranchDesc() {
-		return branchDesc;
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
-	public void setBranchDesc(String branchDesc) {
-		this.branchDesc = branchDesc;
+ 
+	public Date getCofEffDate() {
+		return cofEffDate;
 	}
-	
-	public String getCity() {
-		return city;
+	public void setCofEffDate(Date cofEffDate) {
+		this.cofEffDate = cofEffDate;
 	}
-	public void setCity(String city) {
-		this.city = city;
+
+	public BigDecimal getCofRate() {
+		return cofRate;
 	}
-	
-	public String getMICR() {
-		return mICR;
+	public void setCofRate(BigDecimal cofRate) {
+		this.cofRate = cofRate;
 	}
-	public void setMICR(String mICR) {
-		this.mICR = mICR;
-	}
-	
-	public String getIFSC() {
-		return iFSC;
-	}
-	public void setIFSC(String iFSC) {
-		this.iFSC = iFSC;
-	}
-	
+
+	public boolean isDelExistingRates() {
+    	return delExistingRates;
+    }
+	public void setDelExistingRates(boolean delExistingRates) {
+    	this.delExistingRates = delExistingRates;
+    }
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
-
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public BankBranch getBefImage(){
+	public CostOfFund getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BankBranch beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(CostOfFund beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	public String getBankName() {
-		return bankName;
-	}
+	public Date getLastMdfDate() {
+    	return lastMdfDate;
+    }
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
-
-	public String getPCCityName() {
-		return PCCityName;
-	}
-
-	public void setPCCityName(String pCCityName) {
-		PCCityName = pCCityName;
-	}
-
-	public boolean isEcs() {
-		return ecs;
-	}
-
-	public void setEcs(boolean ecs) {
-		this.ecs = ecs;
-	}
-
-	public boolean isDda() {
-		return dda;
-	}
-
-	public void setDda(boolean dda) {
-		this.dda = dda;
-	}
-
-	public boolean isNach() {
-		return nach;
-	}
-
-	public void setNach(boolean nach) {
-		this.nach = nach;
-	}
-
-	public boolean isCheque() {
-		return cheque;
-	}
-
-	public void setCheque(boolean cheque) {
-		this.cheque = cheque;
-	}
-
-	public boolean isDd() {
-		return dd;
-	}
-
-	public void setDd(boolean dd) {
-		this.dd = dd;
-	}
-
-	public String getAddOfBranch() {
-		return addOfBranch;
-	}
-
-	public void setAddOfBranch(String addOfBranch) {
-		this.addOfBranch = addOfBranch;
-	}
-
+	public void setLastMdfDate(Date lastMdfDate) {
+    	this.lastMdfDate = lastMdfDate;
+    }
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -258,4 +188,7 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 		this.active = active;
 	}
 
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

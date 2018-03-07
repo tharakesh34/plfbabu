@@ -90,6 +90,8 @@ public class Entity extends AbstractWorkflowEntity {
 	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
+	
+	private String cINNumber;
 
 	public String getEntityAddrLine1() {
 		return entityAddrLine1;
@@ -325,4 +327,11 @@ public class Entity extends AbstractWorkflowEntity {
 		this.cityName = cityName;
 	}
 
+	public String getcINNumber() {
+		return cINNumber;
+	}
+
+	public void setcINNumber(String cINNumber) {
+		this.cINNumber = cINNumber;
+	}
 }

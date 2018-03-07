@@ -42,7 +42,9 @@
  */
 package com.pennant.backend.dao.mandate.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +70,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Mandate model</b> class.<br>
@@ -135,10 +138,10 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, ExternalRef,");
 		selectSql.append(" Version ,LastMntBy,LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId");
+		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, primarymandateid, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
-			selectSql.append("useExisting");
+			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -182,10 +185,10 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId");
+		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
-			selectSql.append("useExisting");
+			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -220,10 +223,10 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId");
+		selectSql.append(" WorkflowId,BarCodeNumber, SwapIsActive, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
-			selectSql.append("useExisting");
+			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -318,13 +321,13 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		insertSql.append(" Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status, ApprovalID,");
 		insertSql.append(" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
 		insertSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
-		insertSql.append(" WorkflowId,OrgReference)");
+		insertSql.append(" WorkflowId,OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode)");
 		insertSql.append(" Values(:MandateID, :CustID, :MandateRef, :MandateType, :BankBranchID, :AccNumber, ");
 		insertSql.append(" :AccHolderName, :JointAccHolderName, :AccType, :OpenMandate, :StartDate, :ExpiryDate,");
 		insertSql.append(" :MaxLimit, :Periodicity, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Status,");
-		insertSql.append(" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef,");
-		insertSql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId, :OrgReference)");
+		insertSql.append(" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
+		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
+		insertSql.append(" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -365,9 +368,9 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber,");
+		updateSql.append(" SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId, EntityCode = :EntityCode");
 		updateSql.append(" Where MandateID =:MandateID");
-
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
@@ -414,7 +417,8 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber ,");
+		updateSql.append(" SwapIsActive = :SwapIsActive, EntityCode = :EntityCode");
 		updateSql.append(" Where MandateID =:MandateID");
 		updateSql.append("  AND Status = :Status");
 
@@ -510,10 +514,10 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId");
+		selectSql.append(" WorkflowId,  BarCodeNumber, SwapIsActive, EntityCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,");
-			selectSql.append("useExisting");
+			selectSql.append("useExisting, EntityDesc");
 		}
 		selectSql.append(" From Mandates");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -588,4 +592,154 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,	typeRowMapper);
 	}
+
+	@Override
+	public int getSecondaryMandateCount(long mandateID) {
+
+		logger.debug("Entering");
+		
+		Mandate mandate = new Mandate();
+		mandate.setPrimaryMandateId(mandateID);
+		mandate.setActive(true);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates");
+		selectSql.append(" Where PrimaryMandateId =:PrimaryMandateId AND Active =:Active");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+
+	}
+	
+	@Override
+	public void updateStatusAfterRegistration(long mandateID, String statusInprocess) {
+		logger.info(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder updateSql = new StringBuilder("UPDATE MANDATES SET STATUS = :STATUS");
+		updateSql.append(" WHERE MANDATEID = :MANDATEID");
+		paramMap.addValue("MANDATEID", mandateID);
+		paramMap.addValue("STATUS", statusInprocess);
+
+		logger.info("updateSql: " + updateSql.toString());
+		namedParameterJdbcTemplate.update(updateSql.toString(), paramMap);
+		logger.info(Literal.LEAVING);
+
+	}
+
+	@Override
+	public boolean checkMandateStatus(long mandateID) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select COUNT(*) from MANDATE_REGISTRATION ");
+		sql.append("  WHERE MANDATE_ID = :MANDATEID AND MACHINE_FLAG = :MACHINE_FLAG AND ACTIVE_FLAG = :ACTIVE_FLAG");
+		logger.debug("Sql: " + sql.toString());
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", mandateID);
+		paramMap.addValue("MACHINE_FLAG", "Y");
+		paramMap.addValue("ACTIVE_FLAG", 1);
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkMandates(String orgReference, long mandateId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT COUNT(*) FROM  MANDATES ");
+		sql.append("  where ORGREFERENCE = :ORGREFERENCE  AND STATUS IN (:STATUS) AND ACTIVE = :ACTIVE");
+		logger.debug("Sql: " + sql.toString());
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("ORGREFERENCE", orgReference);
+		paramMap.addValue("STATUS", Arrays.asList("AC", "INPROCESS", "NEW"));
+		paramMap.addValue("MANDATEID", mandateId);
+		paramMap.addValue("ACTIVE", 1);
+
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		return false;
+	}
+	
+	@Override
+	public int getBarCodeCount(String barCode, long mandateID, String type) {
+		Mandate mandate = new Mandate();
+		mandate.setMandateID(mandateID);
+		mandate.setBarCodeNumber(barCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Mandates");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BarCodeNumber = :BarCodeNumber And MandateID !=:MandateID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public BigDecimal getMaxRepayAmount(String finReference, String type) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT MAX(REPAYAMOUNT)  FROM  FINSCHEDULEDETAILS");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
+		source.addValue("FINREFERENCE", finReference);
+
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+
+	}
+
+	@Override
+	public boolean entityExistMandate(String entityCode, String type) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select COUNT(*) from Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  WHERE EntityCode = :EntityCode");
+		logger.debug("Sql: " + sql.toString());
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("EntityCode", entityCode);
+		
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		return false;
+	}
+
+		
 }

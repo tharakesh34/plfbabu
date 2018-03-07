@@ -254,10 +254,11 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 		sql = new StringBuilder();
 		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FT.FinDivision FinPurpose,");
 		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName, CURR.CCYCODE finCcy, ");
-		sql.append("  FM.FINSTARTDATE, FM.MATURITYDATE  FROM FINANCEMAIN FM");
+		sql.append("  FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE  FROM FINANCEMAIN FM");
 		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
+		sql.append(" INNER JOIN SMTDIVISIONDETAIL DIV ON DIV.DIVISIONCODE = FT.FINDIVISION");
 		sql.append(" Where FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());
 

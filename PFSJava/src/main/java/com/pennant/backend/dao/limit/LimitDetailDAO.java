@@ -40,4 +40,6 @@ public interface LimitDetailDAO {
 	public List<LimitDetails> getLimitDetails(long headerId);
 	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type);
 	public void saveList(List<LimitDetails> limitDetailsList, String type);
+	
+	public List<LimitDetails> getLatestLimitExposures(final long id, String type);
 }

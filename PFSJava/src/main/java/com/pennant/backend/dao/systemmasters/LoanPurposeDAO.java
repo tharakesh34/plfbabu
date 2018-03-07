@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  LoanPurposeDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  05-05-2011    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  05-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 05-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,41 +39,30 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
 
-package com.pennant.backend.dao.partnerbank;
-
-import java.util.List;
-
+package com.pennant.backend.dao.systemmasters;
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennanttech.pff.core.TableType;
 
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+/**
+ * DAO methods declaration for the <b>LoanPurpose model</b> class.<br>
+ * 
+ */
+public interface LoanPurposeDAO extends BasicCrudDao<LoanPurpose>{
+
+	LoanPurpose getLoanPurposeById(String id,String type);
 	
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
+	 * @param addressTypeCode
+	 *            addressTypeCode of the addressType.
 	 * @param tableType
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	boolean isDuplicateKey(String addressTypeCode, TableType tableType);
 
-	int getPartnerBankbyBank(String bankCode, String type);
-
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
 }

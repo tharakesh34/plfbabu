@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  InterfaceMappingDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  01-12-2016    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  01-12-2016    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 01-12-2016       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,40 +40,23 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
-package com.pennant.backend.dao.partnerbank;
+package com.pennant.backend.dao.interfacemapping;
 
 import java.util.List;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.model.interfacemapping.MasterMapping;
 
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+public interface MasterMappingDAO {
+
+	List<MasterMapping> getMasterMappingDetails(long interfaceMappingId, String type);
+
+	void update(MasterMapping masterMapping, String type);
+
+	void delete(MasterMapping masterMapping, String type);
 	
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	void delete(long masterMappingId, String type);
 
-	int getPartnerBankbyBank(String bankCode, String type);
-
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
+	long save(MasterMapping masterMapping, String type);
+	
+	List<String> getMappings(String tableName, String value);
 }

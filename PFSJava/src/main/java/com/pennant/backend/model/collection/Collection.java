@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  Collection.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  27-05-2017    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  27-05-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 27-05-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,40 +40,52 @@
  *                                                                                          * 
  ********************************************************************************************
  */
+package com.pennant.backend.model.collection;
 
-package com.pennant.backend.dao.partnerbank;
+/**
+ * Model class for the <b>Collection table</b>.<br>
+ * 
+ */
+public class Collection {
 
-import java.util.List;
+	private String tableName;
+	private String status ="";
+	private String errorMessage = "";
+	private long insertCount = 0;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
-import com.pennanttech.pff.core.TableType;
-
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+	public Collection() {
+		super();
+	}
 	
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	public String getTableName() {
+		return tableName;
+	}
 
-	int getPartnerBankbyBank(String bankCode, String type);
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public long getInsertCount() {
+		return insertCount;
+	}
+
+	public void setInsertCount(long insertCount) {
+		this.insertCount = insertCount;
+	}
 }

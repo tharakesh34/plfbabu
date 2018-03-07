@@ -311,6 +311,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			curSchd.setDefSchdDate(curSchd.getSchDate());
 
 			if (i == 0) {
+				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
+					chkFirstRpyDate = true;
+				}
 				continue;
 			}
 			FinanceScheduleDetail prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);

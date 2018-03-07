@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
@@ -72,6 +73,34 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		logger.debug("Leaving");
 		return limitReferenceMapping.getId();
 	}
+	
+	/**
+	 * 
+	 * @param lmtReferenceMapping
+	 */
+	@Override
+	public void saveBatch(List<LimitReferenceMapping> lmtReferenceMapping) {
+		logger.debug("Entering");
+
+		for (LimitReferenceMapping mapping : lmtReferenceMapping) {
+			if (mapping.getId() == Long.MIN_VALUE) {
+				mapping.setId(getNextidviewDAO().getNextId("SeqLimitReferenceMapping"));
+				logger.debug("get NextID:" + mapping.getId());
+			}
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into LimitReferenceMapping");
+		insertSql.append(" (ReferenceId, ReferenceCode,ReferenceNumber, HeaderId,LimitLine ) ");
+		insertSql.append(" Values(:ReferenceId, :ReferenceCode,:ReferenceNumber,:HeaderId,:LimitLine )");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmtReferenceMapping.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+	
 
 	/**
 	 * Fetch the Record Limit items by key field

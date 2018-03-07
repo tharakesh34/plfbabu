@@ -43,19 +43,27 @@
 
 package com.pennant.backend.dao.reports;
 
+import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.payment.PaymentInstruction;
-import com.pennant.backend.model.systemmasters.SOASummaryReport;
-import com.pennant.backend.model.systemmasters.SOATransactionReport;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 
 /**
@@ -74,15 +82,16 @@ public interface SOAReportGenerationDAO {
 	int getFinanceProfitDetailActiveCount(long custId, boolean active);
 	StatementOfAccount getSOACustomerDetails(long custId);
 	StatementOfAccount getSOAProductDetails(String finBranch, String finType);
-	SOASummaryReport getFinExcessAmountOfSummaryReport(String finReference);
-	List<SOATransactionReport> getFinFeeScheduleDetails(String finReference);
-	List<SOATransactionReport> getManualAdviseMovements(String finReference);
-	List<SOATransactionReport> getPresentmentDetails(String finReference);
-	List<Long> getPresentmentReceiptIds();
-	List<SOATransactionReport> getReceiptAllocationDetails(String finReference);
+	List<FinExcessAmount> getFinExcessAmountsList(String finReference);
+	List<ReceiptAllocationDetail> getReceiptAllocationDetailsList(String finReference);
 	List<FinReceiptHeader> getFinReceiptHeaders(String finReference);	
-	List<FinReceiptDetail> getFinReceiptDetails(List<Long> finReceiptIds);
-	List<SOATransactionReport> getFinRepayscheduledetails(String finReference);
-	List<SOATransactionReport> getOrgFinFeedetails(String finReference);
-	List<SOATransactionReport> getFinFeedetails(String finReference);
+	List<FinReceiptDetail> getFinReceiptDetails(String finReference);
+	List<FinRepayHeader> getFinRepayHeadersList(String finReference);
+	List<FinFeeDetail> getFinFeedetails(String finReference);
+	Date getMaxSchDate(String finReference);
+	List<ManualAdviseMovements> getManualAdviseMovements(String finReference);
+	List<PresentmentDetail> getPresentmentDetailsList(String finReference);
+	List<RepayScheduleDetail> getRepayScheduleDetailsList(String finReference);
+	List<VASRecording> getVASRecordingsList(String finReference);
+	List<FinFeeScheduleDetail> getFinFeeScheduleDetailsList(String finReference);
 }

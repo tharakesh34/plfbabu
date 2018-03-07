@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  CasteDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  05-05-2011    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  05-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 05-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,41 +39,26 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
 
-package com.pennant.backend.dao.partnerbank;
-
-import java.util.List;
-
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.model.systemmasters.Caste;
 import com.pennanttech.pff.core.TableType;
 
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+/**
+ * DAO methods declaration for the <b>Caste model</b> class.<br>
+ * 
+ */
+public interface CasteDAO {
+
+	void update(Caste caste,TableType type);
+	void delete(Caste caste,TableType type);
+	long save(Caste caste,TableType type);
 	
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	Caste getCasteById(long id, String type);
+	
+	boolean isDuplicateKey(String casteCode, TableType tableType);
 
-	int getPartnerBankbyBank(String bankCode, String type);
+	int getCasteCount(String casteCode);
 
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
 }

@@ -61,4 +61,6 @@ public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail>{
 	 */
 	boolean isDuplicateKey(String divisionCode, TableType tableType);
 
+	boolean isEntityCodeExistsInDivisionDetails(String entityCode, String type);
+
 }

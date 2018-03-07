@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DivisionDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  CasteDAOImpl.java                                                	* 	  
  *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
+ * Author      		:  PENNANT TECHONOLOGIES          										*
  *                                                                  						*
- * Creation Date    :  02-08-2013    														*
+ * Creation Date    	:  20-01-2018    													*
  *                                                                  						*
- * Modified Date    :  02-08-2013    														*
+ * Modified Date    	:  20-01-2018    													*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 02-08-2013       Pennant	                 0.1                                            * 
+ * 20-01-2018       Pennant	                 0.1                                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -56,9 +56,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
-import com.pennant.backend.model.systemmasters.DivisionDetail;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
+import com.pennant.backend.dao.systemmasters.CasteDAO;
+import com.pennant.backend.model.systemmasters.Caste;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -66,83 +66,79 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>DivisionDetail model</b> class.<br>
- * 
+ * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
  */
+public class CasteDAOImpl extends BasisNextidDaoImpl<Caste> implements CasteDAO {
+	private static Logger				logger	= Logger.getLogger(CasteDAOImpl.class);
 
-public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implements DivisionDetailDAO {
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
-	private static Logger logger = Logger.getLogger(DivisionDetailDAOImpl.class);
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	public DivisionDetailDAOImpl() {
+	public CasteDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Division Detail details by key field
+	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return DivisionDetail
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Academic
 	 */
 	@Override
-	public DivisionDetail getDivisionDetailById(final String id, String type) {
-		logger.debug("Entering");
-		
-		DivisionDetail divisionDetail = new DivisionDetail();
-		divisionDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(", EntityDesc");
-		}
-		selectSql.append(" From SMTDivisionDetail");
+	public Caste getCasteById(long id, String type) {
+		logger.debug(Literal.ENTERING);
+
+		Caste caste = new Caste();
+		caste.setCasteId(id);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" Select CasteId, CasteCode, CasteDesc, CasteIsActive,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM Caste");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DivisionCode =:DivisionCode");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(divisionDetail);
-		RowMapper<DivisionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DivisionDetail.class);
-		
-		try{
-			divisionDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			divisionDetail = null;
+		selectSql.append(" Where casteId = :casteId");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(caste);
+		RowMapper<Caste> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Caste.class);
+
+		try {
+			caste = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			caste = null;
 		}
-		logger.debug("Leaving");
-		return divisionDetail;
+
+		logger.debug(Literal.LEAVING);
+		return caste;
 	}
-	
+
 	@Override
-	public boolean isDuplicateKey(String divisionCode, TableType tableType) {
+	public boolean isDuplicateKey(String casteCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "DivisionCode = :divisionCode";
+		String whereClause = "CasteCode = :CasteCode";
 
 		switch (tableType) {
 		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("SMTDivisionDetail", whereClause);
+			sql = QueryUtil.getCountQuery("Caste", whereClause);
 			break;
 		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("SMTDivisionDetail_Temp", whereClause);
+			sql = QueryUtil.getCountQuery("Caste_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "SMTDivisionDetail_Temp", "SMTDivisionDetail" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "Caste_Temp", "Caste" }, whereClause);
 			break;
 		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("divisionCode", divisionCode);
+		paramSource.addValue("CasteCode", casteCode);
 
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -156,46 +152,54 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	}
 
 	@Override
-	public String save(DivisionDetail divisionDetail, TableType tableType) {
+	public long save(Caste caste, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder("insert into SMTDivisionDetail");
+		StringBuilder sql = new StringBuilder("Insert into Caste");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion)");
-		sql.append(" values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks, :EntityCode ");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:AlwPromotion)");
-		
+		sql.append(" (CasteId, CasteCode, CasteDesc, CasteIsActive,");
+		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values (:CasteId, :CasteCode, :CasteDesc, :CasteIsActive,");
+		sql.append("  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		// Get the identity sequence number.
+		if (caste.getCasteId() <= 0) {
+			caste.setCasteId(getNextidviewDAO().getNextId("SeqCaste"));
+		}
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +sql.toString());		
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
-		try{
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
-		}catch (DuplicateKeyException e) {
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(caste);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return divisionDetail.getId();
+		return caste.getCasteId();
 	}
-	
+
 	@Override
-	public void update(DivisionDetail divisionDetail, TableType tableType) {
+	public void update(Caste caste, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql =new StringBuilder("update SMTDivisionDetail");
-		sql.append(tableType.getSuffix()); 
-		sql.append(" set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks, EntityCode = :EntityCode");
-		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
-		sql.append(" where DivisionCode =:DivisionCode");
+		StringBuilder sql = new StringBuilder("update Caste");
+		sql.append(tableType.getSuffix());
+		sql.append(" set CasteCode = :CasteCode, CasteDesc = :CasteDesc,");
+		sql.append(" CasteIsActive = :CasteIsActive, Version = :Version, LastMntBy = :LastMntBy,");
+		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where casteId = :casteId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(caste);
 		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
@@ -207,22 +211,22 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	}
 
 	@Override
-	public void delete(DivisionDetail divisionDetail, TableType tableType) {
+	public void delete(Caste caste, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from SMTDivisionDetail");
+		StringBuilder sql = new StringBuilder("delete from Caste");
 		sql.append(tableType.getSuffix());
-		sql.append(" where DivisionCode =:DivisionCode");
+		sql.append(" where CasteId = :CasteId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(caste);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -235,26 +239,27 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.debug(Literal.LEAVING);
 	}
 	
+	
 	/**
-	 * Method for get total number of records from SMTDIVISIONDETAILS master table.<br>
+	 * Method for get total number of records from BMTAddressTypes master table.<br>
 	 * 
-	 * @param entityCode
+	 * @param addrType
 	 * 
-	 * @return Boolean
+	 * @return Integer
 	 */
 	@Override
-	public boolean isEntityCodeExistsInDivisionDetails(String entityCode,String type) {
+	public int getCasteCount(String casteCode) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source=new MapSqlParameterSource();
-		source.addValue("ENTITYCODE", entityCode);
+		source.addValue("casteCode", casteCode);
 		
 		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM SMTDIVISIONDETAIL");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE ENTITYCODE= :ENTITYCODE");
+		selectSql.append("SELECT COUNT(casteCode) FROM Caste");
+		selectSql.append(" WHERE ");
+		selectSql.append("casteCode = :casteCode");
 		
-		logger.debug("insertSql: " + selectSql.toString());
+		logger.debug("Sql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
 			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
@@ -264,16 +269,16 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		}
 		logger.debug("Leaving");
 		
-		 return recordCount > 0 ? true : false;
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		return recordCount;
 	}
 
+	/**
+	 * Sets a new <code>JDBC Template</code> for the given data source.
+	 * 
+	 * @param dataSource
+	 *            The JDBC data source to access.
+	 */
+	public void setDataSource(DataSource dataSource) {
+		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
 }

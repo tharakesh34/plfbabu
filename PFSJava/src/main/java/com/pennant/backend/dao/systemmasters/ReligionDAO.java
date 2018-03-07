@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  ReligionDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  24-01-2018    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  24-01-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 24-01-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,41 +39,36 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
-
-package com.pennant.backend.dao.partnerbank;
-
-import java.util.List;
+*/
+package com.pennant.backend.dao.systemmasters;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennant.backend.model.systemmasters.Religion;
 import com.pennanttech.pff.core.TableType;
 
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+public interface ReligionDAO extends BasicCrudDao<Religion> {
 	
+	/**
+	 * Fetch the Record Academic Details details by key field
+	 * 
+	 * @param religionId
+	 *            religionId of the Religion.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return Religion
+	 */
+	Religion getReligion(long religionId,String type);
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
+	 * @param religionId
+	 *            religionId of the Religion.
+	 * @param religionCode
+	 *            religionCode of the Religion.
 	 * @param tableType
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
-
-	int getPartnerBankbyBank(String bankCode, String type);
-
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
+	boolean isDuplicateKey(long religionId, String religionCode, TableType tableType);	
+	
 }

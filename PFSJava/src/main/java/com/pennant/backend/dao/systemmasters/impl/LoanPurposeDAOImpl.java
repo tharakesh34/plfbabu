@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DivisionDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  AddressTypeDAOImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  02-08-2013    														*
+ * Creation Date    :  05-05-2011    														*
  *                                                                  						*
- * Modified Date    :  02-08-2013    														*
+ * Modified Date    :  05-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 02-08-2013       Pennant	                 0.1                                            * 
+ * 05-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -57,8 +57,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
-import com.pennant.backend.model.systemmasters.DivisionDetail;
+import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
+import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -66,83 +66,78 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>DivisionDetail model</b> class.<br>
- * 
+ * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
+public class LoanPurposeDAOImpl extends BasisCodeDAO<LoanPurpose> implements LoanPurposeDAO {
+	private static Logger logger = Logger.getLogger(LoanPurposeDAOImpl.class);
 
-public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implements DivisionDetailDAO {
-
-	private static Logger logger = Logger.getLogger(DivisionDetailDAOImpl.class);
-	
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	public DivisionDetailDAOImpl() {
+
+	public LoanPurposeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Division Detail details by key field
+	 * Fetch the Record Address Type details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return DivisionDetail
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return AddressType
 	 */
 	@Override
-	public DivisionDetail getDivisionDetailById(final String id, String type) {
+	public LoanPurpose getLoanPurposeById(final String id, String type) {
 		logger.debug("Entering");
-		
-		DivisionDetail divisionDetail = new DivisionDetail();
-		divisionDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(", EntityDesc");
-		}
-		selectSql.append(" From SMTDivisionDetail");
+		LoanPurpose loanPurpose = new LoanPurpose();
+		loanPurpose.setId(id);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append("SELECT LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive," );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" FROM  LoanPurposes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DivisionCode =:DivisionCode");
-		
+		selectSql.append(" Where LoanPurposeCode =:LoanPurposeCode") ;
+
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(divisionDetail);
-		RowMapper<DivisionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DivisionDetail.class);
-		
-		try{
-			divisionDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(loanPurpose);
+		RowMapper<LoanPurpose> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LoanPurpose.class);
+
+		try {
+			loanPurpose = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			divisionDetail = null;
+			loanPurpose = null;
 		}
 		logger.debug("Leaving");
-		return divisionDetail;
+		return loanPurpose;
 	}
 	
 	@Override
-	public boolean isDuplicateKey(String divisionCode, TableType tableType) {
+	public boolean isDuplicateKey(String loanPurposeCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "DivisionCode = :divisionCode";
+		String whereClause = "LoanPurposeCode = :LoanPurposeCode";
 
 		switch (tableType) {
 		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("SMTDivisionDetail", whereClause);
+			sql = QueryUtil.getCountQuery("LoanPurposes", whereClause);
 			break;
 		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("SMTDivisionDetail_Temp", whereClause);
+			sql = QueryUtil.getCountQuery("LoanPurposes_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "SMTDivisionDetail_Temp", "SMTDivisionDetail" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "LoanPurposes_Temp", "LoanPurposes" }, whereClause);
 			break;
 		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("divisionCode", divisionCode);
+		paramSource.addValue("LoanPurposeCode", loanPurposeCode);
 
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -156,47 +151,51 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	}
 
 	@Override
-	public String save(DivisionDetail divisionDetail, TableType tableType) {
+	public String save(LoanPurpose loanPurpose, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder("insert into SMTDivisionDetail");
+		StringBuilder sql = new StringBuilder("insert into LoanPurposes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion)");
-		sql.append(" values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks, :EntityCode ");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:AlwPromotion)");
-		
+		sql.append(" (LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive," );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values(:LoanPurposeCode, :LoanPurposeDesc, :LoanPurposeIsActive, " );
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(" :RecordType, :WorkflowId)");
+	
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +sql.toString());		
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
-		try{
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
-		}catch (DuplicateKeyException e) {
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return divisionDetail.getId();
+		return loanPurpose.getId();
 	}
 	
 	@Override
-	public void update(DivisionDetail divisionDetail, TableType tableType) {
+	public void update(LoanPurpose loanPurpose, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql =new StringBuilder("update SMTDivisionDetail");
-		sql.append(tableType.getSuffix()); 
-		sql.append(" set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks, EntityCode = :EntityCode");
-		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
-		sql.append(" where DivisionCode =:DivisionCode");
+		StringBuilder sql = new StringBuilder("update LoanPurposes");
+		sql.append(tableType.getSuffix());
+		sql.append(" set LoanPurposeDesc = :LoanPurposeDesc," );
+		sql.append(" LoanPurposeIsActive = :LoanPurposeIsActive ," );
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" where LoanPurposeCode =:LoanPurposeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
+		int recordCount  = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -206,19 +205,21 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
+
 	@Override
-	public void delete(DivisionDetail divisionDetail, TableType tableType) {
+	public void delete(LoanPurpose addressType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from SMTDivisionDetail");
+		StringBuilder sql = new StringBuilder();
+		sql.append("delete from LoanPurposes");
 		sql.append(tableType.getSuffix());
-		sql.append(" where DivisionCode =:DivisionCode");
+		sql.append(" where LoanPurposeCode = :LoanPurposeCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL +  sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
 		int recordCount = 0;
 		
 		try {
@@ -236,44 +237,10 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	}
 	
 	/**
-	 * Method for get total number of records from SMTDIVISIONDETAILS master table.<br>
-	 * 
-	 * @param entityCode
-	 * 
-	 * @return Boolean
-	 */
-	@Override
-	public boolean isEntityCodeExistsInDivisionDetails(String entityCode,String type) {
-		logger.debug("Entering");
-		
-		MapSqlParameterSource source=new MapSqlParameterSource();
-		source.addValue("ENTITYCODE", entityCode);
-		
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM SMTDIVISIONDETAIL");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE ENTITYCODE= :ENTITYCODE");
-		
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-		
-		 return recordCount > 0 ? true : false;
-	}
-	
-	/**
-	 * To Set  dataSource
 	 * @param dataSource
+	 *            the dataSource to set
 	 */
-	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
+	}	
 }

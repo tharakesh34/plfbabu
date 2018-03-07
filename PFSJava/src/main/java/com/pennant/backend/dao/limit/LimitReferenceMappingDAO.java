@@ -17,5 +17,8 @@ public interface LimitReferenceMappingDAO {
 	int isLimitLineExist(String lmtline);
 
 	boolean deleteByHeaderID(long headerID);
+	
+	// Limit Rebuild
+	void saveBatch(List<LimitReferenceMapping> lmtReferenceMapping);
 
 }

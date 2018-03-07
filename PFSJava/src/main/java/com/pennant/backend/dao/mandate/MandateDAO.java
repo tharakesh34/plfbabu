@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.mandate;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -79,4 +80,20 @@ public interface MandateDAO {
 	int getBranch(long bankBranchID, String type);
 
 	List<Mandate> getMnadateByCustID(long custID, long mandateID);
+
+	void updateStatusAfterRegistration(long mandateID, String statusInprocess);
+
+	boolean checkMandateStatus(long mandateID);
+
+	boolean checkMandates(String orgReference, long mandateid);
+	
+	int getSecondaryMandateCount(long mandateID);
+	
+	 int getBarCodeCount(String barCode, long mandateID, String type);
+
+
+	BigDecimal getMaxRepayAmount(String finReference, String type);
+	
+	boolean entityExistMandate(String entityCode, String type);
+
 }

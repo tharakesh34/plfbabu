@@ -68,7 +68,8 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			FinanceScheduleDetail curSchd = scheduleList.get(i);
 			if(curSchd.getSchDate().compareTo(fromDate) <= 0){
-				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 ||
+						StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())) {
 					prvSchdate = curSchd.getSchDate();
 					prvSchd = curSchd;
 					continue;
@@ -77,11 +78,30 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			//Not Review Date
 			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
+				if(curSchd.isDisbOnSchDate()){
+					curSchd.setDisbOnSchDate(false);
+					curSchd.setDisbAmount(BigDecimal.ZERO);
+					if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
+						prvSchd.setDisbAmount(BigDecimal.ZERO);
+						scheduleList.remove(i);
+						i--;
+					}
+				}
+					
 				continue;
 			}
 			
 			// Only allowed if payment amount is greater than Zero
 			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+				if(curSchd.isDisbOnSchDate()){
+					curSchd.setDisbOnSchDate(false);
+					curSchd.setDisbAmount(BigDecimal.ZERO);
+					if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
+						prvSchd.setDisbAmount(BigDecimal.ZERO);
+						scheduleList.remove(i);
+						i--;
+					}
+				}
 				continue;
 			}
 			
@@ -121,6 +141,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 			
 			if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
+				prvSchd.setDisbAmount(BigDecimal.ZERO);
 				scheduleList.remove(i-1);
 				i--;
 			}

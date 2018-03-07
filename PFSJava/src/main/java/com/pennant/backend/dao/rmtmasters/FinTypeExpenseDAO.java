@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  FinTypeExpenseDAO.java                                               * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  19-12-2017    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  			    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 19-12-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -41,39 +41,36 @@
  ********************************************************************************************
  */
 
-package com.pennant.backend.dao.partnerbank;
+package com.pennant.backend.dao.rmtmasters;
 
 import java.util.List;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+/**
+ * DAO methods declaration for the <b>FinTypeExpense model</b> class.<br>
+ * 
+ */
+public interface FinTypeExpenseDAO {
+
+	FinTypeExpense getFinTypeExpense();
+
+	FinTypeExpense getNewFinTypeExpense();
+
+	FinTypeExpense getFinTypeExpenseByID(FinTypeExpense finTypeExpense, String type);
+
+	List<FinTypeExpense> getFinTypeExpenseListByFinType(String finType, String type);
+
+	void update(FinTypeExpense finTypeExpense, String type);
+
+	long save(FinTypeExpense finTypeExpense, String type);
+
+	void delete(FinTypeExpense finTypeExpense, String type);
+
+	void deleteByFinType(String finType, String type);
 	
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	FinTypeExpense getFinTypeExpenseByFinType(String finType, long expenseTypeId, String type);
+	
+	boolean expenseExistingFinTypeExpense(long expenseId, String type);
 
-	int getPartnerBankbyBank(String bankCode, String type);
-
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
 }

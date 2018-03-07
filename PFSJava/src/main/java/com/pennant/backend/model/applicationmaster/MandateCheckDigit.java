@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExpenseType.java                                                   	* 	  
+ * FileName    		:  MandateCheckDigit.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  29-09-2011    														*
+ * Creation Date    :  11-12-2017    														*
  *                                                                  						*
- * Modified Date    :  29-09-2011    														*
+ * Modified Date    :  11-12-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
+ * 11-12-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,89 +40,70 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-package com.pennant.backend.model.amtmasters;
+package com.pennant.backend.model.applicationmaster;
+
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>ExpenseType table</b>.<br>
+ * Model class for the <b>MandateCheckDigit table</b>.<br>
  *
  */
-public class ExpenseType extends AbstractWorkflowEntity {
+public class MandateCheckDigit extends AbstractWorkflowEntity {
 	private static final long	serialVersionUID	= 1L;
-	private long				expenseTypeId		= Long.MIN_VALUE;
-	private String				expenseTypeCode;
-	private String				expenseTypeDesc;
-	private boolean				amortReq;
-	private boolean				taxApplicable;
-	private boolean				active;
-	private boolean				newRecord;
-	private String				lovValue;
-	private ExpenseType			befImage;
-	private LoggedInUser		userDetails;
 
-	public ExpenseType() {
-		super();
-	}
+	private int					checkDigitValue;
+	private String				lookUpValue;
+	private boolean				active;
+	private boolean				newRecord			= false;
+	private String				lovValue;
+	private MandateCheckDigit	befImage;
+	private LoggedInUser		userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
-	public ExpenseType(long id) {
+	public MandateCheckDigit() {
+		super();
+	}
+
+	public MandateCheckDigit(int id) {
 		super();
 		this.setId(id);
 	}
 
-	// Getter and Setter methods
-
-	public long getId() {
-		return expenseTypeId;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
-	public void setId(long id) {
-		this.expenseTypeId = id;
+	public int getId() {
+		return checkDigitValue;
 	}
 
-	public long getExpenseTypeId() {
-		return expenseTypeId;
+	public void setId(int id) {
+		this.checkDigitValue = id;
 	}
 
-	public void setExpenseTypeId(long expenseTypeId) {
-		this.expenseTypeId = expenseTypeId;
+	public int getCheckDigitValue() {
+		return checkDigitValue;
 	}
 
-	public String getExpenseTypeCode() {
-		return expenseTypeCode;
+	public void setCheckDigitValue(int checkDigitValue) {
+		this.checkDigitValue = checkDigitValue;
 	}
 
-	public void setExpenseTypeCode(String expenseTypeCode) {
-		this.expenseTypeCode = expenseTypeCode;
+	public String getLookUpValue() {
+		return lookUpValue;
 	}
 
-	public String getExpenseTypeDesc() {
-		return expenseTypeDesc;
-	}
-
-	public void setExpenseTypeDesc(String expenseTypeDesc) {
-		this.expenseTypeDesc = expenseTypeDesc;
-	}
-
-	public boolean isAmortReq() {
-		return amortReq;
-	}
-
-	public void setAmortReq(boolean amortReq) {
-		this.amortReq = amortReq;
-	}
-
-	public boolean isTaxApplicable() {
-		return taxApplicable;
-	}
-
-	public void setTaxApplicable(boolean taxApplicable) {
-		this.taxApplicable = taxApplicable;
+	public void setLookUpValue(String lookUpValue) {
+		this.lookUpValue = lookUpValue;
 	}
 
 	public boolean isActive() {
@@ -149,11 +130,11 @@ public class ExpenseType extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public ExpenseType getBefImage() {
+	public MandateCheckDigit getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(ExpenseType beforeImage) {
+	public void setBefImage(MandateCheckDigit beforeImage) {
 		this.befImage = beforeImage;
 	}
 
@@ -164,4 +145,9 @@ public class ExpenseType extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
 }

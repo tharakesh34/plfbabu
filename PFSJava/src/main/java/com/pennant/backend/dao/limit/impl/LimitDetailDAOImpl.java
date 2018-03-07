@@ -114,6 +114,35 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		List<LimitDetails> detailsList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
 		return detailsList;
 	}
+	
+	/**
+	 * Fetch the Record  Limit Details details by key field
+	 * 
+	 * @param id (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return LimitDetail
+	 */
+	@Override
+	public List<LimitDetails> getLatestLimitExposures(final long id, String type) {
+		logger.debug("Entering");
+
+		LimitDetails limitDetail = new LimitDetails();
+		limitDetail.setLimitHeaderId(id);
+
+		StringBuilder selectSql = new StringBuilder(" Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit, UtilisedLimit, NonRvlUtilised");
+		selectSql.append(" From LimitDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where LimitHeaderId = :LimitHeaderId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
+		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+
+		List<LimitDetails> detailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return detailsList;
+	}
+	
 
 	/**
 	 * To Set  dataSource
@@ -213,16 +242,26 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 
 	@Override
 	public void update(LimitDetails limitDetail,String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
+
+		int recordCount = 0;
 		StringBuilder	updateSql =new StringBuilder("Update LimitDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitHeaderId = :LimitHeaderId, LimitStructureDetailsID =:LimitStructureDetailsID, ExpiryDate = :ExpiryDate,Revolving =:Revolving, LimitSanctioned = :LimitSanctioned,  ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit, LimitCheck = :LimitCheck,LimitChkMethod = :LimitChkMethod");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where DetailId = :DetailId");
 
+		updateSql.append(" Set LimitHeaderId = :LimitHeaderId, LimitStructureDetailsID = :LimitStructureDetailsID, ExpiryDate = :ExpiryDate, Revolving = :Revolving," );
+		updateSql.append(" LimitCheck = :LimitCheck, LimitChkMethod = :LimitChkMethod," );
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+
+		// For Non Revolving Limits LimitSanctioned need to check update or not ?
+		updateSql.append(", LimitSanctioned = :LimitSanctioned");
+
+		// Below are Calculated fields hence those are excluded from this UPDATE statement 
+		//updateSql.append(", ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit, NonRvlUtilised = :NonRvlUtilised");
+
+		updateSql.append(" Where DetailId = :DetailId");
 		if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
+			updateSql.append("  AND Version = :Version-1");
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PartnerBankDAO.java                                                   * 	  
+ * FileName    		:  BaseRateCode.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  09-03-2017    														*
+ * Creation Date    :  03-05-2011    														*
  *                                                                  						*
- * Modified Date    :  09-03-2017    														*
+ * Modified Date    :  03-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
+ * 03-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,41 +39,110 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
+*/
+package com.pennant.backend.model.applicationmaster;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+/**
+ * Model class for the <b>BaseRateCode table</b>.<br>
+ *
  */
-
-package com.pennant.backend.dao.partnerbank;
-
-import java.util.List;
-
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.partnerbank.PartnerBranchModes;
-import com.pennanttech.pff.core.TableType;
-
-public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
-	PartnerBank getPartnerBankById(long id, String type);
+public class CostOfFundCode extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = -1288421928415683359L;
 	
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param PartnerBankCode
-	 *            PartnerBankCode of the partnerBank.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
-	void saveList(List<PartnerBankModes> list,long id);
-	void updateList(List<PartnerBankModes> list);
-	void deletePartner(PartnerBank partnerBankModes);
-	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
-	int geBankCodeCount(String partnerBankCodeValue, String type);
-	List<PartnerBranchModes> getPartnerBranchModesId(long id);
-	void deletePartnerBranch(PartnerBank partnerBank);
-	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+	private String cofCode;
+	private String cofDesc;
+	private boolean newRecord;
+	private String lovValue;
+	private CostOfFundCode befImage;
+	private LoggedInUser userDetails;
+	private boolean active;
 
-	int getPartnerBankbyBank(String bankCode, String type);
+	public boolean isNew() {
+		return isNewRecord();
+	}
 
-	boolean isEntityCodeExistsInPartnerBank(String entityCode, String type);
+	public String getCofCode() {
+		return cofCode;
+	}
+
+	public void setCofCode(String cofCode) {
+		this.cofCode = cofCode;
+	}
+
+	public String getCofDesc() {
+		return cofDesc;
+	}
+
+	public void setCofDesc(String cofDesc) {
+		this.cofDesc = cofDesc;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
+	public CostOfFundCode getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(CostOfFundCode befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public CostOfFundCode() {
+		super();
+	}
+
+	public CostOfFundCode(String id) {
+		super();
+		this.setId(id);
+	}
+	
+	public String getId() {
+		return cofCode;
+	}
+	public void setId (String id) {
+		this.cofCode = id;
+	}
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+	
+	
+	
 }

@@ -84,4 +84,8 @@ public interface FinanceTypeDAO {
 
 	boolean isStepPolicyExists(String policyCode);
 
+	boolean isDivisionCodeExistsInFinanceTypes(String divisionCode, String type);
+
+	boolean isCostOfFundsExist(String costOfFunds, String type);
+
 }
