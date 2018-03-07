@@ -379,4 +379,9 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 		
 		</createView>
 	</changeSet>
+		<changeSet id="10" author="Durga Prasad D">
+		 <sql>
+		  update plf.data_engine_config set postEvent = null where name = 'MANDATES_EXPORT';
+		 </sql>
+		</changeSet>
 </databaseChangeLog>
