@@ -479,12 +479,16 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
+
+		custCIF.setValue(aCustomer.getCustCIF());
+		custShrtName.setValue(aCustomer.getCustShrtName());
+
 		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())){
 			Retails.setVisible(true);
 			Corporates.setVisible(false);
 			CustRetl.setVisible(true);
 			CustCorpo.setVisible(false);
-			custCIF.setValue(aCustomer.getCustCIF());
+
 			if (aCustomer.getCustCIF() == null) {
 				custCIF.setStyle("color:orange; font:12px");
 				custCIF.setValue("- - - - - - - - -");
@@ -494,7 +498,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custCIF2.setStyle("color:orange; font:12px");
 				custCIF2.setValue("- - - - - - - - -");
 			}
-			custShrtName.setValue(aCustomer.getCustShrtName());
+
 			if (aCustomer.getCustShrtName() == null) {
 				custShrtName.setStyle("color:orange; font:12px");
 				custShrtName.setValue("- - - - - - - - -");
@@ -765,28 +769,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 
-			if(!isCustPhotoAvail){
-				if (aCustomer.getLovDescCustGenderCodeName() != null
-						&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
-					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-						customerPic.setSrc("images/icons/customerenquiry/male.png");
-						customerPic1.setSrc("images/icons/customerenquiry/male.png");
-						customerPic2.setSrc("images/icons/customerenquiry/male.png");
-						customerPic3.setSrc("images/icons/customerenquiry/male.png");
-						customerPic4.setSrc("images/icons/customerenquiry/male.png");
-						customerPic5.setSrc("images/icons/customerenquiry/male.png");
-					}
-					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-						customerPic.setSrc("images/icons/customerenquiry/female.png");
-						customerPic1.setSrc("images/icons/customerenquiry/female.png");
-						customerPic2.setSrc("images/icons/customerenquiry/female.png");
-						customerPic3.setSrc("images/icons/customerenquiry/female.png");
-						customerPic4.setSrc("images/icons/customerenquiry/female.png");
-						customerPic5.setSrc("images/icons/customerenquiry/female.png");
-					}
-				}
-			}
-
 			if (isRetailCustomer) {
 				tabShareHoleder.setVisible(false);
 				tabFinancial.setVisible(true);
@@ -1019,27 +1001,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 
-			if(!isCustPhotoAvail){
-				if (aCustomer.getLovDescCustGenderCodeName() != null
-						&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
-					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
-						customerPic.setSrc("images/icons/customerenquiry/male.png");
-						corpCustomerPic1.setSrc("images/icons/customerenquiry/male.png");
-						customerPic2.setSrc("images/icons/customerenquiry/male.png");
-						customerPic3.setSrc("images/icons/customerenquiry/male.png");
-						customerPic4.setSrc("images/icons/customerenquiry/male.png");
-						customerPic5.setSrc("images/icons/customerenquiry/male.png");
-					}
-					if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-						customerPic.setSrc("images/icons/customerenquiry/female.png");
-						corpCustomerPic1.setSrc("images/icons/customerenquiry/female.png");
-						customerPic2.setSrc("images/icons/customerenquiry/female.png");
-						customerPic3.setSrc("images/icons/customerenquiry/female.png");
-						customerPic4.setSrc("images/icons/customerenquiry/female.png");
-						customerPic5.setSrc("images/icons/customerenquiry/female.png");
-					}
-				}
-			}
 			if (isRetailCustomer) {
 				tabShareHoleder.setVisible(false);
 				tabFinancial.setVisible(true);
@@ -1092,6 +1053,29 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				listBoxCustomerIncome.appendChild(listitem);
 			}
 		}
+
+		// Display default image for the photo.
+		if (!isCustPhotoAvail) {
+			if (StringUtils.isEmpty(aCustomer.getLovDescCustGenderCodeName())
+					|| "male".equalsIgnoreCase(aCustomer.getLovDescCustGenderCodeName())) {
+				customerPic.setSrc("images/icons/customerenquiry/male.png");
+				customerPic1.setSrc("images/icons/customerenquiry/male.png");
+				customerPic2.setSrc("images/icons/customerenquiry/male.png");
+				customerPic3.setSrc("images/icons/customerenquiry/male.png");
+				customerPic4.setSrc("images/icons/customerenquiry/male.png");
+				customerPic5.setSrc("images/icons/customerenquiry/male.png");
+				corpCustomerPic1.setSrc("images/icons/customerenquiry/male.png");
+			} else {
+				customerPic.setSrc("images/icons/customerenquiry/female.png");
+				customerPic1.setSrc("images/icons/customerenquiry/female.png");
+				customerPic2.setSrc("images/icons/customerenquiry/female.png");
+				customerPic3.setSrc("images/icons/customerenquiry/female.png");
+				customerPic4.setSrc("images/icons/customerenquiry/female.png");
+				customerPic5.setSrc("images/icons/customerenquiry/female.png");
+				corpCustomerPic1.setSrc("images/icons/customerenquiry/female.png");
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
