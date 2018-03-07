@@ -1,23 +1,26 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.ALMProcess;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.alm.ALMExtarct;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.external.ALMProcess;
 
 public class ALM implements Tasklet {
 	private Logger logger = Logger.getLogger(ALM.class);
@@ -28,9 +31,6 @@ public class ALM implements Tasklet {
 	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-	
-	@Autowired
-	private ProjectedAccrualProcess projectedAccrualProcess;
 	
 	public EODConfig getEodConfig() {
 		try {
@@ -55,7 +55,7 @@ public class ALM implements Tasklet {
 			logger.debug("START: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			DataEngineStatus status = ALMProcess.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();;
+			new Thread(new ALMProcessThread(new Long(1000))).start();;
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
@@ -82,18 +82,16 @@ public class ALM implements Tasklet {
 	
 	public class ALMProcessThread implements Runnable {
 		private long userId;
-		private ProjectedAccrualProcess projectedAccrualProcess;
-
-		public ALMProcessThread(long userId, ProjectedAccrualProcess projectedAccrualProcess) {
+		
+		public ALMProcessThread(long userId) {
 			this.userId = userId;
-			this.projectedAccrualProcess = projectedAccrualProcess;
 		}
 
 		public void run() {
 			try {
 				logger.debug("ALM process started...");
-				ALMProcess process = new ALMProcess(dataSource, userId, valueDate, appDate, projectedAccrualProcess);
-				process.process("ALM_REQUEST");
+				ALMProcess process = new ALMExtarct(dataSource, userId, valueDate, appDate);
+				process.process();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

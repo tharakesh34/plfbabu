@@ -588,12 +588,34 @@
     <bean id="cibilReport" class=" com.pennanttech.pff.reports.cibil.CIBILReport" >
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/>
-
+	
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
 		<property name="dateRollOverProcess" ref="dateRollOverProcess" />
 		<property name="weekendMasterDAO" ref="weekendMasterDAO" />
 		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
 	</bean>
+
+	<!-- Income Amortization IND AS -->
+	
+	<bean id="incomeAmortizationProcess"
+		class="com.pennant.app.eod.incomeamortization.IncomeAmortizationProcess">
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
+
+	<bean id="projectedAmortizationDAO"
+		class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="finFeeDetailDAO" class="com.pennant.backend.dao.finance.impl.FinFeeDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
 </beans>

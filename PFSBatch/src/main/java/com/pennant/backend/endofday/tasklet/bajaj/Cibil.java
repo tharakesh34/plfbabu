@@ -88,7 +88,7 @@ public class Cibil implements Tasklet {
 
 		public void run() {
 			try {
-				logger.debug("Control Dump Request Service started...");
+				logger.debug("Cibil Service started...");
 				cibilReport.generateReport();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

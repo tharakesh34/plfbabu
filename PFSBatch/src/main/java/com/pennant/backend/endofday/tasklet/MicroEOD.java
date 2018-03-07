@@ -58,6 +58,7 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -96,10 +97,10 @@ public class MicroEOD implements Tasklet {
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
-		JdbcCursorItemReader<Long> cursorItemReader = new JdbcCursorItemReader<Long>();
+		JdbcCursorItemReader<CustomerQueuing> cursorItemReader = new JdbcCursorItemReader<CustomerQueuing>();
 		cursorItemReader.setSql(customerSQL);
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setRowMapper(new SingleColumnRowMapper<Long>(Long.class));
+		cursorItemReader.setRowMapper(ParameterizedBeanPropertyRowMapper.newInstance(CustomerQueuing.class));
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -112,28 +113,38 @@ public class MicroEOD implements Tasklet {
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
-		Long custID = null;
-		while ((custID = cursorItemReader.read()) != null) {
+		
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		while ((customerQueuing = cursorItemReader.read()) != null) {
+			
+			long custId = customerQueuing.getCustID();
+			
 			try {
 				//update start
-				customerQueuingDAO.startEODForCID(custID);
+				customerQueuingDAO.startEODForCID(custId);
 
 				// begin transaction
 				txStatus = transactionManager.getTransaction(txDef);
 
 				CustEODEvent custEODEvent = new CustEODEvent();
-				Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custID);
-				custEODEvent.setCustomer(customer);
-				custEODEvent.setEodDate(appDate);
-				custEODEvent.setEodValueDate(appDate);
-
-				eodService.doProcess(custEODEvent);
-
-				eodService.doUpdate(custEODEvent);
-
+				if (customerQueuing.isLoanExist()) {
+					customerQueuing.setLoanExist(false);
+					Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custId);
+					custEODEvent.setCustomer(customer);
+					custEODEvent.setEodDate(appDate);
+					custEODEvent.setEodValueDate(appDate);
+					
+					eodService.doProcess(custEODEvent);
+					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
+				} else {
+					if (customerQueuing.isLimitRebuild()) {
+						eodService.processCustomerRebuild(custId, true);
+					}
+				}
+				
 				//update  end
-				customerQueuingDAO.updateSucess(custID);
-
+				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
+				
 				//commit
 				transactionManager.commit(txStatus);
 
@@ -144,12 +155,11 @@ public class MicroEOD implements Tasklet {
 				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
-				updateFailed(custID);
+				updateFailed(custId);
 			}
 			//clear data after the process
-			custID = null;
+			customerQueuing = null;
 		}
-
 		cursorItemReader.close();
 
 		if (!exceptions.isEmpty()) {

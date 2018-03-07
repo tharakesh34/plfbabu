@@ -33,6 +33,8 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -67,7 +69,6 @@
 
 	<!-- NPA Service -->
 	<bean id="npaService" class="com.pennant.app.core.NPAService" parent="serviceHelper">
-		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
@@ -144,7 +145,29 @@
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
 		<property name="transactionManager" ref="transactionManager" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>
+
+	<!-- Income Amortization IND AS -->
+
+	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService"
+		parent="serviceHelper">
+		<property name="dataSource" ref="dataSource" />
+		<property name="loadFinanceData" ref="loadFinanceData" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
+
+	<!-- ProjectedAmortizationService -->
+	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService"
+		parent="serviceHelper">
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+	
 </beans>

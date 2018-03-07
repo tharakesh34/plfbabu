@@ -86,7 +86,7 @@ public class Posidex implements Tasklet {
 
 		public void run() {
 			try {
-				logger.debug("Control Dump Request Service started...");
+				logger.debug("Posidex Request Service started...");
 				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, valueDate, appDate);
 				process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 				TimeUnit.SECONDS.sleep(1);

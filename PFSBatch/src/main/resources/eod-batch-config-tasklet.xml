@@ -43,13 +43,33 @@
 	<bean id="accountsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.AccountsUpdate">
 		<property name="customerAccountService" ref="customerAccountService" />
 	</bean>
+	
+	<!-- profitDetailsUpdateTasklet -->
+	<bean id="profitDetailsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.ProfitDetailsUpdate">
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+	</bean>
+	
+	<!-- prepareCustomerGroupQueue -->
+	<bean id="prepareCustomerGroupQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerGroupQueue">
+		<property name="customerGroupQueuingDAO" ref="customerGroupQueuingDAO" />
+	</bean>
+	
+	<bean id="limitCustomerGroupsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.LimitCustomerGroupsUpdate">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="customerGroupQueuingDAO" ref="customerGroupQueuingDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="limitRebuild" ref="limitRebuild" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
 		
 	<bean id="almTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ALM">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
-	<bean id="controlDumpTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ControlDump">
+	<bean id="controlDumpTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ControlDumpStoredProcedure">
 		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_CF_CONTROL_DUMP" />
 	</bean>
 	<bean id="posidexTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Posidex">
 		<property name="dataSource" ref="dataSource"/>
@@ -57,11 +77,11 @@
 	<bean id="dataMartTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.DataMart">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
-	<bean id="DM_LOAN_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+	 <bean id="DM_LOAN_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
 		<property name="dataSource" ref="dataSource"/>
 		<constructor-arg index="0" ref="dataSource" />
 		<constructor-arg index="1" type="String" value="SP_DM_LOAN_DETAILS_MONTHLY" />
-	</bean>
+	</bean> 
 	<bean id="DM_LOAN_BALANCES_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
 		<property name="dataSource" ref="dataSource"/>
 		<constructor-arg index="0" ref="dataSource" />
@@ -72,7 +92,23 @@
 		<constructor-arg index="0" ref="dataSource" />
 		<constructor-arg index="1" type="String" value="SP_DM_DISB_DETAILS_MONTHLY" />
 	</bean>
-	
+
+	<!-- <bean id="DM_LOAN_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_DETAILS_MONTHLY" />
+	</bean> -->
+	<!-- <bean id="DM_LOAN_BALANCES_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_LOAN_BALANCES_MONTHLY" />
+	</bean> -->
+	<!-- <bean id="DM_DISB_DETAILS_MONTHLY" class="com.pennant.backend.endofday.tasklet.bajaj.DataMartStoredProcedure">
+		<property name="dataSource" ref="dataSource"/>
+		<constructor-arg index="0" ref="dataSource" />
+		<constructor-arg index="1" type="String" value="SP_DM_DISB_DETAILS_MONTHLY" />
+	</bean> -->
+
 	<bean id="trailBalanceTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.TrailBalance">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
@@ -89,8 +125,15 @@
 	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate">
 		<property name="dataSource" ref="dataSource" />
 		<property name="dateService" ref="dateService" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
+	
+	<bean id="limitsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.LimitsUpdate">
+		<property name="dataSource" ref="dataSource" />
+		<property name="limitStructureDAO" ref="limitStructureDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="customerGroupQueuingDAO" ref="customerGroupQueuingDAO" />
+	</bean>
+	
 
 	<!-- Start of the month Decider -->
 	<bean id="startOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.StartOfMonthDecider"/>
@@ -229,6 +272,14 @@
 		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
 
-
-
+	<!-- Income Amortization IND AS -->
+	<bean id="incomeAmortizationTaskLet" class="com.pennant.backend.endofday.tasklet.IncomeAmortization">
+		<property name="incomeAmortizationProcess" ref="incomeAmortizationProcess" />
+	</bean>
+ 
+	<bean id="processInActiveFinancesTaskLet"
+		class="com.pennant.backend.endofday.tasklet.ProcessInActiveFinances">
+		<property name="finMaturityService" ref="finMaturityService" />
+	</bean>
+	
 </beans>

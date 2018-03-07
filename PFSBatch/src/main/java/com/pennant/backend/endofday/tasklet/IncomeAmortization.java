@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  NextBussinessDateUpdation.java										*                           
+ * FileName    		:  IncomeAmortization.java												*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
- * Creation Date    :  26-04-2011															*
+ * Creation Date    :  24-12-2017															*
  *                                                                  
- * Modified Date    :  30-07-2011															*
+ * Modified Date    :  24-12-2017															*
  *                                                                  
  * Description 		:												 						*                                 
  *                                                                                          
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
+ * 24-12-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -50,35 +50,30 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
+import com.pennant.app.eod.incomeamortization.IncomeAmortizationProcess;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
-import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class PrepareCustomerQueue implements Tasklet {
+public class IncomeAmortization implements Tasklet {
 
-	private Logger				logger	= Logger.getLogger(PrepareCustomerQueue.class);
+	private Logger logger = Logger.getLogger(IncomeAmortization.class);
 
-	private CustomerQueuingDAO	customerQueuingDAO;
-
-	public PrepareCustomerQueue() {
-
-	}
+	private IncomeAmortizationProcess incomeAmortizationProcess;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+
 		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Prepare Customer Queue On : " + valueDate);
+		logger.debug("START : Income Amortization On : " + valueDate);
 
-		this.customerQueuingDAO.delete();
-		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
-		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
-		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
+		incomeAmortizationProcess.projectedIncomeAmortization();
 
-		logger.debug("COMPLETE: Prepare Customer Queue On :" + valueDate);
+		logger.debug("COMPLETE : Income Amortization On : " + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	// getters / setters
+
+	public void setIncomeAmortizationProcess(IncomeAmortizationProcess incomeAmortizationProcess) {
+		this.incomeAmortizationProcess = incomeAmortizationProcess;
 	}
 }
