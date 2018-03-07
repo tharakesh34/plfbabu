@@ -14,7 +14,12 @@ public class CustomerQueuing implements Serializable {
 
 	private Date				startTime;
 	private Date				endTime;
+	
+	private boolean				loanExist;
+	private boolean				limitRebuild;
 
+	private boolean				eodProcess;
+	
 	//Unused variable for bean parameter. Temporary
 	private boolean				active;
 
@@ -94,5 +99,29 @@ public class CustomerQueuing implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public boolean isEodProcess() {
+		return eodProcess;
+	}
+
+	public void setEodProcess(boolean eodProcess) {
+		this.eodProcess = eodProcess;
+	}
+	
+	public boolean isLoanExist() {
+		return loanExist;
+	}
+
+	public void setLoanExist(boolean loanExist) {
+		this.loanExist = loanExist;
+	}
+
+	public boolean isLimitRebuild() {
+		return limitRebuild;
+	}
+
+	public void setLimitRebuild(boolean limitRebuild) {
+		this.limitRebuild = limitRebuild;
 	}
 }
