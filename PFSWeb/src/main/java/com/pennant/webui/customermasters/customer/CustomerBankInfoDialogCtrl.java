@@ -115,7 +115,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private boolean newCustomer=false;
 	private List<CustomerBankInfo> CustomerBankInfoList;
 	private CustomerDialogCtrl customerDialogCtrl;
-	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
@@ -197,8 +197,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				}
 			}
 
-			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
-				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			if (arguments.containsKey("customerViewDialogCtrl")) {
+				setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
 				setNewCustomer(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -1082,11 +1082,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.bankDetailService = bankDetailService;
 	}
 
-	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
-		return customerEnquiryDialogCtrlr;
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
 	}
 
-	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
-		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 }

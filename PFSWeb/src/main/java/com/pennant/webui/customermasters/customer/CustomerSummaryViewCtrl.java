@@ -110,7 +110,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private ExternalDocumentManager externalDocumentManager = null;
 
-	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	private boolean isCustPhotoAvail = false;
 
 	/**
@@ -155,8 +155,8 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
 			old_ccyFormatter = ccyFormatter;
 
-			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
-				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			if (arguments.containsKey("customerViewDialogCtrl")) {
+				setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
 			}
 
 			doShowDialog(customerDetails);
@@ -491,7 +491,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
-		arg.put("customerEnquiryDialogCtrlr", this);
+		arg.put("customerViewDialogCtrl", this);
 		if(!this.window_CustomerSummaryDialog.isVisible()){
 			try {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSummaryView.zul", null, arg);
@@ -508,7 +508,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		Map<String, Object> arg = new  HashMap<>();
 		arg.put("customerDetails", customerDetails);
-		arg.put("customerEnquiryDialogCtrlr", this);
+		arg.put("customerViewDialogCtrl", this);
 		this.window_CustomerSummaryDialog.onClose();
 
 		try {
@@ -536,12 +536,12 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.externalDocumentManager = externalDocumentManager;
 	}
 
-	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
-		return customerEnquiryDialogCtrlr;
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
 	}
 
-	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
-		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
 }

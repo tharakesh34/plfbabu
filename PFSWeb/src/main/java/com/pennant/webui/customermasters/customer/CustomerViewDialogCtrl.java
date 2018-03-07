@@ -84,9 +84,9 @@ import com.pennanttech.pff.document.external.ExternalDocumentManager;
 /**
  * This is the controller class for the /customer.zul file.
  */
-public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
+public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(CustomerEnquiryDialogCtrlr.class);
+	private static final Logger logger = Logger.getLogger(CustomerViewDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -337,7 +337,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * default constructor.<br>
 	 */
-	public CustomerEnquiryDialogCtrlr() {
+	public CustomerViewDialogCtrl() {
 		super();
 	}
 
@@ -1206,7 +1206,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerEmploymentDetail", customerEmploymentDetail);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("moduleType", this.moduleType);
@@ -1257,7 +1257,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
 				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerDocument", customerDocument);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("moduleType", this.moduleType);
@@ -1291,7 +1291,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				customerAddress.setLovDescCustCIF(this.custCIF.getValue());
 				customerAddress.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerAddres", customerAddress);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1321,7 +1321,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				customerPhoneNumber.setLovDescCustCIF(this.custCIF.getValue());
 				customerPhoneNumber.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerPhoneNumber", customerPhoneNumber);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1352,7 +1352,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				customerEmail.setLovDescCustCIF(this.custCIF.getValue());
 				customerEmail.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerEMail", customerEmail);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1382,7 +1382,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
 				custBankInfo.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerBankInfo", custBankInfo);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1416,7 +1416,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custChequeInfo.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerChequeInfo", custChequeInfo);
 				map.put("finFormatter", ccyFormatter);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1447,7 +1447,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 				custExtLiability.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerExtLiability", custExtLiability);
 				map.put("finFormatter", ccyFormatter);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1475,7 +1475,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerIncome", customerIncome);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("ccyFormatter", ccyFormatter);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
@@ -1503,7 +1503,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("directorDetail", directorDetail);
-				map.put("customerEnquiryDialogCtrlr", this);
+				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
 				BigDecimal totSharePerc = BigDecimal.ZERO;
@@ -2537,7 +2537,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		
 		Map<String, Object> arg = new  HashMap<>();
 		arg.put("customerDetails", customerDetails);
-		arg.put("customerEnquiryDialogCtrlr", this);
+		arg.put("customerViewDialogCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null,
@@ -2554,7 +2554,7 @@ public class CustomerEnquiryDialogCtrlr extends GFCBaseCtrl<CustomerDetails> {
 		
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
-		arg.put("customerEnquiryDialogCtrlr", this);
+		arg.put("customerViewDialogCtrl", this);
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSummaryView.zul", null, arg);

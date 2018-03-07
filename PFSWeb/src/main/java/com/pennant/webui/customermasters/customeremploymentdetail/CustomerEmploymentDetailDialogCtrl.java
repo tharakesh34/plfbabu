@@ -80,8 +80,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
-import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -133,15 +133,15 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private boolean newCustomer=false;
 	private CustomerDialogCtrl customerDialogCtrl;
 
-	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
-		return customerEnquiryDialogCtrlr;
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
 	}
 
-	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
-		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
-	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	private List<CustomerEmploymentDetail> customerEmploymentDetails;
 	private String moduleType="";
 	private String userRole="";
@@ -212,9 +212,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			}
 		}
 		
-		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+		if (arguments.containsKey("customerViewDialogCtrl")) {
 
-			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
 			setNewCustomer(true);
 
 			if(arguments.containsKey("newRecord")){

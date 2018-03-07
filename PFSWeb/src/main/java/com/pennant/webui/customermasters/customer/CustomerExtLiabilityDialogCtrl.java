@@ -126,7 +126,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private boolean newCustomer=false;
 	private List<CustomerExtLiability> CustomerExtLiabilityList;
 	private CustomerDialogCtrl customerDialogCtrl;
-	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
@@ -205,8 +205,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 							"CustomerExtLiabilityDialog");
 				}
 			}
-			if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
-				setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			if (arguments.containsKey("customerViewDialogCtrl")) {
+				setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
 				setNewCustomer(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -1141,12 +1141,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		return customerDialogCtrl;
 	}
 
-	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
-		return customerEnquiryDialogCtrlr;
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
 	}
 
-	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
-		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 	
 }

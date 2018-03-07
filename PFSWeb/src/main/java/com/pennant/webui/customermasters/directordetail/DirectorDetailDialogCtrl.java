@@ -94,8 +94,8 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
-import com.pennant.webui.customermasters.customer.CustomerEnquiryDialogCtrlr;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -160,7 +160,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private boolean								newRecord			= false;
 	private boolean								newCustomer			= false;
 	private CustomerDialogCtrl					customerDialogCtrl;
-	private CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer>		newSearchObject;
 	protected Button							btnSearchPRCustid;
 
@@ -237,9 +237,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			}
 			this.directorDetail.setWorkflowId(0);
 		}
-		if (arguments.containsKey("customerEnquiryDialogCtrlr")) {
+		if (arguments.containsKey("customerViewDialogCtrl")) {
 
-			setCustomerEnquiryDialogCtrlr((CustomerEnquiryDialogCtrlr) arguments.get("customerEnquiryDialogCtrlr"));
+			setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments.get("customerViewDialogCtrl"));
 			setNewCustomer(true);
 
 			if (arguments.containsKey("newRecord")) {
@@ -1902,12 +1902,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
 
-	public CustomerEnquiryDialogCtrlr getCustomerEnquiryDialogCtrlr() {
-		return customerEnquiryDialogCtrlr;
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
 	}
 
-	public void setCustomerEnquiryDialogCtrlr(CustomerEnquiryDialogCtrlr customerEnquiryDialogCtrlr) {
-		this.customerEnquiryDialogCtrlr = customerEnquiryDialogCtrlr;
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
 }
