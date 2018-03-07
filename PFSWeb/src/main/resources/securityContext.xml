@@ -60,13 +60,13 @@
 		<beans:property name="userDetailsService" ref="userDetailsService"/>
 	</beans:bean>
 	
-	<beans:bean id="authenticationFilter" class="com.pennanttech.framework.security.filter.AuthenticationFormFilter">
+	<beans:bean id="authenticationFilter" class="com.pennanttech.pennapps.web.security.filter.AuthenticationFormFilter">
 		<beans:property name="sessionAuthenticationStrategy" ref="sas" />
   		<beans:property name="authenticationManager" ref="authenticationManager" />
   		<beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
 	</beans:bean>
 
-	<beans:bean id="authenticationFailureHandler" class="com.pennanttech.framework.security.core.AuthenticationFailureHandler"/>
+	<beans:bean id="authenticationFailureHandler" class="com.pennanttech.pennapps.web.security.AuthenticationFailureHandler"/>
 		
 	<beans:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
 		<beans:constructor-arg value="/loginDialog.zul"/>
@@ -105,7 +105,7 @@
 		</beans:property>
 	</beans:bean>
     
-    <beans:bean id="sessionFixationProtectionFilter" class="com.pennanttech.framework.security.filter.SessionFixationProtectionFilter"/>
+    <beans:bean id="sessionFixationProtectionFilter" class="com.pennanttech.pennapps.web.security.filter.SessionFixationProtectionFilter"/>
     	
 	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
 		<beans:constructor-arg>
@@ -125,7 +125,7 @@
 	</beans:bean>
 		
 	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
-	<beans:bean id="csrfRequestMatcher" class="com.pennanttech.framework.security.filter.CsrfRequestMatcher"/>
+	<beans:bean id="csrfRequestMatcher" class="com.pennanttech.pennapps.web.security.CsrfRequestMatcher"/>
 	<beans:bean id="authenticationProvider" class="com.pennanttech.framework.security.core.AuthenticationManager"/>
 	<beans:bean id="userDetailsService" class="com.pennanttech.framework.security.core.UserDetailsServiceImpl"/>
 </beans:beans>

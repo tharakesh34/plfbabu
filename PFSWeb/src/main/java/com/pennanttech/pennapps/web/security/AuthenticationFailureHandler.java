@@ -1,4 +1,4 @@
-package com.pennanttech.framework.security.core;
+package com.pennanttech.pennapps.web.security;
 
 import java.io.IOException;
 

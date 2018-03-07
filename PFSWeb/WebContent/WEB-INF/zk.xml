@@ -56,8 +56,7 @@
 	</listener>
 	<listener>
 		<description>Append CSRF token for each page</description>
-		<listener-class>com.pennanttech.framework.security.filter.CsrfTokenAppender
-		</listener-class>
+		<listener-class>com.pennanttech.pennapps.web.security.CsrfTokenAppender</listener-class>
 	</listener>
 
 	<!-- ====================================================== -->
