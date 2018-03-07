@@ -114,6 +114,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinDelegationDeviationCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
@@ -193,6 +194,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean newCustomer=false;
 	private List<CustomerDocument> customerDocuments;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	protected JdbcSearchObject<SecurityUser> secUserSearchObj;
 	private PagedListWrapper<SecurityUser> secUserPagedListWrapper;
@@ -314,6 +316,25 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					this.customerDocument.setWorkflowId(0);
 				}
 			}
+			
+			if (arguments.containsKey("isCheckList")) {
+				this.isCheckList = (Boolean) arguments.get("isCheckList");
+			} else {
+				if (arguments.containsKey("customerViewDialogCtrl")) {
+					setCustomerViewDialogCtrl((CustomerViewDialogCtrl) arguments
+							.get("customerViewDialogCtrl"));
+					setNewCustomer(true);
+					
+					if (arguments.containsKey("newRecord")) {
+						setNewRecord(true);
+					} else {
+						setNewRecord(false);
+					}
+					
+					this.customerDocument.setWorkflowId(0);
+				}
+			}
+			
 			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole,
@@ -1209,8 +1230,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocIsVerified.setDisabled(true);
 			this.custDocVerifiedBy.setReadonly(true);
 			this.custDocIsAcrive.setDisabled(true);
-			this.btnSearchPRCustid.setDisabled(true);
-			this.btnEdit.setVisible(false);
 		}
 	}
 
@@ -2385,6 +2404,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	public void setFinDelegationDeviationCtrl(FinDelegationDeviationCtrl finDelegationDeviationCtrl) {
 		this.finDelegationDeviationCtrl = finDelegationDeviationCtrl;
+	}
+
+	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
+		return customerViewDialogCtrl;
+	}
+
+	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
+		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
 }
