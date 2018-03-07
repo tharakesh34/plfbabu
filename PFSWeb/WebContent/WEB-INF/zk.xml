@@ -52,8 +52,7 @@
 	</listener>
 	<listener>
 		<description>Initialize a session</description>
-		<listener-class>com.pennanttech.framework.security.filter.SessionInit
-		</listener-class>
+		<listener-class>com.pennanttech.pennapps.web.security.listener.SessionInit</listener-class>
 	</listener>
 	<listener>
 		<description>Append CSRF token for each page</description>

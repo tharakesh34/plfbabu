@@ -38,7 +38,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public final class LdapContext {
-	private final static Logger logger = LogManager.getLogger(LdapContext.class);
+	private static final Logger log = LogManager.getLogger(LdapContext.class);
 
 	/*
 	 * User not found in Active Directory
@@ -66,7 +66,7 @@ public final class LdapContext {
 	@Value("${ldap.credentials}")
 	private String credentials;
 
-	private javax.naming.ldap.LdapContext ldapContext;
+	private javax.naming.ldap.LdapContext context;
 
 	public LdapContext() {
 		super();
@@ -79,9 +79,9 @@ public final class LdapContext {
 	 *            The Name of the Active directory user to fetch the user
 	 *            attributes
 	 * @return <code>Map<String, String></code> Returns user attributes map
-	 * @throws Exception
+	 * @throws NamingException
 	 */
-	public Map<String, String> getUserDetail(String userName) throws Exception {
+	public Map<String, String> getUserDetail(String userName) throws NamingException {
 		Map<String, String> details = new HashMap<>();
 		try {
 			Attributes attributes = getAttributes(userName);
@@ -89,18 +89,19 @@ public final class LdapContext {
 			if (attributes != null) {
 				setAttributes(details, attributes);
 			}
-		} catch (Exception e) {
+		} catch (NamingException e) {
+			log.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
-			if (ldapContext != null) {
-				ldapContext.close();
+			if (context != null) {
+				context.close();
 			}
-			ldapContext = null;
+			context = null;
 		}
 		return details;
 	}
 
-	private void setAttributes(Map<String, String> details, Attributes attributes) throws Exception {
+	private void setAttributes(Map<String, String> details, Attributes attributes) {
 		String email = getString(UserAttributes.EMAIL.getAttribute(), attributes);
 		if (email != null) {
 			email = StringUtils.trimToNull(email.replace(UserAttributes.EMAIL.getAttribute().concat(":"), ""));
@@ -135,35 +136,36 @@ public final class LdapContext {
 	}
 
 	private void initializeContext() throws NamingException {
-		logger.info(Literal.ENTERING);
+		log.info(Literal.ENTERING);
 
 		try {
-			Hashtable<String, String> env = new Hashtable<String, String>();
+			Hashtable<String, String> env = new Hashtable<>();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.SECURITY_AUTHENTICATION, "Simple");
 			env.put(Context.SECURITY_PRINCIPAL, this.principal);
 			env.put(Context.SECURITY_CREDENTIALS, this.credentials);
 			env.put(Context.PROVIDER_URL, this.url);
 
-			logger.info("Attempting to Connect to Active Directory...");
+			log.info("Attempting to Connect to Active Directory...");
 
-			ldapContext = new InitialLdapContext(env, null);
-			logger.info("Connection Successful.");
+			context = new InitialLdapContext(env, null);
+			log.info("Connection Successful.");
 
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+			log.warn(Literal.EXCEPTION, e);
 		}
-		logger.info(Literal.LEAVING);
+		log.info(Literal.LEAVING);
 	}
 
 	/**
 	 * @param username
 	 *            The Name of the Active directory user to search
 	 * @return The non-null attributes in this search result. Can be empty.
+	 * @throws NamingException
 	 * @throws InterfaceException
 	 */
-	private Attributes getAttributes(String username) throws Exception {
-		if (ldapContext == null) {
+	private Attributes getAttributes(String username) throws NamingException {
+		if (context == null) {
 			initializeContext();
 		}
 
@@ -172,7 +174,7 @@ public final class LdapContext {
 			throw new InterfaceException(LDAP81, "Active Directory credentials not available");
 		}
 
-		if (ldapContext == null) {
+		if (context == null) {
 			throw new InterfaceException(LDAP80, "Unable to connect Active Directory, please contact administrator");
 		}
 
@@ -181,17 +183,16 @@ public final class LdapContext {
 
 		constraints.setReturningAttributes(UserAttributes.getAttributes());
 
-		NamingEnumeration<SearchResult> answer = ldapContext.search(base, "sAMAccountName=".concat(username),
-				constraints);
+		NamingEnumeration<SearchResult> answer = context.search(base, "sAMAccountName=".concat(username), constraints);
 
 		if (answer.hasMoreElements()) {
-			return ((SearchResult) answer.next()).getAttributes();
+			return (answer.next()).getAttributes();
 		} else {
 			throw new InterfaceException(LDAP64, "User not found in Active Directory");
 		}
 	}
 
-	private String getString(String attribute, Attributes attributes) throws Exception {
+	private String getString(String attribute, Attributes attributes) {
 		Object obj = attributes.get(attribute);
 		if (obj != null) {
 			return obj.toString();
