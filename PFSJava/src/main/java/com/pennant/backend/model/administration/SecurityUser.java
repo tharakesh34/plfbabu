@@ -105,6 +105,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("loginAppId");
 		excludeFields.add("lastLoginOn");
 		excludeFields.add("lastFailLoginOn");
+		excludeFields.add("userType");
 		return excludeFields;
 	}
 	public boolean isNew() {

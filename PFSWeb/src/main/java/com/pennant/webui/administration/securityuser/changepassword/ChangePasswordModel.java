@@ -48,6 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zkoss.spring.SpringUtil;
@@ -59,9 +60,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ChangePasswordModel {
-	private static final Logger logger = Logger	.getLogger(ChangePasswordModel.class);
+	private static final Logger logger = LogManager.getLogger(ChangePasswordModel.class);
 	private static SecurityUserPasswordsDAO securityUserPasswordsDAO;
 
 	/**
@@ -73,14 +75,14 @@ public class ChangePasswordModel {
 	 */
 
 	public boolean isPaswordsSame(String encriptedPassword, String password) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		
 		PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
 		if (!pwdEncoder.matches(password, encriptedPassword)) {
 			return false; 
 		}
 		
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return true;
 
 	}
@@ -95,7 +97,7 @@ public class ChangePasswordModel {
 	 * @return boolean
 	 */
 	public boolean checkPasswordCriteria(String username, String password) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		boolean inValid = false;
 		String pattern="";
 		int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
@@ -113,7 +115,7 @@ public class ChangePasswordModel {
 				}
 			}
 		}      	
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return inValid;
 	}
 
@@ -124,7 +126,7 @@ public class ChangePasswordModel {
 	 * @return List< String > partsList
 	 */
 	private List<String> getSubstrings(String string, int partitionSize) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		List<String> partsList = new ArrayList<String>();
 		int len = string.length();
 		for (int i = 0; i < len; i += 1) {
@@ -133,7 +135,7 @@ public class ChangePasswordModel {
 				partsList.add(part);
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return partsList;
 	}
 	/**
@@ -148,7 +150,7 @@ public class ChangePasswordModel {
 	 * @return boolean 
 	 */
 	public boolean checkWithPreviousPasswords(SecurityUser aSecurityUser,String newPassword){
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		/*select all previous  passwords for user*/
 		List<SecurityUser> secUserList=getSecurityUserPasswordsDAO().getUserPreviousPasswords(aSecurityUser);
 		/*maxPasswordsCheck is number that new passwords should not match with how many previous passwords */
@@ -168,7 +170,7 @@ public class ChangePasswordModel {
 				}
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return false;
 
 	}
@@ -224,6 +226,4 @@ public class ChangePasswordModel {
 			break;
 		}
 	}
-
-
 }

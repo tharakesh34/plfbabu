@@ -258,7 +258,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(false);
 			this.rowSecurityUserDialogUsrPwd.setVisible(false);
 			doShowDialog(getSecurityUser());
-			//
 			doSetAuthType(securityUser.getUserType());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -287,7 +286,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
 		this.usrLName.setMaxlength(50);
-	//	this.usrMobile.setMaxlength(10);
+		this.usrMobile.setMaxlength(10);
 		this.usrEmail.setMaxlength(50);
 
 		this.usrLanguage.setMaxlength(4);
@@ -579,7 +578,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Entering ");
 
 		doSetLOVValidation();
-		
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -840,7 +838,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.btnDelete.setVisible(false);
 		}else{
 			this.authType.setDisabled(false);
-			this.btnDelete.setVisible(true);
 		}
 	}
 	/**
@@ -1524,7 +1521,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		@Override
 		public void onEvent(Event event) throws Exception {
-			logger.debug("Entering ");
+			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
+			int specialCharCount = SysParamUtil.getValueAsInt("USR_PWD_SPECIAL_CHAR_COUNT");
+			
 			int pwdstatusCode = 0;
 			int splCharCount = 0;
 			String pwd = ((org.zkoss.zk.ui.event.InputEvent) event).getValue();
@@ -1546,7 +1545,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd)))
-						&& (StringUtils.trimToEmpty(pwd).length() < PennantConstants.PWD_STATUSBAR_CHAR_LENGTH)) {
+						&& (StringUtils.trimToEmpty(pwd).length() < pwdMinLenght)) {
 					pwdstatusCode = 2;
 				}
 				/*
@@ -1556,7 +1555,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd)))
-						&& (StringUtils.trimToEmpty(pwd).length() >= PennantConstants.PWD_STATUSBAR_CHAR_LENGTH && splCharCount < PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT)) {
+						&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount < specialCharCount)) {
 					pwdstatusCode = 3;
 				}
 				/*
@@ -1566,7 +1565,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd)))
-						&& (StringUtils.trimToEmpty(pwd).length() >= PennantConstants.PWD_STATUSBAR_CHAR_LENGTH && splCharCount >= PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT)) {
+						&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount >= specialCharCount)) {
 					pwdstatusCode = 4;
 				}
 

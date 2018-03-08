@@ -63,6 +63,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.webui.administration.securityuser.model.SecurityUserListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -131,6 +132,14 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		super();
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if ("PSWDRST".equals(this.moduleType)) {
+			this.searchObject.addFilterEqual("authType", AuthenticationType.DAO.name());
+		}
+	}
+	
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "SecurityUser";

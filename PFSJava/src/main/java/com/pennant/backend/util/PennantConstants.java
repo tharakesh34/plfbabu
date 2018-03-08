@@ -206,10 +206,6 @@ public class PennantConstants {
 	public static final String ERR_9999 = "99999";
 	public static final String ERR_UNDEF = "000000";
 
-	// Password definition restrictions
-	public static final int PWD_STATUSBAR_CHAR_LENGTH = 12;
-	public static final int PWD_STATUSBAR_SPLCHAR_COUNT = 3;
-
 	// SMT Parameter Values
 	public static final String LOCAL_CCY = "APP_DFT_CURR";
 	public static final String LOCAL_CCY_FORMAT = "APP_DFT_CURR_EDIT_FIELD";

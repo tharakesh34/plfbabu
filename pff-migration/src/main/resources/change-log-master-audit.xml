@@ -74,5 +74,6 @@
 	<include file="change-logs/refactor/change-log-errordetail-audit.xml" />
 	<include file="change-logs/change-log-4.7.5-audit.xml" /> -->
 	<!-- <include file="change-logs/change-log-4.7.6-audit.xml" /> -->
-	<include file="change-logs/change-log-4.7.7-audit.xml" />
+	<!-- <include file="change-logs/change-log-4.7.7-audit.xml" /> -->
+	<include file="change-logs/change-log-4.7.15-audit.xml" />
 </databaseChangeLog>

@@ -12,7 +12,7 @@
 				zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=USEROPR"
 				rightName="menuItem_Administration_SecurityUserOperations" />
 			<menuItem id="menu_Item_PasswordResetUser"
-				zulNavigation="/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordList.zul?moduleType=PSWDRST"
+				zulNavigation="/WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul?moduleType=PSWDRST"
 				rightName="menuItem_Administration_UserpasswordReset" />
 		</menu>
 		<menu id="menu_Category_RoleSetup">

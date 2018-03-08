@@ -387,7 +387,6 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * showPasswordStatusMeter() for view passwordStatusmeter.
 	 */
 	final class OnChanging  implements EventListener<Event> {
-		
 		public OnChanging() {
 			
 		}
@@ -395,6 +394,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		@Override
 		public void onEvent(Event event) throws Exception {
 			logger.debug("Entering ");
+			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
+			int specialCharCount = SysParamUtil.getValueAsInt("USR_PWD_SPECIAL_CHAR_COUNT");
+			
 			int pwdstatusCode=0;
 			int splCharCount=0;
 			String pwd=((org.zkoss.zk.ui.event.InputEvent) event).getValue(); 
@@ -416,27 +418,23 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 			if(!changePasswordModel.checkPasswordCriteria(
 					StringUtils.trimToEmpty(getSecurityUser().getUsrLogin())
 					,StringUtils.trimToEmpty(pwd)) 
-					&& StringUtils.trimToEmpty(pwd).length()<PennantConstants.PWD_STATUSBAR_CHAR_LENGTH){
+					&& StringUtils.trimToEmpty(pwd).length()< pwdMinLenght){
 				pwdstatusCode=2;
 			}
 			/*if criteria matched and password length greater than  PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and
 			 *  special character count less than PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT*/
-			if((!changePasswordModel.checkPasswordCriteria(
-					StringUtils.trimToEmpty(getSecurityUser().getUsrLogin())
-					,StringUtils.trimToEmpty(pwd)))
-					&& (StringUtils.trimToEmpty(pwd).length()>=PennantConstants.PWD_STATUSBAR_CHAR_LENGTH 
-							&& splCharCount<PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT)){
-				pwdstatusCode=3;
+			if ((!changePasswordModel.checkPasswordCriteria(StringUtils.trimToEmpty(getSecurityUser().getUsrLogin()),
+					StringUtils.trimToEmpty(pwd)))
+					&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount < specialCharCount)) {
+				pwdstatusCode = 3;
 			}
 
 			/*if criteria matched and password length greater than  PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and 
 			 * special character count PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT or more*/
-			if(!changePasswordModel.checkPasswordCriteria(
-					StringUtils.trimToEmpty(getSecurityUser().getUsrLogin())
-					,StringUtils.trimToEmpty(pwd)) 
-					&& (StringUtils.trimToEmpty(pwd).length()>=PennantConstants.PWD_STATUSBAR_CHAR_LENGTH) 
-					&& splCharCount>=PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT){
-				pwdstatusCode=4;
+			if (!changePasswordModel.checkPasswordCriteria(StringUtils.trimToEmpty(getSecurityUser().getUsrLogin()),
+					StringUtils.trimToEmpty(pwd)) && (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght)
+					&& splCharCount >= specialCharCount) {
+				pwdstatusCode = 4;
 			}
 
 			if(StringUtils.isBlank(pwd)){
