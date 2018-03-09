@@ -1,6 +1,7 @@
 package com.pennanttech.niyogin.legaldesk.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,13 +9,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "purposeOfLoan", "borrowerPan","sactionAmt", "tenure", "intrestType", "rateOfIntrest", "instalmentAmt",
-		"instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges", "documentationCharges",
-		"foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt", "disbursementOfLoan", "loanType" })
+@XmlType(propOrder = { "instalmentType", "sactionAmt", "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest",
+		"instalmentAmt", "instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges",
+		"documentationCharges", "foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt",
+		"disbursementOfLoan", "insuranceAmount", "loanType" })
 @XmlRootElement(name = "FormData")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FormData {
 
+	@XmlElement(name = "co_borrower")
+	private List<CoBorrower> coBorrowers;
+
+	@XmlElement(name = "instalment_type")
+	private String		instalmentType;
+	
 	@XmlElement(name = "purpose_of_loan")
 	private String		purposeOfLoan;
 
@@ -221,4 +229,21 @@ public class FormData {
 	public void setInsuranceAmount(BigDecimal insuranceAmount) {
 		this.insuranceAmount = insuranceAmount;
 	}
+
+	public List<CoBorrower> getCoBorrowers() {
+		return coBorrowers;
+	}
+
+	public void setCoBorrowers(List<CoBorrower> coBorrowers) {
+		this.coBorrowers = coBorrowers;
+	}
+
+	public String getInstalmentType() {
+		return instalmentType;
+	}
+
+	public void setInstalmentType(String instalmentType) {
+		this.instalmentType = instalmentType;
+	}
+
 }

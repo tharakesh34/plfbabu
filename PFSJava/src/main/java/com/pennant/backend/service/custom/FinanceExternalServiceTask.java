@@ -14,9 +14,11 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
@@ -206,6 +208,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_LegalDesk:
 				try {
+					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader);
 					taskExecuted = true;
@@ -282,6 +285,33 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		}
 	}
 
+	/**
+	 * Method for set the finance frequency type to the ExtendedMap for temporary rendering purpose.
+	 * 
+	 * @param auditHeader
+	 */
+	private void setInstallmentType(AuditHeader auditHeader) {
+		//FIXME: How to get Installment Type for Niyogin project
+		try {
+			FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();
+			String repayFrq = finMain.getRepayFrq();
+			if (StringUtils.isNotBlank(repayFrq)) {
+				String frequencyCode = repayFrq.substring(0, 1);
+				ArrayList<ValueLabel> freequencyList = FrequencyUtil.getFrequency();
+				for (ValueLabel valueLabe : freequencyList) {
+					if (StringUtils.equals(valueLabe.getValue(), frequencyCode)) {
+						finDeatil.getExtendedFieldRender().getMapValues().put("INSTALLMENTTYPE_LEGALDESK",
+								valueLabe.getLabel());
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+	}
+	
 	/**
 	 * Method for set Reason code and remarks.
 	 * 

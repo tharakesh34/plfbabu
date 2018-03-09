@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "name", "email", "seqNumbOfSign" })
+@XmlType(propOrder = { "name", "pan" })
 @XmlRootElement(name = "co_borrower")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CoBorrower {
@@ -14,13 +14,8 @@ public class CoBorrower {
 	@XmlElement(name = "name")
 	private String	name;
 
-	@XmlElement(name = "email")
-	private String	email;
-
-	@XmlElement(name = "sequence_of_signature")
-	private int		seqNumbOfSign;
-
-	private long	custID;
+	@XmlElement(name = "pan")
+	private String	pan;
 
 	public String getName() {
 		return name;
@@ -30,28 +25,12 @@ public class CoBorrower {
 		this.name = name;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getPan() {
+		return pan;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public int getSeqNumbOfSign() {
-		return seqNumbOfSign;
-	}
-
-	public void setSeqNumbOfSign(int seqNumbOfSign) {
-		this.seqNumbOfSign = seqNumbOfSign;
-	}
-
-	public long getCustID() {
-		return custID;
-	}
-
-	public void setCustID(long custID) {
-		this.custID = custID;
+	public void setPan(String pan) {
+		this.pan = pan;
 	}
 
 }

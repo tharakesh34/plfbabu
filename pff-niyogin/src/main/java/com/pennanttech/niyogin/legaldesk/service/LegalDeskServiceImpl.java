@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,12 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 	public static final String	STAMP_FEE				= "STAMP_FEE";
 	public static final String	INSURANCE_FEE			= "INSURANCE_FEE";
+	private Map<String, Object>	extendedMap				= null;
+	//Legal Desk
+	public static final String	REQ_SEND				= "REQSENDLEGDESK";
+	public static final String	STATUSCODE				= "STATUSLEGDESK";
+	public static final String	RSN_CODE				= "REASONLEGDESK";
+	public static final String	REMARKS					= "REMARKSLEGDESK";
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -83,6 +90,11 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			errorDesc = getErrorMessage(jsonResponse);
 
 			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
+			
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
+			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
+			
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
@@ -95,7 +107,10 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			errorDesc = getWriteException(e);
 			errorDesc = getTrimmedMessage(errorDesc);
 			doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
+			appplicationdata.put(RSN_CODE, errorCode);
+			appplicationdata.put(REMARKS, errorDesc);
 		}
+		appplicationdata.put(REQ_SEND, true);
 		prepareResponseObj(appplicationdata, financeDetail);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -165,7 +180,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 				String feeCode = (String) getSMTParameter(Code, String.class);
 				if (StringUtils.isNotBlank(feeCode)) {
 					if (StringUtils.equals(finFee.getFeeTypeCode(), feeCode)) {
-						feeAmount= finFee.getActualAmount();
+						feeAmount= finFee.getRemainingFee();
 						break;
 					}
 				}
@@ -183,11 +198,37 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		SignersInfo signersInfo = new SignersInfo();
-		signersInfo.setLenders(null);
+		if (extendedMap != null) {
+			signersInfo.setLenders(prepareLendersList(extendedMap));
+		}
 		signersInfo.setBorrowers(prepareBorrowersList(financeDetail));
 		logger.debug(Literal.LEAVING);
 		return signersInfo;
+	}
+
+	/**
+	 * Method for prepare the LenderList
+	 * 
+	 * @param extendedMap
+	 * @return
+	 */
+	private List<SignerDetails> prepareLendersList(Map<String, Object> extendedMap) {
+		logger.debug(Literal.ENTERING);
+		List<SignerDetails> lenderList = new ArrayList<>(6);
+		for (int i = 1; i <= 6; i++) {
+			String lenderName = getStringValue("LENDERSIGNUFNAME" + i) + " " + getStringValue("LENDERSIGNULNAME" + i);
+			if (StringUtils.isNotBlank(lenderName)) {
+				SignerDetails lender = new SignerDetails();
+				lender.setName(lenderName);
+				lender.setEmail(getStringValue("LENDERSIGNUEMAIL" + i));
+				lender.setSeqNumbOfSign(getIntValue("LENDERSIGNUSEQ" + i));
+				lenderList.add(lender);
+			}
+		}
+		logger.debug(Literal.ENTERING);
+		return lenderList;
 	}
 
 	/**
@@ -269,10 +310,18 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		logger.debug(Literal.ENTERING);
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FormData formData = new FormData();
+		//TODO: recent requirement coBorrowers not required
+		formData.setCoBorrowers(null);
 		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
 		String valueDesc = "";
+		String rateOfIntrest = null;
+		String installmentType = null;
 		if (extendedMap != null) {
 			valueDesc = getLovFieldDetailByCode(String.valueOf(extendedMap.get(FORM_FLDS_LOANPURPOSE)));
+			installmentType = String.valueOf(extendedMap.get("INSTALLMENTTYPE_LEGALDESK"));
+			rateOfIntrest = String.valueOf(extendedMap.get("RATE_LEGALDESK"));
+			extendedMap.remove("INSTALLMENTTYPE_LEGALDESK");
+			extendedMap.remove("RATE_LEGALDESK");
 		}
 		formData.setPurposeOfLoan(valueDesc);
 		formData.setTenure(NiyoginUtility.getMonthsBetween(finMain.getFinStartDate(), finMain.getMaturityDate()));
@@ -284,12 +333,13 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		} else if (StringUtils.equalsIgnoreCase(finMain.getRepayRateBasis(), "C")) {
 			instType = App.getLabel("label_Flat_Convert_Reduce");
 		}
-		formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));
-		BigDecimal sactionAmt = financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+		//TODO:removed there in latest requirement
+		/*formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));*/
+		formData.setInstalmentType(installmentType);
+		BigDecimal sactionAmt = finMain.getFinAmount();
 		formData.setSactionAmt(formateAmount(sactionAmt));
 		formData.setIntrestType(instType);
-		formData.setRateOfIntrest(String.valueOf(extendedMap.get("RATE_LEGALDESK")));
-		extendedMap.remove("RATE_LEGALDESK");
+		formData.setRateOfIntrest(rateOfIntrest);
 		formData.setInstalmentAmt(finMain.getFirstRepay());
 		String instlmntDate = NiyoginUtility.formatDate(finMain.getNextRepayDate(), "dd/MM/yyyy");
 		formData.setInstalmentStartdate(instlmntDate);
@@ -303,7 +353,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		formData.setInsuranceGstAmt(App.getLabel("label_LegalDesk_InsuranceGstAmt"));
 		formData.setDisbursementOfLoan(formateAmount(finMain.getCurDisbursementAmt()));
 		formData.setLoanType(finMain.getFinType());
-		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();;
+		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		formData.setInsuranceAmount(formateAmount(getFeeAmount(fereedetails, INSURANCE_FEE)));
 		logger.debug(Literal.LEAVING);
 		return formData;
@@ -374,5 +424,19 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+
+	private String getStringValue(String key) {
+		return Objects.toString(extendedMap.get(key), "");
+	}
+
+	private int getIntValue(String key) {
+		int intValue = 0;
+		try {
+			intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
+		} catch (NumberFormatException e) {
+			logger.error("Exception", e);
+		}
+		return intValue;
 	}
 }
