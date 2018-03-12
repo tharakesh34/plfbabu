@@ -350,7 +350,7 @@ public class PennantStaticListUtil {
 		if(dataSourceNames == null){
 			dataSourceNames = new ArrayList<>(2);
 			dataSourceNames.add(new ValueLabel("dataSource", "PFS DataBase"));
-			dataSourceNames.add(new ValueLabel("auditDatasource", "PFSAudit Database"));
+			dataSourceNames.add(new ValueLabel("auditDataSource", "PFSAudit Database"));
 		}
 		return dataSourceNames;	 
 	}

@@ -1,3 +1,7 @@
+pff 4.7.14, 2018-03-12
+---------------------
+- Rename the datasource bean names and corresponding property names from datasource to  dataSource for consistency
+
 pff 4.7.14, 2018-03-05
 ----------------------
 - Upgraded pennapps-core version from 0.7.4.2 to 0.7.5, to use security.

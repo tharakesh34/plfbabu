@@ -107,7 +107,7 @@
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
-		<!-- <property name="adtDataSource" ref="auditDatasource" /> -->
+		<!-- <property name="adtDataSource" ref="auditDataSource" /> -->
 	</bean>
 	
 	

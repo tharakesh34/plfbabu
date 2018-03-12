@@ -12,10 +12,10 @@
 		<constructor-arg name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="auditSearchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
-		<constructor-arg name="dataSource" ref="auditDatasource"/>
+		<constructor-arg name="dataSource" ref="auditDataSource"/>
 	</bean>
 	<bean id="extSearchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
-		<constructor-arg name="dataSource" ref="extDatasource" />
+		<constructor-arg name="dataSource" ref="extDataSource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -45,7 +45,7 @@
 	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl"
 		parent="auditNextidDao">
 		<property name="auditTransactionManager" ref="auditTransactionManager" />
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -175,7 +175,7 @@
 
 	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean name="pagedListService" class="com.pennant.backend.service.impl.PagedListServiceImpl" scope="session">
@@ -201,7 +201,7 @@
 
 	<bean id="userDAO" class="com.pennant.backend.dao.impl.UserDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<!--================= Security User Details ================ -->
@@ -209,7 +209,7 @@
 	<bean id="securityUserDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityUserDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityUserService"
@@ -246,7 +246,7 @@
 	<bean id="securityUserPasswordsDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityUserPasswordsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<!--================= Security Role Details ================ -->
@@ -254,7 +254,7 @@
 	<bean id="securityRoleDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityRoleDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityRoleService"
@@ -289,7 +289,7 @@
 	<bean id="securityGroupDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityGroupDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityGroupService"
@@ -324,7 +324,7 @@
 	<bean id="securityRightDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityRightDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<!--================= Security RoleGroup Details ================ -->
@@ -332,7 +332,7 @@
 	<bean id="securityRoleGroupsDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityRoleGroupsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityRoleGroupsService"
@@ -364,7 +364,7 @@
 	<bean id="securityGroupRightsDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityGroupRightsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityGroupRightsService"
@@ -3680,7 +3680,7 @@
 		class="com.pennant.backend.dao.solutionfactory.impl.ExtendedFieldDetailDAOImpl"
 		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
-		<property name="auditDataSource" ref="auditDatasource" />
+		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="extendedFieldDetailService"
@@ -4763,7 +4763,7 @@
 		class="com.pennant.backend.dao.staticparms.impl.ExtendedFieldHeaderDAOImpl"
 		parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
-		<property name="auditDataSource" ref="auditDatasource" />
+		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="extendedFieldHeaderService"
@@ -6395,13 +6395,13 @@
 	<bean id="detailStatisticsDAO"
 		class="com.pennant.backend.dao.dashboard.impl.DetailStatisticsDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="detailStatisticsHeaderDAO"
 		class="com.pennant.backend.dao.dashboard.impl.DetailStatisticsHeaderDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="detailStatisticsService"
@@ -6754,7 +6754,7 @@
 
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
 		<property name="dataSource" ref="dataSource" />
-		<property name="auditDatasource" ref="auditDatasource" />
+		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="ddaInterfaceService"
@@ -7143,7 +7143,7 @@
 		class="com.pennant.backend.dao.approvalstatusenquiry.impl.ApprovalStatusEnquiryDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="dataSource" />
-		<property name="auditDataSource" ref="auditDatasource" />
+		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 
 	<!-- Query Details -->
@@ -7245,7 +7245,7 @@
 	<!-- Closed Facility Details(Use Client provided schema) -->
 	<bean id="closedFacilityDAO"
 		class="com.pennant.backend.dao.limits.impl.ClosedFacilityDAOImpl">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 
 	<bean id="eventManager" class="com.pennant.core.EventManager">
@@ -7625,21 +7625,21 @@
 	<bean id="ddaPaymentInitiateDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentInitiateDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 
 	<!-- DDA PaymentResponse DAO Details -->
 	<bean id="ddaPaymentResponseDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDAPaymentResponseDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 
 	<!-- DDA Representment Details -->
 	<bean id="ddaRepresentmentDAO"
 		class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 
 	<bean id="ddaRepresentmentService"
@@ -7673,7 +7673,7 @@
 	<bean id="securityUserOperationsDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityUserOperationsDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="securityUserOperationsService"
@@ -7744,7 +7744,7 @@
 	<bean id="securityOperationRolesDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityOperationRolesDAOImpl"
 		parent="basisNextidDao">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 
 	</bean>
 	<bean id="securityOperationRolesService"
@@ -8106,7 +8106,7 @@
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 
 
@@ -11142,7 +11142,7 @@
 		<!--============ ActivityLog Details ============== -->
 	
 	<bean id="activityLogDAO" class="com.pennanttech.activity.log.ActivityLogDAOImpl">
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 	</bean>
 
 	<bean id="activityLogService"

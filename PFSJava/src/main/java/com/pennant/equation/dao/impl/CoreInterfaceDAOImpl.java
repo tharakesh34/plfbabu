@@ -73,7 +73,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	public void setAuditDatasource(DataSource dataSource) {
+	public void setAuditDataSource(DataSource dataSource) {
 		this.auditNamedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	/**

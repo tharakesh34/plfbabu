@@ -14,7 +14,7 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     <import resource="classpath:pff-interfaces-context.xml"/>
    
-	<!-- <bean id="finOneDatasource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
+	<!-- <bean id="finOneDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
 		<property name="resourceRef" value="true" /> <property name="jndiName" value="jdbc/FINONE" 
 		/> <property name="lookupOnStartup" value="true" /> </bean> -->
         
@@ -54,7 +54,7 @@
 	</bean> -->
 	
 	<bean id="crm" class="com.pennanttech.pff.external.customer.FinnOneCustomer"  parent="bajajService">
-		<property name="finOneDatasource" ref="finOneDatasource" />
+		<property name="finOneDataSource" ref="finOneDataSource" />
 	</bean>
 	
 	<bean id="mandateProcess" class="com.pennanttech.bajaj.services.BajajMandateProcess"  parent="abstractMandateProcess"/>

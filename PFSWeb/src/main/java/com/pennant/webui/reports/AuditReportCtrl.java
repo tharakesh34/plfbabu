@@ -145,13 +145,13 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		map.put("userName", getUserWorkspace().getLoggedInUser().getUserName());
 		
 		File file = null;
-		DataSource auditDatasource = null;
+		DataSource auditDataSource = null;
 		try {			
 			file = new File(reportSrc) ;
 			if(file.exists()){
 				byte[] buf = null;
-				auditDatasource = (DataSource) SpringUtil.getBean("auditDatasource");
-				buf = JasperRunManager.runReportToPdf(reportSrc, map, auditDatasource.getConnection());
+				auditDataSource = (DataSource) SpringUtil.getBean("auditDataSource");
+				buf = JasperRunManager.runReportToPdf(reportSrc, map, auditDataSource.getConnection());
 				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
 				auditMap.put("reportBuffer", buf);
 

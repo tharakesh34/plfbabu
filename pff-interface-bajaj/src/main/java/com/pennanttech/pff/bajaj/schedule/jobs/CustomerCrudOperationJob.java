@@ -25,9 +25,9 @@ public class CustomerCrudOperationJob implements Job, Serializable {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 		DataSource dataSource =  (DataSource)context.getJobDetail().getJobDataMap().get("dataSource");
-		DataSource finOneDatasource =  (DataSource)context.getJobDetail().getJobDataMap().get("finOneDatasource");
+		DataSource finOneDataSource =  (DataSource)context.getJobDetail().getJobDataMap().get("finOneDataSource");
 		
-		CustomerCurdOperationProcess service = new CustomerCurdOperationProcess(dataSource, finOneDatasource);
+		CustomerCurdOperationProcess service = new CustomerCurdOperationProcess(dataSource, finOneDataSource);
 		try {
 			service.process();
 		} catch (Exception e) {

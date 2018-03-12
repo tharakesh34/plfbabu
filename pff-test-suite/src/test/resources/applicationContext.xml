@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 	<!-- CONFIG-FILE FOR CONNECTING TO A TEST SUITE DATABASE = -->
-	<bean id="secDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+	<bean id="secDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${secjdbc.driverClassName}" />
 		<property name="url" value="${secjdbc.url}" />
@@ -25,7 +25,7 @@
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
 	</bean>
-	<bean id="auditDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+	<bean id="auditDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
 		<property name="url" value="${auditjdbc.url}" />
@@ -42,7 +42,7 @@
 		<property name="password" value="${pffextjdbc.password}" />
 	</bean>
 	
-	<bean id="finOneDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+	<bean id="finOneDataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${finOnejdbc.driverClassName}" />
 		<property name="url" value="${finOnejdbc.url}" />
@@ -57,11 +57,11 @@
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
 	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
 	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
 

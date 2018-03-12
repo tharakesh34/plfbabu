@@ -36,7 +36,7 @@ import com.pennanttech.pff.external.Crm;
 public class FinnOneCustomer extends BajajService implements Crm {
 	private final Logger logger = Logger.getLogger(getClass());
 
-	private DataSource finOneDatasource;
+	private DataSource finOneDataSource;
 
 	@Override
 	public CustomerDetails create(CustomerDetails customerDetails) throws InterfaceException {
@@ -49,7 +49,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			return customerDetails;
 		}
 
-		CustomerProcedure customerproc = new CustomerProcedure(finOneDatasource, "CREATE_CUSTOMER_IN_FINNONE");
+		CustomerProcedure customerproc = new CustomerProcedure(finOneDataSource, "CREATE_CUSTOMER_IN_FINNONE");
 		Map<String, Object> params = new LinkedHashMap<>();
 
 		GcdCustomer gcdCustomer = preparegcdCustomer(customerDetails);
@@ -171,8 +171,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		return customerDetails;
 	}
 
-	public void setFinOneDatasource(DataSource finOneDatasource) {
-		this.finOneDatasource = finOneDatasource;
+	public void setFinOneDataSource(DataSource finOneDataSource) {
+		this.finOneDataSource = finOneDataSource;
 	}
 
 	private GcdCustomer preparegcdCustomer(CustomerDetails customerDetail) {

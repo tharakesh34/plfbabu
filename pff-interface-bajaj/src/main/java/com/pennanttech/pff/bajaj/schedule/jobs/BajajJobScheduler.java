@@ -30,7 +30,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	private DataEngineConfig datEngine = null;
 		
 	@Autowired
-	protected DataSource		finOneDatasource;
+	protected DataSource		finOneDataSource;
 	
 	@Autowired
 	private MandateProcess mandateProcess;

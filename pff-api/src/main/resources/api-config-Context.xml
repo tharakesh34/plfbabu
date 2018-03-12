@@ -14,7 +14,7 @@
 
 	<bean id="serverAuthDAO" class="com.pennanttech.ws.auth.dao.impl.ServerAuthDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="serverAuthService"
@@ -43,7 +43,7 @@
 	</bean>
 	<bean id="userAuthDAO" class="com.pennanttech.ws.auth.dao.impl.UserAuthDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 
 	<bean id="userAuthService"
@@ -170,7 +170,7 @@
 	</bean>
 	 <bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl"
 		parent="basisCodeDAO">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 	
 </beans>

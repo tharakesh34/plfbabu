@@ -58,11 +58,11 @@
 	</bean>
 	<bean id="secTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="secDatasource" />
+		<property name="dataSource" ref="secDataSource" />
 	</bean>
 	<bean id="auditTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="auditDatasource" />
+		<property name="dataSource" ref="auditDataSource" />
 	</bean>
 		
 	<!-- ====================================================== -->

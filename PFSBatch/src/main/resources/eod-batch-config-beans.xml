@@ -316,7 +316,7 @@
 	</bean>
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 	</bean>
@@ -362,11 +362,11 @@
 	</bean>
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
 		<property name="dataSource" ref="dataSource" />
-		<property name="auditDatasource" ref="auditDatasource" />
+		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>
 	<!-- DDA Representment Details -->
 	<bean id="ddaRepresentmentDAO" class="com.pennant.backend.dao.ddapayments.impl.DDARepresentmentDAOImpl" parent="basisNextidDao">
-		<property name="dataSource" ref="extDatasource" />
+		<property name="dataSource" ref="extDataSource" />
 	</bean>
 	<bean id="ddaRepresentmentService" class="com.pennant.backend.service.ddapayments.impl.DDARepresentmentService">
 		<property name="ddaRepresentmentDAO" ref="ddaRepresentmentDAO" />
