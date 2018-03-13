@@ -68,5 +68,12 @@
 			newDataType="nclob" />
 	</changeSet>
 	
+	<changeSet id="06" author="Ganesh.p">
+		<addColumn tableName="PLFAPILOGDETAILS">
+			<column name="keyFields" type="VARCHAR(100)"></column>
+			</addColumn>
+	</changeSet>
+	
+	
 	</databaseChangeLog>
 	
