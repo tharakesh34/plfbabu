@@ -1,3 +1,7 @@
+pff 4.7.14, 2018-03-13
+---------------------
+- Upgraded pennapps-web version from 0.6 to 0.6.1, to resolve the "Server is temporarily out of service" issue.
+
 pff 4.7.14, 2018-03-12
 ---------------------
 - Rename the datasource bean names and corresponding property names from datasource to  dataSource for consistency

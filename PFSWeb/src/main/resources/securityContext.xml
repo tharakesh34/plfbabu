@@ -88,6 +88,7 @@
 						
 	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
 		<beans:property name="sessionRegistry" ref="sessionRegistry"/>
+		<beans:property name="redirectStrategy" ref="redirectStrategy"/>
 		<beans:property name="expiredUrl" value="/timeout.zul"/>
 		<beans:property name="logoutHandlers">
 			<beans:list>
@@ -128,4 +129,9 @@
 	<beans:bean id="csrfRequestMatcher" class="com.pennanttech.pennapps.web.security.CsrfRequestMatcher"/>
 	<beans:bean id="authenticationProvider" class="com.pennanttech.framework.security.core.AuthenticationManager"/>
 	<beans:bean id="userDetailsService" class="com.pennanttech.framework.security.core.UserDetailsServiceImpl"/>
+	<beans:bean id="redirectStrategy" class= "com.pennanttech.pennapps.web.security.DefaultRedirectStrategy">
+		<beans:constructor-arg>
+			<beans:bean class="org.springframework.security.web.DefaultRedirectStrategy"/>
+		</beans:constructor-arg>
+	</beans:bean>
 </beans:beans>
