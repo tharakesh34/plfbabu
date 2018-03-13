@@ -73,7 +73,11 @@
 			<column name="keyFields" type="VARCHAR(100)"></column>
 			</addColumn>
 	</changeSet>
-	
+	<changeSet id="07" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('92005','EN','E','Message Id is Invalid','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
 	
 	</databaseChangeLog>
 	
