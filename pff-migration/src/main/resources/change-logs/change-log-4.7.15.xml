@@ -40,5 +40,33 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="02" author="Ganesh.p">
+		<addColumn tableName="PLFAPILOGDETAILS">
+			<column name="messageid" type="VARCHAR(20)"></column>
+			<column name="entityId" type="VARCHAR(20)"></column>
+			<column name="language" type="VARCHAR(5)"></column>
+			<column name="serviceVersion" type="int"></column>
+			<column name="processed" type="Boolean"></column>
+			<column name="headerReqTime" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="03" author="Ganesh.p">
+		<renameColumn newColumnName="id" oldColumnName="seqid"
+			tableName="PLFAPILOGDETAILS" />
+	</changeSet>
+
+	<changeSet id="04" author="Ganesh.p">
+		<renameColumn newColumnName="restclientid" oldColumnName="cxfid"
+		tableName="PLFAPILOGDETAILS" />
+	</changeSet>
+	
+	<changeSet id="05" author="Ganesh.p">
+		<modifyDataType tableName="plfapilogdetails" columnName="request"
+			newDataType="nclob" />
+		<modifyDataType tableName="PLFAPILOGDETAILS" columnName="response"
+			newDataType="nclob" />
+	</changeSet>
+	
 	</databaseChangeLog>
 	
