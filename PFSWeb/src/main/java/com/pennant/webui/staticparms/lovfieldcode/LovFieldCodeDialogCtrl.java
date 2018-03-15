@@ -709,20 +709,18 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 					}
 				}
 			}
-			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
-			} else {
+			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}

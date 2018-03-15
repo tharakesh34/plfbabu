@@ -194,7 +194,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
 		sql.append(" reason = :reason, action = :action, ruleID = :ruleID, ");
 		sql.append(" returnCode = :returnCode, active = :active, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" Version = :Version , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bounceID = :bounceID ");
