@@ -148,6 +148,22 @@ public class APIErrorHandlerService {
 		}
 	}
 	
+	//TODO: Need to move Method
+	public static void logKeyFields(String[] keyFields) {
+		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+		if (apiLogDetail != null && keyFields != null) {
+			String keyFieldsData = "";
+			for (String field : keyFields) {
+				if(StringUtils.isNotBlank(field)){
+					keyFieldsData = keyFieldsData + field + "," ;	
+				}
+			}
+			if(StringUtils.isNotBlank(keyFieldsData)){
+				apiLogDetail.setKeyFields(keyFieldsData.substring(0, keyFieldsData.length()-1));
+			}
+		}
+	}
+
 	@Autowired
 	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		APIErrorHandlerService.errorDetailService = errorDetailService;

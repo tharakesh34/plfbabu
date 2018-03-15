@@ -59,6 +59,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
+		//for logging purpose
+		String[] logFields = getLogFields(financeDetail);
+		APIErrorHandlerService.logKeyFields(logFields);
+		// logging customer CIF as reference for create loan failure cases
+		String custCif = logFields[0];
+		APIErrorHandlerService.logReference(custCif);
 		try {
 			if(financeDetail.getFinScheduleData().getFinanceMain() == null){
 				FinanceDetail response = new FinanceDetail();
@@ -116,6 +122,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					}
 				}
 			}
+			// for logging purpose
+			APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
 			logger.debug("Leaving");
 			return financeDetailRes;
 		} catch(Exception e) {
@@ -140,6 +148,9 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinancewithWIFGroup.class);
+		//for logging purpose
+		String[] logFields = getLogFields(financeDetail);
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		try {
 			// call WIF finance related validations
@@ -245,7 +256,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					}
 				}
 			}
-
+			APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
 			logger.debug("Leaving");
 			return financeDetailRes;
 		} catch(Exception e) {
@@ -311,6 +322,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Override
 	public FinanceDetail getFinInquiryDetails(String finReference) throws ServiceException {
 		logger.debug("Enetring");
+		//for logging purpose
+		APIErrorHandlerService.logReference(finReference);
 		// service level validations
 		WSReturnStatus returnStatus = validateFinReference(finReference);
 
@@ -341,7 +354,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isBlank(custCif)) {
 			validationUtility.fieldLevelException();
 		}
-
+		//for logging purpose
+		APIErrorHandlerService.logReference(custCif);
 		FinanceInquiry response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(custCif);
 		if (customer == null) {
@@ -371,6 +385,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isBlank(collateralRef)) {
 			validationUtility.fieldLevelException();
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(collateralRef);
 
 		FinanceInquiry response = null;
 		int count = collateralSetupService.getCountByCollateralRef(collateralRef);
@@ -389,7 +405,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Override
 	public FinanceDetail getFinanceDetails(String finReference) {
 		logger.debug("Enetring");
-
+		// for logging purpose
+		if (StringUtils.isNotBlank(finReference)) {
+			APIErrorHandlerService.logReference(finReference);
+		}
 		FinanceDetail financeDetail = createFinanceController.getFinanceDetails(finReference);
 
 		logger.debug("Leaving");
@@ -408,6 +427,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// set default values
 		financeDataDefaulting.doFinanceDetailDefaulting(financeDetail);
+		//for logging purpose
+		String[] logFields=getLogFields(financeDetail);
+		APIErrorHandlerService.logKeyFields(logFields);
+		APIErrorHandlerService.logReference(financeDetail.getFinReference());
 		
 		//validate FinanceDetail Validations
 		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN,
@@ -471,6 +494,28 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		logger.debug("Leaving");
 		return returnStatus;
+	}
+
+	/**
+	 * Method to prepare the log fields.
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private String[] getLogFields(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		String[] logfields = new String[3];
+		FinScheduleData finscheduleData = financeDetail.getFinScheduleData();
+		if (finscheduleData != null) {
+			FinanceMain finMain = finscheduleData.getFinanceMain();
+			if (finMain != null) {
+				logfields[0] = finMain.getCustCIF();
+				logfields[1] = finMain.getFinType();
+				logfields[2] = String.valueOf(finMain.getFinAmount());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return logfields;
 	}
 
 	/**

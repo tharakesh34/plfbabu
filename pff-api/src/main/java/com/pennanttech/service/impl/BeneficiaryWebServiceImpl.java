@@ -54,7 +54,11 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 			response = new Beneficiary();
 			response.setReturnStatus(returnStatus);
 		}
-		
+		//for Logging Purpose
+		String[] logFields = new String[1];
+		logFields[0] = String.valueOf(beneficiary.getBeneficiaryId());
+		APIErrorHandlerService.logKeyFields(logFields);
+		APIErrorHandlerService.logReference(beneficiary.getCustCIF());
 		logger.debug("Leaving");
 		return response;
 	}
@@ -73,6 +77,8 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		if (beneficiaryId < 0) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(String.valueOf(beneficiaryId));
 		Beneficiary response = beneficiaryController.getBeneficiary(beneficiaryId);
 		logger.debug("Leaving");
 		return response;
@@ -86,6 +92,11 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	@Override
 	public WSReturnStatus updateBeneficiary(Beneficiary beneficiary) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = beneficiary.getCustCIF();
+		APIErrorHandlerService.logKeyFields(logFields);
+		APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
 		//beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
 		Beneficiary beneficiaryDetails=beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
@@ -121,6 +132,8 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		if (beneficiaryId < 0) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(String.valueOf(beneficiaryId));
 		// Mandate Id is Available or not in PLF
 		WSReturnStatus response = new WSReturnStatus();
 		Beneficiary beneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
@@ -149,6 +162,8 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 		if (StringUtils.isBlank(cif)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		BeneficiaryDetail response = new BeneficiaryDetail();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);

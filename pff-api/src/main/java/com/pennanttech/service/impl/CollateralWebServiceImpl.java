@@ -48,6 +48,8 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		if(StringUtils.isBlank(collateralType)) {
 			validationUtility.fieldLevelException();
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(collateralType);
 		
 		// call get collateralType method
 		CollateralStructure collateralStructure = collateralController.getCollateralType(collateralType);
@@ -78,15 +80,14 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 					response = new CollateralSetup();
 					response.setReturnStatus(
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-					return response;
 				}
-			}
+			} else {
+				// call create collateral controller service
+				response = collateralController.createCollateral(collateralSetup);
 
-			// call create collateral controller service
-			response = collateralController.createCollateral(collateralSetup);
-
-			if (StringUtils.equals(response.getReturnStatus().getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
-				response = getCreateCollateralResponse(response);
+				if (StringUtils.equals(response.getReturnStatus().getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
+					response = getCreateCollateralResponse(response);
+				}
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -94,6 +95,11 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
+		//for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = response.getCollateralRef();
+		APIErrorHandlerService.logKeyFields(logFields);
+		APIErrorHandlerService.logReference(collateralSetup.getDepositorCif());
 		logger.debug("Leaving");
 		return response;
 	}
@@ -107,6 +113,11 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 	@Override
 	public WSReturnStatus updateCollateral(CollateralSetup collateralSetup) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		String[] logFields = new String[2];
+		logFields[0] = collateralSetup.getDepositorCif();
+		logFields[1] = collateralSetup.getCollateralType();
+		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
 		WSReturnStatus response = null;
@@ -122,6 +133,7 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		}
 
 		// call create collateral controller service
+		APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
 		response = collateralController.updateCollateral(collateralSetup);
 		}catch (Exception e) {
 			logger.error(e);
@@ -141,11 +153,17 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 	@Override
 	public WSReturnStatus deleteCollateral(CollateralSetup collateralSetup) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = collateralSetup.getDepositorCif();
+		APIErrorHandlerService.logKeyFields(logFields);
 		
 		// bean validations
 		validationUtility.validate(collateralSetup, DeleteValidationGroup.class); 
 		WSReturnStatus response = null;
 		try{
+			// for logging purpose
+			APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
 		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
 		
 		if (auditDetail.getErrorDetails() != null) {
@@ -179,7 +197,8 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		if (StringUtils.isBlank(cif)) {
 			validationUtility.fieldLevelException();
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
 		CollateralDetail collateralDetail = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		if (customer != null) {
@@ -187,9 +206,6 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			// call getCollaterals service
 			collateralDetail = collateralController.getCollaterals(customer.getCustID());
 			
-			// for logging purpose
-			APIErrorHandlerService.logReference(cif);
-
 			if (collateralDetail != null) {
 				collateralDetail.setCif(cif);
 				collateralDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());

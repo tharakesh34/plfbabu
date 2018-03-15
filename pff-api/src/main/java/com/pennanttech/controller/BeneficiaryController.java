@@ -48,8 +48,6 @@ public class BeneficiaryController {
 		Beneficiary response = null;
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(beneficiary.getCustCIF());
 		try {
 			// setting required values which are not received from API
 			prepareRequiredData(beneficiary);
@@ -74,8 +72,6 @@ public class BeneficiaryController {
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				reqHeaderDetails.setReturnCode(response.getReturnStatus().getReturnCode());
 				reqHeaderDetails.setReturnDesc(response.getReturnStatus().getReturnText());
-				// for logging purpose
-				APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
 				doEmptyResponseObject(response);
 			}
 		} catch (Exception e) {
@@ -98,9 +94,7 @@ public class BeneficiaryController {
 	 */
 	public Beneficiary getBeneficiary(long beneficiaryId) {
 		logger.debug("Entering");
-		Beneficiary response = null;
-		// for logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(beneficiaryId));		
+		Beneficiary response = null;		
 		try {
 			response = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
 			if (response != null) {
@@ -130,9 +124,6 @@ public class BeneficiaryController {
 	public WSReturnStatus updateBeneficiary(Beneficiary beneficiary) {
 		logger.debug("Entering");
 		WSReturnStatus response = new WSReturnStatus();
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(beneficiary.getCustCIF());
-		
 		try {
 			// set the default values for mandate
 			prepareRequiredData(beneficiary);
@@ -160,8 +151,6 @@ public class BeneficiaryController {
 				}
 			} else {
 				response = APIErrorHandlerService.getSuccessStatus();
-				// for logging purpose
-				APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -183,8 +172,6 @@ public class BeneficiaryController {
 	public WSReturnStatus deleteBeneficiary(long beneficiaryId) {
 		logger.debug("Entering");
 		WSReturnStatus response = new WSReturnStatus();
-		// for logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(beneficiaryId));
 		try {
 			// get the mandate by the mandateId
 			Beneficiary beneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
@@ -226,8 +213,6 @@ public class BeneficiaryController {
 	 */
 	public BeneficiaryDetail getBeneficiaries(String cif) {
 		logger.debug("Entering");
-		// for logging purpose
-		APIErrorHandlerService.logReference(cif);
 		BeneficiaryDetail response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {

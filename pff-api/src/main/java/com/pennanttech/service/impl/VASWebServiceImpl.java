@@ -94,8 +94,13 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		// validate recordVAS details as per the API specification
 		// bean validations
 		validationUtility.validate(vasRecording, SaveValidationGroup.class);
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(vasRecording.getProductCode());
+		// for logging purpose
+		String[] logFields=new String[4];
+		logFields[0]=vasRecording.getProductCode();
+		logFields[1]=vasRecording.getPostingAgainst();
+		logFields[2]=String.valueOf(vasRecording.getFee());
+		logFields[3]=vasRecording.getFeePaymentMode();
+		APIErrorHandlerService.logKeyFields(logFields);
 		VASRecording response = null;
 		try {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
@@ -139,8 +144,12 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				return returnStatus;
 			}
 
-			//for failure case logging purpose
-			APIErrorHandlerService.logReference(vasRecording.getVasReference());
+			//for logging purpose
+			String[] logFields=new String[3];
+			logFields[0]=vasRecording.getProductCode();
+			logFields[1]=vasRecording.getPostingAgainst();
+			logFields[2]=vasRecording.getVasReference();
+			APIErrorHandlerService.logKeyFields(logFields);
 
 			VASRecording vasDetails = vASRecordingService
 					.getVASRecordingByRef(vasRecording.getVasReference(), "", true);
@@ -204,8 +213,12 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
-			//for failure case logging purpose
-			APIErrorHandlerService.logReference(vasRecording.getVasReference());
+			//for logging purpose
+			String[] logFields=new String[3];
+			logFields[0]=vasRecording.getProductCode();
+			logFields[1]=vasRecording.getPostingAgainst();
+			logFields[2]=vasRecording.getVasReference();
+			APIErrorHandlerService.logKeyFields(logFields);
 
 			response = vASRecordingService.getVASRecordingByRef(vasRecording.getVasReference(), "", false);
 
@@ -316,6 +329,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90336", valueParm));
 				return vASRecordingDetail;
 			}
+			// for logging purpose
+			APIErrorHandlerService.logReference(vasRecording.getPrimaryLinkRef());
 			vASRecordingDetail =vasController.getVASRecordings(vasRecording);
 			
 		} catch (Exception e) {

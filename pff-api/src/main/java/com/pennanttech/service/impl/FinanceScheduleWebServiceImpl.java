@@ -56,8 +56,12 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 				return response;
 			}
 
-			// for failure case logging purpose
-			APIErrorHandlerService.logReference(finScheduleData.getFinanceMain().getCustCIF());
+			// for logging purpose
+			String[] logFields = new String[3];
+			logFields[0] = finScheduleData.getFinanceMain().getCustCIF();
+			logFields[1] = finScheduleData.getFinanceMain().getFinType();
+			logFields[2] = String.valueOf(finScheduleData.getFinanceMain().getFinAmount());
+			APIErrorHandlerService.logKeyFields(logFields);
 
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finScheduleData);
@@ -96,7 +100,8 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 		} finally {
 			financeDataValidation.setFinanceDetail(null);
 		}
-
+		// for  logging purpose
+		APIErrorHandlerService.logReference(financeSchdData.getFinReference());
 		logger.debug("Leaving");
 		return financeSchdData;
 	}

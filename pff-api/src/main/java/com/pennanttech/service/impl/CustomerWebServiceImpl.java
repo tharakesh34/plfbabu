@@ -100,7 +100,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	@Override
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
-
+		// for logging purpose 
+		String[] logFields = getCustomerLogDetails(customerDetails);
+		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, SaveValidationGroup.class);
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
@@ -120,12 +122,6 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 						errorDetail.getError()));
 				return response;
 			}
-		}
-		//logging customer phoneNumber in failure case
-		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-		if (customerPhoneNumbers != null && !customerPhoneNumbers.isEmpty()) {
-			CustomerPhoneNumber custPhoneNumber = customerPhoneNumbers.get(0);
-			APIErrorHandlerService.logReference(custPhoneNumber.getPhoneNumber());
 		}
 		
 		//call dedup service for customer duplication
@@ -153,7 +149,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		
 		// call create customer method in case of no errors
 		response = customerController.createCustomer(customerDetails);
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(response.getCustCIF());
 		logger.debug("Leaving");
 		return response;
 	}
@@ -166,7 +163,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
-
+		// for logging purpose 
+		String[] logFields = getCustomerLogDetails(customerDetails);
+		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
 		// customer validations
@@ -179,7 +178,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose 
+		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 
 		AuditDetail auditDetail = customerDetailsService.doCustomerValidations(auditHeader);
@@ -214,14 +214,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose 
 		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = null;
 
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
-			// for logging purpose
-			APIErrorHandlerService.logReference(custCIF);
 			response = customerController.getCustomerDetails(customer.getCustID());
 		} else {
 			response = new CustomerDetails();
@@ -248,13 +247,12 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-
+		// for logging purpose 
+		APIErrorHandlerService.logReference(custCIF);
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
-			// for logging purpose
-			APIErrorHandlerService.logReference(custCIF);
 			// call delete customer service
 			response = customerController.deleteCustomerById(customer.getCustID());
 		} else {
@@ -283,14 +281,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-
+		// for logging purpose 
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = null;
 
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer != null) {
-			// for logging purpose
-			APIErrorHandlerService.logReference(custCIF);
 			response = customerController.getCustomerPersonalInfo(customer.getCustID());
 		} else {
 			response = new CustomerDetails();
@@ -313,6 +310,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerPersonalInfo(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
+		// for logging purpose 
+		String[] logFields = getCustomerLogDetails(customerDetails);
+		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, PersionalInfoGroup.class);
 		Customer customer = null;
@@ -325,6 +325,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
+		// for logging purpose 
+		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
 		customerDetails.getCustomer().setCustID(customer.getCustID());
 		customerDetails.getCustomer().setCustCtgCode(customer.getCustCtgCode());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
@@ -380,7 +382,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return customerEmpDetail;
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(employmentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(employmentDetail.getCustomerEmploymentDetail(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -421,6 +424,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -463,7 +468,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(employmentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(employmentDetail.getCustomerEmploymentDetail(),
 				PennantConstants.TRAN_WF);
 
@@ -596,6 +602,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custPhoneNumber.getCif());
 		custPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custPhoneNumber.getCustomerPhoneNumber(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -645,6 +653,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerPhoneNumber.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerPhoneNumber.getCustomerPhoneNumber(), PennantConstants.TRAN_WF);
 		customerPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
 		// validate customer details as per the API specification
@@ -692,6 +702,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -787,6 +799,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custAddress.getCif());
 		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -836,6 +850,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custAddress.getCif());
 		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres(),APIConstants.SERVICE_TYPE_UPDATE);
@@ -881,6 +897,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -977,6 +995,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custEMail.getCif());
 		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1025,6 +1045,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(custEMail.getCif());
 		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail(),APIConstants.SERVICE_TYPE_UPDATE);
@@ -1070,6 +1092,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1160,6 +1184,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
@@ -1213,7 +1239,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-		
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
@@ -1264,6 +1291,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1355,7 +1384,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return custBankInfoDetail;
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo());
@@ -1409,7 +1439,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(), PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
@@ -1457,6 +1488,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1551,6 +1584,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return custChequeInfoDetail;
 			}
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
 		// call add Customer Employment method in case of no errors
 		CustomerChequeInfoDetail response = customerDetailsController.addCustomerAccountBehaviour(
 				customerChequeInfoDetail.getCustomerChequeInfo(), customerChequeInfoDetail.getCif());
@@ -1585,7 +1620,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
 		CustomerChequeInfo customerChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customer.getCustID(),
@@ -1618,6 +1654,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1711,7 +1749,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return custExtLiabilityDetail;
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerExtLiabilityDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerExtLiabilityDetail.getCustomerExtLiability(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
@@ -1765,7 +1804,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerExtLiabilityDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerExtLiabilityDetail.getCustomerExtLiability(), PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
@@ -1813,6 +1853,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1899,7 +1941,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(),customer);
@@ -1946,7 +1989,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(),customer);
 		auditHeader.setAuditDetail(auditDetail);
@@ -1989,6 +2033,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2279,6 +2325,29 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		response.setCustomerIncomeList(null);
 	}
 
+	/**
+	 * Method for fetch the basic log fields from the given request.
+	 * 
+	 * @param customerDetails
+	 * @return
+	 */
+	private String[] getCustomerLogDetails(CustomerDetails customerDetails) {
+		// for logging purpose 
+		String[] logFields = null;
+		if (customerDetails != null) {
+			logFields = new String[3];
+			logFields[0] = customerDetails.getCustCtgCode();
+			logFields[1] = customerDetails.getCustDftBranch();
+
+			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+			if (customerPhoneNumbers != null && !customerPhoneNumbers.isEmpty()) {
+				CustomerPhoneNumber custPhoneNumber = customerPhoneNumbers.get(0);
+				logFields[2] = custPhoneNumber.getPhoneNumber();
+			}
+		}
+		return logFields;
+	}
+	
 	@Autowired
 	public void setCustomerEmploymentDetailService(CustomerEmploymentDetailService customerEmploymentDetailService) {
 		this.customerEmploymentDetailService = customerEmploymentDetailService;

@@ -54,9 +54,6 @@ public class MandateController {
 	 */
 	public Mandate createMandate(Mandate mandate) {
 		logger.debug("Entering");
-
-		//for logging purpose
-		APIErrorHandlerService.logReference(mandate.getCustCIF());
 		Mandate response = null;
 		try{
 		// setting required values which are not received from API
@@ -106,10 +103,6 @@ public class MandateController {
 	 */
 	public Mandate getMandate(long mandateId) {
 		logger.debug("Entering");
-
-		//for logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(mandateId));
-
 		Mandate response = new Mandate();
 		try {
 			response = mandateService.getApprovedMandateById(mandateId);
@@ -143,8 +136,6 @@ public class MandateController {
 	 */
 	public WSReturnStatus updateMandate(Mandate mandate) {
 		logger.debug("Entering");
-		//for logging purpose
-		APIErrorHandlerService.logReference(mandate.getCustCIF());
 
 		WSReturnStatus response = new WSReturnStatus();
 		try{
@@ -283,8 +274,6 @@ public class MandateController {
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandateDetail) {
 		logger.debug("Entering");
 		WSReturnStatus response=null; 
-		//for logging purpose
-		APIErrorHandlerService.logReference(mandateDetail.getFinReference());
 		try{
 		int count =financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),mandateDetail.getNewMandateId());
 		if(count>0)

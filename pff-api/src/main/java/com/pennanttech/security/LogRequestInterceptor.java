@@ -104,7 +104,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			}
 		}
 		APILogDetail apiLogDetail = new APILogDetail();
-		apiLogDetail.setCxfID(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
+		apiLogDetail.setRestClientId(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
 		String endPoint = StringUtils.trimToEmpty(String.valueOf(buffer.getAddress()).replaceAll(",", ""));
 		String method = StringUtils.trimToEmpty(httpMethod);
 		apiLogDetail.setServiceName(getServiceName(endPoint, method));

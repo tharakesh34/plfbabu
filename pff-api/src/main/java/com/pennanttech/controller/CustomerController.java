@@ -108,8 +108,6 @@ public class CustomerController {
 
 		// prepare create customer response object
 		response = getCreateCustomerResponse(customerDetails.getCustomer().getCustCIF());
-		// for logging purpose
-		APIErrorHandlerService.logReference(response.getCustCIF());
 		logger.debug("Leaving");
 
 		return response;
@@ -122,8 +120,6 @@ public class CustomerController {
 	 */
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
-		// for logging purpose
-		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 			
@@ -881,8 +877,6 @@ public class CustomerController {
 	 */
 	public WSReturnStatus updateCustomerPersionalInfo(CustomerDetails customerDetails) {
 		logger.debug("Entering");
-		// for logging purpose
-		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
 		// user details from session
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		
@@ -950,8 +944,6 @@ public class CustomerController {
 		logger.debug("Entering");
 
 		CustomerDetails response = null;
-		// for logging purpose
-		APIErrorHandlerService.logReference(cif);
 		try {
 			Customer customer = customerDetailsService.getCustomerByCIF(cif);
 			List<CustomerEmploymentDetail> customerEmploymentDetailList = getCustomerEmploymentDetailService()
@@ -995,8 +987,6 @@ public class CustomerController {
 		
 		EmploymentDetail response = null;
 		logger.debug("Entering");
-		// for logging purpose
-		APIErrorHandlerService.logReference(cif);
 		try{
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
@@ -1047,8 +1037,6 @@ public class CustomerController {
 	public WSReturnStatus updateCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
-		// for logging purpose
-		APIErrorHandlerService.logReference(cif);
 		try {
 			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
 

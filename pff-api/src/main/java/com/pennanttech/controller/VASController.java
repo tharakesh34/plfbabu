@@ -130,7 +130,7 @@ public class VASController {
 			} else {
 				response.setVasReference(vasRecording.getVasReference());
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				//for failure case logging
+				//for logging
 				if (StringUtils.isNotBlank(response.getCif())) {
 					APIErrorHandlerService.logReference(response.getCif());
 				} else if (StringUtils.isNotBlank(response.getFinReference())) {
@@ -210,8 +210,6 @@ public class VASController {
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) {
 		logger.debug("Entering");
 		VASRecordingDetail vASRecordingDetail = null;
-		// for logging purpose
-		APIErrorHandlerService.logReference(vasRecording.getPrimaryLinkRef());				
 		try {
 			List<VASRecording> vasRecordingList;
 			vasRecordingList = vASRecordingService.getVasRecordingsByPrimaryLinkRef(vasRecording.getPrimaryLinkRef());

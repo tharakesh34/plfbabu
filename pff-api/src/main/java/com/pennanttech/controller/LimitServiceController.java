@@ -158,13 +158,6 @@ public class LimitServiceController {
 			headerDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		// for logging purpose
-		if (StringUtils.isNotBlank(headerDetail.getCustCIF())) {
-			APIErrorHandlerService.logReference(headerDetail.getCustCIF());
-		} else {
-			APIErrorHandlerService.logReference(headerDetail.getCustGrpCode());
-		}
-
 		logger.debug("Leaving");
 		return headerDetail;
 	}
@@ -215,12 +208,6 @@ public class LimitServiceController {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		// for logging purpose
-		if (StringUtils.isNotBlank(response.getCustCIF())) {
-			APIErrorHandlerService.logReference(response.getCustCIF());
-		} else {
-			APIErrorHandlerService.logReference(response.getCustGrpCode());
-		}
 		logger.debug("Leaving");
 		return response;
 	}
@@ -255,13 +242,6 @@ public class LimitServiceController {
 				}
 			} else {
 				returnStatus = APIErrorHandlerService.getSuccessStatus();
-				// for logging purpose
-				LimitHeader limitHeader = (LimitHeader) auditHeader.getAuditDetail().getModelData();
-				if (StringUtils.isNotBlank(limitHeader.getCustCIF())) {
-					APIErrorHandlerService.logReference(limitHeader.getCustCIF());
-				} else {
-					APIErrorHandlerService.logReference(limitHeader.getCustGrpCode());
-				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -331,12 +311,6 @@ public class LimitServiceController {
 				String errorMessage = errorDetail.getError();
 				return APIErrorHandlerService.getFailedStatus(errorCode, errorMessage);
 			}
-		}
-		// for logging purpose
-		if (StringUtils.isNotBlank(limitTransDetail.getCustCIF())) {
-			APIErrorHandlerService.logReference(limitTransDetail.getCustCIF());
-		} else {
-			APIErrorHandlerService.logReference(limitTransDetail.getCustGrpCode());
 		}
 		logger.debug("Leaving");
 		return APIErrorHandlerService.getSuccessStatus();

@@ -9,6 +9,9 @@ public class APIConstants {
 	// Response codes
 	public static final String RES_SUCCESS_CODE = "0000";
 	public static final String RES_SUCCESS_DESC = "Success";
+	public static final String	RES_FAILURE_DESC			= "Failure";
+	public static final String	RES_DUPLICATE_MSDID_CODE	= "9998";
+	public static final String	RES_DUPLICATE_MSDID			= "Duplicate message id";	
 	
 	public static final String RES_FAILED_CODE = "9999";
 	public static final String RES_FAILED_DESC = "Unable to process request.";

@@ -2,8 +2,15 @@ package com.pennanttech.security;
 
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.LoggingMessage;
@@ -15,6 +22,11 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jayway.jsonpath.Configuration;
@@ -22,6 +34,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.pennant.app.util.APIHeader;
+import com.pennanttech.util.APIConstants;
 import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.log.model.APILogDetail;
 
@@ -32,7 +45,7 @@ import com.pennanttech.ws.log.model.APILogDetail;
 public class LogResponseInterceptor extends LoggingOutInterceptor {
 
 	private static final Logger LOG = Logger.getLogger(LogResponseInterceptor.class);
-	private APILogDetailDAO aPILogDetailDAO;
+	private APILogDetailDAO apiLogDetailDAO;
 	public LogResponseInterceptor() {
 		super(Phase.PRE_STREAM);
 	}
@@ -40,6 +53,8 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	public void handleMessage(Message message) throws Fault {
 		if (writer != null || LOG.isInfoEnabled()) {
 			logging(message);
+			//prepare the HeaderDetails of Response.
+			prepareHeaderDetails(message);
 		}
 	}
 
@@ -52,14 +67,50 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 		newOut.registerCallback(new LoggingCallback(message, os));
 
 	}
+	
+	/**
+	 * Method to prepare the PROTOCOL HEADERS based on the given response return code.
+	 * if return code is 0000 then return description  is success else Failure.
+	 * 
+	 * @param message
+	 */
+	private void prepareHeaderDetails(Message message) {
+		@SuppressWarnings("unchecked")
+		Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
+		APIHeader apiHeader = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
+		if (headers == null) {
+			headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+			message.put(Message.PROTOCOL_HEADERS, headers);
+		}
+		if (apiHeader != null) {
+			String returnCode = null;
+			String returnDesc = null;
+			Object obj = message.getContent(List.class).get(0);
+			//here we check the Return code and based on that we set the ReturnDesc to the Header.
+			if (StringUtils.isBlank(apiHeader.getReturnCode()) && obj != null) {
+				String jsonResponse = LogUtility.convertObjToJson(obj);
+				returnCode = LogUtility.getReturnCode(jsonResponse);
+				if (StringUtils.equalsIgnoreCase(returnCode, APIConstants.RES_SUCCESS_CODE)) {
+					returnDesc = APIConstants.RES_SUCCESS_DESC;
+				} else {
+					returnDesc = APIConstants.RES_FAILURE_DESC;
+				}
+				apiHeader.setReturnCode(returnCode);
+				apiHeader.setReturnDesc(returnDesc);
+			}
+			headers.put(APIHeader.API_RETURNCODE, Arrays.asList(apiHeader.getReturnCode()));
+			headers.put(APIHeader.API_RETURNDESC, Arrays.asList(apiHeader.getReturnDesc()));
+		}
+	}
 
 	@Override
 	protected java.util.logging.Logger getLogger() {
 		return LogUtils.getLogger(LogResponseInterceptor.class);
 	}
 	@Autowired
-	public void setaPILogDetailDAO(APILogDetailDAO aPILogDetailDAO) {
-		this.aPILogDetailDAO = aPILogDetailDAO;
+	public void setaPILogDetailDAO(APILogDetailDAO apiLogDetailDAO) {
+		this.apiLogDetailDAO = apiLogDetailDAO;
 	}
 
 	private class LoggingCallback implements CachedOutputStreamCallback {
@@ -125,36 +176,13 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
 			if (apiLogDetail != null) {
 				apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
-				apiLogDetail.setStatusCode(getStatusCode(String.valueOf(buffer.getPayload())));
 				apiLogDetail.setResponse(String.valueOf(buffer.getPayload()));
-				
-				// save API logging details
-				aPILogDetailDAO.saveLogDetails(apiLogDetail);
-			}
-		}
-
-		/**
-		 * Method for get the Statuscode of the gives response.
-		 * 
-		 * @param responseString
-		 * @return
-		 */
-		private String getStatusCode(String responseString) {
-			Object value = null;
-			String keypath1 = "$.returnStatus.returnCode";
-			String keypath2 = "$.returnCode";
-			Configuration conf = Configuration.defaultConfiguration();
-			Configuration conf2 = conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
-			try {
-				value = JsonPath.using(conf2).parse(responseString).read(keypath1);
-				if (value == null) {
-					value = JsonPath.read(responseString, keypath2);
+				if(StringUtils.isBlank(apiLogDetail.getStatusCode())){
+					apiLogDetail.setStatusCode(LogUtility.getReturnCode(buffer.getPayload().toString()));					
 				}
-			} catch (PathNotFoundException pathNotFoundException) {
-				value = null;
-				LOG.error("Exception in getStatusCode", pathNotFoundException);
+				// save API logging details
+				apiLogDetailDAO.saveLogDetails(apiLogDetail);
 			}
-			return Objects.toString(value, "");
 		}
 
 		private LoggingMessage setupBuffer(Message message) {
@@ -203,4 +231,52 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 
 	}
 
+	public static class LogUtility {
+		static Configuration	conf		= Configuration.defaultConfiguration();
+		static Configuration	conf2		= conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
+		static ObjectMapper		mapper		= new ObjectMapper();
+		static DateFormat		dateFormat	= new SimpleDateFormat("yyyy-MM-dd");
+
+		public static String getValueFromResponse(String key, String jsonResponse) {
+			Object value = null;
+			try {
+				value = JsonPath.using(conf2).parse(jsonResponse).read(key);
+			} catch (PathNotFoundException pathNotFoundException) {
+				value = null;
+				LOG.error("Exception in getStatusCode", pathNotFoundException);
+			}
+			return Objects.toString(value, "");
+		}
+
+		public static String convertObjToJson(Object obj) {
+			String jsonString;
+			mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+			mapper.setSerializationInclusion(Inclusion.NON_NULL);
+			mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+			dateFormat.setLenient(false);
+			mapper.setDateFormat(dateFormat);
+			try {
+				jsonString = mapper.writeValueAsString(obj);
+			} catch (Exception e) {
+				LOG.error("Exception in convertObjToJson", e);
+				jsonString = null;
+			}
+			return jsonString;
+		}
+
+		public static String getReturnCode(String responseString) {
+			String returnCode = null;
+			String keypath1 = "$.returnStatus.returnCode";
+			String keypath2 = "$.returnCode";
+
+			returnCode = getValueFromResponse(keypath1, responseString);
+			if (StringUtils.isEmpty(returnCode)) {
+				returnCode = getValueFromResponse(keypath2, responseString);
+			}
+
+			return returnCode;
+		}
+	}
 }

@@ -68,6 +68,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		// bean validations
 		validationUtility.validate(mandate, SaveValidationGroup.class);
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
+		//for logging purpose
+		String[] logFields = new String[3];
+		logFields[0] = mandate.getCustCIF();
+		logFields[1] = mandate.getAccNumber();
+		logFields[2] = mandate.getAccHolderName();
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		Mandate response = null;
 		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
@@ -76,7 +82,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			response = new Mandate();
 			response.setReturnStatus(returnStatus);
 		}
-
+		//for logging purpose
+		if (response.getMandateID() != Long.MIN_VALUE) {
+			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
+		}
 		logger.debug("Leaving");
 		return response;
 	}
@@ -95,6 +104,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (mandateID < 0) {
 			validationUtility.fieldLevelException();
 		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(String.valueOf(mandateID));
 		Mandate response = mandateController.getMandate(mandateID);
 		logger.debug("Leaving");
 		return response;
@@ -113,12 +124,19 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		// beanValidation
 		validationUtility.validate(mandate, UpdateValidationGroup.class);
 
-		//for failure case logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
+		//for logging purpose
+		String[] logFields = new String[3];
+		logFields[0] = mandate.getCustCIF();
+		logFields[1] = mandate.getAccNumber();
+		logFields[2] = mandate.getAccHolderName();
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		Mandate mandateDetails = mandateService.getApprovedMandateById(mandate.getMandateID());
 		WSReturnStatus returnStatus = null;
 		if (mandateDetails != null) {
+			//for logging purpose
+			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
+
 			returnStatus = doMandateValidation(mandate);
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 				if (StringUtils.equals(MandateConstants.STATUS_AWAITCON, mandateDetails.getStatus())) {
@@ -162,7 +180,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (mandateID < 0) {
 			validationUtility.fieldLevelException();
 		}
-		//for failure case logging purpose
+		//for logging purpose
 		APIErrorHandlerService.logReference(String.valueOf(mandateID));
 
 		// Mandate Id is Available or not in PLF
@@ -194,7 +212,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (StringUtils.isBlank(cif)) {
 			validationUtility.fieldLevelException();
 		}
-		//for failure case logging purpose
+		//for logging purpose
 		APIErrorHandlerService.logReference(cif);
 
 		MandateDetial response = new MandateDetial();
@@ -226,6 +244,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		// validate customer details as per the API specification
 		WSReturnStatus response = doValidation(mandate);
+		//for logging purpose
+		APIErrorHandlerService.logReference(mandate.getFinReference());
 		if (response == null) {
 			return response = mandateController.loanMandateSwapping(mandate);
 		} else {

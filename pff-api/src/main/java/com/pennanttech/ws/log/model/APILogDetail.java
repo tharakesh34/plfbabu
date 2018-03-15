@@ -5,8 +5,9 @@ import java.sql.Timestamp;
 public class APILogDetail {
 
 	private long		seqId	= Long.MIN_VALUE;
-	private int			cxfID;
+	private int			restClientId;
 	private String		reference;
+	private String		keyFields;
 	private String		serviceName;
 	private String		endPoint;
 	private String		method;
@@ -18,6 +19,12 @@ public class APILogDetail {
 	private Timestamp	responseGiven;
 	private String		statusCode;
 	private String		error;
+	private String		messageId;
+	private String		entityId;
+	private String		language;
+	private int		serviceVersion;
+	private Timestamp	headerReqTime;
+	private boolean		processed;
 
 	public long getSeqId() {
 		return seqId;
@@ -27,12 +34,12 @@ public class APILogDetail {
 		this.seqId = seqId;
 	}
 
-	public int getCxfID() {
-		return cxfID;
+	public int getRestClientId() {
+		return restClientId;
 	}
 
-	public void setCxfID(int cxfID) {
-		this.cxfID = cxfID;
+	public void setRestClientId(int restClientId) {
+		this.restClientId = restClientId;
 	}
 
 	public String getReference() {
@@ -129,6 +136,62 @@ public class APILogDetail {
 
 	public void setError(String error) {
 		this.error = error;
+	}
+
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
+
+	public String getEntityId() {
+		return entityId;
+	}
+
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public String getKeyFields() {
+		return keyFields;
+	}
+
+	public void setKeyFields(String keyFields) {
+		this.keyFields = keyFields;
+	}
+
+	public int getServiceVersion() {
+		return serviceVersion;
+	}
+
+	public void setServiceVersion(int serviceVersion) {
+		this.serviceVersion = serviceVersion;
+	}
+
+	public Timestamp getHeaderReqTime() {
+		return headerReqTime;
+	}
+
+	public void setHeaderReqTime(Timestamp headerReqTime) {
+		this.headerReqTime = headerReqTime;
+	}
+
+	public boolean isProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 }

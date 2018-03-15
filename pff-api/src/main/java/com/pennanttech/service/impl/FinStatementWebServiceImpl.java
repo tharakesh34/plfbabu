@@ -49,14 +49,15 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
+		//for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+
 		FinStatementResponse finStatement = new FinStatementResponse();
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(statementRequest.getCif());
-
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
 			String[] valueParm = new String[1];
@@ -85,8 +86,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(statementRequest.getCif());
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
@@ -117,8 +120,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(statementRequest.getCif());
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		List<String> finReferences = getFinanceReferences(statementRequest);
 		if (finReferences.isEmpty()) {
@@ -143,6 +148,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
 
 		String finReference = statementRequest.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
@@ -165,8 +174,6 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 		}
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(statementRequest.getCif());
 		// call controller to get NOC details 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
@@ -186,6 +193,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
 		
 		String finReference = statementRequest.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
@@ -211,8 +222,6 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("65031", valueParm));
 			return finStatementResponse;
 		}
-		// for failure case logging purpose
-		APIErrorHandlerService.logReference(statementRequest.getCif());
 		// call controller to get fore-closure letter 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
 		logger.debug("Leaving");
