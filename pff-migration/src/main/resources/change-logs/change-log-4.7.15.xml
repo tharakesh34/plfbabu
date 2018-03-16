@@ -311,7 +311,13 @@
 
     </createView>
      </changeSet>
-     <changeSet id="14" author="Sriram">
+     <changeSet id="13" author="Jayant">
+     	<dropTable tableName="EXPENSETYPES" cascadeConstraints="true"/>
+     </changeSet>
+      <changeSet id="14" author="Jayant">
+     	<dropTable tableName="EXPENSETYPES_Temp" cascadeConstraints="true"/>
+     </changeSet>
+     <changeSet id="15" author="Sriram">
 	<createTable tableName="EXPENSETYPES">
 		<column name="ExpenseTypeId" type="bigint" >
 			<constraints primaryKey="true" nullable="false" />
@@ -322,10 +328,10 @@
 		<column name="ExpenseTypeDesc" type="varchar(200)" >
 				<constraints  nullable="false" />
 		</column>
-		<column name="AmortReq" type="number(1,0)" defaultValue="0"/>
-        <column name="TaxApplicable" type="number(1,0)" defaultValue="0"/>
-		<column name="Active" type="number(1,0)" defaultValue="0"/>	
-		<column name="Version" type="number(10,0)" defaultValue="0" />
+		<column name="AmortReq" type="boolean" defaultValue="0"/>
+        <column name="TaxApplicable" type="boolean" defaultValue="0"/>
+		<column name="Active" type="boolean" defaultValue="0"/>	
+		<column name="Version" type="int" defaultValue="0" />
 		<column name="LastMntBy" type="bigint" />
 		<column name="LastMntOn" type="datetime" />
 		<column name="RecordStatus" type="varchar(50)" />
@@ -338,7 +344,7 @@
 	</createTable>
 </changeSet>
 
-<changeSet id="15" author="Sriram">
+<changeSet id="16" author="Sriram">
 	<createTable tableName="EXPENSETYPES_Temp">
 		<column name="ExpenseTypeId" type="bigint" >
 			<constraints primaryKey="true" nullable="false" />
@@ -349,10 +355,10 @@
 		<column name="ExpenseTypeDesc" type="varchar(200)" >
 				<constraints nullable="false" />
 		</column>
-		<column name="AmortReq" type="number(1,0)" defaultValue="0"/>
-        <column name="TaxApplicable" type="number(1,0)" defaultValue="0"/>
-		<column name="Active" type="number(1,0)" defaultValue="0"/>	
-		<column name="Version" type="number(10,0)" defaultValue="0" />
+		<column name="AmortReq" type="boolean" defaultValue="0"/>
+        <column name="TaxApplicable" type="boolean" defaultValue="0"/>
+		<column name="Active" type="boolean" defaultValue="0"/>	
+		<column name="Version" type="int" defaultValue="0" />
 		<column name="LastMntBy" type="bigint" />
 		<column name="LastMntOn" type="datetime" />
 		<column name="RecordStatus" type="varchar(50)" />
