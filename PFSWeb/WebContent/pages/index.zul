@@ -74,7 +74,7 @@
 			</north>
 
 			<!-- MAIN MENU AREA -->
-			<west id="west" border="none" margins="2,0,0,1" size="240px"
+			<west id="west" border="none" margins="2,0,0,1" size="260px"
 				style="align:left;overflow:hidden;border:0px;" >
 				<div id="divWest"
 					style="align:center;margin-left:70px;">
