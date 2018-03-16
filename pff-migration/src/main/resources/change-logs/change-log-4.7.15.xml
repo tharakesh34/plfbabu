@@ -87,7 +87,7 @@
 	</changeSet>
 	<changeSet id="08.2" author="Jayant">
 		<sql>
-			drop view rmtfinancetypes_aeview
+			drop view rmtfinancetypes_aeview cascade;
 		</sql>
 	</changeSet>
 	<changeSet id="08" author="Jayant">
