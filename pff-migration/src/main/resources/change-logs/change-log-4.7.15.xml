@@ -93,10 +93,10 @@
 	<changeSet id="08" author="Jayant">
 		<modifyDataType tableName="RMTFinanceTypes" columnName="developerfinance" newDataType="boolean"/>
 	</changeSet>
-	<changeSet id="08.3" author="Jayant">
-		<modifyDataType tableName="RMTFinanceTypes" columnName="developerfinance" newDataType="boolean"/>
+	<changeSet id="08.4" author="Jayant">
+		<modifyDataType tableName="RMTFinanceTypes_Temp" columnName="developerfinance" newDataType="boolean"/>
 	</changeSet>
-	<changeSet id="09.2" author="Jayant">
+	<changeSet id="09" author="Jayant">
       <createView replaceIfExists="true" viewName="RMTFinanceTypes_ORGView">
     SELECT		T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, 
 					T1.FinContingentAcType, T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, 
