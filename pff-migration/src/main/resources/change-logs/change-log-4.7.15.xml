@@ -78,14 +78,14 @@
 			INSERT INTO ErrorDetails VALUES('92005','EN','E','Message Id is Invalid','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
-	<changeSet id="08.1" author="Jayant">
+	<changeSet id="08.1" author="Jayant" dbms="postgresql">
 		<sql>
 			drop view RMTFinanceTypes_ORGView cascade;
 			drop view RMTFinanceTypes_View cascade;
 			drop view RMTFinanceTypes_AView cascade;
 		</sql>
 	</changeSet>
-	<changeSet id="08.2" author="Jayant">
+	<changeSet id="08.2" author="Jayant" dbms="postgresql">
 		<sql>
 			drop view rmtfinancetypes_aeview cascade;
 		</sql>
@@ -311,5 +311,76 @@
 
     </createView>
      </changeSet>
+     <changeSet id="14" author="Sriram">
+	<createTable tableName="EXPENSETYPES">
+		<column name="ExpenseTypeId" type="bigint" >
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="ExpenseTypeCode" type="varchar(10)" >
+				<constraints  nullable="false" />
+		</column>
+		<column name="ExpenseTypeDesc" type="varchar(200)" >
+				<constraints  nullable="false" />
+		</column>
+		<column name="AmortReq" type="number(1,0)" defaultValue="0"/>
+        <column name="TaxApplicable" type="number(1,0)" defaultValue="0"/>
+		<column name="Active" type="number(1,0)" defaultValue="0"/>	
+		<column name="Version" type="number(10,0)" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" defaultValue="0"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="15" author="Sriram">
+	<createTable tableName="EXPENSETYPES_Temp">
+		<column name="ExpenseTypeId" type="bigint" >
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="ExpenseTypeCode" type="varchar(10)" >
+				<constraints nullable="false" />
+		</column>
+		<column name="ExpenseTypeDesc" type="varchar(200)" >
+				<constraints nullable="false" />
+		</column>
+		<column name="AmortReq" type="number(1,0)" defaultValue="0"/>
+        <column name="TaxApplicable" type="number(1,0)" defaultValue="0"/>
+		<column name="Active" type="number(1,0)" defaultValue="0"/>	
+		<column name="Version" type="number(10,0)" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" defaultValue="0"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="17" author="Sriram">
+	<createView viewName="EXPENSETYPES_VIEW" replaceIfExists="true">
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc, AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM       ExpenseTypes_Temp
+	  UNION ALL 
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc,  AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM       ExpenseTypes
+	    
+	  WHERE NOT EXISTS ( SELECT 1 FROM ExpenseTypes_Temp WHERE ExpenseTypeId = ExpenseTypes.ExpenseTypeId )
+    </createView>
+</changeSet>
+<changeSet id="18" author="Sriram">
+	<createView viewName="EXPENSETYPES_AVIEW" replaceIfExists="true">
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc,  AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM         ExpenseTypes
+	</createView>
+</changeSet>
 	</databaseChangeLog>
 	
