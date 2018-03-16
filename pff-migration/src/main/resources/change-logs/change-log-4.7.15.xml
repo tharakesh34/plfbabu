@@ -388,5 +388,35 @@
 	  FROM         ExpenseTypes
 	</createView>
 </changeSet>
+<changeSet id="19" author="Sriram" >
+	<createView replaceIfExists="true" viewName="FinTypeExpenses_VIEW">
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses_Temp T1 
+				   		     INNER JOIN ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID 
+		UNION ALL
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses T1 
+				   INNER JOIN  ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID 
+		
+		WHERE  NOT EXISTS (SELECT 1 FROM FinTypeExpenses_Temp  WHERE  FinTypeExpenseID =T1.FinTypeExpenseID)
+	</createView>
+</changeSet>
+
+<changeSet id="20" author="Sriram" >
+	<createView replaceIfExists="true" viewName="FinTypeExpenses_AVIEW">
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses T1 
+				   INNER JOIN  ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID
+	</createView>
+</changeSet>
 	</databaseChangeLog>
 	
