@@ -85,10 +85,15 @@
 			drop view RMTFinanceTypes_AView cascade;
 		</sql>
 	</changeSet>
+	<changeSet id="08.2" author="Jayant">
+		<sql>
+			drop view rmtfinancetypes_aeview
+		</sql>
+	</changeSet>
 	<changeSet id="08" author="Jayant">
 		<modifyDataType tableName="RMTFinanceTypes" columnName="developerfinance" newDataType="boolean"/>
 	</changeSet>
-	<changeSet id="09" author="Somasekhar">
+	<changeSet id="09" author="Jayant">
       <createView replaceIfExists="true" viewName="RMTFinanceTypes_ORGView">
     SELECT		T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, 
 					T1.FinContingentAcType, T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, 
@@ -120,18 +125,18 @@
 					T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
 					T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, 
 					T1.QuickDisb,T1.AlwReage,T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq, T1.ProductCategory, T1.RpyHierarchy , T1.DeveloperFinance,
-					T3.EntityCode LovDescEntityCode,T8.EntityDesc LovDescEntityDesc
-					FROM			RMTFinanceTypes T1 INNER JOIN
+					T3.EntityCode LovDescEntityCode,T8.EntityDesc LovDescEntityDesc, T1.CostOfFunds
+			FROM			RMTFinanceTypes T1 INNER JOIN
                     SMTDivisionDetail T3 ON T1.FinDivision = T3.DivisionCode LEFT OUTER JOIN
 					                StepPolicyHeader T4 ON T1.DftStepPolicy = T4.PolicyCode LEFT OUTER JOIN
 					                Rules T5 ON T1.DownPayRule = T5.RuleId LEFT OUTER JOIN
 					                Rules T6 ON T1.GrcPricingMethod = T6.RuleId LEFT OUTER JOIN
 					                Rules T7 ON T1.RpyPricingMethod = T7.RuleId LEFT OUTER JOIN
-					                ENTITY T8 ON T3.EntityCode = T8.EntityCode
+					                ENTITY T8 ON T3.EntityCode = T8.EntityCode	
     
     </createView>
      </changeSet>
-     <changeSet id="10" author="Somasekhar">
+     <changeSet id="10" author="Jayant">
     <createView replaceIfExists="true" viewName="RMTFinanceTypes_View">
      SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
 			           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
@@ -167,7 +172,7 @@
 						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
 						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
 						T1.AlwReage,T1.AlwUnPlanEmiHoliday,
-							T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory  , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance
+						T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory  , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance, T1.CostOfFunds
 
 			FROM       RMTFinanceTypes_Temp T1 LEFT OUTER JOIN
 					   BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
@@ -216,10 +221,10 @@
 						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
 						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
 						T1.AlwReage,T1.AlwUnPlanEmiHoliday,
-							T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance
+						T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance, T1.CostOfFunds
 
 			FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
-			  BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
+					BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
 			           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
 			           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
 			           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
@@ -241,7 +246,7 @@
     
     </changeSet>
     
-      <changeSet id="11" author="Somasekhar">
+      <changeSet id="11" author="Jayant">
        <createView replaceIfExists="true" viewName="RMTFinanceTypes_AView">
     SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
 				           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
@@ -279,9 +284,9 @@
 							T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
 							T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,  T1.RoundingTarget,T1.FrequencyDays, T1.QuickDisb,T1.AlwReage,
 							T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq, T1.FinTypeDesc lovDescPromoFinTypeDesc,
-							T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc , T1.DeveloperFinance
+							T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc , T1.DeveloperFinance, T1.CostOfFunds
 				FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
-				  BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
+				  			BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
 				           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
 				           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
 				           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
@@ -292,9 +297,19 @@
 				           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
 				           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
 				           Rules T68 ON T1.RpyPricingMethod = T68.RuleId LEFT OUTER JOIN 
-                  		   ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID
+                  		   ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID	
     </createView>
     
       </changeSet>
+      
+       <changeSet id="12" author="Jayant">
+       <createView replaceIfExists="true" viewName="RMTFinanceTypes_AEView">
+    SELECT     T1.FinType,  '' FinDeffreq, T1.FinAcType, T1.FinCcy, T1.FinIsOpenNewFinAc, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,
+           T1.FinContingentAcType, T1.FinProvisionAcType, T1.FinSuspAcType, T1.FinCategory,T1.DeveloperFinance
+                
+    FROM         RMTFinanceTypes T1
+
+    </createView>
+     </changeSet>
 	</databaseChangeLog>
 	
