@@ -3,28 +3,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-	
-	<bean id="secDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFSEC" />
-		<property name="lookupOnStartup" value="true" />
-	</bean>
-	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFF" />
-		<property name="lookupOnStartup" value="true" />
-	</bean>
-	<bean id="auditDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFAUDIT" />
-		<property name="lookupOnStartup" value="true" />
-	</bean>
-	<bean id="extDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFEXT" />
-		<property name="lookupOnStartup" value="true" />
-	</bean>
 
+	<import resource="classpath:pennapps-datasources.xml"/>
+	
 	<bean id="jobOperator"
 		class="org.springframework.batch.core.launch.support.SimpleJobOperator"
 		p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer"

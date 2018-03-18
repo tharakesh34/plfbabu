@@ -9,66 +9,7 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-
-	<!-- ====================================================== -->
-	<!-- Define schemas for transactions -->
-	<!-- ====================================================== -->
-	<tx:advice id="secServiceTxAdvice" transaction-manager="secTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	<tx:advice id="pfsServiceTxAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<tx:advice id="auditServiceTxAdvice" transaction-manager="auditTransactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-
-	<!-- ====================================================== -->
-	<!-- Define Aspect pointcuts and advisors -->
-	<!-- for the transaction scopes. -->
-	<!-- ====================================================== -->
-	<aop:config>
-		<aop:pointcut id="guiServiceMethods"
-			expression="execution(* com.pennant.gui.service.*.*(..))" />
-		<aop:pointcut id="serviceMethods"
-			expression="execution(* com.pennant.backend.service.*.*(..))" />
-		<aop:pointcut id="daoMethods"
-			expression="execution(* com.pennant.backend.dao.*.*(..))" />
-
-		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="serviceMethods" />
-		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice"
-			pointcut-ref="guiServiceMethods" />
-		<aop:advisor advice-ref="auditServiceTxAdvice"
-			pointcut-ref="serviceMethods" />
-
-	</aop:config>
-
-	<!-- ====================================================== -->
-	<!-- Define the transaction manager -->
-	<!-- ====================================================== -->
-	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	<bean id="secTransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
-	<bean id="auditTransactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="auditDataSource" />
-	</bean>
-
+		
 	<bean id="propertyConfigurer"
 		class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
 		<constructor-arg ref="configurationEncryptor" />
@@ -103,33 +44,6 @@
 		<property name="config" ref="environmentVariablesConfiguration" />
 	</bean>
 	
-	<bean id="secDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFSEC"/>
-		<property name="lookupOnStartup" value="true"/>
-	</bean>
-	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFF"/>
-		<property name="lookupOnStartup" value="true"/>
-	</bean>
-	<bean id="auditDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFAUDIT"/>
-		<property name="lookupOnStartup" value="true"/>
-	</bean>
-	<bean id="extDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFEXT"/>
-		<property name="lookupOnStartup" value="true"/>
-	</bean>
-	<bean id="finOneDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/FINONE" />
-		<property name="lookupOnStartup" value="true" />
-	</bean> 
-
-
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
