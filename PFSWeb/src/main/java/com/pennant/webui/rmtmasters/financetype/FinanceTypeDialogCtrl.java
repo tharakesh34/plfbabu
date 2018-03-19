@@ -341,6 +341,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox roundingMode;
 	protected Combobox roundingTarget;
 	protected Textbox frequencyDays;
+	protected Checkbox chequeCaptureReq;
 
 	// Advised Profit Rates
 	protected ExtendedCombobox rpyAdvBaseRate; // autoWired
@@ -1479,6 +1480,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.isOverdraft || ImplementationConstants.ALLOW_INSURANCE) {
 			appendInsuranceDetailsTab();
 		}
+		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -3171,7 +3173,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		//Cheque Capture
+		try {
+			aFinanceType.setChequeCaptureReq(this.chequeCaptureReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Fees
 		if (getFinTypeFeesListCtrl() != null) {
 			aFinanceType.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());

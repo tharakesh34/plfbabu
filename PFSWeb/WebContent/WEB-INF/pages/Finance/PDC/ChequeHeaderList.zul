@@ -90,7 +90,7 @@
 								align="right"
 								hflex="min"  />
 							<listheader id="listheader_TotalAmount" label="${c:l('listheader_TotalAmount.label')}" sort="auto" 
-								hflex="min"  />
+								align="right" hflex="min" />
 							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  />
 							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  />
 						</listhead>		

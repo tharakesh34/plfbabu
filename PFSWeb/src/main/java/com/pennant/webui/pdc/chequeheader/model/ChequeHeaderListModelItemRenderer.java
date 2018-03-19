@@ -80,7 +80,7 @@ public class ChequeHeaderListModelItemRenderer implements ListitemRenderer<Chequ
 	  	lc.setParent(item);
 	  	lc = new Listcell(PennantApplicationUtil.formateInt(chequeHeader.getNoOfCheques()));
 	  	lc.setParent(item);
-	    lc = new Listcell(String.valueOf(PennantAppUtil.formateAmount(chequeHeader.getTotalAmount(), CurrencyUtil.getFormat("INR"))));
+	    lc = new Listcell(PennantAppUtil.amountFormate(chequeHeader.getTotalAmount(),CurrencyUtil.getFormat("INR")));
 		lc.setParent(item);
 	  	lc = new Listcell(chequeHeader.getRecordStatus());
 		lc.setParent(item);

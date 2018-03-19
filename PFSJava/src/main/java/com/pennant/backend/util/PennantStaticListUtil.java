@@ -3038,10 +3038,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getChequeTypes() {
 		if (chequeTypesList == null) {
 			chequeTypesList = new ArrayList<ValueLabel>(3);
-			chequeTypesList.add(new ValueLabel("PDC", "PDC"));
-			if(!ImplementationConstants.CLIENT_NFL) {
-				chequeTypesList.add(new ValueLabel("UDC", "UDC"));
-			}
+			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC, Labels.getLabel("label_Finance_Cheque_RepayMethod_PDC")));
+			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_UDC, Labels.getLabel("label_Finance_Cheque_RepayMethod_UDC")));
 		}
 		return chequeTypesList;
 	}

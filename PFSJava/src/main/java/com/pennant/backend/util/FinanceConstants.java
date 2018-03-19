@@ -132,6 +132,7 @@ public class FinanceConstants {
 	public static final String	REPAYMTH_AUTODDA				= "DDA";
 	public static final String	REPAYMTH_MANUAL					= "MANUAL";
 	public static final String	REPAYMTH_PDC					= "PDC";
+	public static final String	REPAYMTH_UDC					= "UDC";
 
 	// Finance Reference Generation Constants
 	public static final String	REF_DIVISION_RETAIL				= "PB";

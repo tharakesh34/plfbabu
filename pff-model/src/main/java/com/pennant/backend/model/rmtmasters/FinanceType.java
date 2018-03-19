@@ -243,6 +243,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescEntityCode;
 	private String lovDescEntityDesc;
 	
+	//cheque
+	private boolean								chequeCaptureReq;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -1978,5 +1980,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setCostOfFunds(String costOfFunds) {
 		this.costOfFunds = costOfFunds;
 	}
-	
+
+	public boolean isChequeCaptureReq() {
+		return chequeCaptureReq;
+	}
+
+	public void setChequeCaptureReq(boolean chequeCaptureReq) {
+		this.chequeCaptureReq = chequeCaptureReq;
+	}
+
 }
