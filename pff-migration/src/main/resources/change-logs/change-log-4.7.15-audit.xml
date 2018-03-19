@@ -39,4 +39,15 @@
 			columnName="usrpwd" columnDataType="VARCHAR2(100)" />
 	</changeSet>
 	
+	<changeSet id="02" author="Ganesh.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="chequeCaptureReq" type="BOOLEAN" defaultValue="false">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet  id="03" author="Ganesh.p">
+		<dropNotNullConstraint tableName="ADTchequedetail"
+			columnName="emirefno" columnDataType="varchar(20)" />
+	</changeSet>
 	</databaseChangeLog>
