@@ -295,7 +295,9 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("ColumnName", column);
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
-		if(StringUtils.equals("CustGrpID", column)) {//FIXME:DDP
+		source.addValue("active", true);
+		//FIXME: Need to change the method implementation
+		if(StringUtils.equals("CustGrpID", column) || StringUtils.equals("EmployerId", column)) {
 			source.addValue("Value", Integer.parseInt(fieldValue));
 		} else if(StringUtils.equals("DealerName", column)) {
 			tempFix = true;
@@ -313,14 +315,14 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 			selectSql.append(column);
 			selectSql.append("= :Value");
 			if(StringUtils.isNotBlank(filterColumn)){
-				selectSql.append(" AND "+filterColumn+"= 1");
+				selectSql.append(" AND "+filterColumn+"=:active");
 			}
 		}
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
 			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
-		} catch(EmptyResultDataAccessException dae) {
+		} catch(Exception dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}

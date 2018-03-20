@@ -558,7 +558,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 			
 			String docName = Objects.toString(customerDocument.getCustDocName(),"").toLowerCase();
-			if (customerDocument.isDocIsMandatory()) {
+			if (customerDocument.isDocIsMandatory() || StringUtils.isNotBlank(customerDocument.getCustDocType())) {
 				if (!(StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_PDF)
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOC)
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOCX)
@@ -570,10 +570,10 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 			
-			
 			if (StringUtils.isNotBlank(docName) || customerDocument.isDocIsMandatory()) {
-
+				boolean isImage = false;
 				if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
+					isImage = true;
 					if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "document type: " + customerDocument.getCustDocName();
@@ -582,48 +582,36 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}
-
-				// document name is only extension
-				if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Document Name";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-
-				// document Name Extension validation
-				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
-						&& !docName.endsWith(".pdf")) {
+				
+				//if docName has no extension.
+				if (!docName.contains(".")) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN");
+					valueParm[0] = "docName: " + docName;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+				} else {
+					// document name is only extension
+					String docNameExtension = docName.substring(docName.lastIndexOf("."));
+					if (StringUtils.equalsIgnoreCase(customerDocument.getCustDocName(), docNameExtension)) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docName: ";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+				String docExtension=docName.substring(docName.lastIndexOf(".")+1);
+				//if doc type and doc Extension are invalid
+				if (!isImage) {
+					if (!StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), docExtension)) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "document type: " + customerDocument.getCustDocName();
+						valueParm[1] = customerDocument.getCustDocType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
 				}
 			}
-			String docFormate = customerDocument.getCustDocName()
-					.substring(customerDocument.getCustDocName().lastIndexOf(".") + 1);
-			if (StringUtils.equals(customerDocument.getCustDocName(), docFormate)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "docName: " + docFormate;
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-			}
-			boolean isImage = false;
-			if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
-				if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
-						|| StringUtils.equals(docFormate, "png")) {
-					isImage = true;
-				}
-			}
-			if (!isImage) {
-				if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "document type: " + customerDocument.getCustDocName();
-					valueParm[1] = customerDocument.getCustDocType();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-			}
+			
 			Date appStartDate = DateUtility.getAppDate();
 			Date endDate = DateUtility.addDays(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), -1);
 			Date startDate = null;
@@ -665,12 +653,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					return auditDetail;
 				}
 			}
-			
 		}	
 		logger.debug("Leaving");
 		return auditDetail;
-
 	}
+	
 	/**
 	 * Fetch current version of the record.
 	 * 

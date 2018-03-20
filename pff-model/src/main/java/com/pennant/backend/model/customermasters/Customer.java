@@ -104,7 +104,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "shortName")
 	private String custShrtName;
 	
-	@XmlElement(name="fatherName")
+	@XmlElement(name="motherName")
 	private String custFNameLclLng;
 	private String custMNameLclLng;
 	private String custLNameLclLng;
@@ -127,7 +127,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustCOBName;
 	private String custPassportNo;
 
-	@XmlElement(name = "motherName")
+	@XmlElement(name = "fatherName")
 	private String custMotherMaiden;
 	private boolean custIsMinor;
 	private String custReferedBy;

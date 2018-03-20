@@ -76,19 +76,11 @@ public class MandateProcess extends AbstractMandateProcess{
 				if(list != null) {
 					for(EventProperties prop: list) {
 						properties = prop;
-						accessKey = EncryptionUtil.decrypt(prop.getAccessKey());
-						secretKey = EncryptionUtil.decrypt(prop.getSecretKey());
+						accessKey = prop.getAccessKey();
+						secretKey = prop.getSecretKey();
 						bucketName = prop.getBucketName();
 					}
 				}
-			}
-
-			SftpClient client = null;
-
-			if (properties.getPrivateKey() != null) {
-				client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey, properties.getPrivateKey());
-			} else {
-				client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey);
 			}
 
 			File file = new File(config.getUploadPath().concat(File.separator).concat(String.valueOf(exportStatus.getId())));
@@ -125,18 +117,34 @@ public class MandateProcess extends AbstractMandateProcess{
 		        	URL url = new URL(detail.getDocUri());
 		        	bufferedImage = ImageIO.read(url);
 					if(StringUtils.contains(mandate.getDocumentName(), SEPARATOR_DOT)) {
-						formate = StringUtils.split(mandate.getDocumentName(), "\\"+SEPARATOR_DOT);
+						formate = StringUtils.split(mandate.getDocumentName(), "//"+SEPARATOR_DOT);
 					}
 					ImageIO.write(bufferedImage, formate[1], new File(file.getPath().concat(File.separator).concat(reference).concat("."+formate[1])));
 		        } catch (IOException e) {
 		           logger.error("Exception", e);
 		        }
 			}
-
-			client.upload(file, bucketName);
+			
+			if (file.isDirectory()) {
+				for (File item : file.listFiles()) {
+					getSFTPClient(accessKey, secretKey, properties).upload(item, bucketName);
+				}
+			} else {
+				getSFTPClient(accessKey, secretKey, properties).upload(file, bucketName);
+			}
 		}
 
 		return exportStatus;
+	}
+
+	private SftpClient getSFTPClient(String accessKey, String secretKey, EventProperties properties) {
+		SftpClient client = null;
+		if (properties.getPrivateKey() != null) {
+			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey, properties.getPrivateKey());
+		} else {
+			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey);
+		}
+		return client;
 	}
 
 	@Override

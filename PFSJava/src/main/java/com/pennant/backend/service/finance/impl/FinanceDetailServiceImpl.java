@@ -1821,8 +1821,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		} else {
 			// set Customer Details Audit
-			if (financeDetail.getCustomerDetails() != null && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-				auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+				if (financeDetail.getCustomerDetails() != null
+						&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+					auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
+				}
 			}
 		}
 
@@ -3466,9 +3469,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			
 			// set Customer Details Audit
-			if (financeDetail.getCustomerDetails() != null
-					&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-				auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+				if (financeDetail.getCustomerDetails() != null
+						&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+					auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
+				}
 			}
 
 			if (!financeDetail.isExtSource() && !isWIF) {

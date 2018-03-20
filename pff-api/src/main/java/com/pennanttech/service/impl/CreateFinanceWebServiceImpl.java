@@ -66,12 +66,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		String custCif = logFields[0];
 		APIErrorHandlerService.logReference(custCif);
 		try {
-			if(financeDetail.getFinScheduleData().getFinanceMain() == null){
+			if (financeDetail.getFinScheduleData().getFinanceMain() == null) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[1];
 				valueParm[0] = "financeDetail";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502",valueParm));
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
 			// validate and Data defaulting
@@ -82,27 +82,21 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 
 			// validate finance data
-			if(!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+			if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
 				financeDataValidation.setFinanceDetail(financeDetail);
 			}
-			
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
-						financeDetail.getFinScheduleData(), true);
-				if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-					return getErrorMessage(financeDetail.getFinScheduleData());
-				}
-				//validate FinanceDetail Validations
-				financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
-				
+
+			// validate Finance schedule details Validations
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(), true);
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
+
 			// validate FinanceDetail Validations
 			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
-
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
@@ -126,7 +120,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			APIErrorHandlerService.logReference(financeDetailRes.getFinReference());
 			logger.debug("Leaving");
 			return financeDetailRes;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
