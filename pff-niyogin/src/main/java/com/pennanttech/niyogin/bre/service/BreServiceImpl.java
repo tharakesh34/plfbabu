@@ -397,7 +397,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		Financials financials = new Financials();
 		//getting data from pdfExtraction
 		financials.setExpenseYr1(getBigDecimalValue(ExtFieldMapConstants.EXPENSE_YR1));
-		financials.setExpenseYr2(getBigDecimalValue(ExtFieldMapConstants.EXPENSE_YR1));
+		financials.setExpenseYr2(getBigDecimalValue(ExtFieldMapConstants.EXPENSE_YR2));
 		financials.setDepreciationYr1(getBigDecimalValue(ExtFieldMapConstants.DEPRECIATION_YR1));
 		financials.setDepreciationYr2(getBigDecimalValue(ExtFieldMapConstants.DEPRECIATION_YR2));
 		financials.setInterestOnCapitalToPartners(getBigDecimalValue(ExtFieldMapConstants.INTERST_CAPTIAL_PATNER_YR1));

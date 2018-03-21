@@ -53,7 +53,7 @@ public class ExtFieldMapConstants {
 	public static final String	EQUITYSHARECAPTIAL_YR1						= "EQPERSHCAPY1";
 	public static final String	TOTAL_ASSETS_YR1							= "TOTASTY1";
 	public static final String	EXPENSE_YR1									= "EXPY1";
-	public static final String	Expense_Yr2									= "EXPY2";
+	public static final String	EXPENSE_YR2									= "EXPY2";
 	public static final String	TOTAL_LIABILITIES_YR1						= "TOTLINY1";
 	public static final String	NET_PROFIT_YR1								= "NETPFTY1";
 	public static final String	NET_PROFIT_YR2								= "NETPFTY2";
