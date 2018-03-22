@@ -22,12 +22,15 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
+import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 
 public class JSONClient {
 
 	private static final Logger	logger			= Logger.getLogger(JSONClient.class);
 
 	private final static String	AUTHORIZATION	= "Authorization";
+	private static String authorizationKey="";
+	private NiyoginDAOImpl niyoginDAOImpl;
 	
 	public String post(String url, String jsonInString) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -129,7 +132,7 @@ public class JSONClient {
 	 * @param authorization
 	 * @return WebClient
 	 */
-	public static WebClient getClient(String serviceUrl) {
+	public  WebClient getClient(String serviceUrl) {
 		logger.debug(Literal.ENTERING);
 		WebClient client = WebClient.create(serviceUrl);
 		client.accept(MediaType.APPLICATION_JSON);
@@ -149,7 +152,7 @@ public class JSONClient {
 	 * @param client
 	 * @return
 	 */
-	private static WebClient prepareHeader(WebClient client) {
+	private  WebClient prepareHeader(WebClient client) {
 		logger.debug(Literal.ENTERING);
 		client.header(AUTHORIZATION, getAuthkey());
 		logger.debug(Literal.LEAVING);
@@ -157,19 +160,22 @@ public class JSONClient {
 	}
 
 	/**
-	 * Generate Authorization key for client specific by loading use name and password from config file
+	 * Generate Authorization key for client specific by loading use name and password from SystemParams.
 	 * 
 	 * @return
 	 */
-	private static String getAuthkey() {
+	private String getAuthkey() {
 		logger.debug(Literal.ENTERING);
-		//TODO:DDP-Use encypted password
-		String username = "qUmCM";
-		String password = "rye28f16Z";
-		String key = username + ":" + password;
-		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(key.getBytes());
+		if (StringUtils.isEmpty(authorizationKey)) {
+			authorizationKey = (String) niyoginDAOImpl.getSMTParameter("NIYOGIN_INTERFACE_AUTHKEY", String.class);
+		}
+		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(authorizationKey.getBytes());
 		logger.debug(Literal.LEAVING);
 		return authKey;
+	}
+
+	public void setNiyoginDAOImpl(NiyoginDAOImpl niyoginDAOImpl) {
+		this.niyoginDAOImpl = niyoginDAOImpl;
 	}
 
 }

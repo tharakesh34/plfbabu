@@ -78,7 +78,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS			= "MAXPEROFAMTREPAID";
 	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "MAXIMUMDISBURSED";
 	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS			= "MINIMUMPEROFAMT";
-	public static final String	COMBINATION_OF_PREVIOUS_LOANS_TAKEN						= "AMBOFPRVSLOANS";
 	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "MNTHSIN30DPDINALAS";
 	
 	//for CoAPP
@@ -103,11 +102,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private final String		COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS		= "CANOOFBUSILOANS";
 	private final String		COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "CAMAXIMUMDISBURSED";
 	private final String		COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS		= "CAMINIMUMPEROFAMT";
-	private final String		COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN					= "CAAMBOFPRVSLOANS";
 	private final String		COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "CAMNTHSIN30DPDINALAS";
 
 	private Date				appDate													= getAppDate();
 	private String				pincode													= null;
+	private final String		ACCOUNT_STATUS_CLOSED										= "S07";
 
 	/**
 	 * Method for execute CRIFF Bureau service<br>
@@ -187,7 +186,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			prepareListData(COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, coAppplicantsdata, appplicationdata);
 			prepareListData(COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, coAppplicantsdata, appplicationdata);
 			prepareListData(COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_COMBINATION_OF_PREVIOUS_LOANS_TAKEN, COMBINATION_OF_PREVIOUS_LOANS_TAKEN, coAppplicantsdata, appplicationdata);
 			prepareListData(COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M, MONTHS_SINCE_30_PLUS_DPD_IN_L12M, coAppplicantsdata, appplicationdata);
 
 		}
@@ -366,8 +364,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		logger.debug(Literal.ENTERING);
 		List<TradeLine> tradlineList = commercialResponse.getTradelines();
 		if (tradlineList != null && !tradlineList.isEmpty()) {
-			BigDecimal overDueAmt = BigDecimal.ZERO;
-			BigDecimal disBursedAmt = BigDecimal.ZERO;
+			BigDecimal totSanctionAmt = BigDecimal.ZERO;
+			BigDecimal totCurrentBal = BigDecimal.ZERO;
 			BigDecimal disbursAmtSixMnths = BigDecimal.ZERO;
 			int noBusLoanOpened = 0;
 			Date disbursedDate = tradlineList.get(0).getSanctionDate();
@@ -383,18 +381,23 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 				paymentList.add(tradeline.getPaymentHistory());
 
 				//for sum of disbursed amount of all closed loans
-				if (tradeline.getAccountStatus().equalsIgnoreCase("Closed")) {
-					closedloanDisbursAmt = closedloanDisbursAmt.add(tradeline.getDisbursedAmount());
+				// Sum(SanctionedAmt) where Account-Status is Closed in Last 12 months.
+				if (tradeline.getSanctionDate() != null
+						&& NiyoginUtility.getMonthsBetween(getAppDate(), tradeline.getSanctionDate()) <= 12) {
+					if (tradeline.getAccountStatus().equalsIgnoreCase(ACCOUNT_STATUS_CLOSED)) {
+						closedloanDisbursAmt = closedloanDisbursAmt.add(tradeline.getDisbursedAmount());
+					}
 				}
 
-				if (NiyoginUtility.getMonthsBetween(getAppDate(), tradeline.getSanctionDate()) <= 6) {
+				//noBusLoanOpened: If Sanctioned_DT is within last 6 months as on loan application date, then loan is considered.
+				if (tradeline.getSanctionDate() != null
+						&& NiyoginUtility.getMonthsBetween(getAppDate(), tradeline.getSanctionDate()) <= 6) {
 					disbursAmtSixMnths = disbursAmtSixMnths.add(tradeline.getDisbursedAmount());
 					noBusLoanOpened++;
 				}
 
-				disBursedAmt = disBursedAmt.add(tradeline.getDisbursedAmount());
-				overDueAmt = overDueAmt.add(tradeline.getOverdueAmount());
-
+				totSanctionAmt = totSanctionAmt.add(tradeline.getSanctionedAmount());
+				totCurrentBal = totCurrentBal.add(tradeline.getCurrentBalance());
 				//for oldest loan disbursed date
 				if (disbursedDate != null && tradeline.getSanctionDate() != null) {
 					if (disbursedDate.compareTo(tradeline.getSanctionDate()) > 0) {
@@ -418,9 +421,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			extendedFieldMap.put(SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, closedloanDisbursAmt);
 
 			//Ratio of Overdue and Disbursement amount for all loans
+			//Formula = ((Total Sanctioned Amount - Total Current Balance)/Total Sanctioned Amount)*100
 			BigDecimal ratioOfOverdue = BigDecimal.ZERO;
-			if (overDueAmt.compareTo(BigDecimal.ZERO) > 0 && disBursedAmt.compareTo(BigDecimal.ZERO) > 0) {
-				ratioOfOverdue = overDueAmt.divide(disBursedAmt);
+			if (totSanctionAmt.compareTo(BigDecimal.ZERO) > 0) {
+				ratioOfOverdue = (totSanctionAmt.subtract(totCurrentBal)).divide(totSanctionAmt);
+				ratioOfOverdue = ratioOfOverdue.multiply(new BigDecimal(100));
 			}
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
 
@@ -620,8 +625,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//Maximum disbursed Amount across all unsecured loans in the last 12 months
 			Date disbursmentDate = loanDetail.getDisbursedDate();
-			if (NiyoginUtility.getMonthsBetween(appDate, disbursmentDate) <= 12) {
-				if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
+			if (disbursmentDate != null && NiyoginUtility.getMonthsBetween(appDate, disbursmentDate) <= 12) {
+				if (loanDetail.getSecurityDetails() != null && loanDetail.getSecurityDetails().isEmpty()) {
 					maxDsbursmentAmt = maxDsbursmentAmt.add(loanDetail.getDisbursedAmt());
 				}
 			}
@@ -649,7 +654,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			disBursedAmt = disBursedAmt.add(loanDetail.getDisbursedAmt());
 			overDueAmt = overDueAmt.add(loanDetail.getOverdueAmt());
 
-			if (NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
+			if (loanDetail.getDisbursedDate()!=null && NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
 				disbursAmtSixMnths = disbursAmtSixMnths.add(loanDetail.getDisbursedAmt());
 				noBusLoanOpened++;
 			}
@@ -686,7 +691,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		extendedFieldMap.put(MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, minPerOfAmtRepaidOnSL);
 
 		//for  comb of previous loan taken
-		extendedFieldMap.put(COMBINATION_OF_PREVIOUS_LOANS_TAKEN, sb.toString());
+		extendedFieldMap.put(COMB_OF_PREVS_LOANS_TAKEN, sb.toString());
 
 		//Number of business loans opened in last 6 months
 		extendedFieldMap.put(NUMB_OF_BUS_LOANS_OPENED_IN_L6M, noBusLoanOpened);
@@ -770,11 +775,12 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		}
 
 		//for Months since 30+DPD in the last 12 months
+		//Difference in Months since most recent occurrence of DPD>=30 or (SUB, DBT, LOS, SMA) and Loan App Date.
 		Date startDate = null;
 		for (PaymentHistory paymentHistory : paymentHistories) {
 			try {
 				long dpd = Long.parseLong(paymentHistory.getDpd());
-				if (dpd > 30) {
+				if (dpd >= 30 && paymentHistory.getPaymentDate() != null) {
 					startDate = paymentHistory.getPaymentDate();
 					break;
 				}

@@ -45,7 +45,7 @@ public class TradeLine implements Serializable {
 	private String				creditFacilityStatus;
 
 	@XmlElement(name = "SANCTIONED-AMOUNT")
-	private String				sanctionedAmount;
+	private BigDecimal			sanctionedAmount	= BigDecimal.ZERO;
 
 	@XmlElement(name = "SANCTION-DATE")
 	private Date				sanctionDate;
@@ -230,11 +230,11 @@ public class TradeLine implements Serializable {
 		this.lastReportedDate = lastReportedDate;
 	}
 
-	public String getSanctionedAmount() {
+	public BigDecimal getSanctionedAmount() {
 		return sanctionedAmount;
 	}
 
-	public void setSanctionedAmount(String sanctionedAmount) {
+	public void setSanctionedAmount(BigDecimal sanctionedAmount) {
 		this.sanctionedAmount = sanctionedAmount;
 	}
 
@@ -260,20 +260,6 @@ public class TradeLine implements Serializable {
 
 	public void setAssetClassification(String assetClassification) {
 		this.assetClassification = assetClassification;
-	}
-
-	@Override
-	public String toString() {
-		return "TRADELINE [derivedAccStatus=" + derivedAccStatus + ", currentBalance=" + currentBalance
-				+ ", overdueAmount=" + overdueAmount + ", lenderType=" + lenderType + ", issuedCurrency="
-				+ issuedCurrency + ", borrowerName=" + borrowerName + ", dpd=" + dpd + ", sanctionDate=" + sanctionDate
-				+ ", accountNo=" + accountNo + ", writeoffAmount=" + writeoffAmount + ", creditFacilityType="
-				+ creditFacilityType + ", suitFiledAndWilfulDefaults=" + suitFiledAndWilfulDefaults + ", creditGrantor="
-				+ creditGrantor + ", creditFacilityStatus=" + creditFacilityStatus + ", creditFacilityGroup="
-				+ creditFacilityGroup + ", disbursedAmount=" + disbursedAmount + ", accountStatus=" + accountStatus
-				+ ", lastReportedDate=" + lastReportedDate + ", sanctionedAmount=" + sanctionedAmount
-				+ ", drawingPower=" + drawingPower + ", paymentHistory=" + paymentHistory + ", assetClassification="
-				+ assetClassification + "]";
 	}
 
 }

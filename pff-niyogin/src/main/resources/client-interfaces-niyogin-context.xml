@@ -19,7 +19,9 @@
 		<property name="client" ref="jsonClient" />
 	</bean>
 	
-	<bean id="jsonClient" class="com.pennanttech.niyogin.clients.JSONClient"/>
+	<bean id="jsonClient" class="com.pennanttech.niyogin.clients.JSONClient">
+	<property name="niyoginDAOImpl" ref="niyoginDAOImpl" />
+	</bean>
 	
 	<bean id="niyoginDAOImpl" class="com.pennanttech.pff.external.dao.NiyoginDAOImpl">
 	<property name="dataSource" ref="dataSource" />
