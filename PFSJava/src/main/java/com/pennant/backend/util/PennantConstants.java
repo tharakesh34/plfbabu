@@ -159,6 +159,7 @@ public class PennantConstants {
 	public static final String method_doReversal = "doReversal";
 	public static final String method_doPreApprove = "doPreApprove";
 	public static final String method_doReject = "doReject";
+	public static final String WF_CIBIL = "cibil";
 	public static final String method_doDedup = "doDedup";
 	public static final String method_doBlacklist = "doBlacklist";
 	public static final String method_doPoliceCase = "doPoliceCase";
@@ -713,4 +714,7 @@ public class PennantConstants {
 	// Sub Category Constants
 	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC";	//Domestic
 	public static final String SUBCATEGORY_NRI 		= "NRI";		//NRI
+	
+	
+	
 }

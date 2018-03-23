@@ -19,13 +19,15 @@
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 	
-
-	
 	 <bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	 <bean id="abstractMandateProcess" class="com.pennanttech.pennapps.pff.interfaces.AbstractMandateProcess" abstract="true">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="cibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.RetailCibilEnquiryProcess">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 </beans>

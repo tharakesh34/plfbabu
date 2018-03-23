@@ -1,5 +1,7 @@
 package com.pennanttech.pff;
 
+import com.pennanttech.pennapps.core.App;
+
 public class InterfaceConstants {
 	public static final String	SUCCESS_CODE			= "0000";
 	public static final String	ERROR_CODE				= "9999";
@@ -50,5 +52,69 @@ public class InterfaceConstants {
 	public static final String method_HoldFinance = "executeHold";
 	public static final String method_bre = "executeBRE";	
 	public static String automaticMandate = "N";
+	
+	
+	// UAT Details
+		public static final String SOCKET_IP = "103.225.112.28";
+		public static final int DEFAULT_PORT = 7506;
+		public static final int SCOKET_TIMEOUT = 60000;
+
+		public static final String EndCharacters = "0102**";
+
+		public static final int CIBIL_REQUEST_USERNAME_PWD_LENGTH = 30;
+		public static final int CIBIL_REQUEST_PWD_LENGTH = 30;
+		public static final int CIBIL_REQUEST_AMOUNT_LENGTH = 9;
+		public static final int CIBIL_APPLICATON_REFERENCE = 25;
+		public static final int CIBIL_SERVER_PORT = 7506;
+		public static final int CIBIL_READ_BUFFERSIZE = 2048;
+		public static final String Enquiry_Header_Segment = "TUEF";
+		public static final int Enquiry_Header_version = 12;
+		public static final String Name_Segment = "PN";
+		public static final int Output_Format = 01;
+		public static final String Input_Output_Media = "CC";
+		public static final String Authentication_Method = "L";
+		public static final String Identification_Segment = "ID";
+		public static final String Telephone_Segment = "PT";
+		public static final String Address_Segment = "PA";
+		public static final String End_Segment = "ES05";
+		
+		
+		// Extended Field Types
+		public static final String FIELDTYPE_TEXT 				= "TEXT";
+		public static final String FIELDTYPE_UPPERTEXT 			= "UPPERTEXT";
+		public static final String FIELDTYPE_STATICCOMBO 		= "STATICCOMBO";
+		public static final String FIELDTYPE_MULTISTATICCOMBO 	= "MULTISTATICCOMBO";
+		public static final String FIELDTYPE_EXTENDEDCOMBO 		= "EXTENDEDCOMBO";
+		public static final String FIELDTYPE_MULTIEXTENDEDCOMBO = "MULTIEXTENDEDCOMBO";
+		public static final String FIELDTYPE_DATE 				= "DATE";
+		public static final String FIELDTYPE_DATETIME 			= "DATETIME";
+		public static final String FIELDTYPE_TIME 				= "TIME";
+		public static final String FIELDTYPE_INT 				= "INT";
+		public static final String FIELDTYPE_LONG 				= "LONG";
+		public static final String FIELDTYPE_ACTRATE 			= "ACTRATE";
+		public static final String FIELDTYPE_DECIMAL 			= "DECIMAL";
+		public static final String FIELDTYPE_AMOUNT 			= "CURRENCY";
+		public static final String FIELDTYPE_RADIO 				= "RADIO";
+		public static final String FIELDTYPE_PERCENTAGE 		= "PERCENTAGE";
+		public static final String FIELDTYPE_BOOLEAN 			= "BOOLEAN";
+		public static final String FIELDTYPE_MULTILINETEXT 		= "MULTILINETEXT";
+		public static final String FIELDTYPE_ACCOUNT 			= "ACCOUNT";
+		public static final String FIELDTYPE_FRQ 				= "FREQUENCY";
+		public static final String FIELDTYPE_BASERATE 			= "BASERATE";
+		public static final String FIELDTYPE_ADDRESS 			= "ADDRESS";
+		public static final String FIELDTYPE_PHONE 				= "PHONE";
+		public static final String	FIELDTYPE_GROUPBOX			= "GROUPBOX";
+		public static final String	FIELDTYPE_TABPANEL			= "TABPANEL";
+		public static final String	FIELDTYPE_BUTTON			= "BUTTON";
+		public static final String	FIELDTYPE_LISTBOX			= "LISTBOX";
+		public static final String	FIELDTYPE_LISTFIELD			= "LISTFIELD";
+		
+		// Date Default Types
+		public static final String DFTDATETYPE_APPDATE 			= "APPDATE";
+		public static final String DFTDATETYPE_SYSDATE 			= "SYSDATE";
+		public static final String DFTDATETYPE_SYSTIME 			= "SYSTIME";
+		
+		public final static String		wrongValueMSG		= App.getLabel("WRONG_VALUE_EXT");
+		public final static String		wrongLengthMSG		= App.getLabel("WRONG_LENGTH_EXT");
 	
 }

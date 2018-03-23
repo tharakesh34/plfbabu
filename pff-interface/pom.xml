@@ -32,11 +32,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<!-- Data-Engine -->
-		<dependency>
-			<groupId>com.pennanttech.framework.components</groupId>
-			<artifactId>data-engine</artifactId>
-			<version>2.1.7</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -52,6 +48,21 @@
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+		
+		
+		
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zk</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		
+		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc8</artifactId>
@@ -75,6 +86,16 @@
 			<artifactId>json</artifactId>
 			<version>20170516</version>
 		</dependency>
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20170516</version>
+	</dependency>
+	<dependency>
+		<groupId>com.jayway.jsonpath</groupId>
+		<artifactId>json-path</artifactId>
+		<version>2.4.0</version>
+	</dependency>
 
 		<!-- Data-Engine -->
 		<dependency>
