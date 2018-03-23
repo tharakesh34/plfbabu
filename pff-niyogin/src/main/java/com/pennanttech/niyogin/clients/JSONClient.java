@@ -3,6 +3,7 @@ package com.pennanttech.niyogin.clients;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,8 +30,8 @@ public class JSONClient {
 	private static final Logger	logger			= Logger.getLogger(JSONClient.class);
 
 	private final static String	AUTHORIZATION	= "Authorization";
-	private static String authorizationKey="";
-	private NiyoginDAOImpl niyoginDAOImpl;
+	private static String		authorizationKey;
+	private NiyoginDAOImpl		niyoginDAOImpl;
 	
 	public String post(String url, String jsonInString) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -168,6 +169,8 @@ public class JSONClient {
 		logger.debug(Literal.ENTERING);
 		if (StringUtils.isEmpty(authorizationKey)) {
 			authorizationKey = (String) niyoginDAOImpl.getSMTParameter("NIYOGIN_INTERFACE_AUTHKEY", String.class);
+			//if the value getting from DB is Null then it is Empty.
+			authorizationKey = Objects.toString(authorizationKey, "");
 		}
 		String authKey = "Basic " + java.util.Base64.getEncoder().encodeToString(authorizationKey.getBytes());
 		logger.debug(Literal.LEAVING);
