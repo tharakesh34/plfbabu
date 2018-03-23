@@ -273,7 +273,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 				Object responseObj = getResponseObject(jsonResponse, CriffCommercialResponse.class, false);
 				CriffCommercialResponse commercialResponse = (CriffCommercialResponse) responseObj;
 				//process the response
-				prepareCommercialExtendedMap(commercialResponse, mapvalidData, financeMain);
+				prepareCommercialExtendedMap(commercialResponse, mapvalidData);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -333,7 +333,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 				Object responseObj = getResponseObject(jsonResponse, CRIFConsumerResponse.class, false);
 				CRIFConsumerResponse consumerResponse = (CRIFConsumerResponse) responseObj;
 				//process the response
-				prepareConsumerExtendedMap(consumerResponse, mapvalidData, financeMain);
+				prepareConsumerExtendedMap(consumerResponse, mapvalidData);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -357,12 +357,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * 
 	 * @param commercialResponse
 	 * @param extendedFieldMap
-	 * @param financeMain 
 	 * @return
 	 * @throws ParseException
 	 */
 	private Map<String, Object> prepareCommercialExtendedMap(CriffCommercialResponse commercialResponse,
-			Map<String, Object> extendedFieldMap, FinanceMain financeMain) {
+			Map<String, Object> extendedFieldMap) {
 		logger.debug(Literal.ENTERING);
 		List<TradeLine> tradlineList = commercialResponse.getTradelines();
 		if (tradlineList != null && !tradlineList.isEmpty()) {
@@ -424,8 +423,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			//Formula = ((Total Sanctioned Amount - Total Current Balance)/Total Sanctioned Amount)*100
 			BigDecimal ratioOfOverdue = BigDecimal.ZERO;
 			if (totSanctionAmt.compareTo(BigDecimal.ZERO) > 0) {
-				RoundingMode roundingMode = getRoundingMode(financeMain.getCalRoundingMode());
-				ratioOfOverdue = (totSanctionAmt.subtract(totCurrentBal)).divide(totSanctionAmt,financeMain.getRoundingTarget(), roundingMode);
+				ratioOfOverdue = (totSanctionAmt.subtract(totCurrentBal)).divide(totSanctionAmt, 5, RoundingMode.HALF_DOWN);
 				ratioOfOverdue = ratioOfOverdue.multiply(new BigDecimal(100));
 			}
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -572,12 +570,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	 * 
 	 * @param consumerResponse
 	 * @param extendedFieldMap
-	 * @param financeMain 
 	 * @return
 	 * @throws ParseException
 	 */
 	private Map<String, Object> prepareConsumerExtendedMap(CRIFConsumerResponse consumerResponse,
-			Map<String, Object> extendedFieldMap, FinanceMain financeMain) {
+			Map<String, Object> extendedFieldMap) {
 
 		List<LoanDetail> loanDetailsList = new ArrayList<LoanDetail>();
 		for (LoanDetailsData loanData : consumerResponse.getLoanDetailsData()) {
@@ -612,8 +609,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
 				BigDecimal paidAmt = loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
 				if (loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO) > 0 && paidAmt.compareTo(BigDecimal.ZERO) > 0) {
-					RoundingMode roundingMode = getRoundingMode(financeMain.getCalRoundingMode());
-					tempValueForMaxAmt = paidAmt.divide(loanDetail.getDisbursedAmt(),financeMain.getRoundingTarget(), roundingMode);
+					tempValueForMaxAmt = paidAmt.divide(loanDetail.getDisbursedAmt(), 5, RoundingMode.HALF_DOWN);
 				}
 				if (tempValueForMaxAmt.compareTo(maxPerOfAmtRepaidOnSL) > 0) {
 					maxPerOfAmtRepaidOnSL = tempValueForMaxAmt;
@@ -637,8 +633,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			if (loanDetail.getSecurityDetails() != null && loanDetail.getSecurityDetails().isEmpty()) {
 				BigDecimal paidAmt=loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
 				if(loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO)>0&&paidAmt.compareTo(BigDecimal.ZERO)>0){
-					RoundingMode roundingMode = getRoundingMode(financeMain.getCalRoundingMode());
-					tempValueForMinAmt=paidAmt.divide(loanDetail.getDisbursedAmt(), financeMain.getRoundingTarget(), roundingMode);
+					tempValueForMinAmt=paidAmt.divide(loanDetail.getDisbursedAmt(), 5,  RoundingMode.HALF_DOWN);
 				}
 				if (tempValueForMinAmt.compareTo(minPerOfAmtRepaidOnSL) < 0) {
 					minPerOfAmtRepaidOnSL = tempValueForMinAmt;
@@ -701,8 +696,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		//Ratio of Overdue and Disbursement amount for all loans
 		BigDecimal ratioOfOverdue = BigDecimal.ZERO;
 		if (overDueAmt.compareTo(BigDecimal.ZERO) > 0 && disBursedAmt.compareTo(BigDecimal.ZERO) > 0) {
-			RoundingMode roundingMode = getRoundingMode(financeMain.getCalRoundingMode());
-			ratioOfOverdue = overDueAmt.divide(disBursedAmt, financeMain.getRoundingTarget(), roundingMode);
+			ratioOfOverdue = overDueAmt.divide(disBursedAmt, 5, RoundingMode.HALF_DOWN);
 		}
 		extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
 
@@ -827,32 +821,6 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			}
 		}
 		return paymentHistoryList;
-	}
-	
-	/**
-	 * Method to get the RoundingMode based on the given calRoundingMode Name.
-	 * 
-	 * @param calRoundingMode
-	 * @return
-	 */
-	private RoundingMode getRoundingMode(String calRoundingMode) {
-		RoundingMode roundingMode;
-		if (StringUtils.equals(calRoundingMode, RoundingMode.HALF_DOWN.name())) {
-			roundingMode = RoundingMode.HALF_DOWN;
-		} else if (StringUtils.equals(calRoundingMode, RoundingMode.HALF_EVEN.name())) {
-			roundingMode = RoundingMode.HALF_EVEN;
-		} else if (StringUtils.equals(calRoundingMode, RoundingMode.HALF_UP.name())) {
-			roundingMode = RoundingMode.HALF_UP;
-		} else if (StringUtils.equals(calRoundingMode, RoundingMode.CEILING.name())) {
-			roundingMode = RoundingMode.CEILING;
-		} else if (StringUtils.equals(calRoundingMode, RoundingMode.DOWN.name())) {
-			roundingMode = RoundingMode.DOWN;
-		} else if (StringUtils.equals(calRoundingMode, RoundingMode.FLOOR.name())) {
-			roundingMode = RoundingMode.FLOOR;
-		} else {
-			roundingMode = RoundingMode.UP;
-		}
-		return roundingMode;
 	}
 
 	/**
