@@ -807,6 +807,9 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		List<PaymentHistory> paymentHistoryList = new ArrayList<PaymentHistory>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd:MMM:yyyy");
 		for (String payment : paymentList) {
+			if(StringUtils.isEmpty(payment)){
+				continue;
+			}
 			String[] block = payment.split("\\|");
 			for (String field : block) {
 				PaymentHistory paymentHistory = new PaymentHistory();
