@@ -125,6 +125,12 @@
 			<menuItem id="menu_Item_NationalityCode"
 				zulNavigation="/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeList.zul"
 				rightName="menuItem_SystemMaster_NationalityCode" />
+			<menuItem id="menu_Item_Caste"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Caste/CasteList.zul"
+				rightName="menuItem_SystemMaster_Caste" />
+			<menuItem id="menu_Item_Religion"
+				zulNavigation="/WEB-INF/pages/SystemMaster/Religion/ReligionList.zul"
+				rightName="menuItem_SystemMaster_Religion" />
 			<menuItem id="menu_Item_AddressType"
 				zulNavigation="/WEB-INF/pages/SystemMaster/AddressType/AddressTypeList.zul"
 				rightName="menuItem_SystemMaster_AddressType" />
