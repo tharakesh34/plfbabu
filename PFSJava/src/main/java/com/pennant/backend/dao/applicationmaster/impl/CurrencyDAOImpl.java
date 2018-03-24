@@ -46,8 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,15 +54,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -73,12 +70,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Currency model</b> class.<br>
  * 
  */
-public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyDAO {
-
+public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	private static Logger logger = Logger.getLogger(CurrencyDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	public CurrencyDAOImpl() {
 		super();
@@ -120,8 +113,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 				.newInstance(Currency.class);
 
 		try{
-			currency = this.namedParameterJdbcTemplate.queryForObject(
-					 selectSql.toString(), beanParameters, typeRowMapper);	
+			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			currency = null;
@@ -153,7 +145,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		try{
-			currency = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			currency = null;
@@ -185,8 +177,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 
 		try{
-			ccyCode = this.namedParameterJdbcTemplate.queryForObject(
-					 selectSql.toString(), beanParameters, String.class);	
+			ccyCode = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			ccyCode = "";
@@ -220,7 +211,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("ccyCode", ccyCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -258,7 +249,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(currency);
 		
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -294,7 +285,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -320,7 +311,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -332,15 +323,6 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	
 	/**
 	 * Method for Checking Currency having Unique CcyCode,CcyNumber and SwiftCode or Not
@@ -365,8 +347,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(Currency.class);
 
-		List<Currency> list = this.namedParameterJdbcTemplate.query(
-				selectSql.toString(), beanParameters, typeRowMapper);	
+		List<Currency> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		if(list !=null && list.size()>0){
 			logger.debug("Leaving ");
 			return true;
@@ -394,7 +375,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
-		List<Currency> currencies = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
+		List<Currency> currencies = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
 		logger.debug("Leaving");
 		return currencies;
 	}
@@ -412,7 +393,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 	//	logger.debug("selectSql: " + selectSql.toString()); 
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 		
-		Currency currencies = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),source, typeRowMapper); 
+		Currency currencies = this.jdbcTemplate.queryForObject(selectSql.toString(),source, typeRowMapper); 
 		//logger.debug("Leaving");
 		return currencies;
 	}
@@ -433,7 +414,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);	
     }
 
 
@@ -453,7 +434,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		
 		try {
 			RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
-			Currency currencies = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),source, typeRowMapper); 
+			Currency currencies = jdbcTemplate.queryForObject(selectSql.toString(),source, typeRowMapper); 
 			if(currencies != null) {
 				return true;
 			}

@@ -13,7 +13,7 @@
 			classpath:applicationContext-zkoss.xml, 
 			classpath:applicationContext-db.xml,
 			classpath:applicationContext-daos.xml,
-			classpath:pennapps-tx-managers.xml,
+			classpath:applicationContext-txn.xml,
  			classpath:customize-applicationContext.xml,
  			classpath:securityContext.xml,
  			<!-- classpath:applicationContext-mq-interface.xml,  -->

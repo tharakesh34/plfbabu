@@ -45,33 +45,27 @@ package com.pennant.backend.dao.audit.impl;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
-public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implements AuditHeaderDAO{
-	private static Logger logger = Logger.getLogger(AuditHeaderDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private DataSourceTransactionManager auditTransactionManager;
+public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements AuditHeaderDAO{
+	private static Logger logger = LogManager.getLogger(AuditHeaderDAOImpl.class);
 	
 	public AuditHeaderDAOImpl() {
 		super();
@@ -82,7 +76,7 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 	}
 	
 	public long addAudit(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		long id = Long.MIN_VALUE;
 		auditHeader.setAuditDate(new Timestamp(System.currentTimeMillis()));
@@ -99,17 +93,17 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 				createAuditDetails(auditHeader);
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return id;
 	}
 	
 	private long addAuditHeader(AuditHeader auditHeader){
 		logger.debug("addAuditHeader");
-		auditHeader.setId(getNextidviewDAO().getNextId("SeqAuditHeader"));
+		auditHeader.setId(getNextValue("SeqAuditHeader"));
 		StringBuilder insertSql = new StringBuilder();
 		
 		insertSql.append("insert into AuditHeader (AuditId,AuditDate,AuditUsrId,AuditModule,AuditBranchCode,AuditDeptCode,AuditTranType,");
@@ -122,36 +116,36 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 		insertSql.append(":AuditPrinted,:AuditRecovered,:AuditErrorForRecocvery)");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(auditHeader);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		jdbcTemplate.update(insertSql.toString(), beanParameters);
 		return auditHeader.getId();
 	}
 	
 	private void addAuditDetails(Object modelData,String insertString, boolean isExtendedModule){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		logger.debug("SQL Qry"+insertString);
 		if(isExtendedModule){
 			ExtendedFieldRender fieldRender = (ExtendedFieldRender) modelData;
-			this.namedParameterJdbcTemplate.update(insertString, fieldRender.getAuditMapValues());
+			jdbcTemplate.update(insertString, fieldRender.getAuditMapValues());
 		}else{
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(modelData);
-			this.namedParameterJdbcTemplate.update(insertString, beanParameters);
+			jdbcTemplate.update(insertString, beanParameters);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public void createAuditDetails(AuditHeader auditHeader){
 		List<AuditDetail> auditDetails = auditHeader.getAuditDetails();
 		
-		if(auditDetails!=null && auditDetails.size()>0){
+		if (auditDetails != null && !auditDetails.isEmpty()) {
 			for (int i = 0; i < auditDetails.size(); i++) {
-				createAuditDetails(auditHeader,auditDetails.get(i));
+				createAuditDetails(auditHeader, auditDetails.get(i));
 			}
 		}
 	}
 
 	private void createAuditDetails(AuditHeader auditHeader,AuditDetail auditDetail){
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean after=false;
 		boolean before=false;
 		boolean workFlow=false;
@@ -184,7 +178,7 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 						auditDetail), auditDetail.isExtended());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getInsertQry(Object dataObject, String imageType, AuditHeader auditHeader,AuditDetail auditDetail) {
@@ -215,18 +209,4 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 		sql.append(")");
 		return sql.toString();
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-
-	public DataSourceTransactionManager getAuditTransactionManager() {
-		return auditTransactionManager;
-	}
-
-	public void setAuditTransactionManager(
-			DataSourceTransactionManager auditTransactionManager) {
-		this.auditTransactionManager = auditTransactionManager;
-	}	
 }

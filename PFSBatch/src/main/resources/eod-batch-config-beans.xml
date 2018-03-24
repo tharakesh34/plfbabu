@@ -9,6 +9,7 @@
 	<!-- ====================================================== -->
 	<!-- <import resource="applicationContext-mq-interface.xml" /> -->
 	<import resource="applicationContext-core-interface.xml" />
+	<import resource="classpath:applicationContext-jdbc.xml"/>
 
 	<!-- Error Details -->
 	<bean id="errorDetailDAO" class="com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl">
@@ -204,9 +205,7 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Currency -->
-	<bean id="currencyDAO" class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl" parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="currencyDAO" class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl" parent="basicDao"/>
 	<!-- ====================================================== -->
 	<!-- Job Specific DAOs -->
 	<!-- ====================================================== -->

@@ -44,20 +44,16 @@ package com.pennant.backend.dao.impl;
 
 import java.sql.Timestamp;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.model.SecLoginlog;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class SecLoginlogDAOImpl extends BasisNextidDaoImpl<SecLoginlog> implements SecLoginlogDAO {
+public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecLoginlogDAO {
 	private static final Logger logger = Logger.getLogger(SecLoginlogDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public SecLoginlogDAOImpl() {
 		super();
@@ -67,7 +63,7 @@ public class SecLoginlogDAOImpl extends BasisNextidDaoImpl<SecLoginlog> implemen
 	public long saveLog(SecLoginlog logingLog) {
 		logger.debug("Entering");
 
-		logingLog.setId(getNextId("SeqSecLoginLog"));
+		logingLog.setId(getNextValue("SeqSecLoginLog"));
 		StringBuilder insertSql = new StringBuilder(
 				"INSERT INTO SecLoginLog(LoginLogID,loginUsrLogin,LoginTime,LoginIP,LoginBrowserType,LoginStsID,");
 		insertSql.append("LoginSessionID,LoginError)");
@@ -76,7 +72,7 @@ public class SecLoginlogDAOImpl extends BasisNextidDaoImpl<SecLoginlog> implemen
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(logingLog);
-		namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
 		
@@ -95,12 +91,8 @@ public class SecLoginlogDAOImpl extends BasisNextidDaoImpl<SecLoginlog> implemen
 		logger.debug("insertSql: " + updateSql);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(logingLog);
-		namedParameterJdbcTemplate.update(updateSql, beanParameters);
+		jdbcTemplate.update(updateSql, beanParameters);
 
 		logger.debug("Leaving ");
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

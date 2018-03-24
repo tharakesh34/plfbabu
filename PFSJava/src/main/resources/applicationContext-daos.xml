@@ -8,15 +8,7 @@
 		http://www.springframework.org/schema/aop
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 		
-	<bean id="searchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
-		<constructor-arg name="dataSource" ref="dataSource" />
-	</bean>
-	<bean id="auditSearchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
-		<constructor-arg name="dataSource" ref="auditDataSource"/>
-	</bean>
-	<bean id="extSearchProcessor" class="com.pennanttech.pennapps.jdbc.search.SearchProcessor">
-		<constructor-arg name="dataSource" ref="extDataSource" />
-	</bean>
+	<import resource="classpath:applicationContext-jdbc.xml"/>
 
 	<!-- ====================================================== -->
 	<!-- Base bean -->
@@ -35,18 +27,12 @@
 	<bean id="pfsNextidDao" abstract="true" p:nextidviewDAO-ref="pfsNextidviewDAO"
 		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
 
-	<bean id="auditNextidDao" abstract="true" p:nextidviewDAO-ref="auditNextidviewDAO"
-		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
-
 	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
 	<!-- ====================================================== -->
 
 	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl"
-		parent="auditNextidDao">
-		<property name="auditTransactionManager" ref="auditTransactionManager" />
-		<property name="dataSource" ref="auditDataSource" />
-	</bean>
+	parent="auditSequenceDao" />
 
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->
@@ -173,10 +159,7 @@
 	<!-- SERVICE Beans Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="secDataSource" />
-	</bean>
+	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl" parent="secSequenceDao"/>
 
 	<bean name="pagedListService" class="com.pennant.backend.service.impl.PagedListServiceImpl" scope="session">
 		<property name="searchProcessor" ref="searchProcessor" />
@@ -396,11 +379,7 @@
 
 	<!--============ Academic Details ============== -->
 
-	<bean id="academicDAO"
-		class="com.pennant.backend.dao.systemmasters.impl.AcademicDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="academicDAO" class="com.pennant.backend.dao.systemmasters.impl.AcademicDAOImpl" parent="sequenceDao"/>
 
 	<bean id="academicService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -1736,11 +1715,7 @@
 
 	<!--============ Currency Details ============== -->
 
-	<bean id="currencyDAO"
-		class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="currencyDAO" class="com.pennant.backend.dao.applicationmaster.impl.CurrencyDAOImpl" parent="basicDao"/>
 
 	<bean id="currencyService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

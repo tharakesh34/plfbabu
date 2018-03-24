@@ -47,10 +47,10 @@ public class PennantConstants {
 	}
 
 	public enum SeqTables {
-		SeqAuditHeader, SeqFinFeeDetail, SeqCustomers, SeqProspectCustomer, SeqCustomerBankInfo, SeqDocumentManager, 
+		SeqFinFeeDetail, SeqCustomers, SeqProspectCustomer, SeqCustomerBankInfo, SeqDocumentManager, 
 		SeqCustomerEmpDetails, SeqCustomerDirectorDetail, SeqFinReference, SeqFinGuarantorsDetails, SeqFinInstruction, 
 		SeqFinInsurance, SeqFinJointAccountDetails, SeqMandates, SeqLimitTransactionDetails, SeqLimitReferenceMapping, 
-		SeqCollateral, SeqPostings, SeqFinanceScoreHeader, SeqDocumentDetails, SeqSecLoginLog,SeqAdvpayment,
+		SeqCollateral, SeqPostings, SeqFinanceScoreHeader, SeqDocumentDetails, SeqAdvpayment,
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
 		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,

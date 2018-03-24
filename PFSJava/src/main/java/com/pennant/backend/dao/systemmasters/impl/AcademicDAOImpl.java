@@ -42,9 +42,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -52,15 +51,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.AcademicDAO;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,10 +66,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
  */
-public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements AcademicDAO {
-	private static Logger				logger	= Logger.getLogger(AcademicDAOImpl.class);
-
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+public class AcademicDAOImpl extends SequenceDao<Academic> implements AcademicDAO {
+	private static Logger				logger	= LogManager.getLogger(AcademicDAOImpl.class);
 
 	public AcademicDAOImpl() {
 		super();
@@ -106,7 +102,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		RowMapper<Academic> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Academic.class);
 
 		try {
-			academic = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			academic = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			academic = null;
@@ -143,7 +139,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		paramSource.addValue("level", level);
 		paramSource.addValue("discipline", discipline);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -154,6 +150,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		return exists;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String save(Academic academic, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -170,7 +167,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 
 		// Get the identity sequence number.
 		if (academic.getAcademicID() <= 0) {
-			academic.setAcademicID(getNextidviewDAO().getNextId("SeqBMTAcademics"));
+			academic.setAcademicID(getNextId("SeqBMTAcademics"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -178,7 +175,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(academic);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -205,7 +202,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(academic);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -231,7 +228,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -242,15 +239,5 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }

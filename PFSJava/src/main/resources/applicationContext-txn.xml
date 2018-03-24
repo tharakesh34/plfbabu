@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
-	<import resource="classpath:pennapps-datasources.xml"/>	
+	<import resource="classpath:applicationContext-ds.xml"/>	
 	<!-- Application Transaction Managers -->
 	<bean id="secTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

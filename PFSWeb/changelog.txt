@@ -1,5 +1,9 @@
 pff 4.7.14, 2018-03-18
 ----------------------
+- upgrade pennapps-core from 0.7.5 to 0.7.6.1 to use framework jdbc module
+
+pff 4.7.14, 2018-03-18
+----------------------
 - Application datasources and transaction-managers are maintain in separate config files.
 - Refer the pennapps-dataources.xml and pennapps-tx.xml instead of re-configure the beans.  
 
