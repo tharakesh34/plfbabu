@@ -5118,8 +5118,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (list != null && list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
-				String field = list.get(i).getAuditField();
-				String fieldValues = list.get(i).getAuditValue();
 				String transType = "";
 				String rcdType = "";
 				Object object = ((AuditDetail) list.get(i)).getModelData();
@@ -5144,14 +5142,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								befImg, object);
 						if (auditDetail.getModelData() instanceof ExtendedFieldRender) {
 							auditDetail.setExtended(true);
-							auditDetail.setAuditField(field);
-							auditDetail.setAuditValue(fieldValues);
-							auditDetailsList.add(auditDetail);
-						} else {
-							auditDetailsList.add(auditDetail);
+							auditDetail.setAuditField(list.get(i).getAuditField());
+							auditDetail.setAuditValue(list.get(i).getAuditValue());
 						}
-
-
+						auditDetailsList.add(auditDetail);
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
