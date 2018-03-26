@@ -50,4 +50,9 @@
 		<dropNotNullConstraint tableName="ADTchequedetail"
 			columnName="emirefno" columnDataType="varchar(20)" />
 	</changeSet>
+	
+	<changeSet id="04" author="Manikanta.p">
+	<modifyDataType columnName="name" newDataType="varchar(50)"
+		tableName="adtlocality"/>
+	</changeSet>
 	</databaseChangeLog>

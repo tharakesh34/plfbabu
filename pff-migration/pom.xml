@@ -193,6 +193,31 @@
 				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>pgpcore</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>org.postgresql.Driver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:postgresql://192.168.1.26:5432/plfcore</pfs.liquibase.url>
+				<pfs.liquibase.liquibaseSchemaName>plf</pfs.liquibase.liquibaseSchemaName>
+				<pfs.liquibase.defaultSchemaName>plf</pfs.liquibase.defaultSchemaName>
+				<pfs.liquibase.username>postgres</pfs.liquibase.username>
+				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>pgpcoreaudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>org.postgresql.Driver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:postgresql://192.168.1.26:5432/plfcore</pfs.liquibase.url>
+				<pfs.liquibase.liquibaseSchemaName>plfaudit</pfs.liquibase.liquibaseSchemaName>
+				<pfs.liquibase.defaultSchemaName>plfaudit</pfs.liquibase.defaultSchemaName>
+				<pfs.liquibase.username>postgres</pfs.liquibase.username>
+				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
