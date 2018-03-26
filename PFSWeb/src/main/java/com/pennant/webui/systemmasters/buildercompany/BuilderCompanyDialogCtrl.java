@@ -59,6 +59,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
+import com.pennant.backend.model.systemmasters.BuilderGroup;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -66,10 +67,10 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -184,10 +185,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
 		this.segmentation.setFilters(segmentFilter);
 		this.groupId.setModuleName("BuilderGroup");
-		this.groupId.setValueColumn("Id");
-		this.groupId.setDescColumn("Name");
-		this.groupId.setValidateColumns(new String[]{"Id"});
 		this.groupId.setMandatoryStyle(true);
+		this.groupId.setValueColumn("Name");
+		this.groupId.setDescColumn("SegmentationName");
+		this.groupId.setValidateColumns(new String[] { "Name" });
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -331,6 +333,24 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
     	logger.debug(Literal.LEAVING);
 	}	
 
+	public void onFulfill$groupId(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = groupId.getObject();
+
+		if (dataObject instanceof String) {
+			this.groupId.setValue(dataObject.toString());
+			this.groupId.setDescription("");
+		} else {
+			BuilderGroup builderGroup = (BuilderGroup) dataObject;
+			if (builderGroup != null) {
+				this.groupId.setAttribute("groupId", builderGroup.getBuilderGroupId());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -348,8 +368,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
   			this.groupId.setDescription("");
   		}else{
   			this.segmentation.setDescription(aBuilderCompany.getSegmentationName());
-  			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupId()));
-  			this.groupId.setDescription(String.valueOf(aBuilderCompany.getGroupIdName()));
+			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupIdName()));
+			this.groupId.setAttribute("groupId", aBuilderCompany.getGroupId());
   		}
   		
   		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
@@ -383,9 +403,15 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		}
 		//Builder Group
 		try {
-			
-			aBuilderCompany.setGroupId(Long.parseLong(this.groupId.getValue()));
-		}catch (WrongValueException we ) {
+			Object object = this.groupId.getAttribute("groupId");
+			if (object != null) {
+				aBuilderCompany.setGroupId(Long.valueOf(object.toString()));
+
+			} else {
+				aBuilderCompany.setGroupId(0);
+			}
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		

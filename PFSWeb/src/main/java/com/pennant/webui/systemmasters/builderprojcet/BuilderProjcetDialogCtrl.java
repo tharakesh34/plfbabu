@@ -59,6 +59,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.backend.util.PennantConstants;
@@ -67,9 +68,9 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -177,9 +178,9 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		
 			this.name.setMaxlength(50);
 			this.builderId.setModuleName("BuilderCompany");
-			this.builderId.setValueColumn("Id");
-			this.builderId.setDescColumn("Name");
-			this.builderId.setValidateColumns(new String[] {"Id"});
+			this.builderId.setValueColumn("Name");
+			this.builderId.setDescColumn("Segmentation");
+			this.builderId.setValidateColumns(new String[] {"Name"});
 			this.builderId.setMandatoryStyle(true);
 			this.apfNo.setMaxlength(20);
 		
@@ -326,8 +327,8 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		if (aBuilderProjcet.isNewRecord()){
 			   this.builderId.setDescription("");
 		}else{
-			this.builderId.setValue(String.valueOf(aBuilderProjcet.getBuilderId()));
-			this.builderId.setDescription(String.valueOf(aBuilderProjcet.getbuilderIdName()));
+			this.builderId.setValue(String.valueOf(aBuilderProjcet.getbuilderIdName()));
+			this.builderId.setAttribute("builderId", aBuilderProjcet.getBuilderId());
 		}
 		this.recordStatus.setValue(aBuilderProjcet.getRecordStatus());
 		
@@ -360,10 +361,19 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		}
 		//Company
 		try {
-			aBuilderProjcet.setBuilderId(Long.parseLong(this.builderId.getValue()));
-		}catch (WrongValueException we ) {
+			Object object = this.builderId.getAttribute("builderId");
+
+			if (object != null) {
+				aBuilderProjcet.setBuilderId(Long.parseLong(object.toString()));
+
+			} else {
+				aBuilderProjcet.setBuilderId(0);
+			}
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		//APF No
 		try {
 		    aBuilderProjcet.setApfNo(this.apfNo.getValue());
@@ -827,6 +837,24 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			logger.debug("Leaving");
 			return processCompleted;
 		}
+
+	public void onFulfill$builderId(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = builderId.getObject();
+
+		if (dataObject instanceof String) {
+			this.builderId.setValue(dataObject.toString());
+			this.builderId.setDescription("");
+		} else {
+			BuilderCompany builderCompany = (BuilderCompany) dataObject;
+			if (builderCompany != null) {
+				this.builderId.setAttribute("builderId", builderCompany.getId());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
 
 		/**
 		 * @param aAuthorizedSignatoryRepository

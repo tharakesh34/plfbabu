@@ -440,10 +440,12 @@ public class PennantJavaUtil {
 				new Object[][] { { "AddrTypeIsActive", "0", 1 } }, 300));
 		
 		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
-		"BuilderGroup_AView" }, masterWF, new String[] {"Id","Name"},null, 350));
+						"BuilderGroup_AView" }, masterWF, new String[] { "Name", "Segmentation" }, null, 350));
 		
 		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
-		"BuilderCompany_AView" }, masterWF, new String[] {"Id","Name","Segmentation","GroupId"},null, 600));
+						"BuilderCompany_AView" }, masterWF, new String[] { "Name", "Segmentation", "GroupIdName" },
+						null,
+						350));
 
 		ModuleUtil.register("BuilderProjcet", new ModuleMapping("BuilderProjcet", BuilderProjcet.class, new String[] { "BuilderProjcet",
 		"BuilderProjcet_AView" }, masterWF, new String[] {"Id","Name","BuilderId","ApfNo"},null, 600));
@@ -490,7 +492,7 @@ public class PennantJavaUtil {
 				new Object[][] { { "EmailTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("EmployerDetail", new ModuleMapping("EmployerDetail", EmployerDetail.class, new String[] {
-				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmployerId", "EmpName" },
+				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmpName", "EmpIndustry" },
 				new Object[][] { { "EmpIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("TakafulProvider", new ModuleMapping("TakafulProvider", TakafulProvider.class,
@@ -797,7 +799,8 @@ public class PennantJavaUtil {
 				masterWF, new String[] { "EntityCode", "EntityDesc" },  new Object[][] { { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
-		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","pANNumber"}, new String[][] { { "Active", "0", "1" } }, 600));
+				"Entity_AView" }, masterWF, new String[] { "EntityCode", "EntityDesc" },
+				new Object[][] { { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("MandateCheckDigit", new ModuleMapping("MandateCheckDigit", MandateCheckDigit.class, new String[] { "MandateCheckDigits",
 		"MandateCheckDigits_AView" }, masterWF, new String[] {"CheckDigitValue","LookUpValue","Active"},null, 600));

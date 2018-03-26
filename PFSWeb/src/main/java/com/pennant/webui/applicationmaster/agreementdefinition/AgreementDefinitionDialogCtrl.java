@@ -740,35 +740,30 @@ public class AgreementDefinitionDialogCtrl extends
 		setValidationOn(true);
 
 		if (!this.aggCode.isReadonly()) {
-			this.aggCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AgreementDefinitionDialog_AggCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.aggCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.aggDesc.isReadonly()) {
-			this.aggDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AgreementDefinitionDialog_AggDesc.value"),
-					null, true));
+			this.aggDesc.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AgreementDefinitionDialog_AggDesc.value"), null, true));
 		}
 
 		if (!this.aggName.isReadonly()) {
-			this.aggName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AgreementDefinitionDialog_AggName.value"),
-					null, true));
+			this.aggName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		if (!this.aggReportName.isReadonly()) {
-			this.aggReportName
-					.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_AgreementDefinitionDialog_AggReportName.value"),
-							null, true));
+			this.aggReportName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AgreementDefinitionDialog_AggReportName.value"), null, true));
 		}
 
 		/*
-		 * if (!this.aggReportPath.isReadonly()){
-		 * this.aggReportPath.setConstraint(new SimpleConstraint(
-		 * PennantConstants.PATH_REGEX, Labels.getLabel(
-		 * "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new String[]{Labels.getLabel(
-		 * "label_AgreementDefinitionDialog_AggReportPath.value")}))); }
+		 * if (!this.aggReportPath.isReadonly()){ this.aggReportPath.setConstraint(new SimpleConstraint(
+		 * PennantConstants.PATH_REGEX, Labels.getLabel( "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new
+		 * String[]{Labels.getLabel( "label_AgreementDefinitionDialog_AggReportPath.value")}))); }
 		 */
 		logger.debug("Leaving");
 	}

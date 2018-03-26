@@ -74,10 +74,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -498,9 +497,6 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-		Filter[] fieldCode = new Filter[1] ;
-		fieldCode[0]= new Filter("Active", 1, Filter.OP_EQUAL);
-		this.entityCode.setFilters(fieldCode);
 	
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);

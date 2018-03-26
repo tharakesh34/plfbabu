@@ -82,10 +82,10 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.framework.security.core.User;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Branch/branchDialog.zul file.
@@ -817,7 +817,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		if (!this.branchSwiftBrnCde.isReadonly()) {
 			this.branchSwiftBrnCde
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBrnCde.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_FL3, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.branchSortCode.isReadonly()) {
 			this.branchSortCode
