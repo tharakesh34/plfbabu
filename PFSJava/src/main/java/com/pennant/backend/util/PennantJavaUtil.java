@@ -192,9 +192,9 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.expenses.LegalExpenses;
+import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
-import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
@@ -594,10 +594,12 @@ public class PennantJavaUtil {
 				"SubSegmentDesc" }, new Object[][] { { "SubSegmentIsActive", "0", 1 } }, 500));
 		
 		ModuleUtil.register("Caste", new ModuleMapping("Caste", Caste.class, new String[] {
-				"Caste", "Caste_AView" }, masterWF, new String[] { "CasteId", "CasteCode", "CasteDesc" }, new String[][] { { "CasteIsActive", "0", "1" } }, 400));
+				"Caste", "Caste_AView" }, masterWF, new String[] { "CasteCode", "CasteDesc" },
+				new Object[][] { { "CasteIsActive", "0", 1 } }, 400));
 		
 		ModuleUtil.register("Religion", new ModuleMapping("Religion", Religion.class, new String[] { "Religion",
-				"Religion_AView" }, masterWF, new String[] { "ReligionId", "ReligionCode","ReligionDesc"}, new String[][] { { "Active", "0", "1" } }, 400));
+				"Religion_AView" }, masterWF, new String[] { "ReligionCode", "ReligionDesc" },
+				new Object[][] { { "Active", "0", 1 } }, 400));
 		
 				
 		/************* Application Masters *************/
@@ -984,8 +986,9 @@ public class PennantJavaUtil {
 				500));
 
 		ModuleUtil.register("CustomerGroup", new ModuleMapping("CustomerGroup", CustomerGroup.class, new String[] {
-				"CustomerGroups", "CustomerGroups_AView" }, customerWF, new String[] { "CustGrpID", "CustGrpCode",
-				"CustGrpDesc" }, new Object[][] { { "CustGrpisActive", "1", 1 } }, 300));
+				"CustomerGroups", "CustomerGroups_AView" }, customerWF, new String[] { "CustGrpCode",
+						"CustGrpDesc" },
+				new Object[][] { { "CustGrpisActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("DedupParm", new ModuleMapping("DedupParm", DedupParm.class, new String[] { "DedupParams",
 				"DedupParams_AView" }, masterWF, new String[] { "QueryCode", "QueryModule" }, null, 300));

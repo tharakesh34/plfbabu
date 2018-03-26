@@ -5118,7 +5118,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (list != null && list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
-
+				String field = list.get(i).getAuditField();
+				String fieldValues = list.get(i).getAuditValue();
 				String transType = "";
 				String rcdType = "";
 				Object object = ((AuditDetail) list.get(i)).getModelData();
@@ -5139,8 +5140,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						// check and change below line for Complete code
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
-						auditDetailsList.add(
-								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
+						AuditDetail auditDetail = new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+								befImg, object);
+						if (auditDetail.getModelData() instanceof ExtendedFieldRender) {
+							auditDetail.setExtended(true);
+							auditDetail.setAuditField(field);
+							auditDetail.setAuditValue(fieldValues);
+							auditDetailsList.add(auditDetail);
+						} else {
+							auditDetailsList.add(auditDetail);
+						}
+
+
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
