@@ -349,7 +349,7 @@
 	<!-- Rest container for SecRoles -->
 	<bean id="wsSecRolessService" class="com.pennanttech.service.impl.SecRolesWebServiceImpl" />
 
-	<jaxrs:server id="secRolesRestService" address="/secRolesRest" publish="false">
+	<jaxrs:server id="secRolesRestService" address="/secRolesRest" publish="true">
 		<jaxrs:serviceBeans>
 			<ref bean="wsSecRolessService" />
 		</jaxrs:serviceBeans>
