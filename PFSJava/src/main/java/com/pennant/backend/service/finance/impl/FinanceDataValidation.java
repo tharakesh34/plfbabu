@@ -191,7 +191,7 @@ public class FinanceDataValidation {
 		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall);
 
 		// validate FinReference
-		ErrorDetail error = validateFinReference(financeDetail.getFinReference(), finScheduleData);
+		ErrorDetail error = validateFinReference(finScheduleData.getFinReference(), finScheduleData);
 		if(error != null) {
 			errorDetails.add(error);
 		}

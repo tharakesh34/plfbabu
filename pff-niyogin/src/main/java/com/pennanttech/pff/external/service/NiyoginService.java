@@ -475,7 +475,10 @@ public abstract class NiyoginService {
 	protected void prepareResponseObj(Map<String, Object> validatedMap, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		if (validatedMap != null) {
-			Map<String, Object> extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			Map<String, Object> extendedMapObject = null;
+			if(financeDetail.getExtendedFieldRender() != null) {
+				extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			}
 			if (extendedMapObject == null) {
 				extendedMapObject = new HashMap<String, Object>();
 			}

@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.extendedfield;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,7 +92,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 
 	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
-	private List<ExtendedFieldDetail> extendedFieldDetailList;
+	private List<ExtendedFieldDetail> extendedFieldDetailList = new ArrayList<ExtendedFieldDetail>(1);
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement

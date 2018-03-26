@@ -796,11 +796,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NPABucketConfiguration",new ModuleMapping("NPABucketConfiguration", NPABucketConfiguration.class, new String[]{"NPABUCKETSCONFIG", "NPABUCKETSCONFIG_AView"}, masterWF,new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("Entities", new ModuleMapping("Entities", Entities.class, new String[] { "Entities", "Entities_AView" },
-				masterWF, new String[] { "EntityCode", "EntityDesc" },  new Object[][] { { "Active", "0", 1 } }, 300));
-		
-		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
-				"Entity_AView" }, masterWF, new String[] { "EntityCode", "EntityDesc" },
-				new Object[][] { { "Active", "0", 1 } }, 300));
+				masterWF, new String[] { "EntityCode", "EntityDesc" },  new Object[][] { { "Active", 0, 1 } }, 300));
+		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity", "Entity_AView" }, 
+				masterWF, new String[] { "EntityCode", "EntityDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("MandateCheckDigit", new ModuleMapping("MandateCheckDigit", MandateCheckDigit.class, new String[] { "MandateCheckDigits",
 		"MandateCheckDigits_AView" }, masterWF, new String[] {"CheckDigitValue","LookUpValue","Active"},null, 600));
@@ -1652,7 +1650,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ExpenseType", new ModuleMapping("ExpenseType", ExpenseType.class, new String[] {
 				"ExpenseTypes", "ExpenseTypes_AView" }, masterWF , new String[] { "ExpenseTypeCode", "ExpenseTypeDesc" },
-				 new String[][] { { "Active", "1", "0" } }, 300));
+				 new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("VehicleDealer", new ModuleMapping("VehicleDealer", VehicleDealer.class, new String[] {
 				"AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF , new String[] {"DealerName","DealerCity" }, null,

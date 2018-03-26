@@ -92,7 +92,10 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		//for Applicant
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		Map<String, Object> extendedMap = null;
+		if(financeDetail.getExtendedFieldRender() != null) {
+			extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		}
 		Map<String, Object> appplicationdata = new HashMap<>();
 		ExperianDedup experianDedupApplicant = new ExperianDedup();
 		experianDedupApplicant.setApplicantType(APPLICANT);

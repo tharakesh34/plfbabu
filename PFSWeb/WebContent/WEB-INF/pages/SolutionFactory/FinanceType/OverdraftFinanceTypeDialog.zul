@@ -410,6 +410,14 @@
 														id="roundingTarget" width="250px" readonly="true" />
 												</hbox>
 											</row>
+											<row id="row_ChequeCaptureReq">
+												<label id="label_FinanceTypeDialog_ChequeAlw"
+													value="${c:l('label_FinanceTypeDialog_ChequeCaptureReq.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="chequeCaptureReq" checked="false" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 									<grid sclass="GridLayoutNoBorder"

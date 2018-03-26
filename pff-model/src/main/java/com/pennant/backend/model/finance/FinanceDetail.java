@@ -204,8 +204,8 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	//Additional Fields
 	//**********************************************************************
-	private ExtendedFieldHeader						extendedFieldHeader;
-	private ExtendedFieldRender						extendedFieldRender;
+	private ExtendedFieldHeader						extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldRender						extendedFieldRender = new ExtendedFieldRender();
 	
 	private HashMap<String, Object> lovDescExtendedFieldValues = new HashMap<String, Object>(1);
 	//WriteoffPayment
