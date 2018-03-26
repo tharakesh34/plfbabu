@@ -1229,5 +1229,11 @@ UNION ALL
 		'qUmCM:rye28f16Z',100,0,'','','Niyogin Authorization Key to connect with Interfaces',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 	</sql>
 </changeSet>
-	</databaseChangeLog>
+
+<changeSet id="29" author="Manikanta.p">
+	<sql>
+		update SEQRMTLOVFIELDDETAIL set seqno=(select max(fieldcodeid) from RMTLOVFIELDDETAIL)
+	</sql>
+</changeSet>
+</databaseChangeLog>
 	
