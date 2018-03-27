@@ -30,7 +30,7 @@ public interface CustomerRESTService {
 	public CustomerDetails createCustomer(@WebParam(name = "customer") CustomerDetails customerDetails)
 			throws ServiceException;
 
-	/*@POST
+	@POST
 	@Path("/customerService/updateCustomer")
 	public WSReturnStatus updateCustomer(@WebParam(name = "customer") CustomerDetails customerDetails)
 			throws ServiceException;
@@ -218,5 +218,5 @@ public interface CustomerRESTService {
 	@DELETE
 	@Path("/customerService/deleteCustomerDocument")
 	public WSReturnStatus deleteCustomerDocument(
-			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;*/
+			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
 }

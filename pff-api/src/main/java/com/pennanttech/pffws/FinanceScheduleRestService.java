@@ -16,8 +16,8 @@ public interface FinanceScheduleRestService {
 	@Path("/loanSchedule/createLoanSchedule")
 	public FinScheduleData createFinanceSchedule(FinScheduleData finScheduleData) throws ServiceException;
 	
-	/*@GET
+	@GET
 	@Path("/loanSchedule/getLoanInquiry/{finReference}")
-	public FinScheduleData getFinanceInquiry(@PathParam("finReference") String finReference) throws ServiceException;*/
+	public FinScheduleData getFinanceInquiry(@PathParam("finReference") String finReference) throws ServiceException;
 
 }
