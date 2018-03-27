@@ -97,8 +97,13 @@ public class FinanceDetailController extends SummaryDetailService {
 			// financeMain details
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
-
-			financeMain.setFinReference(String.valueOf(ReferenceGenerator.generateNewFinRef(true, financeMain)));
+			String finReference = null;
+			if (StringUtils.isBlank(financeMain.getFinReference())) {
+				finReference = String.valueOf(ReferenceGenerator.generateNewFinRef(true, financeMain));
+			} else {
+				finReference = financeMain.getFinReference();
+			}
+			financeMain.setFinReference(finReference);
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeMain.setWorkflowId(0);
 			financeMain.setNewRecord(true);
