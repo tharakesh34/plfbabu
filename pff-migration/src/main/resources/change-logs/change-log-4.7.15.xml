@@ -1235,5 +1235,13 @@ UNION ALL
 		update SEQRMTLOVFIELDDETAIL set seqno=(select max(fieldcodeid) from RMTLOVFIELDDETAIL)
 	</sql>
 </changeSet>
+<changeSet id="30" author="Jayant">
+	<dropSequence sequenceName="SeqMailTemplate"/>
+</changeSet>
+<changeSet id="31" author="Jayant">
+	<createTable tableName="SeqMailTemplate">
+		<column name="Seqno" type="bigint"/>
+	</createTable>
+</changeSet>
 </databaseChangeLog>
 	
