@@ -1240,8 +1240,8 @@
 			rightName="menuItem_ApplicationMaster_CustomerNotesType" /> -->
 		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul" 
 			rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
-		<!-- <menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" 
-			rightName="menuItem_ApplicationMaster_BlacklistCustomer"/> -->
+		<menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" 
+			rightName="menuItem_ApplicationMaster_BlacklistCustomer"/>
 		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" 
 			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
