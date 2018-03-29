@@ -126,6 +126,7 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -481,7 +482,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private  boolean						enquiry    				= false;
 	private	 boolean 						fromApproved;
 	private FinanceProfitDetailDAO          financeProfitDetailDAO;
-	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
+	private boolean chartReportLoaded;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1855,7 +1856,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/** ========================================================= */
 	/** Graph Report Preparation */
 	/** ========================================================= */
-	public void doShowReportChart() {
+	public void doShowReportChart(List<ChartDetail> charts) {
 		logger.debug("Entering ");
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		ChartDetail chartDetail = new ChartDetail();
@@ -1879,7 +1880,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("200px");
 		chartDetail.setiFrameWidth("95%");
-		chartDetailList.add(chartDetail);
+		charts.add(chartDetail);
 		// For Repayments Chart
 		chartsConfig = new ChartsConfig("Payments", "", "", "");
 		chartsConfig.setSetElements(getReportDataForRepayments());
@@ -1898,7 +1899,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		chartDetail.setChartWidth("100%");
 		chartDetail.setiFrameHeight("320px");
 		chartDetail.setiFrameWidth("95%");
-		chartDetailList.add(chartDetail);
+		charts.add(chartDetail);
 		logger.debug("Leaving ");
 	}
 
@@ -2185,9 +2186,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/** new code to display chart by skipping jsps code start */
 	public void onSelect$repayGraphTab(Event event) throws InterruptedException {
-		logger.debug("Entering");
-		doShowReportChart();
-		for (ChartDetail chartDetail : chartDetailList) {
+		logger.debug(Literal.ENTERING);
+
+		if (chartReportLoaded) {
+			return;
+		}
+
+		List<ChartDetail> charts = new ArrayList<>();
+
+		doShowReportChart(charts);
+		for (ChartDetail chartDetail : charts) {
 			String strXML = chartDetail.getStrXML();
 			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
 			strXML = StringEscapeUtils.escapeJavaScript(strXML);
@@ -2196,8 +2204,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/Charts/Chart.zul", tabpanel_graph,
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
-		chartDetailList =  new ArrayList<ChartDetail>(); // Resetting 
-		logger.debug("Leaving");
+
+		chartReportLoaded = true;
+
+		logger.debug(Literal.LEAVING);
 	}
 	/** new code to display chart by skipping jsps code end */
 	// ******************************************************//
