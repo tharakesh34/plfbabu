@@ -22,7 +22,7 @@
 							label="${c:l('label_Filter')}"
 							autodisable="button_MandateList_MandateSearch,print,button_MandateList_NewMandate,btnRefresh,help"
 							tooltiptext="${c:l('button_MandateList_MandateSearch.tooltiptext')}" />
-						<button id="print" height="24px"
+						<button id="print"
 							label="${c:l('label_Print')}"
 							autodisable="button_MandateList_MandateSearch,print,button_MandateList_NewMandate,btnRefresh,help"
 							tooltiptext="${c:l('button_MandateList_PrintList.tooltiptext')}"
@@ -35,7 +35,7 @@
 							label="${c:l('label_New')}"
 							autodisable="button_MandateList_MandateSearch,print,button_MandateList_NewMandate,btnRefresh,help"
 							tooltiptext="${c:l('button_MandateList_NewMandate.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_MandateList_MandateSearch,print,button_MandateList_NewMandate,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />

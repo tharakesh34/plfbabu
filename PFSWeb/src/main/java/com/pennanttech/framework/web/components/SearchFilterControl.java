@@ -122,23 +122,23 @@ public class SearchFilterControl implements Serializable {
 		}
 		return filter;
 	}
-	
+
 	public static void renderOperators(Listbox sortOperator, Operators operators) {
 		sortOperator.setModel(new ListModelList<ValueLabel>(SearchOperator.getOperators(operators)));
 		sortOperator.setItemRenderer(new SearchFiltersRender());
 		sortOperator.setSelectedIndex(0);
 	}
-	
+
 	public static void resetFilters(Component component) {
 		resetValue(component);
 	}
-	
+
 	public static void resetFilters(Component component, Listbox sortOperator) {
 		sortOperator.setSelectedIndex(0);
 
 		resetFilters(component);
 	}
-	
+
 	public void resetFilters() {
 		sortOperator.setSelectedIndex(0);
 
@@ -178,7 +178,7 @@ public class SearchFilterControl implements Serializable {
 		if (component instanceof ExtendedCombobox) {
 			return ((ExtendedCombobox) component).getValue();
 		}
-		
+
 		if (component instanceof Listbox) {
 			Listitem listitem = ((Listbox) component).getSelectedItem();
 			return listitem == null ? "" : listitem.getValue();
@@ -196,37 +196,22 @@ public class SearchFilterControl implements Serializable {
 	}
 
 	private static void resetValue(Component component) {
-		if (component instanceof Combobox) {
-			Combobox combobox = (Combobox) component;
-			Comboitem comboitem = (Comboitem) combobox.getFirstChild();
-			combobox.setSelectedItem(comboitem);
-		}
-
-		if (component instanceof Textbox) {
-			((Textbox) component).setValue("");
-		}
-
-		if (component instanceof Intbox) {
-			((Intbox) component).setValue(null);
-		}
-
-		if (component instanceof Decimalbox) {
-			((Decimalbox) component).setText("");
-		}
-
-		if (component instanceof Checkbox) {
-			((Checkbox) component).setChecked(false);
-		}
-
-		if (component instanceof Listbox) {
-			((Listbox) component).setSelectedIndex(0);
-		}
-
-		if (component instanceof Datebox) {
-			((Datebox) component).setValue(null);
-		}
 		if (component instanceof ExtendedCombobox) {
-		((ExtendedCombobox) component).setValue(null);
+			((ExtendedCombobox) component).setValue(null);
+		} else if (component instanceof Combobox) {
+			((Combobox) component).setSelectedIndex(0);
+		} else if (component instanceof Listbox) {
+			((Listbox) component).setSelectedIndex(0);
+		} else if (component instanceof Textbox) {
+			((Textbox) component).setValue("");
+		} else if (component instanceof Intbox) {
+			((Intbox) component).setValue(null);
+		} else if (component instanceof Decimalbox) {
+			((Decimalbox) component).setText("");
+		} else if (component instanceof Datebox) {
+			((Datebox) component).setValue(null);
+		} else if (component instanceof Checkbox) {
+			((Checkbox) component).setChecked(false);
 		}
 	}
 

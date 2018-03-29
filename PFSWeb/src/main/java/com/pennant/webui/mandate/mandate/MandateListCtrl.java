@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -73,9 +72,9 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -367,7 +366,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
@@ -376,7 +375,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	/**
 	 * Method for Showing Customer Search Window
 	 */
-	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+	private void doSearchCustomerCIF() {
 		logger.debug("Entering");
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
@@ -391,9 +390,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * 
 	 * @param nCustomer
 	 * @param newSearchObject
-	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

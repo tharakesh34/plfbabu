@@ -92,7 +92,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	
 	
 
-	protected List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
+	protected List<SearchFilterControl> searchControls = new ArrayList<>();
 	protected transient PagedListService pagedListService;
 
 	protected AbstractListController() {
@@ -550,7 +550,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	}
 	
 	protected Map<String, Object> getDefaultArguments() {
-		HashMap<String, Object> aruments = new HashMap<String, Object>();
+		HashMap<String, Object> aruments = new HashMap<>();
 		
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
