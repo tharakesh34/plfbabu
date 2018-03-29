@@ -155,9 +155,9 @@
 			<menuItem id="menu_Item_IncomeType"
 				zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"
 				rightName="menuItem_SystemMaster_IncomeType" />
-			<menuItem id="menu_Item_OtherBankFinanceType"
+			<!-- <menuItem id="menu_Item_OtherBankFinanceType"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul"
-				rightName="menuItem_applicationmaster_OtherBankFinanceType" />
+				rightName="menuItem_applicationmaster_OtherBankFinanceType" /> -->
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
 			<menuItem id="menu_Item_BuilderGroup"
