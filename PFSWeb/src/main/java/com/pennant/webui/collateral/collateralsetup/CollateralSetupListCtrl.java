@@ -70,7 +70,6 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -78,10 +77,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.collateral.collateralsetup.model.CollateralSetupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -330,7 +329,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 		// Setting Workflow Details
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(collateralType, 
-				FinanceConstants.FINSER_EVENT_ORG, CollateralConstants.MODULE_NAME);
+				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_COLLATERAL);
 
 		// Workflow Details Setup
 		if (financeWorkFlow != null) {

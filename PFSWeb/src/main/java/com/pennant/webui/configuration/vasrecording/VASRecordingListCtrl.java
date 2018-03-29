@@ -76,15 +76,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.configuration.vasrecording.model.VASRecordingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.framework.core.SearchOperator.Operators;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -370,7 +369,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		// Setting Workflow Details
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-				productCode, FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+				productCode, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_VAS);
 
 		// Workflow Details Setup
 		if (financeWorkFlow != null) {
