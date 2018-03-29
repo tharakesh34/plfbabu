@@ -28,7 +28,7 @@ public class ImplementationConstants {
 	public static final boolean	VALIDATE_CORE_CUST_UPDATE		= false;
 	public static final boolean	ALLOW_COVENANT_TYPES			= true;		// Covenants Allowed or not
 	public static final boolean COLLATERAL_INTERNAL = true; // Which Collateral We are using Internal or Third Party Collaterals
-	public static final boolean	ALLOW_VAS						= false;	// VAS required or not
+	public static final boolean	ALLOW_VAS						= true;	// VAS required or not
 	// F = Administration/Insurance/Other Fees
 	// C = Past due Penalty
 	// I = Profit

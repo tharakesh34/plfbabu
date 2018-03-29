@@ -112,7 +112,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinEvent", finEvent);
-		source.addValue("ModuleName", moduleName);
+		source.addValue("ModuleName", moduleName.toUpperCase());
 
 		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 		try {

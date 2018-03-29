@@ -359,19 +359,21 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 		String remarks = "";
 		for (FinanceReferenceDetail finRefDetail : checkList) {
 			if (!notAllowedToShowMap.containsKey(Long.valueOf(finRefDetail.getFinRefId()))) {
-				for (CheckListDetail checkListDetail : finRefDetail.getLovDesccheckListDetail()) {
-					checkListDetail.setLovDescCheckListDesc(finRefDetail.getLovDescRefDesc());
-					checkListDetail.setLovDescCheckMinCount(finRefDetail.getLovDescCheckMinCount());
-					checkListDetail.setLovDescCheckMaxCount(finRefDetail.getLovDescCheckMaxCount());
-					checkListDetail.setLovDescFinRefDetail(finRefDetail);
-					checkListDetail.setLovDescUserRole(userRole);
-					String key = checkListDetail.getCheckListId() + ";" + checkListDetail.getAnsSeqNo();
-					remarks = prevAnswersMap.get(key) == null ? "" : prevAnswersMap.get(key).getRemarks();
-					checkListDetail.setLovDescRemarks(remarks);
-					checkListDetailsList.add(checkListDetail);
-					ansDescMap.put(key, checkListDetail.getAnsDesc());
-					if (isLoadProcess) {
-						screenLevelRemarks.put(key, checkListDetail.getLovDescRemarks());
+				if (finRefDetail.getLovDesccheckListDetail() != null) {
+					for (CheckListDetail checkListDetail : finRefDetail.getLovDesccheckListDetail()) {
+						checkListDetail.setLovDescCheckListDesc(finRefDetail.getLovDescRefDesc());
+						checkListDetail.setLovDescCheckMinCount(finRefDetail.getLovDescCheckMinCount());
+						checkListDetail.setLovDescCheckMaxCount(finRefDetail.getLovDescCheckMaxCount());
+						checkListDetail.setLovDescFinRefDetail(finRefDetail);
+						checkListDetail.setLovDescUserRole(userRole);
+						String key = checkListDetail.getCheckListId() + ";" + checkListDetail.getAnsSeqNo();
+						remarks = prevAnswersMap.get(key) == null ? "" : prevAnswersMap.get(key).getRemarks();
+						checkListDetail.setLovDescRemarks(remarks);
+						checkListDetailsList.add(checkListDetail);
+						ansDescMap.put(key, checkListDetail.getAnsDesc());
+						if (isLoadProcess) {
+							screenLevelRemarks.put(key, checkListDetail.getLovDescRemarks());
+						}
 					}
 				}
 			}

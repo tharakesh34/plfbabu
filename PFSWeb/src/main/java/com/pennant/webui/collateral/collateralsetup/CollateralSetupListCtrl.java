@@ -266,47 +266,50 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 		// Get the selected entity.
 		CollateralSetup collateralSetup = (CollateralSetup) selectedItem.getAttribute("collateralSetup");
-		
+
 		// Set Workflow Details
 		String userRole = collateralSetup.getNextRoleCode();
-		if(StringUtils.isEmpty(collateralSetup.getRecordType())){
+		if (StringUtils.isEmpty(collateralSetup.getRecordType())) {
 			setWorkflowDetails(collateralSetup.getCollateralType());
-			if(workFlowDetails == null){
+			if (workFlowDetails == null) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
-			
-			if(StringUtils.isEmpty(userRole)){
+
+			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 		}
-					
-		CollateralSetup aCollateralSetup = collateralSetupService.getCollateralSetupByRef(collateralSetup.getCollateralRef(), userRole, false);
+
+		CollateralSetup aCollateralSetup = collateralSetupService
+				.getCollateralSetupByRef(collateralSetup.getCollateralRef(), userRole, false);
 
 		if (aCollateralSetup == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		//Role Code State Checking
-		String nextroleCode = aCollateralSetup.getNextRoleCode();
-		if(StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)){
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=aCollateralSetup.getCollateralRef();
-			errParm[0]=PennantJavaUtil.getLabel("label_CollateralRef")+":"+valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(
-					PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+		// Role Code State Checking
+		String nextroleCode = aCollateralSetup.getNextRoleCode();
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = aCollateralSetup.getCollateralRef();
+			errParm[0] = PennantJavaUtil.getLabel("label_CollateralRef") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
-			
+
 			Events.sendEvent(Events.ON_CLICK, this.btnRefresh, null);
 			logger.debug("Leaving");
 			return;
 		}
-		
+
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CollateralType='" + aCollateralSetup.getCollateralType() + "' AND version=" + aCollateralSetup.getVersion() + " ";
+		String whereCond = " AND CollateralType='" + aCollateralSetup.getCollateralType() + "' AND version="
+				+ aCollateralSetup.getVersion() + " ";
 
 		if (doCheckAuthority(aCollateralSetup, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

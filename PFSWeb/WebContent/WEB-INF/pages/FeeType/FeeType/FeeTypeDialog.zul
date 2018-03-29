@@ -153,7 +153,7 @@
 										<checkbox id="active" />
 									</hbox>
 								</row>
-								<row id="row4">
+								<row id="row6">
 									<label id="label_TaxApplicable"
 										value="${c:l('label_FeeTypeDialog_TaxApplicable.value')}" />
 									<hbox id="hlayout_TaxApplicable">
