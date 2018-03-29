@@ -657,9 +657,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aOtherBankFinanceType.setRecordStatus(String.valueOf(userAction
-					.getSelectedItem().getValue()));
-
+			aOtherBankFinanceType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
