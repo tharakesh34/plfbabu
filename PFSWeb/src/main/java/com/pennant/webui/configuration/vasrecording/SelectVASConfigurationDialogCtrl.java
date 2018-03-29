@@ -84,11 +84,11 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
@@ -303,7 +303,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					this.productType.getValue(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+					this.productType.getValue(), FinanceConstants.FINSER_EVENT_ORG,
+					PennantConstants.WORFLOW_MODULE_VAS);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 
