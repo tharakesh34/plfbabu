@@ -64,4 +64,8 @@
 			columnName="amortzreq" newDataType="citext" />
 	</changeSet>
 	
+	<changeSet id="07" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="AdtFeeTypes"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
 	</databaseChangeLog>
