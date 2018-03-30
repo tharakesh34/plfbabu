@@ -55,4 +55,13 @@
 	<modifyDataType columnName="name" newDataType="varchar(50)"
 		tableName="adtlocality"/>
 	</changeSet>
+	<changeSet id="05" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="ADTFINTYPEVASPRODUCTS"
+			columnName="Mandatory" newDataType="citext" />
+	</changeSet>
+	<changeSet id="06" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="AdtFeeTypes"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+	
 	</databaseChangeLog>
