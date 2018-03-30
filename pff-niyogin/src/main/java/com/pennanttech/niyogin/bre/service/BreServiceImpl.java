@@ -508,7 +508,17 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private VatServiceTaxForms prepareVatServiceTaxForms(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		VatServiceTaxForms forms = new VatServiceTaxForms();
-		forms.setItems(new ArrayList<BreItem>(1));
+		List<BigDecimal> vatList = null;
+		if (extendedMap != null) {
+			vatList = new ArrayList<BigDecimal>(6);
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH1));
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH2));
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH3));
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH4));
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH5));
+			vatList.add(getBigDecimalValue(ExtFieldMapConstants.VAT_MONTH6));
+		}
+		forms.setItems(vatList);
 		logger.debug(Literal.LEAVING);
 		return forms;
 	}
@@ -577,7 +587,17 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private AmtOfCreditTransactions prepareAmtOfCreditTransactions(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		AmtOfCreditTransactions amtOfCreditTransactions = new AmtOfCreditTransactions();
-		amtOfCreditTransactions.setItems(new ArrayList<BreItem>(1));
+		List<BigDecimal> creditTransactions = null;
+		if (extendedMap != null) {
+			creditTransactions = new ArrayList<BigDecimal>(6);
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH1));
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH2));
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH3));
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH4));
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH5));
+			creditTransactions.add(getBigDecimalValue(ExtFieldMapConstants.FUND_RECEIVED_MNTH6));
+		}
+		amtOfCreditTransactions.setItems(creditTransactions);
 		logger.debug(Literal.LEAVING);
 		return amtOfCreditTransactions;
 	}

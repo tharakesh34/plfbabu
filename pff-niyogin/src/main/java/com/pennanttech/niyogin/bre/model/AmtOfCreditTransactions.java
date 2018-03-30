@@ -1,5 +1,6 @@
 package com.pennanttech.niyogin.bre.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,13 +12,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AmtOfCreditTransactions {
 	@XmlElement(name = "item")
-	private List<BreItem> items;
+	private List<BigDecimal> items;
 
-	public List<BreItem> getItems() {
+	public List<BigDecimal> getItems() {
 		return items;
 	}
 
-	public void setItems(List<BreItem> items) {
+	public void setItems(List<BigDecimal> items) {
 		this.items = items;
 	}
+
 }

@@ -77,6 +77,12 @@ public class ExtFieldMapConstants {
 	public static final String	SUNDRY_CREDITORS_YR1						= "SUNDRCREDY1";
 	public static final String	OTH_CURNT_LIABILITIES_YR1					= "OTHCURLIBY1";
 	public static final String	CASH_AND_BANK_YR1							= "CASBNKY1";
+	public static final String	FUND_RECEIVED_MNTH1							= "FUNDSRECEIVEDM1";
+	public static final String	FUND_RECEIVED_MNTH2							= "FUNDSRECEIVEDM2";
+	public static final String	FUND_RECEIVED_MNTH3							= "FUNDSRECEIVEDM3";
+	public static final String	FUND_RECEIVED_MNTH4							= "FUNDSRECEIVEDM4";
+	public static final String	FUND_RECEIVED_MNTH5							= "FUNDSRECEIVEDM5";
+	public static final String	FUND_RECEIVED_MNTH6							= "FUNDSRECEIVEDM6";
 	//PREFIOUS
 	public static final String	CC_OR_OD_UTILIZATION						= "CCODUTILIZATION";
 	public static final String	AVERAGE_BANK_BALANCE						= "AVERAGEBANKBAL";
@@ -86,6 +92,12 @@ public class ExtFieldMapConstants {
 	public static final String	INTEREST_ON_OD_CC							= null;
 	public static final String	FUNDS_RECEIVED								= "FUNDSRECEIVED";
 	public static final String	EMI_BOUNCES_L6M								= "NOOFEMIBOUNCESIN6M";
+	public static final String	VAT_MONTH1									= "VTAMONTH1";
+	public static final String	VAT_MONTH2									= "VTAMONTH2";
+	public static final String	VAT_MONTH3									= "VTAMONTH3";
+	public static final String	VAT_MONTH4									= "VTAMONTH4";
+	public static final String	VAT_MONTH5									= "VTAMONTH5";
+	public static final String	VAT_MONTH6									= "VTAMONTH6";
 
 	// Web/Mobile
 	public static final String	BUSINESS_PREMISES_CUSTOMER					= "BUSINESSPERMISESS";
