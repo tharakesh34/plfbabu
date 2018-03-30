@@ -254,9 +254,10 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				serviceTaskDetail.setRemarks(errorDetail.getCode()+":"+errorDetail.getMessage());
 			}
+		} else {
+			serviceTaskDetail.setStatus("Success");
+			serviceTaskDetail.setRemarks(Labels.getLabel("SERVICETASK_EXECUTED"));
 		}
-		serviceTaskDetail.setStatus("Success");
-		serviceTaskDetail.setRemarks(Labels.getLabel("SERVICETASK_EXECUTED"));
 
 		logServiceTaskDetails(auditHeader, serviceTask, serviceTaskDetail);
 		return taskExecuted;
