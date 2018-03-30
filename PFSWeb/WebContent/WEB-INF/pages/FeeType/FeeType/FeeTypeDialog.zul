@@ -135,7 +135,7 @@
 										<checkbox id="amortzReq" />
 									</hbox>
 								</row>
-								<row id="row4">
+								<row id="row4" visible="false">
 									<label id="label_TAXApplicable"
 										value="${c:l('label_FeeTypeDialog_TAXApplicable.value')}" />
 									<hbox id="hlayout_TAXApplicable">
