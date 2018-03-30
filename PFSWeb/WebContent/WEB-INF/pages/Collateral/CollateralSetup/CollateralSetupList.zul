@@ -183,10 +183,8 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingCollateralSetupList"
-						height="35px" />
+					<paging id="pagingCollateralSetupList" />
 				</south>
-
 			</borderlayout>
 		</window>
 	</window>

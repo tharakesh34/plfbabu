@@ -12,7 +12,6 @@
 package com.pennanttech.framework.web.components;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
@@ -31,11 +30,9 @@ import org.zkoss.zul.Textbox;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.framework.core.SearchOperator;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class SearchFilterControl implements Serializable {
 	private static final long serialVersionUID = 5088276424935815163L;
@@ -146,53 +143,36 @@ public class SearchFilterControl implements Serializable {
 	}
 
 	private static Object getValue(Component component) {
-		Object value = "";
-		if (component instanceof Combobox) {
+		if (component instanceof ExtendedCombobox) {
+			return ((ExtendedCombobox) component).getValue();
+		} else if (component instanceof Combobox) {
 			Comboitem comboitem = ((Combobox) component).getSelectedItem();
+
 			if (comboitem != null) {
 				String selectedValue = comboitem.getValue();
 				if ("#".equals(selectedValue)) {
 					return null;
-				} else {
-
 				}
+
 				return selectedValue;
 			}
-		}
+		} else if (component instanceof Listbox) {
+			Listitem listitem = ((Listbox) component).getSelectedItem();
 
-		if (component instanceof Textbox) {
+			return listitem == null ? "" : listitem.getValue();
+		} else if (component instanceof Textbox) {
 			return ((Textbox) component).getValue();
-		}
-
-		if (component instanceof Intbox) {
+		} else if (component instanceof Intbox) {
 			return ((Intbox) component).getValue();
-		}
-
-		if (component instanceof Decimalbox) {
+		} else if (component instanceof Decimalbox) {
 			return ((Decimalbox) component).getValue();
-		}
-
-		if (component instanceof Checkbox) {
+		} else if (component instanceof Datebox) {
+			return ((Datebox) component).getValue();
+		} else if (component instanceof Checkbox) {
 			return ((Checkbox) component).isChecked() ? 1 : 0;
 		}
-		if (component instanceof ExtendedCombobox) {
-			return ((ExtendedCombobox) component).getValue();
-		}
 
-		if (component instanceof Listbox) {
-			Listitem listitem = ((Listbox) component).getSelectedItem();
-			return listitem == null ? "" : listitem.getValue();
-		}
-
-		if (component instanceof Datebox) {
-			Date date = ((Datebox) component).getValue();
-
-			if (date != null) {
-				return DateUtil.format(date, PennantConstants.DBDateFormat);
-			}
-		}
-
-		return value;
+		return "";
 	}
 
 	private static void resetValue(Component component) {
