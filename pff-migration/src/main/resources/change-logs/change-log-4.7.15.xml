@@ -1243,5 +1243,137 @@ UNION ALL
 		<column name="Seqno" type="bigint"/>
 	</createTable>
 </changeSet>
+
+<changeSet id="32.1" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view feetypes_view;
+drop view feetypes_tview;
+drop view feetypes_aview;
+</sql>
+</changeSet>
+<changeSet id="32" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+<changeSet id="33" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes_Temp"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+	<changeSet id="34" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_aview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+	</createView>
+	</changeSet>
+	<changeSet id="35" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_tview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+	</createView>
+	</changeSet>
+	<changeSet id="36" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_view">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+UNION ALL
+ SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM feetypes_temp
+          WHERE feetypes_temp.feetypeid = t1.feetypeid))
+	</createView>
+	</changeSet>
 </databaseChangeLog>
 	
