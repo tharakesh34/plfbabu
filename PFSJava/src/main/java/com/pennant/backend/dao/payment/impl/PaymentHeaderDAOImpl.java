@@ -321,7 +321,7 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("AdviseType", "2");
+		source.addValue("AdviseType", 2);
 
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		try {

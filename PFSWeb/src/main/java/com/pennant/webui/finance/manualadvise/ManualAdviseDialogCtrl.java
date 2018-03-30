@@ -422,7 +422,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else {
 			filter = new Filter[2];
 			filter[0] = new Filter("ManualAdvice", 1, Filter.OP_EQUAL);
-			filter[1] = new Filter("AdviseType", adviseTypeValue, Filter.OP_EQUAL);
+			filter[1] = new Filter("AdviseType", Integer.parseInt(adviseTypeValue), Filter.OP_EQUAL);
 		}
 		this.feeTypeID.setFilters(filter);
 		this.feeTypeID.setValue("");

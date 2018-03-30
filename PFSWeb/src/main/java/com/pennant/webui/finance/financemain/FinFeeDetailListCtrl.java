@@ -1507,7 +1507,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
 		
-		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
+		boolean readOnly = !isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 		if (finMain.isQuickDisb() && readOnly) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}

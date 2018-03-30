@@ -253,10 +253,6 @@
 							</tabpanel>
 						</tabpanels>
 					</tabbox>
-					</groupbox>
-					</tabpanel>
-					</tabpanels>
-					</tabbox>
 				</center>
 				<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%">

@@ -1488,7 +1488,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		generator.setWindow(this.window_VASRecordingDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(220);
-		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-280)+"px");
 		generator.setCcyFormat(getCcyFormat());
 		if (enqiryModule || isCancelProcess) {
 			generator.setReadOnly(true);

@@ -101,7 +101,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 	private String status;
 
 	private Date clearingdate;
-	private String active;
+	private boolean active;
 
 	private String finReference;
 	private Date clearingDate;
@@ -321,11 +321,11 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 		this.clearingdate = clearingdate;
 	}
 
-	public String getActive() {
+	public boolean getActive() {
 		return active;
 	}
 
-	public void setActive(String active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
