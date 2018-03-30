@@ -102,7 +102,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		if(type.contains("View")){
 			selectSql.append(" AccountSetCode, AccountSetCodeName," );
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, TaxApplicable");
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FeeTypeID =:FeeTypeID");
@@ -167,10 +167,10 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		StringBuilder sql = new StringBuilder("insert into FeeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq, TaxApplicable)");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq)");
 		sql.append(" values(");
 		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq, :TaxApplicable)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq)");
 		
 		// Get the identity sequence number.
 		if (feeType.getId() == Long.MIN_VALUE) {
@@ -202,7 +202,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
 		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
-		sql.append(" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq, TaxApplicable = :TaxApplicable");
+		sql.append(" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ");
 		sql.append(" where FeeTypeID =:FeeTypeID");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

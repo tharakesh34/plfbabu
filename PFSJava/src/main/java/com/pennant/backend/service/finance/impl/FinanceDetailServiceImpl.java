@@ -2256,7 +2256,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
 						ExtendedFieldConstants.MODULE_LOAN, tableType.getSuffix());
-				auditDetails.addAll(details);
+				if(details != null && !details.isEmpty()) {
+					auditDetails.addAll(details);
+				}
 			}
 
 			// Flag Details
@@ -5566,13 +5568,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 			ExtendedFieldHeader extendedFieldHeader = financeDetail.getExtendedFieldHeader();
-			StringBuilder sb = new StringBuilder();
-			sb.append(extendedFieldHeader.getModuleName());
-			sb.append("_");
-			sb.append(extendedFieldHeader.getSubModuleName());
-			sb.append("_ED");
-			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, sb.toString());
-			auditDetails.addAll(details);
+			if(extendedFieldHeader != null) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(extendedFieldHeader.getModuleName());
+				sb.append("_");
+				sb.append(extendedFieldHeader.getSubModuleName());
+				sb.append("_ED");
+				details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, sb.toString());
+				auditDetails.addAll(details);
+			}
 		}
 		
 		for (int i = 0; i < auditDetails.size(); i++) {

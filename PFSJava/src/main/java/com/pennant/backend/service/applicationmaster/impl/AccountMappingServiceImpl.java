@@ -554,7 +554,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], accountMapping.getBefImage(),
+			auditDetails.add(new AuditDetail(auditTranType, i + 2, fields[0], fields[1], accountMapping.getBefImage(),
 					accountMapping));
 		}
 

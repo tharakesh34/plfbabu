@@ -266,20 +266,20 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		//FIXME: How to get RateUtil for Niyogin project
 		try {
 			FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();	
-			
+			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();
+
 			BigDecimal rate = BigDecimal.ZERO;
 			if (finMain.getRepayBaseRate() != null) {
-				RateDetail details = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(),
-						finMain.getRepayMargin(),finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+				RateDetail details = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(),
+						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
 				rate = details.getNetRefRateLoan();
 			} else {
 				rate = finMain.getRepayProfitRate();
 			}
-			finDeatil.getExtendedFieldRender().getMapValues().put("RATE_LEGALDESK", 
-					PennantApplicationUtil.formatRate(rate.doubleValue(), 9));
-			
-			
+			if (finDeatil.getExtendedFieldRender() != null) {
+				finDeatil.getExtendedFieldRender().getMapValues().put("RATE_LEGALDESK",
+						PennantApplicationUtil.formatRate(rate.doubleValue(), 9));
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -300,7 +300,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				String frequencyCode = repayFrq.substring(0, 1);
 				ArrayList<ValueLabel> freequencyList = FrequencyUtil.getFrequency();
 				for (ValueLabel valueLabe : freequencyList) {
-					if (StringUtils.equals(valueLabe.getValue(), frequencyCode)) {
+					if (StringUtils.equals(valueLabe.getValue(), frequencyCode) && finDeatil.getExtendedFieldRender() != null) {
 						finDeatil.getExtendedFieldRender().getMapValues().put("INSTALLMENTTYPE_LEGALDESK",
 								valueLabe.getLabel());
 						break;

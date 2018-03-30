@@ -198,7 +198,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 */
 	private SignersInfo prepareSignersInfo(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		extendedMap = getExtendedMapValues(financeDetail);
 		SignersInfo signersInfo = new SignersInfo();
 		if (extendedMap != null) {
 			signersInfo.setLenders(prepareLendersList(extendedMap));
@@ -312,7 +312,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		FormData formData = new FormData();
 		//TODO: recent requirement coBorrowers not required
 		formData.setCoBorrowers(null);
-		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		Map<String, Object> extendedMap = getExtendedMapValues(financeDetail);
 		String valueDesc = "";
 		String rateOfIntrest = null;
 		String installmentType = null;

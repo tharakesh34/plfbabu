@@ -128,6 +128,9 @@ public class AEAmountCodes {
 	private BigDecimal	cmtAvl				= BigDecimal.ZERO;
 	private BigDecimal	cmtUAmt				= BigDecimal.ZERO;
 	private BigDecimal	cmtUOth				= BigDecimal.ZERO;
+	
+	// Present mode
+	private String		receiptMode;
 
 	public AEAmountCodes() {
 
@@ -989,6 +992,14 @@ public class AEAmountCodes {
 
 	public void setLastSchTds(BigDecimal lastSchTds) {
 		this.lastSchTds = lastSchTds;
+	}
+
+	public String getReceiptMode() {
+		return receiptMode;
+	}
+
+	public void setReceiptMode(String receiptMode) {
+		this.receiptMode = receiptMode;
 	}
 	
 }

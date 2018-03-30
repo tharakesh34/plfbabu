@@ -94,6 +94,8 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
@@ -1559,6 +1561,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = null;
+		FinReceiptData receiptData = null;
 
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -1566,16 +1569,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			financeDetail = ((LiabilityRequest) auditHeader.getAuditDetail().getModelData()).getFinanceDetail();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof RepayData) {
 			financeDetail = ((RepayData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail();
+		}  else if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
+			receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		} else {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		long linkedTranId = Long.MIN_VALUE;
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Date curBDay = DateUtility.getAppDate();
+		
+		// set receipt mode value
+		if(receiptData != null) {
+			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+			if(receiptHeader != null) {
+				amountCodes.setReceiptMode(receiptHeader.getReceiptMode());
+			}
+		}
 
 		aeEvent = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
 				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE, financeMain.getFinStartDate(),

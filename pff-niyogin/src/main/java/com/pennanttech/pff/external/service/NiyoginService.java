@@ -476,18 +476,35 @@ public abstract class NiyoginService {
 		logger.debug(Literal.ENTERING);
 		if (validatedMap != null) {
 			Map<String, Object> extendedMapObject = null;
-			if(financeDetail.getExtendedFieldRender() != null) {
-				extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
-			}
+			extendedMapObject = getExtendedMapValues(financeDetail);
 			if (extendedMapObject == null) {
 				extendedMapObject = new HashMap<String, Object>();
 			}
 			for (Entry<String, Object> entry : validatedMap.entrySet()) {
 				extendedMapObject.put(entry.getKey(), entry.getValue());
 			}
+			if(financeDetail.getExtendedFieldRender() == null) {
+				financeDetail.setExtendedFieldRender(new ExtendedFieldRender());
+			}
 			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected Map<String, Object> getExtendedMapValues(Object object) {
+		Map<String, Object> extendedMapObject = null;
+		if (object instanceof FinanceDetail) {
+			FinanceDetail financeDetail = (FinanceDetail) object;
+			if (financeDetail.getExtendedFieldRender() != null) {
+				extendedMapObject = financeDetail.getExtendedFieldRender().getMapValues();
+			}
+		} else if (object instanceof CustomerDetails) {
+			CustomerDetails customerDetails = (CustomerDetails) object;
+			extendedMapObject = customerDetails.getExtendedFieldRender().getMapValues();
+		} else {
+			extendedMapObject = null;
+		}
+		return extendedMapObject;
 	}
 
 	protected void logInterfaceDetails(InterfaceLogDetail interfaceLogDetail) {

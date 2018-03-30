@@ -75,7 +75,7 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			//bussiness validations
 			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
 
-			if (auditDetail.getErrorDetails() != null) {
+			if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
 					response = new CollateralSetup();
 					response.setReturnStatus(
@@ -93,6 +93,7 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 			logger.error(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
 		}
 
 		//for logging purpose

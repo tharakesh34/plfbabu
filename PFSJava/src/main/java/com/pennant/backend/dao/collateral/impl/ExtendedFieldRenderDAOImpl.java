@@ -297,8 +297,10 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("Value", fieldValue);
 		source.addValue("active", true);
 		//FIXME: Need to change the method implementation
-		if(StringUtils.equals("CustGrpID", column) || StringUtils.equals("EmployerId", column)) {
+		if(StringUtils.equals("CustGrpID", column) || StringUtils.equals("EmpName", column)) {
 			source.addValue("Value", Integer.parseInt(fieldValue));
+			column = "EmployerId";
+			source.addValue("ColumnName", "EmployerId");
 		} else if(StringUtils.equals("DealerName", column)) {
 			tempFix = true;
 			source.addValue("Value", Long.parseLong(fieldValue));

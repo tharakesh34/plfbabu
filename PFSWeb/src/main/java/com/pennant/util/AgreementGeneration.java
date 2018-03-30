@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -1420,7 +1421,12 @@ public class AgreementGeneration implements Serializable {
 		try {
 			ExtendedFieldHeader header = detail.getExtendedFieldHeader();
 			List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
-			Map<String, Object> extendedData = detail.getExtendedFieldRender().getMapValues();
+			Map<String, Object> extendedData = null;
+			if(detail.getExtendedFieldRender() != null) {
+				extendedData = detail.getExtendedFieldRender().getMapValues();
+			} else {
+				extendedData = new WeakHashMap<>();
+			}
 
 			//extended fields in merge
 			String[] keys = extendedData.keySet().toArray(new String[extendedData.size()]);

@@ -150,8 +150,7 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		boolean before=false;
 		boolean workFlow=false;
 		
-		if(auditDetail.getModelData()!=null){
-			
+		if (auditDetail != null && auditDetail.getModelData() != null) {
 			if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_ADD)){
 				after = true;
 			}else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_UPD)){

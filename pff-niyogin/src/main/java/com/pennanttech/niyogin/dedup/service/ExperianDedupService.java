@@ -94,7 +94,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> extendedMap = null;
 		if(financeDetail.getExtendedFieldRender() != null) {
-			extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+			extendedMap = getExtendedMapValues(financeDetail);
 		}
 		Map<String, Object> appplicationdata = new HashMap<>();
 		ExperianDedup experianDedupApplicant = new ExperianDedup();
@@ -166,7 +166,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		}
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Map<String, Object> extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		Map<String, Object> extendedMap = getExtendedMapValues(financeDetail);
 
 		List<Long> coApplicantIDs = new ArrayList<Long>(1);
 		for (JointAccountDetail coApplicant : coapplicants) {

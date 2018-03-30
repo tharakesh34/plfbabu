@@ -1682,7 +1682,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Entering");
 
 		// customer Employment details
-
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			List<CustomerEmploymentDetail> custEmpDetails = customerDetails.getEmploymentDetailsList();
 			if (custEmpDetails != null) {

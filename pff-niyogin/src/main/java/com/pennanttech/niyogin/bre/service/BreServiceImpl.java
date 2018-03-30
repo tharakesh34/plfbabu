@@ -97,7 +97,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		extendedMap = getExtendedMapValues(financeDetail);
 
 		Map<String, Object> appplicationdata = new HashMap<>();
 		BreData breDataRequest = prepareRequestObj(financeDetail);
@@ -157,7 +157,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		logger.debug(Literal.ENTERING);
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		extendedMap = financeDetail.getExtendedFieldRender().getMapValues();
+		extendedMap = getExtendedMapValues(financeDetail);
 		BreData breData = new BreData();
 		breData.setCif(StringUtils.trimToNull(customer.getCustCIF()));
 		breData.setApplication(prepareApplication(financeDetail));
@@ -685,7 +685,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private CoAppBusiness prepareCoAppBusiness(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		CoAppBusiness coAppBusiness = new CoAppBusiness();
-		Map<String, Object> custFormFields = customerDetails.getExtendedFieldRender().getMapValues();
+		Map<String, Object> custFormFields = getExtendedMapValues(customerDetails);
 		if (custFormFields != null) {
 			try {
 
@@ -817,13 +817,19 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	}
 
 	private String getStringValue(String key) {
-		return Objects.toString(extendedMap.get(key), null);
+		String stringValue = null;
+		if(extendedMap != null) {
+			stringValue = Objects.toString(extendedMap.get(key), null);
+		}
+		return stringValue;
 	}
 
 	private int getIntValue(String key) {
 		int intValue = 0;
 		try {
-			intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
+			if(extendedMap != null) {
+				intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
+			}
 		} catch (NumberFormatException e) {
 			logger.error("Exception", e);
 		}
@@ -833,7 +839,9 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private boolean getBooleanValue(String key) {
 		boolean booleanValue = false;
 		try {
-			booleanValue = (Boolean) extendedMap.get(key);
+			if(extendedMap != null) {
+				booleanValue = (Boolean) extendedMap.get(key);
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -844,7 +852,9 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private BigDecimal getBigDecimalValue(String key) {
 		BigDecimal bigDecimalValue = BigDecimal.ZERO;
 		try {
-			bigDecimalValue = (BigDecimal) extendedMap.get(key);
+			if(extendedMap != null) {
+				bigDecimalValue = (BigDecimal) extendedMap.get(key);
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -853,9 +863,11 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	}
 
 	private Date getDateValue(String key) {
-		Date date=null;
+		Date date = null;
 		try {
-			date = (Date) extendedMap.get(key);
+			if (extendedMap != null) {
+				date = (Date) extendedMap.get(key);
+			}
 		} catch (Exception e) {
 			date = null;
 			logger.error("Exception", e);
