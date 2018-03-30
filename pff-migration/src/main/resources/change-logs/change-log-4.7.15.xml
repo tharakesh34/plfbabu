@@ -1375,5 +1375,262 @@ UNION ALL
           WHERE feetypes_temp.feetypeid = t1.feetypeid))
 	</createView>
 	</changeSet>
+	
+	<changeSet id="36.1" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view feetypes_view;
+drop view feetypes_tview;
+drop view feetypes_aview;
+</sql>
+</changeSet>
+<changeSet id="36.2" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view fintypefees_aview;
+drop view fintypefees_view;
+</sql>
+</changeSet>
+
+
+<changeSet id="37" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
+<changeSet id="38" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes_Temp"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
+	<changeSet id="39" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_aview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+	</createView>
+	</changeSet>
+	<changeSet id="40" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_tview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+	</createView>
+	</changeSet>
+	<changeSet id="41" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_view">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+UNION ALL
+ SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM feetypes_temp
+          WHERE feetypes_temp.feetypeid = t1.feetypeid))
+	</createView>
+	</changeSet>
+	<changeSet id="42" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="fintypefees_view">
+	SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees_temp t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+UNION ALL
+ SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM fintypefees_temp
+          WHERE fintypefees_temp.fintype = t1.fintype AND fintypefees_temp.finevent = t1.finevent AND fintypefees_temp.feetypeid = t1.feetypeid AND fintypefees_temp.originationfee = t1.originationfee))
+	</createView>
+	</changeSet>
+	<changeSet id="43" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="fintypefees_aview">
+	SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+	</createView>
+	</changeSet>
 </databaseChangeLog>
 	
