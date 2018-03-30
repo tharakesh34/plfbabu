@@ -164,12 +164,13 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
+		
 		StringBuilder sql = new StringBuilder("insert into FeeTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,");
+		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq)");
 		sql.append(" values(");
-		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable,");
+		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq)");
 		
 		// Get the identity sequence number.
@@ -199,7 +200,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		sql.append(tableType.getSuffix());
 		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
-		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
+		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent ,");
 		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
 		sql.append(" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ");
