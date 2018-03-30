@@ -233,7 +233,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		logger.debug("Entering");
 		
 		FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		custCtgType = main.getLovDescCustCtgCode();
+		custCtgType = getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode();
 		
 		appendFinBasicDetails();
 		
