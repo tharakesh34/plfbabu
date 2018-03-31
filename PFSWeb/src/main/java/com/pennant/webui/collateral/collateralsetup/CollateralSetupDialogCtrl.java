@@ -689,19 +689,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if(StringUtils.equals(structure.getLtvType(), CollateralConstants.FIXED_LTV)){
 				this.bankLtv.setValue(structure.getLtvPercentage());
 			}else if(StringUtils.equals(structure.getLtvType(), CollateralConstants.VARIABLE_LTV)){
-				Object ruleResult = null;
-				
-				HashMap<String, Object> declaredMap = aCollateralSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
-				declaredMap.put("collateralType", aCollateralSetup.getCollateralType());
-				declaredMap.put("collateralCcy", aCollateralSetup.getCollateralCcy());
-				try {
-					ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap, 
-							aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					ruleResult = "0";
-				}
-				this.bankLtv.setValue(ruleResult == null ? "0" : ruleResult.toString());
+				setBankLTV();
 			}
 		}else{
 			this.bankLtv.setValue(aCollateralSetup.getBankLTV());
@@ -748,6 +736,36 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		this.recordStatus.setValue(aCollateralSetup.getRecordStatus());
 		logger.debug("Leaving");
+	}
+	
+	private void setBankLTV(){
+		
+		Object ruleResult = null;
+		CollateralSetup aCollateralSetup = getCollateralSetup();
+		CollateralStructure structure = aCollateralSetup.getCollateralStructure();
+		HashMap<String, Object> declaredMap = aCollateralSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
+		declaredMap.put("ct_collateralType", aCollateralSetup.getCollateralType());
+		declaredMap.put("ct_collateralCcy", aCollateralSetup.getCollateralCcy());
+		if(this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0){
+			
+			ExtendedFieldRender fieldValueDetail = extendedFieldRenderList.get(0);
+			Map<String, Object> detail = fieldValueDetail.getMapValues();
+			String fieldValue = "";
+			if(detail.containsKey("PROPERTYTYPE")){
+				fieldValue = (String) detail.get("PROPERTYTYPE");
+			}
+			declaredMap.put("ct_propertyType", fieldValue);
+		}else{
+			declaredMap.put("ct_propertyType", "");
+		}
+		try {
+			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap, 
+					aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			ruleResult = "0";
+		}
+		this.bankLtv.setValue(ruleResult == null ? "0" : ruleResult.toString());
 	}
 
 	/**
@@ -2765,6 +2783,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		if(noOfUnits > 0){
 			this.unitPrice.setValue(PennantApplicationUtil.formateAmount(collateralValue.divide(
 					new BigDecimal(noOfUnits), ccyFormat, RoundingMode.HALF_DOWN), ccyFormat));
+		}
+		
+		if(StringUtils.equals(getCollateralSetup().getCollateralStructure().getLtvType(), CollateralConstants.VARIABLE_LTV)){
+			setBankLTV();
 		}
 	}
 
