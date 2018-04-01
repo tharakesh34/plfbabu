@@ -231,7 +231,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT T2.FeeTypeCode,T2.FeeTypeDesc,T1.AlwDeviation  From FinTypeFees T1");
 		selectSql.append("  INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID  ");
-		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType AND AND T1.ModuleId = :ModuleId");
+		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType AND T1.ModuleId = :ModuleId");
 		
 
 		logger.debug("selectListSql: " + selectSql.toString());
