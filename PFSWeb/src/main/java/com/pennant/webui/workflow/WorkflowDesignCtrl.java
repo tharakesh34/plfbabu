@@ -179,16 +179,9 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		refreshList();
-		doClose(false);
-	}
-	
-	/**
-	 * Refresh the list page with the filters that are applied in list page.
-	 */
-	private void refreshList() {
-		getWorkFlowListCtrl().doReset();
 		getWorkFlowListCtrl().search();
+
+		doClose(false);
 	}
 
 	// ******************************************************//
