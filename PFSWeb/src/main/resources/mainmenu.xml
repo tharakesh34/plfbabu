@@ -1344,8 +1344,8 @@
 		rightName="menuItem_SolutionFactory_CommitmentWorkFlow" /> -->
 	<!-- <menuItem id="menu_Item_ExtendedFieldDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailList.zul" 
 		rightName="menuItem_SolutionFactory_ExtendedFieldDetail" /> -->
-	<!-- <menuItem id="menu_Item_FacilityReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailList.zul" 
-		rightName="menuItem_SolutionFactory_FacilityReferenceDetail" /> -->
+	<menuItem id="menu_Item_FacilityReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailList.zul" 
+		rightName="menuItem_SolutionFactory_FacilityReferenceDetail" />
 	<!-- <menuItem id="menu_Item_FinanceRepayPriority" zulNavigation="/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityList.zul" 
 		rightName="menuItem_SolutionFactory_FinanceRepayPriority"/> -->
 	<!-- <menuItem id="menu_Item_Calendar" zulNavigation="/WEB-INF/pages/SolutionFactory/Calendar/HolidayCalendar.zul" 
@@ -1370,12 +1370,12 @@
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_Commitment" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentList.zul" 
 		rightName="menuItem_Commitment_Commitment"/> -->
-	<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview" 
-		rightName="menuItem_CommCreditApplicationReview" /> -->
-	<!-- <menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview" 
-		rightName="menuItem_CorpCreditApplicationReview" /> -->
-	<!-- <menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" 
-		rightName="menuItem_CreditApplicationReviewMaintinence"/> -->
+	<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview" 
+		rightName="menuItem_CommCreditApplicationReview" />
+	<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview" 
+		rightName="menuItem_CorpCreditApplicationReview" />
+	<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" 
+		rightName="menuItem_CreditApplicationReviewMaintinence"/>
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 
 		rightName="menuItem_CustomerMasters_ProspectCustomer" /> -->
 	<menuItem id="menu_Item_UpdateCoreCustomer"
@@ -1383,11 +1383,11 @@
 		rightName="menuItem_CustomerMasters_UpdateCoreCustomer" />
 	<!-- <menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" 
 		rightName="menuItem_MandateFileUpload"/> -->
-	<!-- <menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
+	<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
 	<!-- <menuItem id="menu_Item_CustomerAddres" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresList.zul" 
 		rightName="menuItem_CustomerMasters_CustomerAddres" /> -->
-	<!-- <menuItem id="menu_Item_CustomerBalanceSheet" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerBalanceSheet/CustomerBalanceSheetList.zul" 
-		rightName="menuItem_CustomerMasters_CustomerBalanceSheet" /> -->
+	<menuItem id="menu_Item_CustomerBalanceSheet" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerBalanceSheet/CustomerBalanceSheetList.zul" 
+		rightName="menuItem_CustomerMasters_CustomerBalanceSheet" />
 	<!-- <menuItem id="menu_Item_CustomerAdditionalDetail" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail/CustomerAdditionalDetailList.zul" 
 		rightName="menuItem_CustomerMasters_CustomerAdditionalDetail" /> -->
 	<!-- <menuItem id="menu_Item_CorporateCustomerDetail" zulNavigation="/WEB-INF/pages/CustomerMasters/CorporateCustomerDetail/CorporateCustomerDetailList.zul" 
@@ -1506,12 +1506,12 @@
 
 	<!-- Misc... -->
 	<menu id="menu_Category_Facility" rightName="menuCat_Facility">
-		<!-- <menuItem id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
-			rightName="menuItem_Facility_FacilityEnquiry" /> -->
-		<!-- <menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" 
-			rightName="menuItem_Facility_Facility" /> -->
-		<!-- <menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
-			rightName="menuItem_Facility_Corp" /> -->
+		<menuItem id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
+			rightName="menuItem_Facility_FacilityEnquiry" />
+		<menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" 
+			rightName="menuItem_Facility_Facility" />
+		<menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
+			rightName="menuItem_Facility_Corp" />
 	</menu>
 
 	<menu id="menu_Category_StaticParm">
@@ -1540,10 +1540,10 @@
 	</menu>
 
 	<!-- Enquiry -->
-	<!-- <menuItem id="menu_Item_CreditApplicationReviewEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul" 
-		rightName="menuItem_CustomerEnquiry_CreditReviewEnq" /> -->
-	<!-- <menuItem id="menu_Item_CustomerSummary" zulNavigation="/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul" 
-		rightName="menuItem_CustomerEnquiry_CustomerSummaryEnq"/> -->
+	<menuItem id="menu_Item_CreditApplicationReviewEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul" 
+		rightName="menuItem_CustomerEnquiry_CreditReviewEnq" />
+	<menuItem id="menu_Item_CustomerSummary" zulNavigation="/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul" 
+		rightName="menuItem_CustomerEnquiry_CustomerSummaryEnq"/>
 	<!-- <menuItem id="menu_Item_BankBranchEnquiry" zulNavigation="/WEB-INF/pages/BMTMasters/BankBranch/BankBranchList.zul?enqiryModule=Y" 
 		rightName="menuItem_BMTMasters_BankBranchEnquiry" /> -->
 
@@ -1551,8 +1551,8 @@
 		rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
 	<!-- <menuItem id="menu_Item_ChequeHeaderEnquiry" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderEnquiryList.zul?enqiryModule=Y" 
 		rightName="menuItem_pdc_ChequeHeaderEnquiry"/> -->
-	<!--<menuItem id="menu_Item_FacilityApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FacilityApprovalStsInquiryList.zul" 
-		rightName="menuItem_Enquiry_FacilityApproval"/> -->
+	<menuItem id="menu_Item_FacilityApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FacilityApprovalStsInquiryList.zul" 
+		rightName="menuItem_Enquiry_FacilityApproval"/>
 	<!-- <menuItem id="menu_Item_RetailWIFFinanceMain" zulNavigation="/WEB-INF/pages/Finance/WIFFinanceMain/RetailWIFFinanceMainList.zul" 
 		rightName="menuItem_Enquiry_RetailWIF"/> -->
 	<!--<menuItem id="menu_Item_CommercialWIFFinanceMain" zulNavigation="/WEB-INF/pages/Finance/WIFFinanceMain/CommercialWIFFinanceMainList.zul" 
