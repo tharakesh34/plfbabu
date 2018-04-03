@@ -80,7 +80,7 @@
 									value="${c:l('label_ErrorDetailDialog_ErrorCode.value')}" />
 								<hlayout id="hlayout_ErrorCode">
 									<space id="space_ErrorCode"
-										spacing="2px" />
+										spacing="2px" sclass="mandatory" />
 									<uppercasebox id="errorCode"
 										maxlength="10" width="90px" />
 								</hlayout>
@@ -88,7 +88,7 @@
 									value="${c:l('label_ErrorDetailDialog_ErrorLanguage.value')}" />
 								<hlayout id="hlayout_ErrorLanguage">
 									<space id="space_ErrorLanguage"
-										spacing="2px" />
+										spacing="2px" sclass="mandatory" />
 									<textbox id="errorLanguage"
 										maxlength="2" width="30px" />
 								</hlayout>
@@ -98,7 +98,7 @@
 									value="${c:l('label_ErrorDetailDialog_ErrorSeverity.value')}" />
 								<hlayout id="hlayout_ErrorSeverity">
 									<space id="space_ErrorSeverity"
-										spacing="2px" />
+										spacing="2px"  sclass="mandatory"/>
 									<combobox id="errorSeverity"
 										width="200px" />
 								</hlayout>
@@ -106,7 +106,7 @@
 									value="${c:l('label_ErrorDetailDialog_ErrorMessage.value')}" />
 								<hlayout id="hlayout_ErrorMessage">
 									<space id="space_ErrorMessage"
-										spacing="2px" />
+										spacing="2px"  sclass="mandatory"/>
 									<textbox id="errorMessage"
 										maxlength="100" width="400px" />
 								</hlayout>
@@ -117,7 +117,7 @@
 								<hlayout
 									id="hlayout_ErrorExtendedMessage">
 									<space
-										id="space_ErrorExtendedMessage" spacing="2px" />
+										id="space_ErrorExtendedMessage" spacing="2px" sclass="mandatory" />
 									<textbox id="errorExtendedMessage"
 										maxlength="300" multiline="true" rows="4" width="200px" />
 								</hlayout>
