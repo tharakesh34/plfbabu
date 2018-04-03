@@ -87,7 +87,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/Configuration/VASConfiguration/VASConfigurationList.zul file.<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/Configuration/VASConfiguration/VASConfigurationList.zul
+ * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -116,36 +118,36 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	protected Listheader listheader_FulfilOfficerId;
 	protected Listheader listheader_ReferralId;
 	protected Listheader listheader_VasStatus;
-	
+
 	// checkRights
-	protected Button 	btnHelp;
-	protected Button    button_VASRecordingList_NewVASRecording;
-	protected Button 	button_VASRecordingList_VASRecordingSearch;
-	protected Button 	button_VASRecordingList_PrintList;
-	protected Button	btnRefresh;
-	protected Label 	label_VASRecordingList_RecordStatus;
-	protected Label 	label_VASRecordingList_RecordType;
+	protected Button btnHelp;
+	protected Button button_VASRecordingList_NewVASRecording;
+	protected Button button_VASRecordingList_VASRecordingSearch;
+	protected Button button_VASRecordingList_PrintList;
+	protected Button btnRefresh;
+	protected Label label_VASRecordingList_RecordStatus;
+	protected Label label_VASRecordingList_RecordType;
 
- 	protected Textbox 	productCode;
-	protected Listbox 	sortOperator_ProductCode;
+	protected Textbox productCode;
+	protected Listbox sortOperator_ProductCode;
 
-	protected Combobox 	postingAgainst;
-	protected Listbox 	sortOperator_PostingAgainst;
+	protected Combobox postingAgainst;
+	protected Listbox sortOperator_PostingAgainst;
 
-	protected Textbox 	primaryLinkRef;
-	protected Listbox 	sortOperator_PrimaryLinkRef;
+	protected Textbox primaryLinkRef;
+	protected Listbox sortOperator_PrimaryLinkRef;
 
-	protected Textbox 	vasReference;
-	protected Listbox 	sortOperator_VasReference;
+	protected Textbox vasReference;
+	protected Listbox sortOperator_VasReference;
 
-	protected Decimalbox 	fee;
-	protected Listbox 		sortOperator_Fee;
+	protected Decimalbox fee;
+	protected Listbox sortOperator_Fee;
 
-	protected Combobox 	feePaymentMode;
-	protected Listbox 	sortOperator_FeePaymentMode;
+	protected Combobox feePaymentMode;
+	protected Listbox sortOperator_FeePaymentMode;
 
-	protected Datebox 	valueDate;
-	protected Listbox 	sortOperator_ValueDate;
+	protected Datebox valueDate;
+	protected Listbox sortOperator_ValueDate;
 
 	protected Datebox accrualTillDate;
 	protected Listbox sortOperator_AccrualTillDate;
@@ -167,12 +169,13 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	protected Textbox moduleType;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
-	
-	private transient VASRecordingService 	vASRecordingService;
+
+	private transient VASRecordingService vASRecordingService;
 	private transient FinanceWorkFlowService financeWorkFlowService;
-	private transient WorkFlowDetails workFlowDetails  =  null;
-	
+	private transient WorkFlowDetails workFlowDetails = null;
+
 	private String module = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -191,7 +194,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		if ("C".equals(module)) {
-			this.searchObject.addWhereClause("(RecordType IS NULL AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)");
+			this.searchObject.addWhereClause(
+					"(RecordType IS NULL AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)");
 		} else if ("N".equals(module)) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL);
@@ -199,13 +203,13 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			this.searchObject.addFilterAnd(filters);
 		}
 	}
-	
+
 	public void onCreate$window_VASRecordingList(Event event) throws Exception {
 		logger.debug("Entering");
 
-		//Getting moduleName from mainmenu.xml
+		// Getting moduleName from mainmenu.xml
 		module = getArgument("module");
-		
+
 		// Set the page level components.
 		setPageComponents(window_VASRecordingList, borderLayout_VASRecordingList, listBoxVASRecording,
 				pagingVASRecordingList);
@@ -236,6 +240,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		if ("C".equals(module) || "E".equals(module)) {
 			this.button_VASRecordingList_NewVASRecording.setVisible(false);
+		} else {
+			this.button_VASRecordingList_NewVASRecording.setVisible(true);
 		}
 		if ("E".equals(module)) {
 			this.listheader_VasStatus.setVisible(true);
@@ -244,7 +250,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -254,7 +261,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -265,7 +273,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -292,8 +301,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -320,14 +329,15 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 		}
-		
-		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(vasRecording.getVasReference(), userRole, enqiryModule);
+
+		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(vasRecording.getVasReference(),
+				userRole, enqiryModule);
 		if (aVASRecording == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		//Role Code State Checking
+		// Role Code State Checking
 		String nextroleCode = aVASRecording.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
@@ -335,8 +345,9 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			valueParm[0] = aVASRecording.getProductCode();
 			errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
-					errParm, valueParm), getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 
 			Events.sendEvent(Events.ON_CLICK, this.btnRefresh, null);
@@ -360,16 +371,16 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Method for Fetching Dynamic Workflow Details
+	 * 
 	 * @param productCode
 	 */
-	private void setWorkflowDetails(String productCode){
+	private void setWorkflowDetails(String productCode) {
 
 		// Setting Workflow Details
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-				productCode, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_VAS);
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(productCode,
+				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_VAS);
 
 		// Workflow Details Setup
 		if (financeWorkFlow != null) {
@@ -417,9 +428,10 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -445,6 +457,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	public VASRecordingService getVASRecordingService() {
 		return this.vASRecordingService;
 	}
+
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
