@@ -101,6 +101,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankBranchIDName");
+		excludeFields.add("chequeType");
 		return excludeFields;
 	}
 

@@ -83,7 +83,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" headerID, finReference, chequeType, noOfCheques, totalAmount, active, ");
+		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
 		sql.append(type);
@@ -115,7 +115,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" headerID, finReference, chequeType, noOfCheques, totalAmount, active, ");
+		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From CHEQUEHEADER");
@@ -148,7 +148,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" headerID, finReference, chequeType, noOfCheques, totalAmount, active, ");
+		sql.append(" headerID, finReference, noOfCheques, totalAmount, active, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEHEADER");
@@ -182,11 +182,11 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into CHEQUEHEADER");
 		sql.append(tableType.getSuffix());
-		sql.append("(headerID, finReference, chequeType, noOfCheques, totalAmount, active, ");
+		sql.append("(headerID, finReference, noOfCheques, totalAmount, active, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :headerID, :finReference, :chequeType, :noOfCheques, :totalAmount, :active, ");
+		sql.append(" :headerID, :finReference, :noOfCheques, :totalAmount, :active, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		if (chequeHeader.getId() == Long.MIN_VALUE || chequeHeader.getId() == 0) {
@@ -214,7 +214,7 @@ public class ChequeHeaderDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update CHEQUEHEADER");
 		sql.append(tableType.getSuffix());
-		sql.append("  set finReference = :finReference, chequeType = :chequeType, noOfCheques = :noOfCheques, ");
+		sql.append("  set finReference = :finReference, noOfCheques = :noOfCheques, ");
 		sql.append(" totalAmount = :totalAmount, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

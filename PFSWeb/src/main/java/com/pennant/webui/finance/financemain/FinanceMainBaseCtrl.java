@@ -13914,8 +13914,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		if (getChequeDetailDialogCtrl() != null) {
-			boolean isChqCaptureReq = this.financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
-			getChequeDetailDialogCtrl().checkTabDisplay(repymethod, true, isChqCaptureReq);
+			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, true, repymethod);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

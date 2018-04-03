@@ -711,6 +711,27 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+		
+		List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
+		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
+			for (ChequeDetail chequeDetail : chequeDetailList) {
+				if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
+						chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(), chequeDetail.getChequeSerialNo(),
+						TableType.BOTH_TAB)) {
+
+					String[] parameters = new String[3];
+
+					parameters[0] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_BankBranchID.value") + ": "
+							+ chequeDetail.getBankBranchID();
+					parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
+							+ chequeDetail.getAccountNo();
+					parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
+							+ chequeDetail.getChequeSerialNo();
+
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
+				}
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
