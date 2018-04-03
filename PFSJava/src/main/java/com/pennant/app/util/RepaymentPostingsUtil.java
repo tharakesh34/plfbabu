@@ -368,8 +368,8 @@ public class RepaymentPostingsUtil implements Serializable {
 
 			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, valueDate,postDate, linkedTranId,
 					rpyTotal);
-			scheduleMap.remove(scheduleDetail.getSchDate());
-			scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
+			scheduleMap.remove(DateUtility.getSqlDate(scheduleDetail.getSchDate()));
+			scheduleMap.put(DateUtility.getSqlDate(scheduleDetail.getSchDate()), scheduleDetail);
 		}
 
 		//Reset Finance Schedule Details
