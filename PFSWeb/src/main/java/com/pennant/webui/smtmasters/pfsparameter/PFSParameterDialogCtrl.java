@@ -894,8 +894,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			if (doProcess(aPFSParameter, tranType)) {
 				
 				//Parameter Updation in Map Details
-				SysParamUtil.updateParamDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
-				
+				SysParamUtil.setParmDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
