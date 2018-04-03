@@ -308,9 +308,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			if (rs != null) {
 				rs.close();
 			}
-			PreparedStatement stmt = (PreparedStatement) resultList.get(1);
-			if (stmt != null) {
-				stmt.close();
+			if(resultList != null) {
+				PreparedStatement stmt = (PreparedStatement) resultList.get(1);
+				if (stmt != null) {
+					stmt.close();
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);

@@ -96,14 +96,6 @@
 		<artifactId>json-path</artifactId>
 		<version>2.4.0</version>
 	</dependency>
-
-		<!-- Data-Engine -->
-		<dependency>
-			<groupId>com.pennanttech.framework.components</groupId>
-			<artifactId>data-engine</artifactId>
-			<version>2.1.7</version>
-		</dependency>
-		 
 	</dependencies>
 
 </project>
