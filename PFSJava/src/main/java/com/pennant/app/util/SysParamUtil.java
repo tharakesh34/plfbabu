@@ -44,6 +44,7 @@ package com.pennant.app.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -167,10 +168,27 @@ public class SysParamUtil {
 
 	public static void updateParamDetails(String code, String value) {
 		logger.debug(Literal.ENTERING);
+		setParmDetails(code, value);
 		systemParameterService.update(code, value, "");
 		logger.debug(Literal.LEAVING);
 	}
 
+
+	private static HashMap<String, PFSParameter> parmDetails = null;
+	public static void setParmDetails(String code, String value) {
+		logger.debug("Entering");
+		if (parmDetails != null) {
+			PFSParameter pfsParameter = parmDetails.get(code);
+			if (pfsParameter != null) {
+				parmDetails.remove(code);
+				pfsParameter.setSysParmValue(value);
+				parmDetails.put(code, pfsParameter);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 	/**
 	 * Get the List of System Parameters
 	 * 
