@@ -68,4 +68,15 @@
 		<modifyDataType tableName="AdtFeeTypes"
 			columnName="taxapplicable" newDataType="citext" />
 	</changeSet>
+	
+	<changeSet id="08" author="Ganesh.p">
+		<addColumn tableName="ADTCHEQUEDETAIL">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="09" author="Ganesh.p">
+		<dropColumn tableName="ADTCHEQUEHEADER" columnName="chequetype"/>
+	</changeSet>
+	
 	</databaseChangeLog>

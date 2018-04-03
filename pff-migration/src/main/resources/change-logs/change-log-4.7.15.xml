@@ -1855,5 +1855,273 @@ UNION ALL
           WHERE limitheader_temp.headerid = t1.headerid))
 		</createView>
 	</changeSet>
+	
+		<changeSet id="44" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL_TEMP">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="45" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="46" author="Ganesh,p">
+ 		<addNotNullConstraint tableName="CHEQUEDETAIL_TEMP" columnName="chequetype"/>
+	 </changeSet>
+	 
+	 <changeSet id="47" author="Ganesh,p">
+ 		<addNotNullConstraint tableName="CHEQUEDETAIL" columnName="chequetype"/>
+	 </changeSet>
+	
+	<changeSet id="48" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_view">
+ 	SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail_temp t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+UNION ALL
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequedetail_temp
+          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid))
+	</createView>
+</changeSet>
+
+<changeSet id="49" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_aview">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+	</createView>
+</changeSet>
+
+	<changeSet id="50" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequeheader_view;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="51" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequeheader_aview;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="52" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequedetailmaintain_view;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Ganesh.p">
+		<dropColumn tableName="CHEQUEHEADER_TEMP" columnName="chequetype"/>
+	</changeSet>
+	
+	<changeSet id="54" author="Ganesh.p">
+		<dropColumn tableName="CHEQUEHEADER" columnName="chequetype"/>
+	</changeSet>
+	
+	<changeSet id="55" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequeheader_view">
+ 	 SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader_temp t1
+UNION ALL
+ SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequeheader_temp
+          WHERE chequeheader_temp.headerid = t1.headerid))
+	</createView>
+</changeSet>
+
+<changeSet id="56" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequeheader_aview">
+ 	SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+	</createView>
+</changeSet>
+
+	<changeSet id="57" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetailmaintain_view">
+ 	 SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader_temp t1
+     JOIN financemain t2 ON t1.finreference = t2.finreference
+UNION ALL
+ SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+    JOIN financemain t2 ON t1.finreference = t2.finreference
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequeheader_temp
+          WHERE chequeheader_temp.headerid = t1.headerid))
+	</createView>
+</changeSet>
+	
 </databaseChangeLog>
 	
