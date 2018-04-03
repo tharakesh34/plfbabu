@@ -76,7 +76,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 		super();
 	}
 	
-	public AuditHeader Save(AuditHeader auditHeader) {
+	public AuditHeader save(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		auditHeader=businessValidation(auditHeader);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();

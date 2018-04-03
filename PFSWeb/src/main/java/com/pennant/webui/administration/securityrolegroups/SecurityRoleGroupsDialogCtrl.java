@@ -85,10 +85,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityRoleGroups/SecurityRoleGroupsDialog.zul
@@ -772,7 +772,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				auditHeader = getSecurityRoleGroupsService().Save(auditHeader);
+				auditHeader = getSecurityRoleGroupsService().save(auditHeader);
 				auditHeader = ErrorControl.showErrorDetails(
 						this.win_SecRoleGroupsDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
