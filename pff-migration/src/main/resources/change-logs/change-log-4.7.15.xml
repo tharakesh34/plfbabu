@@ -1285,7 +1285,7 @@ drop view feetypes_aview;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 	</createView>
 	</changeSet>
 	<changeSet id="35" author="Sreekanth" dbms="postgresql">
@@ -1314,7 +1314,7 @@ drop view feetypes_aview;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes_temp t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 	</createView>
 	</changeSet>
 	<changeSet id="36" author="Sreekanth" dbms="postgresql">
@@ -1343,7 +1343,7 @@ drop view feetypes_aview;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes_temp t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 UNION ALL
  SELECT t1.feetypeid,
     t1.feetypecode,
@@ -1369,7 +1369,7 @@ UNION ALL
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
   WHERE NOT (EXISTS ( SELECT 1
            FROM feetypes_temp
           WHERE feetypes_temp.feetypeid = t1.feetypeid))
@@ -1425,7 +1425,7 @@ drop view fintypefees_view;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 	</createView>
 	</changeSet>
 	<changeSet id="40" author="Sreekanth" dbms="postgresql">
@@ -1454,7 +1454,7 @@ drop view fintypefees_view;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes_temp t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 	</createView>
 	</changeSet>
 	<changeSet id="41" author="Sreekanth" dbms="postgresql">
@@ -1483,7 +1483,7 @@ drop view fintypefees_view;
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes_temp t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
 UNION ALL
  SELECT t1.feetypeid,
     t1.feetypecode,
@@ -1509,7 +1509,7 @@ UNION ALL
     t2.accountsetcodename,
     t1.amortzreq
    FROM feetypes t1
-     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid::numeric
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
   WHERE NOT (EXISTS ( SELECT 1
            FROM feetypes_temp
           WHERE feetypes_temp.feetypeid = t1.feetypeid))
@@ -1682,6 +1682,177 @@ UNION ALL
 			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
 			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+	<changeSet id="45" author="Jayant">
+		<createView viewName="limitheader_aview" replaceIfExists="true">
+			SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+   		FROM limitheader t1
+		     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+		     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+		     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+		     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+		     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+		     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+		</createView>
+	</changeSet>
+	<changeSet id="46" author="Jayant">
+		<createView viewName="limitheader_view" replaceIfExists="true">
+		SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+	   FROM limitheader_temp t1
+	     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+	     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+	     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+	     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+	     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+	     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+	     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+		UNION ALL
+		 SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+  	 FROM limitheader t1
+	     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+	     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+	     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+	     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+	     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+	     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+	     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+ 		WHERE NOT (EXISTS ( SELECT 1
+           FROM limitheader_temp
+          WHERE limitheader_temp.headerid = t1.headerid))
 		</createView>
 	</changeSet>
 </databaseChangeLog>
