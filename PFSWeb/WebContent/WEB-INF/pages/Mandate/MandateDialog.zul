@@ -175,6 +175,8 @@
 									<hbox>
 										<currencyBox id="maxLimit" />
 									</hbox>
+							  </row >	
+							   <row >		
 									<label id = "label_AmountInWords" value="${c:l('label_MandateDialog_AmtInWords.value')}"/>
 									<hbox>
 										<space spacing="2px"/>
