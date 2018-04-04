@@ -65,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -713,8 +714,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		}
 		
 		List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
+		boolean isListContainsPDC = false;
 		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
+				if(StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)){
+					isListContainsPDC=true;
+				}
 				if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
 						chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(), chequeDetail.getChequeSerialNo(),
 						TableType.BOTH_TAB)) {
@@ -730,6 +735,17 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 				}
+			}
+		}
+
+		//if finance Payment Method is PDC and there is no PDC cheques.
+		String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)) {
+			if (!isListContainsPDC) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
+				parameters[1] = PennantJavaUtil.getLabel("Label_PDC_Cheque");
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", parameters, null));
 			}
 		}
 

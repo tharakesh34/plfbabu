@@ -99,12 +99,10 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 	// Search Fields
 	protected Textbox					finReference;
-	protected Combobox					chequeType;	
 	protected Intbox					noOfCheques;
 	protected Textbox					totalAmount;
 
 	protected Listbox					sortOperator_FinReference;
-	protected Listbox					sortOperator_ChequeType;
 	protected Listbox					sortOperator_NoOfCheques;
 	protected Listbox					sortOperator_TotalAmount;
 
@@ -146,8 +144,6 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 		registerField("headerID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
-				Operators.STRING);
-		registerField("chequeType", listheader_ChequeType, SortOrder.NONE, chequeType, sortOperator_ChequeType,
 				Operators.STRING);
 		registerField("noOfCheques", listheader_NoOfCheques, SortOrder.NONE, noOfCheques, sortOperator_NoOfCheques,
 				Operators.NUMERIC);

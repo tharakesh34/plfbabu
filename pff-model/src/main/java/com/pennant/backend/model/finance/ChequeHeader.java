@@ -70,7 +70,6 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	private long								headerID			= 0;
 	private String								finReference;
-	private String								chequeType;
 	private int									noOfCheques;
 	private BigDecimal							totalAmount;
 	private boolean								active				= false;
@@ -101,7 +100,6 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankBranchIDName");
-		excludeFields.add("chequeType");
 		return excludeFields;
 	}
 
@@ -135,14 +133,6 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-
-	public String getChequeType() {
-		return chequeType;
-	}
-
-	public void setChequeType(String chequeType) {
-		this.chequeType = chequeType;
 	}
 
 	public int getNoOfCheques() {

@@ -84,8 +84,6 @@
 						<listhead sizable="true">
 							<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto" 
 								hflex="min"  />
-							<listheader id="listheader_ChequeType" label="${c:l('listheader_ChequeType.label')}" sort="auto" 
-								hflex="min"  />
 							<listheader id="listheader_NoOfCheques" label="${c:l('listheader_NoOfCheques.label')}" sort="auto" 
 								align="right"
 								hflex="min"  />
