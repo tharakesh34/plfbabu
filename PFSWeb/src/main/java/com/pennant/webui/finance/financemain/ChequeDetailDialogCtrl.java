@@ -283,6 +283,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.chequeType.setSclass(PennantConstants.mandateSclass);
 		this.chequeSerialNo.setMaxlength(6);
 		this.accNumber.setMaxlength(15);
 		this.noOfChequesCalc.setMaxlength(2);
@@ -744,16 +745,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// cheque Type
-		try {
-			if (!this.chequeType.isDisabled()
-					&& getComboboxValue(this.chequeType).equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.chequeType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_ChequeDetailDialog_ChequeType.value") }));
+		if (!this.chequeType.isDisabled() && chequeHeader.isNew()) {
+			try {
+				chequeHeader.setChequeType(this.chequeType.getValue().toString());
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
-			chequeHeader.setChequeType(getComboboxValue(this.chequeType));
-
-		} catch (WrongValueException we) {
-			wve.add(we);
 		}
 		// noOfCheques
 		try {
@@ -884,8 +881,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		// Mandate Type
-		if (!this.chequeType.isDisabled()) {
+		// cheque Type
+		if ((!this.chequeType.isDisabled() && getChequeHeader().isNew()) || onclickGenBtn) {
 			this.chequeType.setConstraint(new StaticListValidator(chequeTypeList,
 					Labels.getLabel("label_ChequeDetailDialog_ChequeType.value")));
 		}
@@ -1309,8 +1306,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			int emiRefCount = 0;
 			for (ChequeDetail chequeDetail : chequeDetails) {
 				List<Listcell> list = listitem.getChildren();
-				Listcell chkSerial = (Listcell) list.get(0);
-				Listcell extListCell = (Listcell) list.get(1);
+				Listcell chkSerial = (Listcell) list.get(1);
+				Listcell extListCell = (Listcell) list.get(2);
 				ExtendedCombobox extendedCombobox = (ExtendedCombobox) extListCell.getFirstChild();
 
 				// validate cheque serial number
@@ -1410,7 +1407,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		@SuppressWarnings("unchecked")
 		List<Object> list1 = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list1.get(0);
-		String emiDate = (String) list1.get(4);
+		String emiDate = (String) list1.get(3);
 		chequeDetail.seteMIRefNo(emiDate);
 		
 		if (StringUtils.isBlank(chequeDetail.getRecordType())) {
@@ -1443,6 +1440,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 		for (Listitem listitem : listbox.getItems()) {
 			List<Listcell> list = listitem.getChildren();
+			Listcell chequeType = list.get(0);
 			Listcell chequeSerialNo = list.get(1);
 
 			chequeDetail = getObject(Integer.valueOf(chequeSerialNo.getLabel()), oldList);
@@ -1452,7 +1450,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				chequeDetail.setNewRecord(true);
 				chequeDetail.setRecordType(PennantConstants.RCD_ADD);
 			}
-
+			chequeDetail.setChequeType(chequeType.getLabel());
 			chequeDetail.setChequeSerialNo(Integer.valueOf(chequeSerialNo.getLabel()));
 			Listcell bankbranchid = list.get(2);
 			ExtendedCombobox bankbrachid = (ExtendedCombobox) bankbranchid.getFirstChild();
@@ -1482,7 +1480,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					CurrencyUtil.getFormat(curField));
 			chequeDetail.setAmount(chequeAmt);
 			chequeDetail.setChequeCcy(SysParamUtil.getAppCurrency());
-			chequeDetail.setChequeType(this.chequeType.getSelectedItem().getValue().toString());
 
 			if (newRecord) { //only for new records
 				for(ChequeDetail document:getChequeDocuments()) {
@@ -1519,7 +1516,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
-		Object[] rvddata = (Object[]) list.get(3);
+		Object[] rvddata = (Object[]) list.get(2);
 		Listitem listitem = (Listitem) rvddata[0];
 		
 		this.listBoxChequeDetail.removeItemAt(listitem.getIndex());
