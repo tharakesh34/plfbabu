@@ -2129,6 +2129,240 @@ UNION ALL
           WHERE chequeheader_temp.headerid = t1.headerid))
 	</createView>
 </changeSet>
+
+	<changeSet id="58" author="Sriram">
+		<createTable tableName="ManualDeviations">
+		<column name="DeviationID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="Code" type="varchar(20)">
+			<constraints unique="true"/>
+		</column>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Categorization" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Severity" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0">
+			<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
 	
+	<changeSet id="59" author="Sriram">
+		<createTable tableName="ManualDeviations_Temp">
+		<column name="DeviationID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="Code" type="varchar(20)">
+			<constraints unique="true"/>
+		</column>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Categorization" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Severity" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0">
+			<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="60" author="Sriram">
+		<addUniqueConstraint tableName="ManualDeviations" constraintName="ManualDeviations_UK_Code" columnNames="Code" initiallyDeferred="true" />
+		<addUniqueConstraint tableName="ManualDeviations_Temp" constraintName="ManualDeviations_Temp_UK_Code" columnNames="Code" initiallyDeferred="true" />
+	</changeSet>
+	<changeSet id="61" author="Sriram">
+		<createSequence sequenceName="SeqManualDeviations" startValue="1"
+			 maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="62" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="63" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+	</createView>
+	</changeSet>
+	<changeSet id="64" author="Sriram">
+		<sql>
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'MANUALDEVIATION_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'MANUALDEVIATION_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode IN('MANUALDEVIATION_MAKER','MANUALDEVIATION_APPROVER')) And RightId in(Select rightid from secrights where page IN ('ManualDeviationDialog','ManualDeviationList'));
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode IN('MANUALDEVIATION_MAKER','MANUALDEVIATION_APPROVER')) And RightId in(Select rightid from secrights where rightname = 'menuItem_Applicationmaster_ManualDeviation');
+		Delete from SecGroups where GrpCode = 'MANUALDEVIATION_MAKER';
+		Delete from SecGroups where GrpCode = 'MANUALDEVIATION_APPROVER';
+		Delete from SecRights where Page In('ManualDeviationList','ManualDeviationDialog');
+		Delete from SecRights where RightName = 'menuItem_Applicationmaster_ManualDeviation';
+		
+		
+		INSERT INTO SecGroups Values ((select max(grpid)+1 from SecGroups), 'MANUALDEVIATION_MAKER', 'WF Maker for ManualDeviation', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroups Values ((select max(grpid)+1 from SecGroups), 'MANUALDEVIATION_APPROVER', 'WF Approver for ManualDeviation', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),0,'menuItem_Applicationmaster_ManualDeviation','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationList_PrintList','ManualDeviationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationList_NewManualDeviation','ManualDeviationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnNew','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnEdit','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnDelete','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnSave','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Code','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Description','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Module','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Categorization','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Severity','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Active','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='menuItem_Applicationmaster_ManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationList_PrintList'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationList_NewManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnNew'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnEdit'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Code'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Description'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Categorization'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Severity'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Active'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_APPROVER' ), (select rightid  from SecRights WHERE RightName='menuItem_Applicationmaster_ManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_APPROVER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		INSERT INTO SecRoleGroups Values((select max(rolegrpid)+1 from SecRoleGroups), (select grpid from SecGroups Where grpcode = 'MANUALDEVIATION_MAKER'),(select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups Values((Select max(rolegrpid)+1 from SecRoleGroups), (select grpid from SecGroups Where grpcode = 'MANUALDEVIATION_APPROVER' ), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	<changeSet id="65" author="Sriram">
+		<dropView viewName="ManualDeviations_View"/>
+		<dropView viewName="ManualDeviations_AView"/>
+	</changeSet>
+	<changeSet id="66" author="Sriram">
+		<modifyDataType tableName="ManualDeviations" columnName="Categorization" newDataType="bigint"/>
+		<modifyDataType tableName="ManualDeviations_Temp" columnName="Categorization" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="67" author="Sriram">
+		<modifyDataType tableName="ManualDeviations" columnName="Severity" newDataType="bigint"/>
+		<modifyDataType tableName="ManualDeviations_Temp" columnName="Severity" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="68" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="69" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+	</createView>
+	</changeSet>
+	<changeSet id="70" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="71" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+	</createView>
+	</changeSet>
+	<changeSet id="72" author="Sriram">
+	<sql>
+		Delete from REPORTLIST where code = 'ManualDeviation';
+		INSERT INTO REPORTLIST  Values ('ManualDeviation','ManualDeviation','listheader_Code.label,listheader_Description.label,listheader_Module.label,listheader_Categorization.label,listheader_Severity.label,listheader_Active.label',
+		'code,description,module,categorizationName,severityName,active','String,String,String,String,String,boolean',' ','ReportList06','Deviations','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
 	

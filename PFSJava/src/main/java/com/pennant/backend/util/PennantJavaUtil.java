@@ -111,6 +111,7 @@ import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
+import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
@@ -803,6 +804,17 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MandateCheckDigit", new ModuleMapping("MandateCheckDigit", MandateCheckDigit.class, new String[] { "MandateCheckDigits",
 		"MandateCheckDigits_AView" }, masterWF, new String[] {"CheckDigitValue","LookUpValue","Active"},null, 600));
 
+		ModuleUtil.register("ManualDeviation", new ModuleMapping("ManualDeviation", ManualDeviation.class, new String[] { "ManualDeviations",
+		"ManualDeviations_AView" }, masterWF, new String[] {"Code","Description","Module"},new Object[][] { { "Active", "0", 1 } }, 600));
+		
+		ModuleUtil.register("MDEVCAT", new ModuleMapping("MDEVCAT", LovFieldDetail.class,
+				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
+				new String[][] { { "FieldCode", "0", "MDEVCAT" } }, 400));
+		
+		ModuleUtil.register("MDEVSEV", new ModuleMapping("MDEVSEV", LovFieldDetail.class,
+				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
+				new String[][] { { "FieldCode", "0", "MDEVSEV" } }, 400));
+		
 		/************* Accounts *************/
 
 		ModuleUtil.register("Accounts",

@@ -214,6 +214,9 @@
 			<menuItem id="menu_Item_Currency"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"
 				rightName="menuItem_ApplicationMaster_Currency" />
+			<menuItem id="menu_Item_ManualDeviation"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/ManualDeviation/ManualDeviationList.zul"
+				rightName="menuItem_Applicationmaster_ManualDeviation"/>
 			<menuItem id="menu_Item_DocumentType"
 				zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
 				rightName="menuItem_SystemMaster_DocumentType" />

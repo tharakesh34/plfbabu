@@ -5213,4 +5213,17 @@
 		scope="prototype">
 		<property name="activityLogService" ref="activityLogService" />
 	</bean>	
+	
+		<!-- ManualDeviation -->
+	<bean id="manualDeviationListCtrl"
+			class="com.pennant.webui.applicationmaster.manualdeviation.ManualDeviationListCtrl"
+			parent="basisListCtrl" scope="prototype">
+		<property name="manualDeviationService" ref="manualDeviationService" />
+	</bean>
+	<bean id="manualDeviationDialogCtrl"
+			class="com.pennant.webui.applicationmaster.manualdeviation.ManualDeviationDialogCtrl"
+			parent="basisCtrl" scope="prototype">
+		<property name="manualDeviationService" ref="manualDeviationService" />
+	</bean>
+	
 </beans>

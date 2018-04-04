@@ -69,7 +69,7 @@
 			columnName="taxapplicable" newDataType="citext" />
 	</changeSet>
 	
-	<changeSet id="08" author="Ganesh.p">
+	<!-- <changeSet id="08" author="Ganesh.p">
 		<addColumn tableName="ADTCHEQUEDETAIL">
 			<column name="chequetype" type="VARCHAR(8)"></column>
 		</addColumn>
@@ -77,6 +77,42 @@
 	
 	<changeSet id="09" author="Ganesh.p">
 		<dropColumn tableName="ADTCHEQUEHEADER" columnName="chequetype"/>
+	</changeSet> -->
+	<changeSet id="10" author="Sriram">
+		<createTable tableName="AdtManualDeviations">
+		<column name="AUDITID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITDATE" type="datetime">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITSEQ" type="int">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITIMAGE" type="varchar(1)">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="Code" type="varchar(20)"/>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)"/>
+		<column name="Categorization" type="varchar(10)"/>
+		<column name="Severity" type="varchar(10)"/>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0"/>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
 	</changeSet>
-	
+	<changeSet id="11" author="Sriram">
+		<modifyDataType tableName="AdtManualDeviations" columnName="Categorization" newDataType="bigint"/>
+		<modifyDataType tableName="AdtManualDeviations" columnName="Severity" newDataType="bigint"/>
+	</changeSet>
 	</databaseChangeLog>
