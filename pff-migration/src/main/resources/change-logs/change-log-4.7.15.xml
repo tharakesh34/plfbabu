@@ -1243,7 +1243,14 @@ UNION ALL
 		<column name="Seqno" type="bigint"/>
 	</createTable>
 </changeSet>
-
+<changeSet id="32" author="lakshmi.n">
+	<sql>
+		update rbfielddetails set modulecode ='Customer' where modulecode ='Customers' ;
+		update rbfielddetails set modulecode ='PartnerBank' where modulecode ='PARTNERBANKS';
+		update rbfielddetails set modulecode ='Branch' where modulecode ='RMTBranches';
+		update rbfielddetails set modulecode ='Currency' where modulecode ='RMTCurrencies';
+	</sql>
+</changeSet>
 <changeSet id="32.1" author="Sreekanth" dbms="postgresql">
 <sql>
 drop view feetypes_view;
