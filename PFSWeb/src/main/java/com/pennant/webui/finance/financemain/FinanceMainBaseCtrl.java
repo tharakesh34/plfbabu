@@ -2770,7 +2770,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (rpMthds.length > 0) {
 				List<String> list = Arrays.asList(rpMthds);
 				for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
-					if (list.contains(rpyMthd.getValue().trim())) {
+					if (list.contains(rpyMthd.getValue().trim())
+							&& !StringUtils.equals(rpyMthd.getValue().trim(), FinanceConstants.REPAYMTH_PDC)) {
 						rpyMethodList.add(rpyMthd);
 					}
 				}
@@ -13913,9 +13914,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
 		
-		if (getChequeDetailDialogCtrl() != null) {
+		/*if (getChequeDetailDialogCtrl() != null) {
 			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, true, repymethod);
-		}
+		}*/
 		logger.debug("Leaving" + event.toString());
 	}
 

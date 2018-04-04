@@ -837,17 +837,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					logger.error("Exception: ", e);
 				}
 				if (parenttab != null) {
-					String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-					String alwRepayMethods = financeDetail.getFinScheduleData().getFinanceType().getAlwdRpyMethods();
 					boolean isChqCaptureReq = financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
-					if (chequeHeader.isNew() || StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)) {
-						checkTabDisplay(financeDetail, false, finRepayMethod);
+					if (isChqCaptureReq) {
+						checkTabDisplay(financeDetail, false);
 					} else if (chequeHeader.getChequeDetailList() != null
 							&& !chequeHeader.getChequeDetailList().isEmpty()) {
-						finRepayMethod = chequeHeader.getChequeDetailList().get(0).getChequeType();
-						checkTabDisplay(financeDetail, false, finRepayMethod);
-					} else if (containsPDC(alwRepayMethods) || isChqCaptureReq) {
-						checkTabDisplay(financeDetail, false, finRepayMethod);
+						checkTabDisplay(financeDetail, true);
 					}
 				}
 				// Header toolbar not required in origination
@@ -1587,43 +1582,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * having chequeheader details then also the tab is visible.
 	 * 
 	 * @param financeDetail
-	 * @param onchange
+	 * @param isContainPrvsCheques
 	 * @param finRepayMethod
 	 */
-	public void checkTabDisplay(FinanceDetail financeDetail, boolean onchange, String finRepayMethod) {
+	public void checkTabDisplay(FinanceDetail financeDetail, boolean isContainPrvsCheques) {
 		logger.debug(Literal.ENTERING);
 		boolean isChqCaptureReq = financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
-		String alwRepayMethods = financeDetail.getFinScheduleData().getFinanceType().getAlwdRpyMethods();
-		boolean isrepayMthdContainsPDC = containsPDC(alwRepayMethods);
-		String repayMethod = StringUtils.trimToEmpty(finRepayMethod);
 
-		if (isChqCaptureReq || isrepayMthdContainsPDC || StringUtils.equals(repayMethod, FinanceConstants.REPAYMTH_PDC)
-				|| StringUtils.equals(repayMethod, FinanceConstants.REPAYMTH_UDC)) {
+		if (isChqCaptureReq || isContainPrvsCheques) {
 			this.parenttab.setVisible(true);
 			String chequetype = "";
-			if (!isChqCaptureReq && !isrepayMthdContainsPDC) {
-				this.chequeType.setDisabled(true);
-				this.btnGen.setDisabled(true);
-			} else if (isChqCaptureReq && isrepayMthdContainsPDC) {
-				this.chequeType.setDisabled(false);
-			} else {
-				if (isChqCaptureReq) {
-					chequetype = FinanceConstants.REPAYMTH_UDC;
-				} else if (isrepayMthdContainsPDC) {
-					chequetype = FinanceConstants.REPAYMTH_PDC;
-				}
-				this.chequeType.setDisabled(true);
-			}
 			fillComboBox(this.chequeType, chequetype, chequeTypeList, "");
-			if (StringUtils.equals(repayMethod, FinanceConstants.REPAYMTH_PDC)) {
-				isPDC = true;
-			} else {
-				isPDC = false;
-			}
 		} else {
 			this.parenttab.setVisible(false);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1638,27 +1610,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method to check whether the finance type allowpaymentMethods contains PDC or not.
-	 * 
-	 * @param finrepayMethods
-	 * @return
-	 */
-	private boolean containsPDC(String finrepayMethods) {
-		boolean isrepayMthdContainsPDC = false;
-		if (StringUtils.isNotBlank(finrepayMethods)) {
-			String[] rpMthds = finrepayMethods.trim().split(",");
-			if (rpMthds.length > 0) {
-				for (int i = 0; i < rpMthds.length; i++) {
-					if (StringUtils.equals(rpMthds[i], FinanceConstants.REPAYMTH_PDC)) {
-						isrepayMthdContainsPDC = true;
-						break;
-					}
-				}
-			}
-		}
-		return isrepayMthdContainsPDC;
-	}
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
