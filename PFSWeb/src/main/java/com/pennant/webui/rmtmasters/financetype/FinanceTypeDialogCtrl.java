@@ -5007,7 +5007,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void onChange$cbfinProductType(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if (this.cbfinProductType.getSelectedItem() != null) {
+		if (this.cbfinProductType.getSelectedItem() != null &&
+				!StringUtils.equals(getComboboxValue(this.cbfinProductType), PennantConstants.List_Select)) {
 			this.allowRIAInvestment.setChecked(false);
 			String productCtg = getProductService().getProductCtgByProduct(this.cbfinProductType.getSelectedItem().getValue().toString());
 			getFinanceType().setProductCategory(productCtg);
