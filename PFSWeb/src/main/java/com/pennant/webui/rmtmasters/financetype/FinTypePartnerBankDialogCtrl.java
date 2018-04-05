@@ -666,6 +666,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
 			this.paymentModesList = PennantStaticListUtil.getPaymentTypes(false);
+		} else {
+			this.paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
 		}
 
 		fillComboBox(this.paymentMode, "", paymentModesList, "");
