@@ -240,9 +240,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		if ("C".equals(module) || "E".equals(module)) {
 			this.button_VASRecordingList_NewVASRecording.setVisible(false);
-		} else {
-			this.button_VASRecordingList_NewVASRecording.setVisible(true);
-		}
+		} 
 		if ("E".equals(module)) {
 			this.listheader_VasStatus.setVisible(true);
 		}
