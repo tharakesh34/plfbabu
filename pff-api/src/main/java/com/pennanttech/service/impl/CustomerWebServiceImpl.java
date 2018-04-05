@@ -168,16 +168,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
+		
 		// customer validations
-		Customer customer = null;
-		if (StringUtils.isNotBlank(customerDetails.getCustCIF())) {
-			customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDetails.getCustCIF();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
-			}
+		WSReturnStatus status = validateCustomerCIF(customerDetails.getCustCIF());
+		if(status != null) {
+			return status;
 		}
+		
 		// for logging purpose 
 		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
@@ -2346,6 +2343,32 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			}
 		}
 		return logFields;
+	}
+	
+	/**
+	 * Method for validate customer CIF
+	 * 
+	 * @param custCIF
+	 * @return
+	 */
+	private WSReturnStatus validateCustomerCIF(String custCIF) {
+		WSReturnStatus returnStatus = null;
+		if (StringUtils.isNotBlank(custCIF)) {
+			int mainCount = customerDetailsService.getCustomerCountByCIF(custCIF, "");
+			if (mainCount == 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = custCIF;
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}
+
+			int tempCount = customerDetailsService.getCustomerCountByCIF(custCIF, "_Temp");
+			if (tempCount > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = custCIF;
+				return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+			}
+		}
+		return returnStatus;
 	}
 	
 	@Autowired

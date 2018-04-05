@@ -86,7 +86,7 @@ public interface CustomerDetailsService {
 
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
 	
-	int getCustomerCountByCIF(String custCIF);
+	int getCustomerCountByCIF(String custCIF, String type);
 	
 	boolean getCustomerByCoreBankId(String custCoreBank);
 

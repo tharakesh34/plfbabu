@@ -1689,7 +1689,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		customer.setCustCIF(custCIF);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT COUNT(*) FROM Customers ");
+		selectSql.append("SELECT COUNT(*) FROM Customers");
+		selectSql.append(StringUtils.trimToEmpty(type) ); 
 		selectSql.append(" WHERE CustCIF = :CustCIF");
 
 		logger.debug("SelectSql: " + selectSql.toString());

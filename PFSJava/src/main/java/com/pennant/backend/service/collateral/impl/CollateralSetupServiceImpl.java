@@ -2232,7 +2232,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
 			if (thirdPartyCollateral != null) {
 				for (CollateralThirdParty thirdPartyCust : thirdPartyCollateral) {
-					int rcdCount = customerDetailsService.getCustomerCountByCIF(thirdPartyCust.getCustCIF());
+					int rcdCount = customerDetailsService.getCustomerCountByCIF(thirdPartyCust.getCustCIF(), "");
 					if (rcdCount <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = thirdPartyCust.getCustCIF();
@@ -2247,7 +2247,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 				// validate co-owner cif
 				if (coOwnerDetail.isBankCustomer()) {
-					int rcdCount = customerDetailsService.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF());
+					int rcdCount = customerDetailsService.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF(), "");
 					if (rcdCount <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = coOwnerDetail.getCoOwnerCIF();

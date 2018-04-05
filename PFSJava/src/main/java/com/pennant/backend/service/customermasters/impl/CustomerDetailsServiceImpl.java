@@ -5554,8 +5554,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public int getCustomerCountByCIF(String custCIF) {
-		return getCustomerDAO().getCustomerCountByCIF(custCIF, "");
+	public int getCustomerCountByCIF(String custCIF, String type) {
+		return getCustomerDAO().getCustomerCountByCIF(custCIF, type);
 	}
 
 	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {
