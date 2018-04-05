@@ -115,4 +115,39 @@
 		<modifyDataType tableName="AdtManualDeviations" columnName="Categorization" newDataType="bigint"/>
 		<modifyDataType tableName="AdtManualDeviations" columnName="Severity" newDataType="bigint"/>
 	</changeSet>
+	<changeSet id="12" author="Sriram">
+		<addColumn tableName="AdtBMTproduct">
+		<column name="allowDeviations" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="13" author="Sriram">
+		<createTable tableName="AdtProductDeviations">
+		<column name="AUDITID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITDATE" type="datetime">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITSEQ" type="int">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITIMAGE" type="varchar(1)">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="ProductDevID" type="bigint"/>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)"/>
+		<column name="Version" type="int" defaultValue="0"/>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	
 	</databaseChangeLog>

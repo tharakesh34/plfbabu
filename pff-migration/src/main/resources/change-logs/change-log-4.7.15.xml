@@ -2364,5 +2364,129 @@ UNION ALL
 		'code,description,module,categorizationName,severityName,active','String,String,String,String,String,boolean',' ','ReportList06','Deviations','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 	</sql>
 	</changeSet>
+	<changeSet id="75" author="Sriram">
+		<addColumn tableName="BMTproduct">
+		<column name="AllowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="76" author="Sriram">
+		<addColumn tableName="BMTproduct_Temp">
+		<column name="AllowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="77" author="Sriram">
+		<comment>Add AllowDeviation Column</comment>
+		<createView viewName="BMTproduct_View" replaceIfExists="true">
+		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t1.AllowDeviation
+   		FROM    BMTproduct_Temp t1
+		UNION ALL
+ 		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid, t1.AllowDeviation
+   		FROM 	BMTproduct t1
+  		WHERE NOT (EXISTS ( SELECT 1 FROM BMTproduct_Temp WHERE productcode = t1.productcode))
+		</createView>
+	</changeSet>
+	<changeSet id="78" author="Sriram">
+		<comment>Add AllowDeviation Column</comment>
+		<createView viewName="BMTproduct_AView" replaceIfExists="true">
+ 		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid, t1.AllowDeviation
+   		FROM 	BMTproduct t1
+		</createView>
+	</changeSet>
+	<changeSet id="79" author="Sriram">
+		<createTable tableName="ProductDeviations">
+		<column name="ProductDevID" type="bigint">
+		<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)"/>
+		<column name="Version" type="int" defaultValue="0">
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="80" author="Sriram">
+		<createTable tableName="ProductDeviations_Temp">
+		<column name="ProductDevID" type="bigint">
+		<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)">
+		</column>
+		<column name="Version" type="int" defaultValue="0">
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="81" author="Sriram">
+		<addForeignKeyConstraint constraintName="FK_ProductDeviations" 	
+			baseTableName="ProductDeviations" baseColumnNames="DeviationID"	
+			referencedColumnNames="DeviationID"	referencedTableName="ManualDeviations" />
+	</changeSet>
+	<changeSet id="82" author="Sriram">
+		<addForeignKeyConstraint constraintName="FK_ProdDeviations_Temp"
+			baseTableName="ProductDeviations_Temp" baseColumnNames="DeviationID"
+			referencedColumnNames="DeviationID"	referencedTableName="ManualDeviations" />
+	</changeSet>
+	<changeSet id="83" author="Sriram">
+		<createSequence sequenceName="SeqProductDeviations" startValue="1"  maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+ 	<changeSet id="84" author="Sriram">
+ 	<createView viewName="ProductDeviations_View" replaceIfExists="true">
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations_Temp T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID					
+		UNION ALL
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID 
+		WHERE       NOT EXISTS (SELECT 1 FROM ProductDeviations_Temp WHERE ProductDevID = T1.ProductDevID)
+	</createView>	
+	</changeSet>	
+ 	<changeSet id="85" author="Sriram">
+ 	<createView viewName="ProductDeviations_AView" replaceIfExists="true">
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID 
+	</createView>	
+	</changeSet>
+	<changeSet id="86" author="Sriram">
+		<sql>
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode ='PRODUCT_MAKER') And RightId in(Select rightid from SecRights where rightName in('ProductDialog_allowDeviation','ProductDialog_btnManualDeviation'));
+		Delete from SecRights where RightName In('ProductDialog_allowDeviation','ProductDialog_btnManualDeviation');
+		
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ProductDialog_allowDeviation','ProductDialog',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ProductDialog_btnManualDeviation','ProductDialog',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'PRODUCT_MAKER'), (select rightid  from SecRights WHERE RightName='ProductDialog_allowDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'PRODUCT_MAKER'), (select rightid  from SecRights WHERE RightName='ProductDialog_btnManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+ 	</changeSet>	
 </databaseChangeLog>
 	
