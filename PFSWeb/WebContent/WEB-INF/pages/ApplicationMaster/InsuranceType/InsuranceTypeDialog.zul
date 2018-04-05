@@ -99,7 +99,7 @@
 									<space id="space_InsuranceTypeDesc" sclass="mandatory"
 										spacing="2px" />
 									<textbox id="insuranceTypeDesc"
-										maxlength="50" width="450px" />
+										maxlength="50" width="100px" />
 								</hbox>
 							</row>
 						</rows>
