@@ -287,7 +287,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		Date hldEMIMaxAlwdDays = DateUtility.addDays((Date) this.holdEMIFromDate.getSelectedItem().getValue(),
 				SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
-		if (getFinScheduleData().getFinanceType().getFrequencyDays() != null) {
+		if (StringUtils.isNotBlank(getFinScheduleData().getFinanceType().getFrequencyDays())) {
 			String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
 			int hldEMIMaxAlwdMnth = DateUtility.getMonth(hldEMIMaxAlwdDays);
 			int hldEMIMaxAlwdYear = DateUtility.getYear(hldEMIMaxAlwdDays);
