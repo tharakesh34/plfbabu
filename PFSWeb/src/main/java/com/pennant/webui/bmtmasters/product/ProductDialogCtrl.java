@@ -44,9 +44,12 @@ package com.pennant.webui.bmtmasters.product;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -59,9 +62,12 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -73,6 +79,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.util.PennantConstants;
@@ -84,9 +91,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.productAsset.model.ProductAssetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
  * This is the controller class for the
@@ -140,6 +148,15 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	private List<ProductAsset> productAssetList = new ArrayList<ProductAsset>();
 	private PagedListWrapper<ProductAsset> productAssetPagedListWrapper;
+	
+	//Added Manual Deviation Details
+	protected Checkbox allowDeviation;
+	protected Textbox manualDeviations;
+	protected Label label_ProductDialog_ManualDeviations;
+	protected Hbox hbox_Deviations;
+	protected Button btnManualDeviation;
+	
+	private List<ProductDeviation> productDeviationDetails = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -398,6 +415,10 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 		fillComboBox(this.productCategory, aProduct.getProductCategory(), PennantStaticListUtil.getProductCategories(), "");
 		doFillProductAsset(aProduct.getProductAssetList());
+		//Manual Deviations
+		this.allowDeviation.setChecked(aProduct.isAllowDeviation());
+		allowManualDeviation();
+		doFillProductDeviationDetails(aProduct.getProductDeviationDetails());
 		logger.debug("Leaving");
 	}
 
@@ -429,7 +450,13 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		aProduct.setAllowDeviation(this.allowDeviation.isChecked());
+		try {
+			List<String> deviationList = Arrays.asList(this.manualDeviations.getValue().split(","));
+			fetchFlagDetals(deviationList);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -513,6 +540,10 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 							PennantStaticListUtil.getProductCategories(),
 							Labels.getLabel("label_ProductDialog_ProductCategory.value")));
 		}
+		//Manual Deviation
+		if (!this.btnManualDeviation.isDisabled()) {
+			this.manualDeviations.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductDialog_ManualDeviations.value"), null, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -525,6 +556,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productCode.setConstraint("");
 		this.productDesc.setConstraint("");
 		this.productCategory.setConstraint("");
+		this.manualDeviations.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -549,6 +581,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productCode.setErrorMessage("");
 		this.productDesc.setErrorMessage("");
 		this.productCategory.setErrorMessage("");
+		this.manualDeviations.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -624,8 +657,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		}
 
 		this.productDesc.setReadonly(isReadOnly("ProductDialog_productDesc"));
-		this.productCategory
-				.setDisabled(isReadOnly("ProductDialog_productCategory"));
+		this.productCategory.setDisabled(isReadOnly("ProductDialog_productCategory"));
+		readOnlyComponent(isReadOnly("ProductDialog_allowDeviation"), this.allowDeviation);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -653,7 +686,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productCode.setReadonly(true);
 		this.productDesc.setReadonly(true);
 		this.productCategory.setDisabled(true);
-
+		this.btnManualDeviation.setDisabled(true);
+		this.allowDeviation.setDisabled(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -676,6 +710,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.productCode.setValue("");
 		this.productDesc.setValue("");
 		this.productCategory.setValue("");
+		this.manualDeviations.setValue("");
+		this.allowDeviation.setChecked(false);
 		logger.debug("Leaving");
 	}
 
@@ -694,6 +730,12 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		doSetValidation();
 		// fill the Product object with the components data
 		doWriteComponentsToBean(aProduct);
+		
+		if (CollectionUtils.isNotEmpty(getProductDeviationDetails())) {
+			aProduct.setProductDeviationDetails(getProductDeviationDetails());
+		} else {
+			aProduct.setProductDeviationDetails(null);
+		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
@@ -1090,6 +1132,146 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	protected String getReference() {
 		return String.valueOf(this.product.getProductCode());
 	}
+	
+	/**
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnManualDeviation(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+
+		this.manualDeviations.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductDialog, "ManualDeviation",
+				this.manualDeviations.getValue(), null);
+		
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.manualDeviations.setValue(details);
+		}
+
+		logger.debug("Leaving  " + event.toString());
+
+	}
+	
+	/**
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCheck$allowDeviation(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		allowManualDeviation();
+		logger.debug("Leaving  " + event.toString());
+
+	}
+	
+	private void allowManualDeviation(){
+		logger.debug("Entering ");
+		if (this.allowDeviation.isChecked()) {
+			readOnlyComponent(isReadOnly("ProductDialog_btnManualDeviation"), this.btnManualDeviation);
+		} else {
+			this.manualDeviations.setValue("");
+			readOnlyComponent(true, this.btnManualDeviation);
+
+			
+		}
+		logger.debug("Leaving ");
+	}
+	/**
+	 * Method Used for set list of values been class to components Product Deviation list
+	 * 
+	 * @param Product
+	 */
+	public void doFillProductDeviationDetails(List<ProductDeviation> productDeviationDetails) {
+		logger.debug("Entering");
+
+		setProductDeviationDetails(productDeviationDetails);
+		if (productDeviationDetails == null || productDeviationDetails.isEmpty()) {
+			return;
+		}
+		String tempDeviationCode = "";
+		for (ProductDeviation flagDetail : productDeviationDetails) {
+			if (!StringUtils.equals(flagDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				String deviationCode = flagDetail.getDeviationCode();
+				if (StringUtils.isEmpty(tempDeviationCode)) {
+					tempDeviationCode = deviationCode;
+				} else {
+					tempDeviationCode = tempDeviationCode.concat(",").concat(deviationCode);
+				}
+			}
+		}
+		this.manualDeviations.setValue(tempDeviationCode);
+
+		logger.debug("Entering");
+	}
+
+	/**
+	 * Method for Used for render the Data from List
+	 * 
+	 * @param cmtFlagDetailList
+	 */
+	private void fetchFlagDetals(List<String> deviationList) {
+		logger.debug("Entering");
+		Map<String, ProductDeviation> flagMap = new HashMap<>();
+		
+		if (this.productDeviationDetails == null) {
+			this.productDeviationDetails = new ArrayList<>();
+		}
+		for (ProductDeviation deviationDetail : productDeviationDetails) {
+			flagMap.put(String.valueOf(deviationDetail.getDeviationCode()), deviationDetail);
+		}
+		for (String deviationCode : deviationList) {
+			if (StringUtils.isEmpty(deviationCode)) {
+				continue;
+			}
+			// Check object is already exists in saved list or not
+			if (flagMap.containsKey(deviationCode)) {
+				// Do Nothing
+
+				//Removing from map to identify existing modifications
+				boolean isDelete = false;
+				if (this.userAction.getSelectedItem() != null) {
+					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+						isDelete = true;
+					}
+				}
+				if (!isDelete) {
+					flagMap.remove(deviationCode);
+				}
+			} else {
+				ProductDeviation productDeviation = new ProductDeviation();
+				productDeviation.setDeviationCode(deviationCode);
+				productDeviation.setNewRecord(true);
+				productDeviation.setVersion(1);
+				productDeviation.setRecordType(PennantConstants.RCD_ADD);
+
+				this.productDeviationDetails.add(productDeviation);
+			}
+		}
+
+		//Removing unavailable records from DB by using Work flow details
+		if (flagMap.size() > 0) {
+			for (ProductDeviation deviation : productDeviationDetails) {
+				if (flagMap.containsKey(deviation.getDeviationCode())) {
+
+					if (StringUtils.isBlank(deviation.getRecordType())) {
+						deviation.setNewRecord(true);
+						deviation.setVersion(deviation.getVersion() + 1);
+						deviation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else {
+						if (!StringUtils.equals(deviation.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+							deviation.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+						}
+					}
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1155,5 +1337,13 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	public void setProductAssetList(List<ProductAsset> productAssetList) {
 		this.productAssetList = productAssetList;
+	}
+
+	public List<ProductDeviation> getProductDeviationDetails() {
+		return productDeviationDetails;
+	}
+
+	public void setProductDeviationDetails(List<ProductDeviation> productDeviationDetails) {
+		this.productDeviationDetails = productDeviationDetails;
 	}
 }

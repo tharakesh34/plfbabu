@@ -2438,11 +2438,11 @@ UNION ALL
 		<column name="WorkflowId" type="bigint"/>
 		</createTable>	
 	</changeSet>
-	<changeSet id="81" author="Sriram">
+	<!-- <changeSet id="81" author="Sriram">
 		<addForeignKeyConstraint constraintName="FK_ProductDeviations" 	
 			baseTableName="ProductDeviations" baseColumnNames="DeviationID"	
 			referencedColumnNames="DeviationID"	referencedTableName="ManualDeviations" />
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="82" author="Sriram">
 		<addForeignKeyConstraint constraintName="FK_ProdDeviations_Temp"
 			baseTableName="ProductDeviations_Temp" baseColumnNames="DeviationID"
@@ -2487,6 +2487,13 @@ UNION ALL
 		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		</sql>
+ 	</changeSet>
+ 	<changeSet id="87" author="Sriram">
+ 		<sql>
+ 		Delete From BMTLovFieldCode where FieldCode IN('MDEV_CAT','MDEV_SEV');
+		INSERT INTO BMTLovFieldCode VALUES ('MDEV_CAT','Manual Deviation Categorization','String',0,1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		INSERT INTO BMTLovFieldCode VALUES ('MDEV_SEV','Manual Deviation Severity','String',0,1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+ 		</sql>
  	</changeSet>	
 </databaseChangeLog>
 	

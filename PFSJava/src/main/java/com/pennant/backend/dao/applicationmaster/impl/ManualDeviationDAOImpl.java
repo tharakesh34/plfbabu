@@ -255,4 +255,40 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
+	@Override
+	public boolean isExistsFieldCodeID(long fieldCodeID, String type) {
+		logger.debug("Entering");
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("FieldCodeID", fieldCodeID);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  ManualDeviations");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where Categorization = :FieldCodeID OR Severity = :FieldCodeID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+		
+		return count > 0 ? true : false;
+	}
+
+	@Override
+	public long getDeviationIdByCode(String deviationCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("DeviationCode", deviationCode);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append("Select DeviationID From ManualDeviations");
+		selectSql.append(" Where Code = :DeviationCode");
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),mapSqlParameterSource, Long.class);
+	}
 }

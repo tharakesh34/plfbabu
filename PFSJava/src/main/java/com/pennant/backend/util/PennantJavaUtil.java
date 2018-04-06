@@ -148,6 +148,7 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.model.bmtmasters.CustRiskType;
 import com.pennant.backend.model.bmtmasters.EntityCodes;
 import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.bmtmasters.RatingType;
 import com.pennant.backend.model.bmtmasters.SICCodes;
@@ -805,15 +806,15 @@ public class PennantJavaUtil {
 		"MandateCheckDigits_AView" }, masterWF, new String[] {"CheckDigitValue","LookUpValue","Active"},null, 600));
 
 		ModuleUtil.register("ManualDeviation", new ModuleMapping("ManualDeviation", ManualDeviation.class, new String[] { "ManualDeviations",
-		"ManualDeviations_AView" }, masterWF, new String[] {"Code","Description","Module"},new Object[][] { { "Active", "0", 1 } }, 600));
+		"ManualDeviations_AView" }, masterWF, new String[] {"Code","Description"},new Object[][] { { "Active", "0", 1 } }, 500));
 		
-		ModuleUtil.register("MDEVCAT", new ModuleMapping("MDEVCAT", LovFieldDetail.class,
+		ModuleUtil.register("MDEV_CAT", new ModuleMapping("MDEV_CAT", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
-				new String[][] { { "FieldCode", "0", "MDEVCAT" } }, 400));
+				new String[][] { { "FieldCode", "0", "MDEV_CAT" } }, 400));
 		
-		ModuleUtil.register("MDEVSEV", new ModuleMapping("MDEVSEV", LovFieldDetail.class,
+		ModuleUtil.register("MDEV_SEV", new ModuleMapping("MDEV_SEV", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
-				new String[][] { { "FieldCode", "0", "MDEVSEV" } }, 400));
+				new String[][] { { "FieldCode", "0", "MDEV_SEV" } }, 400));
 		
 		/************* Accounts *************/
 
@@ -1141,6 +1142,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Promotion", new ModuleMapping("Promotions", Promotion.class,
 				new String[] { "Promotions", "Promotions_AView" }, masterWF, new String[] {
 						"PromotionCode", "PromotionDesc" }, null, 300));
+		
+		ModuleUtil.register("ProductDeviation", new ModuleMapping("ProductDeviation", ProductDeviation.class, new String[] {
+				"ProductDeviations", "ProductDeviations_AView" }, null, new String[] { "ProductCode", "DeviationCode" },
+				null, 300));
 		
 		/************* Finance *************/
 

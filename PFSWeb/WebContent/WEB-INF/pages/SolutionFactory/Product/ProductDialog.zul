@@ -112,6 +112,35 @@
 							</rows>
 						</grid>
 					</groupbox>
+					<groupbox id = "gb_ManualDeviation">
+					<caption label="${c:l('label_ManualDeviation')}" />
+						<grid sclass="GridLayoutNoBorder" 
+						fixedLayout="true"  style="border:0px">
+						<columns>
+							<column width="220px"/>
+							<column />
+							<column width="220px"/>
+							<column />
+						</columns>
+							<rows>
+								<row>
+									<label id="label_ProductDialog_AllowDeviation"
+										value="${c:l('label_ProductDialog_AllowDeviation.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="allowDeviation" />
+									</hbox>
+									<label id="label_ProductDialog_ManualDeviations"
+										value="${c:l('label_ProductDialog_ManualDeviations.value')}"/>
+									<hbox id = "hbox_Deviations" >
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="manualDeviations" width="200px" readonly="true" />
+										<button id='btnManualDeviation' image="/images/icons/LOVSearch.png" />
+									</hbox>
+								</row>							
+							</rows>						
+						</grid>
+					</groupbox>
 					<groupbox id="gb_ProductAsset" mold="3d" visible="false">
 						<div sclass="z-toolbar" height="auto">
 							<hbox pack="stretch" widths="35%,30%,35%"

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ManualDeviationDAO.java                                                   * 	  
+ * FileName    		:  ProductDeviationDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  03-04-2018    														*
+ * Creation Date    :  19-11-2011    														*
  *                                                                  						*
- * Modified Date    :  03-04-2018    														*
+ * Modified Date    :  19-11-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 03-04-2018       PENNANT	                 0.1                                            * 
+ * 19-11-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,41 +39,36 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.applicationmaster;
+ */
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.applicationmaster.ManualDeviation;
-import com.pennanttech.pff.core.TableType;
+package com.pennant.backend.dao.rmtmasters;
 
-public interface ManualDeviationDAO extends BasicCrudDao<ManualDeviation> {
+import java.util.List;
 
-	/**
-	 * Fetch the Record ManualDeviation by key field
-	 * 
-	 * @param deviationID
-	 *            deviationID of the ManualDeviation.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return ManualDeviation
-	 */
-	ManualDeviation getManualDeviation(long deviationID, String type);
+import com.pennant.backend.model.bmtmasters.ProductDeviation;
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param deviationID
-	 *            deviationID of the ManualDeviation.
-	 * @param code
-	 *            code of the ManualDeviation.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long deviationID, String code, TableType tableType);
+/**
+ * DAO methods declaration for the <b>ProductAsset model</b> class.<br>
+ * 
+ */
+public interface ProductDeviationDAO {
+
+	ProductDeviation getProductDeviation();
+
+	ProductDeviation getNewProductDeviation();
+
+	ProductDeviation getProductDeviationById(long id, String type);
+
+	void update(ProductDeviation productDeviation, String type);
+
+	void delete(ProductDeviation productDeviation, String type);
+
+	void deleteByProduct(String prodCode, String type);
+
+	long save(ProductDeviation productDeviation, String type);
+
+	List<ProductDeviation> getProductDeviationByProdCode(final String prodCode, String type);
 	
-	boolean isExistsFieldCodeID(long fieldCodeID, String type);
-	
-	long getDeviationIdByCode(String deviationCode);
+	boolean isExistsDeviationID(long deviationID, String type);
 
 }

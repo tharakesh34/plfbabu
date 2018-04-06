@@ -46,17 +46,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
+import com.pennant.backend.dao.rmtmasters.ProductDeviationDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.ProductService;
@@ -76,6 +80,8 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	private ProductDAO productDAO;
 	private ProductAssetDAO productAssetDAO;
 	private ProductAssetValidation productAssetValidation;
+	private ProductDeviationDAO productDeviationDAO;
+	private ManualDeviationDAO manualDeviationDAO;
 
 	public ProductServiceImpl() {
 		super();
@@ -113,7 +119,22 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		}
 		return this.productAssetValidation;
 	}
+	
+	public ProductDeviationDAO getProductDeviationDAO() {
+		return productDeviationDAO;
+	}
 
+	public void setProductDeviationDAO(ProductDeviationDAO productDeviationDAO) {
+		this.productDeviationDAO = productDeviationDAO;
+	}
+	
+	public ManualDeviationDAO getManualDeviationDAO() {
+		return manualDeviationDAO;
+	}
+
+	public void setManualDeviationDAO(ManualDeviationDAO manualDeviationDAO) {
+		this.manualDeviationDAO = manualDeviationDAO;
+	}
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -155,6 +176,12 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
 			List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
 			details = processingProductAssetList(details,tableType);
+			auditDetails.addAll(details);
+		}
+		//Product Deviation Details
+		if(CollectionUtils.isNotEmpty(product.getProductDeviationDetails())){
+			List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
+			details = processingProductDeviationList(details,tableType);
 			auditDetails.addAll(details);
 		}
 
@@ -215,6 +242,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		logger.debug("Entering");
 		Product product = getProductDAO().getProductByID(id,code, "_View");
 		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(), "_View"));
+		product.setProductDeviationDetails(getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_View"));
 		logger.debug("Leaving");
 		return product;
 	}
@@ -236,6 +264,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	public Product getApprovedProductById(String id, String code) {
 		Product product = getProductDAO().getProductByID(id,code, "_AView");
 		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(),"_AView"));
+		product.setProductDeviationDetails(getProductDeviationDAO().getProductDeviationByProdCode(product.getProductCode(), "_AView"));
 		return product;
 	}
 	
@@ -302,6 +331,12 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
 				List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
 				details = processingProductAssetList(details,"");
+				auditDetails.addAll(details);
+			}
+			//Product Deviation
+			if(product.getProductDeviationDetails()!=null && product.getProductDeviationDetails().size()>0){
+				List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
+				details = processingProductDeviationList(details,"");
 				auditDetails.addAll(details);
 			}
 		}
@@ -519,6 +554,11 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			auditDetailMap.put("ProductAsset", setPAssetAuditData(product,auditTranType,method));
 			auditDetails.addAll(auditDetailMap.get("ProductAsset"));
 		}
+		//Product Deviations
+		if(product.getProductDeviationDetails()!=null && product.getProductDeviationDetails().size()>0){
+			auditDetailMap.put("ProductDeviation", setPDeviationAuditData(product,auditTranType,method));
+			auditDetails.addAll(auditDetailMap.get("ProductDeviation"));
+		}
 
 		product.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(product);
@@ -691,6 +731,9 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		if(product.getProductAssetList()!=null && product.getProductAssetList().size()>0){
 			getProductAssetDAO().deleteByProduct(product.getProductAssetList().get(0), tableType);
 		}
+		if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
+			getProductDeviationDAO().deleteByProduct(product.getProductCode(), tableType);
+		}
 	}	
 
 	/** 
@@ -706,14 +749,17 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		List<AuditDetail> auditDetailsList =new ArrayList<AuditDetail>();
 
 		if (list != null && list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
+			for (AuditDetail detail : list) {
 
 				String transType="";
 				String rcdType = "";
-				ProductAsset productAsset = (ProductAsset) ((AuditDetail)list.get(i)).getModelData();			
+				Object object = detail.getModelData();
 
-				rcdType = productAsset.getRecordType();
-
+				if (object instanceof ProductAsset) {
+					rcdType = ((ProductAsset) object).getRecordType();
+				} else if (object instanceof ProductDeviation) {
+					rcdType = ((ProductDeviation) object).getRecordType();
+				}
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					transType= PennantConstants.TRAN_ADD;
 				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || 
@@ -725,12 +771,171 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 				if(StringUtils.isNotEmpty(transType)){
 					//check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail)list.get(i)).getAuditSeq(),
-							productAsset.getBefImage(), productAsset));
+					auditDetailsList
+							.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(), object));
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param Product
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setPDeviationAuditData(Product product, String auditTranType, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		ProductDeviation productDeviation = new ProductDeviation();
+		String[] fields = PennantJavaUtil.getFieldDetails(productDeviation, productDeviation.getExcludeFields());
+		
+		for (int i = 0; i < product.getProductDeviationDetails().size(); i++) {
+			ProductDeviation deviationDetail = product.getProductDeviationDetails().get(i);
+			//Get the DeviationId from ManualDeviations by deviationCode
+			if (deviationDetail.getDeviationID() < 0 && StringUtils.isNotBlank(deviationDetail.getDeviationCode())) {
+				deviationDetail.setDeviationID(
+						getManualDeviationDAO().getDeviationIdByCode(deviationDetail.getDeviationCode()));
+			}
+			if (StringUtils.isEmpty(deviationDetail.getRecordType())) {
+				continue;
+			}
+			
+			deviationDetail.setWorkflowId(product.getWorkflowId());
+			deviationDetail.setProductCode(product.getProductCode());
+
+			boolean isRcdType = false;
+
+			if (deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				deviationDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				deviationDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				deviationDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && isRcdType) {
+				deviationDetail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| deviationDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			deviationDetail.setRecordStatus(product.getRecordStatus());
+			deviationDetail.setLoginDetails(product.getUserDetails());
+			deviationDetail.setLastMntOn(product.getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], deviationDetail.getBefImage(),
+					deviationDetail));
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	/**
+	 * Method For Preparing List of AuditDetails for Product Deviation
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> processingProductDeviationList(List<AuditDetail> auditDetails, String type) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			ProductDeviation productDeviation = (ProductDeviation) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				productDeviation.setRoleCode("");
+				productDeviation.setNextRoleCode("");
+				productDeviation.setTaskId("");
+				productDeviation.setNextTaskId("");
+			}
+
+			productDeviation.setWorkflowId(0);
+
+			if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (productDeviation.isNewRecord()) {
+				saveRecord = true;
+				if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					productDeviation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					productDeviation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					productDeviation.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (productDeviation.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = productDeviation.getRecordType();
+				recordStatus = productDeviation.getRecordStatus();
+				productDeviation.setRecordType("");
+				productDeviation.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				getProductDeviationDAO().save(productDeviation, type);
+			}
+
+			if (updateRecord) {
+				getProductDeviationDAO().update(productDeviation, type);
+			}
+
+			if (deleteRecord) {
+				getProductDeviationDAO().delete(productDeviation, type);
+			}
+
+			if (approveRec) {
+				productDeviation.setRecordType(rcdType);
+				productDeviation.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(productDeviation);
+		}
+
+		return auditDetails;
+
+	}
+
 }

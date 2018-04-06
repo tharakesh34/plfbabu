@@ -115,11 +115,6 @@
 		<modifyDataType tableName="AdtManualDeviations" columnName="Categorization" newDataType="bigint"/>
 		<modifyDataType tableName="AdtManualDeviations" columnName="Severity" newDataType="bigint"/>
 	</changeSet>
-	<changeSet id="12" author="Sriram">
-		<addColumn tableName="AdtBMTproduct">
-		<column name="allowDeviations" type="boolean" defaultValue="0"/>
-		</addColumn>
-	</changeSet>
 	<changeSet id="13" author="Sriram">
 		<createTable tableName="AdtProductDeviations">
 		<column name="AUDITID" type="bigint">
@@ -149,5 +144,9 @@
 		<column name="WorkflowId" type="bigint"/>
 		</createTable>	
 	</changeSet>
-	
+	<changeSet id="14" author="Sriram">
+		<addColumn tableName="AdtBMTproduct">
+		<column name="allowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>

@@ -43,7 +43,9 @@
 package com.pennant.backend.model.bmtmasters;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
@@ -64,11 +66,18 @@ public class Product extends AbstractWorkflowEntity {
 	private String lovValue;
 	private Product befImage;
 	private LoggedInUser userDetails;
-
+	//Allow Manual Deviation 
+	private boolean allowDeviation;
+	
 	private List<ProductAsset> productAssetList;
+	private List<ProductDeviation> productDeviationDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
-
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("productDeviationDetails");
+		return excludeFields;
+	}
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -155,5 +164,21 @@ public class Product extends AbstractWorkflowEntity {
 
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
+	}
+
+	public List<ProductDeviation> getProductDeviationDetails() {
+		return productDeviationDetails;
+	}
+
+	public void setProductDeviationDetails(List<ProductDeviation> productDeviationDetails) {
+		this.productDeviationDetails = productDeviationDetails;
+	}
+
+	public boolean isAllowDeviation() {
+		return allowDeviation;
+	}
+
+	public void setAllowDeviation(boolean allowDeviation) {
+		this.allowDeviation = allowDeviation;
 	}
 }

@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -70,6 +71,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
+	private ManualDeviationDAO manualDeviationDAO;
 
 	public LovFieldDetailServiceImpl() {
 		super();
@@ -93,6 +95,13 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 		this.lovFieldDetailDAO = lovFieldDetailDAO;
 	}
 
+	public ManualDeviationDAO getManualDeviationDAO() {
+		return manualDeviationDAO;
+	}
+
+	public void setManualDeviationDAO(ManualDeviationDAO manualDeviationDAO) {
+		this.manualDeviationDAO = manualDeviationDAO;
+	}
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -363,7 +372,16 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 				        new String[]{PennantJavaUtil.getLabel("label_FieldCodeId")+":"+lovFieldDetail.getFieldCodeValue()}, null));
 			}
         }
-
+		//Dependency Validation if the FieldCodeValue Exists in ManualDeviation 
+		if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(lovFieldDetail.getRecordType())) {
+			boolean isFieldCodeExists = manualDeviationDAO.isExistsFieldCodeID(lovFieldDetail.getFieldCodeId(),
+					"_View");
+			if (isFieldCodeExists) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", new String[] {
+						PennantJavaUtil.getLabel("label_FieldCodeValue") + ":" + lovFieldDetail.getFieldCodeValue() },
+						null));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

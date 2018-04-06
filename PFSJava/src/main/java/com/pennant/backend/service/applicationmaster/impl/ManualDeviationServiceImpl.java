@@ -48,6 +48,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.ProductDeviationDAO;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -67,6 +68,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 
 	private AuditHeaderDAO		auditHeaderDAO;
 	private ManualDeviationDAO	manualDeviationDAO;
+	private ProductDeviationDAO productDeviationDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -100,6 +102,14 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 	 */
 	public void setManualDeviationDAO(ManualDeviationDAO manualDeviationDAO) {
 		this.manualDeviationDAO = manualDeviationDAO;
+	}
+	
+	public ProductDeviationDAO getProductDeviationDAO() {
+		return productDeviationDAO;
+	}
+
+	public void setProductDeviationDAO(ProductDeviationDAO productDeviationDAO) {
+		this.productDeviationDAO = productDeviationDAO;
 	}
 
 	/**
@@ -344,6 +354,16 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + manualDeviation.getCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+		//Dependency Validation if the Code Exists in ProductDeviation 
+		if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(manualDeviation.getRecordType())) {
+			boolean isDeviationCodeExists = productDeviationDAO.isExistsDeviationID(manualDeviation.getDeviationID(),
+					"_View");
+			if (isDeviationCodeExists) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", new String[] {
+						PennantJavaUtil.getLabel("label_Code") + ":" + manualDeviation.getCode() },
+						null));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

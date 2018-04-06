@@ -1133,6 +1133,7 @@
 		class="com.pennant.backend.service.systemmasters.impl.LovFieldDetailServiceImpl">
 		<property name="lovFieldDetailDAO" ref="lovFieldDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="manualDeviationDAO" ref="manualDeviationDAO" />
 	</bean>
 
 	<!--============ Marital Status Code Details ============== -->
@@ -3949,6 +3950,8 @@
 		<property name="productDAO" ref="productDAO" />
 		<property name="productAssetDAO" ref="productAssetDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="productDeviationDAO" ref="productDeviationDAO" />
+		<property name="manualDeviationDAO" ref="manualDeviationDAO" />
 	</bean>
 
 	<bean id="productAssetDAO"
@@ -11162,5 +11165,11 @@
  	<bean name="manualDeviationServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ManualDeviationServiceImpl">
        <property name="manualDeviationDAO" ref="manualDeviationDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	   <property name="productDeviationDAO" ref="productDeviationDAO" />
    </bean>
+   
+   	<!-- Product Deviation Details -->
+	<bean id="productDeviationDAO" class="com.pennant.backend.dao.bmtmasters.impl.ProductDeviationDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
 </beans>

@@ -188,13 +188,13 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		logger.debug(Literal.ENTERING);
 
 		this.categorization.setMandatoryStyle(true);
-		this.categorization.setModuleName("MDEVCAT");
+		this.categorization.setModuleName("MDEV_CAT");
 		this.categorization.setValueColumn("FieldCodeValue");
 		this.categorization.setDescColumn("ValueDesc");
 		this.categorization.setValidateColumns(new String[] { "FieldCodeValue" });
 
 		this.severity.setMandatoryStyle(true);
-		this.severity.setModuleName("MDEVSEV");
+		this.severity.setModuleName("MDEV_SEV");
 		this.severity.setValueColumn("FieldCodeValue");
 		this.severity.setDescColumn("ValueDesc");
 		this.severity.setValidateColumns(new String[] { "FieldCodeValue" });
@@ -608,7 +608,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aManualDeviation.getDeviationID();
+				+ aManualDeviation.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aManualDeviation.getRecordType()).equals("")) {
 				aManualDeviation.setVersion(aManualDeviation.getVersion() + 1);

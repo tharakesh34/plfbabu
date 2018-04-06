@@ -95,7 +95,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select ProductCode, ProductDesc, ProductCategory,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AllowDeviation");
 		selectSql.append(" From BMTProduct");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ProductCode =:ProductCode");
@@ -213,9 +213,10 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		insertSql.append("Insert Into BMTProduct");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ProductCode, ProductDesc, ProductCategory,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		insertSql.append("  RecordType, WorkflowId, AllowDeviation)");
 		insertSql.append(" Values(:ProductCode, :ProductDesc, :ProductCategory, :Version , :LastMntBy, :LastMntOn,");
-		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AllowDeviation)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -246,7 +247,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		updateSql.append(" Set ProductDesc = :ProductDesc, ProductCategory = :ProductCategory,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AllowDeviation = :AllowDeviation");
 		updateSql.append(" Where ProductCode =:ProductCode");
 
 		if (!type.endsWith("_Temp")) {
