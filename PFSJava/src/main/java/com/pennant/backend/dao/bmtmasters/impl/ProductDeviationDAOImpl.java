@@ -186,10 +186,9 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
+		/*if (recordCount <= 0) {
 			throw new ConcurrencyException();
-		}
+		}*/
 		logger.debug("Leaving");
 
 	}
@@ -247,9 +246,9 @@ public class ProductDeviationDAOImpl extends BasisNextidDaoImpl<ProductDeviation
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
+			/*if (recordCount <= 0) {
 				throw new ConcurrencyException();
-			}
+			}*/
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
