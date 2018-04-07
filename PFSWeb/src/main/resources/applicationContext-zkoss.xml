@@ -2282,12 +2282,6 @@
 		<property name="securityRoleService" ref="securityRoleService" />
 	</bean>
 
-	<bean id="securityRoleSearchCtrl"
-		class="com.pennant.webui.administration.securityrole.SecurityRoleSearchCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="securityRoleService" ref="securityRoleService" />
-	</bean>
-
 	<!--================ Security Group Details ================ -->
 
 	<bean id="securityGroupListCtrl"
@@ -2310,12 +2304,6 @@
 	</bean>
 
 	<!--============= Security RoleGroup Details ============== -->
-
-	<bean id="securityRoleGroupsListCtrl"
-		class="com.pennant.webui.administration.securityrolegroups.SecurityRoleGroupsListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="securityRoleService" ref="securityRoleService" />
-	</bean>
 
 	<bean id="securityRoleGroupsDailogCtrl"
 		class="com.pennant.webui.administration.securityrolegroups.SecurityRoleGroupsDialogCtrl"

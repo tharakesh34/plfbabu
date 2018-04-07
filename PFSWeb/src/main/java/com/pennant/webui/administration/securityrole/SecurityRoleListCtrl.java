@@ -147,7 +147,8 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		registerField("roleCd", listheader_RoleCd, SortOrder.ASC, roleCd, sortOperator_roleCd, Operators.STRING);
 
 		fillList(roleApp, PennantStaticListUtil.getApplications(), null);
-		registerField("roleApp", listheader_RoleApp, SortOrder.NONE, roleApp, sortOperator_roleApp, Operators.STRING);
+		registerField("roleApp", listheader_RoleApp, SortOrder.NONE, roleApp, sortOperator_roleApp,
+				Operators.SIMPLE_NUMARIC);
 
 		registerField("roleDesc", listheader_RoleDesc, SortOrder.NONE, roleDesc, sortOperator_roleDesc,
 				Operators.STRING);
