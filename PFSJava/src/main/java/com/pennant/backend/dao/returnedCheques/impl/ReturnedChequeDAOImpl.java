@@ -89,7 +89,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "CustCIF =:CustCIF or ChequeNo =:ChequeNo";
+		String whereClause = "CustCIF =:CustCIF and ChequeNo =:ChequeNo";
 
 		switch (tableType) {
 		case MAIN_TAB:
