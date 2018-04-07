@@ -53,6 +53,7 @@ import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -67,6 +68,7 @@ import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.web.components.ButtonControl;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -634,6 +636,38 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	public void fillList(Combobox component, List<Property> properties, Object selectedKey) {
+		logger.trace(Literal.ENTERING);
+
+		component.setReadonly(true);
+
+		// Clear the existing items.
+		component.getChildren().clear();
+
+		// Add the default item.
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue(PennantConstants.List_Select);
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+
+		component.appendChild(comboitem);
+		component.setSelectedItem(comboitem);
+
+		// Add the list of items.
+		for (Property property : properties) {
+			comboitem = new Comboitem();
+			comboitem.setValue(property.getKey());
+			comboitem.setLabel(property.getValue());
+
+			component.appendChild(comboitem);
+
+			if (selectedKey != null && StringUtils.equals((String) selectedKey, (String) property.getKey())) {
+				component.setSelectedItem(comboitem);
+			}
+		}
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**

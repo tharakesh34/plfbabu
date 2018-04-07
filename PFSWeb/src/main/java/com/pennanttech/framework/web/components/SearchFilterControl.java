@@ -149,7 +149,7 @@ public class SearchFilterControl implements Serializable {
 			Comboitem comboitem = ((Combobox) component).getSelectedItem();
 
 			if (comboitem != null) {
-				String selectedValue = comboitem.getValue();
+				Object selectedValue = comboitem.getValue();
 				if ("#".equals(selectedValue)) {
 					return null;
 				}

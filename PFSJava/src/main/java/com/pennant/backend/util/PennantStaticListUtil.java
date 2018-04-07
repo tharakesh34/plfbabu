@@ -15,6 +15,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -25,6 +26,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class PennantStaticListUtil {
 	
 	// List Declarations for Static Initializations
+	private static List<Property> applications;
 	private static ArrayList<ValueLabel> fieldSelection;
 	private static ArrayList<ValueLabel> fieldType;
 	private static ArrayList<ValueLabel> regexType;
@@ -692,6 +694,15 @@ public class PennantStaticListUtil {
 			appCodeList.add(new ValueLabel("1", Labels.getLabel("PLF")));
 		}
 		return appCodeList;
+	}
+
+	public static List<Property> getApplications() {
+		if (applications == null) {
+			applications = new ArrayList<>(1);
+			applications.add(new Property(1, Labels.getLabel("PLF")));
+		}
+
+		return applications;
 	}
 
 	public static ArrayList<ValueLabel> getRuleOperator() {

@@ -64,9 +64,9 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.administration.securityrole.model.SecurityRoleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityRole/SecurityRoleList.zul file.
@@ -146,7 +146,7 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 
 		registerField("roleCd", listheader_RoleCd, SortOrder.ASC, roleCd, sortOperator_roleCd, Operators.STRING);
 
-		fillComboBox(this.roleApp, "", PennantStaticListUtil.getAppCodes(), "");
+		fillList(roleApp, PennantStaticListUtil.getApplications(), null);
 		registerField("roleApp", listheader_RoleApp, SortOrder.NONE, roleApp, sortOperator_roleApp, Operators.STRING);
 
 		registerField("roleDesc", listheader_RoleDesc, SortOrder.NONE, roleDesc, sortOperator_roleDesc,
