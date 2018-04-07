@@ -323,7 +323,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		updateSql.append(" UsrMName = :UsrMName, UsrLName = :UsrLName, UsrMobile = :UsrMobile, UsrEmail = :UsrEmail, ");
 		updateSql.append(" UsrEnabled = :UsrEnabled, UsrCanSignonFrom = :UsrCanSignonFrom, UsrCanSignonTo = :UsrCanSignonTo,");
 		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
-		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId, UsrDftAppCode = :UsrDftAppCode, ");
+		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId,UsrAcExpDt= :UsrAcExpDt, UsrDftAppCode = :UsrDftAppCode, ");
 		updateSql.append(" UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode, ");
 		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg, AuthType = :AuthType, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
