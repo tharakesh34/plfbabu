@@ -19,6 +19,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -336,19 +337,16 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		}else{
 			this.custCIF.setDescription(aReturnedCheque.getCustShrtName());
 			this.currency.setDescription(aReturnedCheque.getCcyDesc());
+			returnedCheque.setCcyEditField(CurrencyUtil.getFormat(returnedCheque.getCurrency()));
 			ccyFormatter = aReturnedCheque.getCcyEditField();
 			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(),ccyFormatter));
-			/*this.amount.setFormat(PennantApplicationUtil.getAmountFormate(
-					  aReturnedCheque.getCcyEditField())); 
-			  this.amount.setScale(aReturnedCheque.getCcyEditField())*/;
-			/*this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(),aReturnedCheque.getCcyEditField()));*/
+
 		}
 		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(
 				  ccyFormatter)); 
 		  this.amount.setScale(ccyFormatter);
 		this.recordStatus.setValue(aReturnedCheque.getRecordStatus());
 		logger.debug("Leaving");
-
 	}
 
 	/**
@@ -395,6 +393,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		 aReturnedCheque.setCcyEditField(ccyFormatter);
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
