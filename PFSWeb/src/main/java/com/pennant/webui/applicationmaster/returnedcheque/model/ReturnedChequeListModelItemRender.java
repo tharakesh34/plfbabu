@@ -7,6 +7,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.returnedcheques.ReturnedChequeDetails;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -25,6 +26,7 @@ public class ReturnedChequeListModelItemRender implements ListitemRenderer<Retur
 		lc.setParent(item);
 		lc = new Listcell(returnedCheque.getChequeNo());
 		lc.setParent(item);
+		returnedCheque.setCcyEditField(CurrencyUtil.getFormat(returnedCheque.getCurrency()));
 		lc = new Listcell(PennantApplicationUtil.amountFormate(returnedCheque.getAmount(),
 				returnedCheque.getCcyEditField()));
 		lc.setParent(item);
