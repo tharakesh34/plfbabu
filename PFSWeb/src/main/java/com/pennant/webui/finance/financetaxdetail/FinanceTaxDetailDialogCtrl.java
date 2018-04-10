@@ -577,11 +577,19 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				}
 			}
 			
+			if (custCIFList.isEmpty()) {
+				custCIFList.add("");
+			}
+			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
 			custRefFilter[0] = new Filter("CustCif", custCIFList, Filter.OP_IN);
 			this.custRef.setFilters(custRefFilter);
 			readOnlyComponentChecking();
+			
+			if(finReference.getValue().isEmpty()){
+				this.custRef.setFilters(null);
+			}
 		} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(applicable)) {
 			List<String> guarantorDetails = new ArrayList<>();
 
@@ -596,11 +604,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 					guarantorDetails.add(guarantorDetail.getGuarantorCIF());
 				}
 			}
+			if (guarantorDetails.isEmpty()) {
+				guarantorDetails.add("");
+			}
 			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
 			custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
 			this.custRef.setFilters(custRefFilter);
+			
+			if(finReference.getValue().isEmpty()){
+				this.custRef.setFilters(null);
+			}
 			readOnlyComponentChecking();
 		} else {
 			readOnlyComponent(true, this.custRef);
