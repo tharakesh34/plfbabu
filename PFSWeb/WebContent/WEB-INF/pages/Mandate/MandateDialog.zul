@@ -74,7 +74,8 @@
 								<row visible="true">
 								<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
 								<extendedcombobox id = "entityCode"/>
-								
+								</row>
+								<row visible="true">
 								<label id="label_FinanceReference" value="${c:l('label_MandateDialog_FinReference.value')}" />
 								<extendedcombobox id="finReference" />
 								</row>
