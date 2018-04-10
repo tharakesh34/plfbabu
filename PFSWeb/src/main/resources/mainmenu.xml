@@ -230,6 +230,9 @@
 				rightName="menuItem_ApplicationMaster_Flags" />
 			<menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
 			rightName="menuItem_applicationmasters_InsuranceType"/>
+			<menuItem id="menu_Item_MandateCheckDigit" 
+			    zulNavigation="/WEB-INF/pages/ApplicationMaster/MandateCheckDigit/MandateCheckDigitList.zul"
+			    rightName="menuItem_ApplicationMaster_MandateCheckDigit" />
 			<menuItem id="menu_Item_TaxDetail"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
 				rightName="menuItem_applicationmaster_TaxDetail" />
