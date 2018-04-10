@@ -359,8 +359,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		Date appDate= DateUtility.getAppDate();
 		filters[0]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1]= new Filter("Product", StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
-		filters[2]= new Filter("StartDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
-		filters[3]= new Filter("EndDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL);
+		filters[2]= new Filter("StartDate", appDate, Filter.OP_LESS_OR_EQUAL);
+		filters[3]= new Filter("EndDate",appDate, Filter.OP_GREATER_OR_EQUAL);
 		searchObject.addFilterAnd(filters);
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<FinanceType> list = pagedListService.getBySearchObject(searchObject);
