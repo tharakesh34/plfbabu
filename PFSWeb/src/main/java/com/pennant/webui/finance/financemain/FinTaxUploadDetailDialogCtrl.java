@@ -197,7 +197,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		this.button_ErrorDetails.setVisible(false);
 		this.label_FinTaxUploadDialog_Errors.setVisible(false);
 
-		if ("xls".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
+		if ((media.getFormat().endsWith("xls")) ||(media.getFormat().endsWith("xlsx"))) {
 			isSupported = true;
 			if (media.getName().length() > 100) {
 				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
@@ -207,12 +207,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 
 		if (isSupported) {
-			if ("xls".equals(media.getFormat())) {
-				HSSFWorkbook workbook = new HSSFWorkbook(media.getStreamData());
-				firstSheet = workbook.getSheetAt(0);
+			if ((media.getFormat().endsWith("xls"))) {
+				firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
 			} else {
-				XSSFWorkbook workbook = new XSSFWorkbook(media.getStreamData());
-				firstSheet = workbook.getSheetAt(0);
+				firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
 			}
 
 			Iterator<Row> iterator = firstSheet.iterator();
