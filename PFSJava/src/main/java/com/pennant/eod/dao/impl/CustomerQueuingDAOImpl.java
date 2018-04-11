@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
@@ -58,11 +59,21 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setLoanExist(true);
 		customerQueuing.setLimitRebuild(false);
 		customerQueuing.setEodProcess(true);
-
+		
 		StringBuilder insertSql = new StringBuilder(
 				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
 		insertSql.append(
-				" SELECT  DISTINCT CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
+				" SELECT  DISTINCT CustID, ");
+				
+				if (App.DATABASE.name() == Database.POSTGRES.name()) {
+					insertSql.append(" to_timestamp(:EodDate, '");
+					insertSql.append(PennantConstants.DBDateFormat);
+					insertSql.append("'),   ");
+				}else{
+					insertSql.append(":EodDate,   ");
+				}
+				
+				insertSql.append(":ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
 
 		logger.debug("updateSql: " + insertSql.toString());
 
@@ -73,7 +84,15 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setLoanExist(false);
 		
 		insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
-		insertSql.append(" select DISTINCT CustomerID, :EodDate, :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess from LimitHeader T1 ");
+		insertSql.append(" select DISTINCT CustomerID,");
+		if (App.DATABASE.name() == Database.POSTGRES.name()) {
+			insertSql.append(" to_timestamp(:EodDate, '");
+			insertSql.append(PennantConstants.DBDateFormat);
+			insertSql.append("'),   ");
+		}else{
+			insertSql.append(":EodDate,   ");
+		}
+		insertSql.append(" :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess from LimitHeader T1 ");
 		insertSql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
 		insertSql.append(" Where T2.Rebuild = '1' and CustomerID Not IN (Select Distinct CustId from CustomerQueuing) and CustomerID <> 0");
 		
@@ -87,7 +106,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		return financeRecords + nonFinacerecords;
 	}
-
+	
 	@Override
 	public long getCountByProgress() {
 		logger.debug("Entering");
@@ -237,7 +256,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
-
+	
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
 		logger.debug("Entering");
@@ -257,28 +276,26 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	public void delete() {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("TRUNCATE TABLE CustomerQueuing");
+		StringBuilder deleteSql = new StringBuilder("TRUNCATE TABLE CustomerQueuing");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerQueuing());
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
 
 	@Override
-	public void logCustomerQueuing(int progressSts) {
+	public void logCustomerQueuing() {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", progressSts);
-		source.addValue("Status", EodConstants.STATUS_SUCCESS);
 
 		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
-		insertSql.append(" SELECT * FROM CustomerQueuing Where Progress =:Progress AND Status =:Status");
+		insertSql.append(" SELECT * FROM CustomerQueuing");
 
-		logger.debug("updateSql: " + insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
 
