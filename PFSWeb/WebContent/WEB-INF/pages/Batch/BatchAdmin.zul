@@ -165,6 +165,9 @@
 											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="false" />
 										</hbox>
+										<exePannel id="limitsUpdate" border="normal" title="${c:l('label_limitsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="prepareCustomerGroupQueue" border="normal" title="${c:l('label_prepareCustomerGroupQueue')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="limitCustomerGroupsUpdate" border="normal" title="${c:l('label_limitCustomerGroupsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
 										<exePannel id="profitDetailsUpdate" border="normal" title="${c:l('label_profitDetailsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
 										<exePannel id="processInActiveFinances" border="normal" title="${c:l('label_processInActiveFinances')}" imgSrc="/images/icons/send.gif" visible="false" />
 										<exePannel id="incomeAmortization" border="normal" title="${c:l('label_IncomeAmortization')}" imgSrc="/images/icons/send.gif" visible="false" />
