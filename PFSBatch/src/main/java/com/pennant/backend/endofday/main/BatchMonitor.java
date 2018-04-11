@@ -239,8 +239,8 @@ public class BatchMonitor {
 					query.append("  FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
 
 				} else {
-					query.append(" SELECT AVG(DATEDIFF (millisecond, START_TIME, END_TIME))  avg FROM");
-					query.append(" (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
+					query.append(" SELECT AVG(DATE_PART ('millisecond', START_TIME::timestamp - END_TIME::timestamp))");
+					query.append("avg FROM (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID ");
 					query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED')))  T");
 				}
 				resultSet = statement.executeQuery(query.toString());

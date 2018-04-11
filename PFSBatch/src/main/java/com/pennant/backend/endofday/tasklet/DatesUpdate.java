@@ -32,7 +32,7 @@ public class DatesUpdate implements Tasklet {
 
 		//stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
 		// Log the Customer queuing data and threads status
-		customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
+		//customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
 		//check extended month end and update the dates.
 		dateService.doUpdateAftereod(true);
 
