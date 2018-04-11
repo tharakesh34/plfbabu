@@ -52,6 +52,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -288,5 +289,35 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 
 		logger.debug("Leaving");
 		return recordCount;
+	}
+
+	@Override
+	public void updateReBuildField(String limitLine, String groupCode, boolean rebuild, String type) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		
+		StringBuilder	updateSql =new StringBuilder("Update LimitStructure");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set ReBuild = :ReBuild");
+		source.addValue("ReBuild", rebuild);
+		
+		if (!(StringUtils.isBlank(limitLine) && StringUtils.isBlank(groupCode))) {
+			updateSql.append(" Where StructureCode in (Select LimitStructureCode from LimitStructureDetails where ");
+			
+			if (StringUtils.isNotBlank(limitLine)) {
+				updateSql.append("LimitLine = :LimitLine)");
+				source.addValue("LimitLine", limitLine);
+			} else {
+				updateSql.append("GroupCode = :GroupCode)");
+				source.addValue("GroupCode", groupCode);
+			}
+		}
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		
+		logger.debug("Leaving");
 	}
 }
