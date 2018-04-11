@@ -57,4 +57,5 @@ public interface SecurityRoleDAO {
 	List<SecurityRole> getApprovedSecurityRole();
 	List<SecurityRole> getSecurityRole(String roleCode);
 	List<SecurityRole> getApprovedSecurityRoles();
+	List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings);
 }

@@ -52,6 +52,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -366,5 +367,29 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 			logger.debug(e);
 		}
        return null;
+	}
+	
+	/**
+	 * Fetch the Record  SecurityRole details by key field
+	 * 			          
+	 * @return SecurityRole
+	 */
+	@Override
+	public List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings) {
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("Rolecds", strings);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT * FROM SecRoles where rolecd in (:Rolecds) ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug(e);
+		}
+		return null;
 	}
 }
