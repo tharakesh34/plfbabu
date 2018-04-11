@@ -55,7 +55,7 @@
 	</bean>
 	
 	<bean id="limitCustomerGroupsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.LimitCustomerGroupsUpdate">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="customerGroupQueuingDAO" ref="customerGroupQueuingDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />

@@ -129,7 +129,7 @@
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
+	<bean id="customerGroupQueuingDAO" class="com.pennant.eod.dao.impl.CustomerGroupQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- No end of day Service -->

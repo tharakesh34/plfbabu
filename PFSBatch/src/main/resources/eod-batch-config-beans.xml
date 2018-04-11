@@ -617,4 +617,12 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
+	<!-- Limit Structure -->
+	<bean id="limitStructureDAO"
+		class="com.pennant.backend.dao.limit.impl.LimitStructureDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	
 </beans>

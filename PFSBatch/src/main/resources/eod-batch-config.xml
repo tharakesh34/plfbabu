@@ -33,51 +33,21 @@
 		</step>
 
 		<!-- <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="masterStep" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </decision> -->
+
 		<step id="accountsUpdate">
 			<tasklet ref="accountsUpdateTaskLet" />
-			<next on="*" to="profitDetailsUpdate" />
-			<fail on="FAILED" />
-		</step>
-
-<!-- 		<step id="processInActiveFinances">
-			<tasklet ref="processInActiveFinancesTaskLet" />
-			<next on="*" to="profitDetailsUpdate" />
-			<fail on="FAILED" />
-		</step> -->
-
-		<step id="profitDetailsUpdate">
-			<tasklet ref="profitDetailsUpdateTaskLet" />
-			<next on="*" to="prepareCustomerGroupQueue" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="prepareCustomerGroupQueue">
-			<tasklet ref="prepareCustomerGroupQueueTaskLet" />
-			<next on="*" to="limitCustomerGroupsUpdate" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="limitCustomerGroupsUpdate">
-			<tasklet ref="limitCustomerGroupsUpdateTaskLet" >
-				<transaction-attributes propagation="NEVER" />
-			</tasklet>
-			<next on="*" to="limitsUpdate" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="limitsUpdate">
-			<tasklet ref="limitsUpdateTaskLet" />
 			<next on="*" to="datesUpdate" />
- 			<fail on="FAILED" />
+			<fail on="FAILED" />
 		</step>
-
+		
 		<step id="datesUpdate">
 			<tasklet ref="datesUpdateTaskLet" />
-			<next on="*" to="posidex" />
+			<!-- <next on="*" to="posidex" /> -->
 			<fail on="FAILED" />
+			<end on="*" exit-code="COMPLETED" />
 		</step>
 		
-		<step id="posidex">
+<!-- 		<step id="posidex">
 			<tasklet ref="posidexTaskLet">
 				<transaction-attributes propagation="NEVER" />
 			</tasklet>
@@ -91,22 +61,37 @@
 			</tasklet>
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
-		</step>
+		</step> -->
 		
 		<!-- End Of Month Decision For Month End process -->
-		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="trailBalance" />
+<!-- 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="controlDump" />
 			<end on="NotEndOfMonth" exit-code="COMPLETED" />
 			<fail on="FAILED" />
-		</decision>
+		</decision> -->
 		
-		<step id="trailBalance">
+
+<!-- 		<step id="alm">
+			<tasklet ref="almTaskLet" />
+			<next on="*" to="controlDump" />
+			<fail on="FAILED" />
+		</step> -->
+		
+<!-- 		<step id="controlDump">
+			<tasklet ref="controlDumpTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+			<next on="*" to="trailBalance" />
+			<fail on="FAILED" />
+		</step> -->
+		
+		<!-- <step id="trailBalance">
 			<tasklet ref="trailBalanceTaskLet" />
 			<next on="*" to="sapGL" />
 			<fail on="FAILED" />
-		</step>
+		</step> -->
 		
-		<step id="sapGL">
+		<!-- <step id="sapGL">
 			<tasklet ref="sapGLTaskLet" />
 			<next on="*" to="alm" />
 			<fail on="FAILED" />
@@ -116,24 +101,16 @@
 			<tasklet ref="almTaskLet" />
 			<next on="*" to="cibil" />
 			<fail on="FAILED" />
-		</step>
+		</step> -->
 		
-		<step id="cibil">
+<!-- 		<step id="cibil">
 			<tasklet ref="cibilTaskLet" />
 			<next on="*" to="gstTaxDownload" />
 			<fail on="FAILED" />
 		</step>
-		
-		<step id="gstTaxDownload">
+		 -->
+<!-- 		<step id="gstTaxDownload">
 			<tasklet ref="gstTaxDownloadTaskLet" />
-			<next on="*" to="controlDump" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="controlDump">
-			<tasklet ref="controlDumpTaskLet">
-				<transaction-attributes propagation="NEVER" />
-			</tasklet>
 			<next on="*" to="dmLoanDetailsMonthly" />
 			<fail on="FAILED" />
 		</step>
@@ -142,8 +119,12 @@
 			<tasklet ref="DM_LOAN_DETAILS_MONTHLY"/>
 			<next on="*" to="dmLoanBalancesMonthly" />
 			<fail on="FAILED" />
-		</step>
-		
+		</step> -->
+
+<!-- 		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 		<step id="dmLoanBalancesMonthly">
 			<tasklet ref="DM_LOAN_BALANCES_MONTHLY" />
 			<next on="*" to="dmDisbDetailsMonthly" />
@@ -155,14 +136,8 @@
 			<next on="*" to="snapShotPreparation" />
 			<fail on="FAILED" />
 		</step>
-
-<!-- 		<step id="incomeAmortization">
-			<tasklet ref="incomeAmortizationTaskLet" />
-			<next on="*" to="snapShotPreparation" />
-			<fail on="FAILED" />
-		</step> -->
 		
-		<!--  <step id="snapShotPreparation">
+		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
 			<end on="*" exit-code="COMPLETED" />
 			<fail on="FAILED" />
