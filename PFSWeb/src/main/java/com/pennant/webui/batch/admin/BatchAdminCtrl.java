@@ -336,7 +336,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			BatchMonitor.jobExecutionId = 0;
 			
 			//Collection Interfaces Execution
-			if (collectionProcess) {
+			/*if (collectionProcess) {
 				try {
 					Map<String, Object> arguments = new HashMap<String, Object>();
 					arguments.put("EOD", "EOD");
@@ -346,7 +346,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
-			}
+			}*/
 		}
 	}
 
