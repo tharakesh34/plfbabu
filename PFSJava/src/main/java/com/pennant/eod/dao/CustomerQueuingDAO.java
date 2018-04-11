@@ -20,7 +20,7 @@ public interface CustomerQueuingDAO {
 
 	void updateThreadID(Date date, int threadId);
 
-	void logCustomerQueuing(int progressSts);
+	void logCustomerQueuing();
 
 	void update(CustomerQueuing customerQueuing, boolean start);
 
