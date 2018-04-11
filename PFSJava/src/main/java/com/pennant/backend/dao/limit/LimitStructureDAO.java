@@ -59,4 +59,5 @@ public interface LimitStructureDAO {
 
 	int getLimitStructureCountById(String structureCode, String tableType);
 
+	void updateReBuildField(String limitLine, String groupCode, boolean rebuild, String type);
 }
