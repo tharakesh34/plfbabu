@@ -2500,6 +2500,29 @@ UNION ALL
  		Update BMTProduct set AllowDeviation = 0 where AllowDeviation is null;
  		Update BMTProduct_Temp set AllowDeviation = 0 where AllowDeviation is null;
  		</sql>
- 	</changeSet>	
+ 	</changeSet>
+ 	<changeSet id="89" author="VijayKumar.L">
+  		<sql>
+ 			alter table  CustomerQueuing  alter column eodprocess type smallint;
+			alter table  CustomerGroupQueuing  alter column eodprocess type smallint;
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="90" author="VijayKumar.L">
+ 		<sql>
+ 			Insert into data_engine_config  values ((select max(id)+1 from data_engine_config ),'POSIDEX_CUSTOMER_UPDATE_REQUEST','PosidexUpdateEODRequest.',7,null,null,null,null,0,0, null, null, null,'A',null,'DBFILE',null,0,null,null,null,'0',null,1,1);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="91" author="VijayKumar.L">
+ 		<sql>
+			update REPORTCONFIGURATION set datasourcename = 'auditDataSource' where datasourcename = 'auditDatasource';
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="92" author="VijayKumar.L">
+ 		<sql>
+ 			insert into  tatnotificationcodes values(1,'TAT 1','30 minutes',1,30);
+			insert into  tatnotificationcodes values(2,'TAT 2','120 minutes',1,60);
+			insert into  tatnotificationcodes values(3,'TAT 3','1 Day',1,1440);
+ 		</sql>
+ 	</changeSet>
 </databaseChangeLog>
 	
