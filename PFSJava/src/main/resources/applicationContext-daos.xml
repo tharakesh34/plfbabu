@@ -10418,6 +10418,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+	  	<property name="securityRightDAO" ref="securityRightDAO" />
 	</bean>
 
 	<!-- extendedFieldDetailsService -->

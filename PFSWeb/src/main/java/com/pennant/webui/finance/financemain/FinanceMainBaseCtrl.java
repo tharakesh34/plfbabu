@@ -1612,8 +1612,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(onLoad);
 		// Extended Field Details
-		if (StringUtils.isEmpty(moduleDefiner)){
-			appendExtendedFieldDetails(aFinanceDetail);
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			if (onLoad) {
+				appendExtendedFieldDetails(aFinanceDetail);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -3678,6 +3680,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(getMainWindow());
 			extendedFieldCtrl.setTabHeight(170);
+			//for getting rights in ExtendeFieldGenerator these two fields required.
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -4682,7 +4687,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					// Find Valid From Date by rendering 
 					List<FinanceScheduleDetail> scheduelist = getFinanceDetail().getFinScheduleData()
 							.getFinanceScheduleDetails();
-					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
 					for (int i = 1; i < scheduelist.size(); i++) {
 
 						FinanceScheduleDetail curSchd = scheduelist.get(i);

@@ -1,5 +1,6 @@
 package com.pennant.backend.service.extendedfields;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,15 +8,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.administration.SecurityRightDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
+import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.audit.AuditDetail;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldsValidation {
 
@@ -23,10 +27,19 @@ public class ExtendedFieldsValidation {
 
 	private ExtendedFieldDetailDAO	extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO	extendedFieldHeaderDAO;
+	private SecurityRightDAO		securityRightDAO;
 
 	public ExtendedFieldsValidation(ExtendedFieldDetailDAO extendedFieldDetailDAO, ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	//using in ExtFieldConfigServiceImpl for Loan and Customer modules
+	public ExtendedFieldsValidation(ExtendedFieldDetailDAO extendedFieldDetailDAO,
+			ExtendedFieldHeaderDAO extendedFieldHeaderDAO, SecurityRightDAO securityRightDAO) {
+		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+		this.securityRightDAO = securityRightDAO;
 	}
 
 	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
@@ -148,7 +161,7 @@ public class ExtendedFieldsValidation {
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		ExtendedFieldDetail extendedFieldDetail = (ExtendedFieldDetail) auditDetail.getModelData();
@@ -372,17 +385,28 @@ public class ExtendedFieldsValidation {
 				extendedFieldDetailDAO.delete(extendedFieldDetail, type);
 			}
 
-			if (approveRec && extendedFieldDetail.isInputElement()) {
+			if (approveRec) {
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
-				if (!deleteRecord) {
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
-				} else {
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
+				//if it is an input element added column in ED table.
+				if (extendedFieldDetail.isInputElement()) {
+					if (!deleteRecord) {
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
+					} else {
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
+					}
+				}
+				//saving secRight for Loan and CustomerModule while approving.
+				if (securityRightDAO != null
+						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+					if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
+						SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
+						securityRightDAO.save(securityRight);
+					}
 				}
 			}
 			auditDetails.get(i).setModelData(extendedFieldDetail);
@@ -390,5 +414,63 @@ public class ExtendedFieldsValidation {
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
+	/**
+	 * Method to prepare SecurityRight based on the given ExtendedField
+	 * PageName=ModuleName+"_"+SubModuleName ,
+	 * RightName= PageName+"_"+FieldName if it is an InputElement otherwise 
+	 * RightName=PageName+"_"FieldType+"_"+FieldName.
+	 * 
+	 * @param detail
+	 * @return securityRight
+	 */
+	private SecurityRight prepareSecRight(ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+		SecurityRight securityRight = new SecurityRight();
+		int rightType;
+		String pageName = detail.getLovDescSubModuleName();
+		if (StringUtils.isNotBlank(pageName) && pageName.contains("_ED")) {
+			pageName = pageName.replace("_ED", "");
+		}
+		if (StringUtils.equals(detail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_BUTTON)) {
+			rightType = 2;
+		} else {
+			rightType = 3;
+		}
+		securityRight.setRightType(rightType);
+		securityRight.setRightName(getExtendedFieldRightName(detail));
+		securityRight.setPage(pageName);
+		securityRight.setVersion(1);
+		securityRight.setLastMntBy(1000);
+		securityRight.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		securityRight.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		securityRight.setRoleCode("");
+		securityRight.setNextRoleCode("");
+		securityRight.setTaskId("");
+		securityRight.setNextTaskId("");
+		securityRight.setRecordType("");
+		securityRight.setWorkflowId(0);
+		logger.debug(Literal.LEAVING);
+		return securityRight;
+	}
 	
+	//TODO:Ganesh need to move this method  Common Class.
+	public String getExtendedFieldRightName(ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+		String rightName = null;
+		if (detail != null) {
+			String pageName = detail.getLovDescSubModuleName();
+			if (StringUtils.isNotBlank(pageName) && pageName.contains("_ED")) {
+				pageName = pageName.replace("_ED", "");
+			}
+			if (detail.isInputElement()) {
+				rightName = pageName + "_" + detail.getFieldName();
+			} else {
+				rightName = pageName + "_" + detail.getFieldType() + "_" + detail.getFieldName();
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return rightName;
+	}
+
 }

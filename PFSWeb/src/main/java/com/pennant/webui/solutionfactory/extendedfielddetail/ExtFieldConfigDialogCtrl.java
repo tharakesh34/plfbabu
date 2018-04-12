@@ -837,7 +837,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	// For Tab Wise validations
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	protected void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
 		logger.debug(Literal.ENTERING);
 		doRemoveValidation();
 		doRemoveLOVValidation();

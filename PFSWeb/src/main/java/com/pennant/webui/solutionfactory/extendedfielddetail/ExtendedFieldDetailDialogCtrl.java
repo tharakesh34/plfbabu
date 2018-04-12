@@ -407,7 +407,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldName.setValue(aExtendedFieldDetail.getFieldName());
 
 		fillComboBox(this.fieldType,aExtendedFieldDetail.getFieldType(),PennantStaticListUtil.getFieldType(),"");
-		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getParentElements(), "");
+		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getParentElements(aExtendedFieldDetail.getFieldType()), "");
 
 		if(isTextType()){
 			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint(),PennantStaticListUtil.getRegexType(),"");
@@ -443,7 +443,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		if (StringUtils.isNotBlank(aExtendedFieldDetail.getFieldType())) {
 			onFieldTypeChange(aExtendedFieldDetail.getFieldType(), isNewRecord());
 		}
-		if (aExtendedFieldDetail.isNewRecord()) {
+		if (aExtendedFieldDetail.isNewRecord() && StringUtils.isBlank(aExtendedFieldDetail.getFieldName())) {
 			this.fieldEditable.setChecked(true);
 		} else {
 			this.fieldEditable.setChecked(aExtendedFieldDetail.isEditable());
@@ -454,45 +454,33 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	}
 
 	/**
-	 * Method for get the list of parent components in the ExtendedFields except the same parent element, button and
-	 * listbox.
+	 * Method for get the list of parent components in the ExtendedFields except the same parent element, button and if
+	 * the field type is listField gives the list of ListBox's
 	 * 
-	 * @return parentList
+	 * @param fieldType
+	 * @return
 	 */
-	private List<ValueLabel> getParentElements() {
-		List<ValueLabel> parentList = null;
+	private List<ValueLabel> getParentElements(String fieldType) {
+		List<ValueLabel> parentList = new ArrayList<ValueLabel>();
 		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 		if (extendedFieldDetail != null) {
-			parentList = new ArrayList<ValueLabel>();
-			for (ExtendedFieldDetail detail : extendedFieldDetail) {
-				if (!detail.isInputElement() && !detail.getFieldName().equals(this.fieldName.getValue())
-						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, detail.getFieldType())
-						&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
-					parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
+			if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LISTFIELD)) {
+				for (ExtendedFieldDetail detail : extendedFieldDetail) {
+					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
+						parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
+					}
+				}
+			} else {
+				for (ExtendedFieldDetail detail : extendedFieldDetail) {
+					if (!detail.isInputElement() && !detail.getFieldName().equals(this.fieldName.getValue())
+							&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, detail.getFieldType())
+							&& !StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
+						parentList.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
+					}
 				}
 			}
 		}
 		return parentList;
-	}
-
-	/**
-	 * Method for get the list of ListBoxs in the Extendedfielddetail's.
-	 * 
-	 * @return listBoxs
-	 */
-	private List<ValueLabel> getListBoxElements() {
-		List<ValueLabel> listBoxs = null;
-		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
-		if (extendedFieldDetail != null) {
-			listBoxs = new ArrayList<ValueLabel>();
-			for (ExtendedFieldDetail detail : extendedFieldDetail) {
-				if (!detail.isInputElement()
-						&& StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, detail.getFieldType())) {
-					listBoxs.add(new ValueLabel(detail.getFieldName(), detail.getFieldName()));
-				}
-			}
-		}
-		return listBoxs;
 	}
 
 	/**
@@ -721,9 +709,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY",
 							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value")));
-				}else if(this.fieldLength.intValue() > 20){
+				}else if(this.fieldLength.intValue() > 30){
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
-							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(20)}));
+							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(30)}));
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldPrec(0);
@@ -1117,8 +1105,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				maxLength = 100;
 			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT)) {
 				maxLength = 1000;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_STATICCOMBO) ||
-					StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_RADIO)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_STATICCOMBO)) {
+				maxLength = 30;
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_RADIO)) {
 				maxLength = 20;
 			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
 				maxLength = 21;
@@ -1792,7 +1781,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 	private void onFieldTypeChange(String fieldType, boolean newSelection) {
 		logger.debug("Entering");
-
+		fillComboBox(this.parentTag, "", getParentElements(fieldType), "");
 		if(StringUtils.equals(PennantConstants.List_Select,fieldType)){
 			this.fieldLength.setText("");
 			this.fieldPrec.setText("");
@@ -2028,13 +2017,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, fieldType)) {
 				this.rowMandatory.setVisible(false);
-			}
-
-			//For listfield
-			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, fieldType)) {
-				fillComboBox(this.parentTag, "", getListBoxElements(), "");
-			} else {
-				fillComboBox(this.parentTag, "", getParentElements(), "");
 			}
 
 			if(this.rowfieldLength.isVisible()){

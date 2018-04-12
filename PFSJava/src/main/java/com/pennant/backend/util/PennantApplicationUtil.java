@@ -21,8 +21,10 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class PennantApplicationUtil {
@@ -662,7 +664,26 @@ public class PennantApplicationUtil {
 		}
 		return null;
 	}
-	
-	
+
+	/**
+	 * Method to get the RightName of ExtendedField Based on Module, SubModule and InputType.
+	 * 
+	 * @param detail
+	 * @return
+	 */
+	public static String getExtendedFieldRightName(ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+		String rightName = null;
+		if (detail != null) {
+			String pageName = detail.getLovDescModuleName() + "_" + detail.getLovDescSubModuleName();
+			if (detail.isInputElement()) {
+				rightName = pageName + "_" + detail.getFieldName();
+			} else {
+				rightName = pageName + "_" + detail.getFieldType() + "_" + detail.getFieldName();
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return rightName;
+	}
 	
  }

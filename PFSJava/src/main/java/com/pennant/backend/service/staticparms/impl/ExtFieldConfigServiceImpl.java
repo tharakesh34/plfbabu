@@ -49,12 +49,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.backend.dao.administration.SecurityRightDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.GenericService;
@@ -75,6 +75,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	private ExtendedFieldsValidation	extendedFieldsValidation;
 	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
+	private SecurityRightDAO			securityRightDAO;
 
 	public ExtFieldConfigServiceImpl() {
 		super();
@@ -94,8 +95,8 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 	public ExtendedFieldsValidation getExtendedFieldsValidation() {
 		if (extendedFieldsValidation == null) {
-			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO,
-					extendedFieldHeaderDAO);
+			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO, extendedFieldHeaderDAO,
+					securityRightDAO);
 		}
 		return this.extendedFieldsValidation;
 	}
@@ -114,6 +115,10 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public void setSecurityRightDAO(SecurityRightDAO securityRightDAO) {
+		this.securityRightDAO = securityRightDAO;
 	}
 
 	/**

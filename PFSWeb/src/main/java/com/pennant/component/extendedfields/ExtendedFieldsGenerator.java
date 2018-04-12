@@ -64,6 +64,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
+import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -111,6 +112,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private final String		DELIMETR_DOUBLE_BAR	= "\\|\\|";
 	private Row					row;
 	private Tab					topLevelTab;// To through wrong value exceptions
+	private String				userRole;
 
 	public ExtendedFieldsGenerator() {
 
@@ -169,15 +171,22 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		Collections.sort(containers, new ExtendedFieldsComparator());
 		for (ExtendedFieldDetail containerElement : containers) {
 			String parentTag = containerElement.getParentTag();
+			Component container;
 			if (parentTag == null) {
-				processContainer(containerElement, this.tabpanel,isReadOnly);
+				container = processContainer(containerElement, this.tabpanel, isReadOnly);
+				if (getUserWorkspace() != null) {
+					doCheckContainerRights(container, containerElement);
+				}
 			} else {
 				Component existting = this.tabpanel.getFellowIfAny(parentTag);
 				if (existting instanceof Tab) {
 					existting = this.tabpanel.getFellowIfAny(TABPANEL_ID + parentTag);
 				}
 				if (existting != null) {
-					processContainer(containerElement, existting,isReadOnly);
+					container = processContainer(containerElement, existting, isReadOnly);
+					if (getUserWorkspace() != null) {
+						doCheckContainerRights(container, containerElement);
+					}
 				}
 			}
 
@@ -191,7 +200,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 
 		}
-
+		if (getUserWorkspace() != null) {
+			getUserWorkspace().deAllocateAuthorities(fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName());
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -223,6 +234,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					renderComponents(extendedFieldDetail, columnCount, existting, isReadOnly, newRecord, i);
 				}
 				i++;
+				//Here we set Editable=false for unVisavle elements to avoid constraint based wrongValue Exception in doSave.
+				if (getUserWorkspace() != null && 
+						!getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(containerElement))) {
+					extendedFieldDetail.setEditable(false);
+				}
 			}
 		}
 	}
@@ -259,6 +275,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			boolean editable=true;
 			if (!detail.isEditable() || isReadOnly) {
 				editable=false;
+			} else if (getUserWorkspace() != null) {
+				editable = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
 			}
 			readOnlyComponent(!editable, component);
 			hbox.appendChild(component);
@@ -1982,7 +2000,34 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		tabpanels.setParent(tabbox);
 		return tabpanel;
 	}
-
+	
+	/**
+	 * Method for Enabling or Disabling the container element based on rights.
+	 * 
+	 * @param container
+	 * @param detail
+	 */
+	private void doCheckContainerRights(Component container, ExtendedFieldDetail detail) {
+		logger.debug(Literal.ENTERING);
+		if (container instanceof Tabpanel) {
+			Tabpanel tabpanel = (Tabpanel) container;
+			Tab tab = (Tab) tabpanel.getFellowIfAny(detail.getFieldName());
+			if (tab != null) {
+				tab.setVisible(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+			}
+		} else if (container instanceof Groupbox) {
+			Groupbox groupbox = (Groupbox) container;
+			groupbox.setVisible(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+		} else if (container instanceof Listbox) {
+			Listbox listbox = (Listbox) container;
+			listbox.setVisible(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+		} else if (container instanceof Button) {
+			Button button = (Button) container;
+			button.setDisabled(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * Method for create ListBox based on the Extended field details.
 	 * 
@@ -2104,6 +2149,18 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setTopLevelTab(Tab topLevelTab) {
 		this.topLevelTab = topLevelTab;
+	}
+
+	public void setUserWorkspace(UserWorkspace userWorkspace) {
+		super.setUserWorkspace(userWorkspace);
+	}
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
 	}
 
 }

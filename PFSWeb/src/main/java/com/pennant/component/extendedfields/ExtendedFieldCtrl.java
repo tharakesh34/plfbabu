@@ -38,6 +38,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
+import com.pennant.UserWorkspace;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -67,7 +68,9 @@ public class ExtendedFieldCtrl {
 	private static ScriptValidationService	scriptValidationService;
 	private static ExtFieldConfigService	extFieldConfigService;
 	private static ExtendedFieldRenderDAO	extendedFieldRenderDAO;
-	private static Map<String, Object> tabPanelsMap = new HashMap<>(); 
+	private static Map<String, Object> tabPanelsMap = new HashMap<>();
+	private UserWorkspace					userWorkspace;
+	private String							userRole;
 
 	/**
 	 * Method for Rendering the Extended field details
@@ -83,7 +86,9 @@ public class ExtendedFieldCtrl {
 		this.generator.setReadOnly(this.isReadOnly);
 		this.generator.setWindow(window);
 		this.generator.setTabHeight(tabHeight);
-		if (tab!=null) {
+		this.generator.setUserWorkspace(userWorkspace);
+		this.generator.setUserRole(userRole);
+		if (tab != null) {
 			this.generator.setTopLevelTab(tab);
 			this.tab.setLabel(extendedFieldHeader.getTabHeading());
 		}
@@ -102,6 +107,10 @@ public class ExtendedFieldCtrl {
 
 		// setting the pre and post validation scripts
 		if (!this.isReadOnly) {
+			if (getUserWorkspace()!=null) {
+				String pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
+				getUserWorkspace().allocateAuthorities(pageName, getUserRole());
+			}
 			// get pre-validation script if record is new
 			if (StringUtils.trimToNull(this.extendedFieldHeader.getPreValidation()) != null) {
 				ScriptErrors defaults = scriptValidationService.setPreValidationDefaults(this.extendedFieldHeader.getPreValidation(), fieldValuesMap);
@@ -595,4 +604,23 @@ public class ExtendedFieldCtrl {
 		this.tabHeight = tabHeight;
 	}
 
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+	
+	public UserWorkspace getUserWorkspace() {
+		return userWorkspace;
+	}
+
+	public void setUserWorkspace(UserWorkspace userWorkspace) {
+		this.userWorkspace = userWorkspace;
+	}
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
 }

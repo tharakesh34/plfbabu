@@ -1256,8 +1256,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				aCustomerDetails.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
+			//extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
+			//for getting rights in ExtendeFieldGenerator these two fields required.
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error("Exception", e);
