@@ -2524,5 +2524,15 @@ UNION ALL
 			insert into  tatnotificationcodes values(3,'TAT 3','1 Day',1,1440);
  		</sql>
  	</changeSet>
+ 	<changeSet id="93" author="Jayant">
+ 		<sql>
+ 			update RMTFinanceTypes_Temp set  finAEBuyOrInception = 0 where  finAEBuyOrInception is null;
+			update RMTFinanceTypes set  finAEBuyOrInception = 0 where  finAEBuyOrInception is null;
+			update RMTFinanceTypes_Temp set  finAESellOrMaturity = 1 where  finAESellOrMaturity is null;
+			update RMTFinanceTypes set  finAESellOrMaturity = 1 where  finAESellOrMaturity is null;
+			update RMTFinanceTypes_Temp set  chequeCaptureReq = 0 where chequeCaptureReq is null;
+			update RMTFinanceTypes set  chequeCaptureReq = 0 where chequeCaptureReq is null;
+ 		</sql>
+ 	</changeSet>
 </databaseChangeLog>
 	
