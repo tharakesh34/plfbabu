@@ -65,4 +65,21 @@ public interface SecurityRightDAO {
 	 * @return The rights that the user has for a specified page.
 	 */
 	List<SecurityRight> getPageRights(SecurityRight right);
+
+	/**
+	 * Check whether right is exists with the given RightName.
+	 * 
+	 * @param rightName
+	 * @return true if right is exist's with given RightName otherwise false.
+	 */
+	boolean isRightNameExists(String rightName);
+
+	/**
+	 * Inserts the given right in the SecRights.
+	 * 
+	 * @param right
+	 * @return rightId
+	 */
+	long save(SecurityRight right);
+
 }

@@ -50,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -59,6 +60,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> implements SecurityRightDAO {
 	private static Logger				logger	= Logger.getLogger(SecurityRightDAOImpl.class);
@@ -123,6 +125,44 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
+	@Override
+	public boolean isRightNameExists(String rightName) {
+		logger.debug(Literal.ENTERING);
+
+		boolean exists = false;
+		// Prepare the parameter source.
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("rightName", rightName);
+		String sql = QueryUtil.getCountQuery(new String[] { "SecRights" }, "rightName = :rightName ");
+		logger.trace(Literal.SQL + sql);
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+	@Override
+	public long save(SecurityRight right) {
+		logger.debug(Literal.ENTERING);
+
+		if (right.getId() == Long.MIN_VALUE) {
+			right.setId(getNextidviewDAO().getNextId("SeqSecRights"));
+			logger.debug("get NextID:" + right.getId());
+		}
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn, ");
+		sql.append("RecordStatus, RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) ");
+		sql.append("Values(:RightID, :RightType, :RightName, :Page, :Version, :LastMntBy, :LastMntOn,");
+		sql.append(":RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
+		logger.debug(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(right);
+		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.ENTERING);
+		return right.getId();
+	}
+	
 	/**
 	 * Setting DataSource
 	 * 
