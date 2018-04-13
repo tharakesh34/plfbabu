@@ -65,14 +65,13 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.NPABucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -432,12 +431,12 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		if (!this.productCode.isReadonly()) {
 			this.productCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_NPABucketConfigurationDialog_ProductCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					null, true));
 		}
 		if (!this.bucketID.isReadonly()) {
 			this.bucketID.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_NPABucketConfigurationDialog_BucketID.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					null, true));
 		}
 		if (!this.dueDays.isReadonly()) {
 			this.dueDays.setConstraint(new PTNumberValidator(Labels
