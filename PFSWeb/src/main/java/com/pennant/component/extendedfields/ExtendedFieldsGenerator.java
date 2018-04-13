@@ -113,7 +113,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private Row					row;
 	private Tab					topLevelTab;// To through wrong value exceptions
 	private String				userRole;
-
+	private int					columnCount;
 	public ExtendedFieldsGenerator() {
 
 	}
@@ -138,7 +138,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			return;
 		}
 
-		int columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
+		columnCount = Integer.parseInt(fieldHeader.getNumberOfColumns());
 
 		List<ExtendedFieldDetail> containers = new ArrayList<ExtendedFieldDetail>();
 		List<ExtendedFieldDetail> inputElemetswithoutParents = new ArrayList<ExtendedFieldDetail>();
@@ -1528,10 +1528,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (detail.getFieldLength() < 10) {
 			combobox.setWidth("100px");
 		} else {
-			combobox.setWidth(detail.getFieldLength() * 10 + "px");
+			if (columnCount == 1 || detail.getFieldLength() <= 40) {
+				combobox.setWidth(detail.getFieldLength() * 10 + "px");
+			} else {
+				combobox.setWidth("400px");
+			}
 		}
-
-		// Data Rendering and Setting existing value
+			// Data Rendering and Setting existing value
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));

@@ -709,9 +709,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY",
 							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value")));
-				}else if(this.fieldLength.intValue() > 30){
+				}else if(this.fieldLength.intValue() > 100){
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
-							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(30)}));
+							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(100)}));
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldPrec(0);
@@ -1106,7 +1106,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT)) {
 				maxLength = 1000;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_STATICCOMBO)) {
-				maxLength = 30;
+				maxLength = 100;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_RADIO)) {
 				maxLength = 20;
 			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
@@ -1916,6 +1916,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO, fieldType)) {
 				this.rowfieldList.setVisible(true);
 				Uppercasebox textbox = new Uppercasebox();
+				textbox.setRows(2);
+				textbox.setMultiline(true);
+				textbox.setWidth("200px");
 				textbox.setId("SListId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
 				if(!newSelection){
