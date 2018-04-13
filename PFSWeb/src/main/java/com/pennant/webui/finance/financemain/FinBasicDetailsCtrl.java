@@ -94,6 +94,9 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void doWriteBeanToComponents(ArrayList<Object> finHeaderList) {
 		logger.debug("Entering");
 		
+		if(finHeaderList != null) {
+			this.finHeaderList = finHeaderList;
+		}
 		this.finBasic_finType.setValue(String.valueOf(finHeaderList.get(0)));
 		this.finBasic_finCcy.setValue(String.valueOf(finHeaderList.get(1)));
 		this.finBasic_scheduleMethod.setValue(String.valueOf(finHeaderList.get(2)));
@@ -178,15 +181,16 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		 */
 
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		map.put("label_FinanceMainDialog_FinType.value", finHeaderList.get(0));
-		map.put("label_FinanceMainDialog_FinCcy.value", finHeaderList.get(1));
-		map.put("label_FinanceMainDialog_ScheduleMethod.value", finHeaderList.get(2));
-		map.put("label_FinanceMainDialog_ProfitDaysBasis.value", finHeaderList.get(4));
-		map.put("label_FinanceMainDialog_FinReference.value", finHeaderList.get(3));
-		map.put("label_FinanceMainDialog_CustShrtName.value", finHeaderList.get(9));
+		if (finHeaderList != null && !finHeaderList.isEmpty()) {
+			map.put("label_FinanceMainDialog_FinType.value", finHeaderList.get(0));
+			map.put("label_FinanceMainDialog_FinCcy.value", finHeaderList.get(1));
+			map.put("label_FinanceMainDialog_ScheduleMethod.value", finHeaderList.get(2));
+			map.put("label_FinanceMainDialog_ProfitDaysBasis.value", finHeaderList.get(4));
+			map.put("label_FinanceMainDialog_FinReference.value", finHeaderList.get(3));
+			map.put("label_FinanceMainDialog_CustShrtName.value", finHeaderList.get(9));
 
-		doShowActivityLog(finHeaderList.get(3), map);
-
+			doShowActivityLog(finHeaderList.get(3), map);
+		}
 		logger.debug("Leaving ");
 	}
 	
