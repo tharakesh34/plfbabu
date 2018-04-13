@@ -81,6 +81,10 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_PARTNERBANK 	    = "PARTNERBANK";
 	public static final String 	UNIQUE_ID_POSTINGS 	    	= "POSTINGS";
 	public static final String 	UNIQUE_ID_EXTENDED 	    	= "EXTENDED";
+	public static final String 	UNIQUE_ID_FIINITIATION 		= "FIINIT";
+	public static final String 	UNIQUE_ID_FIAPPROVAL 		= "FIAPPROVAL";
+	public static final String 	UNIQUE_ID_TVINITIATION 		= "TVINIT";
+	public static final String 	UNIQUE_ID_TVAPPROVAL 		= "TVAPPROVAL";
 
 	public static final int 	DEFAULT_ITEMNO 			= 1;
 	

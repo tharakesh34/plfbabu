@@ -77,7 +77,7 @@ public class ExtendedFieldsValidation {
 	 */
 	public AuditDetail extendedFieldsHeaderValidation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
-		
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
 		ExtendedFieldHeader extendedFieldHeader= (ExtendedFieldHeader) auditDetail.getModelData();
 
@@ -91,10 +91,10 @@ public class ExtendedFieldsValidation {
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
-		
+
 		valueParm[0] = extendedFieldHeader.getModuleName();
 		valueParm[1] = extendedFieldHeader.getSubModuleName();
-		
+
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleName") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubModuleName") + ":" + valueParm[1];
 
@@ -153,7 +153,7 @@ public class ExtendedFieldsValidation {
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Method for validating Extended Field Details
 	 * @param auditDetail
@@ -241,7 +241,7 @@ public class ExtendedFieldsValidation {
 		}
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -250,19 +250,42 @@ public class ExtendedFieldsValidation {
 	 * @param method
 	 * @return
 	 */
-	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader extendedFldHeader, String auditTranType, String method) {
+	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader extendedFldHeader, String auditTranType,
+			String method) {
 		logger.debug("Entering");
-		
+
+		int count = 0;
+		List<AuditDetail> auditDetails = prepareAuditData(extendedFldHeader,
+				extendedFldHeader.getExtendedFieldDetails(), auditTranType, method, count);
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	public List<AuditDetail> setTechValuationFieldsAuditData(ExtendedFieldHeader extendedFldHeader, String auditTranType, String method,int count) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = prepareAuditData(extendedFldHeader,
+				extendedFldHeader.getTechnicalValuationDetailList(), auditTranType, method, count);
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	private List<AuditDetail> prepareAuditData(ExtendedFieldHeader extendedFldHeader,
+			List<ExtendedFieldDetail> extendedFieldDetailList, String auditTranType, String method, int count) {
+		logger.debug("Entering");
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new ExtendedFieldDetail());
-		
-		for (int i = 0; i < extendedFldHeader.getExtendedFieldDetails().size(); i++) {
-			ExtendedFieldDetail extendedFieldDetail = extendedFldHeader.getExtendedFieldDetails().get(i);
-			
+
+		for (int i = 0; i < extendedFieldDetailList.size(); i++) {
+			ExtendedFieldDetail extendedFieldDetail = extendedFieldDetailList.get(i);
+
 			if (StringUtils.isEmpty(extendedFieldDetail.getRecordType())) {
 				continue;
 			}
-			
+
 			if (StringUtils.trimToNull(extendedFieldDetail.getFieldName()) != null) {
 				extendedFieldDetail.setFieldName(extendedFieldDetail.getFieldName());
 			}
@@ -297,9 +320,8 @@ public class ExtendedFieldsValidation {
 			extendedFieldDetail.setRecordStatus(extendedFldHeader.getRecordStatus());
 			extendedFieldDetail.setLastMntOn(extendedFldHeader.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], extendedFieldDetail.getBefImage(), extendedFieldDetail));
+			auditDetails.add(new AuditDetail(auditTranType, count++, fields[0], fields[1], extendedFieldDetail.getBefImage(), extendedFieldDetail));
 		}
-		
 		logger.debug("Leaving");
 		return auditDetails;
 	}
@@ -389,32 +411,139 @@ public class ExtendedFieldsValidation {
 			if (approveRec) {
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
-				//if it is an input element added column in ED table.
-				if (extendedFieldDetail.isInputElement()) {
-					if (!deleteRecord) {
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
-					} else {
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
-						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
+
+				if (!deleteRecord) {
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", false, true, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
+				} else {
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", true, false, false);
+					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
+
+					//if it is an input element added column in ED table.
+					if (extendedFieldDetail.isInputElement()) {
+						if (!deleteRecord) {
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
+						} else {
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
+						}
+					}
+					//saving secRight for Loan and CustomerModule while approving.
+					if (securityRightDAO != null
+							&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+						if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
+							SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
+							if (!isSeqSecRightsUpdated) {
+								securityRightDAO.updateSeqSecRights();
+								isSeqSecRightsUpdated = true;
+							}
+							securityRightDAO.save(securityRight);
+						}
 					}
 				}
-				//saving secRight for Loan and CustomerModule while approving.
-				if (securityRightDAO != null
-						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-					if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
-						SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
-						if (!isSeqSecRightsUpdated) {
-							securityRightDAO.updateSeqSecRights();
-							isSeqSecRightsUpdated = true;
-						}
-						securityRightDAO.save(securityRight);
-					}
+				auditDetails.get(i).setModelData(extendedFieldDetail);
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	
+	}
+
+	public List<AuditDetail> processingTechValuationFieldsList(List<AuditDetail> auditDetails, String type) {
+		logger.debug("Entering");
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			ExtendedFieldDetail techValuationFieldDetail = (ExtendedFieldDetail) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				techValuationFieldDetail.setRoleCode("");
+				techValuationFieldDetail.setNextRoleCode("");
+				techValuationFieldDetail.setTaskId("");
+				techValuationFieldDetail.setNextTaskId("");
+			}
+
+			techValuationFieldDetail.setWorkflowId(0);
+
+			if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (techValuationFieldDetail.isNewRecord()) {
+				saveRecord = true;
+				if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					techValuationFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					techValuationFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					techValuationFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (techValuationFieldDetail.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
 			}
-			auditDetails.get(i).setModelData(extendedFieldDetail);
+			if (approveRec) {
+				rcdType = techValuationFieldDetail.getRecordType();
+				recordStatus = techValuationFieldDetail.getRecordStatus();
+				techValuationFieldDetail.setRecordType("");
+				techValuationFieldDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				extendedFieldDetailDAO.save(techValuationFieldDetail, type);
+			}
+
+			if (updateRecord) {
+				extendedFieldDetailDAO.update(techValuationFieldDetail, type);
+			}
+
+			if (deleteRecord) {
+				extendedFieldDetailDAO.delete(techValuationFieldDetail, type);
+			}
+
+			if (approveRec && techValuationFieldDetail.isInputElement()) {
+				techValuationFieldDetail.setRecordType(rcdType);
+				techValuationFieldDetail.setRecordStatus(recordStatus);
+				if (!deleteRecord) {
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "_Temp", false, true, false);
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "", false, true, false);
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "", false, true, true);
+
+				} else {
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "_Temp", false, true, false);
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "", false, true, false);
+					extendedFieldDetailDAO.alter(techValuationFieldDetail, "", false, true, true);
+				}
+			}
+			auditDetails.get(i).setModelData(techValuationFieldDetail);
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -458,7 +587,7 @@ public class ExtendedFieldsValidation {
 		logger.debug(Literal.LEAVING);
 		return securityRight;
 	}
-	
+
 	//TODO:Ganesh need to move this method  Common Class.
 	public String getExtendedFieldRightName(ExtendedFieldDetail detail) {
 		logger.debug(Literal.ENTERING);

@@ -100,10 +100,12 @@
 									<listbox
 										id="sortOperator_addrTypePriority" width="43px" mold="select"
 										rows="1" />
-									<intbox id="addrTypePriority"
-										width="80px" maxlength="4" />
+										<intbox id="addrTypePriority" width="80px" maxlength="4" />
 								</row>
 								<row>	
+									<label value="${c:l('listheader_AddrTypeFIRequired.label')}" />
+									<listbox id="sortOperator_addrTypeFIRequired" width="43px" mold="select" rows="1" />
+									<checkbox id="addrTypeFIRequired" checked="false" />
 									<label
 										id="label_AddressTypeSearch_AddrTypeIsActive"
 										value="${c:l('label_AddressTypeSearch_AddrTypeIsActive.value')}" />
@@ -151,13 +153,12 @@
 									label="${c:l('listheader_AddrTypePriority.label')}" sort="auto"
 									hflex="min" />
 								<listheader
-									id="listheader_AddrTypeIsActive"
-									label="${c:l('listheader_AddrTypeIsActive.label')}" sort="auto"
+									id="listheader_AddrTypeFIRequired"
+									label="${c:l('listheader_AddrTypeFIRequired.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordStatus"
-									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType"
-									label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+								<listheader id="listheader_AddrTypeIsActive" label="${c:l('listheader_AddrTypeIsActive.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

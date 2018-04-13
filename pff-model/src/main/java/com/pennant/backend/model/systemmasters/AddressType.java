@@ -58,6 +58,7 @@ public class AddressType extends AbstractWorkflowEntity {
 	private String addrTypeCode;
 	private String addrTypeDesc;
 	private int addrTypePriority;
+	private boolean addrTypeFIRequired;
 	private boolean addrTypeIsActive;
 	private boolean newRecord;
 	private String lovValue;
@@ -109,6 +110,14 @@ public class AddressType extends AbstractWorkflowEntity {
 		this.addrTypePriority = addrTypePriority;
 	}
 	
+	public boolean isAddrTypeFIRequired() {
+		return addrTypeFIRequired;
+	}
+
+	public void setAddrTypeFIRequired(boolean addrTypeFIRequired) {
+		this.addrTypeFIRequired = addrTypeFIRequired;
+	}
+
 	public boolean isAddrTypeIsActive() {
 		return addrTypeIsActive;
 	}

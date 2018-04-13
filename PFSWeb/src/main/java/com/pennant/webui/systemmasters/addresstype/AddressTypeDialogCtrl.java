@@ -92,6 +92,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	protected Textbox 		addrTypeDesc; 				// autoWired
 	protected Intbox 		addrTypePriority; 			// autoWired
 	protected Checkbox 		addrTypeIsActive; 			// autoWired
+	protected Checkbox 		addrTypeFIRequired; 		// autoWired
 	protected Row			row_AddrTypePriority;		// autoWired
 
 
@@ -310,6 +311,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		}else{
 			this.row_AddrTypePriority.setVisible(false);
 		}
+		this.addrTypeFIRequired.setChecked(aAddressType.isAddrTypeFIRequired());
 		this.addrTypeIsActive.setChecked(aAddressType.isAddrTypeIsActive());
 		this.recordStatus.setValue(aAddressType.getRecordStatus());
 		
@@ -348,6 +350,11 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 			} else {
 				aAddressType.setAddrTypePriority(aAddressType.getAddrTypePriority());
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aAddressType.setAddrTypeFIRequired(this.addrTypeFIRequired.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -540,6 +547,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 
 		this.addrTypeDesc.setReadonly(isReadOnly("AddressTypeDialog_addrTypeDesc"));
 		this.addrTypePriority.setReadonly(isReadOnly("AddressTypeDialog_addrTypePriority"));
+		this.addrTypeFIRequired.setDisabled(isReadOnly("AddressTypeDialog_addrTypeFIRequired"));
 		this.addrTypeIsActive.setDisabled(isReadOnly("AddressTypeDialog_addrTypeIsActive"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -568,6 +576,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		this.addrTypeCode.setReadonly(true);
 		this.addrTypeDesc.setReadonly(true);
 		this.addrTypePriority.setReadonly(true);
+		this.addrTypeFIRequired.setDisabled(true);
 		this.addrTypeIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -593,6 +602,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		this.addrTypeDesc.setValue("");
 		this.addrTypePriority.setText("");
 		this.addrTypeIsActive.setChecked(false);
+		this.addrTypeFIRequired.setChecked(false);
 		logger.debug("Leaving");
 	}
 

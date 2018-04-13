@@ -206,13 +206,6 @@
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
 
-		<!-- Scheduler -->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-all</artifactId>
-			<version>1.8.6</version>
-		</dependency>
-
 		<!-- Free Marker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>

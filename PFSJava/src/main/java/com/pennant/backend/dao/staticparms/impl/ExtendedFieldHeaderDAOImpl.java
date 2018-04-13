@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -290,35 +291,41 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 * @param tableName
 	 */
 	@Override
-	public void createTable(String module, String subModule){
+	public void createTable(String module, String subModule) {
 		logger.debug("Entering");
-		
-		for (int i = 0; i < 3; i++) {
+		int numbOfTables = 3;
+		if (StringUtils.equals(module, CollateralConstants.MODULE_NAME)) {
+			// _TV and Verification tables.
+			numbOfTables = 7;
+		}
+		for (int i = 0; i < numbOfTables; i++) {
 			String tableType = "";
-			if(i == 0){
+			if (i == 0 || i == 4) {
 				tableType = "_Temp";
+			} else if (i == 3) {
+				tableType = "_TV";
+			} else if (i >= 4) {
+				module = CollateralConstants.VERIFICATION_MODULE;
 			}
 
-			//For SQL server
+			
+			// For SQL server
 			StringBuilder syntax = new StringBuilder();
-			if(App.DATABASE == App.Database.SQL_SERVER){
-				syntax.append("create table ");
-				if(i == 2){
-					syntax.append("Adt");
-				}
-				syntax.append(StringUtils.trim(module));
-				syntax.append("_");
-				syntax.append(StringUtils.trim(subModule));
-				syntax.append("_ED");
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if(i == 2){
+			syntax.append("create table ");
+			if (App.DATABASE == App.Database.SQL_SERVER) {
+				syntax.append(getTableName(module, subModule, i));
+				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		bigint NOT NULL, ");
 					syntax.append(" AuditDate 		datetime NOT NULL, ");
 					syntax.append(" AuditSeq 		int NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar(20) NOT NULL, ");
-				}else{
-					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+				} else {
+					syntax.append("(");
+					if (i > 2) {
+						syntax.append(" Id 		bigint NOT NULL, ");
+					}
+					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo			int NOT NULL, ");
 				syntax.append("	Version			int NOT NULL,");
@@ -332,39 +339,40 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	RecordType		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
 				syntax.append(" CONSTRAINT PK_");
-				if(i == 2){
+				if (i == 2 || i == 6) {
 					syntax.append("Adt");
 				}
 				syntax.append(module);
 				syntax.append("_");
 				syntax.append(subModule);
-				syntax.append("_ED");
+				if (i < 4) {
+					syntax.append("_ED");
+				} else if (i >= 4) {
+					syntax.append("_TV");
+				}
 				syntax.append(StringUtils.trimToEmpty(tableType));
-				if(i == 2){
+				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
-				}else{
+				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
+				
 
-				//Oracle DB Scripts
-			}else if(App.DATABASE == App.Database.ORACLE){
-				syntax.append("create table ");
-				if(i == 2){
-					syntax.append("Adt");
-				}
-				syntax.append(module);
-				syntax.append("_");
-				syntax.append(subModule);
-				syntax.append("_ED");
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if(i == 2){
+				// Oracle DB Scripts
+			} else if (App.DATABASE == App.Database.ORACLE) {
+				syntax.append(getTableName(module, subModule, i));
+				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		number(19,0) NOT NULL, ");
 					syntax.append(" AuditDate 		date NOT NULL, ");
 					syntax.append(" AuditSeq 		number(10,0) NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar2(20) NOT NULL, ");
-				}else{
-					syntax.append(" (Reference 		varchar2(20) NOT NULL, ");
+				} else {
+					syntax.append("(");
+					if (i > 2) {
+						syntax.append(" Id 		bigint NOT NULL, ");
+					}
+					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo 			number(10,0) NOT NULL, ");
 				syntax.append("	Version 		number(10,0) NOT NULL,");
@@ -378,37 +386,37 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	RecordType 		varchar2(50) NULL,");
 				syntax.append("	WorkflowId 		number(19,0) NULL,");
 				syntax.append(" CONSTRAINT PK_");
-				if(i == 2){
+				if (i == 2 || i == 6) {
 					syntax.append("Adt");
 				}
 				syntax.append(module);
 				syntax.append("_");
 				syntax.append(subModule);
-				syntax.append("_ED");
+				if (i < 4) {
+					syntax.append("_ED");
+				} else if (i >= 4) {
+					syntax.append("_TV");
+				}
 				syntax.append(StringUtils.trimToEmpty(tableType));
-				if(i == 2){
+				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
-				}else{
+				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
-			}  else if (App.DATABASE == App.Database.POSTGRES){
-				syntax.append("create table ");
-				if (i == 2) {
-					syntax.append("Adt");
-				}
-				syntax.append(module);
-				syntax.append("_");
-				syntax.append(subModule);
-				syntax.append("_ED");
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if (i == 2) {
+			} else if (App.DATABASE == App.Database.POSTGRES) {
+				syntax.append(getTableName(module, subModule, i));
+				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		bigint NOT NULL, ");
 					syntax.append(" AuditDate 		timestamp NOT NULL, ");
 					syntax.append(" AuditSeq 		integer NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				} else {
-					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+					syntax.append("(");
+					if (i > 2) {
+						syntax.append(" Id 		int8 NOT NULL, ");
+					}
+					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo 			integer NOT NULL, ");
 				syntax.append("	Version 		integer NOT NULL,");
@@ -422,13 +430,17 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	RecordType 		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
 				syntax.append(" CONSTRAINT PK_");
-				if (i == 2) {
+				if (i == 2 || i == 6) {
 					syntax.append("Adt");
 				}
 				syntax.append(module);
 				syntax.append("_");
 				syntax.append(subModule);
-				syntax.append("_ED");
+				if (i < 4) {
+					syntax.append("_ED");
+				} else if (i >= 4) {
+					syntax.append("_TV");
+				}
 				syntax.append(StringUtils.trimToEmpty(tableType));
 				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
@@ -436,20 +448,46 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
 			}
-			
+
 			try {
 				logger.debug("createsql: " + syntax.toString());
-				if(i == 2){// Audit DB
+				if (i == 2 || i == 6) {// Audit DB
 					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
-				}else{
+				} else {
 					this.namedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
 			}
-			
+
 		}
 	}
+	
+	private static String getTableName(String module, String subModule, int count) {
+		StringBuilder syntax = new StringBuilder();
+		String tableType = "";
+		if (count == 0 || count == 4) {
+			tableType = "_Temp";
+		} else if (count == 2 || count == 6) {
+			syntax.append("Adt");
+		} else if (count == 3) {
+			tableType = "_TV";
+		}
+		if (count >= 4) {
+			module = CollateralConstants.VERIFICATION_MODULE;
+		}
+		syntax.append(module);
+		syntax.append("_");
+		syntax.append(subModule);
+		if (count < 4) {
+			syntax.append("_ED");
+		} else if (count >= 4) {
+			syntax.append("_TV");
+		}
+		syntax.append(StringUtils.trimToEmpty(tableType));
+		return syntax.toString();
+	}
+	
 	
 	/**
 	 * Method for Creating table structure for New Module & SubModule combination

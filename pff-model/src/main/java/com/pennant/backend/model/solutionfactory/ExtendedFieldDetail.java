@@ -106,6 +106,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	@XmlElement(name="uniqueField")
 	private boolean fieldUnique;
 	
+	private int extendedType;
 	private int		multiLine;
 	private boolean inputElement;
 	private String parentTag;
@@ -250,6 +251,13 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	}
 	public void setFieldUnique(boolean fieldUnique) {
 		this.fieldUnique = fieldUnique;
+	}
+
+	public int getExtendedType() {
+		return extendedType;
+	}
+	public void setExtendedType(int extendedType) {
+		this.extendedType = extendedType;
 	}
 
 	public boolean isNewRecord() {

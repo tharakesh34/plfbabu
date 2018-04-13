@@ -408,11 +408,7 @@
 
 	<!--============ Address Types ============== -->
 
-	<bean id="addressTypeDAO"
-		class="com.pennant.backend.dao.systemmasters.impl.AddressTypeDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="addressTypeDAO" class="com.pennant.backend.dao.systemmasters.impl.AddressTypeDAOImpl" parent="basicDao"/>
 
 	<bean id="addressTypeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -11115,12 +11111,8 @@
 		class="com.pennant.backend.financeservice.impl.ChangeScheduleMethodServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
-
-
-
 	
-		<!--============ ActivityLog Details ============== -->
-	
+	<!--============ ActivityLog Details ============== -->
 	<bean id="activityLogDAO" class="com.pennanttech.activity.log.ActivityLogDAOImpl">
 		<property name="dataSource" ref="auditDataSource" />
 	</bean>
@@ -11145,10 +11137,11 @@
 		<property name="activityLogDAO" ref="activityLogDAO" />
 	</bean>
 	
-		<!-- ManualDeviation -->
+	<!-- ManualDeviation -->
 	<bean id="manualDeviationDAO" class="com.pennant.backend.dao.applicationmaster.impl.ManualDeviationDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
+	
 	<bean id="manualDeviationService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
       	<property name="transactionManager"><ref bean="transactionManager" /></property>
 	    <property name="target"><ref bean="manualDeviationServiceTarget"/></property>
@@ -11172,5 +11165,83 @@
    	<!-- Product Deviation Details -->
 	<bean id="productDeviationDAO" class="com.pennant.backend.dao.bmtmasters.impl.ProductDeviationDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- Validation Module -->
+	<bean id="verificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.VerificationDAOImpl" parent="basicDao"/>
+	
+	<bean id="verificationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="verificationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="verificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.VerificationServiceImpl"/>
+	
+	<bean id="fieldInvestigationDAO" class="com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="fieldInvestigationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="fieldInvestigationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl" >
+	<property name="fieldInvestigationDAO" ref="fieldInvestigationDAO" />
+	<property name="verificationDAO" ref="verificationDAO"></property>
+	<property name="auditHeaderDAO" ref="auditHeaderDAO"></property>
+	</bean>
+	
+	<!-- Technical Verification -->
+	<bean id="technicalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="technicalVerificationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="technicalVerificationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl" >
+		<property name="technicalVerificationDAO" ref="technicalVerificationDAO" />
+		<property name="verificationDAO" ref="verificationDAO"></property>
+		<property name="auditHeaderDAO" ref="auditHeaderDAO"></property>
 	</bean>
 </beans>

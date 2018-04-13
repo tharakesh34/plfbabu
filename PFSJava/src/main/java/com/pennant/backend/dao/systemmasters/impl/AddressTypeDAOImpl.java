@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,15 +53,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -68,11 +68,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
-public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements AddressTypeDAO {
+public class AddressTypeDAOImpl extends BasicDao<AddressType> implements AddressTypeDAO {
 	private static Logger logger = Logger.getLogger(AddressTypeDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public AddressTypeDAOImpl() {
 		super();
@@ -94,7 +91,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		addressType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeIsActive," );
+		selectSql.append("SELECT AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  BMTAddressTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -105,7 +102,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		RowMapper<AddressType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AddressType.class);
 
 		try {
-			addressType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			addressType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			addressType = null;
@@ -139,7 +136,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("addressTypeCode", addressTypeCode);
 
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -157,10 +154,10 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTAddressTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeIsActive," );
+		sql.append(" (AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive," );
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:AddrTypeCode, :AddrTypeDesc, :AddrTypePriority, :AddrTypeIsActive, " );
+		sql.append(" values(:AddrTypeCode, :AddrTypeDesc, :AddrTypePriority, :AddrTypeFIRequired, :AddrTypeIsActive, " );
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
 	
@@ -168,7 +165,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -185,7 +182,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		StringBuilder sql = new StringBuilder("update BMTAddressTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set AddrTypeDesc = :AddrTypeDesc," );
-		sql.append(" AddrTypePriority = :AddrTypePriority, AddrTypeIsActive = :AddrTypeIsActive ," );
+		sql.append(" AddrTypePriority = :AddrTypePriority, AddrTypeFIRequired = :AddrTypeFIRequired, AddrTypeIsActive = :AddrTypeIsActive ," );
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
@@ -195,7 +192,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
-		int recordCount  = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount  = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -223,7 +220,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		int recordCount = 0;
 		
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -236,11 +233,20 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 		logger.debug(Literal.LEAVING);
 	}
 	
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	@Override
+	public List<String> getFiRequiredCodes() {
+		List<String> codes;
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("addrtypefirequired", 1);
+
+		try {
+			codes = jdbcTemplate.queryForList(
+					"select addrtypeCode from BMTAddressTypes where addrtypefirequired=:addrtypefirequired",
+					parameterSource, String.class);
+		} catch (Exception e) {
+			codes = new ArrayList<>();
+		}
+
+		return codes;
 	}	
 }

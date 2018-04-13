@@ -67,6 +67,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -161,6 +162,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -187,6 +189,7 @@ import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -274,8 +277,12 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Decision;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 import freemarker.template.TemplateException;
@@ -743,7 +750,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient AgreementFieldsDetailDialogCtrl		agreementFieldsDetailDialogCtrl;
 	private transient ManualScheduleDetailDialogCtrl		manualScheduleDetailDialogCtrl;
 	private transient OverdraftScheduleDetailDialogCtrl		overdraftScheduleDetailDialogCtrl;
-
+	private transient FieldVerificationDialogCtrl			fieldVerificationDialogCtrl;
+	
 	private transient FinBasicDetailsCtrl					finBasicDetailsCtrl;
 	private transient CustomerInterfaceService				customerInterfaceService;
 	private LimitCheckDetails								limitCheckDetails;
@@ -854,6 +862,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private PdfParserCaller                                 pdfParserCaller;
 	private String										    pdfExtTabPanelId;
 	private VehicleDealerService                            vehicleDealerService;
+	
+	@Autowired
+	private FieldInvestigationService                       fieldInvestigationService;
 
 	/**
 	 * default constructor.<br>
@@ -1470,6 +1481,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if(onLoad || StringUtils.isEmpty(moduleDefiner)){
 			appendCustomerDetailTab(onLoad);
 		}
+		
+		//FI Initiation Tab
+		appendFIInitiationTab(onLoad);
+
+		//FI Approval Tab
+		appendFIApprovalTab(onLoad);
+
+		//TV Initiation Tab
+		//appendTVInitiationTab(onLoad);
 
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -1617,6 +1637,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendExtendedFieldDetails(aFinanceDetail);
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -2621,6 +2642,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeCheckListReferenceDialogCtrl.doSetLabels(getFinBasicDetails());
 				financeCheckListReferenceDialogCtrl.doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 						getFinanceDetail().getFinanceCheckList(), false);
+			}
+			break;
+		case AssetConstants.UNIQUE_ID_FIINITIATION:
+			if (fieldVerificationDialogCtrl != null) {
+				fieldVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
 			}
 			break;
 		default:
@@ -5637,6 +5663,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			boolean validatePhone = !recSave || "Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel());
 			if (!processCustomerDetails(aFinanceDetail, validatePhone)) {
 				return;
+			} else {
+				if (financeDetail.isFiInitTab()) {
+					Verification verification = financeDetail.getFiVerification();
+					if(addChangedAddress(aFinanceDetail, verification,false)){
+						return;
+					}
+				}
 			}
 		}
 
@@ -5689,6 +5722,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (jointAccountDetailDialogCtrl.getJountAccountDetailList() != null
 					&& jointAccountDetailDialogCtrl.getJountAccountDetailList().size() > 0) {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail);
+				if (financeDetail.isFiInitTab()) {
+					Verification verification = financeDetail.getFiVerification();
+					if(addChangedAddress(aFinanceDetail, verification,true)){
+						return;
+					}
+				}
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -6001,6 +6040,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeTaxDetailDialogCtrl.doSave_Tax(aFinanceDetail, taxTab, recSave);
 		}else{
 			aFinanceDetail.setTaxDetail(null);
+		}
+		
+		// FI Init Verification Detail
+		Tab fiInitTab = getTab(AssetConstants.UNIQUE_ID_FIINITIATION);
+		if ((fiInitTab != null && fiInitTab.isVisible()) && fieldVerificationDialogCtrl != null) {
+			fieldVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, fiInitTab, recSave);
+		} 
+		
+		// FI Approval Verification Detail
+		Tab fiApprovalTab = getTab(AssetConstants.UNIQUE_ID_FIAPPROVAL);
+		if ((fiApprovalTab != null && fiApprovalTab.isVisible()) && fieldVerificationDialogCtrl != null) {
+			fieldVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, fiApprovalTab, recSave);
+			for (Verification verification : aFinanceDetail.getFiVerification().getVerifications()) {
+				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+					MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
+					return;
+				}
+			}
 		}
 
 		//Validation For Mandatory Recommendation
@@ -6756,7 +6814,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-
+		
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -16264,5 +16322,147 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setChequeDetailDialogCtrl(ChequeDetailDialogCtrl chequeDetailDialogCtrl) {
 		this.chequeDetailDialogCtrl = chequeDetailDialogCtrl;
+	}
+	
+	public FieldVerificationDialogCtrl getFieldVerificationDialogCtrl() {
+		return fieldVerificationDialogCtrl;
+	}
+
+	public void setFieldVerificationDialogCtrl(FieldVerificationDialogCtrl fieldVerificationDialogCtrl) {
+		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
+	}
+	
+	/**
+	 * Method for Rendering FIV Initiation Data in finance
+	 */
+	protected void appendFIInitiationTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isFiInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_FIINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_FIINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIINITIATION);
+		}
+		if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl",this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getFiVerification());
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_FIINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Rendering FIV Approval Data in finance
+	 */
+	protected void appendFIApprovalTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isFiApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_FIAPPROVAL) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_FIAPPROVAL, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIAPPROVAL);
+		}
+		if (getFinanceDetail().isFiApprovalTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl",this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getFiVerification());
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIApproval.zul", getTabpanel(AssetConstants.UNIQUE_ID_FIAPPROVAL), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private boolean addChangedAddress(FinanceDetail aFinanceDetail, Verification verification,boolean jointAcc) {
+		List<CustomerDetails> screenCustomers = new ArrayList<>();
+		screenCustomers.add(aFinanceDetail.getCustomerDetails());
+		for (JointAccountDetail jointAccountDetail : aFinanceDetail.getJountAccountDetailList()) {
+			screenCustomers.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
+		}
+
+		if (screenCustomers.size() != verification.getCustomerDetailsList().size() && jointAcc) {
+			setNewVerification(aFinanceDetail);
+			return true;
+		}
+		for (CustomerDetails screenCustomer : screenCustomers) {
+			for (CustomerDetails savedcustomer : verification.getCustomerDetailsList()) {
+				if (screenCustomer.getCustID() == savedcustomer.getCustID()) {
+					if (fieldInvestigationService.isAddressesAdded(screenCustomer.getAddressList(),
+							savedcustomer.getAddressList())
+							|| fieldInvestigationService.isAddressesAdded(savedcustomer.getAddressList(),
+									screenCustomer.getAddressList())) {
+						setNewVerification(aFinanceDetail);
+						return true;
+					} else {
+						for (CustomerAddres screenaddres : screenCustomer.getAddressList()) {
+							for (CustomerAddres oldAddres :savedcustomer .getAddressList()) {
+								if ((oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
+										&& (!StringUtils.isEmpty(screenaddres.getRecordType()) && screenaddres
+												.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)))
+										|| (oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
+												&& fieldInvestigationService.isAddressChanged(screenaddres, oldAddres))) {
+									setNewVerification(aFinanceDetail);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private void setNewVerification(FinanceDetail aFinanceDetail) {
+		financeDetailService.setFIInitVerification(aFinanceDetail);
+		financeDetail.setFiVerification(aFinanceDetail.getFiVerification());
+		fieldVerificationDialogCtrl.renderFIVerificationList(financeDetail.getFiVerification());
+		getTab(AssetConstants.UNIQUE_ID_FIINITIATION).setSelected(true);
+		MessageUtil.showMessage("FI Verifications are added,please  take respective actions");
+	}
+	
+	/**
+	 * Method for Rendering TV Initiation Data in finance
+	 */
+	protected void appendTVInitiationTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isTvInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_TVINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_TVINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVINITIATION);
+		}
+		if (getFinanceDetail().isTvInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl",this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getTvVerification());
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

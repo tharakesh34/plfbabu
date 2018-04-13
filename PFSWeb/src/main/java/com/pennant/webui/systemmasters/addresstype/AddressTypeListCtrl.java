@@ -88,18 +88,21 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 	protected Textbox addrTypeCode;
 	protected Textbox addrTypeDesc;
 	protected Intbox addrTypePriority;
+	protected Checkbox addrTypeFIRequired;
 	protected Checkbox addrTypeIsActive;
 	protected Row	   row_AddrTypePriority;
 
 	protected Listbox sortOperator_addrTypeCode;
 	protected Listbox sortOperator_addrTypeDesc;
 	protected Listbox sortOperator_addrTypePriority;
+	protected Listbox sortOperator_addrTypeFIRequired;
 	protected Listbox sortOperator_addrTypeIsActive;
 
 	// List headers
 	protected Listheader listheader_AddrTypeCode;
 	protected Listheader listheader_AddrTypeDesc;
 	protected Listheader listheader_AddrTypePriority;
+	protected Listheader listheader_AddrTypeFIRequired;
 	protected Listheader listheader_AddrTypeIsActive;
 
 	// checkRights
@@ -143,10 +146,9 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 				Operators.STRING);
 		registerField("addrTypeDesc", listheader_AddrTypeDesc, SortOrder.NONE, addrTypeDesc, sortOperator_addrTypeDesc,
 				Operators.STRING);
-		registerField("addrTypePriority", listheader_AddrTypePriority, SortOrder.NONE, addrTypePriority,
-				sortOperator_addrTypePriority, Operators.STRING);
-		registerField("addrTypeIsActive", listheader_AddrTypeIsActive, SortOrder.NONE, addrTypeIsActive,
-				sortOperator_addrTypeIsActive, Operators.BOOLEAN);
+		registerField("addrTypePriority", listheader_AddrTypePriority, SortOrder.NONE, addrTypePriority, sortOperator_addrTypePriority, Operators.STRING);
+		registerField("addrTypeFIRequired", listheader_AddrTypeFIRequired, SortOrder.NONE, addrTypeFIRequired, sortOperator_addrTypeFIRequired, Operators.BOOLEAN);
+		registerField("addrTypeIsActive", listheader_AddrTypeIsActive, SortOrder.NONE, addrTypeIsActive, sortOperator_addrTypeIsActive, Operators.BOOLEAN);
 		if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
 			this.row_AddrTypePriority.setVisible(true);
 			this.listheader_AddrTypePriority.setVisible(true);

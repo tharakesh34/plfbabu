@@ -160,6 +160,20 @@
 				rightName="menuItem_applicationmaster_OtherBankFinanceType" />
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
+			<menu id="menu_Category_Agencies">
+				<menuItem id="menu_Item_Field_Investigation"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=FIAGENCY"
+					rightName="menu_Item_Agencies_Field_Investigation" />
+				<menuItem id="menu_Item_Legal_Verification"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=LVAGENCY"
+					rightName="menu_Item_Agencies_Legal_Verification" />
+				<menuItem id="menu_Item_RCU_Verification"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=RCUVAGENCY"
+					rightName="menu_Item_Agencies_RCU_Verification" />
+				<menuItem id="menu_Item_Technical_Verification"
+					zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=TVAGENCY"
+					rightName="menu_Item_Agencies_Technical_Verification" />
+			</menu>
 			<menuItem id="menu_Item_BuilderGroup"
 				zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul"
 				rightName="menuItem_masters_BuilderGroup" />
@@ -487,6 +501,16 @@
 			rightName="menuItem_Finance_FinanceMain" />
 	<menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
 		rightName="menuItem_Finance_QDEFinanceMain" />		
+	</menu>
+	
+	<!-- Verification -->
+	<menu id="menu_Category_Verification">
+	<menuItem id="menu_Item_FieldInvestigation"
+		zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul"
+		rightName="menuItem_Verification_FieldInvestigation" />	
+	<menuItem id="menu_Item_TechnicalVerification"
+		zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
+		rightName="menuItem_Verification_FieldInvestigation" />	
 	</menu>
 
 	<!-- Loan Management -->

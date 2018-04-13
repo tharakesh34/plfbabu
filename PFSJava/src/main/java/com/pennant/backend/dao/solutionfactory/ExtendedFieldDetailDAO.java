@@ -97,4 +97,6 @@ public interface ExtendedFieldDetailDAO {
 	boolean isExist(String tableName, String primaryKeyColumn, Serializable id, String type);
 
 	void revertColumn(ExtendedFieldDetail efd);
+
+	List<ExtendedFieldDetail> getExtendedFieldDetailById(long moduleId, int extendedType, String type);
 }

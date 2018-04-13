@@ -93,7 +93,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList = new ArrayList<ExtendedFieldDetail>(1);
-
+	private List<ExtendedFieldDetail> technicalValuationDetailList;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -206,6 +206,14 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 
 	public void setExtendedFieldDetails(List<ExtendedFieldDetail> extendedFieldDetails) {
 		this.extendedFieldDetailList = extendedFieldDetails;
+	}
+	
+	public List<ExtendedFieldDetail> getTechnicalValuationDetailList() {
+		return technicalValuationDetailList;
+	}
+
+	public void setTechnicalValuationDetailList(List<ExtendedFieldDetail> technicalValuationDetailList) {
+		this.technicalValuationDetailList = technicalValuationDetailList;
 	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {

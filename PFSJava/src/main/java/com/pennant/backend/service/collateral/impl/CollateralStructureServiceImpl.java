@@ -66,6 +66,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldsValidation;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -169,11 +170,17 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		long moduleId;
 		if (extFieldHeader.isNew()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
-			
-			//Setting Module ID to List
+
+			// Setting Module ID to List
 			List<ExtendedFieldDetail> list = extFieldHeader.getExtendedFieldDetails();
 			if (list != null && list.size() > 0) {
 				for (ExtendedFieldDetail ext : list) {
+					ext.setModuleId(moduleId);
+				}
+			}
+			List<ExtendedFieldDetail> techValuationList = extFieldHeader.getTechnicalValuationDetailList();
+			if (list != null && techValuationList.size() > 0) {
+				for (ExtendedFieldDetail ext : techValuationList) {
 					ext.setModuleId(moduleId);
 				}
 			}
@@ -188,6 +195,11 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		if (extFieldHeader.getExtendedFieldDetails() != null && extFieldHeader.getExtendedFieldDetails().size() > 0) {
 			List<AuditDetail> details = extFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = getExtendedFieldsValidation().processingExtendeFieldList(details, tableType);
+			auditDetails.addAll(details);
+		}
+		if (extFieldHeader.getTechnicalValuationDetailList() != null && extFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+			List<AuditDetail> details = extFieldHeader.getAuditDetailMap().get("TechValuationFieldDetails");
+			details = getExtendedFieldsValidation().processingTechValuationFieldsList(details, tableType);
 			auditDetails.addAll(details);
 		}
 		
@@ -263,7 +275,8 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 					CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_View");
 			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
+				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_View"));
+				extFldHeader.setTechnicalValuationDetailList(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION ,"_View"));
 			}
 			collaStructure.setExtendedFieldHeader(extFldHeader);
 		}
@@ -291,7 +304,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 					CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_AView");
 			if (extFldHeader != null) {
 				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
-						extFldHeader.getModuleId(), "_AView"));
+						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD,"_AView"));
 			}
 			collaStructure.setExtendedFieldHeader(extFldHeader);
 		}
@@ -383,6 +396,11 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
 				details = getExtendedFieldsValidation().processingExtendeFieldList(details, "");
+				auditDetails.addAll(details);
+			}
+			if (extendedFieldHeader.getTechnicalValuationDetailList() != null && extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("TechValuationFieldDetails");
+				details = getExtendedFieldsValidation().processingTechValuationFieldsList(details, "");
 				auditDetails.addAll(details);
 			}
 		}
@@ -550,10 +568,19 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
 		//Audit Detail Preparation for Extended Field Detail
+		
+		 int count=0;
 		if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation().setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+			count=extendedFieldHeader.getExtendedFieldDetails().size();
 		}
+		
+		//Audit Detail Preparation for Extended Field Detail
+		if (extendedFieldHeader.getTechnicalValuationDetailList() != null && extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+					auditDetailMap.put("TechValuationFieldDetails", getExtendedFieldsValidation().setTechValuationFieldsAuditData(extendedFieldHeader,auditTranType, method,count+1));
+					auditDetails.addAll(auditDetailMap.get("TechValuationFieldDetails"));
+			}
 		
 		extendedFieldHeader.setAuditDetailMap(auditDetailMap);
 		collateralStructure.setExtendedFieldHeader(extendedFieldHeader);

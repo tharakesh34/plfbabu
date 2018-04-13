@@ -182,7 +182,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-
+	
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes

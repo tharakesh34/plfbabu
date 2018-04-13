@@ -46,5 +46,8 @@ public class ExtendedFieldConstants {
 	public static final String MODULE_CUSTOMER 			= "CUSTOMER";
 	public static final String MODULE_LOAN 			= "LOAN";
 	
+	//Extended Types
+	public static final int EXTENDEDTYPE_EXTENDEDFIELD		 = 0;
+	public static final int EXTENDEDTYPE_TECHVALUATION 		 = 1;
 	
 }

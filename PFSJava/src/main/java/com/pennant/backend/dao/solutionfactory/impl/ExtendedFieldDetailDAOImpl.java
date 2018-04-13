@@ -228,12 +228,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		insertSql.append(" (ModuleId, FieldName, FieldType, FieldLength, FieldPrec, FieldLabel, " );
 		insertSql.append(" FieldMandatory, FieldConstraint, FieldSeqOrder, FieldList, " );
 		insertSql.append(" FieldDefaultValue, FieldMinValue, FieldMaxValue, FieldUnique, MultiLine,ParentTag,");
-		insertSql.append(" InputElement,Editable, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" InputElement,Editable, ExtendedType, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :FieldName, :FieldType, :FieldLength, :FieldPrec, " );
 		insertSql.append(" :FieldLabel, :FieldMandatory, :FieldConstraint, :FieldSeqOrder, " );
 		insertSql.append(" :FieldList, :FieldDefaultValue, :FieldMinValue, " );
-		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable, ");
+		insertSql.append(" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable,:ExtendedType, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -275,7 +275,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" FieldSeqOrder = :FieldSeqOrder, " );
 		updateSql.append(" FieldList = :FieldList, FieldDefaultValue = :FieldDefaultValue, " );
 		updateSql.append(" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue,Editable = :Editable, " );
-		updateSql.append(" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,");
+		updateSql.append(" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,ExtendedType =:ExtendedType,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -933,5 +933,36 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 			logger.debug("Leaving");
 		}
+	}
+
+	@Override
+	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, int extendedType, String type) {
+		logger.debug("Entering");
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
+
+		extendedFieldDetail.setId(id);
+		extendedFieldDetail.setExtendedType(extendedType);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
+		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, " );
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(" ,lovDescModuleName,lovDescSubModuleName ");
+		}
+
+		selectSql.append(" From ExtendedFieldDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ModuleId =:ModuleId and ExtendedType =:ExtendedType order by ParentTag DESC ,FieldSeqOrder ASC");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
+		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				ExtendedFieldDetail.class);
+
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 }

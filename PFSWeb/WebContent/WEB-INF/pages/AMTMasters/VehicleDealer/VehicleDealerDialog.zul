@@ -98,14 +98,15 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="dealerName"
-										 width="180px" />
+										width="180px" />
 								</hbox>
-								<label id ="label_VehicleDealerDialog_Email" value="${c:l('label_VehicleDealerDialog_Email.value')}" />
+								<label
+									id="label_VehicleDealerDialog_Email"
+									value="${c:l('label_VehicleDealerDialog_Email.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="email"
-										width="280px" />
+									<textbox id="email" width="280px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -115,26 +116,33 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="phoneCountryCode" width="40px" />
+									<textbox id="phoneCountryCode"
+										width="40px" />
 									<label value="-"
 										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode" width="40px"/>
+									<textbox id="phoneAreaCode"
+										width="40px" />
 									<label value="-"
 										style="display:inline-block;padding-top:4px;" />
-									<textbox id="dealerTelephone" width="70px"/>
+									<textbox id="dealerTelephone"
+										width="70px" />
 								</hbox>
 								<label
 									id="label_VehicleDealerDialog_DealerFax"
 									value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="faxCountryCode" width="40px"/>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="faxCountryCode"
+										width="40px" />
 									<label value="-"
 										style="display:inline-block;padding-top:4px;" />
-									<textbox id="faxAreaCode" width="40px"/>
+									<textbox id="faxAreaCode"
+										width="40px" />
 									<label value="-"
 										style="display:inline-block;padding-top:4px;" />
-									<textbox id="dealerFax" width="70px" />
+									<textbox id="dealerFax"
+										width="70px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -155,7 +163,7 @@
 									<textbox id="dealerAddress2"
 										width="280px" />
 								</hbox>
-								
+
 							</row>
 							<row visible="true">
 								<label
@@ -172,7 +180,7 @@
 								<extendedcombobox id="dealerCountry" />
 							</row>
 							<row visible="true">
-							<label
+								<label
 									id="label_VehicleDealerDialog_DealerProvince"
 									value="${c:l('label_VehicleDealerDialog_DealerProvince.value')}" />
 								<extendedcombobox id="dealerProvince" />
@@ -185,8 +193,8 @@
 									<textbox id="cityName"
 										width="180px" />
 								</hbox>
-								</row>
-								<row visible="true">
+							</row>
+							<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_Pobox"
 									value="${c:l('label_VehicleDealerDialog_Pobox.value')}" />
@@ -202,28 +210,28 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="zipCode"
-										width="150px" />
+									<textbox id="zipCode" width="150px" />
 								</hbox>
 							</row>
 							<row visible="true">
-								<label	id="label_VehicleDealerDialog_Active"
-										value="${c:l('label_VehicleDealerDialog_Active.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="active"
-											checked="false" />
-									</hbox>
+								<label
+									id="label_VehicleDealerDialog_Active"
+									value="${c:l('label_VehicleDealerDialog_Active.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="active"
+										checked="false" />
+								</hbox>
 							</row>
 							<row visible="false">
-							<label
+								<label
 									id="label_VehicleDealerDialog_Emirates"
 									value="${c:l('label_VehicleDealerDialog_Emirates.value')}" />
 								<hbox>
 									<extendedcombobox id="emirates" />
 								</hbox>
 							</row>
-				
+
 							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_DealerAddress4"
@@ -234,15 +242,15 @@
 										width="280px" />
 								</hbox>
 							</row>
-							
+
 							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_CommisionPaidAt"
 									value="${c:l('label_VehicleDealerDialog_CommisionPaidAt.value')}" />
 								<hbox>
-								<space spacing="2px"
-										sclass="mandatory"/>
-								<combobox id="commisionPaid" />
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="commisionPaid" />
 								</hbox>
 								<label
 									id="label_VehicleDealerDialog_CommisionCalRule"
@@ -255,7 +263,7 @@
 									value="${c:l('label_VehicleDealerDialog_PaymentMode.value')}" />
 								<hbox>
 									<space spacing="2px"
-										id = "space_PaymentMode"/>
+										id="space_PaymentMode" />
 									<combobox id="paymentMode" />
 								</hbox>
 								<label
@@ -274,17 +282,18 @@
 								<label
 									id="label_VehicleDealerDialog_AccountingTreatment"
 									value="${c:l('label_VehicleDealerDialog_AccountingTreatment.value')}" />
-									<hbox>
-								<extendedcombobox id="accountingSetId" />
+								<hbox>
+									<extendedcombobox
+										id="accountingSetId" />
 								</hbox>
-									<label
-										id="label_VehicleDealerDialog_SellerType"
-										value="${c:l('label_VehicleDealerDialog_SellerType.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<combobox id="sellerType" />
-									</hbox>
+								<label
+									id="label_VehicleDealerDialog_SellerType"
+									value="${c:l('label_VehicleDealerDialog_SellerType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="sellerType" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>
@@ -303,7 +312,6 @@
 					</hbox>
 				</groupbox>
 			</south>
-
 		</borderlayout>
 	</window>
 </zk>

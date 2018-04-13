@@ -66,6 +66,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.amtmasters.vehicledealer.model.VehicleDealerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -73,7 +74,8 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 
 /**
- * This is the controller class for the /WEB-INF/pages/AMTMaster/VehicleDealer/VehicleDealerList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/AMTMaster/VehicleDealer/VehicleDealerList.zul file.
  */
 public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	private static final long serialVersionUID = 259921702952389829L;
@@ -115,8 +117,6 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	protected Listbox sortOperator_dealerProvince;
 	protected Listbox sortOperator_dealerCity;
 	protected Listbox sortOperator_active;
-	
-	
 
 	private transient VehicleDealerService vehicleDealerService;
 	private String module;
@@ -140,17 +140,17 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
+
 		Filter[] filters = new Filter[2];
 		String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
 				this.phoneAreaCode.getValue(), this.dealerTelephone.getValue());
-		if(StringUtils.isEmpty(phoneNumber)){
-			 filters = new Filter[1];
-			 filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
-		}else{
-			 filters = new Filter[2];
-			 filters[0] = SearchFilterControl.getFilter("dealerTelephone", phoneNumber,
-					 sortOperator_dealerTelephone);
-			 filters[1] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
+		if (StringUtils.isEmpty(phoneNumber)) {
+			filters = new Filter[1];
+			filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
+		} else {
+			filters = new Filter[2];
+			filters[0] = SearchFilterControl.getFilter("dealerTelephone", phoneNumber, sortOperator_dealerTelephone);
+			filters[1] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
 		}
 		searchObject.addFilterAnd(filters);
 	}
@@ -164,7 +164,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -186,14 +187,14 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 				Operators.STRING);
 		registerField("dealerName", listheader_DealerName, SortOrder.NONE, dealerName, sortOperator_dealerName,
 				Operators.STRING);
-		registerField("email", listheader_Email, SortOrder.NONE,email,sortOperator_email,Operators.STRING);
+		registerField("email", listheader_Email, SortOrder.NONE, email, sortOperator_email, Operators.STRING);
 		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE);
 		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
-		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince, sortOperator_dealerProvince,
+		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince,
+				sortOperator_dealerProvince, Operators.STRING);
+		registerField("dealerCity", listheader_DealerCity, SortOrder.NONE, dealerCity, sortOperator_dealerCity,
 				Operators.STRING);
-		registerField("dealerCity", listheader_DealerCity, SortOrder.NONE, dealerCity, sortOperator_dealerCity, Operators.STRING);
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active,
-				Operators.BOOLEAN);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
 
 		SearchFilterControl.renderOperators(this.sortOperator_dealerTelephone, Operators.STRING);
 
@@ -204,7 +205,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -214,7 +216,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -225,13 +228,14 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_VehicleDealerList_NewVehicleDealer(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
 		VehicleDealer vehicleDealer = new VehicleDealer();
@@ -241,18 +245,19 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		// Display the dialog page.
 		doShowDialogPage(vehicleDealer);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onVehicleDealerItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxVehicleDealer.getSelectedItem();
@@ -267,8 +272,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DealerId=" + vehicleDealer.getDealerId() + " AND version="
-				+ vehicleDealer.getVersion() + " ";
+		String whereCond = " AND DealerId=" + vehicleDealer.getDealerId() + " AND version=" + vehicleDealer.getVersion()
+				+ " ";
 		if (doCheckAuthority(vehicleDealer, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vehicleDealer.getWorkflowId() == 0) {
@@ -279,7 +284,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -289,10 +294,10 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	 *            The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(VehicleDealer vehicleDealer) {
-		logger.debug("Entering");
-		
+		logger.debug(Literal.ENTERING);
+
 		this.module = getArgument("module");
-		
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("vehicleDealer", vehicleDealer);
 		arg.put("vehicleDealerListCtrl", this);
@@ -304,22 +309,25 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		this.dealerId.setMaxlength(19);
 		this.dealerName.setMaxlength(50);
 		this.phoneAreaCode.setMaxlength(3);
 		this.phoneCountryCode.setMaxlength(3);
 		this.dealerTelephone.setMaxlength(8);
 		this.recordStatus.setMaxlength(50);
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

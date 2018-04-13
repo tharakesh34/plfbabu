@@ -78,12 +78,21 @@ public class AddressTypeListModelItemRenderer implements ListitemRenderer<Addres
 		lc = new Listcell(PennantAppUtil.formateInt(addressType.getAddrTypePriority()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell();
+		
+		lc = new Listcell();		
+		final Checkbox fiRequired = new Checkbox();
+		fiRequired.setDisabled(true);
+		fiRequired.setChecked(addressType.isAddrTypeFIRequired());
+		lc.appendChild(fiRequired);
+		lc.setParent(item);
+		
+		lc = new Listcell();	
 		final Checkbox cbAddrTypeIsActive = new Checkbox();
 		cbAddrTypeIsActive.setDisabled(true);
 		cbAddrTypeIsActive.setChecked(addressType.isAddrTypeIsActive());
 		lc.appendChild(cbAddrTypeIsActive);
 		lc.setParent(item);
+		
 		lc = new Listcell(addressType.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(addressType.getRecordType()));

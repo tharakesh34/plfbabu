@@ -186,6 +186,8 @@
 								label="${c:l('Tab_CollateralStructureBasicDetails')}" />
 							<tab id="extendedDetailsTab"
 								label="${c:l('Tab_CollateralStructureExtendedFieldDetails')}" />
+							<tab id="techValuationDetailsTab"
+								label="${c:l('Tab_CollateralStructureTechnicalValuationDetails')}" />
 							<tab id="ltvRuleTab"
 								label="${c:l('Tab_CollateralStructureLTVDetails')}" />
 							<tab id="preValidationTab"
@@ -320,6 +322,8 @@
 							</tabpanel>
 							<tabpanel id="extendedFieldTabpanel"
 								style="overflow:auto" />
+							<tabpanel id="techValuationTabpanel"
+								style="overflow:auto" />	
 							<tabpanel style="overflow:auto">
 								<div id="ltvRuleTabDiv">
 									<groupbox id="gb_ltvDetails"

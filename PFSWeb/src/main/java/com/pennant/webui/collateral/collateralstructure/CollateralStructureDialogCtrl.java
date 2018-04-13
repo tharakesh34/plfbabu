@@ -103,6 +103,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
+import com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -161,16 +162,19 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab basicDetailsTab;
 	protected Tab extendedDetailsTab;
+	protected Tab techValuationDetailsTab;
 	protected Tab ltvRuleTab;
 	protected Tab preValidationTab;
 	protected Tab postValidationTab;
 	protected Tabpanel extendedFieldTabpanel;
+	protected Tabpanel techValuationTabpanel;
 	protected Button btnCopyTo;
 
 	private CollateralStructure collateralStructure;
 	private transient CollateralStructureListCtrl collateralStructureListCtrl;
 	private transient CollateralStructureService collateralStructureService;
 	private transient ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
+	private transient TechnicalValuationDialogCtrl technicalValuationDialogCtrl;
 	private JSONArray variables = new JSONArray();
 	private List<String> fieldNames = new ArrayList<String>();
 	protected boolean alwCopyOption = false;
@@ -241,9 +245,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	/**
 	 * Method for append Extended field Details tab
 	 */
-	private void appendExtendedFieldsTab() {
+	private void appendExtendedFieldsTab(ExtendedFieldHeader extendedFieldHeader) {
 		try {
-			ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 			if (extendedFieldHeader == null) {
 				extendedFieldHeader = new ExtendedFieldHeader();
 				extendedFieldHeader.setNewRecord(true);
@@ -268,7 +271,35 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			logger.error(e);
 		}
 	}
+	/**
+	 * Method for append Technical Valuation field Details tab
+	 */
+	private void appendTechValuationTab(ExtendedFieldHeader extendedFieldHeader) {
+		try {
+			if (extendedFieldHeader == null) {
+				extendedFieldHeader = new ExtendedFieldHeader();
+				extendedFieldHeader.setNewRecord(true);
+				collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
+			}
+			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
+			if (collateralStructure.isNew()) {
+				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
+				extendedFieldHeader.setNumberOfColumns("2");
+			}
+			Map<String, Object> map = new HashMap<>();
+			map.put("extendedFieldHeader", extendedFieldHeader);
+			map.put("roleCode", getRole());
+			map.put("dialogCtrl", this);
+			map.put("firstTaskRole", StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()));
+			map.put("newRecord", collateralStructure.isNew());
+			map.put("moduleName", CollateralConstants.MODULE_NAME);
 
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/TechnicalValuationDialog.zul",
+					techValuationTabpanel, map);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+	}
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -295,6 +326,16 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		getExtendedFieldDialogCtrl().doSetBasicDetail(CollateralConstants.MODULE_NAME,
 				this.collateralType.getValue(), this.collateralDesc.getValue());
 	}
+	/**
+	 * Method for setting Basic Details on Selecting Technical valuation Details Tab
+	 * 
+	 * @param event
+	 */
+	public void onSelect$techValuationDetailsTab(Event event) {
+		getTechnicalValuationDialogCtrl().doSetBasicDetail(CollateralConstants.MODULE_NAME,
+				this.collateralType.getValue(), this.collateralDesc.getValue());
+	}
+	
 
 	/**
 	 * Method for setting Basic Details on Selecting LTV Rule Details Tab
@@ -799,7 +840,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		preScriptValidated = true;
 		
 		// Extended Field Details tab
-		appendExtendedFieldsTab();
+		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
+		ExtendedFieldHeader techValuationFieldHeader = collateralStructure.getExtendedFieldHeader();
+		appendExtendedFieldsTab(extendedFieldHeader);
+		appendTechValuationTab(techValuationFieldHeader);
 		
 		this.recordStatus.setValue(collateralStructure.getRecordStatus());
 		logger.debug("Leaving");
@@ -856,14 +900,24 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 		showErrorDetails(wve, basicDetailsTab);
 		
+		ExtendedFieldHeader extendedFieldHeader=null;
 		// Extended Field Details
 		if (getExtendedFieldDialogCtrl() != null) {
-			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
+			extendedFieldHeader= getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
 			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
 			extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 			extendedFieldHeader.setTabHeading(collateralStructure.getCollateralDesc());
 			collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 		}
+		
+		// Technical Valuation Details
+		if (getTechnicalValuationDialogCtrl() != null && extendedFieldHeader !=null) {
+			List<ExtendedFieldDetail> techValuationDetailList = getTechnicalValuationDialogCtrl().doSave_TechnicalValuationFields(techValuationDetailsTab);
+			extendedFieldHeader.setTechnicalValuationDetailList(techValuationDetailList);
+			collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
+		}
+		
+		
 
 		// LTV Rules
 		if (StringUtils.equals(getComboboxValue(this.ltvType), CollateralConstants.VARIABLE_LTV)) {
@@ -1479,6 +1533,21 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					}
 				}
 			}
+			
+			for (ExtendedFieldDetail ext : extFldHeader.getTechnicalValuationDetailList()) {
+				ext.setWorkflowId(aCollateralStructure.getWorkflowId());
+				ext.setRecordStatus(aCollateralStructure.getRecordStatus());
+				ext.setTaskId(aCollateralStructure.getTaskId());
+				ext.setNextTaskId(aCollateralStructure.getNextTaskId());
+				ext.setRoleCode(aCollateralStructure.getRoleCode());
+				ext.setNextRoleCode(aCollateralStructure.getNextRoleCode());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(aCollateralStructure.getRecordType())) {
+					if (StringUtils.trimToNull(ext.getRecordType()) == null) {
+						ext.setRecordType(aCollateralStructure.getRecordType());
+						ext.setNewRecord(true);
+					}
+				}
+			}
 
 			auditHeader = getAuditHeader(aCollateralStructure, tranType);
 			String operationRefs = getServiceOperations(taskId, aCollateralStructure);
@@ -1628,6 +1697,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	public ExtendedFieldDialogCtrl getExtendedFieldDialogCtrl() {
 		return this.extendedFieldDialogCtrl;
+	}
+
+	public TechnicalValuationDialogCtrl getTechnicalValuationDialogCtrl() {
+		return technicalValuationDialogCtrl;
+	}
+
+	public void setTechnicalValuationDialogCtrl(TechnicalValuationDialogCtrl technicalValuationDialogCtrl) {
+		this.technicalValuationDialogCtrl = technicalValuationDialogCtrl;
 	}
 
 	public List<String> getFieldNames() {

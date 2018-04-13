@@ -20,6 +20,7 @@ import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1032,7 +1033,7 @@ public class PennantStaticListUtil {
 	}
 
 	public static ArrayList<ValueLabel> getDealerType() {
-		if(dealerType == null){
+		if (dealerType == null) {
 			dealerType = new ArrayList<ValueLabel>(4);
 			dealerType.add(new ValueLabel("D", Labels.getLabel("label_Dealer")));
 			dealerType.add(new ValueLabel("V", Labels.getLabel("label_Vendor")));
@@ -1040,6 +1041,11 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("DSA", Labels.getLabel("label_DSA")));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
+
+			dealerType.add(new ValueLabel(Agencies.FIELD_INVESTIGATION.getKey(), Agencies.FIELD_INVESTIGATION.getValue()));
+			dealerType.add(new ValueLabel(Agencies.LEGAL_VERIFICATION.getKey(), Agencies.LEGAL_VERIFICATION.getValue()));
+			dealerType.add(new ValueLabel(Agencies.RCU_VERIFICATION.getKey(), Agencies.RCU_VERIFICATION.getValue()));
+			dealerType.add(new ValueLabel(Agencies.TECHNICAL_VERIFICATION.getKey(), Agencies.TECHNICAL_VERIFICATION.getValue()));
 		}
 		return dealerType;
 	}

@@ -329,6 +329,136 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.LEAVING);
 		return deatils;
 	}
+	
+	/**
+	 * Method For Preparing List of AuditDetails for Extended FieldDetails
+	 * 
+	 * @param deatils
+	 * @param extFldHeader
+	 * @param tableName
+	 * @param type
+	 * @return
+	 */
+	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils, ExtendedFieldHeader extFldHeader, String tableName, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		
+		for (int i = 0; i < deatils.size(); i++) {
+			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
+			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
+				continue;
+			}
+			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						tableName + type)) {
+					extendedFieldRender.setNewRecord(true);
+				}
+			}
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				extendedFieldRender.setRoleCode("");
+				extendedFieldRender.setNextRoleCode("");
+				extendedFieldRender.setTaskId("");
+				extendedFieldRender.setNextTaskId("");
+			}
+			
+			//Table Name addition for Audit
+			extendedFieldRender.setTableName(tableName);
+			extendedFieldRender.setWorkflowId(0);
+			
+			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (extendedFieldRender.isNewRecord()) {
+				saveRecord = true;
+				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+				
+			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (extendedFieldRender.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = extendedFieldRender.getRecordType();
+				recordStatus = extendedFieldRender.getRecordStatus();
+				extendedFieldRender.setRecordType("");
+				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			
+			// Add Common Fields
+			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			if (saveRecord || updateRecord) {
+				if (saveRecord) {
+					mapValues.put("Reference", extendedFieldRender.getReference());
+					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+				}
+				
+				mapValues.put("Version", extendedFieldRender.getVersion());
+				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+				mapValues.put("TaskId", extendedFieldRender.getTaskId());
+				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+				mapValues.put("RecordType", extendedFieldRender.getRecordType());
+				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+			}
+			
+			if (saveRecord) {
+				extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type, tableName.toString());
+			}
+			
+			if (updateRecord) {
+				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+						extendedFieldRender.getMapValues(), type, tableName.toString());
+			}
+			
+			if (deleteRecord) {
+				extendedFieldRenderDAO.delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(), type,
+						tableName.toString());
+			}
+			if (approveRec) {
+				extendedFieldRender.setRecordType(rcdType);
+				extendedFieldRender.setRecordStatus(recordStatus);
+			}
+			
+			// Setting Extended field is to identify record related to Extended fields
+			extendedFieldRender.setBefImage(extendedFieldRender);
+			deatils.get(i).setExtended(true);
+			deatils.get(i).setModelData(extendedFieldRender);
+		}
+		logger.debug(Literal.LEAVING);
+		return deatils;
+	}
 
 	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> details, String module, String type) {
 		logger.debug(Literal.ENTERING);

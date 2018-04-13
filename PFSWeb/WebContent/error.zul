@@ -21,8 +21,7 @@
 					style="padding: 4px 0px 8px;">
 					<button label="Continue" sclass="z-messagebox-btn"
 						style="margin: 0px 4px;" onClick="spaceOwner.detach()" />
-					<button label="Reload" sclass="z-messagebox-btn"
-						style="margin: 0px 4px;" onClick="Executions.sendRedirect(null)" />
+					<!-- <button label="Reload" sclass="z-messagebox-btn" style="margin: 0px 4px;" onClick="Executions.sendRedirect(null)" /> -->
 				</hbox>
 			</panelchildren>
 		</panel>

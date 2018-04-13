@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennanttech.pff.core.TableType;
@@ -64,5 +66,7 @@ public interface AddressTypeDAO extends BasicCrudDao<AddressType>{
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String addressTypeCode, TableType tableType);
+	
+	List<String>  getFiRequiredCodes();
 
 }

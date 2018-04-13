@@ -349,4 +349,10 @@ public class FinanceConstants {
 	// Fee Type Tax
 	public static final String FEE_TAXCOMPONENT_INCLUSIVE 		= "I"; 					// Inclusive
 	public static final String FEE_TAXCOMPONENT_EXCLUSIVE 		= "E"; 					// Exclusive
+	
+	//Field Investigation
+	public static final String	PROCEDT_VERIFICATION_FI_INIT	= "FIINIT";
+	public static final String	PROCEDT_VERIFICATION_FI_APPR	= "FIAPPR";
+	public static final String	PROCEDT_VERIFICATION_TV_INIT	= "TVINIT";
+	public static final String	PROCEDT_VERIFICATION_TV_APPR	= "TVAPPR";
 }

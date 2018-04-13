@@ -6,202 +6,214 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-<window>
-	<window id="window_VehicleDealerList"
-		apply="${vehicleDealerListCtrl}" border="none" width="100%">
-		<div sclass="z-toolbar" style="padding:0px" height="28px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%" widths="30%,40%,30%">
+	<window>
+		<window id="window_VehicleDealerList"
+			apply="${vehicleDealerListCtrl}" border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
 
-				<!-- COMMON BUTTONS -->
-				<label value="" />
-				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center">
-					<button
-						id="button_VehicleDealerList_VehicleDealerSearchDialog"
-						label="${c:l('label_Filter')}"
-						autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
-						tooltiptext="${c:l('button_VehicleDealerList_VehicleDealerSearchDialog.tooltiptext')}"
-						sclass="z-toolbarbutton" />
-					<button id="print" label="${c:l('label_Print')}"
-						autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
-						tooltiptext="${c:l('button_VehicleDealerList_PrintList.tooltiptext')}"
-						sclass="z-toolbarbutton" />
-				</toolbar>
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button
+							id="button_VehicleDealerList_VehicleDealerSearchDialog"
+							label="${c:l('label_Filter')}"
+							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
+							tooltiptext="${c:l('button_VehicleDealerList_VehicleDealerSearchDialog.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
+							tooltiptext="${c:l('button_VehicleDealerList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
 
-				<!-- CRUD BUTTONS -->
-				<toolbar align="end" sclass="toolbar-end">
-					<button
-						id="button_VehicleDealerList_NewVehicleDealer"
-						label="${c:l('label_New')}"
-						autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
-						tooltiptext="${c:l('button_VehicleDealerList_NewVehicleDealer.tooltiptext')}"
-						sclass="z-toolbarbutton" />
-					<button id="btnRefresh"
-						label="${c:l('label_Refresh')}"
-						autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
-						sclass="z-toolbarbutton" />
-					<button id="help" visible="false"
-						label="${c:l('label_Help')}"
-						autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						sclass="z-toolbarbutton" />
-				</toolbar>
-			</hbox>
-		</div>
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button
+							id="button_VehicleDealerList_NewVehicleDealer"
+							label="${c:l('label_New')}"
+							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
+							tooltiptext="${c:l('button_VehicleDealerList_NewVehicleDealer.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnRefresh"
+							label="${c:l('label_Refresh')}"
+							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" visible="false"
+							label="${c:l('label_Help')}"
+							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,print,button_VehicleDealerList_NewVehicleDealer,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
 
-		<borderlayout id="borderLayout_VehicleDealerList">
-			<north border="none" />
+			<borderlayout id="borderLayout_VehicleDealerList">
+				<north border="none" />
 
-			<center border="none">
-				<div>
-					<grid id="searchGrid" sclass="GridLayoutNoBorder"
-						fixedLayout="true">
-						<columns>
-							<column width="130px" />
-							<column width="50px" />
-							<column />
-							<column width="130px" />
-							<column width="50px" />
-							<column />
-						</columns>
-						<rows>
-							<row visible="false">
-								<label
-									id="label_VehicleDealerSearch_DealerType"
-									value="${c:l('label_VehicleDealerSearch_DealerType.value')}" />
-								<listbox id="sortOperator_dealerType"
-									width="43px" mold="select" rows="1" />
-								<combobox id="dealerType" />
-							</row>
-							<row visible="false">
-								<label
-									id="label_VehicleDealerSearch_DealerId"
-									value="${c:l('label_VehicleDealerSearch_DealerId.value')}" />
-								<listbox id="sortOperator_dealerId"
-									width="43px" mold="select" rows="1" />
-								<textbox id="dealerId" width="200px" />
-							</row>
-							<row>
-								<label
-									id="label_VehicleDealerSearch_DealerName"
-									value="${c:l('label_VehicleDealerSearch_DealerName.value')}" />
-								<listbox id="sortOperator_dealerName"
-									width="43px" mold="select" rows="1" />
-								<textbox id="dealerName" width="300px" />
-								<label
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label
+										id="label_VehicleDealerSearch_DealerType"
+										value="${c:l('label_VehicleDealerSearch_DealerType.value')}" />
+									<listbox
+										id="sortOperator_dealerType" width="43px" mold="select"
+										rows="1" />
+									<combobox id="dealerType" />
+								</row>
+								<row visible="false">
+									<label
+										id="label_VehicleDealerSearch_DealerId"
+										value="${c:l('label_VehicleDealerSearch_DealerId.value')}" />
+									<listbox id="sortOperator_dealerId"
+										width="43px" mold="select" rows="1" />
+									<textbox id="dealerId"
+										width="200px" />
+								</row>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_DealerName"
+										value="${c:l('label_VehicleDealerSearch_DealerName.value')}" />
+									<listbox
+										id="sortOperator_dealerName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerName"
+										width="300px" />
+									<label
 										id="label_VehicleDealerSearch_Email"
 										value="${c:l('label_VehicleDealerSearch_Email.value')}" />
 									<listbox id="sortOperator_email"
 										width="43px" mold="select" rows="1" />
 									<textbox id="email" width="171px"
 										maxlength="50" />
-							</row>
-							<row>
-							<label id="label_VehicleDealerSearch_DealerProvince"
-									value="${c:l('label_VehicleDealerSearch_DealerProvince.value')}" />
-								<listbox id="sortOperator_dealerProvince"
-									width="43px" mold="select" rows="1" />
-								<uppercasebox id="dealerProvince"
-									width="100px" maxlength="8" />
-							<label id="label_VehicleDealerSearch_DealerCity"
-									value="${c:l('label_VehicleDealerSearch_DealerCity.value')}" />
-								<listbox id="sortOperator_dealerCity"
-									width="43px" mold="select" rows="1" />
-								<uppercasebox id="dealerCity" width="100px"
-									maxlength="8" />
-							</row>
-							<row>
-							<label
-									id="label_VehicleDealerSearch_DealerTelephone"
-									value="${c:l('label_VehicleDealerSearch_DealerTelephone.value')}" />
-								<listbox
-									id="sortOperator_dealerTelephone" width="43px" mold="select"
-									rows="1" />
-								<hbox>
-									<textbox id="phoneCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="dealerTelephone"
-										width="80px" />
-								</hbox>
-							<label id="label_VehicleDealerSearch_Active"
-										value="${c:l('label_VehicleDealerSearch_Active.value')}" />
+								</row>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_DealerProvince"
+										value="${c:l('label_VehicleDealerSearch_DealerProvince.value')}" />
 									<listbox
-										id="sortOperator_active" width="43px" mold="select"
+										id="sortOperator_dealerProvince" width="43px" mold="select"
 										rows="1" />
+									<uppercasebox id="dealerProvince"
+										width="100px" maxlength="8" />
+									<label
+										id="label_VehicleDealerSearch_DealerCity"
+										value="${c:l('label_VehicleDealerSearch_DealerCity.value')}" />
+									<listbox
+										id="sortOperator_dealerCity" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="dealerCity"
+										width="100px" maxlength="8" />
+								</row>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_DealerTelephone"
+										value="${c:l('label_VehicleDealerSearch_DealerTelephone.value')}" />
+									<listbox
+										id="sortOperator_dealerTelephone" width="43px" mold="select"
+										rows="1" />
+									<hbox>
+										<textbox id="phoneCountryCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="phoneAreaCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="dealerTelephone"
+											width="80px" />
+									</hbox>
+									<label
+										id="label_VehicleDealerSearch_Active"
+										value="${c:l('label_VehicleDealerSearch_Active.value')}" />
+									<listbox id="sortOperator_active"
+										width="43px" mold="select" rows="1" />
 									<checkbox id="active"
 										checked="false" />
-							
-							</row>
-							<row id="row_AlwWorkflow">
-								<label
-									id="label_VehicleDealerSearch_RecordStatus"
-									value="${c:l('label_VehicleDealerSearch_RecordStatus.value')}" />
-								<listbox id="sortOperator_RecordStatus"
-									width="43px" mold="select" rows="1" />
-								<textbox id="recordStatus"
-									width="100px" />
-								<label
-									id="label_VehicleDealerSearch_RecordType"
-									value="${c:l('label_VehicleDealerSearch_RecordType.value')}" />
-								<listbox id="sortOperator_RecordType"
-									width="43px" mold="select" rows="1" />
-								<listbox id="recordType" width="100px"
-									mold="select" />
-							</row>
-						</rows>
-					</grid>
-					<listbox id="listBoxVehicleDealer"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" sizedByContent="true" multiple="false" span="true"
-						emptyMessage="${c:l('listbox.emptyMessage')}">
-						<listhead sizable="true">
-							<listheader id="listheader_DealerType" visible="false"
-								label="${c:l('listheader_DealerType.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DealerName"
-								label="${c:l('listheader_DealerName.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_Email"
-								label="${c:l('listheader_Email.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DealerTelephone"
-								label="${c:l('listheader_DealerTelephone.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DealerProvince"
-								label="${c:l('listheader_DealerProvince.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DealerCity"
-								label="${c:l('listheader_DealerCity.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_Active"
-								label="${c:l('listheader_Active.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DealerFax" visible="false"
-								label="${c:l('listheader_DealerFax.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
-				</div>
-			</center>
-			<south border="none">
-				<paging id="pagingVehicleDealerList" />
-			</south>
 
-		</borderlayout>
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_VehicleDealerSearch_RecordStatus"
+										value="${c:l('label_VehicleDealerSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" />
+									<label
+										id="label_VehicleDealerSearch_RecordType"
+										value="${c:l('label_VehicleDealerSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxVehicleDealer"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" sizedByContent="true" multiple="false" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader id="listheader_DealerType"
+									visible="false" label="${c:l('listheader_DealerType.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_DealerName"
+									label="${c:l('listheader_DealerName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_Email"
+									label="${c:l('listheader_Email.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_DealerTelephone"
+									label="${c:l('listheader_DealerTelephone.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_DealerProvince"
+									label="${c:l('listheader_DealerProvince.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_DealerCity"
+									label="${c:l('listheader_DealerCity.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_Active"
+									label="${c:l('listheader_Active.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_DealerFax"
+									visible="false" label="${c:l('listheader_DealerFax.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingVehicleDealerList" />
+				</south>
+
+			</borderlayout>
+		</window>
 	</window>
-</window>
 </zk>

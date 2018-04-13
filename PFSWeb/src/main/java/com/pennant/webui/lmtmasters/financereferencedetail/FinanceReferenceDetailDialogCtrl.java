@@ -82,6 +82,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -101,7 +102,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 
 /**
  * This is the controller class for the
@@ -914,7 +918,51 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		return true;
 	}
 
-	
+	private Boolean validateStages(String initId,String approvalId,VerificationType vrfType) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		// Get the Workflow details.
+		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(financeReference.getWorkFlowType());
+		// Workflow Engine
+		WorkflowEngine engine = new WorkflowEngine(workflow.getWorkFlowXml());
+		String initStages[] = null;
+		String apprStage = null;
+
+		// get the Initiation Stages and Approval Stage
+		for (Listitem initListItem : listBoxLimitService.getItems()) {
+			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
+			if (StringUtils.equals(financeReferenceDetail.getLovDescRefDesc(),initId)) {
+				initStages = financeReferenceDetail.getMandInputInStage().split(",");
+			} else if (StringUtils.equals(financeReferenceDetail.getLovDescRefDesc(),approvalId)) {
+				apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
+			}
+		}
+
+		// Check whether the Both Initiation and Approval Stages should be
+		// Mentioned.
+		if (initStages != null && apprStage != null) {
+			for (String fiInitStage : initStages) {
+				String task = engine.getUserTaskId(fiInitStage);
+				String nextTask = engine.getUserTaskId(apprStage);
+
+				// Check whether the Approval Stage is a Successor to the Initiation Stage.
+				if (engine.compareTo(task, nextTask) != Flow.SUCCESSOR) {
+					MessageUtil.showError(vrfType+" Initiation Stages Must be Predecessors to the " +vrfType +" Approval Stage in Miscellaneous Tab.");
+					tabCustLimitCheck.setSelected(true);
+					return false;
+				}
+			}
+		} else if ((initStages != null && apprStage == null) || (initStages == null && apprStage != null)) {
+			MessageUtil.showError("Either both "+vrfType+" Initiation & "+vrfType+" Approval Stages should be saved or none of them.");
+			tabCustLimitCheck.setSelected(true);
+			return false;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return true;
+
+	}
+
 	private boolean validateFees(Map<String,String> sourceFeeMap,Map<String,String>  destFeeMap,boolean isFinTypeFeesValidate){
 
 		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
@@ -1073,7 +1121,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		if(!validateFeeAccounting()){
 			return;
 		}
-		
+		if(!validateStages(FinanceConstants.PROCEDT_VERIFICATION_FI_INIT,FinanceConstants.PROCEDT_VERIFICATION_FI_APPR,VerificationType.FI)){
+			return;
+		}
+		if(!validateStages(FinanceConstants.PROCEDT_VERIFICATION_TV_INIT,FinanceConstants.PROCEDT_VERIFICATION_TV_APPR,VerificationType.TV)){
+			return;
+		}
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		List<Listitem> items = new ArrayList<Listitem>();
 		items.addAll(this.listBoxFinanceCheckList.getItems());

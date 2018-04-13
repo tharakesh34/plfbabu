@@ -99,6 +99,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
@@ -574,14 +575,25 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		try {
 			if (!this.mandInputInStage.isReadonly()) {
+
+				//Verification Approval Event validations in Miscellaneous Tab
+				if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT) {
+					 if (StringUtils.equals(aFinanceReferenceDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
+							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+						throw new WrongValueException(this.listboxmandInputInStage,
+								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.FI.toString()}));
+					}else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
+							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
+						throw new WrongValueException(this.listboxmandInputInStage,
+								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.TV.toString()}));
+					}
+				}
 				// Set checked values
 				this.mandInputInStage.setValue(getCheckedValues(listboxmandInputInStage));
 				// then check for empty
-				if (this.mandInputInStage.getValue() == null || 
-						StringUtils.isEmpty(this.mandInputInStage.getValue())) {
-					throw new WrongValueException(this.listboxmandInputInStage, 
-							Labels.getLabel("FIELD_NO_EMPTY",
-									new String[] { this.mandInputInStage.getLeft() }));
+				if (this.mandInputInStage.getValue() == null || StringUtils.isEmpty(this.mandInputInStage.getValue())) {
+					throw new WrongValueException(this.listboxmandInputInStage,
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.mandInputInStage.getLeft() }));
 				}
 			}
 			aFinanceReferenceDetail.setMandInputInStage(this.mandInputInStage.getValue());

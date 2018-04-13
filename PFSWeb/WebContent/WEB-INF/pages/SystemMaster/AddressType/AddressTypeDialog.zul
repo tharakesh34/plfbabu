@@ -104,6 +104,15 @@
 							</row>
 							<row visible="true">
 								<label
+									id="label_AddressTypeDialog_AddrTypeFIRequired"
+									value="${c:l('listheader_AddrTypeFIRequired.label')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="addrTypeFIRequired" checked="false"/>
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
 									id="label_AddressTypeDialog_AddrTypeIsActive"
 									value="${c:l('label_AddressTypeDialog_AddrTypeIsActive.value')}" />
 								<hbox>

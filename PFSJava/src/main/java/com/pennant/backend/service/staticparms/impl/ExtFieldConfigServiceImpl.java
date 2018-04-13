@@ -60,6 +60,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldsValidation;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -267,13 +268,39 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName,
 				"_AView");
 		if (extFldHeader != null) {
-			extFldHeader.setExtendedFieldDetails(
-					getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
+			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
+					extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD,"_AView"));
 		}
 
 		logger.debug(Literal.LEAVING);
 		return extFldHeader;
 
+	}
+	
+	/**
+	 * getApprovedExtFieldConfigById fetch the details by using ExtFieldConfigDAO's getExtFieldConfigById method . with
+	 * parameter id and type as blank. it fetches the approved records from the ExtFieldConfig.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @return ExtFieldConfig
+	 */
+	@Override
+	public ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String moduleName, String subModuleName, int extendedType) {
+		logger.debug(Literal.ENTERING);
+		
+		ExtendedFieldHeader extFldHeader = null;
+		
+		extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(moduleName, subModuleName,
+				"_AView");
+		if (extFldHeader != null) {
+			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
+					extFldHeader.getModuleId(), extendedType,"_AView"));
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return extFldHeader;
+		
 	}
 
 	/**

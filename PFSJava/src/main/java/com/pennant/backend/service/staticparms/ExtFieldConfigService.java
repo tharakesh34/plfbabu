@@ -60,4 +60,6 @@ public interface ExtFieldConfigService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	ExtendedFieldHeader getApprovedExtendedFieldHeaderByModule(String module, String subModule, int extendedType);
 }

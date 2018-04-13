@@ -5202,7 +5202,7 @@
 		<property name="activityLogService" ref="activityLogService" />
 	</bean>	
 	
-		<!-- ManualDeviation -->
+	<!-- ManualDeviation -->
 	<bean id="manualDeviationListCtrl"
 			class="com.pennant.webui.applicationmaster.manualdeviation.ManualDeviationListCtrl"
 			parent="basisListCtrl" scope="prototype">
@@ -5214,4 +5214,25 @@
 		<property name="manualDeviationService" ref="manualDeviationService" />
 	</bean>
 	
+	<!--============ Field Investigation Module ============== -->
+	<bean id="fieldInvestigationListCtrl"
+		class="com.pennant.webui.verification.fieldinvestigation.FieldInvestigationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+
+	<bean id="fieldInvestigationDialogCtrl"
+		class="com.pennant.webui.verification.fieldinvestigation.FieldInvestigationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!--============ Technical Verification Module ============== -->
+	<bean id="technicalVerificationListCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="technicalVerificationDialogCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationDialogCtrl" parent="basisCtrl" scope="prototype">
+	<property name="collateralSetupService" ref="collateralSetupService" />
+	</bean>
+	
+	<bean id="technicalValuationDialogCtrl"
+		class="com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
 </beans>

@@ -167,6 +167,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private boolean firstTaskRole=false;
 	private int maxSeqNo = 0;
 	private ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
+	private TechnicalValuationDialogCtrl technicalValuationDialogCtrl;
 	private List<ExtendedFieldDetail> extendedFieldDetails;
 	private List<ValueLabel> moduleList = PennantAppUtil.getExtendedModuleList();
 
@@ -211,28 +212,31 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				setExtendedFieldDetail(null);
 			}
 
-			if(arguments.containsKey("extendedFieldDialogCtrl")){
+			if (arguments.containsKey("extendedFieldDialogCtrl")) {
 				setExtendedFieldDialogCtrl((ExtendedFieldDialogCtrl) arguments.get("extendedFieldDialogCtrl"));
-				setNewFieldDetail(true);
+			} else if (arguments.containsKey("technicalValuationDialogCtrl")) {
+				setTechnicalValuationDialogCtrl((TechnicalValuationDialogCtrl) arguments.get("technicalValuationDialogCtrl"));
+			}
 
-				if(arguments.containsKey("newRecord")){
-					setNewRecord(true);
-				}else{
-					setNewRecord(false);
-				}
-				
-				if(arguments.containsKey("maxSeqNo")){
-					maxSeqNo = (int) arguments.get("maxSeqNo");
-				}
+			setNewFieldDetail(true);
 
-				this.extendedFieldDetail.setWorkflowId(0);
-				if (arguments.containsKey("roleCode")) {
-					setRole((String) arguments.get("roleCode"));
-					getUserWorkspace().allocateRoleAuthorities(getRole(), "ExtendedFieldDetailDialog");
-				}
-				if (arguments.containsKey("firstTaskRole")) {
-					this.firstTaskRole =  (boolean) arguments.get("firstTaskRole");
-				}
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord(true);
+			} else {
+				setNewRecord(false);
+			}
+
+			if (arguments.containsKey("maxSeqNo")) {
+				maxSeqNo = (int) arguments.get("maxSeqNo");
+			}
+
+			this.extendedFieldDetail.setWorkflowId(0);
+			if (arguments.containsKey("roleCode")) {
+				setRole((String) arguments.get("roleCode"));
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ExtendedFieldDetailDialog");
+			}
+			if (arguments.containsKey("firstTaskRole")) {
+				this.firstTaskRole = (boolean) arguments.get("firstTaskRole");
 			}
 
 			doLoadWorkFlow(this.extendedFieldDetail.isWorkflow(), this.extendedFieldDetail.getWorkflowId(),
@@ -462,7 +466,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 */
 	private List<ValueLabel> getParentElements(String fieldType) {
 		List<ValueLabel> parentList = new ArrayList<ValueLabel>();
-		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		List<ExtendedFieldDetail> extendedFieldDetail = null;
+		if (getExtendedFieldDialogCtrl() != null) {
+			extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		} else {
+			extendedFieldDetail = getTechnicalValuationDialogCtrl().getTechValuationFieldDetailsList();
+		}
 		if (extendedFieldDetail != null) {
 			if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LISTFIELD)) {
 				for (ExtendedFieldDetail detail : extendedFieldDetail) {
@@ -1219,7 +1228,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+							if (getExtendedFieldDialogCtrl() != null) {
+								getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+							} else if (getTechnicalValuationDialogCtrl() != null) {
+								getTechnicalValuationDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+							}
 						closeDialog();
 					}	
 
@@ -1489,7 +1502,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+					if (getExtendedFieldDialogCtrl() != null) {
+						getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+					} else if (getTechnicalValuationDialogCtrl() != null) {
+						getTechnicalValuationDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+					}
 					closeDialog();
 				}
 
@@ -2119,6 +2136,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public void setExtendedFieldDialogCtrl(ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
 		this.extendedFieldDialogCtrl = extendedFieldDialogCtrl;
 	}
+	
+	public TechnicalValuationDialogCtrl getTechnicalValuationDialogCtrl() {
+		return technicalValuationDialogCtrl;
+	}
+
+	public void setTechnicalValuationDialogCtrl(TechnicalValuationDialogCtrl technicalValuationDialogCtrl) {
+		this.technicalValuationDialogCtrl = technicalValuationDialogCtrl;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -2144,12 +2169,18 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
+		List<ExtendedFieldDetail> extList = null;
+		if (getExtendedFieldDialogCtrl() != null) {
+			extList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+		} else if (getTechnicalValuationDialogCtrl() != null) {
+			extList = getTechnicalValuationDialogCtrl().getTechValuationFieldDetailsList();
+		}
+		if (extList != null && extList.size() > 0) {
+			for (int i = 0; i < extList.size(); i++) {
+				ExtendedFieldDetail extendedFieldDetail = extList.get(i);
 
-		if (getExtendedFieldDialogCtrl().getExtendedFieldDetailsList() != null 	&& getExtendedFieldDialogCtrl().getExtendedFieldDetailsList().size() > 0) {
-			for (int i = 0; i < getExtendedFieldDialogCtrl().getExtendedFieldDetailsList().size(); i++) {
-				ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList().get(i);
-
-				if (StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldName(), aExtendedFieldDetail.getFieldName())) {
+				if (StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldName(),
+						aExtendedFieldDetail.getFieldName())) {
 					if (isNewRecord()) {
 						if (extendedFieldDetail.getFieldName().equals(aExtendedFieldDetail.getFieldName())) {
 							valueParm[0] = aExtendedFieldDetail.getFieldName();

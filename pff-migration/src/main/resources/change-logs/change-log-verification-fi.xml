@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	<changeSet id="1" author="murthy.y">
+		<createTable tableName="verifications">
+			<column name="Id" autoIncrement="true" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_verifications_id" />
+			</column>
+			<column name="VerificationType" type="int"  defaultValue="0" remarks="Initiate-1, Waive-2, Not Required-3"/>
+			<column name="Module" type="int" defaultValue="0" remarks="Loan-1, Customer-2, Collateral-3"/>
+			<column name="KeyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceFor" type="varchar(20)" />
+			<column name="CustId" type="bigint" />
+			<column name="RequestType" type="int" defaultValue="0" remarks="FI-1, TV-2, LV-3, RCU-4"/>
+			<column name="Agency" type="bigint" />
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="Status" type="int" defaultValue="0" remarks="Positive-1, Not Completed-2, Waived-3"/>
+			<column name="AgencyReason" type="bigint" />
+			<column name="AgencyRemarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+			<column name="Decision" type="int" defaultValue="0" remarks="Approve-1, Re-initiate-2, Override-3"/>
+			<column name="DecisionRemarks" type="varchar(500)" />
+		
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_custId"
+			referencedTableName="customers" referencedColumnNames="CustId"
+			baseTableName="verifications" baseColumnNames="CustId" />
+	</changeSet>
+	<changeSet id="1.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_agency"
+			referencedTableName="amtvehicledealer" referencedColumnNames="dealerid"
+			baseTableName="verifications" baseColumnNames="Agency" />
+	</changeSet>
+	<changeSet id="1.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_reason"
+			referencedTableName="Reasons" referencedColumnNames="Id"
+			baseTableName="verifications" baseColumnNames="Reason" />
+	</changeSet> 
+	<changeSet id="1.4" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_createdby"
+			referencedTableName="secusers" referencedColumnNames="usrid"
+			baseTableName="verifications" baseColumnNames="CreatedBy" />
+	</changeSet>
+	<changeSet id="1.5" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_agencyreason"
+			referencedTableName="Reasons" referencedColumnNames="Id"
+			baseTableName="verifications" baseColumnNames="AgencyReason" />
+	</changeSet>
+	<changeSet id="1.6" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verfctions_lastmntby"
+			referencedTableName="secusers" referencedColumnNames="usrid"
+			baseTableName="verifications" baseColumnNames="LastMntBy" />
+	</changeSet>
+
+	<changeSet id="2" author="murthy.y">
+		<createTable tableName="verification_fi">
+			<column name="VerificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Type" type="int" defaultValue="0"/>
+			<column name="Date" type="datetime" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="SummaryRemarks" type="varchar(500)" />
+
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+			<column name="AddressType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HouseNumber" type="varchar(50)" />
+			<column name="FlatNumber" type="varchar(50)" />
+			<column name="Street" type="varchar(50)" />
+			<column name="AddressLine1" type="varchar(50)" />
+			<column name="AddressLine2" type="varchar(50)" />
+			<column name="AddressLine3" type="varchar(50)" />
+			<column name="AddressLine4" type="varchar(50)" />
+			<column name="AddressLine5" type="varchar(50)" />
+			<column name="Country" type="char(2)" />
+			<column name="Province" type="char(2)" />
+			<column name="City" type="char(3)" />
+			<column name="ContactNumber1" type="varchar(20)" />
+			<column name="ContactNumber2" type="varchar(20)" />
+			<column name="PoBox" type="varchar(20)" />
+			<column name="ZipCode" type="varchar(20)" />
+			
+			<!-- Observations -->
+			<column name="OwnershipStatus" type="int"  defaultValue="0"/>
+			<column name="YearsAtPresentAddress" type="int" defaultValue="0"/>
+			<column name="PersonMet" type="varchar(50)" />
+			<column name="Relationship" type="varchar(8)" />
+			<column name="ContactNumber" type="varchar(20)" />
+			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0"/>
+			<column name="LivingStandard" type="int"  defaultValue="0"/>
+			<column name="NegativeCheck" type="smallint" defaultValue="0"/>
+			<column name="NoofAttempts" type="int" defaultValue="0"/>
+			<column name="ObservationRemarks" type="varchar(500)" />
+		</createTable>
+	</changeSet>		
+	<changeSet id="2.0" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="Verification_fi" columnName="Country" newDataType="citext" />
+		<modifyDataType tableName="Verification_fi" columnName="Province" newDataType="citext" />
+		<modifyDataType tableName="Verification_fi" columnName="City" newDataType="citext" />
+	</changeSet>
+	<changeSet id="2.1" author="murthy.y">
+		<addPrimaryKey constraintName="pk_verification_fi_verf_id" columnNames="VerificationId" tableName="Verification_fi"/>
+	</changeSet>
+	<changeSet id="2.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_country"
+			referencedTableName="bmtcountries" referencedColumnNames="countrycode"
+			baseTableName="Verification_fi" baseColumnNames="Country" />
+	</changeSet>
+	<changeSet id="2.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_province"
+			referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, cpprovince"
+			baseTableName="Verification_fi" baseColumnNames="Country, Province" />
+	</changeSet>
+	<changeSet id="2.4" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_city"
+			referencedTableName="rmtprovincevscity" referencedColumnNames="pccity"
+			baseTableName="Verification_fi" baseColumnNames="City" />
+	</changeSet>
+	<changeSet id="2.5" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_relship"
+			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
+			baseTableName="Verification_fi" baseColumnNames="Relationship" />
+	</changeSet>
+	<changeSet id="3" author="murthy.y">
+		<createTable tableName="verification_fi_temp">
+			<column name="VerificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Type" type="int" defaultValue="0"/>
+			<column name="Date" type="datetime" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="SummaryRemarks" type="varchar(500)" />
+
+			<column name="Version" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+			<column name="AddressType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HouseNumber" type="varchar(50)" />
+			<column name="FlatNumber" type="varchar(50)" />
+			<column name="Street" type="varchar(50)" />
+			<column name="AddressLine1" type="varchar(50)" />
+			<column name="AddressLine2" type="varchar(50)" />
+			<column name="AddressLine3" type="varchar(50)" />
+			<column name="AddressLine4" type="varchar(50)" />
+			<column name="AddressLine5" type="varchar(50)" />
+			<column name="Country" type="char(2)" />
+			<column name="Province" type="char(2)" />
+			<column name="City" type="char(3)" />
+			<column name="ContactNumber1" type="varchar(20)" />
+			<column name="ContactNumber2" type="varchar(20)" />
+			<column name="PoBox" type="varchar(20)" />
+			<column name="ZipCode" type="varchar(20)" />
+			
+			<!-- Observations -->
+			<column name="OwnershipStatus" type="int"  defaultValue="0"/>
+			<column name="YearsAtPresentAddress" type="int" defaultValue="0"/>
+			<column name="PersonMet" type="varchar(50)" />
+			<column name="Relationship" type="varchar(8)" />
+			<column name="ContactNumber" type="varchar(20)" />
+			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0"/>
+			<column name="LivingStandard" type="int"  defaultValue="0"/>
+			<column name="NegativeCheck" type="smallint" defaultValue="0"/>
+			<column name="NoofAttempts" type="int" defaultValue="0"/>
+			<column name="ObservationRemarks" type="varchar(500)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="3.0" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="Verification_fi_temp" columnName="Country" newDataType="citext" />
+		<modifyDataType tableName="Verification_fi_temp" columnName="Province" newDataType="citext" />
+		<modifyDataType tableName="Verification_fi_temp" columnName="City" newDataType="citext" />
+	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<addPrimaryKey constraintName="pk_verification_fi_tmp_verf_id" columnNames="VerificationId" tableName="Verification_fi_temp"/>
+	</changeSet>
+	<changeSet id="3.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_tmp_country"
+			referencedTableName="bmtcountries" referencedColumnNames="countrycode"
+			baseTableName="Verification_fi_temp" baseColumnNames="Country" />
+	</changeSet>
+	<changeSet id="3.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_tmp_prov"
+			referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, cpprovince"
+			baseTableName="Verification_fi_temp" baseColumnNames="Country, Province" />
+	</changeSet>
+	<changeSet id="3.4" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_tmp_city"
+			referencedTableName="rmtprovincevscity" referencedColumnNames="pccity"
+			baseTableName="Verification_fi_temp" baseColumnNames="City" />
+	</changeSet>
+	<changeSet id="3.5" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_verification_fi_tmp_relship"
+			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
+			baseTableName="Verification_fi_temp" baseColumnNames="Relationship" />
+	</changeSet>
+	
+	<changeSet id="4.0" author="murthy.y">
+		<createView viewName="verification_fi_view" replaceIfExists="true">
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.date,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName
+		    from verification_fi_temp fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     left join customers c on c.custid = v.custid
+		     left join reasons r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship 
+			union all
+			select fi.verificationid,
+		    fi.agentcode,
+		    fi.agentname,
+		    fi.type,
+		    fi.date,
+		    fi.status,
+		    fi.reason,
+		    r1.code as reasoncode,
+		    r1.description as reasondesc,
+		    fi.summaryremarks,
+		    fi.version,
+		    fi.lastmntby,
+		    fi.lastmnton,
+		    fi.recordstatus,
+		    fi.rolecode,
+		    fi.nextrolecode,
+		    fi.taskid,
+		    fi.nexttaskid,
+		    fi.recordtype,
+		    fi.workflowid,
+		    fi.addresstype,
+		    fi.name,
+		    fi.housenumber,
+		    fi.flatnumber,
+		    fi.street,
+		    fi.addressline1,
+		    fi.addressline2,
+		    fi.addressline3,
+		    fi.addressline4,
+		    fi.addressline5,
+		    fi.country,
+		    fi.province,
+		    fi.city,
+		    fi.contactnumber1,
+		    fi.contactnumber2,
+		    fi.pobox,
+		    fi.zipcode,
+		    fi.ownershipstatus,
+		    fi.yearsatpresentaddress,
+		    fi.personmet,
+		    fi.relationship,
+		    r2.prelationdesc as lovrelationdesc,
+		    fi.contactnumber,
+		    fi.neighbourhoodfeedback,
+		    fi.livingstandard,
+		    fi.negativecheck,
+		    fi.noofattempts,
+		    fi.observationremarks,
+		    c.custcif as cif,
+		    v.keyreference,
+		    v.createdon,
+		    v.agency,
+			a.dealerName as agencyName
+		    from verification_fi fi
+		     inner join verifications v on v.id = fi.verificationid
+		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     left join customers c on c.custid = v.custid
+		     left join reasons r1 on r1.id = fi.reason
+			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship
+			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid);
+		</createView>
+	</changeSet>
+	<changeSet id="5.0" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from secrolegroups where grpid = (select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER') and roleid = (select roleid from secroles where rolecd='MSTGRP1_MAKER');
+				delete from secrolegroups where grpid = (select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER') and roleid = (select roleid from secroles where rolecd='MSTGRP1_APPROVER');
+				
+				delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER');
+				delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER');
+				
+				delete from secgroups where grpcode = 'FIELDINVESTIGATION_VIEW';
+				delete from secgroups where grpcode = 'FIELDINVESTIGATION_MAKER';
+				delete from secgroups where grpcode = 'FIELDINVESTIGATION_APPROVER';
+				
+				--SecGroups
+				update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+				insert into secgroups values((select max(grpid)+1 from secgroups),'FIELDINVESTIGATION_VIEW','Allow to view FieldInvestigation',0,1000,current_timestamp,'Approved','','','','','',0);
+				insert into secgroups values((select max(grpid)+1 from secgroups),'FIELDINVESTIGATION_MAKER','WF Maker for FieldInvestigation',0,1000,current_timestamp,'Approved','','','','','',0);
+				insert into secgroups values((select max(grpid)+1 from secgroups),'FIELDINVESTIGATION_APPROVER','WF Approver for FieldInvestigation',0,1000,current_timestamp,'Approved','','','','','',0);
+				update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+				
+				--SecRoleGroups
+				update seqsecrolegroups set seqno=(select max(rolegrpid) from secrolegroups_view);
+				insert into secrolegroups values ((select max(rolegrpid)+1 from secrolegroups), (select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'), (select roleid from secroles where rolecd='MSTGRP1_MAKER'), 0,1000, current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrolegroups values ((select max(rolegrpid)+1 from secrolegroups), (select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER'), (select roleid from secroles where rolecd='MSTGRP1_APPROVER'), 0,1000, current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+				update seqsecrolegroups set seqno=(select max(rolegrpid) from secrolegroups_view);
+				
+				delete from secrights  where rightname = 'menu_Item_ReturnEmailReport';
+				delete from secrights where rightname in (
+				'menuItem_Verification_FieldInvestigation',
+				'button_FieldInvestigationList_btnNew',
+				'button_FieldInvestigationDialog_btnEdit',
+				'button_FieldInvestigationDialog_btnDelete',
+				'button_FieldInvestigationDialog_btnSave',
+				'FieldInvestigationDialog_Date',
+				'FieldInvestigationDialog_VerificationType',
+				'FieldInvestigationDialog_YearsAtPresentAddress',
+				'FieldInvestigationDialog_PersonMet',
+				'FieldInvestigationDialog_OwnershipStatus',
+				'FieldInvestigationDialog_Relationship',
+				'FieldInvestigationDialog_NeighborhoodCheck',
+				'FieldInvestigationDialog_contactNo',
+				'FieldInvestigationDialog_Remarks',
+				'FieldInvestigationDialog_LivingStandard',
+				'FieldInvestigationDialog_NegativeCheck',
+				'FieldInvestigationDialog_NoofAttempts',
+				'FieldInvestigationDialog_AgentCode',
+				'FieldInvestigationDialog_AgentName',
+				'FieldInvestigationDialog_Recommendations',
+				'FieldInvestigationDialog_Reason',
+				'FieldInvestigationDialog_AgentRemarks',
+				'FieldInvestigationDialog_OwnershipStatus',
+				'FieldInvestigationDialog_LivingStandard'	
+				); 
+				
+				update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+				insert into secrights values ((select max(rightid)+1 from secrights), 0, 'menuItem_Verification_FieldInvestigation', 	'FieldInvestigationList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 2, 'button_FieldInvestigationList_btnNew', 		'FieldInvestigationList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 2, 'button_FieldInvestigationDialog_btnEdit', 	'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 2, 'button_FieldInvestigationDialog_btnDelete', 	'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 2, 'button_FieldInvestigationDialog_btnSave', 	'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				
+				--Observation rights
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_Date', 					'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_VerificationType', 		'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_YearsAtPresentAddress', 	'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_PersonMet', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_OwnershipStatus', 		'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_Relationship', 			'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_NeighborhoodCheck', 		'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_contactNo', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_Remarks', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_LivingStandard', 		'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_NegativeCheck', 			'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_NoofAttempts', 			'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				
+				-- Summary Rights
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_AgentCode', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_AgentName', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_Recommendations', 		'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_Reason', 				'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FieldInvestigationDialog_AgentRemarks', 			'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+				update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+				
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='button_FieldInvestigationDialog_btnEdit'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='button_FieldInvestigationDialog_btnDelete') ,1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='button_FieldInvestigationDialog_btnSave') ,1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='menuItem_Verification_FieldInvestigation'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_Date'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_VerificationType'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_YearsAtPresentAddress') ,1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_PersonMet'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_Relationship'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_NeighborhoodCheck') ,1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_contactNo'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_Remarks'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_NegativeCheck'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_NoofAttempts'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_AgentCode'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_AgentName'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_Recommendations'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_Reason'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_MAKER'),(select rightid from secrights where rightname='FieldInvestigationDialog_AgentRemarks'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into SECGROUPRIGHTS values((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select GRPID from SECGROUPS where GRPCODE='FIELDINVESTIGATION_MAKER'),(select RIGHTID from SECRIGHTS where RIGHTNAME='FieldInvestigationDialog_OwnershipStatus'),1, 0,1000,current_timestamp, 'Approved','','','','','',0);
+				insert into SECGROUPRIGHTS values((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(select GRPID from SECGROUPS where GRPCODE='FIELDINVESTIGATION_MAKER'),(select RIGHTID from SECRIGHTS where RIGHTNAME='FieldInvestigationDialog_LivingStandard'),1, 0,1000,current_timestamp, 'Approved','','','','','',0);
+				
+				
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER'),(select rightid from secrights where rightname='button_FieldInvestigationDialog_btnSave'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+				insert into secgrouprights values((select max(grprightid)+1 from secgrouprights),(select grpid from secgroups where grpcode='FIELDINVESTIGATION_APPROVER'),(select rightid from secrights where rightname='menuItem_Verification_FieldInvestigation'),1 ,0, 1000,current_timestamp, 'Approved','','','','','',0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="6.0" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from  LimitCodeDetail where LimitCode = 'FIINIT';
+				delete from  LimitCodeDetail where LimitCode = 'FIAPPR';
+		
+				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIINIT','Field Investigation Initiation',1, (select max(Id)+1 from limitcodedetail));
+				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIAPPR','Field Investigation Approval',1, (select max(Id)+1 from limitcodedetail));
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="7.0" author="murthy.y">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+			SELECT  T1.FinRefDetailId, T1.FinType, T1.FinRefType, T1.FinRefId,T1.IsActive, T1.ShowInStage,
+			T1.MandInputInStage,T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone,
+			T1.AllowExpire,T1.OverRide,T1.OverRideValue,T1.FinEvent, T1.AlertType,
+			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+			T1.RecordType, T1.WorkflowId, T2.FinTypeDesc lovDescFinTypeDescName, T2.FinCcy lovDescFinCcyCode,T2.FinCategory lovDescProductCodeName,
+			T3.AggImage lovDescAggImage,
+			COALESCE (T3.AggName, T4.EventCode, T7.RuleCodeDesc, T8.ScoreGroupName, T9.ScoreGroupName) lovDescNamelov,
+			COALESCE (T3.AggCode, T7.RuleCode, T8.ScoreGroupCode, T9.ScoreGroupCode) lovDescCodelov,
+			COALESCE (T3.AggDesc, T4.AccountSetCodeName, T5.CheckListDesc, cast(T7.RuleCode as varchar(8)), cast(T8.ScoreGroupCode as varchar(8)), 
+			cast(T9.ScoreGroupCode as varchar(8)), T10.limitCode)
+			lovDescRefDesc,T3.AggReportName lovDescAggReportName,T3.AggReportPath lovDescAggReportPath,
+			T3.AgrRule lovDescAggRuleName, T3.Aggtype,T3.moduleType,COALESCE(T3.AllowMultiple, 0) AllowMultiple,
+			COALESCE(T5.Remarks, '0') lovDescIsRemarksAllowed,COALESCE(T5.CheckMinCount, 0) lovDescCheckMinCount,
+			COALESCE(T5.CheckMaxCount, 0) lovDescCheckMaxCount,
+			COALESCE (T6.SQLRule, T7.SQLRule) LovDescElgRuleValue,COALESCE (T6.ReturnType, T7.ReturnType) lovDescRuleReturnType,
+			COALESCE (T8.MinScore, T9.MinScore, '0') lovDescminScore,COALESCE (T8.IsOverride, T9.IsOverride, 0) lovDescisoverride,
+			COALESCE (T8.OverrideScore, T9.OverrideScore, '0') lovDescoverrideScore
+			FROM LMTFinRefDetail T1 
+			INNER JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+			LEFT JOIN BMTAggrementDef T3 ON T1.FinRefId = T3.AggId AND T1.FinRefType = 2
+			LEFT OUTER JOIN RMTAccountingSet T4 ON T1.FinRefId = T4.AccountSetid AND T1.FinRefType = 5 
+			LEFT OUTER JOIN BMTCheckList T5 ON T1.FinRefId = T5.CheckListId AND T1.FinRefType = 1 
+			LEFT OUTER JOIN Rules T6 ON T6.RuleCode = T5.CheckRule AND T6.RuleModule = 'CLRULE' AND T6.RuleEvent = 'CLRULE' 
+			LEFT OUTER JOIN Rules T7 ON T1.FinRefId = T7.RuleId AND T1.FinRefType = 3 
+			LEFT OUTER JOIN RMTScoringGroup T8 ON T1.FinRefId = T8.ScoreGroupId AND T1.FinRefType = 4 AND T8.CategoryType = 'RETAIL'  
+			LEFT OUTER JOIN RMTScoringGroup T9 ON T1.FinRefId = T9.ScoreGroupId AND T1.FinRefType = 7 AND T9.CategoryType = 'CORP'
+			LEFT OUTER JOIN LimitCodeDetail T10 on T10.id = T1.finrefid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8" author="manikanta.p">
+		<addColumn tableName="bmtaddresstypes">
+	        <column name="AddrTypeFIRequired" type="smallint"/>
+	    </addColumn>
+	</changeSet>
+		
+	<changeSet id="8.1" author="manikanta.p">
+		<addColumn tableName="bmtaddresstypes_temp">
+	        <column name="AddrTypeFIRequired" type="smallint"/>
+	    </addColumn>
+	</changeSet>
+		
+	<changeSet id="8.2" author="manikanta.p">
+		<createView viewName="bmtaddresstypes_aview" replaceIfExists="true">
+			SELECT addrtypecode, addrtypedesc, addrtypepriority, AddrTypeFIRequired, addrtypeisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid FROM bmtaddresstypes;
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8.3" author="manikanta.p">
+		<createView viewName="bmtaddresstypes_view" replaceIfExists="true" >
+			SELECT addrtypecode, addrtypedesc, addrtypepriority, AddrTypeFIRequired, addrtypeisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid FROM bmtaddresstypes_temp
+			UNION ALL
+			SELECT addrtypecode, addrtypedesc, addrtypepriority,AddrTypeFIRequired, addrtypeisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid FROM bmtaddresstypes
+			WHERE NOT EXISTS ( SELECT 1 FROM bmtaddresstypes_temp WHERE bmtaddresstypes_temp.addrtypecode = bmtaddresstypes.addrtypecode);
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8.4" author="manikanta.p">
+		<sql>
+		<![CDATA[
+			delete from SecGroupRights where grpId = (select grpId from SecGroups WHERE GrpCode='ADDRESSTYPE_MAKER') and RightID = (select RightID from SecRights where RightName='AddressTypeDialog_addrTypeFIRequired');
+			Delete from Secrights  Where rightname = 'AddressTypeDialog_addrTypeFIRequired';
+			
+			update SeqSecRights set SeqNo=(select MAX(Rightid) from SecRights);
+			Insert Into SecRights Values ((select MAX(Rightid)+1 from SecRights), 3, 'AddressTypeDialog_addrTypeFIRequired', 'AddressTypeDialog', 0,1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			update SeqSecRights set SeqNo=(select MAX(Rightid) from SecRights);
+	
+			update SeqSecGroupRights set SeqNo=(select MAX(GrpRightID) from SecGroupRights);
+			INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights), (select grpId from SecGroups WHERE GrpCode='ADDRESSTYPE_MAKER'), (select RightID from SecRights where RightName='AddressTypeDialog_addrTypeFIRequired'), 1, 0, 1000, CURRENT_TIMESTAMP,' ', ' ', ' ', ' ', ' ', ' ', 1);
+			update SeqSecGroupRights set SeqNo=(select MAX(GrpRightID) from SecGroupRights);
+		]]>
+		</sql>
+		</changeSet>
+		<changeSet id="8.5" author="manikanta.p">
+			<sql>
+				<![CDATA[
+					update bmtaddresstypes set AddrTypeFIRequired = 0;
+					update bmtaddresstypes_temp set AddrTypeFIRequired = 0;
+				]]>
+			</sql>
+		</changeSet>
+		<changeSet id="8.6" author="manikanta.p">
+			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/>	
+		</changeSet>
+		<changeSet id="8.7" author="manikanta.p">
+			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
+		</changeSet>
+</databaseChangeLog>

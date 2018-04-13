@@ -82,6 +82,7 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
@@ -249,7 +250,15 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	// Reason Details
 	private ReasonHeader reasonHeader;
-
+	
+	//FI Verification module
+	private Verification fiVerification;
+	private Verification tvVerification;
+	private boolean fiApprovalTab =false;
+	private boolean fiInitTab = false;
+	private boolean tvApprovalTab =false;
+	private boolean tvInitTab = false;
+	
 	public FinanceDetail() {
 		
 	}
@@ -901,4 +910,51 @@ public class FinanceDetail implements java.io.Serializable {
 		this.reasonHeader = reasonHeader;
 	}
 
+	public Verification getFiVerification() {
+		return fiVerification;
+	}
+
+	public void setFiVerification(Verification fiVerification) {
+		this.fiVerification = fiVerification;
+	}
+
+	public boolean isFiApprovalTab() {
+		return fiApprovalTab;
+	}
+
+	public void setFiApprovalTab(boolean fiApprovalTab) {
+		this.fiApprovalTab = fiApprovalTab;
+	}
+
+	public boolean isFiInitTab() {
+		return fiInitTab;
+	}
+
+	public void setFiInitTab(boolean fiInitTab) {
+		this.fiInitTab = fiInitTab;
+	}
+
+	public boolean isTvApprovalTab() {
+		return tvApprovalTab;
+	}
+
+	public void setTvApprovalTab(boolean tvApprovalTab) {
+		this.tvApprovalTab = tvApprovalTab;
+	}
+
+	public boolean isTvInitTab() {
+		return tvInitTab;
+	}
+
+	public void setTvInitTab(boolean tvInitTab) {
+		this.tvInitTab = tvInitTab;
+	}
+
+	public Verification getTvVerification() {
+		return tvVerification;
+	}
+
+	public void setTvVerification(Verification tvVerification) {
+		this.tvVerification = tvVerification;
+	}
 }

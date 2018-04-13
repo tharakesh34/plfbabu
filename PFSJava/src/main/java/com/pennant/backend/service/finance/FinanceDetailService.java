@@ -197,4 +197,6 @@ public interface FinanceDetailService {
 	
 	//GST
 	List<Branch> getBrachDetailsByBranchCode (List<String> finBranches);
+	
+	void setFIInitVerification(FinanceDetail financeDetail);
  }
