@@ -221,7 +221,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						PennantRegularExpressions.REGEX_EIDNUMBER, false));
 			}else{
 				this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER,false));
+						PennantRegularExpressions.REGEX_PANNUMBER,true));
 			}
 		}
 		logger.debug("Leaving");
