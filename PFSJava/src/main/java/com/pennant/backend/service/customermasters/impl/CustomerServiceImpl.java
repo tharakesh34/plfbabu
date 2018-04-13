@@ -46,6 +46,7 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -585,7 +586,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 		if (customerDetails.getPrimaryRelationOfficer() != 0) {
 			auditDetail.setErrorDetail(validateMasterCode("AMTVehicleDealer", "DealerId",
-					String.valueOf(customerDetails.getPrimaryRelationOfficer())));
+					customerDetails.getPrimaryRelationOfficer()));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -702,7 +703,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
 		}
 		if (customer.getCustGroupID()>0){
-			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup",customer.getCustGroupID()));
 		}
 		
 		if (StringUtils.isNotBlank(customer.getCustDSA())){
@@ -779,7 +780,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetail validateMasterCode(String moduleName,String fieldValue) {
+	private ErrorDetail validateMasterCode(String moduleName,Object fieldValue) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -795,7 +796,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			if(count <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];
-				valueParm[1] = fieldValue;
+				valueParm[1] = Objects.toString(fieldValue,"");
 				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
 			}
 		}
@@ -812,7 +813,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -822,7 +823,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
-			valueParm[1] = value;
+			valueParm[1] = Objects.toString(value,"");;
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 

@@ -415,7 +415,13 @@ public class CustomerAddresDAOImpl extends BasisNextidDaoImpl<CustomerAddres> im
 		selectSql.append(" Where pinCode=:pinCode");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		int rcdCount = 0;
+		try {
+			rcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			rcdCount = 0;
+		}
 		
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;

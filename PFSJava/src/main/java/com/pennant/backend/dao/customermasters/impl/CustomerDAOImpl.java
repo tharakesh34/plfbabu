@@ -1648,7 +1648,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @return int
 	 */
 	@Override
-	public int getLookupCount(String tableName, String columnName, String value) {
+	public int getLookupCount(String tableName, String columnName, Object value) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source=new MapSqlParameterSource();

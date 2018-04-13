@@ -287,7 +287,7 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	}
 
 	@Override
-	public int validateMasterData(String tableName, String column, String filterColumn, String fieldValue) {
+	public int validateMasterData(String tableName, String column, String filterColumn, Object fieldValue) {
 		logger.debug("Entering");
 		
 		boolean tempFix = false;
@@ -297,14 +297,14 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("Value", fieldValue);
 		source.addValue("active", true);
 		//FIXME: Need to change the method implementation
-		if(StringUtils.equals("CustGrpID", column) || StringUtils.equals("EmpName", column)) {
-			source.addValue("Value", Integer.parseInt(fieldValue));
+		/*if(column.equals("CustGrpID") || column.equals("EmpName")) {
+			source.addValue("Value",fieldValue);
 			column = "EmployerId";
 			source.addValue("ColumnName", "EmployerId");
-		} else if(StringUtils.equals("DealerName", column)) {
+		} else if(column.equals("DealerName")) {
 			tempFix = true;
-			source.addValue("Value", Long.parseLong(fieldValue));
-		}
+			source.addValue("Value", fieldValue);
+		}*/
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM ");

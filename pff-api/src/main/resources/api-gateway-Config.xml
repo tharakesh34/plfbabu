@@ -163,7 +163,7 @@
 	<bean id="wsPromotionTypeService"
 		class="com.pennanttech.service.impl.PromotionTypeWebServiceImpl" />
 	<!-- Rest container -->
-	<jaxrs:server id="promotionTypeRestService" address="/promotionTypeRest" publish="false">
+	<jaxrs:server id="promotionTypeRestService" address="/promotionTypeRest" publish="true">
 		<jaxrs:serviceBeans>
 			<ref bean="wsPromotionTypeService" />
 		</jaxrs:serviceBeans>

@@ -762,11 +762,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		DocumentManager documentManager = new DocumentManager();
 		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
 			DocumentManager olddocumentManager = getDocumentManagerDAO().getById(mandate.getDocumentRef());
+			if(olddocumentManager != null) {
 			byte[] arr1 = olddocumentManager.getDocImage();
 			byte[] arr2 = mandate.getDocImage();
 			if (!Arrays.equals(arr1, arr2)) {
 				documentManager.setDocImage(arr2);
 				mandate.setDocumentRef(getDocumentManagerDAO().save(documentManager));
+			}
 			}
 		} else {
 			documentManager.setDocImage(mandate.getDocImage());

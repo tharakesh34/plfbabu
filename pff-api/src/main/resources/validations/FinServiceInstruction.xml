@@ -262,6 +262,15 @@
 			</constraint>
 		</field>
 		<field name="accountsOfficer">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>accountsOfficer should be positive</message>
+				<groups>
+				<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+		</field> 
+		<!-- <field name="accountsOfficer">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank" >
 				<message>accountsOfficer is Mandatory</message>
 				<groups>
@@ -275,7 +284,7 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-		</field>
+		</field> -->
 	<!-- 	<field name="feeRuleList">
 			<valid></valid>
 		</field> -->

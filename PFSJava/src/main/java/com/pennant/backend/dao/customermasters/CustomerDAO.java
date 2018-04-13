@@ -153,7 +153,7 @@ public interface CustomerDAO {
 
 	ArrayList<Customer> getCustomerByLimitRule(String queryCode, String sqlQuery);
 
-	int getLookupCount(String tableName, String columnName, String value);
+	int getLookupCount(String tableName, String columnName, Object value);
 
 	int getCustomerCountByCIF(String custCIF, String type);
 

@@ -63,6 +63,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -150,11 +151,12 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
-
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-
+			for (FinFeeDetail fees : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				fees.setFinTaxDetails(new FinTaxDetails());
+			}
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
@@ -240,19 +242,6 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
 
-		if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY) 
-				&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
-			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst);
-		} else {
-			if (finServiceInst.getFinFeeDetails() != null) {
-				for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
-					finFeeDetail.setFinEvent(eventCode);
-					finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
-					financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
-				}
-			}
-			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
-		}
 		if (financeDetail.isStp()) {
 			for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 				feeDetail.setWorkflowId(0);

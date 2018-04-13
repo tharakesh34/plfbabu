@@ -353,6 +353,9 @@ public class MandateController {
 		response.setOrgReference(null);
 		response.setAmountInWords(null);
 		response.setEntityCode(null);
+		response.setDocImage(null);
+		response.setDocumentName(null);
+		response.setExternalRef(null);
 	}
 
 	/**

@@ -22,7 +22,7 @@ public interface ExtendedFieldRenderDAO {
 
 	Map<String, Object> getExtendedField(String reference, String tableName, String type);
 
-	int validateMasterData(String tableName, String column, String filterColumn, String fieldValue);
+	int validateMasterData(String tableName, String column, String filterColumn, Object fieldValue);
 	
 	boolean isExists(String reference, int seqNo, String tableName);
 

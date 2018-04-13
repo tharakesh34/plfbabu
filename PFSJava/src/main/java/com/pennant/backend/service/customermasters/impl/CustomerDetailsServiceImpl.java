@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.lang.Objects;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
@@ -1622,7 +1623,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetail.setErrorDetail(validateMasterCode("Currency", customerDetails.getCustBaseCcy()));
 		}
 		auditDetail.setErrorDetail(
-					validateMasterCode("SourceOfficer", String.valueOf(customerDetails.getPrimaryRelationOfficer())));
+					validateMasterCode("SourceOfficer",customerDetails.getPrimaryRelationOfficer()));
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
@@ -1687,7 +1688,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (custEmpDetails != null) {
 				for (CustomerEmploymentDetail empDetail : custEmpDetails) {
 					auditDetail.setErrorDetail(
-							validateMasterCode("EmployerDetail", String.valueOf(empDetail.getCustEmpName())));
+							validateMasterCode("EmployerDetail", empDetail.getCustEmpName()));
 					auditDetail.setErrorDetail(validateMasterCode("EmploymentType", empDetail.getCustEmpType()));
 					auditDetail.setErrorDetail(validateMasterCode("GeneralDesignation", empDetail.getCustEmpDesg()));
 					if (StringUtils.isNotBlank(empDetail.getCustEmpDept())) {
@@ -2309,10 +2310,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 		
 		if (customer.getCasteId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Caste", String.valueOf(customer.getCasteId())));
+			auditDetail.setErrorDetail(validateMasterCode("Caste", customer.getCasteId()));
 		}
 		if (customer.getReligionId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Religion", String.valueOf(customer.getReligionId())));
+			auditDetail.setErrorDetail(validateMasterCode("Religion", customer.getReligionId()));
 		}
 		if (StringUtils.isNotBlank(customer.getSubCategory())) {
 			List<ValueLabel> subCategories = PennantStaticListUtil.getSubCategoriesList();
@@ -2345,7 +2346,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		if (customer.getCustGroupID() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", customer.getCustGroupID()));
 		}
 		if (StringUtils.isNotBlank(customer.getCustStaffID())) {
 			Pattern pattern = Pattern
@@ -2384,7 +2385,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetail validateMasterCode(String moduleName, String fieldValue) {
+	private ErrorDetail validateMasterCode(String moduleName, Object fieldValue) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -2401,7 +2402,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (count <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];
-				valueParm[1] = fieldValue;
+				valueParm[1] = Objects.toString(fieldValue.toString());
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
 			}
 		}

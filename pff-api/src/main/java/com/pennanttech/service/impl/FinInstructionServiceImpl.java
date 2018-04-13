@@ -106,7 +106,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
-		
+		// Set null for Empty values 
+		setDefaultForReferenceFields(finServiceInstruction);
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 
@@ -163,6 +164,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return financeDetail;
 	}
 
+ 
 	/**
 	 * Method for perform changeRepaymentAmount operation
 	 * 
@@ -1413,7 +1415,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					PennantConstants.DBDateFormat)));
 		}
 	}
-	
+	private void setDefaultForReferenceFields(FinServiceInstruction finServiceInstruction) {
+		if (StringUtils.isBlank(finServiceInstruction.getBaseRate())) {
+			finServiceInstruction.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()));
+		}
+	}
 	@Autowired
 	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
 		this.finServiceInstController = finServiceInstController;

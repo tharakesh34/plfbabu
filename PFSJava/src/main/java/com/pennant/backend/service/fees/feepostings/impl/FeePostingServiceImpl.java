@@ -627,7 +627,13 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			valueParm[1] = feePostings.getFeeTyeCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90295", "", valueParm)));
 		} else {
-			feePostings.setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+			if (feeType.getAccountSetId() > 0) {
+				feePostings.setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = feePostings.getFeeTyeCode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90353", "", valueParm)));
+			}
 		}
 
 		return auditDetail;

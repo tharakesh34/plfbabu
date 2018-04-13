@@ -497,7 +497,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
 		selectSql.append(" From RMTFinanceTypes ");
-		selectSql.append(" Where FinType =:FinType AND (Product IS NULL OR Product = ' ')");
+		selectSql.append(" Where FinType =:FinType AND (Product IS NULL OR Product = '')");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);

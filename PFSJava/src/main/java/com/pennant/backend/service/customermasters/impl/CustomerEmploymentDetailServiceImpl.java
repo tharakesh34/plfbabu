@@ -44,6 +44,7 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -350,7 +351,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 		if (custEmpDetails != null) {
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				auditDetail.setErrorDetail(validateMasterCode("EmployerDetail", "EmployerId",
-						String.valueOf(custEmpDetails.getCustEmpName())));
+						custEmpDetails.getCustEmpName()));
 				auditDetail
 						.setErrorDetail(validateMasterCode("RMTEmpTypes", "EmpType", custEmpDetails.getCustEmpType()));
 				auditDetail.setErrorDetail(
@@ -421,7 +422,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetail validateMasterCode(String tableName, String columnName, String value) {
+	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -431,7 +432,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
-			valueParm[1] = value;
+			valueParm[1] = Objects.toString(value);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 

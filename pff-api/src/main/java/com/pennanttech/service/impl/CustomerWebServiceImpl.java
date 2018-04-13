@@ -106,7 +106,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// bean validations
 		validationUtility.validate(customerDetails, SaveValidationGroup.class);
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
-
+		//set empty to null
+		setDefaults(customerDetails);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerDetailsService.doCustomerValidations(auditHeader);
 
@@ -153,6 +154,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		APIErrorHandlerService.logReference(response.getCustCIF());
 		logger.debug("Leaving");
 		return response;
+	}
+
+	private void setDefaults(CustomerDetails customerDetails) {
+		if(StringUtils.isBlank(customerDetails.getCustomer().getCustSegment())) {
+			customerDetails.getCustomer().setCustSegment(StringUtils.trimToNull(customerDetails.getCustomer().getCustSegment()));
+		}
+		
 	}
 
 	/**

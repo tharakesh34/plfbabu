@@ -558,20 +558,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				}
 			}
 		}
-		if (!mandate.isOpenMandate()) {
+		
 			if (mandate.getExpiryDate() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "expiryDate";
 				return getErrorDetails("90502", valueParm);
 			}
-		} else {
-			if (mandate.getExpiryDate() != null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "expiryDate";
-				valueParm[1] = "open mandate";
-				return getErrorDetails("90329", valueParm);
-			}
-		}
 		//validate Dates
 		if (mandate.getExpiryDate() != null) {
 			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
