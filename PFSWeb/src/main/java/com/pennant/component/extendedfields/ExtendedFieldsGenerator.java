@@ -1673,6 +1673,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		button = new Button();
 		button.setImage("/images/icons/search.png");
 		button.setVisible(!isReadOnly);
+		if (getUserWorkspace() != null) {
+			button.setDisabled(!getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+		}
 		extHbox.appendChild(button);
 
 		if (!isReadOnly) {
