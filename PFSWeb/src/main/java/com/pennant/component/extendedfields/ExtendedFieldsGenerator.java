@@ -2014,9 +2014,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		logger.debug(Literal.ENTERING);
 		if (container instanceof Tabpanel) {
 			Tabpanel tabpanel = (Tabpanel) container;
+			boolean isVisible=getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
+			tabpanel.setVisible(isVisible);
 			Tab tab = (Tab) tabpanel.getFellowIfAny(detail.getFieldName());
 			if (tab != null) {
-				tab.setVisible(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+				tab.setVisible(isVisible);
 			}
 		} else if (container instanceof Groupbox) {
 			Groupbox groupbox = (Groupbox) container;
