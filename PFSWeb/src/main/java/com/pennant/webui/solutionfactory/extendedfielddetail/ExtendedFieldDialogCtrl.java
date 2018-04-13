@@ -20,7 +20,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -36,7 +35,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -49,9 +47,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	private static final long						serialVersionUID			= -3249715883200188080L;
@@ -85,7 +83,6 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 	private List<ExtendedFieldDetail>				extendedFieldDetailsList	= new ArrayList<ExtendedFieldDetail>();
 	private PagedListWrapper<ExtendedFieldDetail>	extendedFieldPagedListWrapper;
-	private ExtFieldConfigDialogCtrl				extFieldConfigDialogCtrl;
 
 	public ExtendedFieldDialogCtrl() {
 		super();
@@ -139,9 +136,6 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				try {
 					dialogCtrl.getClass().getMethod("setExtendedFieldDialogCtrl", this.getClass()).invoke(dialogCtrl,
 							this);
-					if (dialogCtrl instanceof ExtFieldConfigDialogCtrl) {
-						extFieldConfigDialogCtrl = (ExtFieldConfigDialogCtrl) dialogCtrl;
-					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
@@ -569,46 +563,11 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 	public void onClick$btnNew_FieldDet(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		String moduleName = null;
-		String subModuleName = null;
-		//for validating right in ExtendedFieldDetailDialog these two are required.
-		if (extFieldConfigDialogCtrl != null) {
-			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>(3);
-			//Configuration components for customer and Loan ExtendedFields.
-			Combobox module = extFieldConfigDialogCtrl.module;
-			Combobox subModule = extFieldConfigDialogCtrl.subModule;
-			ExtendedCombobox product = extFieldConfigDialogCtrl.product;
-			moduleName = module.getSelectedItem().getValue().toString();
-			subModuleName = null;
-			if (!StringUtils.equals(moduleName, PennantConstants.List_Select)) {
-				if (StringUtils.equals(moduleName, ExtendedFieldConstants.MODULE_CUSTOMER)) {
-					subModuleName = subModule.getSelectedItem().getValue().toString();
-					if (StringUtils.equals(subModuleName, PennantConstants.List_Select)) {
-						wve.add(new WrongValueException(subModule, Labels.getLabel("CHECK_NO_EMPTY",
-								new String[] { Labels.getLabel("label_ExtendedFieldConfig_SubModule.value") })));
-					}
-				} else if (StringUtils.equals(moduleName, ExtendedFieldConstants.MODULE_LOAN)) {
-					subModuleName = product.getValue();
-					if (StringUtils.trimToNull(subModuleName) == null) {
-						wve.add(new WrongValueException(product, Labels.getLabel("CHECK_NO_EMPTY",
-								new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value") })));
-					}
-				}
-			} else {
-				wve.add(new WrongValueException(module, Labels.getLabel("CHECK_NO_EMPTY",
-						new String[] { Labels.getLabel("label_ExtendedFieldConfig_Module.value") })));
-			}
-			if (!wve.isEmpty()) {
-				extFieldConfigDialogCtrl.showErrorDetails(wve, extFieldConfigDialogCtrl.basicDetailsTab);
-			}
-		}
 
 		ExtendedFieldDetail aExtendedFieldDetail = new ExtendedFieldDetail();
 		aExtendedFieldDetail.setModuleId(this.moduleId.intValue());
 		aExtendedFieldDetail.setNewRecord(true);
 		aExtendedFieldDetail.setWorkflowId(0);
-		aExtendedFieldDetail.setLovDescModuleName(moduleName);
-		aExtendedFieldDetail.setLovDescSubModuleName(subModuleName);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("extendedFieldDetail", aExtendedFieldDetail);
@@ -671,19 +630,6 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		} else {
 			this.extendedFieldDetailsList = extendedFieldDetailsList;
 		}
-		//based on the child's size allowing the  disable the configuration of customer and loan.
-		if (extFieldConfigDialogCtrl != null) {
-			if (!this.extendedFieldDetailsList.isEmpty()) {
-				extFieldConfigDialogCtrl.module.setDisabled(true);
-				extFieldConfigDialogCtrl.subModule.setDisabled(true);
-				extFieldConfigDialogCtrl.product.setReadonly(true);
-			} else {
-				extFieldConfigDialogCtrl.module.setDisabled(false);
-				extFieldConfigDialogCtrl.subModule.setDisabled(false);
-				extFieldConfigDialogCtrl.product.setReadonly(false);
-			}
-		}
-		
 		this.pagingFieldDetList.setDetailed(true);
 		this.pagingFieldDetList.setActivePage(0);
 		setTableName(this.extendedFieldDetailsList);
