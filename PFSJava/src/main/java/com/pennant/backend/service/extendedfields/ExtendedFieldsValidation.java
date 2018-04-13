@@ -319,6 +319,7 @@ public class ExtendedFieldsValidation {
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
+		boolean isSeqSecRightsUpdated=false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 
@@ -405,6 +406,10 @@ public class ExtendedFieldsValidation {
 						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 					if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
 						SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
+						if (!isSeqSecRightsUpdated) {
+							securityRightDAO.updateSeqSecRights();
+							isSeqSecRightsUpdated = true;
+						}
 						securityRightDAO.save(securityRight);
 					}
 				}

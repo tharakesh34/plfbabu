@@ -163,6 +163,14 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		return right.getId();
 	}
 	
+	@Override
+	public void updateSeqSecRights() {
+		logger.debug(Literal.ENTERING);
+		String query = "UPDATE SEQSECRIGHTS SET SEQNO=(SELECT MAX(RIGHTID) FROM SECRIGHTS)";
+		this.namedParameterJdbcTemplate.getJdbcOperations().update(query);
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Setting DataSource
 	 * 

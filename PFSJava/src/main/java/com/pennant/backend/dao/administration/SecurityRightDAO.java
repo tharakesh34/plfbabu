@@ -81,5 +81,12 @@ public interface SecurityRightDAO {
 	 * @return rightId
 	 */
 	long save(SecurityRight right);
+	
+	/**
+	 * Method for update the sequence number of SecurityRights whether the sequence number and secRights max RighId are
+	 * not in sink.
+	 * 
+	 */
+	void updateSeqSecRights();
 
 }
