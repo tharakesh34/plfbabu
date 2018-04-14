@@ -178,7 +178,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				String finType = financeMain.getFinType();
 				int finRefType = FinanceConstants.PROCEDT_LIMIT;
 				String quickDisbCode = FinanceConstants.QUICK_DISBURSEMENT;
-				String roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
+				String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType,
 						quickDisbCode);
 				if(StringUtils.isBlank(roles)){
 					FinanceDetail response = new FinanceDetail();
