@@ -733,7 +733,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 	}
 
 	@Override
-	public String getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
+	public String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -755,5 +755,6 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 			return null;
 		}
     }
+
 	
 }
