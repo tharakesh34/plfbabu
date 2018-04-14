@@ -2246,9 +2246,6 @@ public class PennantStaticListUtil {
 		if(repayMethodList == null){
 			repayMethodList = new ArrayList<ValueLabel>(3);
 			repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_MANUAL,Labels.getLabel("label_RepayMethod_Manual")));
-			if (ImplementationConstants.PDC_ALLOWED) {
-				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,Labels.getLabel("label_RepayMethod_PDC")));
-			}
 			if (ImplementationConstants.AUTO_ALLOWED) {
 				repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO,Labels.getLabel("label_RepayMethod_Casa")));
 			}
