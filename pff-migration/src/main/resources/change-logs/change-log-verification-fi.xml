@@ -617,4 +617,16 @@
 		<changeSet id="8.7" author="manikanta.p">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
 		</changeSet>
+		<changeSet id="9" author="murthy.y">
+			<modifyDataType tableName="amtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
+		</changeSet>
+		<changeSet id="9.1" author="murthy.y">
+			<modifyDataType tableName="amtvehicledealer_temp" columnName="dealertype" newDataType="varchar(10)" />
+		</changeSet>
+		<changeSet id="9.2" author="murthy.y" dbms="postgresql">
+			<modifyDataType tableName="amtvehicledealer" columnName="dealertype" newDataType="citext" />
+		</changeSet>
+		<changeSet id="9.3" author="murthy.y" dbms="postgresql">
+			<modifyDataType tableName="amtvehicledealer_temp" columnName="dealertype" newDataType="citext" />
+		</changeSet>
 </databaseChangeLog>
