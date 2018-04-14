@@ -85,6 +85,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
@@ -171,6 +172,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Row									mandateRow;
 
 	//Added BarCode and Reg Status
+	protected Label									label_BarCodeNumber;
 	protected Uppercasebox							barCodeNumber;
 	protected Label									amountInWords;
 	protected Label									regStatus;
@@ -780,6 +782,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					doEdit();
 				}
 			}
+		}
+		if(StringUtils.equals(ImplementationConstants.CLIENT_BFL,"CORE")){
+			this.barCodeNumber.setVisible(true);
+			this.label_BarCodeNumber.setVisible(true);
+		}else{
+			this.barCodeNumber.setVisible(false);
+			this.label_BarCodeNumber.setVisible(false);
 		}
 		try {
 			// fill the components with the data
@@ -1526,7 +1535,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			
 			this.barCodeNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_BarCodeNumber.value"),
-							PennantRegularExpressions.REGEX_BARCODE_NUMBER, validate));
+							PennantRegularExpressions.REGEX_BARCODE_NUMBER, false));
 		}
 
 		// Loan Reference
