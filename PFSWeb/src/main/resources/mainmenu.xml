@@ -244,9 +244,9 @@
 				rightName="menuItem_ApplicationMaster_Flags" />
 			<menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
 			rightName="menuItem_applicationmasters_InsuranceType"/>
-			<menuItem id="menu_Item_MandateCheckDigit" 
+			<!-- <menuItem id="menu_Item_MandateCheckDigit" 
 			    zulNavigation="/WEB-INF/pages/ApplicationMaster/MandateCheckDigit/MandateCheckDigitList.zul"
-			    rightName="menuItem_ApplicationMaster_MandateCheckDigit" />
+			    rightName="menuItem_ApplicationMaster_MandateCheckDigit" /> -->
 			<menuItem id="menu_Item_TaxDetail"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
 				rightName="menuItem_applicationmaster_TaxDetail" />
@@ -1405,11 +1405,11 @@
 	<!-- <menuItem id="menu_Item_Commitment" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentList.zul" 
 		rightName="menuItem_Commitment_Commitment"/> -->
 	<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview" 
-		rightName="menuItem_CommCreditApplicationReview" />
+		rightName="" />
 	<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview" 
-		rightName="menuItem_CorpCreditApplicationReview" />
+		/>
 	<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" 
-		rightName="menuItem_CreditApplicationReviewMaintinence"/>
+		rightName=""/>
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 
 		rightName="menuItem_CustomerMasters_ProspectCustomer" /> -->
 	<menuItem id="menu_Item_UpdateCoreCustomer"
