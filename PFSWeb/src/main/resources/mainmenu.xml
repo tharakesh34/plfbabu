@@ -158,6 +158,8 @@
 			<menuItem id="menu_Item_OtherBankFinanceType"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul"
 				rightName="menuItem_applicationmaster_OtherBankFinanceType" />
+			<menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
+			rightName="menuItem_SystemMaster_Profession"/>
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
 			<menu id="menu_Category_Agencies">
@@ -1260,8 +1262,6 @@
 			rightName="menuItem_SystemMaster_VehicleDealer"/> -->
 		<!-- <menuItem id="menu_Item_PRelationCode" zulNavigation="/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeList.zul" 
 			rightName="menuItem_SystemMaster_PRelationCode"/> -->
-		<!-- <menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
-			rightName="menuItem_SystemMaster_Profession"/> -->
 	</menu>
 
 	<menu id="menu_Category_ApplicationMaster">
