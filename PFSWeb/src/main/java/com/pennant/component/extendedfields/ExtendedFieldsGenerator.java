@@ -196,12 +196,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			} else {
 				//create childs
-				processChildElements(newRecord, columnCount, inputElemetswithParents, containers, containerElement);
+				processChildElements(newRecord, columnCount, inputElemetswithParents, containerElement);
 			}
 
-		}
-		if (getUserWorkspace() != null) {
-			getUserWorkspace().deAllocateAuthorities(fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -213,16 +210,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param newRecord
 	 * @param columnCount
 	 * @param inputElemetswithParents
-	 * @param containerElement
 	 * @throws ParseException
 	 */
 	private void processChildElements(boolean newRecord, int columnCount,
-			List<ExtendedFieldDetail> inputElemetswithParents,List<ExtendedFieldDetail> containers, ExtendedFieldDetail containerElement)
+			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement)
 			throws ParseException {
-		boolean isRootComponentVisible=true;
-		if(getUserWorkspace() != null){
-			isRootComponentVisible=isRootComponentVisible(containers, containerElement);
-		}
 		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
 		if (childlist != null && !childlist.isEmpty()) {
 			Collections.sort(childlist, new ExtendedFieldsComparator());
@@ -238,10 +230,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					renderComponents(extendedFieldDetail, columnCount, existting, isReadOnly, newRecord, i);
 				}
 				i++;
-				//Here we set Editable=false for unVisavle elements to avoid constraint based wrongValue Exception in doSave.
-				if (!isRootComponentVisible) {
-					extendedFieldDetail.setEditable(false);
-				}
 			}
 		}
 	}
@@ -1200,7 +1188,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			ExtendedFieldDetail extDetails = entryset.getKey();
 			WrongValueException value = entryset.getValue();
-
+			if (!isRootComponentVisible(nonInputElements, extDetails)) {
+				map.remove(extDetails);
+				continue;
+			}
 			ExtendedFieldDetail extParentDetails = getFirstTabParentIfAny(extDetails, nonInputElements);
 			if (extParentDetails != null) {
 				if (map.containsKey(extParentDetails)) {
@@ -2043,18 +2034,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * method to check whether the rootComponent is visible or not.
 	 * 
 	 * @param containers
-	 * @param containerElement
+	 * @param inputElement
 	 * @return
 	 */
-	//TODO:GANESH
-	private boolean isRootComponentVisible(List<ExtendedFieldDetail> containers, ExtendedFieldDetail containerElement) {
-		if (!getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(containerElement))) {
-			return false;
-		}
-		if (StringUtils.isBlank(containerElement.getParentTag())) {
-			return true;
-		}
-		String parentTag = containerElement.getParentTag();
+	private boolean isRootComponentVisible(List<ExtendedFieldDetail> containers, ExtendedFieldDetail inputElement) {
+		String parentTag = inputElement.getParentTag();
 		boolean isVisible = true;
 		for (int i = 0; i < containers.size(); i++) {
 			ExtendedFieldDetail container = containers.get(i);
@@ -2065,6 +2049,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				} else if (StringUtils.isNotBlank(container.getParentTag())) {
 					parentTag = container.getParentTag();
 					i = 0;
+				}else{
+					break;
 				}
 			}
 		}

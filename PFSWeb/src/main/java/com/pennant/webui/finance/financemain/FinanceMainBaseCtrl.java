@@ -1320,7 +1320,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void doClose() throws Exception {
 		logger.debug("Entering ");
-		doClose(this.btnSave.isVisible());
+		boolean isClosed = doClose(this.btnSave.isVisible());
+		if (isClosed && financeDetail.getExtendedFieldRender() != null) {
+			ExtendedFieldHeader fieldHeader = financeDetail.getExtendedFieldHeader();
+			if (fieldHeader != null) {
+				String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
+				getUserWorkspace().deAllocateAuthorities(pageName);
+			}
+		}
 		logger.debug("Leaving ");
 	}
 

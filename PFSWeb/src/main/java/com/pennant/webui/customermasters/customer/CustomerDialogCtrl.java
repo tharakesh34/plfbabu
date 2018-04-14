@@ -1000,7 +1000,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		doClose(this.btnSave.isVisible());
+		boolean isClosed = doClose(this.btnSave.isVisible());
+		if (isClosed && customerDetails.getExtendedFieldRender() != null) {
+			ExtendedFieldHeader fieldHeader = customerDetails.getExtendedFieldHeader();
+			if (fieldHeader != null) {
+				String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
+				getUserWorkspace().deAllocateAuthorities(pageName);
+			}
+		}
 	}
 
 	/**
