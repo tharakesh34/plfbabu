@@ -2158,7 +2158,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		CustomerAddres customerAddress = null;
 		JdbcSearchObject<CustomerAddres> searchObject=new JdbcSearchObject<CustomerAddres>(CustomerAddres.class);
-		searchObject.addTabelName("CustomerAddresses");
+		searchObject.addTabelName("CustomerAddresses_View");
 		searchObject.addFilterEqual("CustID", custID);
 		List<CustomerAddres> custAddress = pagedListService.getBySearchObject(searchObject);
 		if(custAddress!=null && !custAddress.isEmpty()){
@@ -2210,12 +2210,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if(customerAddress!=null){
 			this.addrHNbr.setValue(customerAddress.getCustAddrHNbr());
 			this.addrStreet.setValue(customerAddress.getCustAddrStreet());
-			this.cityName.setValue(customerAddress.getCustAddrCity());
-			this.addrCity.setDescription(customerAddress.getLovDescCustAddrCityName());
-			this.addrCountry.setValue(customerAddress.getCustAddrCountry());
-			this.addrCountry.setDescription(customerAddress.getLovDescCustAddrCountryName());
-			this.addrProvince.setValue(customerAddress.getCustAddrProvince());
-			this.addrProvince.setDescription(customerAddress.getLovDescCustAddrProvinceName());
+			this.addrCity.setValue(customerAddress.getCustAddrCity(), customerAddress.getLovDescCustAddrCityName());
+			this.addrCountry.setValue(customerAddress.getCustAddrCountry(), customerAddress.getLovDescCustAddrCountryName());
+			this.addrProvince.setValue(customerAddress.getCustAddrProvince(), customerAddress.getLovDescCustAddrProvinceName());
 			this.addrLine1.setValue(customerAddress.getCustAddrLine1());
 			this.addrLine2.setValue(customerAddress.getCustAddrLine2());
 			this.poBox.setValue(customerAddress.getCustPOBox());

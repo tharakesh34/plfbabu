@@ -2832,8 +2832,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		BigDecimal tgstReslut = BigDecimal.ZERO;
 		
 		String fromBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-		if (fromBranch == null) {
+		if (fromBranch == null && getFinanceDetail().getCustomerDetails() != null) {//FIXME: Dependency with GST changes.
 			fromBranch = getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch();
+		} else {
+			fromBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		}
 		String toBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		
