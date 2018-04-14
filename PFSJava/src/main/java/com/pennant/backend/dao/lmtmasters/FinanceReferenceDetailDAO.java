@@ -72,5 +72,5 @@ public interface FinanceReferenceDetailDAO {
 	
 	FinCollaterals getFinCollaterals(String finReference, String collateralType);
 	int getFinanceReferenceDetailByRuleCode(long ruleId, String type);
-	String getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode);
+	String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode);
 }
