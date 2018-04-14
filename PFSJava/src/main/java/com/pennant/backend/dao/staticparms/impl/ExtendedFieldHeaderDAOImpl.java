@@ -145,7 +145,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		try {
 			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
+			logger.warn("Exception :", e);
 		}
 		logger.debug("Leaving");
 		return null;
