@@ -1166,7 +1166,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 	private void dosetFieldLength(String regex) {
 		logger.debug("Entering");
-		if(regex!=null){			
+		if(StringUtils.isNotBlank(regex)){			
 			String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
 			int mobilelength=Integer.parseInt(length);
 			this.phoneNumber.setMaxlength(mobilelength);
