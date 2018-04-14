@@ -162,9 +162,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		super.doAddFilters();
 		
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			this.searchObject.addWhereClause(" ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL  ");
+			this.searchObject.addWhereClause(" ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND  (RecordType IS NULL   OR RecordType='' )");
 		}else{
-			this.searchObject.addWhereClause(" ReceiptPurpose != '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL ");
+			this.searchObject.addWhereClause(" ReceiptPurpose != '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND (RecordType IS NULL   OR RecordType='' )");
 		}
 	}
 
