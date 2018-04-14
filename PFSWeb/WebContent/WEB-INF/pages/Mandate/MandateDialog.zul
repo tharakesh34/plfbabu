@@ -279,7 +279,7 @@
 								<row>
 								<label id = "label_BarCodeNumber" value="${c:l('label_MandateDialog_BarCodeNumber.value')}"/>
 									<hbox>
-									<space spacing="2px" sclass = "mandatory"/>
+									<space spacing="2px" />
 									<uppercasebox id = "barCodeNumber" width="200px"/>
 									</hbox>
 									<label id="label_UmrNumber"
