@@ -182,8 +182,8 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(chequeDetail);
-			this.window_ChequeDetailDocumentDialog.setHeight("70%");
-			this.window_ChequeDetailDocumentDialog.setWidth("60%");
+			this.window_ChequeDetailDocumentDialog.setHeight("80%");
+			this.window_ChequeDetailDocumentDialog.setWidth("80%");
 			this.window_ChequeDetailDocumentDialog.doModal() ;
 		} catch (UiException e) {
 			logger.error("Exception: ", e);

@@ -10632,6 +10632,9 @@
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 	
 	<bean id="finChequeHeaderService"

@@ -5,6 +5,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface ChequeHeaderService {
@@ -24,4 +25,6 @@ public interface ChequeHeaderService {
 			String finCcy);
 
 	ChequeHeader getChequeHeaderByRef(String finReference);
+	
+	FinanceDetail getFinanceDetailById(String finReference);
 }

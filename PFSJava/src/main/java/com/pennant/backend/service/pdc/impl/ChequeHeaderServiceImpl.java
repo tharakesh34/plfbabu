@@ -55,14 +55,21 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -80,6 +87,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private ChequeHeaderDAO		chequeHeaderDAO;
 	private ChequeDetailDAO		chequeDetailDAO;
 	private DocumentManagerDAO	documentManagerDAO;
+	private FinanceMainDAO			financeMainDAO;
+	private FinanceTypeDAO			financeTypeDAO;
+	private CustomerDetailsService	customerDetailsService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -118,6 +128,18 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
 		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
 	}
 
 	/**
@@ -755,4 +777,19 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		return auditDetail;
 	}
 
+	@Override
+	public FinanceDetail getFinanceDetailById(String finReference) {
+		logger.debug(" Entering ");
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(finReference);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_View", false);
+		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
+
+		scheduleData.setFinanceMain(financeMain);
+		scheduleData.setFinanceType(financeType);
+		financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
+		logger.debug(" Leaving ");
+		return financeDetail;
+	}
 }
