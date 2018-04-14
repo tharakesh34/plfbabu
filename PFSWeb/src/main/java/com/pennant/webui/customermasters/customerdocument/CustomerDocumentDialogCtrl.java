@@ -857,7 +857,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			doWriteBeanToComponents(aCustomerDocument);
 
 			if(this.creditApplicationReviewDialogCtrl != null){
-				this.btnSearchPRCustid.setDisabled(true);
+				this.btnSearchPRCustid.setVisible(false);
 			}
 
 			if(isCheckList){
