@@ -1891,9 +1891,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		this.custCIF.focus();
 		
-		 if(StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_CORP)){
-			 this.custNationality.setReadonly(true);
-		 }
 		 
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
@@ -1901,6 +1898,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doSetCategoryProperties();
 			doCheckEnquiry();
 
+			if(StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_CORP)){
+				this.custNationality.setReadonly(true);
+			}
+			
 			this.btnCancel.setVisible(false);
 			if (isFinanceProcess || isNotFinanceProcess || isEnqProcess) {
 				this.north.setVisible(false);
