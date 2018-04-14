@@ -1890,7 +1890,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doEdit();
 		}
 		this.custCIF.focus();
-
+		
+		 if(StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_CORP)){
+			 this.custNationality.setReadonly(true);
+		 }
+		 
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
 			doResetFeeVariables();
@@ -2642,7 +2646,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
 				this.custMiddleName.setReadonly(isReadOnly("CustomerDialog_custMiddleName"));
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
-				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custArabicName"));
+				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
 				this.custDftBranch.setReadonly(isReadOnly("CustomerDialog_custDftBranch"));
 				this.custBaseCcy.setReadonly(isReadOnly("CustomerDialog_custBaseCcy"));
