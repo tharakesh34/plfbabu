@@ -76,4 +76,6 @@ public interface ManualDeviationDAO extends BasicCrudDao<ManualDeviation> {
 	
 	long getDeviationIdByCode(String deviationCode);
 
+	ManualDeviation getManualDeviationDesc(long deviationID);
+
 }

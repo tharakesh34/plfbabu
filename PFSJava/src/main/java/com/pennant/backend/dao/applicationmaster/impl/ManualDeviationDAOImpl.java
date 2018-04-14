@@ -114,6 +114,34 @@ public class ManualDeviationDAOImpl extends BasisNextidDaoImpl<ManualDeviation> 
 		return manualDeviation;
 	}
 
+	private static final String DESC_QUERY = "select md.code,md.description,md.severity,lv.fieldCodevalue severityCode,lv.valuedesc severityName"
+			+ " from productDeviations pd inner join manualdeviations md on pd.deviationID=md.deviationID"
+			+ " inner join rmtlovfielddetail  lv on md.severity = lv.fieldcodeid  Where productdevid = :Productdevid";
+
+	@Override
+	public ManualDeviation getManualDeviationDesc(long deviationID) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Productdevid", deviationID);
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + DESC_QUERY.toString());
+
+		ManualDeviation manualDeviation = new ManualDeviation();
+		manualDeviation.setDeviationID(deviationID);
+
+		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+
+		try {
+			manualDeviation = namedParameterJdbcTemplate.queryForObject(DESC_QUERY.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			manualDeviation = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return manualDeviation;
+	}
+
 	@Override
 	public boolean isDuplicateKey(long deviationID, String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
