@@ -163,6 +163,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
 	private List<FinanceDeviations> financeDeviations=new ArrayList<FinanceDeviations>();
 	private List<FinanceDeviations> approvedFinanceDeviations=new ArrayList<FinanceDeviations>();
+	private List<FinanceDeviations> manualDeviations=new ArrayList<FinanceDeviations>();
+	private List<FinanceDeviations> approvedManualDeviations=new ArrayList<FinanceDeviations>();
 	
 	
 	private List<FinCollaterals> financeCollaterals = new ArrayList<FinCollaterals>(1);
@@ -908,6 +910,22 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setReasonHeader(ReasonHeader reasonHeader) {
 		this.reasonHeader = reasonHeader;
+	}
+
+	public List<FinanceDeviations> getManualDeviations() {
+		return manualDeviations;
+	}
+
+	public void setManualDeviations(List<FinanceDeviations> manualDeviations) {
+		this.manualDeviations = manualDeviations;
+	}
+
+	public List<FinanceDeviations> getApprovedManualDeviations() {
+		return approvedManualDeviations;
+	}
+
+	public void setApprovedManualDeviations(List<FinanceDeviations> approvedManualDeviations) {
+		this.approvedManualDeviations = approvedManualDeviations;
 	}
 
 	public Verification getFiVerification() {

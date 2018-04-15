@@ -4,29 +4,45 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinanceDeviations implements java.io.Serializable, Entity {
-	private static final long serialVersionUID = 8456523350616062070L;
+public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
+	private static final long	serialVersionUID	= 8456523350616062070L;
 
-	private long deviationId = Long.MIN_VALUE;
-	private String finReference;
-	private String module;
-	private String deviationCode;
-	private String deviationType;
-	private String deviationValue;
-	private String userRole;
-	private String delegationRole;
-	private String approvalStatus;
-	private Timestamp deviationDate;
-	private String deviationUserId;
-	private String delegatedUserId;
-	private boolean newRecord = false;
-	private FinanceDeviations befImage;
-	
-	private String custCIF;
-	private String custShrtName;
-	private long custID ;
+	private long				deviationId			= Long.MIN_VALUE;
+	private String				finReference;
+	private String				module;
+	private String				deviationCode;
+
+	private String				deviationType;
+	private String				deviationValue;
+	private String				userRole;
+	private String				delegationRole;
+	private String				approvalStatus;
+	private Timestamp			deviationDate;
+	private String				deviationUserId;
+	private String				delegatedUserId;
+	private boolean				manualDeviation;
+	private boolean				deviProcessed=false;
+	private String				remarks;
+	private boolean				newRecord			= false;
+	private FinanceDeviations	befImage;
+	private boolean				approved;
+
+	private String				custCIF;
+	private String				custShrtName;
+	private long				custID;
+	@XmlTransient
+	private LoggedInUser		userDetails;
+	private String				deviationCodeName;
+	private String				deviationCodeDesc;
+	private long				severity;
+	private String				severityCode;
+	private String				severityName;
 
 	public FinanceDeviations() {
 	}
@@ -40,6 +56,24 @@ public class FinanceDeviations implements java.io.Serializable, Entity {
 		excludeFields.add("custCIF");
 		excludeFields.add("custID");
 		excludeFields.add("custShrtName");
+		excludeFields.add("deviationCodeName");
+		excludeFields.add("deviationCodeDesc");
+		excludeFields.add("severity");
+		excludeFields.add("severityName");
+		excludeFields.add("severityCode");
+		excludeFields.add("approved");
+
+		excludeFields.add("recordStatus");
+		excludeFields.add("roleCode");
+		excludeFields.add("nextRoleCode");
+		excludeFields.add("taskId");
+		excludeFields.add("nextTaskId");
+		excludeFields.add("recordType");
+		excludeFields.add("workflowId");
+		excludeFields.add("userAction");
+		excludeFields.add("version");
+		excludeFields.add("lastMntBy");
+		excludeFields.add("lastMntOn");
 
 		return excludeFields;
 	}
@@ -195,4 +229,83 @@ public class FinanceDeviations implements java.io.Serializable, Entity {
 		this.custID = custID;
 	}
 
+	public boolean isApproved() {
+		return approved;
+	}
+
+	public void setApproved(boolean approved) {
+		this.approved = approved;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public String getDeviationCodeDesc() {
+		return deviationCodeDesc;
+	}
+
+	public void setDeviationCodeDesc(String deviationCodeDesc) {
+		this.deviationCodeDesc = deviationCodeDesc;
+	}
+
+	public String getDeviationCodeName() {
+		return deviationCodeName;
+	}
+
+	public void setDeviationCodeName(String deviationCodeName) {
+		this.deviationCodeName = deviationCodeName;
+	}
+
+	public boolean isManualDeviation() {
+		return manualDeviation;
+	}
+
+	public void setManualDeviation(boolean manualDeviation) {
+		this.manualDeviation = manualDeviation;
+	}
+
+	public String getSeverityCode() {
+		return severityCode;
+	}
+
+	public void setSeverityCode(String severityCode) {
+		this.severityCode = severityCode;
+	}
+
+	public String getSeverityName() {
+		return severityName;
+	}
+
+	public void setSeverityName(String severityName) {
+		this.severityName = severityName;
+	}
+
+	public long getSeverity() {
+		return severity;
+	}
+
+	public void setSeverity(long severity) {
+		this.severity = severity;
+	}
+
+	public boolean isDeviProcessed() {
+		return deviProcessed;
+	}
+
+	public void setDeviProcessed(boolean deviProcessed) {
+		this.deviProcessed = deviProcessed;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 }
