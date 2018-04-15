@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DelegationDeviationCtrl.java                                         * 	  
+ * FileName    		:  DeviationConfigCtrl.java                                         * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -38,7 +38,7 @@
  ********************************************************************************************
  */
 
-package com.pennant.webui.lmtmasters.financereferencedetail;
+package com.pennant.webui.delegationdeviation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,6 +46,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -64,7 +65,6 @@ import org.zkoss.zul.Textbox;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -72,7 +72,8 @@ import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -80,99 +81,57 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class DelegationDeviationCtrl {
+public class DeviationConfigCtrl {
 
-	private static final Logger						logger				= Logger.getLogger(DelegationDeviationCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(DeviationConfigCtrl.class);
 
 	// Variables
-	private String									fintype;
-	private int										percnetageFormatter	= 2;
-	private int										finFormatter		= 0;
+	private String								fintype;
+	private int									percnetageFormatter	= 2;
+	private int									finFormatter		= 0;
 
 	// Components
-	protected Listbox								delationDeviation;
+	protected Listbox							delationDeviation;
 
 	// Objects
-	List<ValueLabel>								delgationRoles;
-	List<DeviationHeader>							deviationHeaderList;
-	private transient DelegationDeviationService	delegationDeviationService;
-	private FinTypeAccountingDAO	                finTypeAccountingDAO;
+	List<ValueLabel>							delgationRoles;
+	List<DeviationHeader>						deviationHeaderList;
+	@Autowired
+	private transient DeviationConfigService	deviationConfigService;
+	private FinTypeAccountingDAO				finTypeAccountingDAO;
+	@Autowired
+	DeviationHelper								deviationHelper;
 
 	// Constants
-	private static final String						styleCenter			= " text-align: center;";
-	private static final String						styleListGroup		= " font-weight: bold; background: #808080;  color: white;";
-	private static final String						styleBold			= "font-weight: bold;";
-	private static final String						ATT_DATA_TYPE		= "dataType";
-	private static final String						ATT_Module			= "module";
-	private static final String						BOOLEAN_TRUE		= "1";
-	private static final String						BOOLEAN_FALSE		= "0";
+	private static final String					styleCenter			= "text-align: center;";
+	private static final String					styleListGroup		= "font-weight: bold; background: #808080;  color: white;";
+	private static final String					styleBold			= "font-weight: bold;";
+	private static final String					ATT_DATA_TYPE		= "dataType";
+	private static final String					ATT_Module			= "module";
+	private static final String					BOOLEAN_TRUE		= "1";
+	private static final String					BOOLEAN_FALSE		= "0";
 
-	public DelegationDeviationCtrl() {
+	public DeviationConfigCtrl() {
 
 	}
 
 	//	Setters & Getters
 
-	private DelegationDeviationService getDelegationDeviationService() {
-		return delegationDeviationService;
-	}
-
-	public void setDelegationDeviationService(DelegationDeviationService delegationDeviationService) {
-		this.delegationDeviationService = delegationDeviationService;
-	}
-
 	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
 		return finTypeAccountingDAO;
 	}
-	
+
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
-	
+
 	// Methods
 
-	protected void init(Listbox delationDeviation, String fintype, List<String> delegationRole) {
+	public void init(Listbox delationDeviation, String fintype, List<String> delegationRole) {
 		this.delationDeviation = delationDeviation;
 		this.fintype = fintype;
-		delgationRoles = getRoleAndDesc(delegationRole);
+		delgationRoles = deviationHelper.getRoleAndDesc(delegationRole);
 		fillListheaders(delationDeviation);
-	}
-
-	/**
-	 * @param delegationRole
-	 * @return
-	 */
-	public List<ValueLabel> getRoleAndDesc(List<String> delegationRole) {
-		logger.debug(" Entering ");
-		List<ValueLabel> delgationRoles = new ArrayList<>();
-
-		if (delegationRole == null || delegationRole.isEmpty()) {
-			return delgationRoles;
-		}
-
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
-		searchObject.addTabelName("SecRoles");
-		searchObject.addFilterIn("RoleCd", delegationRole, false);
-		List<SecurityRole> list = pagedListService.getBySearchObject(searchObject);
-		//to maintain actual order
-		if (list != null && !list.isEmpty()) {
-			for (String degator : delegationRole) {
-				ValueLabel valueLabel = new ValueLabel();
-				valueLabel.setValue(degator);
-				for (SecurityRole securityRole : list) {
-					if (degator.equals(securityRole.getRoleCd())) {
-						valueLabel.setLabel(securityRole.getRoleDesc());
-						break;
-					}
-				}
-				delgationRoles.add(valueLabel);
-			}
-
-		}
-
-		logger.debug(" Leaving ");
-		return delgationRoles;
 	}
 
 	/**
@@ -181,29 +140,29 @@ public class DelegationDeviationCtrl {
 	 * @param finType
 	 * @param user
 	 */
-	protected void processDeviationDelegation(String finType, LoggedInUser user) {
+	public void processDeviationDelegation(String finType, LoggedInUser user) {
 		validateDelegationDeviation();
-		getDelegationDeviationService().processDelegationDeviation(readDelegationDeviation(), fintype, user);
+		deviationConfigService.processDelegationDeviation(readDelegationDeviation(), fintype, user);
 	}
 
 	/**
-	 * To fill Product deviation.Product Deviation are predefine in deviation
-	 * params
+	 * To fill Product deviation.Product Deviation are predefine in deviation params
 	 */
-	protected void fillProductDeviations() {
+	public void fillProductDeviations() {
 		logger.debug(" Entering ");
 
 		if (delgationRoles == null || delgationRoles.isEmpty()) {
 			return;
 		}
 
-		deviationHeaderList = getDelegationDeviationService().getDeviationsByFinType(fintype);
+		deviationHeaderList = deviationConfigService.getDeviationsByFinType(fintype);
 
 		List<DeviationParam> list = PennantAppUtil.getDeviationParams();
 
 		if (list != null && !list.isEmpty()) {
 			for (DeviationParam deviationParam : list) {
-				addListItem(deviationParam.getCode(), deviationParam.getDescription(), deviationParam.getDataType(), DeviationConstants.TY_PRODUCT, this.delationDeviation);
+				addListItem(deviationParam.getCode(), deviationParam.getDescription(), deviationParam.getDataType(),
+						DeviationConstants.TY_PRODUCT, this.delationDeviation);
 			}
 		}
 
@@ -215,7 +174,7 @@ public class DelegationDeviationCtrl {
 	 * 
 	 * @param listbox
 	 */
-	protected void fillEligibilityDeviations(Listbox listbox) {
+	public void fillEligibilityDeviations(Listbox listbox) {
 		logger.debug(" Entering ");
 
 		if (delgationRoles == null || delgationRoles.isEmpty()) {
@@ -248,7 +207,9 @@ public class DelegationDeviationCtrl {
 					if (rule != null) {
 						dataType = rule.getDeviationType();
 					}
-					addListItem(String.valueOf(referenceDetail.getFinRefId()), StringUtils.trimToEmpty(referenceDetail.getLovDescRefDesc()), dataType, DeviationConstants.TY_ELIGIBILITY, this.delationDeviation);
+					addListItem(String.valueOf(referenceDetail.getFinRefId()),
+							StringUtils.trimToEmpty(referenceDetail.getLovDescRefDesc()), dataType,
+							DeviationConstants.TY_ELIGIBILITY, this.delationDeviation);
 				}
 
 			} else {
@@ -260,12 +221,11 @@ public class DelegationDeviationCtrl {
 	}
 
 	/**
-	 * To Fill Check List Deviations based on the flag's allow Expire allow
-	 * postponed allow Waiver
+	 * To Fill Check List Deviations based on the flag's allow Expire allow postponed allow Waiver
 	 * 
 	 * @param listbox
 	 */
-	protected void fillCheckListDeviations(Listbox listbox) {
+	public void fillCheckListDeviations(Listbox listbox) {
 		logger.debug(" Entering ");
 
 		if (delgationRoles == null || delgationRoles.isEmpty()) {
@@ -288,9 +248,12 @@ public class DelegationDeviationCtrl {
 			String refWaived = String.valueOf(refDet.getFinRefId()) + DeviationConstants.CL_WAIVED;
 
 			String desc = StringUtils.trimToEmpty(refDet.getLovDescRefDesc());
-			String descExpired = desc + Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Expired") });
-			String descPostponed = desc + Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Postponed") });
-			String descWaived = desc + Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Waived") });
+			String descExpired = desc
+					+ Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Expired") });
+			String descPostponed = desc
+					+ Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Postponed") });
+			String descWaived = desc
+					+ Labels.getLabel("deviation_checklist", new String[] { Labels.getLabel("checklist_Waived") });
 
 			Listitem listItemExpired = isAlredyInListbox(refExpired, DeviationConstants.TY_CHECKLIST);
 			Listitem listItemPostponed = isAlredyInListbox(refPostponed, DeviationConstants.TY_CHECKLIST);
@@ -305,9 +268,12 @@ public class DelegationDeviationCtrl {
 
 			if (refDet.isAllowDeviation()) {
 
-				addCheckListItem(refDet.isAllowExpire(), listItemExpired, refExpired, descExpired, DeviationConstants.DT_INTEGER);
-				addCheckListItem(refDet.isAllowPostpone(), listItemPostponed, refPostponed, descPostponed, DeviationConstants.DT_INTEGER);
-				addCheckListItem(refDet.isAllowWaiver(), listItemWaived, refWaived, descWaived, DeviationConstants.DT_BOOLEAN);
+				addCheckListItem(refDet.isAllowExpire(), listItemExpired, refExpired, descExpired,
+						DeviationConstants.DT_INTEGER);
+				addCheckListItem(refDet.isAllowPostpone(), listItemPostponed, refPostponed, descPostponed,
+						DeviationConstants.DT_INTEGER);
+				addCheckListItem(refDet.isAllowWaiver(), listItemWaived, refWaived, descWaived,
+						DeviationConstants.DT_BOOLEAN);
 
 			} else {
 
@@ -322,56 +288,44 @@ public class DelegationDeviationCtrl {
 	}
 
 	/**
-	 * To fill deviations based on the allow deviation flag in fee rule. Here
-	 * fee rule are captured from two setups. i.e. Fee's configured in
-	 * accounting setup in finance type creation Stage accounting configure
+	 * To fill deviations based on the allow deviation flag in fee rule. Here fee rule are captured from two setups.
+	 * i.e. Fee's configured in accounting setup in finance type creation Stage accounting configure
 	 * 
 	 * @param listbox
 	 */
-	protected void fillFeeDeviations(Listbox listbox,String finType) {
+	public void fillFeeDeviations(Listbox listbox, String finType) {
 		logger.debug(" Entering ");
 
 		if (delgationRoles == null || delgationRoles.isEmpty()) {
 			return;
 		}
 
-		/*List<Listitem> list = listbox.getItems();
+		/*
+		 * List<Listitem> list = listbox.getItems();
+		 * 
+		 * List<Long> accountingsetIds = new ArrayList<Long>(); for (Listitem listitem : list) { FinanceReferenceDetail
+		 * refDet = (FinanceReferenceDetail) listitem.getAttribute("data"); accountingsetIds.add(refDet.getFinRefId());
+		 * }
+		 * 
+		 * List<Long> listAcc = getFinanceTypeAccountSetID(); if (listAcc == null || listAcc.isEmpty()) { return; }
+		 * accountingsetIds.addAll(listAcc);
+		 */
+		List<FinTypeFees> feeCodes = deviationConfigService.getFeeCodeList(finType,
+				FinanceConstants.MODULEID_FINTYPE);
 
-		List<Long> accountingsetIds = new ArrayList<Long>();
-		for (Listitem listitem : list) {
-			FinanceReferenceDetail refDet = (FinanceReferenceDetail) listitem.getAttribute("data");
-			accountingsetIds.add(refDet.getFinRefId());
-		}
-
-		List<Long> listAcc = getFinanceTypeAccountSetID();
-		if (listAcc == null || listAcc.isEmpty()) {
-			return;
-		}
-		accountingsetIds.addAll(listAcc);
-*/
-		List<FinTypeFees> feeCodes = getDelegationDeviationService().getFeeCodeList(finType, FinanceConstants.MODULEID_FINTYPE);
-		
 		if (!feeCodes.isEmpty()) {
 
-			/*List<String> actualFeeCodes = new ArrayList<>();
-
-			for (String singlefeecode : feeCodes) {
-				if (singlefeecode.contains(",")) {
-					String feecodes[] = singlefeecode.split(",");
-					for (String feecode : feecodes) {
-						if (!actualFeeCodes.contains(feecode)) {
-							actualFeeCodes.add(feecode);
-						}
-					}
-
-				} else {
-					if (!actualFeeCodes.contains(singlefeecode)) {
-						actualFeeCodes.add(singlefeecode);
-					}
-				}
-			}
-
-			List<Rule> listrules = getFeeRules(actualFeeCodes);*/
+			/*
+			 * List<String> actualFeeCodes = new ArrayList<>();
+			 * 
+			 * for (String singlefeecode : feeCodes) { if (singlefeecode.contains(",")) { String feecodes[] =
+			 * singlefeecode.split(","); for (String feecode : feecodes) { if (!actualFeeCodes.contains(feecode)) {
+			 * actualFeeCodes.add(feecode); } }
+			 * 
+			 * } else { if (!actualFeeCodes.contains(singlefeecode)) { actualFeeCodes.add(singlefeecode); } } }
+			 * 
+			 * List<Rule> listrules = getFeeRules(actualFeeCodes);
+			 */
 			for (FinTypeFees finTypeFee : feeCodes) {
 
 				Listitem deviationListItem = isAlredyInListbox(finTypeFee.getFeeTypeCode(), DeviationConstants.TY_FEE);
@@ -379,7 +333,9 @@ public class DelegationDeviationCtrl {
 				if (finTypeFee.isAlwDeviation()) {
 
 					if (deviationListItem == null) {
-						addListItem(String.valueOf(finTypeFee.getFeeTypeCode()), StringUtils.trimToEmpty(finTypeFee.getFeeTypeDesc()), DeviationConstants.DT_PERCENTAGE, DeviationConstants.TY_FEE, this.delationDeviation);
+						addListItem(String.valueOf(finTypeFee.getFeeTypeCode()),
+								StringUtils.trimToEmpty(finTypeFee.getFeeTypeDesc()), DeviationConstants.DT_PERCENTAGE,
+								DeviationConstants.TY_FEE, this.delationDeviation);
 					}
 
 				} else {
@@ -396,7 +352,7 @@ public class DelegationDeviationCtrl {
 	 * 
 	 * @param listbox
 	 */
-	protected void fillScoringDeviations(Listbox listbox) {
+	public void fillScoringDeviations(Listbox listbox) {
 		logger.debug(" Entering ");
 
 		if (delgationRoles == null || delgationRoles.isEmpty()) {
@@ -423,7 +379,9 @@ public class DelegationDeviationCtrl {
 			if (referenceDetail.isAllowDeviation()) {
 				if (deviationListItem == null) {
 					String dataType = DeviationConstants.DT_INTEGER;
-					addListItem(String.valueOf(referenceDetail.getFinRefId()), StringUtils.trimToEmpty(referenceDetail.getLovDescRefDesc()), dataType, DeviationConstants.TY_SCORE, this.delationDeviation);
+					addListItem(String.valueOf(referenceDetail.getFinRefId()),
+							StringUtils.trimToEmpty(referenceDetail.getLovDescRefDesc()), dataType,
+							DeviationConstants.TY_SCORE, this.delationDeviation);
 				}
 
 			} else {
@@ -569,8 +527,7 @@ public class DelegationDeviationCtrl {
 
 	/**
 	 * 
-	 * TO return the Component based on the type and will set the passed value
-	 * to the component
+	 * TO return the Component based on the type and will set the passed value to the component
 	 * 
 	 * @param dataType
 	 * @param value
@@ -860,7 +817,8 @@ public class DelegationDeviationCtrl {
 	private void addCheckListItem(boolean deviated, Listitem listitem, String code, String desc, String datatype) {
 		if (deviated) {
 			if (listitem == null) {
-				addListItem(code, StringUtils.trimToEmpty(desc), datatype, DeviationConstants.TY_CHECKLIST, this.delationDeviation);
+				addListItem(code, StringUtils.trimToEmpty(desc), datatype, DeviationConstants.TY_CHECKLIST,
+						this.delationDeviation);
 			}
 		} else {
 			removeFromDeviation(listitem);
@@ -930,7 +888,6 @@ public class DelegationDeviationCtrl {
 		logger.debug(" Leaving ");
 		return null;
 	}
-
 
 	/**
 	 * To Eligibility Rule

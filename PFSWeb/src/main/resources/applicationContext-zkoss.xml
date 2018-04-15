@@ -1697,7 +1697,6 @@
 		class="com.pennant.webui.lmtmasters.financereferencedetail.FinanceReferenceDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
-		<property name="delegationDeviationCtrl" ref="delegationDeviationCtrl" />
 	</bean>
 
 	<!-- ChekList -->
@@ -2002,8 +2001,18 @@
 		class="com.pennant.webui.finance.financemain.FinanceDeviationsDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="deviationDetailsService" ref="deviationDetailsService" />
+	</bean>
+	
+	<bean id="creditApprovalDialogCtrl"
+		class="com.pennant.webui.finance.financemain.CreditApprovalDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
 		<property name="dashboardCreate" ref="dashboardCreate" />
-
+	</bean>
+	
+	<bean id="manualDeviationTriggerDialogCtrl"
+		class="com.pennant.webui.finance.financemain.ManualDeviationTriggerDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="pagedListService" ref="pagedListService" />
 	</bean>
 
 	<!--============ Finance Scoring Detail ============== -->
@@ -3872,18 +3881,20 @@
 		<property name="deviationParamService" ref="deviationParamService" />
 	</bean>
 
-	<bean id="delegationDeviationCtrl"
-		class="com.pennant.webui.lmtmasters.financereferencedetail.DelegationDeviationCtrl"
+	<bean id="deviationConfigCtrl"
+		class="com.pennant.webui.delegationdeviation.DeviationConfigCtrl"
 		scope="prototype">
-		<property name="delegationDeviationService" ref="delegationDeviationService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
 	<bean id="finDelegationDeviationCtrl" scope="prototype"
-		class="com.pennant.webui.finance.financemain.FinDelegationDeviationCtrl">
-		<property name="delegationDeviationService" ref="delegationDeviationService" />
+		class="com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl">
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
+	</bean>
+	
+	<bean id="deviationRenderer" scope="prototype"
+		class="com.pennant.webui.delegationdeviation.DeviationRenderer">
 	</bean>
 
 	<bean id="qardHassanFinanceMainDialogCtrl"

@@ -54,6 +54,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -99,13 +100,14 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.delegationdeviation.DeviationConfigCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -211,7 +213,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	private boolean isOverDraft = false;
 	
 	protected Listbox delationDeviation;
-	private DelegationDeviationCtrl delegationDeviationCtrl;
+	@Autowired
+	private DeviationConfigCtrl deviationConfigCtrl;
 	
 	/**
 	 * default constructor.<br>
@@ -347,7 +350,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		// Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.finRefType.setMaxlength(10);
-		getDelegationDeviationCtrl().setFinFormatter(CurrencyUtil.getFormat(""));
+		deviationConfigCtrl.setFinFormatter(CurrencyUtil.getFormat(""));
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -488,7 +491,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		// this.mandInputInStage.setValue(aFinanceReferenceDetail.getMandInputInStage());
 		// this.allowInputInStage.setValue(aFinanceReferenceDetail.getAllowInputInStage());
 		// this.recordStatus.setValue(aFinanceReferenceDetail.getRecordStatus());
-		delegationDeviationCtrl.fillProductDeviations();
+		deviationConfigCtrl.fillProductDeviations();
 		
 		this.lovDescFinTypeDescName.setValue(aFinanceReference.getLovDescFinTypeDescName());
 		dofillListbox(aFinanceReference.getCheckList(), this.listBoxFinanceCheckList);
@@ -602,7 +605,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		try {
 			//To get delegating authorities
 			WorkflowEngine workflow = new WorkflowEngine(WorkFlowUtil.getDetailsByType(getFinanceReference().getWorkFlowType()).getWorkFlowXml());
-			delegationDeviationCtrl.init(this.delationDeviation, aFinanceReference.getFinType(),
+			deviationConfigCtrl.init(this.delationDeviation, aFinanceReference.getFinType(),
 					workflow.getActors(true));
 			// fill the components with the data
 			doWriteBeanToComponents(aFinanceReference);
@@ -1174,7 +1177,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		}
 		
 		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)) {
-			delegationDeviationCtrl.processDeviationDelegation(this.finType.getValue(),getUserWorkspace().getLoggedInUser());
+			deviationConfigCtrl.processDeviationDelegation(this.finType.getValue(),getUserWorkspace().getLoggedInUser());
 		}
 		try {
 			items.clear();
@@ -1434,12 +1437,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		this.financeReference = financeReference;
 	}
 	
-	public DelegationDeviationCtrl getDelegationDeviationCtrl() {
-		return delegationDeviationCtrl;
-	}
-	public void setDelegationDeviationCtrl(DelegationDeviationCtrl delegationDeviationCtrl) {
-		this.delegationDeviationCtrl = delegationDeviationCtrl;
-	}
 
 	// ===================
 
@@ -1615,13 +1612,13 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 	private void checkDeviationForRefDetails(Listbox listbox) {
 		if (listbox.getId().equals(this.listBoxEligibilityRules.getId())) {
-			delegationDeviationCtrl.fillEligibilityDeviations(this.listBoxEligibilityRules);
+			deviationConfigCtrl.fillEligibilityDeviations(this.listBoxEligibilityRules);
 		} else if (listbox.getId().equals(this.listBoxFinanceCheckList.getId())) {
-			delegationDeviationCtrl.fillCheckListDeviations(this.listBoxFinanceCheckList);
+			deviationConfigCtrl.fillCheckListDeviations(this.listBoxFinanceCheckList);
 		} else if (listbox.getId().equals(this.listBoxAccounts.getId())) {
-			delegationDeviationCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
+			deviationConfigCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
 		} else if (listbox.getId().equals(this.listBoxScoringGroup.getId())) {
-			delegationDeviationCtrl.fillScoringDeviations(this.listBoxScoringGroup);
+			deviationConfigCtrl.fillScoringDeviations(this.listBoxScoringGroup);
 		}
 
 	}

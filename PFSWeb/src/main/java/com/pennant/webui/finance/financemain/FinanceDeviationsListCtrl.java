@@ -63,92 +63,90 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul file.
  */
 public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
-	private static final long serialVersionUID = -5901195042041627750L;
-	private static final Logger logger = Logger.getLogger(FinanceDeviationsListCtrl.class);
+	private static final long					serialVersionUID	= -5901195042041627750L;
+	private static final Logger					logger				= Logger.getLogger(FinanceDeviationsListCtrl.class);
 
-	protected Window window_FinanceDeviationsList;
-	protected Borderlayout borderLayout_FinanceMainList;
-	protected Paging pagingFinanceMainList;
-	protected Listbox listBoxFinanceMain;
+	protected Window							window_FinanceDeviationsList;
+	protected Borderlayout						borderLayout_FinanceMainList;
+	protected Paging							pagingFinanceMainList;
+	protected Listbox							listBoxFinanceMain;
 
-	protected Textbox finReference;
-	protected Listbox sortOperator_finReference;
-	protected Textbox finType;
-	protected Listbox sortOperator_finType;
-	protected Textbox custCIF;
-	protected Listbox sortOperator_custID;
-	protected Longbox custID;
-	protected Textbox fincustName;
-	protected Listbox sortOperator_custName;
-	protected Textbox finMobileNumber;
-	protected Listbox sortOperator_mobileNumber;
-	protected Textbox finEIDNumber;
-	protected Listbox sortOperator_eidNumber;
-	protected Textbox finPassPort;
-	protected Listbox sortOperator_passPort;
-	protected Datebox finDateofBirth;
-	protected Listbox sortOperator_finDateofBirth;
-	protected Datebox finRequestDate;
-	protected Listbox sortOperator_finRequestDate;
-	protected Listbox sortOperator_finPromotion;
-	protected Textbox finPromotion;
-	protected Listbox sortOperator_finRequestStage;
-	protected Combobox finRequestStage;
-	protected Listbox sortOperator_finQueuePriority;
-	protected Combobox finQueuePriority;
-	protected Textbox phoneCountryCode;
-	protected Textbox phoneAreaCode;
-	protected Datebox initiateDate;
-	protected Listbox sortOperator_InitiateDate;
+	protected Textbox							finReference;
+	protected Listbox							sortOperator_finReference;
+	protected Textbox							finType;
+	protected Listbox							sortOperator_finType;
+	protected Textbox							custCIF;
+	protected Listbox							sortOperator_custID;
+	protected Longbox							custID;
+	protected Textbox							fincustName;
+	protected Listbox							sortOperator_custName;
+	protected Textbox							finMobileNumber;
+	protected Listbox							sortOperator_mobileNumber;
+	protected Textbox							finEIDNumber;
+	protected Listbox							sortOperator_eidNumber;
+	protected Textbox							finPassPort;
+	protected Listbox							sortOperator_passPort;
+	protected Datebox							finDateofBirth;
+	protected Listbox							sortOperator_finDateofBirth;
+	protected Datebox							finRequestDate;
+	protected Listbox							sortOperator_finRequestDate;
+	protected Listbox							sortOperator_finPromotion;
+	protected Textbox							finPromotion;
+	protected Listbox							sortOperator_finRequestStage;
+	protected Combobox							finRequestStage;
+	protected Listbox							sortOperator_finQueuePriority;
+	protected Combobox							finQueuePriority;
+	protected Datebox							initiateDate;
+	protected Listbox							sortOperator_InitiateDate;
 
-	protected Listheader listheader_CustomerCIF;
-	protected Listheader listheader_CustomerName;
-	protected Listheader listheader_FinReference;
-	protected Listheader listheader_FinType;
-	protected Listheader listheader_FinCcy;
-	protected Listheader listheader_FinAmount;
-	protected Listheader listheader_FinancingAmount;
-	protected Listheader listheader_Promotion;
-	protected Listheader listheader_InitiateDate;
-	protected Listheader listheader_Terms;
-	protected Listheader listheader_RequestStage;
-	protected Listheader listheader_Priority;
+	protected Listheader						listheader_CustomerCIF;
+	protected Listheader						listheader_CustomerName;
+	protected Listheader						listheader_FinReference;
+	protected Listheader						listheader_FinType;
+	protected Listheader						listheader_FinCcy;
+	protected Listheader						listheader_FinAmount;
+	protected Listheader						listheader_FinancingAmount;
+	protected Listheader						listheader_Promotion;
+	protected Listheader						listheader_InitiateDate;
+	protected Listheader						listheader_Terms;
+	protected Listheader						listheader_RequestStage;
+	protected Listheader						listheader_Priority;
 
-	protected Button button_FinanceMainList_FinanceMainSearchDialog;
-	protected Button btnRefresh;
+	protected Button							button_FinanceMainList_FinanceMainSearchDialog;
+	protected Button							btnRefresh;
 
-	private transient FinanceDeviationsService deviationDetailsService;
-	protected int oldVar_sortOperator_finType;
+	private transient FinanceDeviationsService	deviationDetailsService;
+	protected int								oldVar_sortOperator_finType;
 
-	private Textbox loanType;// Field for Maintain Different Finance Product Types
-	private String menuItemRightName = null;
-	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private Textbox								loanType;																// Field for Maintain Different Finance Product Types
+	private String								menuItemRightName	= null;
+	protected JdbcSearchObject<Customer>		custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -171,11 +169,8 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		setWorkFlowEnabled(false);
 		super.doAddFilters();
 
-		if (StringUtils.isNotBlank(this.finMobileNumber.getValue())
-				&& StringUtils.isNotBlank(this.phoneAreaCode.getValue())
-				&& StringUtils.isNotBlank(this.phoneCountryCode.getValue())) {
-			String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.finMobileNumber.getValue());
+		if (StringUtils.isNotBlank(this.finMobileNumber.getValue())) {
+			String phoneNumber = this.finMobileNumber.getValue();
 			searchObject
 					.addFilter(SearchFilterControl.getFilter("PhoneNumber", phoneNumber, sortOperator_mobileNumber));
 		}
@@ -189,8 +184,6 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	@Override
 	protected void doReset() {
 		super.doReset();
-		SearchFilterControl.resetFilters(phoneAreaCode, sortOperator_mobileNumber);
-		SearchFilterControl.resetFilters(phoneCountryCode, sortOperator_mobileNumber);
 		SearchFilterControl.resetFilters(finMobileNumber, sortOperator_mobileNumber);
 	}
 
@@ -264,13 +257,14 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		registerField("DownPayment");
 		registerField("FeeChargeAmt");
-		registerField("FinancingAmount");
 		registerField("LovDescProductCodeName", SortOrder.ASC);
-		registerField("LovDescFinFormatter");
 		registerField("NumberOfTerms");
 		registerField("LovDescFinProduct");
 		registerField("NextRoleCode");
 		registerField("FinPurpose");
+		registerField("FinCurrAssetValue");
+		registerField("FeeChargeAmt");
+		registerField("InsuranceAmt");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -324,8 +318,9 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			valueParm[0] = aFinanceMain.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
-					errParm, valueParm), getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 		} else {
 			doShowDialogPage(financeDetail);
@@ -352,8 +347,6 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		arg.put("approval", menuItemRightName);
 
 		try {
-			String productType = aFinanceMain.getLovDescProductCodeName();
-			productType = (productType.substring(0, 1)).toUpperCase() + (productType.substring(1)).toLowerCase();
 
 			StringBuilder fileLocaation = new StringBuilder(
 					"/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsDialog.zul");
@@ -386,7 +379,8 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		doShowHelp(event);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -446,9 +440,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.custID.setMaxlength(26);
 		this.finReference.setMaxlength(20);
 		this.fincustName.setMaxlength(50);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.finMobileNumber.setMaxlength(8);
+		this.finMobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 		this.finRequestDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finDateofBirth.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finPromotion.setMaxlength(50);

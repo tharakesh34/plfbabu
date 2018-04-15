@@ -182,6 +182,7 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -262,6 +263,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
+import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
@@ -2348,12 +2350,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void appendDeviationDetailTab(boolean onLoad) {
 		logger.debug("Entering");
 		if (onLoad) {
-			if (getFinanceDetail().getFinanceDeviations().isEmpty()
-					&& getFinanceDetail().getApprovedFinanceDeviations().isEmpty()) {
-				createTab(AssetConstants.UNIQUE_ID_DEVIATION, false);
-			} else {
-				createTab(AssetConstants.UNIQUE_ID_DEVIATION, true);
-			}
+			createTab(AssetConstants.UNIQUE_ID_DEVIATION, true);
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_DEVIATION));
@@ -6137,8 +6134,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (!recSave && StringUtils.isEmpty(moduleDefiner)) {
-			if (!processDeviations(aFinanceDetail)) {
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			if (!processDeviations(aFinanceDetail,recSave)) {
 				return;
 			}
 		} else {
@@ -6566,9 +6563,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private boolean processDeviations(FinanceDetail aFinanceDetail) {
-		aFinanceDetail.setFinanceDeviations(finDelegationDeviationCtrl.getFinanceDeviations());
-		if (aFinanceDetail.getFinanceDeviations() != null && !aFinanceDetail.getFinanceDeviations().isEmpty()) {
+	private boolean processDeviations(FinanceDetail aFinanceDetail, boolean recordSave) {
+		if (finDelegationDeviationCtrl != null) {
+			if (!recordSave) {
+				aFinanceDetail.setFinanceDeviations(finDelegationDeviationCtrl.getFinanceDeviations());
+			}
+		}
+		if (getDeviationDetailDialogCtrl() != null) {
+			List<FinanceDeviations> list = getDeviationDetailDialogCtrl().getManualDeviationList();
+			aFinanceDetail.setManualDeviations(list);
+		}
+		if ((aFinanceDetail.getFinanceDeviations() != null && !aFinanceDetail.getFinanceDeviations().isEmpty())
+				|| aFinanceDetail.getManualDeviations() != null && !aFinanceDetail.getManualDeviations().isEmpty()) {
 			try {
 				//show pop up to take confirmation and stop if any un allowed deviation
 				final HashMap<String, Object> map = new HashMap<String, Object>();

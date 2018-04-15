@@ -1,4 +1,4 @@
-package com.pennant.webui.finance.financemain;
+package com.pennant.webui.delegationdeviation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +15,7 @@ import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -33,29 +34,31 @@ import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.finance.CheckListDetailService;
-import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
+import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 
 public class FinDelegationDeviationCtrl {
-	private static final Logger			logger				= Logger.getLogger(FinDelegationDeviationCtrl.class);
+	private static final Logger		logger				= Logger.getLogger(FinDelegationDeviationCtrl.class);
 
-	private int							format				= 0;
-	private String						userRole;
-	private long						userid;
-	private List<DeviationParam>		deviationParamsList	= PennantAppUtil.getDeviationParams();
+	private int						format				= 0;
+	private String					userRole;
+	private long					userid;
+	private List<DeviationParam>	deviationParamsList	= PennantAppUtil.getDeviationParams();
 
-	private FinanceMainBaseCtrl			financeMainBaseCtrl;
-	private List<FinanceDeviations>		approvedFinanceDeviations;
-	private DelegationDeviationService	delegationDeviationService;
-	private RuleExecutionUtil			ruleExecutionUtil;
-	private CheckListDetailService		checkListDetailService;
+	private FinanceMainBaseCtrl		financeMainBaseCtrl;
+	private List<FinanceDeviations>	approvedFinanceDeviations;
+	@Autowired
+	private DeviationConfigService	deviationConfigService;
+	private RuleExecutionUtil		ruleExecutionUtil;
+	private CheckListDetailService	checkListDetailService;
 
 	/* This list which hold the all deviation across the tab's */
-	private List<FinanceDeviations>		financeDeviations	= new ArrayList<>();
+	private List<FinanceDeviations>	financeDeviations	= new ArrayList<>();
 
 	public FinDelegationDeviationCtrl() {
 		super();
@@ -91,15 +94,14 @@ public class FinDelegationDeviationCtrl {
 					Object object = executeRule(formula, engine);
 
 					if (object != null) {
-						FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(), DeviationConstants.TY_PRODUCT);
+						FinanceDeviations deviations = getNewFindevations(deviationHeader,
+								financeMain.getFinReference(), DeviationConstants.TY_PRODUCT);
 
 						deviations = processNewDevaitions(deviationHeader, object, deviations);
 
 						if (deviations != null) {
 							deviationslist.add(deviations);
-
 						}
-
 					}
 				}
 			}
@@ -119,7 +121,8 @@ public class FinDelegationDeviationCtrl {
 	 * @return
 	 * @throws ScriptException
 	 */
-	public FinanceDeviations checkEligibilityDeviations(FinanceEligibilityDetail finElgDetail, FinanceDetail financeDetail) throws ScriptException {
+	public FinanceDeviations checkEligibilityDeviations(FinanceEligibilityDetail finElgDetail,
+			FinanceDetail financeDetail) throws ScriptException {
 		logger.debug("Entering");
 
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -128,32 +131,33 @@ public class FinDelegationDeviationCtrl {
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
 
 		CustomerEligibilityCheck customerEligibilityCheck = financeDetail.getCustomerEligibilityCheck();
-		
+
 		String returnType = finElgDetail.getRuleResultType();
 		RuleReturnType ruleReturnType = null;
-		
-		if(StringUtils.equals(returnType, RuleReturnType.BOOLEAN.value())) {
+
+		if (StringUtils.equals(returnType, RuleReturnType.BOOLEAN.value())) {
 			ruleReturnType = RuleReturnType.BOOLEAN;
-		} else if(StringUtils.equals(returnType, RuleReturnType.DECIMAL.value())) {
+		} else if (StringUtils.equals(returnType, RuleReturnType.DECIMAL.value())) {
 			ruleReturnType = RuleReturnType.DECIMAL;
-		} else if(StringUtils.equals(returnType, RuleReturnType.STRING.value())) {
+		} else if (StringUtils.equals(returnType, RuleReturnType.STRING.value())) {
 			ruleReturnType = RuleReturnType.STRING;
-		} else if(StringUtils.equals(returnType, RuleReturnType.INTEGER.value())) {
+		} else if (StringUtils.equals(returnType, RuleReturnType.INTEGER.value())) {
 			ruleReturnType = RuleReturnType.INTEGER;
-		} else if(StringUtils.equals(returnType, RuleReturnType.OBJECT.value())) {
+		} else if (StringUtils.equals(returnType, RuleReturnType.OBJECT.value())) {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		Object object = this.ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), customerEligibilityCheck.getDeclaredFieldValues(), finCcy, ruleReturnType);
-		
+		Object object = this.ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(),
+				customerEligibilityCheck.getDeclaredFieldValues(), finCcy, ruleReturnType);
+
 		String resultValue = null;
 		switch (ruleReturnType) {
 		case DECIMAL:
-			if(object != null && object instanceof BigDecimal) {
+			if (object != null && object instanceof BigDecimal) {
 				//unFormating object
 				int formatter = CurrencyUtil.getFormat(finCcy);
 				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
-			} 
+			}
 			finElgDetail.setRuleResult(object.toString());
 			break;
 		case INTEGER:
@@ -169,13 +173,14 @@ public class FinDelegationDeviationCtrl {
 			}
 			finElgDetail.setRuleResult(resultValue);
 			break;
-			
-		case OBJECT:	//FIXME to discuss with Sathish
+
+		case OBJECT: //FIXME to discuss with Sathish
 			RuleResult ruleResult = (RuleResult) object;
 			Object resultval = ruleResult.getValue();
 			Object resultvalue = ruleResult.getDeviation();
-			List<DeviationHeader> list = delegationDeviationService.getDeviationsbyModule(financeType.getFinType(), DeviationConstants.TY_ELIGIBILITY);
-			
+			List<DeviationHeader> list = deviationConfigService.getDeviationsbyModule(financeType.getFinType(),
+					DeviationConstants.TY_ELIGIBILITY);
+
 			if (resultval instanceof Double) {
 				BigDecimal tempResult = new BigDecimal(resultval.toString());
 				finElgDetail.setRuleResult(tempResult.toString());
@@ -185,14 +190,15 @@ public class FinDelegationDeviationCtrl {
 				if (deviationHeader.getModuleCode().equals(String.valueOf(finElgDetail.getElgRuleCode()))) {
 					List<DeviationDetail> details = deviationHeader.getDeviationDetails();
 					if (details != null && !details.isEmpty()) {
-						FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(), DeviationConstants.TY_ELIGIBILITY);
+						FinanceDeviations deviations = getNewFindevations(deviationHeader,
+								financeMain.getFinReference(), DeviationConstants.TY_ELIGIBILITY);
 						return processNewDevaitions(deviationHeader, resultvalue, deviations);
 					}
 				}
 			}
-			
+
 			break;
-		
+
 		default:
 			//do-nothing
 			break;
@@ -212,7 +218,8 @@ public class FinDelegationDeviationCtrl {
 	 * @param devVal
 	 * @return
 	 */
-	public FinanceDeviations checkCheckListDeviations(long finRefId, FinanceDetail financeDetail, String devType, int devVal) {
+	public FinanceDeviations checkCheckListDeviations(long finRefId, FinanceDetail financeDetail, String devType,
+			int devVal) {
 		logger.debug("Entering");
 
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -227,7 +234,8 @@ public class FinDelegationDeviationCtrl {
 			resultvalue = devVal;
 		}
 
-		List<DeviationHeader> list = delegationDeviationService.getDeviationsbyModule(financeType.getFinType(), DeviationConstants.TY_CHECKLIST);
+		List<DeviationHeader> list = deviationConfigService.getDeviationsbyModule(financeType.getFinType(),
+				DeviationConstants.TY_CHECKLIST);
 
 		for (DeviationHeader deviationHeader : list) {
 
@@ -237,7 +245,8 @@ public class FinDelegationDeviationCtrl {
 
 				if (details != null && !details.isEmpty()) {
 
-					FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(), DeviationConstants.TY_CHECKLIST);
+					FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(),
+							DeviationConstants.TY_CHECKLIST);
 
 					String role = getRoleFromValue(resultvalue, deviationHeader);
 
@@ -254,17 +263,18 @@ public class FinDelegationDeviationCtrl {
 
 	}
 
-	
 	public boolean checkDeviationForDocument(CustomerDocument aCustomerDocument) {
 		logger.debug(" Entering ");
 		String docType = aCustomerDocument.getCustDocCategory();
 		FinanceType financeType = financeMainBaseCtrl.getFinanceDetail().getFinScheduleData().getFinanceType();
-		CheckListDetail checklistDet = checkListDetailService.getCheckListDetailByDocType(docType, financeType.getFinType());
+		CheckListDetail checklistDet = checkListDetailService.getCheckListDetailByDocType(docType,
+				financeType.getFinType());
 		if (checklistDet == null) {
 			return false;
 		}
-		List<DeviationHeader> list = delegationDeviationService.getDeviationsbyModule(financeType.getFinType(), DeviationConstants.TY_CHECKLIST);
-		
+		List<DeviationHeader> list = deviationConfigService.getDeviationsbyModule(financeType.getFinType(),
+				DeviationConstants.TY_CHECKLIST);
+
 		if (list != null && !list.isEmpty()) {
 			for (DeviationHeader deviationHeader : list) {
 				String val = StringUtils.trimToEmpty(deviationHeader.getModuleCode());
@@ -292,23 +302,27 @@ public class FinDelegationDeviationCtrl {
 
 		List<FeeRule> feeruleList = financeDetail.getFinScheduleData().getFeeRules();
 
-		List<DeviationHeader> headerList = delegationDeviationService.getDeviationsbyModule(financeType.getFinType(), DeviationConstants.TY_FEE);
+		List<DeviationHeader> headerList = deviationConfigService.getDeviationsbyModule(financeType.getFinType(),
+				DeviationConstants.TY_FEE);
 		List<FinanceDeviations> deviationslist = new ArrayList<FinanceDeviations>();
 
 		for (FeeRule feeRule : feeruleList) {
 
 			for (DeviationHeader deviationHeader : headerList) {
 
-				if (feeRule.getFeeCode().equals(deviationHeader.getModuleCode()) && feeRule.getWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if (feeRule.getFeeCode().equals(deviationHeader.getModuleCode())
+						&& feeRule.getWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 					List<DeviationDetail> detailsList = deviationHeader.getDeviationDetails();
 
 					if (detailsList != null && !detailsList.isEmpty()) {
 
 						// Calculate Percentage
-						Object object = (feeRule.getWaiverAmount().divide(feeRule.getFeeAmount(), 2, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100));
+						Object object = (feeRule.getWaiverAmount().divide(feeRule.getFeeAmount(), 2,
+								RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100));
 
-						FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(), DeviationConstants.TY_FEE);
+						FinanceDeviations deviations = getNewFindevations(deviationHeader,
+								financeMain.getFinReference(), DeviationConstants.TY_FEE);
 
 						deviations = processNewDevaitions(deviationHeader, object, deviations);
 
@@ -333,13 +347,15 @@ public class FinDelegationDeviationCtrl {
 	 * @param financeDetail
 	 * @return
 	 */
-	public FinanceDeviations checkScoringDeviations(FinanceDetail financeDetail, long GroupId, int minScore, int totcalScore) {
+	public FinanceDeviations checkScoringDeviations(FinanceDetail financeDetail, long GroupId, int minScore,
+			int totcalScore) {
 		logger.debug(" Entering ");
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		List<DeviationHeader> headerList = delegationDeviationService.getDeviationsbyModule(financeType.getFinType(), DeviationConstants.TY_SCORE);
+		List<DeviationHeader> headerList = deviationConfigService.getDeviationsbyModule(financeType.getFinType(),
+				DeviationConstants.TY_SCORE);
 
 		int devValue = minScore - totcalScore;
 
@@ -351,7 +367,8 @@ public class FinDelegationDeviationCtrl {
 
 				if (detailsList != null && !detailsList.isEmpty()) {
 
-					FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(), DeviationConstants.TY_SCORE);
+					FinanceDeviations deviations = getNewFindevations(deviationHeader, financeMain.getFinReference(),
+							DeviationConstants.TY_SCORE);
 
 					return processNewDevaitions(deviationHeader, devValue, deviations);
 
@@ -368,7 +385,7 @@ public class FinDelegationDeviationCtrl {
 	 * @return
 	 */
 	public List<DeviationHeader> getProductDeviatations(String fintype) {
-		return delegationDeviationService.getDeviationsbyModule(fintype, DeviationConstants.TY_PRODUCT);
+		return deviationConfigService.getDeviationsbyModule(fintype, DeviationConstants.TY_PRODUCT);
 	}
 
 	public void setFormat(int format) {
@@ -381,11 +398,6 @@ public class FinDelegationDeviationCtrl {
 
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
-	}
-
-
-	public void setDelegationDeviationService(DelegationDeviationService delegationDeviationService) {
-		this.delegationDeviationService = delegationDeviationService;
 	}
 
 	public List<FinanceDeviations> getFinanceDeviations() {
@@ -411,7 +423,7 @@ public class FinDelegationDeviationCtrl {
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
-	
+
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
 	}
@@ -602,22 +614,20 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * will return the new deviation if, it is not in the current deviation or
-	 * previously Rejected
+	 * will return the new deviation if, it is not in the current deviation or previously Rejected
 	 * 
 	 * @param deviationHeader
 	 * @param object
 	 * @param deviations
 	 * @return
 	 */
-	private FinanceDeviations processNewDevaitions(DeviationHeader deviationHeader, Object object, FinanceDeviations deviations) {
+	private FinanceDeviations processNewDevaitions(DeviationHeader deviationHeader, Object object,
+			FinanceDeviations deviations) {
 
 		String role = getRoleFromValue(object, deviationHeader);
 		/*
-		 * After Execution will add it to List. here two value to consider
-		 * 1.Null means No Deviation , 2.Empty Means deviation Not Allowed So
-		 * empty check should not be required until unless all cases have been
-		 * changed.
+		 * After Execution will add it to List. here two value to consider 1.Null means No Deviation , 2.Empty Means
+		 * deviation Not Allowed So empty check should not be required until unless all cases have been changed.
 		 */
 
 		if (role != null) {
@@ -639,8 +649,7 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * To fill the deviations, it will remove the deviation with current role
-	 * and will add the new deviations.
+	 * To fill the deviations, it will remove the deviation with current role and will add the new deviations.
 	 * 
 	 * @param newList
 	 * @param role
@@ -651,8 +660,8 @@ public class FinDelegationDeviationCtrl {
 
 		removeTheOldDeviation(devModule, role, financeDeviations);
 		financeDeviations.addAll(newList);
-		if (financeMainBaseCtrl != null && financeMainBaseCtrl.getDeviationDetailDialogCtrl()!=null) {
-			financeMainBaseCtrl.getDeviationDetailDialogCtrl().doFillDeviationDetails(financeDeviations);
+		if (financeMainBaseCtrl != null && financeMainBaseCtrl.getDeviationDetailDialogCtrl() != null) {
+			financeMainBaseCtrl.getDeviationDetailDialogCtrl().doFillAutoDeviationDetails(financeDeviations);
 		}
 
 		logger.debug(" Leaving ");
@@ -681,8 +690,7 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * To check given records not already in approved list and not rejected
-	 * previously
+	 * To check given records not already in approved list and not rejected previously
 	 * 
 	 * @param list
 	 * @param deviations
@@ -697,8 +705,10 @@ public class FinDelegationDeviationCtrl {
 				continue;
 			}
 
-			if (StringUtils.equals(deviations.getDeviationCode(), financeDeviations.getDeviationCode()) && StringUtils.equals(deviations.getDeviationValue(), financeDeviations.getDeviationValue())) {
-				if (!PennantConstants.RCD_STATUS_REJECTED.equals(StringUtils.trim(financeDeviations.getApprovalStatus()))) {
+			if (StringUtils.equals(deviations.getDeviationCode(), financeDeviations.getDeviationCode())
+					&& StringUtils.equals(deviations.getDeviationValue(), financeDeviations.getDeviationValue())) {
+				if (!PennantConstants.RCD_STATUS_REJECTED
+						.equals(StringUtils.trim(financeDeviations.getApprovalStatus()))) {
 					logger.debug(" Leaving ");
 					return true;
 				}
@@ -711,8 +721,7 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * to check given deviation not in the current list with different role but
-	 * same value.
+	 * to check given deviation not in the current list with different role but same value.
 	 * 
 	 * @param list
 	 * @param deviations
@@ -727,7 +736,9 @@ public class FinDelegationDeviationCtrl {
 				continue;
 			}
 
-			if (StringUtils.equals(deviations.getDeviationCode(), financeDeviations.getDeviationCode()) && StringUtils.equals(deviations.getDeviationValue(), financeDeviations.getDeviationValue()) && !StringUtils.equals(deviations.getUserRole(), financeDeviations.getUserRole())) {
+			if (StringUtils.equals(deviations.getDeviationCode(), financeDeviations.getDeviationCode())
+					&& StringUtils.equals(deviations.getDeviationValue(), financeDeviations.getDeviationValue())
+					&& !StringUtils.equals(deviations.getUserRole(), financeDeviations.getUserRole())) {
 				logger.debug(" Leaving ");
 				return true;
 			}
@@ -739,8 +750,7 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * will return the false if, it is not in the current deviation or previous
-	 * deviation
+	 * will return the false if, it is not in the current deviation or previous deviation
 	 * 
 	 * @param deviationHeader
 	 * @param object
@@ -780,7 +790,8 @@ public class FinDelegationDeviationCtrl {
 		BeanUtils.copyProperties(financeType, type);
 		// Convert amount for finance type Currency
 		main.setFinAmount(CalculationUtil.getConvertedAmount(main.getFinCcy(), type.getFinCcy(), main.getFinAmount()));
-		main.setDownPayment(CalculationUtil.getConvertedAmount(main.getFinCcy(), type.getFinCcy(), main.getDownPayment()));
+		main.setDownPayment(
+				CalculationUtil.getConvertedAmount(main.getFinCcy(), type.getFinCcy(), main.getDownPayment()));
 
 		Bindings bindings = factory.getBindings();
 		bindings.put("fm", main);
@@ -792,9 +803,8 @@ public class FinDelegationDeviationCtrl {
 	}
 
 	/**
-	 * To execute the Product deviation rule which does not contain any
-	 * assignment in the rule to result the value . so we will assign the
-	 * defined to result and will execute the rule
+	 * To execute the Product deviation rule which does not contain any assignment in the rule to result the value . so
+	 * we will assign the defined to result and will execute the rule
 	 * 
 	 * @param rule
 	 * @param engine
@@ -833,13 +843,11 @@ public class FinDelegationDeviationCtrl {
 					logger.debug(" Leaving ");
 					return param;
 				}
-
 			}
 		}
 
 		logger.debug(" Leaving ");
 		return null;
 	}
-
 
 }

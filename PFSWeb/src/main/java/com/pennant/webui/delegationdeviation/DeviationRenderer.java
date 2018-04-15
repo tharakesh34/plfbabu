@@ -1,0 +1,369 @@
+package com.pennant.webui.delegationdeviation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listitem;
+
+import com.pennant.UserWorkspace;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.ManualDeviation;
+import com.pennant.backend.model.finance.FinanceDeviations;
+import com.pennant.backend.model.solutionfactory.DeviationParam;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
+
+public class DeviationRenderer {
+
+	private static final Logger		logger			= Logger.getLogger(DeviationRenderer.class);
+
+	private static final String		bold			= " font-weight: bold;";
+	private static final String		boldAndRed		= "font-weight:bold;color:red;";
+	int								ccyformat		= 0;
+	private transient UserWorkspace	userWorkspace;
+	private boolean					approverScreen	= false;
+
+	List<DeviationParam>			deviationParams	= PennantAppUtil.getDeviationParams();
+	ArrayList<ValueLabel>			approveStatus	= PennantStaticListUtil.getApproveStatus();
+	ArrayList<ValueLabel>			secRolesList	= PennantAppUtil.getSecRolesList(null);
+
+	@Autowired
+	private DeviationHelper			deviationHelper;
+
+	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen) {
+		this.userWorkspace = userWorkspace;
+		this.ccyformat = ccyformat;
+		this.approverScreen = approverScreen;
+
+	}
+
+	class CompareDeviation implements Comparator<FinanceDeviations> {
+
+		public CompareDeviation() {
+
+		}
+
+		@Override
+		public int compare(FinanceDeviations o1, FinanceDeviations o2) {
+			return o1.getModule().compareTo(o2.getModule());
+		}
+
+	}
+
+	public void renderAutoDeviations(List<FinanceDeviations> financeDeviations,
+			List<FinanceDeviations> appovedDeviations, Listbox listbox) {
+		logger.debug("Entering");
+
+		listbox.getItems().clear();
+		List<FinanceDeviations> renderList = deviationHelper.mergeList(financeDeviations, appovedDeviations);
+
+		if (renderList == null || renderList.isEmpty()) {
+			return;
+		}
+
+		Collections.sort(renderList, new CompareDeviation());
+
+		String module = "";
+
+		for (FinanceDeviations deviationDetail : renderList) {
+			//to show other deviation which in pending queue but should not be editable
+			boolean pending = false;
+			boolean approved = false;
+
+			if (deviationDetail.isApproved()) {
+				approved = true;
+			}
+
+			if (DeviationConstants.MULTIPLE_APPROVAL && !approved) {
+				if (!userWorkspace.getUserRoles().contains(deviationDetail.getDelegationRole())) {
+					pending = true;
+				}
+			}
+
+			boolean deviationNotallowed = false;
+			Listcell listcell;
+			if (!module.equals(deviationDetail.getModule())) {
+				module = deviationDetail.getModule();
+				Listgroup listgroup = new Listgroup();
+				listcell = new Listcell(Labels.getLabel("listGroup_" + deviationDetail.getModule()));
+				listcell.setStyle(bold);
+				listgroup.appendChild(listcell);
+				listbox.appendChild(listgroup);
+			}
+			if (StringUtils.isEmpty(deviationDetail.getDelegationRole())) {
+				deviationNotallowed = true;
+			}
+
+			Listitem listitem = new Listitem();
+
+			String deviationCodedesc = deviationHelper.getDeviationDesc(deviationDetail, deviationParams);
+			listcell = getNewListCell(deviationCodedesc, deviationNotallowed);
+			listitem.appendChild(listcell);
+			listcell = getNewListCell(deviationDetail.getDeviationType(), deviationNotallowed);
+			listitem.appendChild(listcell);
+			String deviationValue = deviationHelper.getDeviationValue(deviationDetail, ccyformat);
+			listcell = getNewListCell(deviationValue, deviationNotallowed);
+			listitem.appendChild(listcell);
+			listcell = getNewListCell(deviationDetail.getUserRole(), deviationNotallowed);
+			listitem.appendChild(listcell);
+			listcell = new Listcell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
+			listitem.appendChild(listcell);
+			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()),
+					deviationNotallowed);
+			listitem.appendChild(listcell);
+
+			listcell = getNewListCell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
+					deviationNotallowed);
+
+			if (approverScreen) {
+				if (!approved) {
+					listcell = getNewListCell("", deviationNotallowed);
+					Combobox combobox = new Combobox();
+					combobox.setReadonly(true);
+					combobox.setWidth("100px");
+					combobox.setId("combo_" + deviationDetail.getDeviationId());
+					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
+					combobox.setDisabled(pending);
+					listcell.appendChild(combobox);
+				}
+			}
+			listitem.appendChild(listcell);
+
+			String lable = "";
+			Button button = new Button();
+			if (approverScreen) {
+				if (!approved) {
+					lable = "add";
+					button.addForward("onClick", "", "onClickAddNotes", deviationDetail);
+				} else {
+					lable = "view";
+					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+				}
+
+			} else {
+				if (approved) {
+					lable = "view";
+					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+				}
+
+			}
+			listcell = getNewListCell("", deviationNotallowed);
+
+			button.setLabel(lable);
+			button.setDisabled(pending);
+			if (StringUtils.isNotBlank(lable)) {
+				listcell.appendChild(button);
+			}
+			listitem.appendChild(listcell);
+
+			listcell = getNewListCell(deviationDetail.getDeviationUserId(), deviationNotallowed);
+			listitem.appendChild(listcell);
+			listcell = getNewListCell(deviationDetail.getDelegatedUserId(), deviationNotallowed);
+			listitem.appendChild(listcell);
+			listitem.setAttribute("data", deviationDetail);
+			listbox.appendChild(listitem);
+		}
+		logger.debug("Leaving");
+	}
+
+	public void renderManualDeviations(List<FinanceDeviations> finDeviations, List<FinanceDeviations> aprvdDeviations,
+			Listbox listbox) {
+		logger.debug("Entering");
+
+		listbox.getItems().clear();
+		List<FinanceDeviations> renderList = deviationHelper.mergeList(finDeviations, aprvdDeviations);
+
+		if (renderList == null || renderList.isEmpty()) {
+			return;
+		}
+
+		for (FinanceDeviations deviationDetail : renderList) {
+			//to show other deviation which in pending queue but should not be editable
+			boolean pending = false;
+			boolean approved = false;
+
+			if (deviationDetail.isApproved()) {
+				approved = true;
+			}
+
+			if (DeviationConstants.MULTIPLE_APPROVAL && !approved) {
+				if (!userWorkspace.getUserRoles().contains(deviationDetail.getDelegationRole())) {
+					pending = true;
+				}
+			}
+
+			boolean devNotallowed = false;
+			Listcell listcell;
+
+			if (StringUtils.isEmpty(deviationDetail.getDelegationRole())) {
+				devNotallowed = true;
+			}
+
+			Listitem listitem = new Listitem();
+
+			//deviation code
+			String deviationCodedesc = deviationDetail.getDeviationCodeDesc();
+			listcell = getNewListCell(deviationCodedesc, devNotallowed);
+			listitem.appendChild(listcell);
+			//Severity
+			String Severity = deviationDetail.getSeverityName();
+			listcell = getNewListCell(Severity, devNotallowed);
+			listitem.appendChild(listcell);
+			//DeviationUserId
+			listcell = getNewListCell(deviationDetail.getDeviationUserId(), devNotallowed);
+			listitem.appendChild(listcell);
+			//DeviationDate
+			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()), devNotallowed);
+			listitem.appendChild(listcell);
+			//DelegationRole
+
+			listcell = new Listcell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
+			listitem.appendChild(listcell);
+			//Approval Status
+			listcell = getNewListCell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
+					devNotallowed);
+
+			if (approverScreen) {
+				if (!approved) {
+					listcell = getNewListCell("", devNotallowed);
+					Combobox combobox = new Combobox();
+					combobox.setReadonly(true);
+					combobox.setWidth("100px");
+					combobox.setId("combo_" + deviationDetail.getDeviationId());
+					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
+					combobox.setDisabled(pending);
+					listcell.appendChild(combobox);
+				}
+
+			}
+			listitem.appendChild(listcell);
+			//Approval Remarks
+
+			String lable = "";
+			Button button = new Button();
+			if (approverScreen) {
+				if (!approved) {
+					lable = "add";
+					button.addForward("onClick", "", "onClickAddNotes", deviationDetail);
+				} else {
+					lable = "view";
+					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+				}
+
+			} else {
+				if (approved) {
+					lable = "view";
+					button.addForward("onClick", "", "onClickViewNotes", deviationDetail);
+				}
+
+			}
+			listcell = getNewListCell("", devNotallowed);
+
+			button.setLabel(lable);
+			button.setDisabled(pending);
+			if (StringUtils.isNotBlank(lable)) {
+				listcell.appendChild(button);
+			}
+			listitem.appendChild(listcell);
+
+			//User role
+			listcell = getNewListCell(deviationDetail.getUserRole(), devNotallowed);
+			listitem.appendChild(listcell);
+			//DelegatedUserId
+			listcell = getNewListCell(deviationDetail.getDelegatedUserId(), devNotallowed);
+			listitem.appendChild(listcell);
+			//DeviationType
+			listcell = getNewListCell(deviationDetail.getDeviationType(), devNotallowed);
+			listitem.appendChild(listcell);
+
+			listcell = getNewListCell(deviationDetail.getDeviationValue(), devNotallowed);
+			listitem.appendChild(listcell);
+
+			listitem.setAttribute("data", deviationDetail);
+			if (!approverScreen) {
+				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onManualDeviationItemDoubleClicked");
+			}
+			listcell = new Listcell(PennantJavaUtil.getLabel(deviationDetail.getRecordType()));
+			listcell.setParent(listitem);
+
+			listbox.appendChild(listitem);
+		}
+		logger.debug("Leaving");
+	}
+
+	private Listcell getNewListCell(String val, boolean colrRed) {
+		Listcell listcell = new Listcell(val);
+		if (colrRed) {
+			listcell.setStyle(boldAndRed);
+		}
+		return listcell;
+	}
+
+	/**
+	 * Method to fill the combobox with given list of values
+	 * 
+	 * @param combobox
+	 * @param value
+	 * @param list
+	 */
+	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+		logger.debug("Entering fillComboBox()");
+		combobox.getChildren().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.pending"));
+		combobox.appendChild(comboitem);
+		combobox.setSelectedItem(comboitem);
+		combobox.setReadonly(true);
+		for (ValueLabel valueLabel : list) {
+			comboitem = new Comboitem();
+			comboitem.setValue(valueLabel.getValue());
+			comboitem.setLabel(valueLabel.getLabel());
+			combobox.appendChild(comboitem);
+
+			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+		logger.debug("Leaving fillComboBox()");
+	}
+
+	public void setDescriptions(List<FinanceDeviations> financeDeviations) {
+		if (financeDeviations != null && !financeDeviations.isEmpty()) {
+			for (FinanceDeviations finDeviations : financeDeviations) {
+				if (finDeviations.isManualDeviation()) {
+					long parseLong = Long.parseLong(finDeviations.getDeviationCode());
+					ManualDeviation deviation = deviationHelper.getManualDeviationDesc(parseLong);
+					if (deviation != null) {
+						finDeviations.setDeviationCodeName(deviation.getCode());
+						finDeviations.setDeviationCodeDesc(deviation.getDescription());
+						finDeviations.setSeverityCode(deviation.getSeverityCode());
+						finDeviations.setSeverityName(deviation.getSeverityName());
+					}
+				}
+			}
+		}
+
+	}
+}

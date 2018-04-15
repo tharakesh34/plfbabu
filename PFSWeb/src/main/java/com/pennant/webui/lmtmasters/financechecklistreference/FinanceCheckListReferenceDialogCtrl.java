@@ -96,7 +96,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
-import com.pennant.webui.finance.financemain.FinDelegationDeviationCtrl;
+import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;

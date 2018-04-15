@@ -27,196 +27,15 @@
 							<tab label="Deviations" id="tabDeviation" />
 						</tabs>
 						<tabpanels>
-							<tabpanel style="overflow:auto">
-								<div id="divFianncedetails">
-									<groupbox closable="false">
-										<caption label="${c:l('cap_FinCust_PersonalDetails')}"></caption>
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
-											<columns>
-												<column width="220px" />
-												<column />
-												<column width="220px" />
-												<column />
-											</columns>
-											<rows>
-												<row>
-													<label value="${c:l('lable_Fincust_SystemReference') }" />
-													<textbox id="finCustSysref" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustBranch') }" />
-													<textbox id="finCustBranch" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustName') }" />
-													<hbox>
-														<textbox id="custCIF" readonly="true" width="200px" />
-														<label id="custName" style="margin-left:10px;display:inline-block;padding-top:6px;" />
-													</hbox>
-													<label value="${c:l('lable_Fincust_CustIDTypeNo') }" />
-													<textbox id="finCustIDTypeNo" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustEmployer') }" />
-													<textbox id="finCustEmployer" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustCYOE') }" />
-													<textbox id="finCustCYOE" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustAccNo') }" />
-													<textbox id="finCustAccNo" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustNationality') }" />
-													<textbox id="finCustNationality" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustOccupation') }" />
-													<textbox id="finCustOccupation" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustCPR') }" />
-													<textbox id="finCustCPR" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustFDOB') }" />
-													<textbox id="finCustFDOB" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustFAge') }" />
-													<textbox id="finCustFAge" readonly="true" width="200px" />
-												</row>
-												<row visible="false">
-													<label value="${c:l('lable_Fincust_CustSDOB') }" />
-													<textbox id="finCustSDOB" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustSAge') }" />
-													<textbox id="finCustSAge" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_CustPhone') }" />
-													<textbox id="finCustPhone" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustMail') }" />
-													<textbox id="finCustMail" readonly="true" width="200px" />
-												</row>
-												<row visible="false">
-													<label value="${c:l('lable_Fincust_CustSector') }" />
-													<textbox id="finCustSector" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustSubSector') }" />
-													<textbox id="finCustSubSector" readonly="true" width="200px" />
-												</row>
-												<row visible="false">
-													<label value="${c:l('lable_Fincust_CustPrvEmployer') }" />
-													<textbox id="finCustPrvEmployer" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustPrvYOE') }" />
-													<textbox id="finCustPrvYOE" readonly="true" width="200px" />
-												</row>
-												<row visible="false">
-													<label value="${c:l('lable_Fincust_CustFax') }" />
-													<textbox id="finCustFax" readonly="true" width="200px" />
-													<label value="${c:l('lable_Fincust_CustEducation') }" />
-													<textbox id="finCustEducation" readonly="true" width="200px" />
-												</row>
-											</rows>
-										</grid>
-									</groupbox>
-									<groupbox closable="false">
-										<caption label="${c:l('cap_FinCust_FinanceDetails')}"></caption>
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
-											<columns>
-												<column width="220px" />
-												<column />
-												<column width="220px" />
-												<column />
-											</columns>
-											<rows>
-												<row>
-													<cell colspan="2" rowspan="9" id="col_html" ></cell>
-													<label value="${c:l('lable_Fincust_FinType')}" />
-													<textbox id="finType" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinDivison')}" />
-													<textbox id="finDivison" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinCcy')}" />
-													<hbox>
-														<textbox id="finCcy" readonly="true" width="200px" />
-														<label id="finCcyDesc" style="margin-left:10px;display:inline-block;padding-top:6px;" />
-													</hbox>
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinAmount')}" />
-													<decimalbox id="finAmount" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinDownPayBank')}" />
-													<decimalbox id="finDownPayBank" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinDownPaySupplier')}" />
-													<decimalbox id="finDownPaySupp" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinProfitRate')}" />
-													<decimalbox id="finProfitRate" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_NumberOfterms')}" />
-													<intbox id="numberOfterms" readonly="true" width="200px" />
-												</row>
-												<row>
-													<label value="${c:l('lable_Fincust_FinPurpose')}" />
-													<textbox id="finPurpose" readonly="true" width="200px" />
-												</row>
-											</rows>
-										</grid>
-									</groupbox>
-									<groupbox open="false">
-										<caption label="${c:l('cap_FinCust_EligibilityDetails')}"></caption>
-										<listbox id="listBoxFinElgRef" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
-											<listhead sizable="false">
-												<listheader id="listheader_FinElgRule" label="${c:l('listheader_ElgRuleCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_ElgRuleDesc" label="${c:l('listheader_ElgRuleDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinElgRuleResult" label="${c:l('listheader_ElgRuleResult.label')}" sort="auto" hflex="min" />
-											</listhead>
-										</listbox>
-									</groupbox>
-									<groupbox open="false">
-										<caption label="${c:l('cap_FinCust_ScoringDetails')}"></caption>
-										<listbox id="listBoxRetailScoRef" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
-											<listhead sizable="false">
-												<listheader label="${c:l('listheader_Scoring_Metric.label')}" sort="false" hflex="min" />
-												<listheader label="${c:l('listheader_Scoring_MetricDesc.label')}" sort="false" hflex="min" />
-												<listheader label="${c:l('listheader_Scoring_MaxScore.label')}" sort="false" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_Scoring_Score.label')}" sort="false" hflex="min" align="right" />
-											</listhead>
-										</listbox>
-									</groupbox>
-									<groupbox open="false">
-										<caption label="${c:l('cap_FinCust_Checklist')}"></caption>
-										<listbox id="listBox_CheckList"   width="100%" height="100%" sizedByContent="true" span="true">
-											<listhead sizable="true">
-												<listheader id="listheader_Question" sort="auto" />
-												<listheader id="listheader_Document" sort="auto" />
-												<listheader id="listheader_Comments" sort="auto" />
-											</listhead>
-										</listbox>
-									</groupbox>
-									<groupbox open="false">
-										<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
-										<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" fixedLayout="true"   width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
-											<listhead sizable="true">
-												<listheader id="listheader_CustFinExposure_FinDate" label="${c:l('listheader_CustFinExposure_FinDate.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_CustFinExposure_FinType" label="${c:l('listheader_CustFinExposure_FinType.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_CustFinExposure_FinReference" label="${c:l('listheader_CustFinExposure_FinReference.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_CustFinExposure_OriginalAmt" label="${c:l('listheader_CustFinExposure_OriginalAmt.label')}" sort="false" hflex="min" align="right" />
-												<listheader id="listheader_CustFinExposure_Installment" label="${c:l('listheader_CustFinExposure_Installment.label')}" sort="false" hflex="min" align="right" />
-												<listheader id="listheader_CustFinExposure_OutstandingBal" label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}" sort="false" hflex="min" align="right" />
-												<listheader id="listheader_CustFinExposure_FinStatus" label="${c:l('listheader_CustFinExposure_FinStatus.label')}" sort="false" hflex="min" />
-											</listhead>
-										</listbox>
-									</groupbox>
-								</div>
+							<tabpanel style="overflow:auto" id="creditApprovalTabpanel">
+							
 							</tabpanel>
 							<!-- Tab 2 -->
 							<tabpanel>
 								<groupbox style="border:none;">
 									<groupbox id="finBasicdetails" zclass="null"></groupbox>
 									<groupbox>
-										<caption label="${c:l('tab_DeviationsPresent.title')}"></caption>
+										<caption label="${c:l('tab_AutoDeviations.title')}"></caption>
 										<listbox id="listBoxDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
 											<listhead sizable="false">
 												<!-- <listheader label="${c:l('listheader_Module.label')}" sort="false" width="6%" /> -->
@@ -227,27 +46,27 @@
 												<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
 												<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false" />
 												<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
-												<listheader label="${c:l('listheader_Remarks.label')}" sort="false" width="6%" />
+												<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
 												<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
 												<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
 									<groupbox>
-										<caption label="${c:l('tab_DeviationsPrevious.title')} "></caption>
-										<listbox id="listBoxApprovedDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
+										<caption label="${c:l('tab_ManualDeviations.title')} "></caption>
+										<listbox id="listBoxManualDeviations" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
 											<listhead sizable="false">
-												<!-- 	<listheader label="${c:l('listheader_Module.label')}" sort="false" width="6%" /> -->
 												<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
-												<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
-												<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" />
-												<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_Severity.label')}" sort="false" width="10%"  />
+												<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%"  />
+												<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%"  />
 												<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
-												<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false" />
 												<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
-												<listheader label="${c:l('listheader_Remarks.label')}" sort="false" width="6%" />
-												<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
+												<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
 												<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
+												<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" visible="false"/>
 											</listhead>
 										</listbox>
 									</groupbox>

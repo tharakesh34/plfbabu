@@ -21,42 +21,54 @@
 				</north>
 				<center border="none" autoscroll="false">
 					<groupbox style="border:none;">
-							<groupbox id="finBasicdetails" zclass="null"></groupbox>
-							<groupbox id="gbDeviations">
-								<caption label="${c:l('tab_pendingforApproval.title')}"></caption>
-								<listbox id="listBoxDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
-									<listhead sizable="false">
-										<!-- <listheader label="${c:l('listheader_Module.label')}" sort="false" width="6%" /> -->
-										<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
-										<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false"/>
-									</listhead>
-								</listbox>
-							</groupbox>
-							<groupbox id="gbApprovedDeviations">
-								<caption id="cpApprovedDeviations" label="${c:l('tab_Approved.title')} "></caption>
-								<listbox id="listBoxApprovedDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
-									<listhead sizable="false">
-										<!-- <listheader label="${c:l('listheader_Module.label')}" sort="false" width="6%" /> -->
-										<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
-										<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
-										<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
-										<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false"/>
-									</listhead>
-								</listbox>
-							</groupbox>
+						<groupbox id="finBasicdetails" zclass="null"></groupbox>
+						<groupbox>
+							<caption label="${c:l('tab_AutoDeviations.title')}"></caption>
+							<listbox id="listBoxAutoDeviations" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
+								<listhead sizable="false">
+									<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
+									<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
+									<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
+								</listhead>
+							</listbox>
 						</groupbox>
+						<groupbox>
+							<div sclass="z-toolbar" style="padding:0">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+									<toolbar align="start" sclass="toolbar-start" width="300px"></toolbar>
+									<toolbar align="center" sclass="toolbar-center"></toolbar>
+									<toolbar align="end" sclass="toolbar-end">
+										<button id="btnNew_ManualDeviation" label="${c:l('label_New')}" tooltiptext="${c:l('button_New_ManualDeviation_.tooltiptext')}" sclass="z-toolbarbutton" autodisable="btnNew_DocumentDetails" />
+									</toolbar>
+									<space width="2px" />
+								</hbox>
+							</div>
+							<caption label="${c:l('tab_ManualDeviations.title')} "></caption>
+							<listbox id="listBoxManualDeviations" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
+								<listhead sizable="false">
+									<listheader label="${c:l('listheader_DeviationCode.label')}" sort="false" width="14%" />
+									<listheader label="${c:l('listheader_Severity.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_DeviationUserID.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
+									<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="false" width="6%" />
+									<listheader label="${c:l('listheader_UserRole.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DeligatedUserID.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DeviationType.label')}" sort="false" width="10%" visible="false" />
+									<listheader label="${c:l('listheader_DeviationValue.label')}" sort="false" width="10%" visible="false" />
+									<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</groupbox>
 				</center>
 			</borderlayout>
 		</window>

@@ -501,6 +501,8 @@
 		<menuItem id="menu_Item_NewFinanceMain"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination"
 			rightName="menuItem_Finance_FinanceMain" />
+			<menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
+		rightName="menuItem_Finance_FinanceDeviations" />	
 	<menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
 		rightName="menuItem_Finance_QDEFinanceMain" />		
 	</menu>
@@ -1458,8 +1460,6 @@
 		rightName="menuItem_Finance_QDEFinanceMain" /> -->
 	<!-- <menuItem id="menu_Item_QueueAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentList.zul" 
 		rightName="menuItem_Reassignment" /> -->
-	<!-- <menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
-		rightName="menuItem_Finance_FinanceDeviations" /> -->
 	<!-- <menuItem id="menu_Item_PaymentOrderAuth" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul" 
 		rightName="menu_Item_PaymentOrderAuth" /> -->
 	<!-- <menuItem id="menu_Item_MMAgreementsGen" zulNavigation="/WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsList.zul" 
