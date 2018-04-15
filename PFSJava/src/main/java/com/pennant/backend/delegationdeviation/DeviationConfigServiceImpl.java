@@ -23,7 +23,7 @@
  ******************************************************************************************** 
  */
 
-package com.pennant.backend.service.solutionfactory.impl;
+package com.pennant.backend.delegationdeviation;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
-import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
+import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -54,8 +54,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Service implementation for methods that depends on <b>DeviationHeader</b>.<br>
  * 
  */
-public class DelegationDeviationServiceImpl implements DelegationDeviationService {
-	private static final Logger logger = Logger.getLogger(DelegationDeviationServiceImpl.class);
+public class DeviationConfigServiceImpl implements DeviationConfigService {
+	private static final Logger logger = Logger.getLogger(DeviationConfigServiceImpl.class);
 
 	
 	private LoggedInUser userDetails;
@@ -70,7 +70,7 @@ public class DelegationDeviationServiceImpl implements DelegationDeviationServic
 
 	private FinTypeFeesDAO finTypeFeesDAO;
 	
-	public DelegationDeviationServiceImpl() {
+	public DeviationConfigServiceImpl() {
 		super();
 	}
 	

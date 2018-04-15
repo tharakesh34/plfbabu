@@ -44,8 +44,8 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		FinanceDeviations financeDeviations = new FinanceDeviations();
 		financeDeviations.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, ");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,");
+		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks, ");
+		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
 		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -57,7 +57,29 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
-	
+
+	@Override
+	public List<FinanceDeviations> getFinanceDeviations(String finReference, boolean deviProcessed, String type) {
+		logger.debug("Entering");
+		FinanceDeviations financeDeviations = new FinanceDeviations();
+		financeDeviations.setFinReference(finReference);
+		financeDeviations.setDeviProcessed(deviProcessed);
+
+		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
+		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
+		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,");
+		selectSql.append(" DelegatedUserId From FinanceDeviations");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference and DeviProcessed =:DeviProcessed");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
+		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceDeviations.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
 	/**
 	 * get Deviation Details List based on finance reference
 	 * 
@@ -70,8 +92,8 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		financeDeviations.setModule(module);
 		financeDeviations.setDeviationCode(deviationCode);
 		
-		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, ");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,");
+		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
+		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole,ManualDeviation,");
 		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,");
 		selectSql.append(" DelegatedUserId From FinanceDeviations");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -112,6 +134,7 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		updateSql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
 		updateSql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
 		updateSql.append(" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
+		updateSql.append(" ManualDeviation = :ManualDeviation,Remarks =:Remarks, ");
 		updateSql.append("  DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId where DeviationId=:DeviationId ");
 
 		logger.debug("updateSql: "+ updateSql.toString());
@@ -136,11 +159,11 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
 		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
-		insertSql.append(" DeviationDate, DeviationUserId,DelegatedUserId)");
-		
+		insertSql.append(" DeviationDate, DeviationUserId,DelegatedUserId,ManualDeviation,Remarks,DeviProcessed  )");
+
 		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
 		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
-		insertSql.append(" :DeviationDate, :DeviationUserId, :DelegatedUserId )");
+		insertSql.append(" :DeviationDate, :DeviationUserId, :DelegatedUserId, :ManualDeviation, :Remarks, :DeviProcessed  )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
@@ -200,6 +223,44 @@ public class FinanceDeviationsDAOImpl extends BasisNextidDaoImpl<FinanceDeviatio
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public void updateDeviProcessed(String finReference, String type) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("DeviProcessed", true);
+		source.addValue("DeviNotProcessed", false);
+
+		StringBuilder updateSql = new StringBuilder("Update FinanceDeviations");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append("  Set DeviProcessed = :DeviProcessed  ");
+		updateSql.append("  where FinReference = :FinReference and  DeviProcessed =:DeviNotProcessed ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+	}
+
 	
-	
+		@Override
+	public void deleteById(FinanceDeviations financeDeviations, String type) {
+		logger.debug("Entering");
+
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append("Delete From FinanceDeviations");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where  DeviationId = :DeviationId");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+
+		} catch (Exception e) {
+			logger.debug(e);
+
+		}
+		logger.debug("Leaving");
+	}
 }

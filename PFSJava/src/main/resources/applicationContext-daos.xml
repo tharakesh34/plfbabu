@@ -7394,13 +7394,13 @@
 	</bean>
 
 
-	<bean id="delegationDeviationService"
+	<bean id="deviationConfigService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="delegationDeviationServiceTarget" />
+			<ref bean="deviationConfigServiceImplTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -7408,13 +7408,14 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="processDelegationDeviation*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean name="delegationDeviationServiceTarget"
-		class="com.pennant.backend.service.solutionfactory.impl.DelegationDeviationServiceImpl">
+	<bean name="deviationConfigServiceImplTarget"
+		class="com.pennant.backend.delegationdeviation.DeviationConfigServiceImpl">
 		<property name="deviationHeaderDAO" ref="deviationHeaderDAO" />
 		<property name="deviationDetailDAO" ref="deviationDetailDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -7443,6 +7444,8 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="processDevaitions*">PROPAGATION_REQUIRED</prop>
+				<prop key="processApproval*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -7460,6 +7463,11 @@
 		<property name="financeScoreHeaderDAO" ref="financeScoreHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<bean name="deviationHelper"
+		class="com.pennant.backend.delegationdeviation.DeviationHelper" />
+		
+	
 
 	<!-- Collaterals Details -->
 	<bean id="finCollateralsDAO"

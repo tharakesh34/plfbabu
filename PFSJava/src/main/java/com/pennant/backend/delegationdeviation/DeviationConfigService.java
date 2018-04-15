@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.service.solutionfactory;
+package com.pennant.backend.delegationdeviation;
 
 import java.util.List;
 
@@ -49,7 +49,8 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public interface DelegationDeviationService {
+public interface DeviationConfigService {
+	
 	void processDelegationDeviation(List<DeviationHeader> deviationHeaders, String finType, LoggedInUser user);
 
 	FinanceType getFinanceType(String fintype);

@@ -14,6 +14,8 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 	private long				deviationID			= Long.MIN_VALUE;
 	private String				productCode;
 	private String				deviationCode;
+	private String				deviationDesc;
+	private long				severity;
 	private boolean				newRecord;
 	private String				lovValue;
 	private Product				befImage;
@@ -22,6 +24,8 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("deviationCode");
+		excludeFields.add("deviationDesc");
+		excludeFields.add("severity");
 
 		return excludeFields;
 	}
@@ -102,5 +106,21 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public String getDeviationDesc() {
+		return deviationDesc;
+	}
+
+	public void setDeviationDesc(String deviationDesc) {
+		this.deviationDesc = deviationDesc;
+	}
+
+	public long getSeverity() {
+		return severity;
+	}
+
+	public void setSeverity(long severity) {
+		this.severity = severity;
 	}
 }

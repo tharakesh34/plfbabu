@@ -12,5 +12,8 @@ public interface FinanceDeviationsDAO {
 	FinanceDeviations getFinanceDeviationsByID(String finReference, String module,String deviationCode, String type);
 	void delete(FinanceDeviations financeDeviations, String type);
 	void deleteCheckListRef(String finReference, String module, String devCode, String type);
+	List<FinanceDeviations> getFinanceDeviations(String finReference, boolean deviProcessed, String type);
+	void updateDeviProcessed(String finReference, String type);
+	void deleteById(FinanceDeviations financeDeviations, String type);
 
 }

@@ -54,6 +54,7 @@ public class DeviationConstants {
 	public static final String CL_POSTPONED 	= "_P";
 	public static final String CL_EXPIRED 		= "_E";
 
+	public static final String TY_LOAN 			= "LOAN";
 	public static final String TY_PRODUCT 		= "PRODUCT";
 	public static final String TY_ELIGIBILITY 	= "EILIBILITY";
 	public static final String TY_CHECKLIST 	= "CHECKLIST";

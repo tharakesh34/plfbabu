@@ -237,6 +237,7 @@ public class FinanceConstants {
 	public static final String	CONFIRM_RESERVATION				= "CONRES";
 	public static final String	CANCEL_RESERVATION				= "CANRES";
 	public static final String	CANCEL_UTILIZE					= "CANUTIL";
+	public static final String	MANUAL_DEVIATION				= "MDEVTR";
 
 	// Collateral Mark & DeMark status
 	public static final String	COLLATERAL_MARK					= "MARK";

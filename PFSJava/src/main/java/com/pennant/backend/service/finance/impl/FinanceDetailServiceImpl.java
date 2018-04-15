@@ -138,6 +138,7 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
@@ -185,6 +186,7 @@ import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
@@ -295,6 +297,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FieldInvestigationService fieldInvestigationService;
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private DeviationHelper deviationHelper;
 		
 	public FinanceDetailServiceImpl() {
 		super();
@@ -459,9 +463,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Deviations
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
-			financeDetail.setFinanceDeviations(getDeviationDetailsService().getFinanceDeviations(finReference));
-			financeDetail.setApprovedFinanceDeviations(getDeviationDetailsService().getApprovedFinanceDeviations(
-					finReference));
+			List<FinanceDeviations> finDeviations = getDeviationDetailsService().getFinanceDeviations(finReference);
+			List<FinanceDeviations> apprFinDeviations = getDeviationDetailsService().getApprovedFinanceDeviations(finReference);
+			deviationHelper.setDeviationDetails(financeDetail, finDeviations, apprFinDeviations);
+			
 		}
 
 		//Mandate
@@ -1114,9 +1119,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Deviation Details
 			if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ORG)) {
-				financeDetail.setFinanceDeviations(getDeviationDetailsService().getFinanceDeviations(finReference));
-				financeDetail.setApprovedFinanceDeviations(getDeviationDetailsService().getApprovedFinanceDeviations(
-						finReference));
+				List<FinanceDeviations> finDeviations = getDeviationDetailsService().getFinanceDeviations(finReference);
+				List<FinanceDeviations> apprFinDeviations = getDeviationDetailsService().getApprovedFinanceDeviations(finReference);
+				deviationHelper.setDeviationDetails(financeDetail, finDeviations, apprFinDeviations);
 			}
 
 			// Mandate Details
@@ -2227,7 +2232,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Deviation details
-			getDeviationDetailsService().processDevaitions(finReference, financeDetail.getFinanceDeviations(),
+			List<FinanceDeviations> deviations=new ArrayList<FinanceDeviations>();
+			if (financeDetail.getFinanceDeviations()!=null) {
+				deviations.addAll(financeDetail.getFinanceDeviations());
+			}
+			
+			if (financeDetail.getManualDeviations()!=null) {
+				deviations.addAll(financeDetail.getManualDeviations());
+			}
+			getDeviationDetailsService().processDevaitions(finReference, deviations,
 					auditHeader);
 
 			//Dedup Details
@@ -4180,6 +4193,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditHeader.setProcessCompleted(true);
 			if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				auditHeader.setDeleteNotes(true);
+			}
+			break;
+		case PennantConstants.method_doCheckDeviations:
+			List<FinanceDeviations> list =new ArrayList<>();
+			List<FinanceDeviations> autoDeviations = financeDetail.getFinanceDeviations();
+			if (autoDeviations!=null && !autoDeviations.isEmpty()) {
+				list.addAll(autoDeviations);
+			}
+			List<FinanceDeviations> manualDeviations = financeDetail.getManualDeviations();
+			if (manualDeviations!=null && !manualDeviations.isEmpty()) {
+				list.addAll(manualDeviations);
+			}
+			if (list != null && !list.isEmpty()) {
+				boolean deviationfound = false;
+				for (FinanceDeviations financeDeviations : list) {
+					if (StringUtils.isBlank(financeDeviations.getApprovalStatus())) {
+						deviationfound = true;
+						break;
+					}
+				}
+				afinanceMain.setDeviationApproval(deviationfound);
 			}
 			break;
 		default:
