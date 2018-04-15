@@ -96,7 +96,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -147,7 +147,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	private HashMap<String, String>					screenLevelRemarks		= new HashMap<String, String>();
 	private HashMap<Long, String>					deviationCombovalues	= new HashMap<Long, String>();
 	private HashMap<Long, Integer>					deviationInboxValues	= new HashMap<Long, Integer>();
-	private FinDelegationDeviationCtrl				finDelegationDeviationCtrl;
+	private DeviationExecutionCtrl					deviationExecutionCtrl;
 
 	private boolean											isNotFinanceProcess		= false;
 	private String											moduleDefiner			= "";
@@ -216,7 +216,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			moduleCheckList = (List<FinanceCheckListReference>) arguments.get("finCheckRefList");
 		}
 		if (!isNotFinanceProcess && StringUtils.equals("", moduleDefiner)) {
-			setFinDelegationDeviationCtrl();
+			setDeviationExecutionCtrl();
 		}
 		
 		if (arguments.containsKey("moduleName")) {
@@ -721,7 +721,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					valid = false;
 				}
 
-				if (getFinDelegationDeviationCtrl() != null && !isNotFinanceProcess) {
+				if (deviationExecutionCtrl != null && !isNotFinanceProcess) {
 					if (!valid) {
 						valid = validateDeviation(aFinRefDetail, chkDeviations, financeDetail, valid);
 					}
@@ -746,8 +746,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			}
 		}
 
-		if (getFinDelegationDeviationCtrl() != null && !isNotFinanceProcess) {
-			getFinDelegationDeviationCtrl().fillDeviationListbox(chkDeviations, getUserRole(), DeviationConstants.TY_CHECKLIST);
+		if (deviationExecutionCtrl != null && !isNotFinanceProcess) {
+			deviationExecutionCtrl.fillDeviationListbox(chkDeviations, getUserRole(), DeviationConstants.TY_CHECKLIST);
 		}
 
 		logger.debug("Leaving ");
@@ -768,10 +768,10 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			String comboVal = StringUtils.trimToEmpty(deviationCombovalues.get(finref));
 			if (!"".equals(comboVal) && !comboVal.equals(PennantConstants.List_Select)) {
 				int val = deviationInboxValues.get(finref);
-				FinanceDeviations deviation = getFinDelegationDeviationCtrl().checkCheckListDeviations(finref, financeDetail, comboVal, val);
+				FinanceDeviations deviation = deviationExecutionCtrl.checkCheckListDeviations(finref, financeDetail, comboVal, val);
 
 				if (deviation != null && !"".equals(deviation.getDelegationRole())) {
-					if (getFinDelegationDeviationCtrl().isAlreadyExsists(deviation)) {
+					if (deviationExecutionCtrl.isAlreadyExsists(deviation)) {
 						valid = true;
 					} else {
 						chkDeviations.add(deviation);
@@ -1209,9 +1209,9 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 
 	private void loadDeviationDetails(List<FinanceReferenceDetail> checkListDetailsList) {
 		logger.debug(" Entering ");
-		if(getFinDelegationDeviationCtrl() != null){
+		if(deviationExecutionCtrl != null){
 			for (FinanceReferenceDetail checkListDetail : checkListDetailsList) {
-				List<FinanceDeviations> list = getFinDelegationDeviationCtrl().getFinanceDeviations();
+				List<FinanceDeviations> list = deviationExecutionCtrl.getFinanceDeviations();
 				List<FinanceDeviations> approvedList = getFinanceDetail().getApprovedFinanceDeviations();
 				StoreDevaitions(checkListDetail,list);
 				StoreDevaitions(checkListDetail,approvedList);
@@ -1304,15 +1304,12 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
 
-	public FinDelegationDeviationCtrl getFinDelegationDeviationCtrl() {
-		return finDelegationDeviationCtrl;
-	}
 
-	public void setFinDelegationDeviationCtrl() throws Exception {
+	public void setDeviationExecutionCtrl() throws Exception {
 		try {
-			if(getFinanceDialogCtrl().getClass().getMethod("getFinDelegationDeviationCtrl") != null){
-				finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceDialogCtrl().getClass().getMethod(
-						"getFinDelegationDeviationCtrl").invoke(getFinanceDialogCtrl());
+			if(getFinanceDialogCtrl().getClass().getMethod("getDeviationExecutionCtrl") != null){
+				deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceDialogCtrl().getClass().getMethod(
+						"getDeviationExecutionCtrl").invoke(getFinanceDialogCtrl());
 			}
 		} catch (NoSuchMethodException e) {
 			logger.error(e);

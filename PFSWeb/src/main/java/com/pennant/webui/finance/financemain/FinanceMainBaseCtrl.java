@@ -263,7 +263,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
@@ -745,7 +745,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient FinAdvancePaymentsListCtrl			finAdvancePaymentsListCtrl;
 	private transient FinFeeDetailListCtrl					finFeeDetailListCtrl;
 	private transient FinCovenantTypeListCtrl				finCovenantTypeListCtrl;
-	private transient FinDelegationDeviationCtrl			finDelegationDeviationCtrl;
+	@Autowired
+	private transient DeviationExecutionCtrl				deviationExecutionCtrl;
 	private transient FinCollateralHeaderDialogCtrl			finCollateralHeaderDialogCtrl;
 	private transient CollateralHeaderDialogCtrl			collateralHeaderDialogCtrl;
 	private transient FinVasRecordingDialogCtrl				finVasRecordingDialogCtrl;
@@ -1181,10 +1182,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.ifscCode.setMaxlength(9);
 
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			finDelegationDeviationCtrl.setFormat(finFormatter);
-			finDelegationDeviationCtrl.setUserRole(getRole());
-			finDelegationDeviationCtrl.setUserid(getUserWorkspace().getUserDetails().getUserId());
-			finDelegationDeviationCtrl.setApprovedFinanceDeviations(getFinanceDetail().getApprovedFinanceDeviations());
+			deviationExecutionCtrl.setFormat(finFormatter);
+			deviationExecutionCtrl.setUserRole(getRole());
+			deviationExecutionCtrl.setUserid(getUserWorkspace().getUserDetails().getUserId());
+			deviationExecutionCtrl.setApprovedFinanceDeviations(getFinanceDetail().getApprovedFinanceDeviations());
 		}
 
 		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
@@ -3861,7 +3862,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			// fill the components with the data
 			if (StringUtils.isEmpty(moduleDefiner)) {
-				finDelegationDeviationCtrl.setFinanceDeviations(afinanceDetail.getFinanceDeviations());
+				deviationExecutionCtrl.setFinanceDeviations(afinanceDetail.getFinanceDeviations());
 			}
 			doWriteBeanToComponents(afinanceDetail, true);
 
@@ -3940,7 +3941,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (StringUtils.isEmpty(moduleDefiner)) {
-				finDelegationDeviationCtrl.setFinanceMainBaseCtrl(this);
+				deviationExecutionCtrl.setFinanceMainBaseCtrl(this);
 			}
 
 			doSetMMAProperties();
@@ -5658,8 +5659,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Deviation calculations
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			finDelegationDeviationCtrl.checkProductDeviations(getFinanceDetail());
-			finDelegationDeviationCtrl.checkFeeDeviations(getFinanceDetail());
+			deviationExecutionCtrl.checkProductDeviations(getFinanceDetail());
+			deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
 		}
 
 		// Customer Details Tab ---> Customer Details 
@@ -6564,9 +6565,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// WorkFlow Creations
 
 	private boolean processDeviations(FinanceDetail aFinanceDetail, boolean recordSave) {
-		if (finDelegationDeviationCtrl != null) {
+		if (deviationExecutionCtrl != null) {
 			if (!recordSave) {
-				aFinanceDetail.setFinanceDeviations(finDelegationDeviationCtrl.getFinanceDeviations());
+				aFinanceDetail.setFinanceDeviations(deviationExecutionCtrl.getFinanceDeviations());
 			}
 		}
 		if (getDeviationDetailDialogCtrl() != null) {
@@ -10368,8 +10369,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					boolean validationRequired = true;
 					int minTerms = financeType.getFinMinTerm();
 					int maxTerms = financeType.getFinMaxTerm();
-					if (finDelegationDeviationCtrl != null) {
-						List<DeviationHeader> list = finDelegationDeviationCtrl.getProductDeviatations(this.finType
+					if (deviationExecutionCtrl != null) {
+						List<DeviationHeader> list = deviationExecutionCtrl.getProductDeviatations(this.finType
 								.getValue());
 						if (list != null && !list.isEmpty()) {
 							for (DeviationHeader deviationHeader : list) {
@@ -15029,8 +15030,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//Deviation calculations
 			if (StringUtils.isEmpty(moduleDefiner)) {
-				finDelegationDeviationCtrl.checkProductDeviations(getFinanceDetail());
-				finDelegationDeviationCtrl.checkFeeDeviations(getFinanceDetail());
+				deviationExecutionCtrl.checkProductDeviations(getFinanceDetail());
+				deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
 			}
 		}
 
@@ -15961,13 +15962,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextUserId = nextUserId;
 	}
 
-	public FinDelegationDeviationCtrl getFinDelegationDeviationCtrl() {
-		return finDelegationDeviationCtrl;
+	public DeviationExecutionCtrl getDeviationExecutionCtrl() {
+		return deviationExecutionCtrl;
 	}
 
-	public void setFinDelegationDeviationCtrl(FinDelegationDeviationCtrl finDelegationDeviationCtrl) {
-		this.finDelegationDeviationCtrl = finDelegationDeviationCtrl;
-	}
 
 	public void setFinCollateralHeaderDialogCtrl(FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl) {
 		this.finCollateralHeaderDialogCtrl = finCollateralHeaderDialogCtrl;

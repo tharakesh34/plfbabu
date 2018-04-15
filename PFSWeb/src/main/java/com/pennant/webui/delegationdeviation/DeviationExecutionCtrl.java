@@ -42,8 +42,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 
-public class FinDelegationDeviationCtrl {
-	private static final Logger		logger				= Logger.getLogger(FinDelegationDeviationCtrl.class);
+public class DeviationExecutionCtrl {
+	private static final Logger		logger				= Logger.getLogger(DeviationExecutionCtrl.class);
 
 	private int						format				= 0;
 	private String					userRole;
@@ -60,7 +60,7 @@ public class FinDelegationDeviationCtrl {
 	/* This list which hold the all deviation across the tab's */
 	private List<FinanceDeviations>	financeDeviations	= new ArrayList<>();
 
-	public FinDelegationDeviationCtrl() {
+	public DeviationExecutionCtrl() {
 		super();
 	}
 

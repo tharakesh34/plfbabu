@@ -85,7 +85,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
@@ -128,7 +128,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
-	FinDelegationDeviationCtrl finDelegationDeviationCtrl; 
+	DeviationExecutionCtrl deviationExecutionCtrl; 
 
 	/**
 	 * default constructor.<br>
@@ -197,8 +197,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				doCheckWIFFinEligibility(false);
 			}else{
 				
-				finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceMainDialogCtrl().getClass().
-						getMethod("getFinDelegationDeviationCtrl").invoke(getFinanceMainDialogCtrl());
+				deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass().
+						getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
 				
 				//Set Eligibility based on deviations and rule result
 				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
@@ -333,7 +333,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 		FinanceDeviations deviation = null;
 
-		List<FinanceDeviations> list = finDelegationDeviationCtrl.getFinanceDeviations();
+		List<FinanceDeviations> list = deviationExecutionCtrl.getFinanceDeviations();
 		if (list != null && !list.isEmpty()) {
 			for (FinanceDeviations financeDeviations : list) {
 				if (financeDeviations.getDeviationCode().equals(String.valueOf(finElgDet.getElgRuleCode()))) {
@@ -485,7 +485,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			}
 		}
 
-		finDelegationDeviationCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
+		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
 		aFinanceDetail = null;
 		
 		//Set Eligibility based on deviations and rule result
@@ -523,7 +523,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		BigDecimal downpaySupl = customerEligibilityCheck.getDownpaySupl();
 		customerEligibilityCheck.setDownpaySupl(CalculationUtil.getConvertedAmount(finCcy, null, downpaySupl));
 
-		FinanceDeviations deviation = finDelegationDeviationCtrl.checkEligibilityDeviations(finElgDet,aFinanceDetail);
+		FinanceDeviations deviation = deviationExecutionCtrl.checkEligibilityDeviations(finElgDet,aFinanceDetail);
 		customerEligibilityCheck.setReqFinAmount(finAmount);
 
 		return deviation;

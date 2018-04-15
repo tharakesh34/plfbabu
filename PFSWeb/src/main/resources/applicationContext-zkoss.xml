@@ -1809,7 +1809,6 @@
 		<property name="extSMSService" value="${commn.sms.isExtService:false}"  />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
-		<property name="finDelegationDeviationCtrl" ref="finDelegationDeviationCtrl" />
 		<property name="agreementGeneration" ref="agreementGeneration" />
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
@@ -3887,8 +3886,8 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
-	<bean id="finDelegationDeviationCtrl" scope="prototype"
-		class="com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl">
+	<bean id="deviationExecutionCtrl" scope="prototype"
+		class="com.pennant.webui.delegationdeviation.DeviationExecutionCtrl">
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 	</bean>

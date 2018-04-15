@@ -157,16 +157,15 @@ import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -567,8 +566,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private transient FinCollateralHeaderDialogCtrl			finCollateralHeaderDialogCtrl;
 	private transient CollateralHeaderDialogCtrl			collateralHeaderDialogCtrl;
 	private transient ManualPaymentDialogCtrl				manualPaymentDialogCtrl				= null;
-
-	private transient FinDelegationDeviationCtrl			finDelegationDeviationCtrl;
 
 	//Bean Setters  by application Context
 	private AccountInterfaceService							accountInterfaceService;
@@ -7933,13 +7930,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.eventManager = eventManager;
 	}
 
-	public FinDelegationDeviationCtrl getFinDelegationDeviationCtrl() {
-		return finDelegationDeviationCtrl;
-	}
-
-	public void setFinDelegationDeviationCtrl(FinDelegationDeviationCtrl finDelegationDeviationCtrl) {
-		this.finDelegationDeviationCtrl = finDelegationDeviationCtrl;
-	}
 
 	public Label getLabel_FinanceMainDialog_PlanEmiHolidayMethod() {
 		return label_FinanceMainDialog_PlanEmiHolidayMethod;

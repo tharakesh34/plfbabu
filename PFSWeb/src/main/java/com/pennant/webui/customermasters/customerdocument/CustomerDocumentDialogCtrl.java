@@ -115,8 +115,8 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -216,7 +216,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean   isRetailCustomer = false;
 	private boolean   isIssuedAuth=false;
 	private boolean   isDocuploadMand=false;
-	private FinDelegationDeviationCtrl finDelegationDeviationCtrl; 
+	private DeviationExecutionCtrl deviationExecutionCtrl; 
 	/**
 	 * default constructor.<br>
 	 */
@@ -402,7 +402,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (isNewRecord() && !isNewCustomer() && !isCheckList) {
 				// onload();
 			}
-			setFinDelegationDeviationCtrl();
+			setDeviationExecutionCtrl();
 
 			if (isCheckList) {// TODO Need to add a condition based visibility
 				// for delete button
@@ -804,8 +804,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		boolean deviationallowed = false;
 		//		Date date = aCustomerDocument.getCustDocExpDate();
 		//		if (date != null && date.compareTo(DateUtility.getAppDate()) <= 0) {
-		//			if (finDelegationDeviationCtrl!=null) {
-		//				deviationallowed=finDelegationDeviationCtrl.checkDeviationForDocument(aCustomerDocument);
+		//			if (deviationExecutionCtrl!=null) {
+		//				deviationallowed=deviationExecutionCtrl.checkDeviationForDocument(aCustomerDocument);
 		//			}
 		//		}
 		if (!deviationallowed) {
@@ -2391,19 +2391,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void setFinDelegationDeviationCtrl() throws Exception {
+	public void setDeviationExecutionCtrl() throws Exception {
 		if(getFinanceMainDialogCtrl()!=null && isFinanceProcess){
-			finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceMainDialogCtrl().getClass()
-					.getMethod("getFinDelegationDeviationCtrl").invoke(getFinanceMainDialogCtrl());
+			deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
+					.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
 		}
-	}
-
-	public FinDelegationDeviationCtrl getFinDelegationDeviationCtrl() {
-		return finDelegationDeviationCtrl;
-	}
-
-	public void setFinDelegationDeviationCtrl(FinDelegationDeviationCtrl finDelegationDeviationCtrl) {
-		this.finDelegationDeviationCtrl = finDelegationDeviationCtrl;
 	}
 
 	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {

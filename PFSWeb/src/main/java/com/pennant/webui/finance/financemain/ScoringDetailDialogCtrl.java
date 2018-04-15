@@ -94,7 +94,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.delegationdeviation.FinDelegationDeviationCtrl;
+import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -173,7 +173,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	
-	FinDelegationDeviationCtrl finDelegationDeviationCtrl; 
+	DeviationExecutionCtrl deviationExecutionCtrl; 
 	/**
 	 * default constructor.<br>
 	 */
@@ -241,8 +241,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if(isWIF){
 			doExecuteScoring(false);
 		}else{
-			finDelegationDeviationCtrl = (FinDelegationDeviationCtrl) getFinanceMainDialogCtrl().getClass().
-					getMethod("getFinDelegationDeviationCtrl").invoke(getFinanceMainDialogCtrl());
+			deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass().
+					getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
 			fillFinCustScoring();
 		}
 		
@@ -443,7 +443,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 				
 				if (isExecute && !isWIF) {
 					if (totalGrpExecScore.intValue() < finrefdet.getLovDescminScore()) {
-						FinanceDeviations scoreDev = finDelegationDeviationCtrl.checkScoringDeviations(getFinanceDetail(), finrefdet.getFinRefId(), finrefdet.getLovDescminScore(), totalGrpExecScore.intValue());
+						FinanceDeviations scoreDev = deviationExecutionCtrl.checkScoringDeviations(getFinanceDetail(), finrefdet.getFinRefId(), finrefdet.getLovDescminScore(), totalGrpExecScore.intValue());
 						if (scoreDev != null) {
 							scoringDeviations.add(scoreDev);
 						}
@@ -470,7 +470,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		}
 		
 		if (isExecute  && !isWIF) {
-			finDelegationDeviationCtrl.fillDeviationListbox(scoringDeviations, getUserRole(), DeviationConstants.TY_SCORE);
+			deviationExecutionCtrl.fillDeviationListbox(scoringDeviations, getUserRole(), DeviationConstants.TY_SCORE);
 		}
 		
 		setScoreSummaryStyle(sufficientScore,false);
@@ -1370,7 +1370,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 			if (totcalScore.intValue() < minScore) {
 
-				FinanceDeviations scoreDev = finDelegationDeviationCtrl.checkScoringDeviations(aFinanceDetail, financeScoreHeader.getGroupId(), minScore, totcalScore.intValue());
+				FinanceDeviations scoreDev = deviationExecutionCtrl.checkScoringDeviations(aFinanceDetail, financeScoreHeader.getGroupId(), minScore, totcalScore.intValue());
 				if (scoreDev != null) {
 					scoringDeviations.add(scoreDev);
 				}
@@ -1378,7 +1378,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 		}
 
-		finDelegationDeviationCtrl.fillDeviationListbox(scoringDeviations, getUserRole(), DeviationConstants.TY_SCORE);
+		deviationExecutionCtrl.fillDeviationListbox(scoringDeviations, getUserRole(), DeviationConstants.TY_SCORE);
 		
 		logger.debug(" Leaving ");
 	}
@@ -1460,7 +1460,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	public boolean checkDevaitionbyScoreHeader(long id, int devValue) {
 		logger.debug(" Entering ");
 
-		List<FinanceDeviations> devList = finDelegationDeviationCtrl.getFinanceDeviations();
+		List<FinanceDeviations> devList = deviationExecutionCtrl.getFinanceDeviations();
 
 		FinanceDeviations deviation = null;
 
