@@ -149,4 +149,22 @@
 		<column name="allowDeviation" type="boolean" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
+	
+		<changeSet id="15" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="16" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="17" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+	
+	
 	</databaseChangeLog>

@@ -2559,5 +2559,64 @@ UNION ALL
 			INSERT INTO data_engine_config VALUES (195, 'ME_BANKBRANCHES', 'Bank Branches extract', 2, '', '', '', '~', 0, 0, '', 'BankCode,BranchCode,BranchDesc,City,MICR,IFSC,Active,AddOfBranch', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BANKBRANCHES_', '.dat', 0, '2018-04-03 19:12:27.274', '${yyyyMMdd}', '0 0 3 ? * 1', '0', 'MOVE_TO_S3_BUCKET', 1, 1);	 			
  		</sql>
  	</changeSet>
+ 	
+	<changeSet id="95" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="96" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="97" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="98" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="99" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="100" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+ 	<changeSet id="101" author="Satish">
+ 	
+ 	<createView viewName="productdeviations_aview" replaceIfExists="true">
+ 	 SELECT t1.productdevid,
+    t1.deviationid,
+    t1.productcode,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.code AS deviationcode,
+    t2.description AS deviationdesc,
+    t2.severity
+   FROM productdeviations t1
+     JOIN manualdeviations t2 ON t1.deviationid = t2.deviationid
+ 	
+ 	</createView>
+ 	</changeSet>
+ 	
+ 	
+ 	
 </databaseChangeLog>
 	
