@@ -36,6 +36,8 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
+import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -160,6 +162,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		}
 		
 		this.searchObject.addFilter(new Filter("reinitid", Filter.OP_NOT_NULL));
+		this.searchObject.addFilter(new Filter("dealertype", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL));
+		this.searchObject.addFilter(new Filter("reasontypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL));
 	}
 
 	public void onFulfill$agency(Event event) {

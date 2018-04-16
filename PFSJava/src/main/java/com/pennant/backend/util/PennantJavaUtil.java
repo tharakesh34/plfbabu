@@ -380,7 +380,9 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.ClassUtil;
-import com.pennanttech.pennapps.pff.verification.Codes;
+import com.pennanttech.pennapps.pff.verification.Agencies;
+import com.pennanttech.pennapps.pff.verification.StatuReasons;
+import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -2186,18 +2188,18 @@ public class PennantJavaUtil {
 				new ModuleMapping("FIVAgencies", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
 						new String[] { "DealerName", "DealerCity" },
-						new Object[][] { { "DealerType", "0", Codes.FIAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
+						new Object[][] { { "DealerType", "0", Agencies.FIAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
 
 		ModuleUtil.register("FIWaiverReason", new ModuleMapping("FIWaiverReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", Codes.FIWRES.getKey() }, { "Active", "0", 1 } }, 300));
+				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.FIWRES.getKey() }, { "Active", "0", 1 } }, 300));
 			
 		ModuleUtil.register("FieldInvestigation", new ModuleMapping("FieldInvestigation", FieldInvestigation.class,
 				new String[] { "verification_fi", "verification_fi_AView" }, masterWF, null, null, 600));
 		
 		ModuleUtil.register("FIStatusReason", new ModuleMapping("FIStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", Codes.FI_STSTUS_REASON.getKey() }, { "Active", "0", 1 } }, 300));
+				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 300));
 		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,
@@ -2207,11 +2209,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("TVAgencies", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
 						new String[] { "DealerName", "DealerCity" },
-						new Object[][] { { "DealerType", "0", Codes.TVAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
+						new Object[][] { { "DealerType", "0", Agencies.TVAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
 		
 		ModuleUtil.register("TVWaiverReason", new ModuleMapping("TVWaiverReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", Codes.TVWRES.getKey() }, { "Active", "0", 1 } }, 300));
+				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.TVWRES.getKey() }, { "Active", "0", 1 } }, 300));
 
 	}
 

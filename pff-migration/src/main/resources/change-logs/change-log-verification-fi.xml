@@ -341,9 +341,9 @@
 			reinitid
 		    from verification_fi_temp fi
 		     inner join verifications v on v.id = fi.verificationid
-		     inner join amtvehicledealer a on a.dealerid = v.agency
+		     inner join amtvehicledealer a on a.dealerid = v.agency 
 		     left join customers c on c.custid = v.custid
-		     left join reasons r1 on r1.id = fi.reason
+		     left join reasons_aview r1 on r1.id = fi.reason
 			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship 
 			union all
 			select fi.verificationid,
@@ -404,7 +404,7 @@
 		     inner join verifications v on v.id = fi.verificationid
 		     inner join amtvehicledealer a on a.dealerid = v.agency
 		     left join customers c on c.custid = v.custid
-		     left join reasons r1 on r1.id = fi.reason
+		     left join reasons_aview r1 on r1.id = fi.reason
 			 left join bmtprelationcodes r2 on r2.prelationcode=fi.relationship
 			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid);
 		</createView>

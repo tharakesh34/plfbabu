@@ -14,8 +14,6 @@ package com.pennanttech.pennapps.pff.verification;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zkoss.util.resource.Labels;
-
 import com.pennant.backend.model.ValueLabel;
 
 /**
@@ -23,15 +21,16 @@ import com.pennant.backend.model.ValueLabel;
  * Enumeration representing the the Agencies Verification.
  *
  */
-public enum Agencies {
-	 
-	FIAGENCY("FIAGENCY", Labels.getLabel("label_Field_Investigation")), LVAGENCY("LVAGENCY", Labels.getLabel("label_Legal_Verification")), RCUVAGENCY(
-			"RCUVAGENCY", Labels.getLabel("label_RCU_Verification")), TVAGENCY("TVAGENCY", Labels.getLabel("label_Technical_Verification"));
+public enum WaiverReasons {
+
+	FIWRES("FIWRES", "Feild Invetigation Waiver Reasons"), LVWRES("LVWRES",
+			"Legal Verification Waiver Reasons"), TVWRES("TVWRES",
+					"Technical Verification Waiver Reasons"), RCUWRES("RCUWRES", "Risk Control Unit Waiver Reasons");
 
 	private final String key;
 	private final String value;
 
-	private Agencies(String key, String value) {
+	private WaiverReasons(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -44,8 +43,8 @@ public enum Agencies {
 		return value;
 	}
 
-	public static Agencies getType(String key) {
-		for (Agencies type : values()) {
+	public static WaiverReasons getType(String key) {
+		for (WaiverReasons type : values()) {
 			if (type.getKey() == key) {
 				return type;
 			}
@@ -55,7 +54,7 @@ public enum Agencies {
 
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
-		for (Agencies type : values()) {
+		for (WaiverReasons type : values()) {
 			list.add(new ValueLabel(String.valueOf(type.getKey()), type.getValue()));
 		}
 

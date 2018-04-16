@@ -340,14 +340,14 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private void setWindowTitle() {
 		if (module.equals(VASConsatnts.VASAGAINST_PARTNER)) {
 			this.windowTitle.setValue(Labels.getLabel("window_VehicleDealerDialog_Patner.title"));
-		} else if (module.equals(Agencies.FIELD_INVESTIGATION.getKey())) {
-			this.windowTitle.setValue(Agencies.FIELD_INVESTIGATION.getValue());
-		} else if (module.equals(Agencies.LEGAL_VERIFICATION.getKey())) {
-			this.windowTitle.setValue(Agencies.LEGAL_VERIFICATION.getValue());
-		} else if (module.equals(Agencies.RCU_VERIFICATION.getKey())) {
-			this.windowTitle.setValue(Agencies.RCU_VERIFICATION.getValue());
-		} else if (module.equals(Agencies.TECHNICAL_VERIFICATION.getKey())) {
-			this.windowTitle.setValue(Agencies.TECHNICAL_VERIFICATION.getValue());
+		} else if (module.equals(Agencies.FIAGENCY.getKey())) {
+			this.windowTitle.setValue(Agencies.FIAGENCY.getValue());
+		} else if (module.equals(Agencies.LVAGENCY.getKey())) {
+			this.windowTitle.setValue(Agencies.LVAGENCY.getValue());
+		} else if (module.equals(Agencies.RCUVAGENCY.getKey())) {
+			this.windowTitle.setValue(Agencies.RCUVAGENCY.getValue());
+		} else if (module.equals(Agencies.TVAGENCY.getKey())) {
+			this.windowTitle.setValue(Agencies.TVAGENCY.getValue());
 		}
 	}
 

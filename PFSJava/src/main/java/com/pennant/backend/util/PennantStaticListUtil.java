@@ -1042,10 +1042,10 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_PARTNER, "Partner Source"));
 
-			dealerType.add(new ValueLabel(Agencies.FIELD_INVESTIGATION.getKey(), Agencies.FIELD_INVESTIGATION.getValue()));
-			dealerType.add(new ValueLabel(Agencies.LEGAL_VERIFICATION.getKey(), Agencies.LEGAL_VERIFICATION.getValue()));
-			dealerType.add(new ValueLabel(Agencies.RCU_VERIFICATION.getKey(), Agencies.RCU_VERIFICATION.getValue()));
-			dealerType.add(new ValueLabel(Agencies.TECHNICAL_VERIFICATION.getKey(), Agencies.TECHNICAL_VERIFICATION.getValue()));
+			dealerType.add(new ValueLabel(Agencies.FIAGENCY.getKey(), Agencies.FIAGENCY.getValue()));
+			dealerType.add(new ValueLabel(Agencies.LVAGENCY.getKey(), Agencies.LVAGENCY.getValue()));
+			dealerType.add(new ValueLabel(Agencies.RCUVAGENCY.getKey(), Agencies.RCUVAGENCY.getValue()));
+			dealerType.add(new ValueLabel(Agencies.TVAGENCY.getKey(), Agencies.TVAGENCY.getValue()));
 		}
 		return dealerType;
 	}

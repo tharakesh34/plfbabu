@@ -31,8 +31,9 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.verification.Codes;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.WaiverReasons;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -74,8 +75,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("dealerType", Codes.FIAGENCY.getKey());
-		parameterSource.addValue("reasontypecode", Codes.FIWRES.getKey());
+		parameterSource.addValue("dealerType", Agencies.FIAGENCY.getKey());
+		parameterSource.addValue("reasontypecode", WaiverReasons.FIWRES.getKey());
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 		
