@@ -474,6 +474,10 @@
 		<menuItem id="menu_Item_VASCancel"
 			zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=C"
 			rightName="menuItem_Finance_VASCancel" />
+		<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview"/>
+		<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul"/>
+<!-- 		<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/>
+		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
 	</menu>
 
 	<!-- Limits -->
@@ -1408,12 +1412,6 @@
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_Commitment" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentList.zul" 
 		rightName="menuItem_Commitment_Commitment"/> -->
-	<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview" 
-		rightName="" />
-	<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CorpCreditAppReview" 
-		/>
-	<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" 
-		rightName=""/>
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 
 		rightName="menuItem_CustomerMasters_ProspectCustomer" /> -->
 	<menuItem id="menu_Item_UpdateCoreCustomer"
@@ -1421,7 +1419,6 @@
 		rightName="menuItem_CustomerMasters_UpdateCoreCustomer" />
 	<!-- <menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" 
 		rightName="menuItem_MandateFileUpload"/> -->
-	<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
 	<!-- <menuItem id="menu_Item_CustomerAddres" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresList.zul" 
 		rightName="menuItem_CustomerMasters_CustomerAddres" /> -->
 	<menuItem id="menu_Item_CustomerBalanceSheet" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerBalanceSheet/CustomerBalanceSheetList.zul" 
@@ -1541,14 +1538,14 @@
 		rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
 
 	<!-- Misc... -->
-	<menu id="menu_Category_Facility" rightName="menuCat_Facility">
-		<menuItem id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
-			rightName="menuItem_Facility_FacilityEnquiry" />
-		<menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" 
-			rightName="menuItem_Facility_Facility" />
+	<!-- <menu id="menu_Category_Facility" rightName="menuCat_Facility">
 		<menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
 			rightName="menuItem_Facility_Corp" />
-	</menu>
+		<menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" 
+			rightName="menuItem_Facility_Facility" />
+		<menuItem id="menu_Item_FacilityEnquiry" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityEnquiryList.zul?enqiryModule=Y" 
+			rightName="menuItem_Facility_FacilityEnquiry" />
+	</menu> -->
 
 	<menu id="menu_Category_StaticParm">
 		<!-- <menuItem id="menu_Item_ExtendedFieldHeader" zulNavigation="/WEB-INF/pages/StaticParms/ExtendedFieldHeader/ExtendedFieldHeaderList.zul" 
