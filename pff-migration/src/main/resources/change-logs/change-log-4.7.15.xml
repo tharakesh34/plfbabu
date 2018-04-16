@@ -2715,5 +2715,10 @@ UNION ALL
 
 		</createView>
 	</changeSet>
+	<changeSet id="108" author="Sriram">
+		<sql>
+		INSERT INTO LimitCodeDetail Values((select max(limitid)+1 from LimitCodeDetail),'MDEVTR','Manual Deviation Triggering',1,(select max(id)+1 from LimitCodeDetail));
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
