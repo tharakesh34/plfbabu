@@ -2615,8 +2615,11 @@ UNION ALL
  	
  	</createView>
  	</changeSet>
- 	
- 	
- 	
+ 	<changeSet id="103" author="Jayant">
+ 		<modifyDataType tableName="BankBranches" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="BankBranches_Temp" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="PartnerBanks" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="PartnerBanks_Temp" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 	</changeSet>
 </databaseChangeLog>
 	

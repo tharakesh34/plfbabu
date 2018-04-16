@@ -27,7 +27,7 @@
 	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
 	
 	
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
@@ -69,7 +69,7 @@
 			columnName="taxapplicable" newDataType="citext" />
 	</changeSet>
 	
-	<!-- <changeSet id="08" author="Ganesh.p">
+	<changeSet id="08" author="Ganesh.p">
 		<addColumn tableName="ADTCHEQUEDETAIL">
 			<column name="chequetype" type="VARCHAR(8)"></column>
 		</addColumn>
@@ -77,7 +77,7 @@
 	
 	<changeSet id="09" author="Ganesh.p">
 		<dropColumn tableName="ADTCHEQUEHEADER" columnName="chequetype"/>
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="10" author="Sriram">
 		<createTable tableName="AdtManualDeviations">
 		<column name="AUDITID" type="bigint">
@@ -165,6 +165,9 @@
 			<column name="remarks" type="varchar(200)" ></column>
 		</addColumn>
 	</changeSet>
-	
+		<changeSet id="18" author="Jayant">
+ 		<modifyDataType tableName="AdtBankBranches" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="AdtPartnerBanks" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 	</changeSet>
 	
 	</databaseChangeLog>
