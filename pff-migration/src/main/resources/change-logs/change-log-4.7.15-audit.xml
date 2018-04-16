@@ -170,4 +170,9 @@
  		<modifyDataType tableName="AdtPartnerBanks" columnName="BankBranchCode" newDataType="varchar(20)"/>
  	</changeSet>
 	
+	 <changeSet id="19" author="Durgaprasad.G">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL" >
+			<column name="ExtendedType" defaultValue="0" type="int"/>
+		</addColumn>
+		</changeSet>
 	</databaseChangeLog>
