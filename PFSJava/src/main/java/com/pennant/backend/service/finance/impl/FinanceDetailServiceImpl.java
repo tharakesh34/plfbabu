@@ -224,6 +224,7 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.rits.cloning.Cloner;
 
@@ -282,7 +283,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomServiceTask	   			customServiceTask;
 	private CustomerService 				customerService;
-	
+
+	@Autowired(required = false)
+	private CreditInformation 				creditInformation;
 	private ReasonDetailDAO 				reasonDetailDAO;
 
 	private FinTypeExpenseDAO				finTypeExpenseDAO;
@@ -4170,7 +4173,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditHeader = saveOrUpdate(auditHeader, false);
 				auditHeader.setProcessCompleted(true);
 			}
-			
 			return auditHeader;
 		}
 		switch (task.getOperation()) {
@@ -4195,6 +4197,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditHeader.setDeleteNotes(true);
 			}
 			break;
+		case PennantConstants.WF_CIBIL:
+				creditInformation.getCreditEnquiryDetails(auditHeader);
+			break;	
 		case PennantConstants.method_doCheckDeviations:
 			List<FinanceDeviations> list =new ArrayList<>();
 			List<FinanceDeviations> autoDeviations = financeDetail.getFinanceDeviations();
@@ -4216,6 +4221,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				afinanceMain.setDeviationApproval(deviationfound);
 			}
 			break;
+
 		default:
 			/*// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {
@@ -4224,6 +4230,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					return auditHeader;
 				}
 			}
+			
 			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 				auditHeader = delete(auditHeader, false);
 				auditHeader.setDeleteNotes(true);
@@ -9317,6 +9324,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setFinExpenseDetailsDAO(FinExpenseDetailsDAO finExpenseDetailsDAO) {
 		this.finExpenseDetailsDAO = finExpenseDetailsDAO;
+	}
+	
+	public void setCreditInformation(CreditInformation creditInformation) {
+		this.creditInformation = creditInformation;
 	}
 
 }
