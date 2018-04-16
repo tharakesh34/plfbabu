@@ -44,6 +44,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,9 +55,13 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
@@ -74,6 +79,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private JountAccountDetailDAO jountAccountDetailDAO;
+	private ExtendedFieldRenderDAO				extendedFieldRenderDAO;
+
 
 	public JointAccountDetailServiceImpl() {
 		super();
@@ -103,6 +110,10 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	 */
 	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
 		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	}
+	
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 
 	/**
@@ -444,7 +455,6 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		
 		for (JointAccountDetail jointAccountDetail : jointAcDetailList) {
 			jointAccountDetail.setWorkflowId(0);
-
 			if (jointAccountDetail.isNewRecord()) {
 				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
 			} else {
@@ -452,6 +462,92 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			}
 			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], jointAccountDetail.getBefImage(), jointAccountDetail));
+			
+			
+			if (jointAccountDetail.getCustomerDetails() != null) {
+				if (jointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null) {
+					boolean isSaveRecord = false;
+					ExtendedFieldHeader extendedFieldHeader = jointAccountDetail.getCustomerDetails().getExtendedFieldHeader();
+					StringBuilder tableName = new StringBuilder();
+					tableName.append(extendedFieldHeader.getModuleName());
+					tableName.append("_");
+					tableName.append(extendedFieldHeader.getSubModuleName());
+					tableName.append("_ED");
+
+					ExtendedFieldRender extendedFieldRender = jointAccountDetail.getCustomerDetails().getExtendedFieldRender();
+					if (StringUtils.isEmpty(tableType)) {
+						extendedFieldRender.setRoleCode("");
+						extendedFieldRender.setNextRoleCode("");
+						extendedFieldRender.setTaskId("");
+						extendedFieldRender.setNextTaskId("");
+					}
+
+					// Table Name addition for Audit
+					extendedFieldRender.setTableName(tableName.toString());
+					extendedFieldRender.setWorkflowId(0);
+
+					// Add Common Fields
+					HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+					Customer aCustomer = jointAccountDetail.getCustomerDetails().getCustomer();
+					if (aCustomer.isNewRecord()) {
+						isSaveRecord = true;
+					}
+					if (isSaveRecord) {
+						extendedFieldRender.setReference(jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF());
+						mapValues.put("Reference", extendedFieldRender.getReference());
+						mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					}
+
+					mapValues.put("Version", extendedFieldRender.getVersion());
+					mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+					mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+					mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+					mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+					mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+					mapValues.put("TaskId", extendedFieldRender.getTaskId());
+					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+					mapValues.put("RecordType", extendedFieldRender.getRecordType());
+					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+
+					// Audit Details Preparation
+					HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender
+							.getMapValues();
+					auditMapValues.put("Reference", extendedFieldRender.getReference());
+					auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					auditMapValues.put("Version", extendedFieldRender.getVersion());
+					auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+					auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+					auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+					auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+					auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+					auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
+					auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+					auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
+					auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+					extendedFieldRender.setAuditMapValues(auditMapValues);
+
+					if (isSaveRecord) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						extendedFieldRender.setRecordType("");
+						extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), "",
+								tableName.toString());
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						extendedFieldRenderDAO.update(extendedFieldRender.getReference(),
+								extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), "",
+								tableName.toString());
+					}
+					/*if (StringUtils.isNotBlank(extendedFieldRender.getReference())) {
+						String[] extFields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
+						AuditDetail auditDetail = new AuditDetail(auditTranType, auditDetails.size()+1, extFields[0], extFields[1],
+								extendedFieldRender.getBefImage(), extendedFieldRender);
+						auditDetail.setExtended(true);
+						auditDetails.add(auditDetail);
+					}*/
+				}
+			}
+			
 		}
 
 		logger.debug("Leaving");
