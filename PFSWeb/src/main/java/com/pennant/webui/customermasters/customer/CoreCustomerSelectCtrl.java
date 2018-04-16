@@ -513,7 +513,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		if(isRetailCustomer){
 			this.label_CoreCustomerDialog_CustCRCPR.setValue(Labels.getLabel("label_CoreCustomerDialog_CustCPR.value"));
-			this.label_CoreCustomerDialog_CustNationality.setValue(Labels.getLabel("label_CoreCustomerDialog_CustCountry.value"));
+			this.label_CoreCustomerDialog_CustNationality.setValue(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"));
 			this.label_CoreCustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"));
 			this.eidNumber.setMaxlength(LengthConstants.LEN_EID);
 		}else{

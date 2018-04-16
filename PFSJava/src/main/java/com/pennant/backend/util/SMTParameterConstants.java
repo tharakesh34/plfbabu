@@ -53,4 +53,5 @@ public class SMTParameterConstants {
 	public static final String	DEFAULT_KYC_PRIORITY = "DEFAULT_KYC_PRIORITY";
 	public static final int		PRESENTATION_HOLD_DAYS	= 2;
 	public static final String	ALMEXTRACT_FROMFINSTARTDATE =  "ALMEXTRACT_FROMFINSTARTDATE";
+	public static final String	PANCARD_REQ			= "PAN_REQ";
 }
