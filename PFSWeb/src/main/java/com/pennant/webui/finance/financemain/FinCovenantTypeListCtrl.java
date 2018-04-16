@@ -377,7 +377,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		aFinCovenantType.setFinReference(financedetail.getFinScheduleData().getFinReference());
 		aFinCovenantType.setNewRecord(true);
 		aFinCovenantType.setWorkflowId(0);
-		aFinCovenantType.setAlwPostpone(true);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finCovenantTypes", aFinCovenantType);
