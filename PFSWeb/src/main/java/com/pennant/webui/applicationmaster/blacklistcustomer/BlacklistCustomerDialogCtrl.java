@@ -119,8 +119,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BlacklistCustomerDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 			}else{
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}	
