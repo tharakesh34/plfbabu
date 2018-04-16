@@ -2803,8 +2803,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (rpMthds.length > 0) {
 				List<String> list = Arrays.asList(rpMthds);
 				for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
-					if (list.contains(rpyMthd.getValue().trim())
-							&& !StringUtils.equals(rpyMthd.getValue().trim(), FinanceConstants.REPAYMTH_PDC)) {
+					if (list.contains(rpyMthd.getValue().trim())) {
 						rpyMethodList.add(rpyMthd);
 					}
 				}
