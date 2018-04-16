@@ -412,40 +412,28 @@ public class ExtendedFieldsValidation {
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
 
-				if (!deleteRecord) {
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", false, true, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
-				} else {
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", true, false, false);
-					extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
-
-					//if it is an input element added column in ED table.
-					if (extendedFieldDetail.isInputElement()) {
-						if (!deleteRecord) {
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
-						} else {
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
-							extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
-						}
+				//if it is an input element added column in ED table.
+				if (extendedFieldDetail.isInputElement()) {
+					if (!deleteRecord) {
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
+					} else {
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
+						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
 					}
-					//saving secRight for Loan and CustomerModule while approving.
-					if (securityRightDAO != null
-							&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-						if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
-							SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
-							if (!isSeqSecRightsUpdated) {
-								securityRightDAO.updateSeqSecRights();
-								isSeqSecRightsUpdated = true;
-							}
-							securityRightDAO.save(securityRight);
+				}
+				//saving secRight for Loan and CustomerModule while approving.
+				if (securityRightDAO != null
+						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+					if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
+						SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
+						if (!isSeqSecRightsUpdated) {
+							securityRightDAO.updateSeqSecRights();
+							isSeqSecRightsUpdated = true;
 						}
+						securityRightDAO.save(securityRight);
 					}
 				}
 				auditDetails.get(i).setModelData(extendedFieldDetail);
