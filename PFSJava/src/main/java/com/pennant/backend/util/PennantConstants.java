@@ -79,7 +79,6 @@ public class PennantConstants {
 	public static final String DBDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 	public static final String AS400DateFormat = "yyMMdd";
 	public static final String dateAndTimeFormat = "dd-MMM-yyyy HH:mm";
-	public static final String DBDateTimeFormat2 = "yyyy-MM-dd HH:mm";
 	public static final String XMLDateFormat = "yyyy-MM-dd HH:mm";
 	public static final String APIDateFormatter = "yyyy-MM-dd'T'HH:mm:ss";
 

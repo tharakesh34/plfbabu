@@ -76,7 +76,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.backend.model.QueueAssignment;
@@ -1016,9 +1015,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		// finDOB
 		if (this.finDateofBirth.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finDateofBirth.getSelectedItem(),
-					DateUtility.formatDate(this.finDateofBirth.getValue(), PennantConstants.DBDateFormat),
-					"LovDescCustDOB");
+			searchObj = getSearchFilter(searchObj, sortOperator_finDateofBirth.getSelectedItem(),
+					finDateofBirth.getValue(), "LovDescCustDOB");
 		}
 		// finEIDNumber
 		if (StringUtils.isNotBlank(this.finEIDNumber.getValue())) {
@@ -1035,8 +1033,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Here added filters for If InitiateDate value is null, when search
 		// with opreator(<>) value not papulated.
 		if (this.initiateDate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_InitiateDate.getSelectedItem(),
-					DateUtility.formatDate(this.initiateDate.getValue(), PennantConstants.DBDateTimeFormat),
+			searchObj = getSearchFilter(searchObj, sortOperator_InitiateDate.getSelectedItem(), initiateDate.getValue(),
 					"InitiateDate");
 		}
 		// finPromotion
@@ -1053,9 +1050,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		// finRequestDate
 		if (this.finRequestDate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finRequestDate.getSelectedItem(),
-					DateUtility.formatDate(this.finRequestDate.getValue(), PennantConstants.DBDateFormat),
-					"FinContractDate");
+			searchObj = getSearchFilter(searchObj, sortOperator_finRequestDate.getSelectedItem(),
+					finRequestDate.getValue(), "FinContractDate");
 		}
 		// finQueuePriority
 		if (this.finQueuePriority.getSelectedIndex() > 0
