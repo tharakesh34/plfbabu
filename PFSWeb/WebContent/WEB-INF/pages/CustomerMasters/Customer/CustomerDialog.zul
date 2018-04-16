@@ -210,7 +210,7 @@
 													</hbox>
 												</row>
 												<row>
-													<label
+													<label id="label_CustomerDialog_CustNationality"
 														value="${c:l('label_CustomerDialog_CustNationality.value')}" />
 													<extendedcombobox
 														id="custNationality" />
