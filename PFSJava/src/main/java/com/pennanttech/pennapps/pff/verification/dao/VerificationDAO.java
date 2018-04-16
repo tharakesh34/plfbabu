@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.core.TableType;
 
 public interface VerificationDAO extends BasicCrudDao<Verification> {
 
@@ -61,4 +62,5 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	 */
 	List<Verification> getFiVeriFications(String keyReference);
 	void updateVerifiaction(long verificationId,Date verificationDate,int status);
+	void updateReInit(Verification verification, TableType tableType);
 }

@@ -46,6 +46,7 @@
 			<column name="ReferenceFor" type="varchar(20)" />
 			<column name="CustId" type="bigint" />
 			<column name="RequestType" type="int" defaultValue="0" remarks="FI-1, TV-2, LV-3, RCU-4"/>
+			<column name="ReInitId" type="bigint"/>
 			<column name="Agency" type="bigint" />
 			<column name="Reason" type="bigint" />
 			<column name="Remarks" type="varchar(500)" />
@@ -336,7 +337,8 @@
 		    v.keyreference,
 		    v.createdon,
 		    v.agency,
-			a.dealerName as agencyName
+			a.dealerName as agencyName,
+			reinitid
 		    from verification_fi_temp fi
 		     inner join verifications v on v.id = fi.verificationid
 		     inner join amtvehicledealer a on a.dealerid = v.agency
@@ -396,7 +398,8 @@
 		    v.keyreference,
 		    v.createdon,
 		    v.agency,
-			a.dealerName as agencyName
+			a.dealerName as agencyName,
+			reinitid
 		    from verification_fi fi
 		     inner join verifications v on v.id = fi.verificationid
 		     inner join amtvehicledealer a on a.dealerid = v.agency

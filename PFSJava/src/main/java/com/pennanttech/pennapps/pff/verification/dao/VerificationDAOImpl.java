@@ -60,7 +60,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
-		sql.append(" requesttype, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
+		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
@@ -99,14 +99,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verifications");
 		sql.append("(verificationType, module, keyReference, referenceType, reference,");
-		sql.append(" referenceFor, custId, requestType, agency, reason, remarks,");
+		sql.append(" referenceFor, custId, requestType, reinitid, agency, reason, remarks,");
 		sql.append(" createdBy, createdOn, status, agencyReason, agencyRemarks,");
 		sql.append(" verificationDate, decision, decisionRemarks,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(":verificationType, :module, :keyReference, :referenceType, :reference,");
-		sql.append(" :referenceFor, :custId, :requestType, :agency, :reason, :remarks,");
+		sql.append(" :referenceFor, :custId, :requestType, :reinitid, :agency, :reason, :remarks,");
 		sql.append(" :createdBy, :createdOn, :status, :agencyReason, :agencyRemarks,");
 		sql.append(" :verificationDate, :decision,  :decisionRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
@@ -138,7 +138,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(tableType.getSuffix());
 		sql.append(" set verificationType = :verificationType, module = :module, keyReference = :keyReference, ");
 		sql.append(" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, ");
-		sql.append(" requestType = :requestType, agency = :agency, ");
+		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, ");
 		sql.append(" reason = :reason, remarks = :remarks, createdBy = :createdBy, ");
 		sql.append(" createdOn = :createdOn, status = :status, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, verificationDate = :verificationDate, ");
@@ -147,7 +147,30 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(verification);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void updateReInit(Verification verification, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("update verifications");
+		sql.append(tableType.getSuffix());
+		sql.append(" set reinitid = :reinitid, Version = :Version,");
+		sql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn where id = :id ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -193,7 +216,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	public void updateVerifiaction(long verificationId, Date verificationDate, int status) {
-		// TODO Auto-generated method stub
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(" set verificationdate = :verificationdate, status = :status ");
 		sql.append(" where id = :id ");

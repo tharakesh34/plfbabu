@@ -139,6 +139,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setCreatedOn(item.getLastMntOn());
 					item.setCreatedBy(item.getLastMntBy());
 					
+					Verification reInit = new Verification();
+					reInit.setId(item.getId());
+					reInit.setLastMntOn(item.getLastMntOn());
+					reInit.setLastMntBy(item.getLastMntBy());
+										
 					if (verificationType == VerificationType.FI) {
 						item.setStatus(FIStatus.SELECT.getKey());
 					}
@@ -150,6 +155,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					item.setRequestType(RequestType.INITIATE.getKey());
 					item.setReason(null);
 					verificationDAO.save(item, TableType.MAIN_TAB);	
+					
+					reInit.setReinitid(item.getId());
+					verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
 					
 					if (verificationType == VerificationType.FI) {
 						saveFI(customerDetailsList, item);

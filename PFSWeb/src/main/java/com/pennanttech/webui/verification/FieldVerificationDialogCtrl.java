@@ -44,7 +44,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.Status;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
@@ -282,6 +281,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
+			
+			if (vrf.getReinitid() != null) {
+				continue;
+			}
+			
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
@@ -324,7 +328,20 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
-			fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
+			
+			List<ValueLabel> list = new ArrayList<>();
+			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
+				for (ValueLabel valueLabel : RequestType.getList()) {
+					if (Integer.parseInt(valueLabel.getValue()) != RequestType.WAIVE.getKey()) {
+						list.add(valueLabel);
+					}
+				}
+
+				fillComboBox(requestType, vrf.getRequestType(), list);
+			} else {
+				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
+			}
+			
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
@@ -385,9 +402,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				if(vrf.getStatus() == FIStatus.SELECT.getKey() && vrf.getRequestType() == RequestType.INITIATE.getKey()){
-					decision.setDisabled(true);
-				}
+				
 				decision.setParent(listCell);
 				listCell.setParent(item);
 				

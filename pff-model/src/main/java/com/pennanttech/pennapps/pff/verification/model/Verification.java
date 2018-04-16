@@ -37,6 +37,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String					referenceFor;
 	private Long					custId;
 	private int						requestType;
+	private Long 					reinitid;
 	private Long					agency;
 	private Long					reason;
 	private String					remarks;
@@ -161,6 +162,14 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setRequestType(int requestType) {
 		this.requestType = requestType;
+	}
+	
+	public Long getReinitid() {
+		return reinitid;
+	}
+
+	public void setReinitid(Long reinitid) {
+		this.reinitid = reinitid;
 	}
 
 	public Long getAgency() {

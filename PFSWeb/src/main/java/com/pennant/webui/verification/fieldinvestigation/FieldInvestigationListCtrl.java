@@ -158,6 +158,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
 			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
 		}
+		
+		this.searchObject.addFilter(new Filter("reinitid", Filter.OP_NOT_NULL));
 	}
 
 	public void onFulfill$agency(Event event) {

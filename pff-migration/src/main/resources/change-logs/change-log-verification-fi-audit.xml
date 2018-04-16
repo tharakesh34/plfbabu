@@ -61,6 +61,7 @@
 			<column name="ReferenceFor" type="varchar(20)" />
 			<column name="CustId" type="bigint" />
 			<column name="RequestType" type="int" defaultValue="0" remarks="FI-1, TV-2, LV-3, RCU-4"/>
+			<column name="ReInitId" type="bigint"/>
 			<column name="Agency" type="bigint" />
 			<column name="Reason" type="bigint" />
 			<column name="Remarks" type="varchar(500)" />
