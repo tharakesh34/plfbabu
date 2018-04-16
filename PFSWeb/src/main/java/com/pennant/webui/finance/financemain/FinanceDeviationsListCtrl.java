@@ -263,7 +263,6 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		registerField("NextRoleCode");
 		registerField("FinPurpose");
 		registerField("FinCurrAssetValue");
-		registerField("FeeChargeAmt");
 		registerField("InsuranceAmt");
 
 		// Render the page and display the data.

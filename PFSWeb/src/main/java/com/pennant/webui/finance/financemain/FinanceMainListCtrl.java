@@ -79,6 +79,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.backend.model.QueueAssignment;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -281,9 +282,17 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		this.sortOperator_finRequestStage.setModel(new ListModelList<SearchOperators>(new SearchOperators()
 				.getEqualOrNotOperators()));
-		Filter[] filters = new Filter[1];
-		filters[0] = Filter.in("RoleCd", usrfinRolesList);
-		fillComboBox(this.finRequestStage, "", PennantAppUtil.getSecRolesList(filters), "");
+		ArrayList<ValueLabel> secRolesList=null;
+		if (usrfinRolesList!=null && !usrfinRolesList.isEmpty()) {
+			Filter[] filters = new Filter[1];
+			filters[0] = Filter.in("RoleCd", usrfinRolesList);
+			secRolesList = PennantAppUtil.getSecRolesList(filters);
+		}
+		if (secRolesList==null) {
+			secRolesList=new ArrayList<ValueLabel>();	
+		}
+		
+		fillComboBox(this.finRequestStage, "", secRolesList, "");
 		this.sortOperator_finRequestStage.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_finQueuePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators()
