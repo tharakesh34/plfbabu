@@ -1,7 +1,9 @@
 package com.pennanttech.pff.external.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennanttech.dataengine.constants.ValueLabel;
 
@@ -281,4 +283,65 @@ public class StaticListUtil {
 		return values;
 
 	}
+	
+	
+	public static final HashMap<String, String> getCibilOccupationCode() {
+		HashMap<String, String> occupationTypes = new HashMap<String, String>();
+		occupationTypes.put("01", "Salaried");
+		occupationTypes.put("02", "Self Employeed Professional");
+		occupationTypes.put("03", "Self Employed");
+		occupationTypes.put("04", "Others");
+		return occupationTypes;
+
+	}
+	
+	public static final HashMap<String, String> getCibilIncomeIndicator() {
+		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
+		incomeIndicator.put("G", "Gross Income");
+		incomeIndicator.put("N", "Net Income");
+		return incomeIndicator;
+
+	}
+	
+	public static final HashMap<String, String> getCibilMonthlyAnnualIncomeIndicator() {
+		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
+		incomeIndicator.put("M", "Monthly");
+		incomeIndicator.put("A", "Annual");
+		return incomeIndicator;
+
+	}
+	
+	public static final HashMap<String, String> getCibilAddrCategory() {
+		HashMap<String, String> addrCategory = new HashMap<String, String>();
+		addrCategory.put("01", "Permanent Address");
+		addrCategory.put("02", "Residence Address");
+		addrCategory.put("03", "Office Address");
+		addrCategory.put("04", "Not Categorized");
+		return addrCategory;
+
+	}
+	
+	
+	public static final HashMap<String, String> getCibilResidenceCode() {
+		HashMap<String, String> residenceCode = new HashMap<String, String>();
+		residenceCode.put("01", "Owned");
+		residenceCode.put("02", "Rented");
+		return residenceCode;
+
+	}
+	
+	public static final HashMap<String, String> getCibilIDTypes() {
+		HashMap<String, String> telephoneTypes = new HashMap<String, String>();
+		telephoneTypes.put("01", "Pan Number");
+		telephoneTypes.put("02", "PassPortNumber");
+		telephoneTypes.put("03", "Voter ID Number");
+		telephoneTypes.put("04", "Driving License");
+		telephoneTypes.put("05", "Ration Card Number");
+		telephoneTypes.put("06", "Universal ID Number");
+		return telephoneTypes;
+
+	}
+	
+	
+	
 }

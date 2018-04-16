@@ -116,5 +116,13 @@ public class InterfaceConstants {
 		
 		public final static String		wrongValueMSG		= App.getLabel("WRONG_VALUE_EXT");
 		public final static String		wrongLengthMSG		= App.getLabel("WRONG_LENGTH_EXT");
+		
+		public static final String MODULE_CUSTOMER 			= "CUSTOMER";
+		public static final String	MODULE_FINANCE						= "Finance";
+		public static final String GENDER = "Gender";
+		public static final String MALE = "MALE";
+		public static final String FEMALE = "FEMALE";
+
+
 	
 }

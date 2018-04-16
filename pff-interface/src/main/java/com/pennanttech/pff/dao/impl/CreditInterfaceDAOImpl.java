@@ -1,4 +1,4 @@
-package com.pennanttech.pff.logging.dao.impl;
+package com.pennanttech.pff.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.mchange.util.DuplicateElementException;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -28,55 +29,22 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.servicetask.ServiceTaskDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
+import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
-public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
+public class CreditInterfaceDAOImpl implements CreditInterfaceDAO {
 	
-	private static final Logger			logger		= Logger.getLogger(InterfaceLoggingDAOImpl.class);
+	private static final Logger			logger		= Logger.getLogger(CreditInterfaceDAOImpl.class);
 	
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 	protected DefaultTransactionDefinition	transDef;
 	private PlatformTransactionManager	transactionManager;
+
 		
-	@Override
-	public void save(InterfaceLogDetail interfaceLogDetail) {
-		logger.debug(Literal.ENTERING);
-
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
-
-		// begin transaction
-		txStatus = transactionManager.getTransaction(txDef);
-		
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CibilInterfaceLogDetails ");
-		insertSql.append(" (ServiceName, Reference, EndPoint, Request, Response,");
-		insertSql.append("  ReqSentOn, RespReceivedOn, Status, ErrorCode, ErrorDesc)");
-		insertSql.append(" Values(:ServiceName, :Reference, :EndPoint, :Request, :Response,");
-		insertSql.append("  :ReqSentOn, :RespReceivedOn, :Status, :ErrorCode, :ErrorDesc)");
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
-		try {
-			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-			//commit
-			transactionManager.commit(txStatus);
-		} catch (Exception dee) {
-			logger.error("Exception", dee);
-			transactionManager.rollback(txStatus);
-			throw dee;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-	
-	
-	
 	/**
 	 * Method for fetch the ExtendedFieldDetails based on given fieldaNames
 	 * 
@@ -391,6 +359,73 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
+	
+	
+	@Override
+	public void save(ServiceTaskDetail serviceTaskDetail, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+
+		// begin transaction
+		txStatus = transactionManager.getTransaction(txDef);
+		
+		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
+			//serviceTaskDetail.setId(getNextId("SeqBMTAcademics"));
+		}
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into ServiceTaskDetails ");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (TaskExecutionId, ServiceModule, Reference, ServiceTaskId, ");
+		insertSql.append(" ServiceTaskName , UserId, ExecutedTime, Status, Remarks)");
+		insertSql.append(" Values( :TaskExecutionId, :ServiceModule, :Reference, :ServiceTaskId,");
+		insertSql.append(" :ServiceTaskName , :UserId, :ExecutedTime, :Status, :Remarks)");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(serviceTaskDetail);
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			//commit
+			transactionManager.commit(txStatus);
+		} catch (DuplicateElementException dee) {
+			logger.error("Exception", dee);
+			transactionManager.rollback(txStatus);
+			throw dee;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public List<ServiceTaskDetail> getServiceTaskDetails(String module, String reference, String serviceTaskName) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ServiceModule", module);
+		source.addValue("Reference", reference);
+		source.addValue("ServiceTaskName", serviceTaskName);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT TaskExecutionId, ServiceModule, Reference, ServiceTaskId,");
+		selectSql.append(" ServiceTaskName, UserId, ExecutedTime, Status, Remarks From ServiceTaskDetails");
+		selectSql.append(" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.LEAVING);
+		try {
+			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(dae);
+			return Collections.emptyList();
+		}
+	}
+	
 	/**
 	 * To Set dataSource
 	 * 
@@ -399,9 +434,10 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 
 }
+
