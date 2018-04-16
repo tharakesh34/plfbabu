@@ -62,6 +62,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -112,6 +113,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.constants.InterfaceConstants;
@@ -158,6 +160,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Row								preApprovedFinRefrow;
 	protected Combobox							custCtgType;
 	protected Uppercasebox						eidNumber;
+	protected Space								space_EIDNumber;
 	protected Label								label_SelectFinanceTypeDialog_EIDNumber;
 
 	protected FinanceMainListCtrl				financeMainListCtrl;														//over handed parameter
@@ -185,6 +188,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private boolean								isPromotionPick		= false;
 	private boolean								isRetailCustomer	= false;
 	public String								wIfFinaceRef_Temp	= "";
+	private String 								isPANMandatory		= "";
 
 	/**
 	 * default constructor.<br>
@@ -1252,7 +1256,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
 							PennantRegularExpressions.REGEX_TRADELICENSE, false));
-				} else {
+				}else if(StringUtils.equals("Y",isPANMandatory)){
+					this.eidNumber.setConstraint(new PTStringValidator(Labels
+							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
+							PennantRegularExpressions.REGEX_PANNUMBER, true));
+				}
+				else {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
 							.getLabel("label_SelectFinanceTypeDialog_TradeLicenseNumber.value"),
 							PennantRegularExpressions.REGEX_PANNUMBER, false));
@@ -1638,6 +1647,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onChange$custCtgType(Event event) {
 		logger.debug("Entering" + event.toString());
 		changeCustCtgType();
+		
+		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
+		if (StringUtils.equals("Y",isPANMandatory)) {
+			this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
+		}else{
+			this.space_EIDNumber.setSclass("");
+		}
+
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
