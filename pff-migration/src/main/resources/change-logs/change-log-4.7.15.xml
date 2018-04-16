@@ -2720,5 +2720,12 @@ UNION ALL
 		INSERT INTO LimitCodeDetail Values((select max(limitid)+1 from LimitCodeDetail),'MDEVTR','Manual Deviation Triggering',1,(select max(id)+1 from LimitCodeDetail));
 		</sql>
 	</changeSet>
+	
+	<changeSet id="109" author="Manoj">
+		<sql>
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'CBIL_PROCESS_REQ';
+			INSERT INTO SMTPARAMETERS VALUES ('CBIL_PROCESS_REQ', 	'Cibil Processing required or not', 'String', 1,  'N', '1', 0, NULL, NULL, 'Cibil Processing required or not', 1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
