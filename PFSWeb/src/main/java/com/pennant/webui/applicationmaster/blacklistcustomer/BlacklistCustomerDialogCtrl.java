@@ -34,6 +34,7 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -93,15 +94,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 * @throws Exception
 	 */
 	public void onCreate$window_BlacklistCustomerDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_BlacklistCustomerDialog);
 
 		try {
-			/* set components visible dependent of the users rights */
-			doCheckRights();
-
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("blackListCustomer")) {
 				this.blacklistCustomer = (BlackListCustomers) arguments
@@ -141,12 +139,14 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 
 			// set Field Properties
 			doSetFieldProperties();
+			doCheckRights();
 			doShowDialog(getBlacklistCustomer());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_BlacklistCustomerDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
