@@ -751,7 +751,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		try {
 			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.warn("Exception", e);
 			return null;
 		}
     }
