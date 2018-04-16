@@ -202,11 +202,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_blacklistCustomerList_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_blacklistCustomerList_btnEdit"));
+				"button_BlacklistCustomerDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_blacklistCustomerList_btnDelete"));
+				"button_BlacklistCustomerDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_blacklistCustomerList_btnSave"));
+				"button_BlacklistCustomerDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
