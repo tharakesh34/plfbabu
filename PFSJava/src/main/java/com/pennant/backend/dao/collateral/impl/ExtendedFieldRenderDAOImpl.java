@@ -297,14 +297,14 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		source.addValue("Value", fieldValue);
 		source.addValue("active", true);
 		//FIXME: Need to change the method implementation
-		/*if(column.equals("CustGrpID") || column.equals("EmpName")) {
+		if(column.equals("CustGrpID") || column.equals("EmpName")) {
 			source.addValue("Value",fieldValue);
 			column = "EmployerId";
 			source.addValue("ColumnName", "EmployerId");
 		} else if(column.equals("DealerName")) {
 			tempFix = true;
 			source.addValue("Value", fieldValue);
-		}*/
+		}
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM ");
