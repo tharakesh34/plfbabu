@@ -130,9 +130,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR ) {
 					
 					if (verificationType == VerificationType.FI) {
-						for (CustomerDetails customerDetails : customerDetailsList) {
-							fieldInvestigationService.saveFieldInvestigation(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
-						}
+						saveFI(customerDetailsList, item);
 					}
 					
 				}
@@ -140,25 +138,21 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				if(item.getDecision() == Decision.RE_INITIATE.getKey()){
 					item.setCreatedOn(item.getLastMntOn());
 					item.setCreatedBy(item.getLastMntBy());
-					item.setStatus(FIStatus.SELECT.getKey());
+					
+					if (verificationType == VerificationType.FI) {
+						item.setStatus(FIStatus.SELECT.getKey());
+					}
+					
 					item.setVerificationDate(null);
 					item.setDecision(Decision.SELECT.getKey());
 					item.setAgency(item.getReInitAgency());
 					item.setRemarks(item.getReInitRemarks());
 					item.setRequestType(RequestType.INITIATE.getKey());
 					item.setReason(null);
-					verificationDAO.save(item, TableType.MAIN_TAB);
-					if (item.getFieldInvestigation() == null) {
-						for (CustomerDetails customerDetails : customerDetailsList) {
-							fieldInvestigationService.saveFieldInvestigation(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
-						}
-					} else {
-						item.getFieldInvestigation().setVerificationId(item.getId());
-						item.getFieldInvestigation().setLastMntOn(item.getLastMntOn());
-						if (verificationType == VerificationType.FI) {
-							fieldInvestigationService.save(item.getFieldInvestigation(), TableType.TEMP_TAB);
-
-						}
+					verificationDAO.save(item, TableType.MAIN_TAB);	
+					
+					if (verificationType == VerificationType.FI) {
+						saveFI(customerDetailsList, item);
 					}
 				}else{
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -169,6 +163,18 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 
 		return auditDetails;
+	}
+
+	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {		
+		if (item.getFieldInvestigation() == null) {
+			for (CustomerDetails customerDetails : customerDetailsList) {
+				fieldInvestigationService.save(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
+			}
+		} else if(item.getRequestType() == RequestType.INITIATE.getKey()){
+			item.getFieldInvestigation().setVerificationId(item.getId());
+			item.getFieldInvestigation().setLastMntOn(item.getLastMntOn());
+			fieldInvestigationService.save(item.getFieldInvestigation(), TableType.TEMP_TAB);
+		}
 	}
 
 	/**

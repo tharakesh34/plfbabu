@@ -48,6 +48,7 @@ import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -259,6 +260,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				fiInquiry.getChildren().clear();
 			}
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul", fiInquiry, map);
+		} else {
+			MessageUtil.showMessage("Initiation request not avilable in Field Investigation Module.");
 		}
 
 	}

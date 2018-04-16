@@ -188,8 +188,6 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 
 	@Override
 	public FieldInvestigation getFieldInvestigation(long id, String type) {
-		FieldInvestigation fieldInvestigation = new FieldInvestigation();
-		fieldInvestigation.setId(id);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationid, name, addresstype, housenumber,flatnumber, street,");
 		sql.append(
@@ -208,18 +206,17 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		sql.append(" Where verificationid =:id");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(fieldInvestigation);
-		RowMapper<FieldInvestigation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FieldInvestigation.class);
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("id", id);
 
 		try {
-			fieldInvestigation = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource,
+					ParameterizedBeanPropertyRowMapper.newInstance(FieldInvestigation.class));
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			fieldInvestigation = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fieldInvestigation;
+		return null;
 	}
 }

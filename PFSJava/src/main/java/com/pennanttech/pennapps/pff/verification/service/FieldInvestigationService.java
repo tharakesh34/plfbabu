@@ -41,7 +41,7 @@ public interface FieldInvestigationService {
 
 	List<Long> getFieldInvestigationIds(List<Verification> verifications,String keyRef);
 
-	void saveFieldInvestigation(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item);
+	void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item);
 
 	Verification getFiVeriFication(Verification verification);
 

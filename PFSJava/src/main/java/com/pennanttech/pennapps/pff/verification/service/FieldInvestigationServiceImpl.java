@@ -346,8 +346,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 	
 	@Override
-	public void saveFieldInvestigation(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers,
-			Verification item) {
+	public void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item) {
 		for (CustomerAddres address : applicant.getAddressList()) {
 			if ((item.getRequestType() == RequestType.INITIATE.getKey()
 					|| item.getDecision() == Decision.RE_INITIATE.getKey()) && (item.getCustId() == address.getCustID())
