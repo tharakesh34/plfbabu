@@ -68,7 +68,7 @@
 									id="label_SelectFinanceTypeDialog_EIDNumber"
 									value="${c:l('label_SelectFinanceTypeDialog_EIDNumber.value')}"/>
 								<hbox>
-									<space spacing="2px"/>
+									<space spacing="2px" id="space_EIDNumber"/>
 									<uppercasebox id="eidNumber"
 										width="154px" />
 								</hbox>
