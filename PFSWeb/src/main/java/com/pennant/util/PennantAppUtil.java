@@ -88,6 +88,7 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -737,6 +738,7 @@ public class PennantAppUtil {
 		moduleList.add("BuilderProjcet");
 		moduleList.add("Locality");
 		moduleList.add("LoanPurpose");
+		moduleList.add("PRelationCode");
 		
 		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
 
@@ -1701,7 +1703,7 @@ public class PennantAppUtil {
 		searchObject.addFilterEqual("RuleModule", module);
 		if(module.equals(RuleConstants.MODULE_LMTLINE)){	
 			if(active)
-			searchObject.addFilterEqual("Active", "1");
+			searchObject.addFilterEqual("Active", 1);
 		}		
 		List<Rule> list = pagedListService.getBySearchObject(searchObject);
 		if (list != null && !list.isEmpty()) {
@@ -1718,7 +1720,7 @@ public class PennantAppUtil {
 		JdbcSearchObject<LimitGroup> searchObject = new JdbcSearchObject<LimitGroup>(LimitGroup.class);
 		searchObject.addTabelName("LimitGroup_AView");
 		if(active){
-			searchObject.addFilterEqual("Active", "1");
+			searchObject.addFilterEqual("Active", 1);
 		}
 		if(category!=null){
 			searchObject.addFilterEqual("LimitCategory", category);
@@ -2099,5 +2101,29 @@ public class PennantAppUtil {
 		}
 		return coApplicants;
 		
+	}
+	
+	/**
+	 * 
+	 * @param cafType 
+	 * @return
+	 */
+	public static List<String> getFacilityHeaderCustomer(String cafType) {
+
+		List<String> facilityHeader = new ArrayList<String>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<Facility> searchObject = new JdbcSearchObject<Facility>(Facility.class);
+
+		searchObject.addTabelName("FacilityHeader_View");
+		searchObject.addFilterEqual("FacilityType", cafType);
+		searchObject.addField("CustID");
+
+		List<Facility> facilityexisitingList = pagedListService.getBySearchObject(searchObject);
+		if (facilityexisitingList != null) {
+			for (Facility facilityCustomer : facilityexisitingList) {
+				facilityHeader.add(String.valueOf(facilityCustomer.getCustID()));
+			}
+		}
+		return facilityHeader;
 	}
 }
