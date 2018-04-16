@@ -4239,6 +4239,7 @@
 	<bean name="finJointAccountDetailService"
 		class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl">
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -6857,6 +6858,7 @@
 	<bean name="jointAccountDetailServiceTarget"
 		class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl">
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
