@@ -2103,27 +2103,4 @@ public class PennantAppUtil {
 		
 	}
 	
-	/**
-	 * 
-	 * @param cafType 
-	 * @return
-	 */
-	public static List<String> getFacilityHeaderCustomer(String cafType) {
-
-		List<String> facilityHeader = new ArrayList<String>();
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<Facility> searchObject = new JdbcSearchObject<Facility>(Facility.class);
-
-		searchObject.addTabelName("FacilityHeader_View");
-		searchObject.addFilterEqual("FacilityType", cafType);
-		searchObject.addField("CustID");
-
-		List<Facility> facilityexisitingList = pagedListService.getBySearchObject(searchObject);
-		if (facilityexisitingList != null) {
-			for (Facility facilityCustomer : facilityexisitingList) {
-				facilityHeader.add(String.valueOf(facilityCustomer.getCustID()));
-			}
-		}
-		return facilityHeader;
-	}
 }
