@@ -160,6 +160,8 @@
 				rightName="menuItem_applicationmaster_OtherBankFinanceType" />
 			<menuItem id="menu_Item_Profession" zulNavigation="/WEB-INF/pages/SystemMaster/Profession/ProfessionList.zul" 
 			rightName="menuItem_SystemMaster_Profession"/>
+			<menuItem id="menu_Item_PRelationCode" zulNavigation="/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeList.zul" 
+			   rightName="menuItem_SystemMaster_PRelationCode"/>
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
 			<menu id="menu_Category_Agencies">
