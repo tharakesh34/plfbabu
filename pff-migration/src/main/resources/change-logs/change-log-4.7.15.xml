@@ -2737,5 +2737,10 @@ UNION ALL
 			INSERT INTO ErrorDetails VALUES('90911','EN','E','GST number {0} should be matched with {1} properties.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="112" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90912','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9] And size should be 15.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
