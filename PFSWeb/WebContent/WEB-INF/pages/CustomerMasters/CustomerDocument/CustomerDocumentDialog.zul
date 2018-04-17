@@ -203,8 +203,7 @@
 					
 					</div>
 					<div id="finDocumentDiv">
-						<iframe id="finDocumentPdfView" width="100%" height = "100%"
-							autohide="true" />
+						<iframe id="finDocumentPdfView" width="100%" height = "100%"/>
 					</div>
 				</div>
 			</center>

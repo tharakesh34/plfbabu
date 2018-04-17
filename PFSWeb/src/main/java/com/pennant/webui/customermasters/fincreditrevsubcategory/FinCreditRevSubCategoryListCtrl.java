@@ -124,7 +124,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 		this.borderLayout_FinCreditRevSubCategoryList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
-		this.pagingFinCreditRevSubCategoryList.setPageSize(getListRows());
+		this.pagingFinCreditRevSubCategoryList.setPageSize(10);
 		this.pagingFinCreditRevSubCategoryList.setDetailed(true);
 
 		

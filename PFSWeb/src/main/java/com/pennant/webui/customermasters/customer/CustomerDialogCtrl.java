@@ -4792,6 +4792,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("moduleType", this.moduleType);
+				map.put("enqiryModule", this.isEnqProcess);
 				map.put("isRetailCustomer", isRetailCustomer);
 				if (getFinanceMainDialogCtrl() != null) {
 					map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());

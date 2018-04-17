@@ -881,8 +881,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (isNewCustomer()) {
 				this.groupboxWf.setVisible(false);
 			}
-
-			setDialog(DialogType.OVERLAPPED);
+			
+			if(enqiryModule) {
+				this.window_CustomerDocumentDialog.setHeight("80%");
+				this.window_CustomerDocumentDialog.setWidth("70%");
+				this.window_CustomerDocumentDialog.doModal();
+			} else {
+				setDialog(DialogType.OVERLAPPED);
+			}
 
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
