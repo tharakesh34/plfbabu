@@ -190,7 +190,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		auditHeader.setAuditDetails(auditDetails);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -446,7 +446,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		getChequeHeaderDAO().delete(chequeHeader, TableType.MAIN_TAB);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditDetails(listDeletion(chequeHeader, TableType.MAIN_TAB, PennantConstants.TRAN_WF));
 
@@ -562,7 +562,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		// Cheque Details
 		if (chequeHeader.getChequeDetailList() != null && chequeHeader.getChequeDetailList().size() > 0) {
@@ -578,7 +578,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(chequeHeader);
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -644,7 +644,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, PennantConstants.TRAN_WF)));
 		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
