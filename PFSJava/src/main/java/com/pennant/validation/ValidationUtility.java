@@ -31,6 +31,7 @@ public class ValidationUtility {
 	private static Logger logger = Logger.getLogger(ValidationUtility.class);
 	
 	private Validator validator;
+	@Autowired
 	private ErrorDetailService errorDetailService;
 	
 	private final int MAX_FAULT_MESSAGES = 10;
@@ -137,10 +138,5 @@ public class ValidationUtility {
 		serviceExceptionDetails.setFaultMessage("Requset Parameter should not be null");
 		serviceExceptionDetailsArray[0] = serviceExceptionDetails;
 		throw new ServiceException(serviceExceptionDetailsArray);
-	}
-
-	@Autowired
-	public void setErrorDetailService(ErrorDetailService errorDetailService) {
-		this.errorDetailService = errorDetailService;
 	}
 }

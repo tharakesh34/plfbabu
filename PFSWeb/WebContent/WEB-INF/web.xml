@@ -14,7 +14,6 @@
 			classpath:applicationContext-db.xml,
 			classpath:applicationContext-daos.xml,
 			classpath:applicationContext-txn.xml,
- 			classpath:customize-applicationContext.xml,
  			classpath:securityContext.xml,
  			<!-- classpath:applicationContext-mq-interface.xml,  -->
  			<!-- classpath:applicationContext-equation-interface.xml, -->

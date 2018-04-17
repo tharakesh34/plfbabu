@@ -353,9 +353,6 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="basisNextidDao" abstract="true" p:nextidviewDAO-ref="nextidviewDAO" class="com.pennant.backend.dao.impl.BasisNextidDaoImpl" />
-	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
 	<bean id="finSuspHoldDAO" class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>

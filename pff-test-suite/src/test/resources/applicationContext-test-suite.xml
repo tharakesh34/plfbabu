@@ -49,21 +49,6 @@
 		<property name="username" value="${finOnejdbc.username}" />
 		<property name="password" value="${finOnejdbc.password}" />
 	</bean>
-	
-	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
-	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="dataSource" />
-		<property name="extDataSource" ref="pfsExtDatasource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
-	</bean>
-	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="secDataSource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
-	</bean>
-	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
-		<property name="dataSource" ref="auditDataSource" />
-		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
-	</bean>
 
 	<!-- Duplicating from applicationContext-core-interface.xml -->
 	<bean id="coreDBDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"

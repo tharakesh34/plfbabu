@@ -7,7 +7,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
@@ -20,13 +20,9 @@ import com.pennanttech.util.Dataset;
 import jxl.read.biff.BiffException;
 
 public class LoadConfigTest {
-	final String[] CONFIG_LOCATIONS = new String[] {
-			"../PLFInterface/src/main/resources/applicationContext-core-interface.xml",
-			"../PFSJava/src/main/resources/applicationContext-daos.xml",
-			"../PFSWeb/src/main/resources/applicationContext-db.xml", "/src/test/resources/applicationContext.xml",
-			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml",
-			"../pff-niyogin/src/main/resources/client-interfaces-niyogin-context.xml",
-			"../PFSBatch/src/main/resources/eod-batch-config-service.xml" };
+	final String[] CONFIG_LOCATIONS = new String[] { "applicationContext-core-interface.xml",
+			"applicationContext-db.xml", "applicationContext-daos.xml", "applicationContext-test-suite.xml",
+			"client-interfaces-context.xml", "client-interfaces-niyogin-context.xml", "eod-batch-config-service.xml" };
 	static ApplicationContext context;
 
 	@BeforeSuite
@@ -42,7 +38,7 @@ public class LoadConfigTest {
 		GenericApplicationContext parent = new GenericApplicationContext(factory);
 		parent.refresh();
 
-		context = new FileSystemXmlApplicationContext(CONFIG_LOCATIONS, parent);
+		context = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, parent);
 
 		System.out.println("Loading the dataset...");
 		Dataset.load();
@@ -50,7 +46,7 @@ public class LoadConfigTest {
 
 	@Test(enabled = false)
 	public void testBean() {
-		Object bean = context.getBean("errorDetailsDAO");
+		Object bean = context.getBean("errorDetailDAO");
 
 		Assert.assertTrue(bean instanceof ErrorDetailDAOImpl);
 
