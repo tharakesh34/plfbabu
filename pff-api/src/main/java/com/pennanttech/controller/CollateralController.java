@@ -187,7 +187,15 @@ public class CollateralController {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
-		} catch (NumberFormatException nfe) {
+		}catch (BadSqlGrammarException badSqlE) {
+			logger.error(badSqlE);
+			APIErrorHandlerService.logUnhandledException(badSqlE);
+			if(badSqlE.getCause() != null) {
+				return APIErrorHandlerService.getFailedStatus("9999", badSqlE.getCause().getMessage());
+			} else {
+				return APIErrorHandlerService.getFailedStatus();
+			}
+		}  catch (NumberFormatException nfe) {
 			logger.error(nfe);
 			APIErrorHandlerService.logUnhandledException(nfe);
 			return APIErrorHandlerService.getFailedStatus("90275");
