@@ -19,8 +19,8 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.interfaces.AbstractMandateProcess;
 import com.pennanttech.pff.InterfaceConstants;
+import com.pennanttech.pff.external.mandate.AbstractMandateProcess;
 
 public class BajajMandateProcess extends AbstractMandateProcess {
 	private final Logger logger = Logger.getLogger(getClass());
