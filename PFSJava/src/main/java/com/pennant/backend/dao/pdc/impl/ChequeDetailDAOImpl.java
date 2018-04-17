@@ -123,7 +123,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
 		if(type.equals("_View")){
-			sql.append(" branchDesc as bankBranchIDName, ");
+			sql.append(" bankName as bankBranchIDName, ");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From CHEQUEDETAIL");

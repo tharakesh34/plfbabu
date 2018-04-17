@@ -279,7 +279,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
 		this.bankBranchID.setValueColumn("BranchCode");
-		this.bankBranchID.setDescColumn("BranchDesc");
+		this.bankBranchID.setDescColumn("BankName");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 		this.chequeType.setSclass(PennantConstants.mandateSclass);
@@ -1135,7 +1135,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		onclickGenBtn = true;
 		doSetValidation();
 		String chqType = this.chequeType.getSelectedItem().getValue().toString();
-		String bankName=this.bankName.getValue();
 		this.accNumber.getValue();
 		this.chequeSerialNo.intValue();
 		this.amount.getValue();
@@ -1155,7 +1154,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				ChequeDetail cheqDetails = getNewChequedetails();
 				cheqDetails.setChequeSerialNo(chequStaretr);
 				chequStaretr++;
-				cheqDetails.setBankBranchID(Long.valueOf(this.bankBranchID.getValidatedValue()));
+				Object bankBranchObj = this.bankBranchID.getAttribute("bankBranchID");
+				if (bankBranchObj != null) {
+					cheqDetails.setBankBranchID(Long.parseLong(bankBranchObj.toString()));
+				}
+				cheqDetails.setBankBranchIDName(this.bankName.getValue());
 				cheqDetails.setAccountNo(this.accNumber.getValue());
 				String curField = this.curCcyField;
 				cheqDetails.setAmount(PennantApplicationUtil.unFormateAmount(this.amountCD.getValue(),
@@ -1165,7 +1168,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				cheqDetails.setNewRecord(true);
 				cheqDetails.setActive(true);
 				cheqDetails.setChequeType(chqType);
-				cheqDetails.setBankBranchIDName(bankName);
 				chequeDetails.add(cheqDetails);
 			}
 
@@ -1201,17 +1203,17 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				listcell.setParent(listitem);
 
 				// Bank branch id
-				listcell = new Listcell(String.format(chequeDetail.getBankBranchIDName()));
-				/*ExtendedCombobox bankBranchID = new ExtendedCombobox();
+				listcell = new Listcell();
+				ExtendedCombobox bankBranchID = new ExtendedCombobox();
 				bankBranchID.setModuleName("BankBranch");
 				bankBranchID.setReadonly(true);
 				bankBranchID.setValueColumn("BranchCode");
-				bankBranchID.setDescColumn("BranchDesc");
+				bankBranchID.setDescColumn("BankName");
 				bankBranchID.setDisplayStyle(2);
 				bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 				bankBranchID.setValue(String.valueOf(chequeDetail.getBankBranchID()));
 				bankBranchID.setDescription(chequeDetail.getBankBranchIDName());
-				listcell.appendChild(bankBranchID);*/
+				listcell.appendChild(bankBranchID);
 				listcell.setParent(listitem);
 
 				// AccountNo
