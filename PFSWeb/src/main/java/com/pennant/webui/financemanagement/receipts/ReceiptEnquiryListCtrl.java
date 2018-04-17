@@ -18,6 +18,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -29,13 +30,12 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptRealization/ReceiptRealizationEnqListCtrl.zul file.
@@ -379,18 +379,18 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_ReceiptCustomer, oldVar_sortOperator_custCIF, this.customer);
 	}
 
-	public void onSelect$sortOperator_finType(Event event) {
+	public void onSelect$sortOperator_ReceiptFinType(Event event) {
 		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_ReceiptFinType, oldVar_sortOperator_finType, this.finType);
 	}
 
-	public void onSelect$sortOperator_finBranch(Event event) {
+	public void onSelect$sortOperator_ReceiptFinBranch(Event event) {
 		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_ReceiptFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
 	}
 
 	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
 
 		final Listitem item = listbox.getSelectedItem();
-		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
+		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
 		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
 			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
