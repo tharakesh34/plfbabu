@@ -112,7 +112,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -121,6 +120,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
@@ -938,10 +938,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND (RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else {
-			if(App.DATABASE == Database.ORACLE){
+			if (App.DATABASE == Database.ORACLE) {
 				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
 			}else{
-				whereClause.append(" AND (RcdMaintainSts = '' OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
+				// for postgredb sometimes record type is null or empty('')
+				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
+						+ moduleDefiner + "' ) ");
 			}
 		}
 		
@@ -2672,7 +2674,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (App.DATABASE == Database.ORACLE) {
 				buildedWhereCondition = " (NextRoleCode IS NULL ";
 			} else {
-				buildedWhereCondition = " (NextRoleCode = '' ";
+				// for postgre db sometimes record type is null or empty('')
+				buildedWhereCondition = " ( (NextRoleCode IS NULL or NextRoleCode = '') ";
 			}
 			buildedWhereCondition = buildedWhereCondition.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
 			buildedWhereCondition = buildedWhereCondition.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
