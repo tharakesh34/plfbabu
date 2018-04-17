@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="pre_run_for_pgp" author="Kesav" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<!-- Entity -->
+	<changeSet id="1" author="Kesav">
+		<addColumn tableName="Entity">
+			<column name="GSTINAvailable" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<addColumn tableName="Entity_Temp">
+			<column name="GSTINAvailable" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Kesav" dbms="postgresql">
+		<sql>
+			set search_path=plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	<changeSet id="3" author="Kesav">
+		<comment>gstinAvailable column added for GST changes</comment>
+		<createView viewName="entity_aview" replaceIfExists="true">
+			SELECT  	t1.entitycode,
+					    t1.entitydesc,
+					    t1.pannumber,
+					    t1.entityaddrline1,
+					    t1.entityaddrline2,
+					    t1.entityaddrhnbr,
+					    t1.entityflatnbr,
+					    t1.entityaddrstreet,
+					    t1.entitypobox,
+					    t1.country,
+					    t1.statecode,
+					    t1.citycode,
+					    t1.pincode,
+					    t1.active,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.countrydesc AS countryname,
+					    t3.cpprovincename AS provincename,
+					    t4.pccityname AS cityname,
+					    t5.areaname AS pincodename,
+					    t1.cinnumber,
+					    t1.gstinAvailable
+   			FROM 		entity t1
+     		LEFT JOIN	bmtcountries t2 ON t1.country = t2.countrycode
+     		LEFT JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+     		LEFT JOIN 	rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+     		LEFT JOIN 	pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<comment>gstinAvailable column added for GST changes</comment>
+		<createView viewName="entity_view" replaceIfExists="true">
+			 SELECT 	t1.entitycode,
+						t1.entitydesc,
+						t1.pannumber,
+						t1.entityaddrline1,
+						t1.entityaddrline2,
+						t1.entityaddrhnbr,
+						t1.entityflatnbr,
+						t1.entityaddrstreet,
+						t1.entitypobox,
+						t1.country,
+						t1.statecode,
+						t1.citycode,
+						t1.pincode,
+						t1.active,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.countrydesc AS countryname,
+						t3.cpprovincename AS provincename,
+						t4.pccityname AS cityname,
+						t5.areaname AS pincodename,
+						t1.cinnumber,
+						t1.gstinAvailable
+			 FROM 		entity_temp t1
+			 LEFT JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+			 LEFT JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+			 LEFT JOIN 	rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+			 LEFT JOIN 	pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+			
+			 UNION ALL
+			 
+			 SELECT 	t1.entitycode,
+						t1.entitydesc,
+						t1.pannumber,
+						t1.entityaddrline1,
+						t1.entityaddrline2,
+						t1.entityaddrhnbr,
+						t1.entityflatnbr,
+						t1.entityaddrstreet,
+						t1.entitypobox,
+						t1.country,
+						t1.statecode,
+						t1.citycode,
+						t1.pincode,
+						t1.active,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.countrydesc AS countryname,
+						t3.cpprovincename AS provincename,
+						t4.pccityname AS cityname,
+						t5.areaname AS pincodename,
+						t1.cinnumber,
+						t1.gstinAvailable
+			 FROM 		entity t1
+			 LEFT JOIN  bmtcountries t2 ON t1.country = t2.countrycode
+			 LEFT JOIN  rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince AND t1.country = t3.cpcountry
+			 LEFT JOIN  rmtprovincevscity t4 ON t1.citycode = t4.pccity AND t1.statecode = t4.pcprovince AND t1.country = t4.pccountry
+			 LEFT JOIN  pincodes t5 ON t1.pincode = t5.pincode AND t1.citycode = t5.city
+			 WHERE NOT (EXISTS ( SELECT 1 FROM entity_temp WHERE entity_temp.entitycode = t1.entitycode))		
+ 		</createView>
+	</changeSet>
+	
+	<!-- TAXDETAIL -->
+	<changeSet id="5" author="Kesav">
+		<addColumn tableName="TAXDETAIL">
+			<column name="hsnNumber" type="varchar(100)"/>
+			<column name="natureService" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<addColumn tableName="TAXDETAIL_Temp">
+			<column name="hsnNumber" type="varchar(100)"/>
+			<column name="natureService" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="7" author="Kesav">
+	 	<comment> hsnNumber, natureService and gstinAvailable columns added for GST changes</comment>
+		<createView viewName="taxdetail_aview" replaceIfExists="true">
+			SELECT t1.id,
+		    t1.country,
+		    t2.countrydesc AS countryname,
+		    t1.statecode,
+		    t3.cpprovincename AS provincename,
+		    t1.entitycode,
+		    t4.entitydesc,
+		    t1.taxcode,
+		    t1.addressline1,
+		    t1.addressline2,
+		    t1.addressline3,
+		    t1.addressline4,
+		    t1.pincode,
+		    t1.citycode,
+		    t6.pccityname AS cityname,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+			t1.hsnNumber,
+			t1.natureService,
+			t4.GstInAvailable
+		   	FROM taxdetail t1
+		    JOIN bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN rmtprovincevscity t6 ON t1.citycode = t6.pccity		
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="8" author="Kesav">
+		<comment> hsnNumber, natureService and gstinAvailable columns added for GST changes</comment>
+		<createView viewName="taxdetail_view" replaceIfExists="true">
+			SELECT 	t1.id,
+					t1.country,
+					t2.countrydesc AS countryname,
+					t1.statecode,
+					t3.cpprovincename AS provincename,
+					t1.entitycode,
+					t4.entitydesc,
+					t1.taxcode,
+					t1.addressline1,
+					t1.addressline2,
+					t1.addressline3,
+					t1.addressline4,
+					t1.pincode,
+					t1.citycode,
+					t6.pccityname AS cityname,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t1.hsnNumber,
+					t1.natureService,
+					t4.GstInAvailable
+			FROM 	taxdetail_temp t1
+		    JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN 	entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN 	pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN 	rmtprovincevscity t6 ON t1.citycode = t6.pccity
+			
+			UNION ALL
+			
+			SELECT 	t1.id,
+					t1.country,
+					t2.countrydesc AS countryname,
+					t1.statecode,
+					t3.cpprovincename AS provincename,
+					t1.entitycode,
+					t4.entitydesc,
+					t1.taxcode,
+					t1.addressline1,
+					t1.addressline2,
+					t1.addressline3,
+					t1.addressline4,
+					t1.pincode,
+					t1.citycode,
+					t6.pccityname AS cityname,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t1.hsnNumber,
+					t1.natureService,
+					t4.GstInAvailable
+			FROM 	taxdetail t1
+		    JOIN 	bmtcountries t2 ON t1.country = t2.countrycode
+		    JOIN 	rmtcountryvsprovince t3 ON t1.statecode = t3.cpprovince
+		    JOIN 	entity t4 ON t1.entitycode = t4.entitycode
+		    JOIN 	pincodes t5 ON t1.pincode = t5.pincode
+		    JOIN 	rmtprovincevscity t6 ON t1.citycode = t6.pccity
+			WHERE NOT (EXISTS ( SELECT 1 FROM taxdetail_temp WHERE taxdetail_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9" author="Kesav">
+		<sql>
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'fromStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'fromStateGstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','fromStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'toStateGstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'toStateGstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','toStateGstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'gstExempted';
+			Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'gstExempted';
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','CGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			 Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','IGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  '); 
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','SGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('GSTRULE','UGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');		
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>
