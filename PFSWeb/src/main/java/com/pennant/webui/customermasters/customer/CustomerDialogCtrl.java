@@ -3019,6 +3019,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			if (doProcess(aCustomerDetails, tranType)) {
+				//ExtendedFields Rights Deallocation.
+				if (customerDetails.getExtendedFieldRender() != null) {
+					ExtendedFieldHeader fieldHeader = customerDetails.getExtendedFieldHeader();
+					if (fieldHeader != null) {
+						String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
+						getUserWorkspace().deAllocateAuthorities(pageName);
+					}
+				}
 				refreshList();
 				closeDialog();
 			}
