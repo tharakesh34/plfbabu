@@ -32,11 +32,6 @@
 			<artifactId>pff-interface-bajaj</artifactId>
 			<version>${project.version}</version>
 		</dependency>
- 		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>pff-niyogin</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 				
 		<!-- Spring Framework -->
 		<dependency>
