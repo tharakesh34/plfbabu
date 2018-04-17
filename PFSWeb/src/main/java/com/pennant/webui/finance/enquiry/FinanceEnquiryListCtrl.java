@@ -70,7 +70,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -86,18 +85,17 @@ import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryServic
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -868,16 +866,16 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.startDate_one.getValue() != null) {
-						this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-								this.startDate_one.getValue(),PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
+						this.searchObj.addFilter(new Filter("FinStartDate",
+								this.startDate_one.getValue(), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.startDate_two.getValue() != null) {
-						this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-								this.startDate_two.getValue(),PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
+						this.searchObj.addFilter(new Filter("FinStartDate",
+							this.startDate_two.getValue(), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
-					this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-							this.startDate_one.getValue(),PennantConstants.DBDateFormat), searchOpId));
+					this.searchObj.addFilter(new Filter("FinStartDate",
+							this.startDate_one.getValue(), searchOpId));
 				}
 			}
 		}
@@ -894,16 +892,15 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.maturityDate_one.getValue() != null) {
-						this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-								this.maturityDate_one.getValue(),PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
+						this.searchObj.addFilter(new Filter("MaturityDate", this.maturityDate_one.getValue(),
+								Filter.OP_GREATER_OR_EQUAL));
 					}
 					if(this.maturityDate_two.getValue() != null){
-						this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-								this.maturityDate_two.getValue(),PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
+						this.searchObj.addFilter(
+								new Filter("MaturityDate", this.maturityDate_two.getValue(), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
-					this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-							this.maturityDate_one.getValue(),PennantConstants.DBDateFormat), searchOpId));
+					this.searchObj.addFilter(new Filter("MaturityDate", this.maturityDate_one.getValue(), searchOpId));
 				}
 			}
 		}
