@@ -159,6 +159,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	private void setDefaults(CustomerDetails customerDetails) {
 		if(StringUtils.isBlank(customerDetails.getCustomer().getCustSegment())) {
 			customerDetails.getCustomer().setCustSegment(StringUtils.trimToNull(customerDetails.getCustomer().getCustSegment()));
+			customerDetails.getCustomer().setCustEmpSts(StringUtils.trimToNull(customerDetails.getCustomer().getCustEmpSts()));
 		}
 		
 	}
@@ -176,7 +177,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
-		
+		//set empty to null
+		setDefaults(customerDetails);
 		// customer validations
 		WSReturnStatus status = validateCustomerCIF(customerDetails.getCustCIF());
 		if(status != null) {
@@ -321,6 +323,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// bean validations
 		validationUtility.validate(customerDetails, PersionalInfoGroup.class);
 		Customer customer = null;
+		//set empty to null
+		setDefaults(customerDetails);
 		// customer validations
 		if (StringUtils.isNotBlank(customerDetails.getCustCIF())) {
 			customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
