@@ -214,14 +214,16 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doClearMessage();
 		setValidationOn(true);
 		if (this.prospect.isChecked()) {
-			this.eidNumber.clearErrorMessage();
-			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-				this.eidNumber.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
-						PennantRegularExpressions.REGEX_EIDNUMBER, false));
-			}else{
-				this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER,true));
+			if(!ImplementationConstants.CLIENT_NFL) {//FIXME: Need final resolution for specific client implementation
+				this.eidNumber.clearErrorMessage();
+				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+					this.eidNumber.setConstraint(new PTStringValidator(Labels
+							.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
+							PennantRegularExpressions.REGEX_EIDNUMBER, false));
+				} else {
+					this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
+							PennantRegularExpressions.REGEX_PANNUMBER,true));
+				}
 			}
 		}
 		logger.debug("Leaving");
@@ -475,6 +477,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.row_custCRCPR.setVisible(false);
 		this.row_CustCIF.setVisible(false);
 		this.row_EIDNumber.setVisible(true);
+		if(!ImplementationConstants.CLIENT_NFL) {
+			this.eidNumber.setSclass(PennantConstants.mandateSclass);
+		}
 		this.custNationality.setValue(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"));
 	}
 

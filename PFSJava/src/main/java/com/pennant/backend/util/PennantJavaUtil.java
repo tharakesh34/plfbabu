@@ -1845,7 +1845,7 @@ public class PennantJavaUtil {
 						"DashboardCode", "DashboardDesc" }, null, 300));
 
 		ModuleUtil.register("GlobalVariable", new ModuleMapping("GlobalVariable", GlobalVariable.class, new String[] {
-				"GlobalVariables", "GlobalVariables" }, masterWF , new String[] { "VarCode", "VarName" }, null, 300));
+				"GlobalVariable", "GlobalVariable" }, masterWF , new String[] { "VarCode", "VarName" }, null, 300));
 
 		/************* Reports *************/
 
