@@ -67,7 +67,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -87,7 +86,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.financemanagement.provision.model.ProvisionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -97,6 +95,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/ProvisionList.zul
@@ -953,8 +952,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		// Provision Calculated Date
 		if (this.provisionCalDate.getValue()!=null) {
 
-			searchObj.addFilter(new Filter("provisionCalDate",DateUtility.formatUtilDate(
-					this.provisionCalDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+			searchObj.addFilter(new Filter("provisionCalDate",this.provisionCalDate.getValue(), Filter.OP_EQUAL));
 		}
 
 		// Provisioned Amount
@@ -969,14 +967,12 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		// Due From Date
 		if (this.dueFromDate.getValue()!=null) {
-			searchObj.addFilter(new Filter("dueFromDate",DateUtility.formatUtilDate(
-					this.dueFromDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+			searchObj.addFilter(new Filter("dueFromDate", this.dueFromDate.getValue(), Filter.OP_EQUAL));
 		}
 
 		// Last Fully Payed Date
 		if (this.lastFullyPaidDate.getValue()!=null) {
-			searchObj.addFilter(new Filter("dueFromDate",DateUtility.formatUtilDate(
-					this.dueFromDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+			searchObj.addFilter(new Filter("dueFromDate",this.dueFromDate.getValue(), Filter.OP_EQUAL));
 		}
 
 		// Set the ListModel for the articles.
