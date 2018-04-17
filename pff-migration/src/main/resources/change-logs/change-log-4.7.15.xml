@@ -2750,6 +2750,10 @@ UNION ALL
     update secrights set rightname='button_BlacklistCustomerDialog_btnDelete' and page='BlacklistCustomerDialog'  where rightname='button_blacklistCustomerList_btnDelete';
 	</sql>
 	</changeSet>
-	
+	<changeSet id="114" author="Jayant">
+		<sql>
+			 alter table limitcodedetail drop column id; 
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
