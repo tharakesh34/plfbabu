@@ -2727,5 +2727,15 @@ UNION ALL
 			INSERT INTO SMTPARAMETERS VALUES ('CBIL_PROCESS_REQ', 	'Cibil Processing required or not', 'String', 1,  'N', '1', 0, NULL, NULL, 'Cibil Processing required or not', 1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
 	</changeSet>
+	<changeSet id="110" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90910','EN','E','Either CIF is invalid or does not match with ApplicableFor in TaxDetails.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="111" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90911','EN','E','GST number {0} should be matched with {1} properties.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
