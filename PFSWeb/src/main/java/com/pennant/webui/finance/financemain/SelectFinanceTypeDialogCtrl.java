@@ -543,9 +543,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 		
 		Date appDate = DateUtility.getAppDate();
-		filters[0] = new Filter("StartDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+		filters[0] = new Filter("StartDate", appDate,
 				Filter.OP_LESS_OR_EQUAL);
-		filters[1] = new Filter("EndDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+		filters[1] = new Filter("EndDate", appDate,
 				Filter.OP_GREATER_OR_EQUAL);
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
 			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL);
