@@ -33,6 +33,7 @@ import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -48,6 +49,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -76,12 +78,14 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.City;
@@ -157,6 +161,7 @@ public class FinanceDataValidation {
 	private PartnerBankDAO					partnerBankDAO;
 	private CurrencyDAO						currencyDAO;
 	private LoanPurposeDAO					loanPurposeDAO;
+	private PinCodeDAO						pinCodeDAO;
 
 	public FinanceDataValidation() {
 		super();
@@ -1152,6 +1157,12 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 			errorDetails = finCollateralValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+			
+			errorDetails = finTaxDetailValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
@@ -4350,6 +4361,214 @@ public class FinanceDataValidation {
 		
 		return feeValidations(vldSrvLoan, finSchdData, true, eventCode);
 	}
+	
+	/**
+	 * Method for validating the Finance Tax Details
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private List<ErrorDetail> finTaxDetailValidation(FinanceDetail financeDetail) {
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		FinanceTaxDetail finTaxDetail = financeDetail.getTaxDetail();
+		if (finTaxDetail != null) {
+			if (StringUtils.isBlank(finTaxDetail.getApplicableFor())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = App.getLabel("label_ApplicableFor");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			} else {
+				String applicableFor = finTaxDetail.getApplicableFor();
+				List<ValueLabel> taxApplicableFor = PennantStaticListUtil.getTaxApplicableFor();
+				boolean isInValidApplicablefor = false;
+				for (ValueLabel value : taxApplicableFor) {
+					if (StringUtils.equals(value.getValue(), applicableFor)) {
+						isInValidApplicablefor = true;
+						break;
+					}
+				}
+				if (!isInValidApplicablefor) {
+					String[] valueParm = new String[2];
+					valueParm[0] = App.getLabel("label_ApplicableFor");
+					valueParm[1] = PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER + ","
+							+ PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT;
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+				}
+			}
+			if (StringUtils.isBlank(finTaxDetail.getCustCIF())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "cif";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			} else {
+				boolean isValidCustCif = false;
+				if (StringUtils.equals(finTaxDetail.getApplicableFor(),
+						PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)) {
+					FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+					if (StringUtils.equals(finTaxDetail.getCustCIF(), finMain.getLovDescCustCIF())) {
+						isValidCustCif = true;
+					}
+				} else if (StringUtils.equals(finTaxDetail.getApplicableFor(),
+						PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
+					List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
+					if (jountAccountDetails != null && !jountAccountDetails.isEmpty()) {
+						for (JointAccountDetail coApplicant : jountAccountDetails) {
+							if (StringUtils.equals(finTaxDetail.getCustCIF(), coApplicant.getCustCIF())) {
+								isValidCustCif = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!isValidCustCif) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90910")));
+					return errorDetails;
+				}
+			}
+			if (StringUtils.isBlank(finTaxDetail.getAddrLine1())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = App.getLabel("label_AddrLine1");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			} else {
+				if (finTaxDetail.getAddrLine1().length() > 100) {
+					String[] valueParm = new String[2];
+					valueParm[0] = App.getLabel("label_AddrLine1");
+					valueParm[1] = "100";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(finTaxDetail.getAddrLine2()) && finTaxDetail.getAddrLine2().length() > 100) {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_AddrLine2");
+				valueParm[1] = "100";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+			}
+			if (StringUtils.isNotBlank(finTaxDetail.getAddrLine3()) && finTaxDetail.getAddrLine3().length() > 100) {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_AddrLine3");
+				valueParm[1] = "100";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+			}
+			if (StringUtils.isNotBlank(finTaxDetail.getAddrLine4()) && finTaxDetail.getAddrLine4().length() > 100) {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_AddrLine4");
+				valueParm[1] = "100";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+			}
+
+			if (StringUtils.isBlank(finTaxDetail.getPinCode())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_PinCode");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			}
+
+			PinCode pincode = pinCodeDAO.getPinCode(finTaxDetail.getPinCode(), "_AView");
+			Province province = null;
+			if (pincode != null) {
+				if (StringUtils.isNotBlank(finTaxDetail.getCountry())
+						&& !finTaxDetail.getCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = finTaxDetail.getCountry();
+					valueParm[1] = finTaxDetail.getPinCode();
+					errorDetails.add(ErrorUtil
+							.getErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm))));
+				} else {
+					finTaxDetail.setCountry(pincode.getpCCountry());
+				}
+				province = provinceDAO.getProvinceById(finTaxDetail.getCountry(), pincode.getpCProvince(), "");
+				if (province != null && StringUtils.isNotBlank(finTaxDetail.getProvince())
+						&& !finTaxDetail.getProvince().equalsIgnoreCase(province.getCPProvince())) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = finTaxDetail.getProvince();
+					valueParm[1] = finTaxDetail.getPinCode();
+					errorDetails.add(ErrorUtil
+							.getErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm))));
+				} else {
+					finTaxDetail.setProvince(pincode.getpCProvince());
+				}
+
+				if (StringUtils.isNotBlank(finTaxDetail.getCity())
+						&& !finTaxDetail.getCity().equalsIgnoreCase(pincode.getCity())) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = finTaxDetail.getCity();
+					valueParm[1] = finTaxDetail.getPinCode();
+					errorDetails.add(ErrorUtil
+							.getErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm))));
+
+				} else {
+					finTaxDetail.setCity(pincode.getCity());
+				}
+
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_PinCode");
+				valueParm[1] = finTaxDetail.getPinCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(finTaxDetail.getTaxNumber())) {
+				Pattern pattern = Pattern
+						.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_GSTIN));
+				Matcher matcher = pattern.matcher(finTaxDetail.getTaxNumber());
+				if (matcher.matches() == false) {
+					String[] valueParm = new String[1];
+					valueParm[0] = App.getLabel("label_FinanceTaxDetailList_TaxNumber.value");
+					errorDetails.add(ErrorUtil
+							.getErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90912", "", valueParm))));
+					return errorDetails;
+				} else {
+					if (province != null && !StringUtils.equalsIgnoreCase(finTaxDetail.getTaxNumber().substring(0, 2),
+							province.getTaxStateCode())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = finTaxDetail.getTaxNumber();
+						valueParm[1] = "TAX StateCode";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90911", valueParm)));
+						return errorDetails;
+					}
+					//validate CustomerPAN
+					PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("PAN_DOC_TYPE");
+					if (pfsParameter != null && StringUtils.isNotBlank(pfsParameter.getSysParmValue())) {
+						String[] panCardTypes = null;
+						if (pfsParameter.getSysParmValue().contains(",")) {
+							panCardTypes = pfsParameter.getSysParmValue().split(",");
+						} else {
+							panCardTypes = new String[1];
+							panCardTypes[0] = pfsParameter.getSysParmValue();
+						}
+
+						boolean isValidPan = false;
+						boolean isCustomerContainPan = false;
+						Customer customer = customerDetailsService.getCustomerByCIF(finTaxDetail.getCustCIF());
+						for (String panCardType : panCardTypes) {
+							CustomerDocument customerDocument = customerDocumentService
+									.getApprovedCustomerDocumentById(customer.getCustID(), panCardType);
+							if (customerDocument == null) {
+								continue;
+							}
+							isCustomerContainPan = true;
+							if (StringUtils.equalsIgnoreCase(customerDocument.getCustDocTitle(),
+									finTaxDetail.getTaxNumber().substring(2, 12))) {
+								isValidPan = true;
+								break;
+							}
+						}
+						if (isCustomerContainPan && !isValidPan) {
+							///GST number {0} should be matched with {1} properties. 90911
+							String[] valueParm = new String[2];
+							valueParm[0] = finTaxDetail.getTaxNumber();
+							valueParm[1] = "PAN Number";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90911", valueParm)));
+						}
+					}
+
+				}
+			}
+		}
+		return errorDetails;
+	}
 
 	/**
 	 * 
@@ -4684,4 +4903,9 @@ public class FinanceDataValidation {
 	public void setLoanPurposeDAO(LoanPurposeDAO loanPurposeDAO) {
 		this.loanPurposeDAO = loanPurposeDAO;
 	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
 }

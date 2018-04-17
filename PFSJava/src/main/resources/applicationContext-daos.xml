@@ -4213,6 +4213,7 @@
 		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="documentService" ref="documentService" />
 		<property name="loanPurposeDAO" ref="loanPurposeDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->

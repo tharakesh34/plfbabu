@@ -48,6 +48,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -58,27 +59,37 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinanceTaxDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {"finReference","applicableFor","taxExempted","taxNumber","addrLine1","addrLine2","addrLine3","addrLine4","country","province"
-		,"city","pinCode"})
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "applicableFor", "custCIF", "taxNumber", "addrLine1", "addrLine2", "addrLine3", "addrLine4",
+		"country", "province", "city", "pinCode" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
+	@XmlElement(name="applicableFor")
 	private String applicableFor;
 	private long  	taxCustId;
 	private boolean taxExempted;
+	@XmlElement(name="GstNumber")
 	private String taxNumber;
+	@XmlElement(name="addrLine1")
 	private String addrLine1;
+	@XmlElement(name="addrLine2")
 	private String addrLine2;
+	@XmlElement(name="addrLine3")
 	private String addrLine3;
+	@XmlElement(name="addrLine4")
 	private String addrLine4;
+	@XmlElement(name="country")
 	private String country;
 	private String countryName;
+	@XmlElement(name="province")
 	private String province;
 	private String provinceName;
+	@XmlElement(name="city")
 	private String city;
 	private String cityName;
+	@XmlElement(name="pinCode")
 	private String pinCode;
 	private String pinCodeName;
 	@XmlTransient
@@ -89,7 +100,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private FinanceTaxDetail befImage;
 	@XmlTransient
 	private  LoggedInUser userDetails;
-	
+	@XmlElement(name="cif")
 	private String custCIF;
 	private String custShrtName;
 
