@@ -63,7 +63,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -75,14 +74,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.finance.wiffinancemain.model.WIFFinanceMainListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainList.zul
@@ -556,7 +555,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		//FinStartDate
 		if (this.finStartDate.getValue()!=null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finStartDate.getSelectedItem(), DateUtility.formatDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat), "FinStartDate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finStartDate.getSelectedItem(),
+					this.finStartDate.getValue(), "FinStartDate");
 		}
 		//FinIsActive
 		int intActive=0;
