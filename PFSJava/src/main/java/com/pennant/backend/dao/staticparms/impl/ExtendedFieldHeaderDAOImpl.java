@@ -295,25 +295,16 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("Entering");
 		int numbOfTables = 3;
 		if (StringUtils.equals(module, CollateralConstants.MODULE_NAME)) {
-			// _TV and Verification tables.
 			numbOfTables = 7;
 		}
 		for (int i = 0; i < numbOfTables; i++) {
-			String tableType = "";
-			if (i == 0 || i == 4) {
-				tableType = "_Temp";
-			} else if (i == 3) {
-				tableType = "_TV";
-			} else if (i >= 4) {
-				module = CollateralConstants.VERIFICATION_MODULE;
-			}
 
-			
 			// For SQL server
 			StringBuilder syntax = new StringBuilder();
-			syntax.append("create table ");
+			String tableName = getTableName(module, subModule, i);
 			if (App.DATABASE == App.Database.SQL_SERVER) {
-				syntax.append(getTableName(module, subModule, i));
+				syntax.append("create table ");
+				syntax.append(tableName);
 				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		bigint NOT NULL, ");
 					syntax.append(" AuditDate 		datetime NOT NULL, ");
@@ -321,11 +312,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				} else {
-					syntax.append("(");
-					if (i > 2) {
-						syntax.append(" Id 		bigint NOT NULL, ");
-					}
-					syntax.append(" Reference 		varchar(20) NOT NULL, ");
+					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo			int NOT NULL, ");
 				syntax.append("	Version			int NOT NULL,");
@@ -338,29 +325,17 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	NextTaskId		varchar(200) NULL,");
 				syntax.append("	RecordType		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
-				syntax.append(" CONSTRAINT PK_");
+				syntax.append(" CONSTRAINT PK_" + tableName);
 				if (i == 2 || i == 6) {
-					syntax.append("Adt");
-				}
-				syntax.append(module);
-				syntax.append("_");
-				syntax.append(subModule);
-				if (i < 4) {
-					syntax.append("_ED");
-				} else if (i >= 4) {
-					syntax.append("_TV");
-				}
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
-				
 
 				// Oracle DB Scripts
 			} else if (App.DATABASE == App.Database.ORACLE) {
-				syntax.append(getTableName(module, subModule, i));
+				syntax.append("create table ");
+				syntax.append(tableName);
 				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		number(19,0) NOT NULL, ");
 					syntax.append(" AuditDate 		date NOT NULL, ");
@@ -368,11 +343,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar2(20) NOT NULL, ");
 				} else {
-					syntax.append("(");
-					if (i > 2) {
-						syntax.append(" Id 		bigint NOT NULL, ");
-					}
-					syntax.append(" Reference 		varchar(20) NOT NULL, ");
+					syntax.append(" (Reference 		varchar2(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo 			number(10,0) NOT NULL, ");
 				syntax.append("	Version 		number(10,0) NOT NULL,");
@@ -385,26 +356,15 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	NextTaskId 		varchar2(200) NULL,");
 				syntax.append("	RecordType 		varchar2(50) NULL,");
 				syntax.append("	WorkflowId 		number(19,0) NULL,");
-				syntax.append(" CONSTRAINT PK_");
+				syntax.append(" CONSTRAINT PK_" + tableName);
 				if (i == 2 || i == 6) {
-					syntax.append("Adt");
-				}
-				syntax.append(module);
-				syntax.append("_");
-				syntax.append(subModule);
-				if (i < 4) {
-					syntax.append("_ED");
-				} else if (i >= 4) {
-					syntax.append("_TV");
-				}
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 				}
 			} else if (App.DATABASE == App.Database.POSTGRES) {
-				syntax.append(getTableName(module, subModule, i));
+				syntax.append("create table ");
+				syntax.append(tableName);
 				if (i == 2 || i == 6) {
 					syntax.append(" (AuditId 		bigint NOT NULL, ");
 					syntax.append(" AuditDate 		timestamp NOT NULL, ");
@@ -412,11 +372,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
 					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				} else {
-					syntax.append("(");
-					if (i > 2) {
-						syntax.append(" Id 		int8 NOT NULL, ");
-					}
-					syntax.append(" Reference 		varchar(20) NOT NULL, ");
+					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
 				}
 				syntax.append(" SeqNo 			integer NOT NULL, ");
 				syntax.append("	Version 		integer NOT NULL,");
@@ -429,20 +385,8 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				syntax.append("	NextTaskId 		varchar(200) NULL,");
 				syntax.append("	RecordType 		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
-				syntax.append(" CONSTRAINT PK_");
+				syntax.append(" CONSTRAINT PK_" + tableName);
 				if (i == 2 || i == 6) {
-					syntax.append("Adt");
-				}
-				syntax.append(module);
-				syntax.append("_");
-				syntax.append(subModule);
-				if (i < 4) {
-					syntax.append("_ED");
-				} else if (i >= 4) {
-					syntax.append("_TV");
-				}
-				syntax.append(StringUtils.trimToEmpty(tableType));
-				if (i == 2) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
@@ -461,8 +405,25 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			}
 
 		}
+
 	}
 	
+	/**
+	 * Method to prepare tableName based on given module,submodule and count
+	 * 
+	 * 
+	 * @param module
+	 * @param subModule
+	 * @param count
+	 * @return if count =0 module_subModule_ED_Temp,<br>
+	 *         if count =1 module_subModule_ED, <br>
+	 *         if count =2 Adtmodule_subModule_ED,<br>
+	 *         if count =3 module_subModule_ED_TV,<br>
+	 *         if count =4 VERIFICATION_subModule_TV_Temp, <br>
+	 *         if count =5 VERIFICATION_subModule_TV and<br>
+	 *         if count =6 AdtVERIFICATION_subModule_TV
+	 * 
+	 */
 	private static String getTableName(String module, String subModule, int count) {
 		StringBuilder syntax = new StringBuilder();
 		String tableType = "";

@@ -15,6 +15,7 @@ import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -417,10 +418,18 @@ public class ExtendedFieldsValidation {
 					if (!deleteRecord) {
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
+						if (StringUtils.equals(extendedFieldDetail.getLovDescModuleName(),
+								CollateralConstants.MODULE_NAME)) {
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", false, true, false);
+						}
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, true);
 					} else {
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", true, false, false);
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, false);
+						if (StringUtils.equals(extendedFieldDetail.getLovDescModuleName(),
+								CollateralConstants.MODULE_NAME)) {
+							extendedFieldDetailDAO.alter(extendedFieldDetail, "_TV", true, false, false);
+						}
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
 					}
 				}
