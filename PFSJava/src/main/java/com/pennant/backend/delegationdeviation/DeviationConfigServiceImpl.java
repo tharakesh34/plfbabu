@@ -33,14 +33,17 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.DeviationDetailDAO;
 import com.pennant.backend.dao.solutionfactory.DeviationHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.DeviationDetail;
@@ -69,6 +72,8 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 	private FinanceTypeDAO financeTypeDAO;
 
 	private FinTypeFeesDAO finTypeFeesDAO;
+	@Autowired
+	private ProductDAO productDAO; 
 	
 	public DeviationConfigServiceImpl() {
 		super();
@@ -83,6 +88,15 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 	public List<FinTypeFees> getFeeCodeList(String finType, int moduleId) {
 	 return  getFinTypeFeesDAO().getFinTypeFeeCodes(finType, moduleId);
     }
+	
+	@Override
+	public boolean deviationAllowed(String product){
+		Product prod = productDAO.getProductByProduct(product);
+		if (prod!=null) {
+			return prod.isAllowDeviation();
+		}
+		return false;
+	}
 	
 	@Override
 	public List<DeviationHeader> getDeviationsByFinType(String finType) {

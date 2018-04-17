@@ -93,6 +93,7 @@ import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
@@ -185,7 +186,6 @@ import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
@@ -1120,10 +1120,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Deviation Details
-			if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ORG)) {
-				List<FinanceDeviations> finDeviations = getDeviationDetailsService().getFinanceDeviations(finReference);
-				List<FinanceDeviations> apprFinDeviations = getDeviationDetailsService().getApprovedFinanceDeviations(finReference);
-				deviationHelper.setDeviationDetails(financeDetail, finDeviations, apprFinDeviations);
+			if (ImplementationConstants.ALLOW_DEVIATIONS) {
+				if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ORG)) {
+					List<FinanceDeviations> finDeviations = getDeviationDetailsService().getFinanceDeviations(finReference);
+					List<FinanceDeviations> apprFinDeviations = getDeviationDetailsService().getApprovedFinanceDeviations(finReference);
+					deviationHelper.setDeviationDetails(financeDetail, finDeviations, apprFinDeviations);
+				}
 			}
 
 			// Mandate Details
@@ -2242,8 +2244,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getManualDeviations()!=null) {
 				deviations.addAll(financeDetail.getManualDeviations());
 			}
-			getDeviationDetailsService().processDevaitions(finReference, deviations,
-					auditHeader);
+			
+			if (ImplementationConstants.ALLOW_DEVIATIONS) {
+				getDeviationDetailsService().processDevaitions(finReference, deviations, auditHeader);
+			}
 
 			//Dedup Details
 			//=======================================

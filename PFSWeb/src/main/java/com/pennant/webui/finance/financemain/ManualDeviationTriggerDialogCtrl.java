@@ -207,7 +207,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 				this.userAction = setListRecordStatus(this.userAction);
 			}
 
-			getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
+			//getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -366,7 +366,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private void doEdit() {
 		logger.debug("Entering");
 		if (this.financeDeviations.isNewRecord()) {
-			readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_paymentDetail"), this.deviationCode);
+			readOnlyComponent(false, this.deviationCode);
 		} else {
 			readOnlyComponent(true, this.deviationCode);
 		}
@@ -411,10 +411,10 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnNew"));
-			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnEdit"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnSave"));
+//			this.btnNew.setVisible(true);
+//			this.btnEdit.setVisible(true);
+			this.btnDelete.setVisible(true);
+			this.btnSave.setVisible(true);
 		} else {
 			this.btnNew.setVisible(false);
 			this.btnEdit.setVisible(false);
@@ -471,8 +471,12 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		aFinanceDeviations.setModule(DeviationConstants.TY_LOAN);
 		fillComboBox(delegationRole, aFinanceDeviations.getDelegationRole(), delegator, "");
-		this.deviationCode.setAttribute("deviationCode", aFinanceDeviations.getDeviationCode());
-		this.deviationCode.setAttribute("deviationCode", aFinanceDeviations.getSeverity());
+		String deviationCode = aFinanceDeviations.getDeviationCode();
+		if (StringUtils.isEmpty(deviationCode)) {
+			deviationCode="0";
+		}
+		this.deviationCode.setAttribute("deviationCode", Long.parseLong(deviationCode));
+		this.deviationCode.setAttribute("severity", aFinanceDeviations.getSeverity());
 		this.deviationCode.setValue(aFinanceDeviations.getDeviationCodeName(),
 				aFinanceDeviations.getDeviationCodeDesc());
 		this.remarks.setValue(aFinanceDeviations.getRemarks());

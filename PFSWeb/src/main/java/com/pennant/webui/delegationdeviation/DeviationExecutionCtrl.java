@@ -64,6 +64,9 @@ public class DeviationExecutionCtrl {
 		super();
 	}
 
+	public boolean deviationAllowed(String product){
+		return deviationConfigService.deviationAllowed(product);
+	}
 	/**
 	 * To product deviations
 	 * 

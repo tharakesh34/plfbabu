@@ -124,18 +124,40 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 	 * @return Product
 	 */
 	@Override
-	public String getProductCtgByProduct(final String code) {
+	public Product getProductByProduct(final String code) {
 		logger.debug("Entering");
 		Product product = new Product();
 		product.setProductCode(code);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select ProductCategory From BMTProduct ");
+		selectSql.append("Select ProductCategory, AllowDeviation From BMTProduct ");
 		selectSql.append(" Where ProductCode =:ProductCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-
+		RowMapper<Product> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Product.class);
+		try {
+			product = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			product = null;
+		}
+		logger.debug("Leaving");
+		return product;
+	}
+	
+	public String getProductCtgByProduct(final String code) {
+		logger.debug("Entering");
+		Product product = new Product();
+		product.setProductCode(code);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("Select ProductCategory From BMTProduct ");
+		selectSql.append(" Where ProductCode =:ProductCode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
+		
 		String productCtg = null;
 		try {
 			productCtg = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);

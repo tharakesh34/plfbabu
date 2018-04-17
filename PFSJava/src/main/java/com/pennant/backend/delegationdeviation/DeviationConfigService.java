@@ -60,4 +60,6 @@ public interface DeviationConfigService {
 	List<DeviationHeader> getDeviationsByFinType(String finType);
 
 	List<DeviationHeader> getDeviationsbyModule(String finType, String module);
+
+	boolean deviationAllowed(String product);
 }

@@ -272,6 +272,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
+			map.put("displayLog", false);
 			if (arrayList != null) {
 				map.put("finHeaderList", arrayList);
 			}

@@ -50,6 +50,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected A userActivityLog;									// autoWired
 	protected A reasonDeatilsLog;									// autoWired
 	
+	boolean displayLog=true;
 	private Object parentCtrl = null;
 	private String finEventCode = null;
 	private ArrayList<Object> finHeaderList;
@@ -73,6 +74,9 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// Set the page level components.
 		setPageComponents(window_FinBasicDetails);
+		if (arguments.containsKey("displayLog")) {
+			displayLog=(boolean) arguments.get("displayLog");
+		}
 
 		if (arguments.containsKey("parentCtrl")) {
 			parentCtrl = arguments.get("parentCtrl");
@@ -88,6 +92,10 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
 			doWriteBeanToComponents(finHeaderList);
 		}
+		
+		userActivityLog.setVisible(displayLog);
+		reasonDeatilsLog.setVisible(displayLog);
+		
 		logger.debug("Leaving " + event.toString());
 	}
 	

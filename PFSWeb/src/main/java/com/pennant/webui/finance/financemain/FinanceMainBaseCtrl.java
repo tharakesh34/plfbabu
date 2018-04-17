@@ -1582,8 +1582,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Deviation Detail Tab 
-		if (StringUtils.isEmpty(moduleDefiner) && ImplementationConstants.ALLOW_DEVIATIONS) {
-			appendDeviationDetailTab(onLoad);
+		if (ImplementationConstants.ALLOW_DEVIATIONS) {
+			if (StringUtils.isEmpty(moduleDefiner)) {
+				boolean allowed = deviationExecutionCtrl.deviationAllowed(financeType.getFinCategory());
+				if (allowed) {
+					appendDeviationDetailTab(onLoad);
+				}
+			}
 		}
 
 		//Mandate Details Tab 
@@ -6132,10 +6137,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 		}
-
-		if (StringUtils.isEmpty(moduleDefiner)) {
-			if (!processDeviations(aFinanceDetail,recSave)) {
-				return;
+		
+		if (ImplementationConstants.ALLOW_DEVIATIONS) {
+			if (StringUtils.isEmpty(moduleDefiner) && deviationDetailDialogCtrl != null) {
+				if (!processDeviations(aFinanceDetail, recSave)) {
+					return;
+				}
+			} else {
+				aFinanceDetail.setFinanceDeviations(null);
 			}
 		} else {
 			aFinanceDetail.setFinanceDeviations(null);
@@ -15954,10 +15963,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setNextUserId(String nextUserId) {
 		this.nextUserId = nextUserId;
-	}
-
-	public DeviationExecutionCtrl getDeviationExecutionCtrl() {
-		return deviationExecutionCtrl;
 	}
 
 
