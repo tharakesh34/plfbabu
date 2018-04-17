@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -79,21 +80,21 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 
 /**
@@ -114,7 +115,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	protected ExtendedCombobox 	custRef; 
 	protected  long 		taxCustId; 
 	protected Checkbox 		taxExempted; 
-	protected Uppercasebox 	taxNumber; 
+	protected Textbox		taxNumber;
 	protected Textbox 		addrLine1; 
 	protected Textbox 		addrLine2; 
 	protected Textbox 		addrLine3; 
@@ -146,6 +147,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	
 	private boolean fromLoan = false;
 	private boolean enquirymode = false;
+	private String old_country = "";
+	private String old_state = "";
+	private String old_city = "";
 
 	/**
 	 * default constructor.<br>
@@ -192,10 +196,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			
 			if (arguments.containsKey("enquirymode")) {
 				enquirymode=(boolean)arguments.containsKey("enquirymode");
-			}
-			
-			if (this.financeTaxDetail == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 			
 			if (arguments.containsKey("financeDetail")) {
@@ -253,8 +253,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			this.financeTaxDetail.setBefImage(financeTaxDetail);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.financeTaxDetail.isWorkflow(), this.financeTaxDetail.getWorkflowId(),
-					this.financeTaxDetail.getNextTaskId());
+			doLoadWorkFlow(this.financeTaxDetail.isWorkflow(), this.financeTaxDetail.getWorkflowId(), this.financeTaxDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
@@ -264,6 +263,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			} else {
 				if (!fromLoan) {
 					getUserWorkspace().allocateAuthorities(this.pageRightName, null);
+				} else {
+					getUserWorkspace().allocateAuthorities(this.pageRightName, role);
 				}
 			}
 
@@ -583,7 +584,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
-			custRefFilter[0] = new Filter("CustCif", custCIFList, Filter.OP_IN);
+			if (CollectionUtils.isNotEmpty(custCIFList)) {
+				custRefFilter[0] = new Filter("CustCif", custCIFList, Filter.OP_IN);
+			} else {
+				custRefFilter[0] = new Filter("CustCif", "", Filter.OP_IN);
+			}
 			this.custRef.setFilters(custRefFilter);
 			readOnlyComponentChecking();
 			
@@ -610,7 +615,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
-			custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
+			if (CollectionUtils.isNotEmpty(guarantorDetails)) {
+				custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
+			} else {
+				custRefFilter[0] = new Filter("CustCif", "", Filter.OP_IN);
+			}
 			this.custRef.setFilters(custRefFilter);
 			
 			if(finReference.getValue().isEmpty()){
@@ -619,16 +628,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			readOnlyComponentChecking();
 		} else {
 			readOnlyComponent(true, this.custRef);
-			readOnlyComponent(true, this.taxExempted);
-			readOnlyComponent(true, this.taxNumber);
-			readOnlyComponent(true, this.addrLine1);
-			readOnlyComponent(true, this.addrLine2);
-			readOnlyComponent(true, this.addrLine3);
-			readOnlyComponent(true, this.addrLine4);
-			readOnlyComponent(true, this.country);
-			readOnlyComponent(true, this.province);
-			readOnlyComponent(true, this.city);
-			readOnlyComponent(true, this.pinCode);
+			readOnlyAllComponents();
 			
 			this.taxExempted.setChecked(false);
 			this.addrLine1.setValue("");
@@ -687,55 +687,98 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$province(Event event) {
-		logger.debug("Entering");
+	private void readOnlyAllComponents() {
+		readOnlyComponent(true, this.taxExempted);
+		readOnlyComponent(true, this.taxNumber);
+		readOnlyComponent(true, this.addrLine1);
+		readOnlyComponent(true, this.addrLine2);
+		readOnlyComponent(true, this.addrLine3);
+		readOnlyComponent(true, this.addrLine4);
+		readOnlyComponent(true, this.country);
+		readOnlyComponent(true, this.province);
+		readOnlyComponent(true, this.city);
+		readOnlyComponent(true, this.pinCode);
+	}
+	
 
-		Object dataObject = province.getObject();
-		String pcProvince = null;
+	public void onFulfill$country(Event event) {
+		logger.debug("Entering");
+		
+		Object dataObject = country.getObject();
+		doClearMessage();
+		
 		if (dataObject instanceof String) {
-			fillPindetails(null, null);
+			this.country.setValue("", "");
+			this.province.setValue("", "");
+			this.city.setValue("", "");
+			this.pinCode.setValue("", "");
+			filterProvinceDetails(null);
+			filterCitydetails(null, null);
+			filterPindetails(null, null, null);
+			old_country = "";
+			old_state = "";
+			old_city = "";
 		} else {
-			Province province = (Province) dataObject;
-			if (province == null) {
-				fillPindetails(null, null);
-			}
-			if (province != null) {
-				this.province.setErrorMessage("");
-				pcProvince = this.province.getValue();
-				fillPindetails(null, pcProvince);
-			}
+			Country country = (Country) dataObject; 
+			if (country != null) {
+				if (!StringUtils.equals(old_country, country.getCountryCode())) {
+					this.province.setValue("", "");
+					this.city.setValue("", "");
+					this.pinCode.setValue("", "");
+					this.province.setFilters(null);
+					this.city.setFilters(null);
+					this.pinCode.setFilters(null);
+					old_state = "";
+					old_city = "";
+					
+					filterCitydetails(null, country.getCountryCode());
+					filterPindetails(null, null, country.getCountryCode());
+				}
+				filterProvinceDetails(country.getCountryCode());
+				old_country = country.getCountryCode();
+			} 
 		}
 		
-		this.city.setObject("");
-		this.pinCode.setObject("");
-		this.city.setValue("");
-		this.city.setDescription("");
-		this.pinCode.setValue("");
-		this.pinCode.setDescription("");
-		fillCitydetails(pcProvince);
-		
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving");
 	}
 
-	private void fillCitydetails(String state) {
-		logger.debug("Entering");
+	public void onFulfill$province(Event event) {
+		logger.debug("Entering" + event.toString());
 
-		this.city.setModuleName("City");
-		this.city.setValueColumn("PCCity");
-		this.city.setDescColumn("PCCityName");
-		this.city.setValidateColumns(new String[] { "PCCity" });
-		Filter[] filters = new Filter[2];
+		Object dataObject = province.getObject();
+		doClearMessage();
 		
-		if (state == null) {
-			filters[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+		if (dataObject instanceof String) {
+			this.province.setValue("", "");
+			this.city.setValue("", "");
+			this.pinCode.setValue("", "");
+			filterCitydetails(null, old_country);
+			filterPindetails(null, null, old_country);
+			old_state = "";
+			old_city = "";
 		} else {
-			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+			Province province = (Province) dataObject;
+			if (province != null) {
+				if (!StringUtils.equals(old_state, this.province.getValue())) {
+					this.city.setValue("", "");
+					this.pinCode.setValue("", "");
+					this.city.setFilters(null);
+					this.pinCode.setFilters(null);
+					old_city = "";
+					
+					filterCitydetails(this.province.getValue(), null);
+					filterPindetails(null, this.province.getValue(), null);
+				}
+				
+				if (StringUtils.isBlank(this.country.getValue())) {
+					this.country.setValue(province.getCPCountry(), province.getLovDescCPCountryName());
+					this.old_country = province.getCPCountry();
+				}
+				this.old_state = this.province.getValue();
+			}
 		}
 		
-		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
-		this.city.setFilters(filters);
-		
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -748,53 +791,38 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		logger.debug("Entering");
 
 		Object dataObject = city.getObject();
-
-		String cityValue = null;
+		doClearMessage();
+		
 		if (dataObject instanceof String) {
-			this.city.setValue("");
-			this.city.setDescription("");
+			this.city.setValue("", "");
+			this.pinCode.setValue("", "");
+			filterPindetails(null, this.old_state, this.old_country);
+			old_city = "";
 		} else {
 			City city = (City) dataObject;
 			if (city != null) {
-				this.city.setErrorMessage("");
-				this.province.setErrorMessage("");
+				this.pinCode.setFilters(null);
+				filterPindetails(this.city.getValue(), null, null);
 				
-				this.province.setValue(city.getPCProvince());
-				this.province.setDescription(city.getLovDescPCProvinceName());
-				cityValue = this.city.getValue();
+				if (!StringUtils.equals(old_city, this.city.getValue())) {
+					this.pinCode.setValue("", "");
+				}
+				
+				if (StringUtils.isBlank(this.country.getValue())) {
+					this.country.setValue(city.getPCCountry(), city.getLovDescPCCountryName());
+					this.old_country = city.getPCCountry();
+				}
+				
+				if (StringUtils.isBlank(this.province.getValue())) {
+					this.province.setValue(city.getPCProvince(), city.getLovDescPCProvinceName());
+					filterProvinceDetails(city.getPCCountry());
+					this.old_state = city.getPCProvince();
+				}
+				
+				this.old_city = this.city.getValue();
 			}
 		}
-		
-		fillPindetails(cityValue, this.province.getValue());
-		
-		this.pinCode.setObject("");
-		this.pinCode.setValue("");
-		this.pinCode.setDescription("");
-		
 		logger.debug("Leaving");
-	}
-
-	private void fillPindetails(String cityValue, String provice) {
-		logger.debug("Entering");
-		
-		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
-		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
-		Filter[] filters = new Filter[2];
-		
-		if (cityValue != null) {
-			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
-		} else if(provice != null && !provice.isEmpty()) {
-			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
-		} else {
-			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
-		}
-		
-		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
-		this.pinCode.setFilters(filters);
-		
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -807,36 +835,82 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		logger.debug("Entering");
 
 		Object dataObject = pinCode.getObject();
+		doClearMessage();
+		
 		if (dataObject instanceof String) {
-			this.pinCode.setValue("");
-			this.pinCode.setDescription("");
+			this.pinCode.setValue("", "");
 		} else {
 			PinCode pinCode = (PinCode) dataObject;
 			if (pinCode != null) {
-				this.city.setValue(pinCode.getCity());
-				this.city.setDescription(pinCode.getPCCityName());
-				this.province.setValue(pinCode.getPCProvince());
-				this.province.setDescription(pinCode.getLovDescPCProvinceName());
-				this.country.setValue(pinCode.getpCCountry());
-				this.country.setDescription(pinCode.getLovDescPCCountryName());
+				if (StringUtils.isBlank(this.country.getValue())) {
+					this.country.setValue(pinCode.getpCCountry(), pinCode.getLovDescPCCountryName());
+					this.old_country = pinCode.getpCCountry();
+				}
 				
-				this.city.setErrorMessage("");
-				this.province.setErrorMessage("");
-				this.pinCode.setErrorMessage("");
-				//this.taxNumber.setErrorMessage("");
+				if (StringUtils.isBlank(this.province.getValue())) {
+					this.province.setValue(pinCode.getPCProvince(), pinCode.getLovDescPCProvinceName());
+					filterProvinceDetails(pinCode.getpCCountry());
+					this.old_state = pinCode.getPCProvince();
+				}
 				
-				/*String taxNumberValue = this.taxNumber.getValue();
-				String gstInValue = pinCode.getGstin() == null ? "" : pinCode.getGstin();
-				if (taxNumberValue.length() == 10) {
-					this.taxNumber.setValue(gstInValue + taxNumberValue);
-				} else if (taxNumberValue.length() > 10) {
-					String suffix = taxNumberValue.substring(2);
-					this.taxNumber.setValue(gstInValue + suffix);
-				} else {
-					this.taxNumber.setValue(gstInValue);
-				}*/
+				if (StringUtils.isBlank(this.city.getValue())) {
+					this.city.setValue(pinCode.getCity(), pinCode.getPCCityName());
+					filterCitydetails(pinCode.getPCProvince(), pinCode.getpCCountry());
+					this.old_city = pinCode.getCity();
+				}
 			} 
 		}
+		
+		logger.debug("Leaving");
+	}
+	
+	private void filterProvinceDetails(String country) {
+		logger.debug("Entering");
+
+		Filter[] provinceFilter = null;
+		if (StringUtils.isNotBlank(country)) {
+			provinceFilter = new Filter[1];
+			provinceFilter[0] = new Filter("CpCountry", country, Filter.OP_EQUAL);
+		} 
+
+		this.province.setFilters(provinceFilter);
+
+		logger.debug("Leaving");
+	}
+
+	private void filterCitydetails(String state, String country) {
+		logger.debug("Entering");
+
+		Filter[] cityFilter = null;
+		if (StringUtils.isNotBlank(state)) {
+			cityFilter = new Filter[1];
+			cityFilter[0] = new Filter("PcProvince", state, Filter.OP_EQUAL);
+		} else if (StringUtils.isNotBlank(country)) {
+			cityFilter = new Filter[1];
+			cityFilter[0] = new Filter("PcCountry", country, Filter.OP_EQUAL);
+		} 
+		
+		this.city.setFilters(cityFilter);
+		
+		logger.debug("Leaving");
+	}
+
+	private void filterPindetails(String cityValue, String state, String country) {
+		logger.debug("Entering");
+		
+		Filter[] pinFilter = null;
+		if (StringUtils.isNotBlank(cityValue)) {
+			pinFilter = new Filter[1];
+			pinFilter[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
+		} else if (StringUtils.isNotBlank(state)) {
+			pinFilter = new Filter[1];
+			pinFilter[0] = new Filter("PcProvince", state, Filter.OP_EQUAL);
+		} else if (StringUtils.isNotBlank(country)) {
+			pinFilter = new Filter[1];
+			pinFilter[0] = new Filter("PcCountry", country, Filter.OP_EQUAL);
+		} 
+		
+		this.pinCode.setFilters(pinFilter);
 		
 		logger.debug("Leaving");
 	}
@@ -854,6 +928,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 		fillComboBox(this.applicableFor, aFinanceTaxDetail.getApplicableFor(), listApplicableFor, getExcludeFields());
 		
+		old_country = aFinanceTaxDetail.getCountry();
+		old_state = aFinanceTaxDetail.getPinCodeName();
+		old_city = aFinanceTaxDetail.getCity();
+		
 		if (!fromLoan) {
 			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
 			if (!aFinanceTaxDetail.isNewRecord()) {
@@ -862,19 +940,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}
 		}
 		
-		if (aFinanceTaxDetail.isNewRecord()) {
-			this.country.setDescription("");
-			this.province.setDescription("");
-			this.city.setDescription("");
-			this.pinCode.setDescription("");
-		} else {
-			this.country.setValue(aFinanceTaxDetail.getCountry());
-			this.country.setDescription(aFinanceTaxDetail.getCountryName());
-			this.province.setDescription(aFinanceTaxDetail.getProvinceName());
-			this.city.setDescription(aFinanceTaxDetail.getCityName());
-			this.pinCode.setDescription(aFinanceTaxDetail.getPinCodeName());
-			this.taxCustId = aFinanceTaxDetail.getTaxCustId();
-		}
+		this.country.setValue(aFinanceTaxDetail.getCountry(), aFinanceTaxDetail.getCountryName());
+		this.province.setValue(aFinanceTaxDetail.getProvince(), aFinanceTaxDetail.getProvinceName());
+		this.city.setValue(aFinanceTaxDetail.getCity(), aFinanceTaxDetail.getCityName());
+		this.pinCode.setValue(aFinanceTaxDetail.getPinCode(), aFinanceTaxDetail.getPinCodeName());
+		this.taxCustId = aFinanceTaxDetail.getTaxCustId();
+		
+		filterProvinceDetails(aFinanceTaxDetail.getCountry());
+		filterCitydetails(aFinanceTaxDetail.getProvince(), aFinanceTaxDetail.getCountry());
+		filterPindetails(aFinanceTaxDetail.getCity(), aFinanceTaxDetail.getProvince(), aFinanceTaxDetail.getCountry());
 		
 		this.taxExempted.setChecked(aFinanceTaxDetail.isTaxExempted());
 		this.taxNumber.setValue(aFinanceTaxDetail.getTaxNumber());
@@ -882,16 +956,12 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.addrLine2.setValue(aFinanceTaxDetail.getAddrLine2());
 		this.addrLine3.setValue(aFinanceTaxDetail.getAddrLine3());
 		this.addrLine4.setValue(aFinanceTaxDetail.getAddrLine4());
-		this.province.setValue(aFinanceTaxDetail.getProvince());
-		this.city.setValue(aFinanceTaxDetail.getCity());
-		this.pinCode.setValue(aFinanceTaxDetail.getPinCode());
 		
-		if(!enquirymode && !enqiryModule){			
+		if (!enquirymode){			
 			setCustCIFFilter();
 		}
 		
-		this.custRef.setValue(aFinanceTaxDetail.getCustCIF());
-		this.custRef.setDescription(aFinanceTaxDetail.getCustShrtName());
+		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -1302,17 +1372,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.applicableFor);
-		readOnlyComponent(true, this.taxExempted);
-		readOnlyComponent(true, this.taxNumber);
-		readOnlyComponent(true, this.addrLine1);
-		readOnlyComponent(true, this.addrLine2);
-		readOnlyComponent(true, this.addrLine3);
-		readOnlyComponent(true, this.addrLine4);
-		readOnlyComponent(true, this.country);
-		readOnlyComponent(true, this.province);
-		readOnlyComponent(true, this.city);
-		readOnlyComponent(true, this.pinCode);
 		readOnlyComponent(true, this.custRef);
+		readOnlyAllComponents();
 
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1440,7 +1501,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		financeDetail.setTaxDetail(this.financeTaxDetail);
+		financeDetail.setFinanceTaxDetails(this.financeTaxDetail);
 		
 		logger.debug("Leaving");
 	}

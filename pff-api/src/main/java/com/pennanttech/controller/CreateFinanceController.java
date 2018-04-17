@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -69,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
@@ -712,6 +714,24 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 		}
+		
+		if (financeDetail.getFinanceTaxDetails() != null) {
+			FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetails();
+			financeTaxDetail.setFinReference(financeMain.getFinReference());
+			financeTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			financeTaxDetail.setNewRecord(true);
+			financeTaxDetail.setLastMntBy(userDetails.getUserId());
+			financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			financeTaxDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+			financeTaxDetail.setUserDetails(financeMain.getUserDetails());
+			financeTaxDetail.setVersion(1);
+			financeTaxDetail.setTaskId(financeMain.getTaskId());
+			financeTaxDetail.setNextTaskId(financeMain.getNextTaskId());
+			financeTaxDetail.setRoleCode(financeMain.getRoleCode());
+			financeTaxDetail.setNextRoleCode(financeMain.getNextRoleCode());
+			financeTaxDetail.setWorkflowId(financeMain.getWorkflowId());
+		}
+		
 		// execute fee charges
 		String finEvent = "";
 		executeFeeCharges(financeDetail, finEvent);
@@ -955,7 +975,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode)
 			throws IllegalAccessException, InvocationTargetException {
 		FinScheduleData schData = financeDetail.getFinScheduleData();
-		if (schData.getFinFeeDetailList() == null || schData.getFinFeeDetailList().isEmpty()) {
+		if (CollectionUtils.isEmpty(schData.getFinFeeDetailList())) {
 			if (StringUtils.isBlank(eventCode)) {
 				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
 			}

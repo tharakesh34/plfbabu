@@ -70,7 +70,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private String applicableFor;
 	private long  	taxCustId;
 	private boolean taxExempted;
-	@XmlElement(name="GstNumber")
+	@XmlElement(name="gstNumber")
 	private String taxNumber;
 	@XmlElement(name="addrLine1")
 	private String addrLine1;

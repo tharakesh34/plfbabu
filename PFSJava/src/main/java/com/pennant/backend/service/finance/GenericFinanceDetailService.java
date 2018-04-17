@@ -75,7 +75,6 @@ import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -129,7 +128,6 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -1285,7 +1283,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
-		amountCodes.setBpi(finMain.getBpiAmount());
+		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+			amountCodes.setBpi(finMain.getBpiAmount());
+		}
 		
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
@@ -1484,24 +1484,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		
-		String fromBranch = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
- 		String toBranch = auditHeader.getAuditBranchCode();
-		
-		List<String> brachesList = new ArrayList<>();
-		brachesList.add(fromBranch);
-		brachesList.add(toBranch);
-		
-		//GST Added
-		List<Branch> braches = getFinanceMainDAO().getBrachDetailsByBranchCode(brachesList);
-		
-		for(Branch brach : braches) {
-			if (StringUtils.equals(fromBranch, brach.getBranchCode())) {
-				dataMap.put("fromState", brach.getBranchProvince());
-			} 
-			
-			if (StringUtils.equals(toBranch, brach.getBranchCode())) {
-				dataMap.put("toState", brach.getBranchProvince());
-			} 
+		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeDetail);
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, gstExecutionMap.get(key));
+				}
+			}
 		}
 
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);

@@ -2029,7 +2029,7 @@ public class FinanceDataValidation {
 			}
 		} else {
 			if(!StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(), 
-					FinanceConstants.REPAYMTH_MANUAL)){
+					FinanceConstants.REPAYMTH_MANUAL) && financeDetail.isStp()){
 			String[] valueParm = new String[1];
 			valueParm[0] = "mandate";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -2391,11 +2391,13 @@ public class FinanceDataValidation {
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
 		// Application number
-		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > LengthConstants.LEN_REF) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Application Number";
-			valueParm[1] = LengthConstants.LEN_REF+ " characters";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+		if(!ImplementationConstants.CLIENT_NFL) {
+			if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > LengthConstants.LEN_REF) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Application Number";
+				valueParm[1] = LengthConstants.LEN_REF+ " characters";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+			}
 		}
 		// Finance start date
 		Date appDate = DateUtility.getAppDate();
@@ -4370,7 +4372,7 @@ public class FinanceDataValidation {
 	 */
 	private List<ErrorDetail> finTaxDetailValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		FinanceTaxDetail finTaxDetail = financeDetail.getTaxDetail();
+		FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
 		if (finTaxDetail != null) {
 			if (StringUtils.isBlank(finTaxDetail.getApplicableFor())) {
 				String[] valueParm = new String[1];
@@ -4766,8 +4768,7 @@ public class FinanceDataValidation {
 	 */
 	private List<ErrorDetail> doValidateFees(FinScheduleData finScheduleData, boolean stp) {
 		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
-		if ((finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty())
-				|| stp) {
+		if ((finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) ) {
 			errors = feeValidations(PennantConstants.VLD_CRT_LOAN, finScheduleData, true, "");
 		}
 		return errors;

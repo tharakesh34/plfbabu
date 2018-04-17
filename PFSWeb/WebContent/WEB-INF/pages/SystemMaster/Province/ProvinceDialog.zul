@@ -139,6 +139,16 @@
 										width="180px" />
 								</hbox>
 							</row>
+							<row id="row_taxAvailable">
+								<label
+									id="label_ProvinceDialog_TaxAvailable"
+									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="taxAvailable"
+										checked="false"/>
+								</hbox>
+							</row>
 							<row>
 								<label
 									id="label_ProvinceDialog_TaxExempted"
@@ -168,16 +178,6 @@
 										sclass="mandatory" />
 									<textbox id="taxStateCode"
 										width="50px" />
-								</hbox>
-							</row>
-							<row id="row_taxAvailable">
-								<label
-									id="label_ProvinceDialog_TaxAvailable"
-									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="taxAvailable"
-										checked="false"/>
 								</hbox>
 							</row>
 							<row>

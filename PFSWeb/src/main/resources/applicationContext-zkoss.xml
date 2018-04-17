@@ -2622,16 +2622,16 @@
 
 	<!--============ Finance Fee Details ============== -->
 
-	<bean id="finFeeDetailListCtrl"
-		class="com.pennant.webui.finance.financemain.FinFeeDetailListCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="finFeeDetailListCtrl" class="com.pennant.webui.finance.financemain.FinFeeDetailListCtrl" parent="basisCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="customerService" ref="customerService" />
-		<property name="engineExecution" ref="engineExecution" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="branchService" ref="branchService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<!--<property name="branchService" ref="branchService" />
+		<property name="provinceService" ref="provinceService" />
+		 <property name="customerService" ref="customerService" /> 
+		<property name="engineExecution" ref="engineExecution" /> -->
 	</bean>
 
 	<bean id="feePaymentDetailDialogCtrl"
@@ -2643,6 +2643,10 @@
 		class="com.pennant.webui.finance.financemain.FinFeeReceiptDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+
+	<bean id="finFeeGSTDetailsDialogCtrl" class="com.pennant.webui.finance.financemain.FinFeeGSTDetailsDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
 	<!--============ Covenant Type Details ============== -->
 
 	<bean id="finCovenantTypeListCtrl"

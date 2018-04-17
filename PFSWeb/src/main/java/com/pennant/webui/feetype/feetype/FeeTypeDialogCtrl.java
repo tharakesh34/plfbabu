@@ -135,7 +135,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	protected Checkbox					active;
 	
-	protected Row						row4;
 	protected Checkbox					taxApplicable;
 	protected Label						label_TaxComponent;
 	protected Hbox						hlayout_TaxComponent;
@@ -162,7 +161,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Textbox					hostFeeTypeCode;
 	
 	protected Checkbox					amortzReq;
-	protected Checkbox 					TAXApplicable;
 
 	private Boolean						feeTypeEnquiry				= false;
 	/**
@@ -407,8 +405,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(true, this.active);
 		readOnlyComponent(true, this.adviseType);
 		readOnlyComponent(true,this.amortzReq);
-		readOnlyComponent(true,this.TAXApplicable);
+		readOnlyComponent(true,this.taxApplicable);
 		readOnlyComponent(true,this.hostFeeTypeCode);
+		readOnlyComponent(true,this.taxComponent);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -522,7 +521,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			
 			this.amortzReq.setChecked(aFeeType.isAmortzReq());
 		}
-		this.TAXApplicable.setChecked(aFeeType.isTaxApplicable());	
 		this.active.setChecked(aFeeType.isActive());
 		
 		if (aFeeType.isTaxApplicable()) {
@@ -637,13 +635,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		//GST Applicable
-		try {
-			aFeeType.setTaxApplicable(this.TAXApplicable.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -665,31 +657,27 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 		//Fee Type Code
 		if (!this.feeTypeCode.isReadonly()) {
-			this.feeTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_FeeTypeCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.feeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		//Description
 		if (!this.feeTypeDesc.isReadonly()) {
-			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
+			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
-		//Description
-		if (!this.hostFeeTypeCode.isReadonly()) {
-			this.hostFeeTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
-		}
+		//hostFeeTypeCode
+		/*if (!this.hostFeeTypeCode.isReadonly()) {
+			this.hostFeeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
+		}*/
+		//accountingSetID
 		if (!this.accountingSetID.isReadonly()) {
-				this.accountingSetID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
+				this.accountingSetID.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
+		//adviseType
 		if (!this.adviseType.isDisabled() && this.label_AdviseType.isVisible()) {
-			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
-					Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
+			this.adviseType.setConstraint(new StaticListValidator(listAdviseType, Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}
 		//Tax Component
 		if (!this.taxComponent.isDisabled() && this.label_TaxComponent.isVisible()) {
-			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent,
-					Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
+			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent, Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
 		}
 		
 		logger.debug("Leaving");
@@ -705,6 +693,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setConstraint("");
 		this.accountingSetID.setConstraint("");
 		this.adviseType.setConstraint("");
+		this.taxComponent.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -732,6 +721,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	protected void doClearMessage() {
 		logger.debug("Entering");
+		this.taxComponent.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -749,6 +739,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	public void onCheck$taxApplicable(Event event) {
 		logger.debug("Entering");
 		
+		this.taxComponent.setErrorMessage("");
+		this.taxComponent.setConstraint("");
 		fillComboBox(this.taxComponent, null, listTaxComponent, "");
 		
 		if (this.taxApplicable.isChecked()) {
@@ -788,7 +780,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxComponent.setDisabled(isReadOnly("FeeTypeDialog_TaxComponent"));
 
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.amortzReq);
-		readOnlyComponent(isReadOnly("FeeTypeDialog_TAXApplicable"), this.TAXApplicable);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -914,11 +905,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.adviseType.setSelectedIndex(0);
 		this.active.setValue("");
 
-		this.taxApplicable.setValue("");
+		this.taxApplicable.setChecked(false);
 		this.taxComponent.setSelectedIndex(0);
 
 		this.amortzReq.setValue("");
-		this.TAXApplicable.setValue("");
 		logger.debug("Leaving");
 	}
 

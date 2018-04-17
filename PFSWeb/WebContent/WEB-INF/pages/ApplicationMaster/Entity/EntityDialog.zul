@@ -185,8 +185,11 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_Active"
-									value="${c:l('label_EntityDialog_Active.value')}" />
+								<label id="label_GSTINAvailable" value="${c:l('label_EntityDialog_GSTINAvailable.value')}" />
+								<checkbox id="gstinAvailable" checked="false" />
+							</row>
+							<row>
+								<label id="label_Active" value="${c:l('label_EntityDialog_Active.value')}" />
 								<checkbox id="active" checked="false" />
 							</row>
 						</rows>

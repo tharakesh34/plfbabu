@@ -99,7 +99,6 @@ import com.pennant.backend.model.UserActivityLog;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -478,7 +477,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		// Finance Tax Detail
-		financeDetail.setTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_TView"));
+		financeDetail.setFinanceTaxDetails(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_TView"));
 
 		//Contributor Details
 		if (scheduleData.getFinanceType().isAllowRIAInvestment()) {
@@ -2013,7 +2012,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		// Save or Update FInance Tax Details
-		FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+		FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetails();
 		if ( taxDetail != null) {
 			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(taxDetail.getFinReference(), "_View");
 			if (tempTaxDetail != null) {
@@ -3367,7 +3366,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						"");
 
 				// Save FInance Tax Details
-				FinanceTaxDetail financeTaxDetail = financeDetail.getTaxDetail();
+				FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetails();
 				if (financeTaxDetail != null) {
 					FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeTaxDetail.getFinReference(), "_AView");
 					if (tempTaxDetail != null) {
@@ -3856,10 +3855,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Save FInance Tax Details
-			if (financeDetail.getTaxDetail() != null) {
-				FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
+			if (financeDetail.getFinanceTaxDetails() != null) {
+				FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinanceTaxDetails().getFinReference(), "_TView");
 				if (tempTaxDetail != null) {
-					getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+					getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetails(), TableType.TEMP_TAB);
 				}
 			}
 			
@@ -5074,10 +5073,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Delete Tax Details
-		if (financeDetail.getTaxDetail() != null) {
-			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
+		if (financeDetail.getFinanceTaxDetails() != null) {
+			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getFinanceTaxDetails().getFinReference(), "_TView");
 			if (tempTaxDetail != null) {
-				getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+				getFinanceTaxDetailDAO().delete(financeDetail.getFinanceTaxDetails(), TableType.TEMP_TAB);
 			}
 		}
 
@@ -5469,7 +5468,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
 			}
 			
-			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+			FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetails();
 			
 			if (taxDetail != null) {
 				if (!financeDetail.isActionSave()) {
@@ -9293,9 +9292,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	
 	@Override
-	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
-	
-		return getFinanceMainDAO().getBrachDetailsByBranchCode(finBranches);
+	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail) {
+		return getFinFeeDetailService().prepareGstMappingDetails(financeDetail);
 	}
 	 
 	public ReasonDetailDAO getReasonDetailDAO() {

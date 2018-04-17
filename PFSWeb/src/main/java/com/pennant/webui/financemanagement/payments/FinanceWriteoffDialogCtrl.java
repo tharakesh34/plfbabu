@@ -1944,7 +1944,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
-		amountCodes.setBpi(finMain.getBpiAmount());
+		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+			amountCodes.setBpi(finMain.getBpiAmount());
+		}
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 

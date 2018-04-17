@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -552,7 +553,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		doSetValidation();
 		doWriteComponentsToBean(getProvince());
 		if (this.cPCountry.getValue() != null && this.cPProvince.getValue() != null && this.taxAvailable.isChecked()) {
-			this.btnNew_gstDetails.setVisible(true);
+			this.btnNew_gstDetails.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnNew_gstDetails"));
 		} else {
 			this.btnNew_gstDetails.setVisible(false);
 		}
@@ -585,12 +586,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	private void doShowDialogPage(TaxDetail taxdetail) {
 		logger.debug(Literal.ENTERING);
 
+		boolean rightsAvailable = getUserWorkspace().isAllowed("button_ProvinceDialog_btnNew_gstDetails");
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("moduleCode", moduleCode);
-		arg.put("enqiryModule", enqiryModule);
+		arg.put("enqiryModule", !rightsAvailable);
 		arg.put("taxdetail", taxdetail);
 		arg.put("provinceDialogCtrl", this);
 		arg.put("roleCode", getRole());
+		arg.put("taxStateCode", this.taxStateCode.getValue());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
@@ -903,7 +906,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 					&& this.taxAvailable.isChecked()) {
 				MessageUtil.showError(Labels.getLabel("label_GstinMap"));
 				return;
-			} else if(getTaxDetailList() != null){
+			} else if (this.taxAvailable.isChecked() && getTaxDetailList() != null) {
 				boolean recordFound = false;
 				for (TaxDetail taxDet : getTaxDetailList()) {
 					if(!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_CAN) && 
@@ -1228,14 +1231,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public void onCheck$taxAvailable(Event event){
 		logger.debug("Enteing");
 		
-		checkTaxAvailable();
-		
-		logger.debug("Leaving");
-	}
-
-	private void checkTaxAvailable() {
-		logger.debug("Enteing");
-		
 		if (this.taxAvailable.isChecked()) {
 			if (!this.province.isNewRecord()) {
 				this.tab_gstdetails.setVisible(true);
@@ -1243,7 +1238,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		} else {
 			this.tab_gstdetails.setVisible(false);
 			List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
-			if (getTaxDetailList() != null) {
+			if (CollectionUtils.isNotEmpty(getTaxDetailList())) {
 				for (TaxDetail taxDet : getTaxDetailList()) {
 					if (!taxDet.isNewRecord()) {
 						if (StringUtils.isBlank(taxDet.getRecordType())) {
@@ -1260,6 +1255,19 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		
 		logger.debug("Leaving");
 	}
+
+	private void checkTaxAvailable() {
+		logger.debug("Enteing");
+		
+		this.tab_gstdetails.setVisible(false);
+		if (this.taxAvailable.isChecked()) {
+			if (!this.province.isNewRecord()) {
+				this.tab_gstdetails.setVisible(true);
+			}
+		}
+		
+		logger.debug("Leaving");
+	}
 	
 	private void doSetFieldMandatory(boolean isMandatory) {
 		logger.debug("Enteing");
@@ -1268,7 +1276,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.space_taxStateCode.setSclass("");
 			this.space_businessArea.setSclass("");
 			doClearMessage();
-			
 		} else {
 			this.space_taxStateCode.setSclass("mandatory");
 			this.space_businessArea.setSclass("mandatory");

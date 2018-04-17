@@ -87,7 +87,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
-		"returnDataSetList", "collateralSetup", "taxDetail", "returnStatus" })
+		"returnDataSetList", "collateralSetup", "financeTaxDetails", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -220,7 +220,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name="mandateDetail")
 	private Mandate mandate;
 	@XmlElement(name="taxDetail")
-	private FinanceTaxDetail taxDetail;
+	private FinanceTaxDetail financeTaxDetails;
 	
 	@XmlElementWrapper(name="financeFlags")
 	@XmlElement(name="financeFlag")
@@ -852,12 +852,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.foreClosureDetails = foreClosureDetails;
 	}
 
-	public FinanceTaxDetail getTaxDetail() {
-		return taxDetail;
+	public FinanceTaxDetail getFinanceTaxDetails() {
+		return financeTaxDetails;
 	}
 
-	public void setTaxDetail(FinanceTaxDetail taxDetail) {
-		this.taxDetail = taxDetail;
+	public void setFinanceTaxDetails(FinanceTaxDetail financeTaxDetails) {
+		this.financeTaxDetails = financeTaxDetails;
 	}
 
 	public boolean isStp() {

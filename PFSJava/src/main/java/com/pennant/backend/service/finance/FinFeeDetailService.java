@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.finance;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +54,8 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(String id,boolean isWIF,String type);
@@ -69,7 +73,17 @@ public interface FinFeeDetailService {
 	List<AuditDetail>  doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType, String finReference);
 	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
 			String auditTranType);
-	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map);
-	
+	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map);	
 	void updateTaxPercent(UploadTaxPercent taxPercent);
+	
+	//GST
+	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceMain financeMain, FinanceDetail financeDetail);
+	BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap);
+	BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal gstPercentage, FinanceMain financeMain);
+	BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy);
+	void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
+	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, FinanceMain financeMain);
+	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceMain financeMain, FinanceDetail financeDetail);
+	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail, HashMap<String, Object> gstExecutionMap);
+	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail);
 }

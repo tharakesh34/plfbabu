@@ -4748,7 +4748,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		accrualService.calProfitDetails(finMain, receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), newProfitDetail, dateValueDate);
-		amountCodes.setBpi(finMain.getBpiAmount());
+		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+			amountCodes.setBpi(finMain.getBpiAmount());
+		}
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		
 		// For Bajaj, It should be always positive

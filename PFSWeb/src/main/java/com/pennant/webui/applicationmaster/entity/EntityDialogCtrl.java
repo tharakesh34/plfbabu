@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  EntityDialogCtrl.java                                                   * 	  
+ * FileName    		:  EntityDialogCtrl.java                                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -98,6 +98,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	protected ExtendedCombobox stateCode;
 	protected ExtendedCombobox cityCode;
 	protected ExtendedCombobox pinCode;
+	protected Checkbox gstinAvailable;
 	protected Checkbox active;
 	private Entity entity; // overhanded per param
 	protected Textbox entityAddrLine1;
@@ -587,6 +588,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.cityCode.setValue(aEntity.getCityCode());
 		this.pinCode.setValue(aEntity.getPinCode());
 		this.active.setChecked(aEntity.isActive());
+		this.gstinAvailable.setChecked(aEntity.isGstinAvailable());
 		this.entityAddrLine1.setValue(aEntity.getEntityAddrLine1());
 		this.entityAddrLine2.setValue(aEntity.getEntityAddrLine2());
 		this.entityAddrHNbr.setValue(aEntity.getEntityAddrHNbr());
@@ -717,6 +719,12 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		// CIN Number
 		try {
 			aEntity.setcINNumber(this.cINNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// gstinAvailable
+		try {
+			aEntity.setGstinAvailable(this.gstinAvailable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -994,6 +1002,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(isReadOnly("EntityDialog_EntityFlatNbr"), this.entityAddrStreet);
 		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrStreet"), this.entityPOBox);
 		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.gstinAvailable);	//TODO crate right
 		
 		readOnlyComponent(isReadOnly("EntityDialog_CINNumber"),this.cINNumber);
 
@@ -1034,6 +1043,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(true, this.entityAddrStreet);
 		readOnlyComponent(true, this.entityFlatNbr);
 		readOnlyComponent(true, this.entityPOBox);
+		readOnlyComponent(true, this.gstinAvailable);
 
 		// readOnlyComponent(true, this.active);
 		readOnlyComponent(true,this.cINNumber);
@@ -1074,6 +1084,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityAddrStreet.setValue("");
 
 		this.active.setChecked(false);
+		this.gstinAvailable.setChecked(false);
 		
 		this.cINNumber.setValue("");
 		

@@ -83,8 +83,7 @@ public class Entity extends AbstractWorkflowEntity {
 	private String entityPOBox;
     private String provinceName;
     private String cityName;
-
-
+    private boolean gstinAvailable;
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord = false;
@@ -333,5 +332,13 @@ public class Entity extends AbstractWorkflowEntity {
 
 	public void setcINNumber(String cINNumber) {
 		this.cINNumber = cINNumber;
+	}
+
+	public boolean isGstinAvailable() {
+		return gstinAvailable;
+	}
+
+	public void setGstinAvailable(boolean gstinAvailable) {
+		this.gstinAvailable = gstinAvailable;
 	}
 }

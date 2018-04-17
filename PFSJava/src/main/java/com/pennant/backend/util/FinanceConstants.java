@@ -205,7 +205,7 @@ public class FinanceConstants {
 	public static final String	FINSER_EVENT_FEEPAYMENT			= "FeePayment";
 	public static final String	FINSER_EVENT_CHGSCHDMETHOD		= "ChangeSchdlMethod";
 
-	
+
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String	FINSER_EVENT_COVENANTS			= "Covenants";
 
@@ -273,9 +273,9 @@ public class FinanceConstants {
 
 	// Review Category Codes
 	//FIXME: PV: 31MAY17 Duplicate and different version present in calculation constants
-/*	public static final String	RVW_UNPAID_INST					= "RVWUPI";
+	/*	public static final String	RVW_UNPAID_INST					= "RVWUPI";
 	public static final String	RVW_ALL							= "RVWALL";
-*/
+	 */
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String	method_scheduleChange			= "scheduleChange";
 
@@ -338,19 +338,26 @@ public class FinanceConstants {
 	public static final String	POSTING_AGAINST_CUST			= "C";						//Misc. Postings
 	public static final String	POSTING_AGAINST_COLLATERAL		= "CLT";					//Misc. Postings
 	public static final String	POSTING_AGAINST_LIMIT			= "LMT";					//Misc. Postings
-	
+
 	public static final String	FEES_AGAINST_LOAN				= "FC";
 	public static final String	FEES_AGAINST_BOUNCE				= "BC";
 	public static final String	FEES_AGAINST_ADVISE				= "AD";
 
 	// Fee Status Details
 	public static final String	FEE_STATUS_CANCEL				= "C";
-	
+
 	//GST
 	// Fee Type Tax
 	public static final String FEE_TAXCOMPONENT_INCLUSIVE 		= "I"; 					// Inclusive
 	public static final String FEE_TAXCOMPONENT_EXCLUSIVE 		= "E"; 					// Exclusive
-	
+	//Rule code Constants for GST
+	public static final String RULE_CODE_CGST 					= "CGST"; 				// CGST
+	public static final String RULE_CODE_IGST 					= "IGST"; 				// IGST
+	public static final String RULE_CODE_SGST 					= "SGST"; 				// SGST
+	public static final String RULE_CODE_UGST 					= "UGST"; 				// UGST
+	//GST Rule Module
+	public static final String RULE_MODULE_GST 					= "GSTRULE"; 			// GST RULE
+
 	//Field Investigation
 	public static final String	PROCEDT_VERIFICATION_FI_INIT	= "FIINIT";
 	public static final String	PROCEDT_VERIFICATION_FI_APPR	= "FIAPPR";

@@ -155,6 +155,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal ugst = BigDecimal.ZERO;
 	private BigDecimal sgst = BigDecimal.ZERO;
 	private BigDecimal cgst = BigDecimal.ZERO;
+	
+	private boolean feeModified = false;	//Added for rule and percentage auto calculation
 
 	public FinFeeDetail() {
 		super();
@@ -188,6 +190,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("ugst");
 		excludeFields.add("sgst");
 		excludeFields.add("cgst");
+		excludeFields.add("feeModified");
 		
 		return excludeFields;
 	}
@@ -629,6 +632,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setTaxPercent(BigDecimal taxPercent) {
 		this.taxPercent = taxPercent;
+	}
+
+	public boolean isFeeModified() {
+		return feeModified;
+	}
+
+	public void setFeeModified(boolean feeModified) {
+		this.feeModified = feeModified;
 	}
 
 }

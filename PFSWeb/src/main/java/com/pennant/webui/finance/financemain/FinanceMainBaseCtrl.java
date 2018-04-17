@@ -153,7 +153,6 @@ import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -2390,7 +2389,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
 			map.put("panNum", getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
-			FinanceTaxDetail financetaxdetail = getFinanceDetail().getTaxDetail();
+			FinanceTaxDetail financetaxdetail = getFinanceDetail().getFinanceTaxDetails();
 			if(financetaxdetail == null){
 				financetaxdetail = new FinanceTaxDetail();
 				financetaxdetail.setNewRecord(true);
@@ -6043,7 +6042,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
 			financeTaxDetailDialogCtrl.doSave_Tax(aFinanceDetail, taxTab, recSave);
 		}else{
-			aFinanceDetail.setTaxDetail(null);
+			aFinanceDetail.setFinanceTaxDetails(null);
 		}
 		
 		// FI Init Verification Detail
@@ -11341,27 +11340,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 		
-		//GST Added
-		String fromBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-		if (fromBranch == null) {
-			fromBranch = getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch();
-		}
-		String toBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		
-		List<String> brachesList = new ArrayList<>();
-		brachesList.add(fromBranch);
-		brachesList.add(toBranch);
-		
-		List<Branch> braches = getFinanceDetailService().getBrachDetailsByBranchCode(brachesList);
-		
-		for(Branch brach : braches) {
-			if (StringUtils.equals(fromBranch, brach.getBranchCode())) {
-				dataMap.put("fromState", brach.getBranchProvince());
-			} 
-			
-			if (StringUtils.equals(toBranch, brach.getBranchCode())) {
-				dataMap.put("toState", brach.getBranchProvince());
-			} 
+		//GST Added		
+		HashMap<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail());
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					dataMap.put (key, gstExecutionMap.get(key));
+				}
+			}
 		}
 		
 		aeEvent.getAeAmountCodes().getDeclaredFieldValues(dataMap);
@@ -11438,7 +11424,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
-		amountCodes.setBpi(finMain.getBpiAmount());
+		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+			amountCodes.setBpi(finMain.getBpiAmount());
+		}
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
@@ -11579,6 +11567,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
+		
+		Tab taxTab = getTab(AssetConstants.UNIQUE_ID_TAX);
+		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
+			financeTaxDetailDialogCtrl.doSave_Tax(getFinanceDetail(), taxTab, recSave);
+		} else {
+			getFinanceDetail().setFinanceTaxDetails(null);
+		}
 
 		if (buildEvent) {
 

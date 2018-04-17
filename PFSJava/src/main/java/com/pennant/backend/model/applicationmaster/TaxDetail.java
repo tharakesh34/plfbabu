@@ -78,8 +78,11 @@ private static final long serialVersionUID = 1L;
 	private String addressLine3;
 	private String addressLine4;
 	private String pinCode;
+	private String areaName;
 	private String cityCode;
 	private String cityName;
+	private String hsnNumber;
+	private String natureService;
 	@XmlTransient
 	private boolean newRecord=false;
 	@XmlTransient
@@ -88,6 +91,8 @@ private static final long serialVersionUID = 1L;
 	private TaxDetail befImage;
 	@XmlTransient
 	private  LoggedInUser userDetails;
+	
+	private boolean gstinAvailable;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -104,11 +109,15 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("countryName");
-			excludeFields.add("provinceName");
-			excludeFields.add("cityName");
-			excludeFields.add("entityDesc");
-	return excludeFields;
+		
+		excludeFields.add("countryName");
+		excludeFields.add("provinceName");
+		excludeFields.add("cityName");
+		excludeFields.add("areaName");
+		excludeFields.add("entityDesc");
+		excludeFields.add("gstinAvailable");
+		
+		return excludeFields;
 	}
 
 	public long getId() {
@@ -256,4 +265,35 @@ private static final long serialVersionUID = 1L;
 		this.entityDesc = entityDesc;
 	}
 
+	public String getHsnNumber() {
+		return hsnNumber;
+	}
+
+	public void setHsnNumber(String hsnNumber) {
+		this.hsnNumber = hsnNumber;
+	}
+
+	public String getNatureService() {
+		return natureService;
+	}
+
+	public void setNatureService(String natureService) {
+		this.natureService = natureService;
+	}
+
+	public boolean isGstinAvailable() {
+		return gstinAvailable;
+	}
+
+	public void setGstinAvailable(boolean gstinAvailable) {
+		this.gstinAvailable = gstinAvailable;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
 }

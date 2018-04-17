@@ -86,10 +86,11 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
-		if(type.contains("View")){
-			sql.append("addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc,");
-		}	
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
+		
+		if (type.contains("View")) {
+			sql.append("addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc, GstInAvailable,");
+		}
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From TAXDETAIL");
@@ -161,11 +162,11 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		StringBuilder sql =new StringBuilder(" insert into TAXDETAIL");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :Id, :Country, :StateCode, :EntityCode, :TaxCode, :AddressLine1, ");
-		sql.append(" :AddressLine2, :AddressLine3, :AddressLine4, :PinCode, :CityCode, ");
+		sql.append(" :AddressLine2, :AddressLine3, :AddressLine4, :PinCode, :CityCode, :HsnNumber, :NatureService, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Get the identity sequence number.
@@ -197,7 +198,7 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		sql.append("  set country = :Country, stateCode = :StateCode, entityCode = :EntityCode, ");
 		sql.append(" taxCode = :TaxCode, addressLine1 = :AddressLine1, addressLine2 = :AddressLine2, ");
 		sql.append(" addressLine3 = :AddressLine3, addressLine4 = :AddressLine4, pinCode = :PinCode, ");
-		sql.append(" cityCode = :CityCode, ");
+		sql.append(" cityCode = :CityCode, hsnNumber = :hsnNumber, natureService = :natureService,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -231,18 +232,12 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
-		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		/*// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}*/
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -265,25 +260,25 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
+		
 		if (type.contains("View")) {
-			sql.append(
-					"addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc,");
+			sql.append("addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc, GstInAvailable,");
 		}
 
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From TAXDETAIL");
 		sql.append(type);
 		sql.append(" Where StateCode = :StateCode");
-
+		
 		source.addValue("StateCode", statecode);
+		
 		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
 
 		logger.debug("selectSql: " + sql.toString());
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
+		return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 	
 	@Override
@@ -312,6 +307,4 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 
 		return count;
 	}
-
-	
 }	

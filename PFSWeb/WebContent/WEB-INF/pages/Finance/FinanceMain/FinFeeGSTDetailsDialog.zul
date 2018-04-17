@@ -8,9 +8,9 @@
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_FinFeeReceiptDialog" border="normal" width="70%"
-		height="50%"  apply="${finFeeReceiptDialogCtrl}" sizable="false">
-		<borderlayout id="borderlayoutFinFeeReceiptDialog">
+	<window id="window_FinFeeGSTDetailsDialog" border="normal" width="70%"
+		height="50%" apply="${finFeeGSTDetailsDialogCtrl}" sizable="false">
+		<borderlayout id="borderlayoutFinFeeGSTDetailsDialog">
 			<north>
 				<div sclass="z-toolbar">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
@@ -28,7 +28,7 @@
 							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+								sclass="z-toolbarbutton" visible="false"/>
 							<button id="btnDelete" label="Delete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
@@ -36,17 +36,16 @@
 							<button id="btnCancel"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+								sclass="z-toolbarbutton" visible="false"/>
 							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
+						<toolbar align="center" sclass="toolbar-center">
 							<label
-								value="${c:l('window_FinFeeReceiptsDialog.title')}"
+								value="${c:l('window_FinFeeGSTDetailsDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
 
@@ -64,62 +63,48 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="true">
-				<groupbox style="border:none;">
-					<grid>
+			<center border="none" autoscroll="false">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
-							<column width="200px" />
-							<column />
 							<column width="200px" />
 							<column />
 						</columns>
 						<rows>
 							<row>
-								<label id="label_FinFeeReceiptDialog_FeeType" value = "${c:l('label_FinFeeReceiptDialog_FeeType.value')}" style="font-weight:bold;"/>
-								<label id="label_FeeType" />
-								<label id="label_FinFeeReceiptDialog_FeeAmount" value = "${c:l('label_FinFeeReceiptDialog_FeeAmount.value')}" style="font-weight:bold;"/>
-								<label id="label_FeeAmount" />
+								<label id="label_FinFeeGSTDetailsDialog_FeeType" value = "${c:l('label_FinFeeGSTDetailsDialog_FeeType.value')}" />
+								<label id="label_FeeType" style="font-weight:bold;"/>
 							</row>
 							<row>
-								<label id="label_FinFeeReceiptDialog_PaidAmount" value = "${c:l('label_FinFeeReceiptDialog_PaidAmount.value')}" style="font-weight:bold;"/>
-								<label id="label_PaidAmount" />
-								<label id="label_FinFeeReceiptDialog_WaiverAmount" value = "${c:l('label_FinFeeReceiptDialog_WaiverAmount.value')}" style="font-weight:bold;"/>
-								<label id="label_WaiverAmount" />
+								<label id="label_FinFeeGSTDetailsDialog_TaxComponent" value = "${c:l('label_FinFeeGSTDetailsDialog_TaxComponent.value')}" />
+								<label id="label_TaxComponent" style="font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_FeeAmount" value = "${c:l('label_FinFeeGSTDetailsDialog_FeeAmount.value')}" />
+								<decimalbox id="feeAmount" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_CGST" value="${c:l('label_FinFeeGSTDetailsDialog_CGST.value')}" />
+								<decimalbox id="cgst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_SGST" value = "${c:l('label_FinFeeGSTDetailsDialog_SGST.value')}"/>
+								<decimalbox id="sgst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_IGST" value = "${c:l('label_FinFeeGSTDetailsDialog_IGST.value')}"/>
+								<decimalbox id="igst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_UGST" value = "${c:l('label_FinFeeGSTDetailsDialog_UGST.value')}"/>
+								<decimalbox id="ugst" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
+							</row>
+							<row>
+								<label id="label_FinFeeGSTDetailsDialog_Total" value = "${c:l('label_FinFeeGSTDetailsDialog_Total.value')}"/>
+								<decimalbox id="total" maxlength="18" readonly="true" style="border:none; background-color:white; font-weight:bold;"/>
 							</row>
 						</rows>
 					</grid>
-					<separator/>
-					<listbox id="listBoxReciptFeeDetail"
-						fixedLayout="false" span="true"
-						emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
-						ca:data-scrollable="true" sizedByContent="true">
-						<listhead sizable="false">
-							<listheader
-								id="listheader_FeeDetailList_ReceiptType"
-								label="${c:l('listheader_FeeDetailList_ReceiptType.label')}"
-								sort="false" />
-							<listheader
-								id="listheader_FeeDetailList_Reference"
-								label="${c:l('listheader_FeeDetailList_Reference.label')}"
-								sort="false" />
-							<listheader
-								id="listheader_FeeDetailList_ReceiptAmount"
-								label="${c:l('listheader_FeeDetailList_ReceiptAmount.label')}"
-								sort="false" />
-							<listheader
-								id="listheader_FeeDetailList_AvailableAmount"
-								label="${c:l('listheader_FeeDetailList_AvailableAmount.label')}"
-								sort="false" />
-							<listheader
-								id="listheader_FeeDetailList_ReceiptPaidAmount"
-								label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
-								sort="false" />
-							<listheader
-								id="listheader_FeeDetailList_Balance"
-								label="${c:l('listheader_FeeDetailList_Balance.label')}"
-								sort="false" />
-						</listhead>
-					</listbox>
 				</groupbox>
 			</center>
 		</borderlayout>

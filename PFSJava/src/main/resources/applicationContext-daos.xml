@@ -5432,6 +5432,10 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="finTaxDetailsDAO" ref="finTaxDetailsDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="branchService" ref="branchService" />
+		<property name="provinceService" ref="provinceService" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->
@@ -9234,6 +9238,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 	</bean>
 
 	<!-- PartnerBank -->

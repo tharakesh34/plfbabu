@@ -59,12 +59,15 @@
 						</row>
 						<row id ="row2" >
 							<label id = "label_EntityCode" value="${c:l('label_TaxDetailDialog_EntityCode.value')}" />
-						  		<extendedcombobox id = "entityCode" />
+						  	<extendedcombobox id = "entityCode" />
 							<label id = "label_TaxCode" value="${c:l('label_TaxDetailDialog_TaxCode.value')}" />
 							<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-						  		<uppercasebox id = "taxCode" maxlength="100" width="300px" />
+								<space spacing="2px" sclass="mandatory" />
+						  		<uppercasebox id = "gstStateCode" maxlength="2" width="30px"/>
+						  		<space spacing="2px"/>
+						  		<uppercasebox id = "panNumber" maxlength="10" width="120px" />
+						  		<space spacing="2px"/>
+						  		<uppercasebox id = "taxCode" maxlength="100" width="50px" />
 						  	</hbox>
 						</row>
 						<row id ="row3" >
@@ -91,6 +94,18 @@
 									<space spacing="2px" />
 						  		<textbox id = "addressLine4" maxlength="100" width="300px" />
 						  		</hbox>
+						</row>
+						<row id ="row_HSNNumber" >
+							<label id="label_TaxDetailDialog_HSNNumber" value="${c:l('label_TaxDetailDialog_HSNNumber.value')}" />
+							<hbox>
+								<space id="space_HSNNumber" spacing="2px" />
+								<textbox id="hSNNumber" maxlength="100" width="200px" />
+							</hbox>
+							<label id="label_TaxDetailDialog_NatureService" value="${c:l('label_TaxDetailDialog_NatureService.value')}" />
+							<hbox>
+								<space id="space_NatureService" spacing="2px"/>
+								<textbox id="natureService" maxlength="50" width="200px" />
+							</hbox>
 						</row>
 					</rows>
 				</grid>

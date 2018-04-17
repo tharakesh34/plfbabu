@@ -95,6 +95,10 @@
 									id="listheader_FeeDetailList_Adjust"
 									label="${c:l('listheader_FeeDetailList_Adjustments.label')}" 
 									sort="false" style="font-size: 11px;" width = "100px"/>
+								<listheader
+									id="listheader_FeeDetailList_GSTDetails"
+									label="${c:l('listheader_FeeDetailList_GSTDetails.label')}" 
+									sort="false" style="font-size: 11px;" width = "100px"/>
 							</listhead>
 						</listbox>
 					</groupbox>

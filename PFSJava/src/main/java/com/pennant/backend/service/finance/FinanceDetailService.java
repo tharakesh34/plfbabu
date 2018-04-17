@@ -46,13 +46,13 @@ package com.pennant.backend.service.finance;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.jaxen.JaxenException;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
@@ -196,7 +196,7 @@ public interface FinanceDetailService {
 	DocumentDetails getDocumentDetails(long id, String type);
 	
 	//GST
-	List<Branch> getBrachDetailsByBranchCode (List<String> finBranches);
+	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail);
 	
 	void setFIInitVerification(FinanceDetail financeDetail);
  }

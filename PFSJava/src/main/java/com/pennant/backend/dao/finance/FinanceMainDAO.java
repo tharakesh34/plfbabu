@@ -49,7 +49,6 @@ import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
@@ -277,9 +276,6 @@ public interface FinanceMainDAO {
 
 	long getMandateIdByRef(String finReference, String type);
 	
-	//GST Added TODO : need to move into BranchDao
-	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
-
 	int getFinanceCountById(String finReference);
 
 	boolean  isAppNoExists(String applicationNo,TableType type);

@@ -103,7 +103,7 @@
 									<hbox id="hlayout_HostFeeTypeCode"
 										visible="true">
 										<space
-											id="space_HostFeeTypeCode" spacing="2px" sclass="mandatory"/>
+											id="space_HostFeeTypeCode" spacing="2px"/>
 										<textbox id="hostFeeTypeCode"
 											width="200px" maxlength="50" />
 									</hbox>
@@ -135,24 +135,6 @@
 										<checkbox id="amortzReq" />
 									</hbox>
 								</row>
-								<row id="row4" visible="false">
-									<label id="label_TAXApplicable"
-										value="${c:l('label_FeeTypeDialog_TAXApplicable.value')}" />
-									<hbox id="hlayout_TAXApplicable">
-										<space id="space_TAXApplicable"
-											spacing="2px" />
-										<checkbox id="TAXApplicable" />
-									</hbox>
-								</row>
-								<row id="row5">
-									<label id="label_Active"
-										value="${c:l('label_FeeTypeDialog_Active.value')}" />
-									<hbox id="hlayout_Active">
-										<space id="space_Active"
-											spacing="2px" />
-										<checkbox id="active" />
-									</hbox>
-								</row>
 								<row id="row6">
 									<label id="label_TaxApplicable"
 										value="${c:l('label_FeeTypeDialog_TaxApplicable.value')}" />
@@ -169,6 +151,15 @@
 											sclass="mandatory" />
 										<combobox id="taxComponent"
 											width="140px" />
+									</hbox>
+								</row>
+								<row id="row5">
+									<label id="label_Active"
+										value="${c:l('label_FeeTypeDialog_Active.value')}" />
+									<hbox id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active" />
 									</hbox>
 								</row>
 							</rows>

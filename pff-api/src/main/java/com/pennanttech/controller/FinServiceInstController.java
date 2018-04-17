@@ -231,7 +231,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 
 		if (finServiceInst.getFinFeeDetails() != null) {
-			if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY) 
+			if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)
 					&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
 				feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst);
 			} else {
@@ -242,12 +242,11 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
 
-		if (financeDetail.isStp()) {
-			for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				feeDetail.setWorkflowId(0);
-			}	
-		}
-
+				if (financeDetail.isStp()) {
+					for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+						feeDetail.setWorkflowId(0);
+					}	
+				}
 			}
 		}
 
