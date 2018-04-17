@@ -906,12 +906,16 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private void checkUserLimit(AuditDetail auditDetail) {
 		SecurityUser securityUser = (SecurityUser) auditDetail.getModelData();
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(securityUser.getRecordType())) {
+			return;
+		}
+
 		if (securityUser.isUsrEnabled()) {
 			try {
 				License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount(securityUser.getId()));
 			} catch (LicenseException e) {
 				auditDetail.setErrorDetail(new ErrorDetail(e.getErrorCode(), e.getErrorMessage(), null));
-			} 
+			}
 		}
 	}
 	
