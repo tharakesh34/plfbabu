@@ -20,7 +20,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String custPassportNo;
 	private String mobileNumber;
 	private String custNationality;
-	private String employer;
+	private long employer;
 	private String watchListRule;
 	private boolean override;
 	private String overrideUser;
@@ -160,11 +160,11 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		this.custNationality = custNationality;
 	}
 
-	public String getEmployer() {
+	public long getEmployer() {
 		return employer;
 	}
 
-	public void setEmployer(String employer) {
+	public void setEmployer(long employer) {
 		this.employer = employer;
 	}
 

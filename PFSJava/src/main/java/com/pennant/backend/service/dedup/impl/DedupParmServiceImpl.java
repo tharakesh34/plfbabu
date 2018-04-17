@@ -1076,7 +1076,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			blacklistCustomer.setCustCRCPR(finBlacklist.getCustCRCPR());
 			blacklistCustomer.setCustPassportNo(finBlacklist.getCustPassportNo());
 			blacklistCustomer.setCustNationality(finBlacklist.getCustNationality());
-			blacklistCustomer.setEmployer(finBlacklist.getEmployer());
+			blacklistCustomer.setEmployer(Long.parseLong((finBlacklist.getEmployer())));
 			blacklistCustomer.setWatchListRule(finBlacklist.getWatchListRule());
 			blacklistCustomer.setOverride(finBlacklist.isOverride());
 			blacklistCustomer.setOverrideUser(finBlacklist.getOverrideUser());

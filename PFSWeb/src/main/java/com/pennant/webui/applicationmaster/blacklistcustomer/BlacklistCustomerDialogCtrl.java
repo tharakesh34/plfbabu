@@ -311,7 +311,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custMobileNum.setValue(aBlackListCustomers.getMobileNumber());
 		this.custNationality.setValue(aBlackListCustomers.getCustNationality());
 		this.custNationality.setDescription(aBlackListCustomers.getLovDescNationalityDesc());
-		this.employer.setValue(aBlackListCustomers.getEmployer());
+		if (!aBlackListCustomers.isNew()) {
+			this.employer.setValue(String.valueOf(aBlackListCustomers.getEmployer()));
+		}
 		this.employer.setDescription(aBlackListCustomers.getLovDescEmpName());
 		this.recordStatus.setValue(aBlackListCustomers.getRecordStatus());
 		this.custIsActive.setChecked(aBlackListCustomers.isCustIsActive());
@@ -385,7 +387,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setEmployer(this.employer.getValue());
+			finBlacklistCust.setEmployer(Long.parseLong(this.employer.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

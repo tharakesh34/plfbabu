@@ -396,7 +396,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			overrideCustomer.setCustCRCPR(customer.getCustCRCPR());
 			overrideCustomer.setCustPassportNo(customer.getCustPassportNo());
 			overrideCustomer.setCustNationality(customer.getCustNationality());
-			overrideCustomer.setEmployer(customer.getEmployer());
+			overrideCustomer.setEmployer(String.valueOf(customer.getEmployer()));
 			overrideCustomer.setWatchListRule(customer.getWatchListRule());
 			overrideCustomer.setOverride(customer.isOverride());
 			overrideCustomer.setOverrideUser(customer.getOverrideUser());
