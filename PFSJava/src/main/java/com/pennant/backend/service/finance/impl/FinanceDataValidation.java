@@ -4508,7 +4508,12 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
 				return errorDetails;
 			}
-
+			
+			Customer customer = customerDetailsService.getCustomerByCIF(finTaxDetail.getCustCIF());
+			if (customer != null) {
+				finTaxDetail.setTaxCustId(customer.getCustID());
+			}
+			
 			if (StringUtils.isNotBlank(finTaxDetail.getTaxNumber())) {
 				Pattern pattern = Pattern
 						.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_GSTIN));
@@ -4541,7 +4546,6 @@ public class FinanceDataValidation {
 
 						boolean isValidPan = false;
 						boolean isCustomerContainPan = false;
-						Customer customer = customerDetailsService.getCustomerByCIF(finTaxDetail.getCustCIF());
 						for (String panCardType : panCardTypes) {
 							CustomerDocument customerDocument = customerDocumentService
 									.getApprovedCustomerDocumentById(customer.getCustID(), panCardType);
