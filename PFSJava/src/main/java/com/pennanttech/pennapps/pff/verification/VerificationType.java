@@ -22,14 +22,17 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum VerificationType {
-	FI(1, "FI"), TV(2, "TV"), LV(3, "LV"), RCU(4, "RCU");
+	FI(1, "FI", "FI_VER"), TV(2, "TV", "TECHNICAL_VER"), LV(3, "LV", "LEGAL_VER"), RCU(4, "RCU",
+			"RISK_CREDIT_UNIT_VER");
 
-	private final Integer	key;
-	private final String	value;
+	private final Integer key;
+	private final String value;
+	private final String code;
 
-	private VerificationType(Integer key, String value) {
+	private VerificationType(Integer key, String value, String code) {
 		this.key = key;
 		this.value = value;
+		this.code = code;
 	}
 
 	public Integer getKey() {
@@ -38,6 +41,10 @@ public enum VerificationType {
 
 	public String getValue() {
 		return value;
+	}
+
+	public String getCode() {
+		return code;
 	}
 
 	public static VerificationType getRequestType(Integer key) {
