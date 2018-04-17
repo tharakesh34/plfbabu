@@ -762,4 +762,35 @@
 			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid);
 		</createView>
 	</changeSet>
+	<changeSet id="11" author="murthy.y">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+			SELECT  T1.FinRefDetailId, T1.FinType, T1.FinRefType, T1.FinRefId,T1.IsActive, T1.ShowInStage,
+			T1.MandInputInStage,T1.AllowInputInStage, T1.AllowDeviation, T1.AllowWaiver, T1.AllowPostpone,
+			T1.AllowExpire,T1.OverRide,T1.OverRideValue,T1.FinEvent, T1.AlertType,
+			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+			T1.RecordType, T1.WorkflowId, T2.FinTypeDesc lovDescFinTypeDescName, T2.FinCcy lovDescFinCcyCode,T2.FinCategory lovDescProductCodeName,
+			T3.AggImage lovDescAggImage,
+			COALESCE (T3.AggName, T4.EventCode, T7.RuleCodeDesc, T8.ScoreGroupName, T9.ScoreGroupName) lovDescNamelov,
+			COALESCE (T3.AggCode, T7.RuleCode, T8.ScoreGroupCode, T9.ScoreGroupCode) lovDescCodelov,
+			COALESCE (T3.AggDesc, T4.AccountSetCodeName, T5.CheckListDesc, cast(T7.RuleCode as varchar(8)), cast(T8.ScoreGroupCode as varchar(8)), 
+			cast(T9.ScoreGroupCode as varchar(8)), T10.limitCode)
+			lovDescRefDesc,T3.AggReportName lovDescAggReportName,T3.AggReportPath lovDescAggReportPath,
+			T3.AgrRule lovDescAggRuleName, T3.Aggtype,T3.moduleType,COALESCE(T3.AllowMultiple, 0) AllowMultiple,
+			COALESCE(T5.Remarks, '0') lovDescIsRemarksAllowed,COALESCE(T5.CheckMinCount, 0) lovDescCheckMinCount,
+			COALESCE(T5.CheckMaxCount, 0) lovDescCheckMaxCount,
+			COALESCE (T6.SQLRule, T7.SQLRule) LovDescElgRuleValue,COALESCE (T6.ReturnType, T7.ReturnType) lovDescRuleReturnType,
+			COALESCE (T8.MinScore, T9.MinScore, '0') lovDescminScore,COALESCE (T8.IsOverride, T9.IsOverride, 0) lovDescisoverride,
+			COALESCE (T8.OverrideScore, T9.OverrideScore, '0') lovDescoverrideScore
+			FROM LMTFinRefDetail T1 
+			INNER JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+			LEFT JOIN BMTAggrementDef T3 ON T1.FinRefId = T3.AggId AND T1.FinRefType = 2
+			LEFT OUTER JOIN RMTAccountingSet T4 ON T1.FinRefId = T4.AccountSetid AND T1.FinRefType = 5 
+			LEFT OUTER JOIN BMTCheckList T5 ON T1.FinRefId = T5.CheckListId AND T1.FinRefType = 1 
+			LEFT OUTER JOIN Rules T6 ON T6.RuleCode = T5.CheckRule AND T6.RuleModule = 'CLRULE' AND T6.RuleEvent = 'CLRULE' 
+			LEFT OUTER JOIN Rules T7 ON T1.FinRefId = T7.RuleId AND T1.FinRefType = 3 
+			LEFT OUTER JOIN RMTScoringGroup T8 ON T1.FinRefId = T8.ScoreGroupId AND T1.FinRefType = 4 AND T8.CategoryType = 'RETAIL'  
+			LEFT OUTER JOIN RMTScoringGroup T9 ON T1.FinRefId = T9.ScoreGroupId AND T1.FinRefType = 7 AND T9.CategoryType = 'CORP'
+			LEFT OUTER JOIN LimitCodeDetail T10 on T10.limitid = T1.finrefid
+		</createView>
+	</changeSet>
 </databaseChangeLog>
