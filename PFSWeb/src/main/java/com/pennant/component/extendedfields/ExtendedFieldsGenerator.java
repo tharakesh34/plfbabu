@@ -2025,7 +2025,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			listbox.setVisible(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
 		} else if (container instanceof Button) {
 			Button button = (Button) container;
-			button.setDisabled(getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
+			button.setDisabled(!getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
 		}
 		logger.debug(Literal.LEAVING);
 	}
