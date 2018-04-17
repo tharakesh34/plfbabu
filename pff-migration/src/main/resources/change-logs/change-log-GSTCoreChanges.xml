@@ -341,5 +341,265 @@
 			('GSTRULE','UGST','gstExempted','From State GST Exempted','nchar',1,'0','1',' ','static,global','  ');		
 		</sql>
 	</changeSet>
+		<changeSet id="10" author="Kesava">
+		<sql>
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'CGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'IGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'SGST';
+			delete from Rules where Rulemodule='GSTRULE' and RULECODE = 'UGST';
+		</sql>
+	</changeSet>
 	
+
+	<changeSet id="11" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">CGST</column>
+			<column name="RULECODE">CGST</column>
+			<column name="RULECODEDESC">CGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 9 ; return;} else {Result = 0 ; return;} ]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="12" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="13" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="14" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">IGST</column>
+			<column name="RULECODE">IGST</column>
+			<column name="RULECODEDESC">IGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 18 ; return; } else { Result = 0 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |!==|FIELDLIST|toState| |1|0|1|1|1|18| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="15" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 18 ; return;  
+} else {
+	Result = 0 ; return;  
+} ]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |!==|FIELDLIST|toState| |1|0|1|1|1|18| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="16" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">SGST</column>
+			<column name="RULECODE">SGST</column>
+			<column name="RULECODEDESC">SGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) { Result = 9 ; return; } else { Result = 0 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">3</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="18" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+ } else {
+	Result = 0 ; return;  
+ } ]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|FIELDLIST|toState| |1|0|1|1|1|9| |~(|AND|FIELDLIST|toUnionTerritory| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="19" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+
+	<changeSet id="20" author="Kesava">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)"/>
+			<column name="RULEMODULE">GSTRULE</column>
+			<column name="RULEEVENT">UGST</column>
+			<column name="RULECODE">UGST</column>
+			<column name="RULECODEDESC">UGST</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) { Result = 9 ; return;  } else { Result = 0 ; return; } ]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|toUnionTerritory| |==|STATICTEXT|1| |1|0|1|1|1|9| |~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">4</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp"/>
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">toState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="21" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|toUnionTerritory| |==|STATICTEXT|1| |1|0|1|1|1|9| |~(|AND|FIELDLIST|fromStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|toStateGstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~(|AND|FIELDLIST|gstExempted| |==|STATICTEXT|0| |1|0|0|0|0|~)|~)|~)|~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="22" author="Kesava">
+		<sql>
+			update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+		</sql>
+	</changeSet>
+	<changeSet id="23" author="Kesava">
+		<update tableName="Rules">			
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'CGST' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="24" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState !== toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 18 ; return;  
+} else {
+	Result = 0 ; return;  
+} ]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'IGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="25" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == toState && (toUnionTerritory == '0' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0'))))) {
+	Result = 9 ; return;  
+ } else {
+	Result = 0 ; return;  
+ } ]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="26" author="Kesava">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (toUnionTerritory == '1' && (fromStateGstExempted == '0' && (toStateGstExempted == '0' && (gstExempted == '0')))) {
+	Result = 9 ; return;  
+} else {
+	Result = 0 ; return;  
+}]]></column>
+			<where> Rulemodule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
