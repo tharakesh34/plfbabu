@@ -620,6 +620,18 @@
 		<changeSet id="8.7" author="manikanta.p">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
 		</changeSet>
+<!-- 		<changeSet id="8.6" author="manikanta.p" dbms="mssql">
+			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/>
+			<sql>
+				alter table bmtaddresstypes add Constraint df_AddrTypeFIRequired default 0 FOR AddrTypeFIRequired;
+			</sql>	
+		</changeSet>
+		<changeSet id="8.7" author="manikanta.p" dbms="mssql">
+			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
+			<sql>
+				alter table bmtaddresstypes_temp add Constraint df_AddrTypeFIRequired_T default 0 FOR AddrTypeFIRequired;
+			</sql>	
+		</changeSet> -->
 		<changeSet id="9" author="murthy.y">
 			<modifyDataType tableName="amtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
 		</changeSet>
