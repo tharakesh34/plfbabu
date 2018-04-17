@@ -2742,5 +2742,13 @@ UNION ALL
 			INSERT INTO ErrorDetails VALUES('90912','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9] And size should be 15.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="113" author="vijaykumar.l">
+	<sql>
+	update secrights set rightname='button_BlacklistCustomerDialog_btnSave' and page='BlacklistCustomerDialog'  where rightname=rightname='button_blacklistCustomerList_btnSave';
+    update secrights set rightname='button_BlacklistCustomerDialog_btnEdit' and page='BlacklistCustomerDialog'  where rightname=rightname='button_blacklistCustomerList_btnEdit';
+    update secrights set rightname='button_BlacklistCustomerDialog_btnDelete' and page='BlacklistCustomerDialog'  where rightname=rightname='button_blacklistCustomerList_btnDelete';
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
