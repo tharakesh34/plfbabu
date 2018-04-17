@@ -731,9 +731,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					Textbox text=(Textbox) grid_label.getFellowIfAny("SListId");
 					String[] statList = text.getValue().split(",");
 					
-					if(statList.length > 10){
+					if(statList.length > 20){
 						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),"10 Items"}));
+								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),"20 Items"}));
 					}
 					Map<String,Boolean> fieldList = new HashMap<String,Boolean>();
 					for (String statValue : statList) {
