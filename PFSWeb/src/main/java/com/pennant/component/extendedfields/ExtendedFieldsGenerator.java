@@ -114,6 +114,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private Tab					topLevelTab;// To through wrong value exceptions
 	private String				userRole;
 	private int					columnCount;
+	private String				defaultComponentWidth	= "250px";
 	public ExtendedFieldsGenerator() {
 
 	}
@@ -464,7 +465,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			columns.appendChild(getColumn("220px"));
 			columns.appendChild(getColumn());
 		} else {
-			columns.appendChild(new Column("", null, "250px"));
+			columns.appendChild(new Column("", null, defaultComponentWidth));
 			columns.appendChild(new Column("", null));
 		}
 
@@ -1301,7 +1302,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		textbox.setReadonly(isReadOnly);
 		if (StringUtils.equals(detail.getFieldType().trim(), ExtendedFieldConstants.FIELDTYPE_ADDRESS)) {
 			textbox.setMaxlength(100);
-			textbox.setWidth("250px");
+			textbox.setWidth(defaultComponentWidth);
 		}
 
 		// Data Setting
@@ -1323,7 +1324,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (detail.getFieldLength() <= 20) {
 			textbox.setWidth(detail.getFieldLength() * 10 + "px");
 		} else {
-			textbox.setWidth("250px");
+			textbox.setWidth(defaultComponentWidth);
 		}
 
 		return textbox;
@@ -1352,7 +1353,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (detail.getFieldLength() <= 20) {
 			uppercasebox.setWidth(detail.getFieldLength() * 10 + "px");
 		} else {
-			uppercasebox.setWidth("250px");
+			uppercasebox.setWidth(defaultComponentWidth);
 		}
 		return uppercasebox;
 	}
@@ -1522,11 +1523,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (detail.getFieldLength() < 10) {
 			combobox.setWidth("100px");
 		} else {
-			if (columnCount == 1 || detail.getFieldLength() <= 40) {
-				combobox.setWidth(detail.getFieldLength() * 10 + "px");
-			} else {
-				combobox.setWidth("400px");
-			}
+			combobox.setWidth(defaultComponentWidth);
 		}
 			// Data Rendering and Setting existing value
 		Comboitem comboitem = new Comboitem();
