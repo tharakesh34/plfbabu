@@ -1409,7 +1409,7 @@
 			update seqamtvehicledealer set seqno = (select coalesce(max(dealerid), 0) from amtvehicledealer_view);
 			
 			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Singla Enterprises', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, 'Sco 60 second floor', 'sec 26 above Bikanervala', 'FIAGENCY', 'Sector 26', 'Chandigarh', 'IN', 'CH', 'Chandigarh', NULL, NULL, NULL, NULL, NULL, NULL,NULL, 0, NULL, '160026', 1);
-			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Vismaya Associates LLP head office', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, 'C1/403', 'Chinar', 'FIAGENCY', 'Silver Oak Society', 'Kalyani Nagar', 'IN', 'MH', 'Pune', NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL, 0, '411014', 1);
+			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Vismaya Associates LLP head office', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, 'C1/403', 'Chinar', 'FIAGENCY', 'Silver Oak Society', 'Kalyani Nagar', 'IN', 'MH', 'Pune', NULL, NULL, NULL, NULL, NULL, NULL,NULL, 0, NULL, '411014', 1);
 			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Konkan Credit And Collection Pvt Ltd', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, '306', '3rd Floor', 'FIAGENCY', 'B Wing', 'Shubhankar Complex Chs Ltd', 'IN', 'MH', 'Mumbai', NULL, NULL, NULL, NULL, NULL, NULL,NULL, 0, NULL, '402301', 1);
 			
 			update seqamtvehicledealer set seqno = (select coalesce(max(dealerid), 0) from amtvehicledealer_view);
