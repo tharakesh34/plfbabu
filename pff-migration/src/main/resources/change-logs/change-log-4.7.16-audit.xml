@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	
+	
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Vinay">
+		<addColumn tableName="AdtCustomerBankInfo"  >
+			 <column name="CreditTranNo" defaultValue="0" type="number(18,0)"/>
+			 <column name="CreditTranAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="CreditTranAvg" defaultValue="0" type="number(18,0)"/>
+			 <column name="DebitTranNo" defaultValue="0" type="int"/>
+			 <column name="DebitTranAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="CashDepositNo" defaultValue="0" type="int"/>
+			 <column name="CashDepositAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="CashWithdrawalNo" defaultValue="0" type="int"/>
+			 <column name="CashWithdrawalAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="ChqDepositNo" defaultValue="0" type="int"/>
+			 <column name="ChqDepositAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="ChqIssueNo" defaultValue="0" type="int"/>
+			 <column name="ChqIssueAmt" defaultValue="0" type="number(18,0)"/>
+			 <column name="InwardChqBounceNo" defaultValue="0" type="int"/>
+			 <column name="OutwardChqBounceNo" defaultValue="0" type="int"/>
+			 <column name="EodBalMin" defaultValue="0" type="number(18,0)"/>
+			 <column name="EodBalMax" defaultValue="0" type="number(18,0)"/>
+			 <column name="EodBalAvg" defaultValue="0" type="number(18,0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Vinay">
+		<addColumn tableName="AdtCustomerExtLiability"  >
+			 <column name="roi" defaultValue="0" type="decimal(18,0)">
+			 <constraints nullable="false" />
+			 </column>
+			 <column name="tenure" defaultValue="0" type="int">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="tenureBal" defaultValue="0" type="int">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="bounceNo" defaultValue="0" type="int"/>
+			 <column name="pos" defaultValue="0" type="decimal(18,0)">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="overdue" defaultValue="0" type="decimal(18,0)"/>
+			 <column name="isEmiCnsdrForFOIR" defaultValue="0" type="boolean">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="source" defaultValue="" type="VARCHAR(8)">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="checkedBy"   defaultValue="" type="VARCHAR(8)">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="securityDetail"  defaultValue=""  type="VARCHAR(50)"/>
+			 <column name="endUseOfFunds"  defaultValue="" type="VARCHAR(8)">
+			  <constraints nullable="false" />
+			 </column>
+			 <column name="repayFrom"  defaultValue="" type="VARCHAR(8)">
+			  <constraints nullable="false" />
+			 </column>
+		 </addColumn>
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<createView viewName="activitylog_view" replaceIfExists="true">
+			select A.AuditId, A.LastMntOn AuditDate, A.Version, A.RoleCode, A.NextRoleCode, A.RecordStatus, A.TaskId, A.RecordType, A.WorkflowId,A.lastMntBy,
+			A.RcdMaintainSts,U.UsrLogin UserLogin ,A.FinReference
+			from AdtFinanceMain A inner join plf.SecUsers U on U.UsrID = A.LastMntBy 
+			where AuditImage = 'W'
+		</createView>
+	</changeSet>
+	
+	</databaseChangeLog>
