@@ -451,6 +451,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	public Verification getFiVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
 		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference());
+		List<Verification> screenVerifications = getScreenVerifications(verification);
+		
+		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
 			List<FieldInvestigation> fiList = fieldInvestigationDAO.getList(verification.getKeyReference());
@@ -462,14 +465,37 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 					}
 				}
 			}
-
 		}
-		List<Verification> screenVerifications = getScreenVerifications(verification);
+		
 		screenVerifications.addAll(getChangedVerifications(preVerifications, screenVerifications,verification.getKeyReference()));
 		verification.setVerifications(compareVerifications(screenVerifications, preVerifications,verification.getKeyReference()));
-
+		
 		logger.info(Literal.LEAVING);
 		return verification;
+	}
+
+	private void setLastStatus(List<Verification> verifications) {
+		String[] cif = new String[verifications.size()];
+
+		int i = 0;
+		for (Verification verification : verifications) {
+			cif[i++] = verification.getCif();
+		}
+
+		List<FieldInvestigation> list = fieldInvestigationDAO.getList(cif);
+
+		for (Verification verification : verifications) {
+			FieldInvestigation current = verification.getFieldInvestigation();
+			for (FieldInvestigation previous : list) {
+				if (previous.getCif().equals(verification.getCif())
+						&& previous.getAddressType().equals(current.getAddressType())) {
+					if (!isAddressChange(previous, current)) {
+						verification.setStatus(previous.getStatus());
+						verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+					}
+				}
+			}
+		}
 	}
 
 	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,String keyReference) {
@@ -551,7 +577,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
 						&& !isAddressChange(preVrf.getFieldInvestigation(), vrf.getFieldInvestigation())
-						&& !fiIds.contains(vrf.getId())) {
+						&& !fiIds.contains(vrf.getId()) && vrf.getVerificationDate() != null) {
 					screenVerifications.remove(vrf);
 					preVerifications.remove(preVrf);
 					break;

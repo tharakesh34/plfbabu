@@ -52,25 +52,26 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
-	private static final long	serialVersionUID		= 8661799804403963415L;
-	private static final Logger	logger					= LogManager.getLogger(FieldVerificationDialogCtrl.class);
+	private static final long serialVersionUID = 8661799804403963415L;
+	private static final Logger logger = LogManager.getLogger(FieldVerificationDialogCtrl.class);
 
-	protected Window			window_FIVerificationDialog;
-	protected Groupbox			finBasicdetails;
-	protected Listbox			listBoxFIVerification;
-	protected Groupbox				fiInquiry;
+	protected Window window_FIVerificationDialog;
+	protected Groupbox finBasicdetails;
+	protected Listbox listBoxFIVerification;
+	protected Groupbox fiInquiry;
 
-	private FinBasicDetailsCtrl	finBasicDetailsCtrl;
-	private FinanceMainBaseCtrl	financeMainDialogCtrl	= null;
-	private Verification		verification;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private Verification verification;
 
-	private transient boolean	validationOn;
-	private transient boolean	initType;
-	
+	private transient boolean validationOn;
+	private transient boolean initType;
+
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
 
 	protected Radiogroup fi;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -157,7 +158,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		ExtendedCombobox cAgency = (ExtendedCombobox) getComponent(listitem, "Agency");
 		ExtendedCombobox cReason = (ExtendedCombobox) getComponent(listitem, "Reason");
 
-		onchangeVerificationType(cfiv, cAgency,cReason);
+		onchangeVerificationType(cfiv, cAgency, cReason);
 	}
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
@@ -181,7 +182,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		}
 	}
-	
+
 	public void onChangeAgency(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "Agency");
@@ -197,7 +198,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 	}
-	
+
 	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
@@ -258,7 +259,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (fiInquiry.getChildren() != null) {
 				fiInquiry.getChildren().clear();
 			}
-			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul", fiInquiry, map);
+			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
+					fiInquiry, map);
 		} else {
 			MessageUtil.showMessage("Initiation request not avilable in Field Investigation Module.");
 		}
@@ -281,54 +283,54 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
-			
-			if (vrf.getReinitid() != null) {
+
+			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
 				continue;
 			}
-			
+
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType) {
-				
-				// Radio Button 
+
+				// Radio Button
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
-				Radio select=new Radio();
+				Radio select = new Radio();
 				select.setRadiogroup(fi);
 				select.setValue(vrf.getId());
 				listCell.appendChild(select);
 				listCell.setParent(item);
 			}
 
-			//Applicant Type
+			// Applicant Type
 			listCell = new Listcell();
 			listCell.setId("ReferenceType".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceType()));
 			listCell.setParent(item);
 
-			//CIF
+			// CIF
 			listCell = new Listcell();
 			listCell.setId("Reference".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getCif()));
 			listCell.setParent(item);
 
-			//Customer Name
+			// Customer Name
 			listCell = new Listcell(vrf.getCustomerName());
 			listCell.setParent(item);
 
-			//Address Type
+			// Address Type
 			listCell = new Listcell();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceFor()));
 			listCell.setParent(item);
 
-			//FIV
+			// FIV
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
 			requestType.setValue(String.valueOf(vrf.getRequestType()));
-			
+
 			List<ValueLabel> list = new ArrayList<>();
 			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
 				for (ValueLabel valueLabel : RequestType.getList()) {
@@ -341,11 +343,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				fillComboBox(requestType, vrf.getRequestType(), RequestType.getList());
 			}
-			
+
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
-			//Agency
+			// Agency
 			listCell = new Listcell();
 			listCell.setId("Agency".concat(String.valueOf(i)));
 			ExtendedCombobox agency = new ExtendedCombobox();
@@ -359,7 +361,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(agency);
 			listCell.setParent(item);
 
-			//Reason
+			// Reason
 			listCell = new Listcell();
 			listCell.setId("Reason".concat(String.valueOf(i)));
 			ExtendedCombobox reason = new ExtendedCombobox();
@@ -371,14 +373,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(reason);
 			listCell.setParent(item);
 
-			//Remarks
+			// Remarks
 			listCell = new Listcell();
 			listCell.setId("Remarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
 
-			//Status
+			// Status
 			listCell = new Listcell();
 			Label status = new Label();
 			if (Status.getType(vrf.getStatus()) != null) {
@@ -387,14 +389,14 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(status);
 			listCell.setParent(item);
 
-			//Verification Date
+			// Verification Date
 			listCell = new Listcell();
 			listCell.appendChild(new Label(DateUtil.formatToShortDate(vrf.getVerificationDate())));
 			listCell.setParent(item);
 
 			if (!initType) {
 
-				//Decision
+				// Decision
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
@@ -402,11 +404,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (Decision.getType(vrf.getDecision()) != null) {
 					decision.setValue(String.valueOf(Decision.getType(vrf.getDecision()).getValue()));
 				}
-				
+
 				decision.setParent(listCell);
 				listCell.setParent(item);
-				
-				//Re-Initiation Agency
+
+				// Re-Initiation Agency
 				listCell = new Listcell();
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
 				ExtendedCombobox reInitAgency = new ExtendedCombobox();
@@ -415,7 +417,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitAgency);
 				listCell.setParent(item);
 
-				//Re-Initiation Remarks
+				// Re-Initiation Remarks
 				listCell = new Listcell();
 				listCell.setId("ReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
@@ -430,7 +432,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			agency.addForward("onFulfill", self, "onChangeAgency", item);
 			reason.addForward("onFulfill", self, "onChangeReason", item);
 
-			onchangeVerificationType(requestType, agency,reason);
+			onchangeVerificationType(requestType, agency, reason);
 
 			String key = vrf.getReferenceFor().concat(vrf.getCif());
 			item.setAttribute(key, vrf);
@@ -468,7 +470,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -486,7 +489,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision != null) {
 				decision.clearErrorMessage();
 			}
-			if(reInitagencyComboBox !=null){
+			if (reInitagencyComboBox != null) {
 				reInitagencyComboBox.clearErrorMessage();
 			}
 		}
@@ -519,7 +522,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				reasonComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FIVerificationDialog_Reason.value"), null, true, true));
 			}
-			
+
 			if (!initType && !reInitAgencyComboBox.isReadonly()) {
 				reInitAgencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FIVerificationDialog_Agency.value"), null, true, true));
@@ -563,11 +566,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
-			int decision  = Integer.parseInt(getComboboxValue(combobox));
+			int decision = Integer.parseInt(getComboboxValue(combobox));
 			verification.setDecision(Integer.parseInt(getComboboxValue((Combobox) getComponent(listitem, "Decision"))));
-			if(!combobox.isDisabled() && decision == 0) {
-				throw new WrongValueException(combobox, Labels.getLabel("STATIC_INVALID",
-						new String[] { "Decision should be mandatory"}));
+			if (!combobox.isDisabled() && decision == 0) {
+				throw new WrongValueException(combobox,
+						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
 			}
 			break;
 		case "ReInitAgency":
@@ -594,10 +597,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param verification
 	 * @return
 	 */
-	public ArrayList<WrongValueException> doWriteComponentsToBean() {
+	public List<WrongValueException> doWriteComponentsToBean() {
 		logger.debug("Entering");
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		for (Listitem listitem : listBoxFIVerification.getItems()) {
 			try {
@@ -665,7 +668,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		for (ValueLabel valueLabel : list) {
@@ -683,12 +686,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab tab) {
 		logger.debug("Entering");
 
 		doRemoveValidation();
 
-		if (wve.size() > 0) {
+		if (!wve.isEmpty()) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			if (tab != null) {
 				tab.setSelected(true);
@@ -710,7 +713,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		doClearMessage();
 		doSetValidation();
 
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean();
+		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {
 			tab.setSelected(true);

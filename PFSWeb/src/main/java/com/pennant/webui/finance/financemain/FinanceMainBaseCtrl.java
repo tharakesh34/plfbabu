@@ -5670,7 +5670,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
-					if(addChangedAddress(aFinanceDetail, verification,false)){
+					if(aFinanceDetail.isFiInitTab() && addChangedAddress(aFinanceDetail, verification,false)){
 						return;
 					}
 				}
@@ -5728,7 +5728,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail);
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
-					if(addChangedAddress(aFinanceDetail, verification,true)){
+					if(aFinanceDetail.isFiInitTab() && addChangedAddress(aFinanceDetail, verification,true)){
 						return;
 					}
 				}
@@ -16366,6 +16366,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
 			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getFiVerification() == null) {
+				financeDetail.setFiVerification(new Verification());
+			}
 			map.put("financeMainBaseCtrl",this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getFiVerification());

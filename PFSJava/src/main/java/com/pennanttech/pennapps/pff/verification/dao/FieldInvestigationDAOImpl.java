@@ -14,6 +14,7 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,14 +47,14 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 	public FieldInvestigationDAOImpl() {
 		super();
 	}
-	
 
-@Override
+	@Override
 	public List<FieldInvestigation> getList(String keyReference) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select verificationid,name, addresstype, houseNumber, flatnumber, street,");
+		StringBuilder sql = new StringBuilder(
+				"select verificationid,name, addresstype, houseNumber, flatnumber, street,");
 		sql.append(" addressLine1, addressLine2, addressLine3, addressLine4, addressLine5, poBox, country,");
 		sql.append(" province, city, zipcode, contactNumber1, contactNumber2,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -78,8 +79,35 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
-	}		
+	}
 	
+	@Override
+	public List<FieldInvestigation> getList(String[] cif) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from verification_fi_view");
+		sql.append(" Where cif in(:cif) and verificationdate is not null");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("cif", Arrays.asList(cif));
+		
+		RowMapper<FieldInvestigation> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FieldInvestigation.class);
+		
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 
 	@Override
 	public String save(FieldInvestigation fieldInvestigation, TableType tableType) {

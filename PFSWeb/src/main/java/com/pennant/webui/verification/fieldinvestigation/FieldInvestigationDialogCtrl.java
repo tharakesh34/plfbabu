@@ -176,7 +176,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
 				enqiryModule = true;
-				fieldInvestigation.setWorkflowId(1);
 			}
 			
 
@@ -188,15 +187,19 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			FieldInvestigation fieldInvestigation = new FieldInvestigation();
 			BeanUtils.copyProperties(this.fieldInvestigation, fieldInvestigation);
 			this.fieldInvestigation.setBefImage(fieldInvestigation);
-
+			
 			// Render the page and display the data.
 			doLoadWorkFlow(this.fieldInvestigation.isWorkflow(), this.fieldInvestigation.getWorkflowId(),
 					this.fieldInvestigation.getNextTaskId());
-
+			
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} 
+			} else if(fromLoanOrg) {
+				setWorkFlowEnabled(true);
+			}
+			
+			
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.fieldInvestigation);
@@ -863,6 +866,25 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.zipCode.setReadonly(true);
 		this.contactNumber1.setReadonly(true);
 		this.contactNumber2.setReadonly(true);
+		
+		this.verificationDate.setReadonly(true);		
+		this.verificationType.setReadonly(true);
+		this.yearsAtPresentAddress.setReadonly(true);
+		this.personMet.setReadonly(true);
+		this.ownerShipStatus.setReadonly(true);
+		this.relationShip.setReadonly(true);
+		this.neighbourhoodCheckFeedBack.setReadonly(true);
+		this.contactNo.setReadonly(true);
+		this.observationRemarks.setReadonly(true);
+		this.livingStandard.setReadonly(true);
+		this.negativeCheck.setDisabled(true);
+		this.noOfAttempts.setReadonly(true);
+
+		this.agentCode.setReadonly(true);
+		this.agentName.setReadonly(true);
+		this.recommendations.setReadonly(true);
+		this.reason.setReadonly(true);
+		this.summaryRemarks.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
