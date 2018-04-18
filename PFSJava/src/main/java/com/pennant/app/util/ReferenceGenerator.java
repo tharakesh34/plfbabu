@@ -75,11 +75,12 @@ public class ReferenceGenerator implements Serializable {
 	public static String generateFinRef(FinanceMain financeMain, FinanceType financeType) {
 
 		String format = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_FORMAT);
+		String prefix = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_PREFIX);
 		if (StringUtils.isBlank(format)) {
 			format = DEFAULT_FORMAT;
 		}
 
-		StringBuilder lonRef = new StringBuilder("");
+		StringBuilder lonRef = new StringBuilder(StringUtils.trimToEmpty(prefix));
 		String branchCode = StringUtils.trimToEmpty(financeMain.getFinBranch());
 		String productCode = StringUtils.trimToEmpty(financeMain.getFinCategory());
 		String divisionCode = StringUtils.trimToEmpty(financeType.getFinDivision());
