@@ -66,6 +66,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 	private long moduleId = Long.MIN_VALUE;
 	private String lovDescModuleName;
 	private String lovDescSubModuleName;
+	private String lovDescTableName;
 	
 	@XmlElement
 	private String fieldName;
@@ -325,6 +326,14 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public String getLovDescTableName() {
+		return lovDescTableName;
+	}
+
+	public void setLovDescTableName(String lovDescTableName) {
+		this.lovDescTableName = lovDescTableName;
 	}
 
 }

@@ -17,6 +17,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -436,8 +437,9 @@ public class ExtendedFieldsValidation {
 				//saving secRight for Loan and CustomerModule while approving.
 				if (securityRightDAO != null
 						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-					if (!securityRightDAO.isRightNameExists(getExtendedFieldRightName(extendedFieldDetail))) {
-						SecurityRight securityRight = prepareSecRight(extendedFieldDetail);
+					String rightName = PennantApplicationUtil.getExtendedFieldRightName(extendedFieldDetail);
+					if (!securityRightDAO.isRightNameExists(rightName)) {
+						SecurityRight securityRight = prepareSecRight(extendedFieldDetail, rightName);
 						if (!isSeqSecRightsUpdated) {
 							securityRightDAO.updateSeqSecRights();
 							isSeqSecRightsUpdated = true;
@@ -547,29 +549,27 @@ public class ExtendedFieldsValidation {
 	}
 
 	/**
-	 * Method to prepare SecurityRight based on the given ExtendedField
-	 * PageName=ModuleName+"_"+SubModuleName ,
-	 * RightName= PageName+"_"+FieldName if it is an InputElement otherwise 
-	 * RightName=PageName+"_"FieldType+"_"+FieldName.
+	 * Method to prepare SecurityRight based on the given ExtendedField<BR>
+	 * PageName=ModuleName+"_"+SubModuleName,<BR>
+	 * RightName= PageName+"_"+FieldName if it is an InputElement,<BR>
+	 * otherwise RightName=PageName+"_"FieldType+"_"+FieldName.
 	 * 
 	 * @param detail
+	 * @param rightName 
 	 * @return securityRight
 	 */
-	private SecurityRight prepareSecRight(ExtendedFieldDetail detail) {
+	private SecurityRight prepareSecRight(ExtendedFieldDetail detail, String rightName) {
 		logger.debug(Literal.ENTERING);
 		SecurityRight securityRight = new SecurityRight();
 		int rightType;
-		String pageName = detail.getLovDescSubModuleName();
-		if (StringUtils.isNotBlank(pageName) && pageName.contains("_ED")) {
-			pageName = pageName.replace("_ED", "");
-		}
+		String pageName = detail.getLovDescModuleName() + "_" + detail.getLovDescSubModuleName();
 		if (StringUtils.equals(detail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_BUTTON)) {
 			rightType = 2;
 		} else {
 			rightType = 3;
 		}
 		securityRight.setRightType(rightType);
-		securityRight.setRightName(getExtendedFieldRightName(detail));
+		securityRight.setRightName(rightName);
 		securityRight.setPage(pageName);
 		securityRight.setVersion(1);
 		securityRight.setLastMntBy(1000);
@@ -583,25 +583,6 @@ public class ExtendedFieldsValidation {
 		securityRight.setWorkflowId(0);
 		logger.debug(Literal.LEAVING);
 		return securityRight;
-	}
-
-	//TODO:Ganesh need to move this method  Common Class.
-	public String getExtendedFieldRightName(ExtendedFieldDetail detail) {
-		logger.debug(Literal.ENTERING);
-		String rightName = null;
-		if (detail != null) {
-			String pageName = detail.getLovDescSubModuleName();
-			if (StringUtils.isNotBlank(pageName) && pageName.contains("_ED")) {
-				pageName = pageName.replace("_ED", "");
-			}
-			if (detail.isInputElement()) {
-				rightName = pageName + "_" + detail.getFieldName();
-			} else {
-				rightName = pageName + "_" + detail.getFieldType() + "_" + detail.getFieldName();
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return rightName;
 	}
 
 }

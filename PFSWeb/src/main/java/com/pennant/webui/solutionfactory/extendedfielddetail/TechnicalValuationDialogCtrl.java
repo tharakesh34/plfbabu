@@ -683,7 +683,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 
 			String tableName = CollateralConstants.VERIFICATION_MODULE;
 			tableName = tableName.concat("_").concat(getExtendedFieldHeader().getSubModuleName()).concat("_TV");
-			efd.setLovDescSubModuleName(tableName);//PennantStaticListUtil.getModuleName(efd)
+			efd.setLovDescTableName(tableName);//PennantStaticListUtil.getModuleName(efd)
 		}
 	}
 

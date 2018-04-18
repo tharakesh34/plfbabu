@@ -393,7 +393,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		if (isAudit) {
 			syntax.append("Adt");
 		}
-		syntax.append(fieldDetail.getLovDescSubModuleName());
+		syntax.append(fieldDetail.getLovDescTableName());
 		syntax.append(StringUtils.trimToEmpty(type));
 		syntax.append(" ");
 
