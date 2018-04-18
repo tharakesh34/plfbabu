@@ -1376,4 +1376,44 @@
 			]]>
 	  </sql>
 	  </changeSet>
+	  
+	  <changeSet id="14.0" author="Durga Prasad G">
+	  <sql>
+		<![CDATA[
+			delete from reasons where reasontypeid IN (select id from reasontypes where code IN ('FIWRES', 'FISTATUS')) and reasoncategoryId IN (select id from reasoncategory where code IN ('FIWRES', 'FISTATUS'));
+			delete from reasontypes where code IN ('FIWRES', 'FISTATUS');
+			delete from reasoncategory where code IN ('FIWRES', 'FISTATUS');
+			
+			update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+			update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+			update seqreasons set seqno = (select coalesce(max(Id), 0) from reasons_view);
+			
+			insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'FIWRES', 'Field investigation waiver reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'FISTATUS', 'Field investigation status reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+			
+			insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'FIWRES', 'Field investigation waiver reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'FISTATUS', 'Field investigation status reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+			
+			insert into reasons values((select coalesce(max(Id), 0)+1 from reasons), (select id from reasontypes where code ='FIWRES'), (select id from reasoncategory where code ='FIWRES'),  'WR1', 'Address verified within 3 months.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasons values((select coalesce(max(Id), 0)+1 from reasons), (select id from reasontypes where code ='FIWRES'), (select id from reasoncategory where code ='FIWRES'),  'WR2', 'VIP Customers.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			
+			insert into reasons values((select coalesce(max(Id), 0)+1 from reasons), (select id from reasontypes where code ='FISTATUS'), (select id from reasoncategory where code ='FISTATUS'),  'SR1', 'Address not found.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasons values((select coalesce(max(Id), 0)+1from reasons), (select id from reasontypes where code ='FISTATUS'), (select id from reasoncategory where code ='FISTATUS'),  'SR2', 'Wrong address.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasons values((select coalesce(max(Id), 0)+1 from reasons), (select id from reasontypes where code ='FISTATUS'), (select id from reasoncategory where code ='FISTATUS'),  'SR3', 'Door found locked.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			insert into reasons values((select coalesce(max(Id), 0)+1 from reasons), (select id from reasontypes where code ='FISTATUS'), (select id from reasoncategory where code ='FISTATUS'),  'SR4', 'Neighbor check negative with negative comments about applicant.', 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+			update seqreasons set seqno = (select coalesce(max(Id), 0) from reasons);
+			
+			delete from amtvehicledealer where dealertype = 'FIAGENCY';
+			update seqamtvehicledealer set seqno = (select coalesce(max(dealerid), 0) from amtvehicledealer_view);
+			
+			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Singla Enterprises', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, 'Sco 60 second floor', 'sec 26 above Bikanervala', 'FIAGENCY', 'Sector 26', 'Chandigarh', 'IN', 'CH', 'Chandigarh', NULL, NULL, NULL, NULL, NULL, NULL,NULL, 0, NULL, '160026', 1);
+			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Vismaya Associates LLP head office', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, 'C1/403', 'Chinar', 'FIAGENCY', 'Silver Oak Society', 'Kalyani Nagar', 'IN', 'MH', 'Pune', NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL, 0, '411014', 1);
+			insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'Konkan Credit And Collection Pvt Ltd', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, '306', '3rd Floor', 'FIAGENCY', 'B Wing', 'Shubhankar Complex Chs Ltd', 'IN', 'MH', 'Mumbai', NULL, NULL, NULL, NULL, NULL, NULL,NULL, 0, NULL, '402301', 1);
+			
+			update seqamtvehicledealer set seqno = (select coalesce(max(dealerid), 0) from amtvehicledealer_view);
+		]]>
+	  </sql>
+	  </changeSet>
 </databaseChangeLog>
