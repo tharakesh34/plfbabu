@@ -317,7 +317,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	public List<GlobalVariable> getGlobaVariables() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Id, Code, Name, Value, Type");
-		sql.append(" from GlobalVariable");
+		sql.append(" from GlobalVariables");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new GlobalVariable());
 		RowMapper<GlobalVariable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GlobalVariable.class);
 		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
