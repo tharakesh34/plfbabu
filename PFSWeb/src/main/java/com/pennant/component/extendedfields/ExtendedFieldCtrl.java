@@ -555,6 +555,17 @@ public class ExtendedFieldCtrl {
 	}
 
 	/**
+	 * Method for deAllocating the ExtendedFields Authorities.
+	 * 
+	 */
+	public void deAllocateAuthorities() {
+		if (getUserWorkspace() != null && extendedFieldHeader != null) {
+			String pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
+			getUserWorkspace().deAllocateAuthorities(pageName);
+		}
+	}
+
+	/**
 	 * @param parentTab
 	 *            the parentTab to set
 	 */

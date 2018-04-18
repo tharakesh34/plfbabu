@@ -1323,12 +1323,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void doClose() throws Exception {
 		logger.debug("Entering ");
 		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && financeDetail.getExtendedFieldRender() != null) {
-			ExtendedFieldHeader fieldHeader = financeDetail.getExtendedFieldHeader();
-			if (fieldHeader != null) {
-				String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
-				getUserWorkspace().deAllocateAuthorities(pageName);
-			}
+		if (isClosed && financeDetail.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
 		}
 		logger.debug("Leaving ");
 	}
@@ -6271,7 +6267,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							aFinanceMain.getRecordStatus(), getNextUserId());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
-
+				if (financeDetail.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
+				}
 				closeDialog();
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);

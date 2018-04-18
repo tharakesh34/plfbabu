@@ -1001,12 +1001,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onClick$btnClose(Event event) {
 		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && customerDetails.getExtendedFieldRender() != null) {
-			ExtendedFieldHeader fieldHeader = customerDetails.getExtendedFieldHeader();
-			if (fieldHeader != null) {
-				String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
-				getUserWorkspace().deAllocateAuthorities(pageName);
-			}
+		if (isClosed && customerDetails.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
 		}
 	}
 
@@ -3020,12 +3016,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			if (doProcess(aCustomerDetails, tranType)) {
 				//ExtendedFields Rights Deallocation.
-				if (customerDetails.getExtendedFieldRender() != null) {
-					ExtendedFieldHeader fieldHeader = customerDetails.getExtendedFieldHeader();
-					if (fieldHeader != null) {
-						String pageName = fieldHeader.getModuleName() + "_" + fieldHeader.getSubModuleName();
-						getUserWorkspace().deAllocateAuthorities(pageName);
-					}
+				if (customerDetails.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
 				}
 				refreshList();
 				closeDialog();
