@@ -209,6 +209,14 @@
 			alter table verification_fi add constraint df_verfctions_fi_noofat default 0 for NoofAttempts;
 		</sql>	
 	</changeSet>
+	<changeSet id="2.6" author="manikanta.p" dbms="postgresql">
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="verification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_fi" defaultValue="0"/>
+	</changeSet>
 	<changeSet id="3" author="murthy.y">
 		<createTable tableName="verification_fi_temp">
 			<column name="VerificationId" type="bigint">
@@ -309,7 +317,15 @@
 			alter table verification_fi_temp add constraint df_verfctions_fit_ver default 0 for Version;
 		</sql>	
 	</changeSet>
-	
+	<changeSet id="3.6" author="manikanta.p" dbms="postgresql">
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_fi_temp" defaultValue="0"/>
+		<addDefaultValue columnName="Version" 				tableName="verification_fi_temp" defaultValue="0"/>
+	</changeSet>
 	<changeSet id="4.0" author="murthy.y">
 		<createView viewName="verification_fi_view" replaceIfExists="true">
 			select fi.verificationid,
@@ -641,12 +657,12 @@
 				]]>
 			</sql>
 		</changeSet>
-		<!-- <changeSet id="8.6" author="manikanta.p">
+		 <changeSet id="8.6" author="manikanta.p" dbms="postgresql">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/>	
 		</changeSet>
-		<changeSet id="8.7" author="manikanta.p">
+		<changeSet id="8.7" author="manikanta.p" dbms="postgresql">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
-		</changeSet> -->
+		</changeSet> 
 		<changeSet id="8.6" author="manikanta.p" dbms="mssql">
 			<!-- <addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/> -->
 			<sql>
