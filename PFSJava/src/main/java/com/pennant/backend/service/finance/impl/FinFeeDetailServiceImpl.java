@@ -1118,38 +1118,38 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public BigDecimal actualGSTFees(FinFeeDetail finFeeDetail, String finCcy, HashMap<String, Object> gstExecutionMap) {
 		logger.debug(Literal.ENTERING);
 	
-		BigDecimal cgstReslut = BigDecimal.ZERO;
-		BigDecimal igstReslut = BigDecimal.ZERO;
-		BigDecimal ugstReslut = BigDecimal.ZERO;
-		BigDecimal sgstReslut = BigDecimal.ZERO;
-		BigDecimal tgstReslut = BigDecimal.ZERO;
+		BigDecimal cgstPercentage = BigDecimal.ZERO;
+		BigDecimal igstPercentage = BigDecimal.ZERO;
+		BigDecimal ugstPercentage = BigDecimal.ZERO;
+		BigDecimal sgstPercentage = BigDecimal.ZERO;
+		BigDecimal tgstPercentage = BigDecimal.ZERO;
 		
 		List<Rule> rules = ruleService.getGSTRuleDetails(FinanceConstants.RULE_MODULE_GST, "");
 		
 		for (Rule rule : rules) {
 			if (StringUtils.equals(FinanceConstants.RULE_CODE_CGST, rule.getRuleCode())) {
-				cgstReslut = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstReslut = tgstReslut.add(cgstReslut);
+				cgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
+				tgstPercentage = tgstPercentage.add(cgstPercentage);
 			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_IGST, rule.getRuleCode())) {
-				igstReslut = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstReslut = tgstReslut.add(igstReslut);
+				igstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
+				tgstPercentage = tgstPercentage.add(igstPercentage);
 			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_SGST, rule.getRuleCode())) {
-				sgstReslut = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstReslut = tgstReslut.add(sgstReslut);
+				sgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
+				tgstPercentage = tgstPercentage.add(sgstPercentage);
 			} else if (StringUtils.equals(FinanceConstants.RULE_CODE_UGST, rule.getRuleCode())) {
-				ugstReslut = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstReslut = tgstReslut.add(ugstReslut);
+				ugstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
+				tgstPercentage = tgstPercentage.add(ugstPercentage);
 			}
 		}
 		
-		finFeeDetail.setCgst(cgstReslut);
-		finFeeDetail.setIgst(igstReslut);
-		finFeeDetail.setSgst(sgstReslut);
-		finFeeDetail.setUgst(ugstReslut);
+		finFeeDetail.setCgst(cgstPercentage);
+		finFeeDetail.setIgst(igstPercentage);
+		finFeeDetail.setSgst(sgstPercentage);
+		finFeeDetail.setUgst(ugstPercentage);
 		
 		logger.debug("Leaving");
 		
-		return tgstReslut;
+		return tgstPercentage;
 	}
 	
 	@Override
@@ -1200,12 +1200,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void calculateGSTFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap) {
 		logger.debug(Literal.ENTERING);
 		
-		BigDecimal cgstPercentage = BigDecimal.ZERO;
-		BigDecimal igstPercentage = BigDecimal.ZERO;
-		BigDecimal ugstPercentage = BigDecimal.ZERO;
-		BigDecimal sgstPercentage = BigDecimal.ZERO;
-		BigDecimal tgstReslut = BigDecimal.ZERO;
-		
 		BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(finFeeDetail.getWaivedAmount());
 		BigDecimal paidAmountOriginal = finFeeDetail.getPaidAmountOriginal();
 		BigDecimal remainingAmountOriginal = finFeeDetail.getRemainingFeeOriginal();
@@ -1220,28 +1214,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		
 		if (finFeeDetail.isTaxApplicable()) {
 			
-			List<Rule> rules = ruleService.getGSTRuleDetails(FinanceConstants.RULE_MODULE_GST, "");
-			
-			for (Rule rule : rules) {
-				if (StringUtils.equals(FinanceConstants.RULE_CODE_CGST, rule.getRuleCode())) {
-					cgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-					tgstReslut = tgstReslut.add(cgstPercentage);
-				} else if (StringUtils.equals(FinanceConstants.RULE_CODE_IGST, rule.getRuleCode())) {
-					igstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-					tgstReslut = tgstReslut.add(igstPercentage);
-				} else if (StringUtils.equals(FinanceConstants.RULE_CODE_SGST, rule.getRuleCode())) {
-					sgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-					tgstReslut = tgstReslut.add(sgstPercentage);
-				} else if (StringUtils.equals(FinanceConstants.RULE_CODE_UGST, rule.getRuleCode())) {
-					ugstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-					tgstReslut = tgstReslut.add(ugstPercentage);
-				}
-			}
-			
-			finFeeDetail.setCgst(cgstPercentage);
-			finFeeDetail.setIgst(igstPercentage);
-			finFeeDetail.setSgst(sgstPercentage);
-			finFeeDetail.setUgst(ugstPercentage);
+			BigDecimal tgstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
+			BigDecimal cgstPercentage = finFeeDetail.getCgst();
+			BigDecimal igstPercentage = finFeeDetail.getIgst();
+			BigDecimal ugstPercentage = finFeeDetail.getUgst();
+			BigDecimal sgstPercentage = finFeeDetail.getSgst();
 
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
 				
@@ -1306,7 +1283,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				
 				//Net Amount
 				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(finFeeDetail.getWaivedAmount());
-				BigDecimal netFeeOriginal = calculateInclusivePercentage(totalNetFee, tgstReslut, financeMain);
+				BigDecimal netFeeOriginal = calculateInclusivePercentage(totalNetFee, tgstPercentage, financeMain);
 				
 				finTaxDetails.setNetCGST(calculatePercentage(netFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setNetIGST(calculatePercentage(netFeeOriginal, igstPercentage, financeMain));
@@ -1324,7 +1301,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				
 				//Actual Amounts
 				BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
-				BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), tgstReslut, financeMain);
+				BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), tgstPercentage, financeMain);
 				actualGst = CalculationUtil.roundAmount(actualGst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 				
 				//finFeeDetail.setActualAmountOriginal(actualOriginal);
@@ -1340,7 +1317,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 				//Paid Amounts
 				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount();
-				BigDecimal paidFeeOriginal = calculateInclusivePercentage(totalPaidFee, tgstReslut, financeMain);
+				BigDecimal paidFeeOriginal = calculateInclusivePercentage(totalPaidFee, tgstPercentage, financeMain);
 				
 				finTaxDetails.setPaidCGST(calculatePercentage(paidFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setPaidIGST(calculatePercentage(paidFeeOriginal, igstPercentage, financeMain));
@@ -1356,7 +1333,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				
 				//Remaining Amount
 				BigDecimal totalRemainingFee = totalNetFee.subtract(totalPaidFee);
-				BigDecimal remainingFeeOriginal = calculateInclusivePercentage(totalRemainingFee, tgstReslut, financeMain);
+				BigDecimal remainingFeeOriginal = calculateInclusivePercentage(totalRemainingFee, tgstPercentage, financeMain);
 				
 				finTaxDetails.setRemFeeCGST(calculatePercentage(remainingFeeOriginal, cgstPercentage, financeMain));
 				finTaxDetails.setRemFeeIGST(calculatePercentage(remainingFeeOriginal, igstPercentage, financeMain));
