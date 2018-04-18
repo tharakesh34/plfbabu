@@ -41,7 +41,7 @@
 			<column name="AuditImage" type="char(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Id" autoIncrement="true" type="bigint">
+			<column name="Id" type="bigint">
 				<constraints nullable="false"/>
 			</column>
 			<column name="VerificationType" type="int" defaultValue="0"
@@ -197,69 +197,5 @@
 	</changeSet>
 	<changeSet id="4.1" author="murthy.y">
 		<modifyDataType tableName="adtamtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
-	</changeSet>
-	<changeSet id="5" author="manikanta.p">
-		<dropTable tableName="adtverifications"/>		
-	</changeSet>
-	<changeSet id="5.1" author="manikanta.p">
-		<createTable tableName="adtverifications">
-			<column name="AuditId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditSeq" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditImage" type="char(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="Id" type="bigint">
-				<constraints nullable="false"/>
-			</column>
-			<column name="VerificationType" type="int" defaultValue="0"
-				remarks="Initiate-1, Waive-2, Not Required-3">
-				<constraints nullable="false" />
-			</column>
-			<column name="Module" type="int" defaultValue="0" remarks="Loan-1, Customer-2, Collateral-3"/>
-			<column name="KeyReference" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="ReferenceType" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="Reference" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="ReferenceFor" type="varchar(20)" />
-			<column name="CustId" type="bigint" />
-			<column name="RequestType" type="int" defaultValue="0" remarks="FI-1, TV-2, LV-3, RCU-4"/>
-			<column name="ReInitId" type="bigint"/>
-			<column name="Agency" type="bigint" />
-			<column name="Reason" type="bigint" />
-			<column name="Remarks" type="varchar(500)" />
-			<column name="CreatedBy" type="bigint" />
-			<column name="CreatedOn" type="datetime" />
-			<column name="Status" type="int" defaultValue="0" remarks="Positive-1, Not Completed-2, Waived-3" />
-			<column name="AgencyReason" type="bigint" />
-			<column name="AgencyRemarks" type="varchar(500)" />
-			<column name="VerificationDate" type="datetime" />
-			<column name="Decision" type="int" defaultValue="0" remarks="Approve-1, Re-initiate-2, Override-3" />
-			<column name="DecisionRemarks" type="varchar(500)" />
-			
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>		
 	</changeSet>
 </databaseChangeLog>
