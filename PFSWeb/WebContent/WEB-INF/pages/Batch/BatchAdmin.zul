@@ -132,7 +132,7 @@
 									<column width="100%" />
 								</columns>
 								<rows>
-									<row>
+									<row visible="false">
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
 
 											<exePannel id="posidex" border="normal" title="${c:l('label_posidex')}" imgSrc="/images/icons/send.gif" visible="true" />
@@ -142,7 +142,7 @@
 											<space/>
 										</hbox>
 									</row>
-									<row>
+									<row visible="false">
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
 
 											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="true" />
@@ -152,14 +152,14 @@
 											
 										</hbox>
 									</row>
-									<row>
+									<row visible="false">
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
 											<exePannel id="dmLoanDetailsMonthly" border="normal" title="${c:l('label_dmLoanDetailsMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="dmLoanBalancesMonthly" border="normal" title="${c:l('label_dmLoanBalancesMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="dmDisbDetailsMonthly" border="normal" title="${c:l('label_dmDisbDetailsMonthly')}" imgSrc="/images/icons/send.gif" visible="false" />
 										</hbox>
 									</row>
-									<row>
+									<row visible="false">
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
 											<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="true" />
