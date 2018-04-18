@@ -188,6 +188,15 @@
 			alter table adtverification_fi add constraint df_verfctions_fi_ver default 0 for Version;
 		</sql>	
 	</changeSet>
+	<changeSet id="2.2" author="manikanta.p" dbms="postgresql">
+		<addDefaultValue columnName="verification_fi" tableName="OwnershipStatus" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi" tableName="YearsAtPresentAddress" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi" tableName="NeighbourhoodFeedBack" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi" tableName="LivingStandard" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi" tableName="NegativeCheck" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi" tableName="NoofAttempts" defaultValue="0"/>
+		<addDefaultValue columnName="verification_fi_temp" tableName="Version" defaultValue="0"/>
+	</changeSet>
 	<changeSet id="3" author="manikanta.p">
 		<addColumn tableName="adtbmtaddresstypes">
 	        <column name="AddrTypeFIRequired" type="smallint"/>
