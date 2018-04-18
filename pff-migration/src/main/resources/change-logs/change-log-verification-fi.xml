@@ -674,7 +674,13 @@
 			<sql>
 				alter table bmtaddresstypes_temp add Constraint df_AddrTypeFIRequired_T default 0 FOR AddrTypeFIRequired;
 			</sql>	
-		</changeSet> 
+		</changeSet>
+		<changeSet id="9.1" author="Jayant" dbms="postgresql">
+			<sql>
+				Select public.deps_save_and_drop_dependencies('plf','amtvehicledealer');
+				Select public.deps_save_and_drop_dependencies('plf','amtvehicledealer_temp');
+			</sql>
+		</changeSet>
 		<changeSet id="9" author="murthy.y">
 			<modifyDataType tableName="amtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
 		</changeSet>
@@ -686,6 +692,12 @@
 		</changeSet>
 		<changeSet id="9.3" author="murthy.y" dbms="postgresql">
 			<modifyDataType tableName="amtvehicledealer_temp" columnName="dealertype" newDataType="citext" />
+		</changeSet>
+		<changeSet id="9.4" author="Jayant" dbms="postgresql">
+			<sql>
+				Select public.deps_restore_dependencies('plf','amtvehicledealer');
+				Select public.deps_restore_dependencies('plf','amtvehicledealer_temp');
+			</sql>
 		</changeSet>
 		<changeSet id="10.0" author="murthy.y">
 		<createView viewName="verification_fi_view" replaceIfExists="true">
