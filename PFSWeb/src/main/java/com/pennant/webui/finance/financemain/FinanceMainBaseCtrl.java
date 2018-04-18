@@ -1323,7 +1323,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void doClose() throws Exception {
 		logger.debug("Entering ");
 		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && financeDetail.getExtendedFieldHeader() != null) {
+		if (isClosed && extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
 			extendedFieldCtrl.deAllocateAuthorities();
 		}
 		logger.debug("Leaving ");
@@ -6267,7 +6267,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							aFinanceMain.getRecordStatus(), getNextUserId());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
-				if (financeDetail.getExtendedFieldHeader() != null) {
+				if (extendedFieldRenderList != null && financeDetail.getExtendedFieldHeader() != null) {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
 				closeDialog();

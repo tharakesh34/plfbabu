@@ -21,6 +21,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -685,5 +686,19 @@ public class PennantApplicationUtil {
 		logger.debug(Literal.LEAVING);
 		return rightName;
 	}
-	
+
+	/**
+	 * Method for get the ExtendedFields pageName.
+	 * 
+	 * @param extendedFieldHeader
+	 * @return
+	 */
+	public static String getExtendedFieldPageName(ExtendedFieldHeader extendedFieldHeader) {
+		String pageName = null;
+		if (extendedFieldHeader != null) {
+			pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
+		}
+		return pageName;
+	}
+
  }

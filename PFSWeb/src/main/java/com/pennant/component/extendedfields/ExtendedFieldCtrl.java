@@ -46,6 +46,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -107,9 +108,11 @@ public class ExtendedFieldCtrl {
 
 		// setting the pre and post validation scripts
 		if (!this.isReadOnly) {
-			if (getUserWorkspace()!=null) {
-				String pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
-				getUserWorkspace().allocateAuthorities(pageName, getUserRole());
+			if (getUserWorkspace() != null) {
+				String pageName = PennantApplicationUtil.getExtendedFieldPageName(extendedFieldHeader);
+				if (StringUtils.isNotBlank(pageName)) {
+					getUserWorkspace().allocateAuthorities(pageName, getUserRole());
+				}
 			}
 			// get pre-validation script if record is new
 			if (StringUtils.trimToNull(this.extendedFieldHeader.getPreValidation()) != null) {
@@ -559,9 +562,11 @@ public class ExtendedFieldCtrl {
 	 * 
 	 */
 	public void deAllocateAuthorities() {
-		if (getUserWorkspace() != null && extendedFieldHeader != null) {
-			String pageName = extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName();
-			getUserWorkspace().deAllocateAuthorities(pageName);
+		if (getUserWorkspace() != null) {
+			String pageName = PennantApplicationUtil.getExtendedFieldPageName(extendedFieldHeader);
+			if (StringUtils.isNotBlank(pageName)) {
+				getUserWorkspace().deAllocateAuthorities(pageName);
+			}
 		}
 	}
 

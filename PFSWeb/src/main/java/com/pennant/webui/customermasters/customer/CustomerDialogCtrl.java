@@ -1001,7 +1001,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onClick$btnClose(Event event) {
 		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && customerDetails.getExtendedFieldHeader() != null) {
+		if (isClosed && extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
 			extendedFieldCtrl.deAllocateAuthorities();
 		}
 	}
@@ -3016,7 +3016,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			if (doProcess(aCustomerDetails, tranType)) {
 				//ExtendedFields Rights Deallocation.
-				if (customerDetails.getExtendedFieldHeader() != null) {
+				if (extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
 				refreshList();
