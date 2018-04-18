@@ -15963,6 +15963,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextUserId = nextUserId;
 	}
 
+	//used in reflection method should not be removed
+	public DeviationExecutionCtrl getDeviationExecutionCtrl() {
+		return deviationExecutionCtrl;
+	}
+
 
 	public void setFinCollateralHeaderDialogCtrl(FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl) {
 		this.finCollateralHeaderDialogCtrl = finCollateralHeaderDialogCtrl;
