@@ -1587,4 +1587,26 @@
 	</sql>
 </changeSet>
 
+<changeSet id="31" author="Ganesh.p">
+	<sql>
+		Delete from SecGroupRights where GrpID =   (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER') And RightId =  (Select RightID from SecRights where RightName = 'LOAN_USL_TABPANEL_RCU');
+		Delete from SecGroupRights where GrpID =   (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER') And RightId = (Select RightID from SecRights where RightName = 'LOAN_USL_GROUPBOX_RCUAGCMT');
+		
+		Delete from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER';
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER','LOAN_USL ExtendedFields for RCU Tab', 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '',0);
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights),(Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER'),  (Select RightID from SecRights where RightName = 'LOAN_USL_TABPANEL_RCU'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights),(Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_RCU_APPROVER'),  (Select RightID from SecRights where RightName = 'LOAN_USL_GROUPBOX_RCUAGCMT'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
+
+<changeSet id="32" author="Ganesh.p">
+	<sql>
+		Delete from SecGroupRights where GrpID = (Select GrpID from SecGroups where GrpCode = 'EXTENDEDFIELDS_LOAN_USL_PDFEXTRACTION_APPROVER') And RightId =  (Select RightID from SecRights where RightName = 'LOAN_USL_BUTTON_EXTRACT');
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
