@@ -4226,7 +4226,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 
 		default:
-			/*// Execute any other custom service tasks
+			// Execute any other custom service tasks
 			if(StringUtils.isNotBlank(task.getOperation())) {
 				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
 				if(taskExecuted) {
@@ -4240,7 +4240,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else {
 				auditHeader = saveOrUpdate(auditHeader, false);
 				auditHeader.setProcessCompleted(true);
-			}*/
+			}
 			break;
 		}
 		return auditHeader;
