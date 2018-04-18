@@ -964,4 +964,388 @@
 			 where not exists ( select 1 from verification_fi_temp where verification_fi_temp.verificationid = fi.verificationid);
 		</createView>
 	</changeSet>
+	<changeSet id="13.0" author="Durga Prasad G">
+	  <sql>
+		<![CDATA[
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	 
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'menu_Item_Agencies_Field_Investigation');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'menu_Item_Agencies_Legal_Verification');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'menu_Item_Agencies_RCU_Verification');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'menu_Item_Agencies_Technical_Verification');
+
+
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerName');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerFax');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress1');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress2');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress3');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress4');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerCountry');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerCity');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerProvince');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_PaymentMode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Emirates');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Email');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_AccountingTreatment');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_CommisionPaidAt');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_CalculationRule');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_PoBox');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_SellerType');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_ZipCode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Active');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_AccountNumber');
+
+
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerName');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerFax');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress1');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress2');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress3');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress4');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerCountry');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerCity');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerProvince');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_PaymentMode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Emirates');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Email');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_AccountingTreatment');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_CommisionPaidAt');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_CalculationRule');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_PoBox');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_SellerType');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_ZipCode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Active');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_AccountNumber');
+
+
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerName');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerFax');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress1');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress2');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress3');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress4');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerCountry');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerCity');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerProvince');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_PaymentMode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Emirates');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Email');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_AccountingTreatment');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_CommisionPaidAt');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_CalculationRule');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_PoBox');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_SellerType');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_ZipCode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Active');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_AccountNumber');
+			 
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerName');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerFax');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress1');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress2');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress3');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress4');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerCountry');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerCity');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerProvince');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_PaymentMode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Emirates');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Email');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_AccountingTreatment');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_CommisionPaidAt');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_CalculationRule');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_PoBox');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_SellerType');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_ZipCode');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Active');
+			Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_AccountNumber');
+
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerName';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerFax';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress1';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress2';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress3';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerAddress4';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerCountry';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerCity';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_dealerProvince';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_PaymentMode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Emirates';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Email';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_AccountingTreatment';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_CommisionPaidAt';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_CalculationRule';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_PoBox';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_SellerType';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_ZipCode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_Active';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_FIAGENCY_AccountNumber';
+			 
+
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerName';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerFax';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress1';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress2';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress3';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerAddress4';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerCountry';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerCity';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_dealerProvince';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_PaymentMode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Emirates';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Email';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_AccountingTreatment';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_CommisionPaidAt';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_CalculationRule';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_PoBox';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_SellerType';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_ZipCode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_Active';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_LVAGENCY_AccountNumber';
+			 
+
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerName';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerFax';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress1';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress2';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress3';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerAddress4';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerCountry';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerCity';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_dealerProvince';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_PaymentMode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Emirates';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Email';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_AccountingTreatment';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_CommisionPaidAt';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_CalculationRule';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_PoBox';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_SellerType';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_ZipCode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_Active';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_RCUVAGENCY_AccountNumber';
+			 
+
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerName';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerFax';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress1';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress2';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress3';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerAddress4';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerCountry';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerCity';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_dealerProvince';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_PaymentMode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Emirates';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Email';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_AccountingTreatment';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_CommisionPaidAt';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_CalculationRule';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_PoBox';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_SellerType';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_ZipCode';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_Active';
+			Delete From SecRights Where RightName = 'VehicleDealerDialog_TVAGENCY_AccountNumber';
+
+			Delete From SecRights Where RightName = 'menu_Item_Agencies_Field_Investigation';
+			Delete From SecRights Where RightName = 'menu_Item_Agencies_Legal_Verification';
+			Delete From SecRights Where RightName = 'menu_Item_Agencies_RCU_Verification';
+			Delete From SecRights Where RightName = 'menu_Item_Agencies_Technical_Verification';
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_Agencies_Field_Investigation','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_Agencies_Legal_Verification','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_Agencies_RCU_Verification','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_Agencies_Technical_Verification','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_FIAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_LVAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+			 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_RCUVAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_TVAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Field_Investigation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Legal_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_RCU_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Technical_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Field_Investigation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Legal_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_RCU_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Technical_Verification'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_LVAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_RCUVAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_TVAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			]]>
+	  </sql>
+	  </changeSet>
 </databaseChangeLog>
