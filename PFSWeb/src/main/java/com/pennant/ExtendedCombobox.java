@@ -84,6 +84,7 @@ public class ExtendedCombobox extends Hbox {
 	private String						moduleName;														//mandatory
 	private int							displayStyle		= 1;										//mandatory 	
 	private String						valueColumn;													//mandatory
+	private Type valueType;
 	private boolean						isdisplayError		= true;										//mandatory
 	private boolean						inputAllowed		= true;										//mandatory
 	private boolean						isWindowOpened		= false;									//mandatory
@@ -99,6 +100,10 @@ public class ExtendedCombobox extends Hbox {
 	private String						whereClause			= null;
 	private String						rateModule			= "";
 	private List<?>						list				= null;
+
+	public enum Type {
+		LONG, STRING;
+	}
 
 	public List<?> getList() {
 		return list;
@@ -517,6 +522,20 @@ public class ExtendedCombobox extends Hbox {
 		}
 	}
 
+	public Object getActualValue() {
+		String value = StringUtils.trimToNull(getValue());
+
+		if (value == null) {
+			return null;
+		}
+
+		if (valueType == Type.LONG) {
+			return Long.valueOf(getValue());
+		} else {
+			return getValue();
+		}
+	}
+
 	/**
 	 * Get the value from the text box after validating it
 	 * 
@@ -789,6 +808,14 @@ public class ExtendedCombobox extends Hbox {
 
 	public void setValueColumn(String valueColumn) {
 		this.valueColumn = valueColumn;
+	}
+
+	public Type getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(Type valueType) {
+		this.valueType = valueType;
 	}
 
 	public String getDescColumn() {

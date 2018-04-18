@@ -144,7 +144,7 @@ public class SearchFilterControl implements Serializable {
 
 	private static Object getValue(Component component) {
 		if (component instanceof ExtendedCombobox) {
-			return ((ExtendedCombobox) component).getValue();
+			return ((ExtendedCombobox) component).getActualValue();
 		} else if (component instanceof Combobox) {
 			Comboitem comboitem = ((Combobox) component).getSelectedItem();
 

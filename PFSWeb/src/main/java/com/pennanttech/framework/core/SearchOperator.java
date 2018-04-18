@@ -125,15 +125,15 @@ public class SearchOperator {
 		MULTISELECT;
 	}
 
-	private static List<ValueLabel> defaultOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> simpleOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> stringOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> simpleNumaricOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> numaricOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> booleanOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> dateOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> dateRangeOperators = new ArrayList<ValueLabel>();
-	private static List<ValueLabel> multiselectOperators = new ArrayList<ValueLabel>();
+	private static List<ValueLabel> defaultOperators = new ArrayList<>();
+	private static List<ValueLabel> simpleOperators = new ArrayList<>();
+	private static List<ValueLabel> stringOperators = new ArrayList<>();
+	private static List<ValueLabel> simpleNumaricOperators = new ArrayList<>();
+	private static List<ValueLabel> numaricOperators = new ArrayList<>();
+	private static List<ValueLabel> booleanOperators = new ArrayList<>();
+	private static List<ValueLabel> dateOperators = new ArrayList<>();
+	private static List<ValueLabel> dateRangeOperators = new ArrayList<>();
+	private static List<ValueLabel> multiselectOperators = new ArrayList<>();
 
 	static {
 		defaultOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
