@@ -11541,9 +11541,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFeeOriginal());	//GST Change
+					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());	//GST Change
 				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFeeOriginal()); //GST Change
+					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee()); //GST Change
 				}
 
 				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
