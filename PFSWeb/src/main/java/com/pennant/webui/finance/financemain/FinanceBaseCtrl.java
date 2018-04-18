@@ -4105,7 +4105,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
-				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(false, aFinanceMain)));
+				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain,financeType)));
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
 			aFinanceSchData.setFinReference(this.finReference.getValue());

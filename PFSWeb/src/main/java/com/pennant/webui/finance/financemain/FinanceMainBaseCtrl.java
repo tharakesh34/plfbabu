@@ -9258,7 +9258,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			if (isBranchanged || StringUtils.isBlank(this.finReference.getValue())) {
-				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(false, aFinanceMain)));
+				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain,financeType)));
 				isBranchanged = false;
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
@@ -14460,6 +14460,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		FinanceDetail financeDetail = getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		financeMain.setFinBranch(customer.getCustDftBranch());
 
 		financeMain.setCustID(customer.getCustID());
 		setFinanceDetail(getFinanceDetailService().fetchFinCustDetails(financeDetail, custCtgCode,

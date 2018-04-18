@@ -658,6 +658,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		FinanceMain aFinanceMain = detail.getFinScheduleData().getFinanceMain();
+		FinanceType fintype = detail.getFinScheduleData().getFinanceType();
 
 		if (StringUtils.isBlank(aFinanceMain.getFinSourceID())) {
 			aFinanceMain.setFinSourceID(App.CODE);
@@ -665,7 +666,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceMain.setFinBranch(getUserWorkspace().getLoggedInUser().getBranchCode());
 		try {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
-				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(false, aFinanceMain)));
+				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain,fintype)));
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
 			detail.getFinScheduleData().setFinReference(this.finReference.getValue());

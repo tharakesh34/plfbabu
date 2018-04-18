@@ -1533,7 +1533,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
-				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(true, aFinanceMain)));
+				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain,financeType)));
 			}
 			aFinanceMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 			aFinanceSchData.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));

@@ -160,7 +160,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
 			financeMain.setFinReference(financeDetail.getFinReference());
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
-				finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateNewFinRef(false, financeMain)));
+				finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(financeMain,finScheduleData.getFinanceType())));
 			} else {
 				finReference = financeMain.getFinReference();
 
