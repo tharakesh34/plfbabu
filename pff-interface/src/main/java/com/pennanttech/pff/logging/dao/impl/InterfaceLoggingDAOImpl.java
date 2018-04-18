@@ -55,7 +55,7 @@ public class InterfaceLoggingDAOImpl implements InterfaceLoggingDAO {
 		txStatus = transactionManager.getTransaction(txDef);
 		
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CibilInterfaceLogDetails ");
+		insertSql.append(" Insert Into InterfaceLogDetails ");
 		insertSql.append(" (ServiceName, Reference, EndPoint, Request, Response,");
 		insertSql.append("  ReqSentOn, RespReceivedOn, Status, ErrorCode, ErrorDesc)");
 		insertSql.append(" Values(:ServiceName, :Reference, :EndPoint, :Request, :Response,");
