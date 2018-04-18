@@ -44,8 +44,7 @@
 			<column name="Id" type="bigint">
 				<constraints nullable="false"/>
 			</column>
-			<column name="VerificationType" type="int" defaultValue="0"
-				remarks="Initiate-1, Waive-2, Not Required-3">
+			<column name="VerificationType" type="int" 	remarks="Initiate-1, Waive-2, Not Required-3">
 				<constraints nullable="false" />
 			</column>
 			<column name="Module" type="int" defaultValue="0" remarks="Loan-1, Customer-2, Collateral-3"/>
@@ -60,7 +59,7 @@
 			</column>
 			<column name="ReferenceFor" type="varchar(20)" />
 			<column name="CustId" type="bigint" />
-			<column name="RequestType" type="int" defaultValue="0" remarks="FI-1, TV-2, LV-3, RCU-4"/>
+			<column name="RequestType" type="int" remarks="FI-1, TV-2, LV-3, RCU-4"/>
 			<column name="ReInitId" type="bigint"/>
 			<column name="Agency" type="bigint" />
 			<column name="Reason" type="bigint" />
@@ -93,6 +92,13 @@
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="pk_adtverifications" />
 	</changeSet>
+	<changeSet id="1.2" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table adtverifications add constraint adtverifications_vtype default 0 for VerificationType;
+			alter table adtverifications add constraint adtverifications_rtype default 0 for RequestType;
+		</sql>	
+	</changeSet>
+	
 	<changeSet id="2" author="murthy.y">
 		<createTable tableName="adtverification_fi">
 			<column name="AuditId" type="bigint">
@@ -154,15 +160,15 @@
 			<column name="ZipCode" type="varchar(20)" />
 			
 			<!-- Observations -->
-			<column name="OwnershipStatus" type="int"  defaultValue="0"/>
-			<column name="YearsAtPresentAddress" type="int" defaultValue="0"/>
+			<column name="OwnershipStatus" type="int"/>
+			<column name="YearsAtPresentAddress" type="int"/>
 			<column name="PersonMet" type="varchar(50)" />
 			<column name="Relationship" type="varchar(8)" />
 			<column name="ContactNumber" type="varchar(20)" />
-			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0"/>
-			<column name="LivingStandard" type="int"  defaultValue="0"/>
-			<column name="NegativeCheck" type="smallint" defaultValue="0"/>
-			<column name="NoofAttempts" type="int" defaultValue="0"/>
+			<column name="NeighbourhoodFeedBack" type="int" />
+			<column name="LivingStandard" type="int"  />
+			<column name="NegativeCheck" type="smallint" />
+			<column name="NoofAttempts" type="int" />
 			<column name="ObservationRemarks" type="varchar(500)" />
 		</createTable>
 	</changeSet>
@@ -170,6 +176,17 @@
 		<addPrimaryKey tableName="adtverification_fi"
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="pk_adtverifications_fi" />
+	</changeSet>
+	<changeSet id="2.2" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table adtverification_fi add constraint df_verfctions_fi_Owner default 0 for OwnershipStatus;
+			alter table adtverification_fi add constraint df_verfctions_fi_YearsAt default 0 for YearsAtPresentAddress;
+			alter table adtverification_fi add constraint df_verfctions_fi_nhf default 0 for NeighbourhoodFeedBack;
+			alter table adtverification_fi add constraint df_verfctions_fi_lsd default 0 for LivingStandard;
+			alter table adtverification_fi add constraint df_verfctions_fi_ncheck default 0 for NegativeCheck;
+			alter table adtverification_fi add constraint df_verfctions_fi_noofat default 0 for NoofAttempts;
+			alter table adtverification_fi add constraint df_verfctions_fi_ver default 0 for Version;
+		</sql>	
 	</changeSet>
 	<changeSet id="3" author="manikanta.p">
 		<addColumn tableName="adtbmtaddresstypes">

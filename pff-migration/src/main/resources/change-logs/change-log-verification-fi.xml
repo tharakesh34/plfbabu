@@ -32,7 +32,7 @@
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="pk_verifications_id" />
 			</column>
-			<column name="VerificationType" type="int"  defaultValue="0" remarks="Initiate-1, Waive-2, Not Required-3"/>
+			<column name="VerificationType" type="int"  remarks="Initiate-1, Waive-2, Not Required-3"/>
 			<column name="Module" type="int" defaultValue="0" remarks="Loan-1, Customer-2, Collateral-3"/>
 			<column name="KeyReference" type="varchar(20)">
 				<constraints nullable="false" />
@@ -103,6 +103,12 @@
 			referencedTableName="secusers" referencedColumnNames="usrid"
 			baseTableName="verifications" baseColumnNames="LastMntBy" />
 	</changeSet>
+	
+	<changeSet id="1.7" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table verifications add constraint df_verfctions_VerificationType default 0 for VerificationType;
+		</sql>	
+	</changeSet>
 
 	<changeSet id="2" author="murthy.y">
 		<createTable tableName="verification_fi">
@@ -145,23 +151,23 @@
 			<column name="AddressLine4" type="varchar(50)" />
 			<column name="AddressLine5" type="varchar(50)" />
 			<column name="Country" type="char(2)" />
-			<column name="Province" type="char(2)" />
-			<column name="City" type="char(3)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
 			<column name="ContactNumber1" type="varchar(20)" />
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
 			
 			<!-- Observations -->
-			<column name="OwnershipStatus" type="int"  defaultValue="0"/>
-			<column name="YearsAtPresentAddress" type="int" defaultValue="0"/>
+			<column name="OwnershipStatus" type="int"/>
+			<column name="YearsAtPresentAddress" type="int" />
 			<column name="PersonMet" type="varchar(50)" />
 			<column name="Relationship" type="varchar(8)" />
 			<column name="ContactNumber" type="varchar(20)" />
-			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0"/>
-			<column name="LivingStandard" type="int"  defaultValue="0"/>
-			<column name="NegativeCheck" type="smallint" defaultValue="0"/>
-			<column name="NoofAttempts" type="int" defaultValue="0"/>
+			<column name="NeighbourhoodFeedBack" type="int"/>
+			<column name="LivingStandard" type="int"/>
+			<column name="NegativeCheck" type="smallint"/>
+			<column name="NoofAttempts" type="int"/>
 			<column name="ObservationRemarks" type="varchar(500)" />
 		</createTable>
 	</changeSet>		
@@ -193,6 +199,16 @@
 			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
 			baseTableName="Verification_fi" baseColumnNames="Relationship" />
 	</changeSet>
+	<changeSet id="2.6" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table verification_fi add constraint df_verfctions_fi_Ownershipsts default 0 for OwnershipStatus;
+			alter table verification_fi add constraint df_verfctions_fi_YearsAt default 0 for YearsAtPresentAddress;
+			alter table verification_fi add constraint df_verfctions_fi_nhf default 0 for NeighbourhoodFeedBack;
+			alter table verification_fi add constraint df_verfctions_fi_lsd default 0 for LivingStandard;
+			alter table verification_fi add constraint df_verfctions_fi_ncheck default 0 for NegativeCheck;
+			alter table verification_fi add constraint df_verfctions_fi_noofat default 0 for NoofAttempts;
+		</sql>	
+	</changeSet>
 	<changeSet id="3" author="murthy.y">
 		<createTable tableName="verification_fi_temp">
 			<column name="VerificationId" type="bigint">
@@ -206,7 +222,7 @@
 			<column name="Reason" type="bigint" />
 			<column name="SummaryRemarks" type="varchar(500)" />
 
-			<column name="Version" type="int" defaultValue="0">
+			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
@@ -234,23 +250,23 @@
 			<column name="AddressLine4" type="varchar(50)" />
 			<column name="AddressLine5" type="varchar(50)" />
 			<column name="Country" type="char(2)" />
-			<column name="Province" type="char(2)" />
-			<column name="City" type="char(3)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
 			<column name="ContactNumber1" type="varchar(20)" />
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
 			
 			<!-- Observations -->
-			<column name="OwnershipStatus" type="int"  defaultValue="0"/>
-			<column name="YearsAtPresentAddress" type="int" defaultValue="0"/>
+			<column name="OwnershipStatus" type="int"/>
+			<column name="YearsAtPresentAddress" type="int"/>
 			<column name="PersonMet" type="varchar(50)" />
 			<column name="Relationship" type="varchar(8)" />
 			<column name="ContactNumber" type="varchar(20)" />
-			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0"/>
-			<column name="LivingStandard" type="int"  defaultValue="0"/>
-			<column name="NegativeCheck" type="smallint" defaultValue="0"/>
-			<column name="NoofAttempts" type="int" defaultValue="0"/>
+			<column name="NeighbourhoodFeedBack" type="int"/>
+			<column name="LivingStandard" type="int"/>
+			<column name="NegativeCheck" type="smallint"/>
+			<column name="NoofAttempts" type="int"/>
 			<column name="ObservationRemarks" type="varchar(500)" />
 		</createTable>
 	</changeSet>
@@ -281,6 +297,17 @@
 		<addForeignKeyConstraint constraintName="fk_verification_fi_tmp_relship"
 			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
 			baseTableName="Verification_fi_temp" baseColumnNames="Relationship" />
+	</changeSet>
+	<changeSet id="3.6" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table verification_fi_temp add constraint df_verfctions_fit_Owner default 0 for OwnershipStatus;
+			alter table verification_fi_temp add constraint df_verfctions_fit_YearsAt default 0 for YearsAtPresentAddress;
+			alter table verification_fi_temp add constraint df_verfctions_fit_nhf default 0 for NeighbourhoodFeedBack;
+			alter table verification_fi_temp add constraint df_verfctions_fit_lsd default 0 for LivingStandard;
+			alter table verification_fi_temp add constraint df_verfctions_fit_ncheck default 0 for NegativeCheck;
+			alter table verification_fi_temp add constraint df_verfctions_fit_noofat default 0 for NoofAttempts;
+			alter table verification_fi_temp add constraint df_verfctions_fit_ver default 0 for Version;
+		</sql>	
 	</changeSet>
 	
 	<changeSet id="4.0" author="murthy.y">
@@ -526,8 +553,8 @@
 				delete from  LimitCodeDetail where LimitCode = 'FIINIT';
 				delete from  LimitCodeDetail where LimitCode = 'FIAPPR';
 		
-				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIINIT','Field Investigation Initiation',1, (select max(Id)+1 from limitcodedetail));
-				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIAPPR','Field Investigation Approval',1, (select max(Id)+1 from limitcodedetail));
+				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIINIT','Field Investigation Initiation',1);
+				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'FIAPPR','Field Investigation Approval',1);
 			]]>
 		</sql>
 	</changeSet>
@@ -559,7 +586,7 @@
 			LEFT OUTER JOIN Rules T7 ON T1.FinRefId = T7.RuleId AND T1.FinRefType = 3 
 			LEFT OUTER JOIN RMTScoringGroup T8 ON T1.FinRefId = T8.ScoreGroupId AND T1.FinRefType = 4 AND T8.CategoryType = 'RETAIL'  
 			LEFT OUTER JOIN RMTScoringGroup T9 ON T1.FinRefId = T9.ScoreGroupId AND T1.FinRefType = 7 AND T9.CategoryType = 'CORP'
-			LEFT OUTER JOIN LimitCodeDetail T10 on T10.id = T1.finrefid
+			LEFT OUTER JOIN LimitCodeDetail T10 on T10.limitid= T1.finrefid
 		</createView>
 	</changeSet>
 	
@@ -614,24 +641,24 @@
 				]]>
 			</sql>
 		</changeSet>
-		<changeSet id="8.6" author="manikanta.p">
+		<!-- <changeSet id="8.6" author="manikanta.p">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/>	
 		</changeSet>
 		<changeSet id="8.7" author="manikanta.p">
 			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
-		</changeSet>
-<!-- 		<changeSet id="8.6" author="manikanta.p" dbms="mssql">
-			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/>
+		</changeSet> -->
+		<changeSet id="8.6" author="manikanta.p" dbms="mssql">
+			<!-- <addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes" defaultValueNumeric="0"/> -->
 			<sql>
 				alter table bmtaddresstypes add Constraint df_AddrTypeFIRequired default 0 FOR AddrTypeFIRequired;
 			</sql>	
 		</changeSet>
 		<changeSet id="8.7" author="manikanta.p" dbms="mssql">
-			<addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	
+			<!-- <addDefaultValue columnName="AddrTypeFIRequired" tableName="bmtaddresstypes_temp" defaultValueNumeric="0"/>	 -->
 			<sql>
 				alter table bmtaddresstypes_temp add Constraint df_AddrTypeFIRequired_T default 0 FOR AddrTypeFIRequired;
 			</sql>	
-		</changeSet> -->
+		</changeSet> 
 		<changeSet id="9" author="murthy.y">
 			<modifyDataType tableName="amtvehicledealer" columnName="dealertype" newDataType="varchar(10)" />
 		</changeSet>
