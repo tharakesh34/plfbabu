@@ -184,7 +184,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="3.2" author="manikanta.p">
+	<changeSet id="3.2" author="manikanta.p" dbms="mssql">
+		<sql>
+			alter table adtbmtaddresstypes add constraint df_adtAddrTypeFIRequired default 0 for AddrTypeFIRequired;
+		</sql>	
+	</changeSet>
+	<changeSet id="3.2" author="manikanta.p" dbms="postgresql">
 		<addDefaultValue columnName="AddrTypeFIRequired" tableName="adtbmtaddresstypes" defaultValueNumeric="0"/>	
 	</changeSet>
 	<changeSet id="4" author="murthy.y" dbms="postgresql">
