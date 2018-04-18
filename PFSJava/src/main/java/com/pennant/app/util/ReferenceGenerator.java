@@ -85,8 +85,8 @@ public class ReferenceGenerator implements Serializable {
 		String divisionCode = StringUtils.trimToEmpty(financeType.getFinDivision());
 		String finType = StringUtils.trimToEmpty(financeType.getFinType());
 
-		if (StringUtils.isNotBlank(DEFAULT_FORMAT)) {
-			String[] formetFileds = DEFAULT_FORMAT.split("_");
+		if (StringUtils.isNotBlank(format)) {
+			String[] formetFileds = format.split("_");
 			for (String formatCode : formetFileds) {
 
 				if (formatCode.startsWith(BRANCH)) {
