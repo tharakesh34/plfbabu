@@ -189,13 +189,13 @@
 		</sql>	
 	</changeSet>
 	<changeSet id="2.2" author="manikanta.p" dbms="postgresql">
-		<addDefaultValue columnName="verification_fi" tableName="OwnershipStatus" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi" tableName="YearsAtPresentAddress" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi" tableName="NeighbourhoodFeedBack" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi" tableName="LivingStandard" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi" tableName="NegativeCheck" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi" tableName="NoofAttempts" defaultValue="0"/>
-		<addDefaultValue columnName="verification_fi_temp" tableName="Version" defaultValue="0"/>
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="Version" 				tableName="adtverification_fi" defaultValue="0"/>
 	</changeSet>
 	<changeSet id="3" author="manikanta.p">
 		<addColumn tableName="adtbmtaddresstypes">
