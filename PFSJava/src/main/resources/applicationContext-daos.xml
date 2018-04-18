@@ -11263,4 +11263,31 @@
 		<property name="verificationDAO" ref="verificationDAO"></property>
 		<property name="auditHeaderDAO" ref="auditHeaderDAO"></property>
 	</bean>
+	
+	<!-- Authorization Limit -->
+	<bean id="authorizationLimitDAO" class="com.pennant.backend.dao.authorization.impl.AuthorizationLimitDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="authorizationLimitDetailDAO" class="com.pennant.backend.dao.authorization.impl.AuthorizationLimitDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+		
+	<bean id="authorizationLimitService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="authorizationLimitServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+ 	<bean name="authorizationLimitServiceTarget" class="com.pennant.backend.service.authorization.impl.AuthorizationLimitServiceImpl">
+       <property name="authorizationLimitDAO" ref="authorizationLimitDAO" />
+       <property name="authorizationLimitDetailDAO" ref="authorizationLimitDetailDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 </beans>

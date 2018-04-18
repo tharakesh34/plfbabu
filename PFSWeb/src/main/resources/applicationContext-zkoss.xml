@@ -5249,4 +5249,15 @@
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
+	
+	<!--============ Authorization Limit ============== -->
+	
+	<bean id="authorizationLimitListCtrl" class="com.pennant.webui.authorization.authorizationlimit.AuthorizationLimitListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="authorizationLimitService" ref="authorizationLimitService" />
+	</bean>
+	<bean id="authorizationLimitDialogCtrl" class="com.pennant.webui.authorization.authorizationlimit.AuthorizationLimitDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="authorizationLimitService" ref="authorizationLimitService"/>
+	</bean>
+	
 </beans>

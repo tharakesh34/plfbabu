@@ -139,6 +139,8 @@ import com.pennant.backend.model.applicationmasters.SukukBond;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
 import com.pennant.backend.model.applicationmasters.SukukBrokerBonds;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.authorization.AuthorizationLimit;
+import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
@@ -2214,6 +2216,24 @@ public class PennantJavaUtil {
 		ModuleUtil.register("TVWaiverReason", new ModuleMapping("TVWaiverReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.TVWRES.getKey() }, { "Active", "0", 1 } }, 300));
+
+		ModuleUtil.register("AuthorizationLimit", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
+		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","StartDate","ExpiryDate","Active"},null, 600));
+
+		ModuleUtil.register("FinanceUserAuthorizationLimit", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
+		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","StartDate","ExpiryDate","Active"},null, 600));
+
+		ModuleUtil.register("FinanceRoleAuthorizationLimit", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
+		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","StartDate","ExpiryDate","Active"},null, 600));
+
+		ModuleUtil.register("FinanceUserAuthorizationLimitHold", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
+		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","HoldStartDate","HoldExpiryDate","Active"},null, 600));
+
+		ModuleUtil.register("FinanceRoleAuthorizationLimitHold", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
+		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","HoldStartDate","HoldExpiryDate","Active"},null, 600));
+
+		ModuleUtil.register("AuthorizationLimitDetail", new ModuleMapping("AuthorizationLimitDetail", AuthorizationLimitDetail.class, new String[] { "Auth_Limit_Details",
+		"Auth_Limit_Details_AView" }, masterWF, new String[] {"Code","LimitAmount"},null, 600));
 
 	}
 
