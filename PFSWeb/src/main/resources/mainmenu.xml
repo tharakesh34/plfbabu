@@ -707,9 +707,9 @@
 			<menuItem id="menu_Item_DataEngine_MasterExport"
 				zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul"
 				rightName="menuItem_DataExtraction" />
-			 <menuItem id="menu_Item_ExternalUplaods"
+			<!--  <menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
-				rightName="menuItem_SystemMaster_AddressType" />
+				rightName="menuItem_SystemMaster_AddressType" /> -->
 		</menu>
 	</menu>
 
