@@ -17,7 +17,6 @@
 				classpath:applicationContext-daos.xml,
  				classpath:applicationContext-core-interface.xml,
  				classpath:client-interfaces-context.xml,
- 				classpath:client-interfaces-niyogin-context.xml
 		</param-value>
 	</context-param>
 	<context-param>
