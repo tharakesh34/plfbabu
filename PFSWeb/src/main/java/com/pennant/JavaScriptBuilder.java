@@ -755,7 +755,10 @@ public class JavaScriptBuilder extends Groupbox {
 
 				resultCombobox.setAttribute("calculatedFields", resultComboboxCalcFields);
 				fillComboBox(resultCombobox, resultComboboxValue, jsRuleReturnType.getListOfData(), "");
-			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) {
+
+			//for deviation case we added this (old code: } else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) {	)
+			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType()) || 
+					StringUtils.equals(RuleConstants.COMPONENTTYPE_INTEGER, jsRuleReturnType.getComponentType())) {
 				Label buttonCalculate = new Label(); // Calculation
 				buttonCalculate.setTooltiptext("Click for Add Return Value");
 				buttonCalculate.setValue("CALCULATE");
@@ -2258,7 +2261,8 @@ public class JavaScriptBuilder extends Groupbox {
 				for (int count = 0; count < this.jsRuleReturnTypeList.size() ; count ++) {
 					String componentType = this.jsRuleReturnTypeList.get(count).getComponentType();
 					
-					if (StringUtils.equalsIgnoreCase(componentType, "decimal")) {
+					//for deviation case we added this (old code: if (StringUtils.equalsIgnoreCase(componentType, "decimal")) {  )
+					if (StringUtils.equalsIgnoreCase(componentType, "decimal") || StringUtils.equalsIgnoreCase(componentType, "integer")) {
 						Component calculateButton = treeCell.getFellowIfAny(uUID + "_btn_CALCULATE" + count);
 						if(calculateButton != null) {
 							if(calculateButton.isVisible()) {
