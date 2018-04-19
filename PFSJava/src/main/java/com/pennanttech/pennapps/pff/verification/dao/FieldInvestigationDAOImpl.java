@@ -38,8 +38,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FieldInvestigation</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>FieldInvestigation</code> with set of CRUD operations.
  */
 public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> implements FieldInvestigationDAO {
 	private static Logger logger = LogManager.getLogger(FieldInvestigationDAOImpl.class);
@@ -80,31 +79,31 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public List<FieldInvestigation> getList(String[] cif) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from verification_fi_view");
 		sql.append(" Where cif in(:cif) and verificationdate is not null");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("cif", Arrays.asList(cif));
-		
+
 		RowMapper<FieldInvestigation> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FieldInvestigation.class);
-		
+
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}

@@ -28,8 +28,10 @@ public interface FieldInvestigationDAO extends BasicCrudDao<FieldInvestigation> 
 	 *            The type of the table.
 	 * @return FieldInvestigation
 	 */
-	FieldInvestigation getFieldInvestigation(long id,String type);
+	FieldInvestigation getFieldInvestigation(long id, String type);
+
 	List<FieldInvestigation> getList(String keyReference);
+
 	List<FieldInvestigation> getList(String[] cif);
 
 }

@@ -26,7 +26,6 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 	 *            The type of the table.
 	 * @return FieldInvestigation
 	 */
-	TechnicalVerification getTechnicalVerification(long id,String type);
-	
+	TechnicalVerification getTechnicalVerification(long id, String type);
 
 }

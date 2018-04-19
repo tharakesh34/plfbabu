@@ -79,14 +79,13 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		parameterSource.addValue("reasontypecode", WaiverReasons.FIWRES.getKey());
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
-		
 
 		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -103,8 +102,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" referenceFor, custId, requestType, reinitid, agency, reason, remarks,");
 		sql.append(" createdBy, createdOn, status, agencyReason, agencyRemarks,");
 		sql.append(" verificationDate, decision, decisionRemarks,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(":verificationType, :module, :keyReference, :referenceType, :reference,");
 		sql.append(" :referenceFor, :custId, :requestType, :reinitid, :agency, :reason, :remarks,");
@@ -112,7 +111,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" :verificationDate, :decision,  :decisionRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		// Execute the SQL, binding the arguments.
@@ -120,7 +118,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource, keyHolder, new String[] {"id"});
+			jdbcTemplate.update(sql.toString(), paramSource, keyHolder, new String[] { "id" });
 			entity.setId(keyHolder.getKey().longValue());
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -144,7 +142,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" createdOn = :createdOn, status = :status, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, verificationDate = :verificationDate, ");
 		sql.append(" decisionRemarks = :decisionRemarks, ");
-		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
+		sql.append(
+				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
@@ -162,7 +161,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void updateReInit(Verification verification, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -220,14 +219,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("update verifications");
 		sql.append(" set verificationdate = :verificationdate, status = :status ");
 		sql.append(" where id = :id ");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", verificationId);
 		parameterSource.addValue("verificationdate", verificationDate);
 		parameterSource.addValue("status", status);
-		
+
 		int recordCount = jdbcTemplate.update(sql.toString(), parameterSource);
 
 		// Check for the concurrency failure.

@@ -33,10 +33,10 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>TechnicalVerification</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>TechnicalVerification</code> with set of CRUD operations.
  */
-public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerification> implements TechnicalVerificationDAO {
+public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerification>
+		implements TechnicalVerificationDAO {
 	private static Logger logger = LogManager.getLogger(TechnicalVerificationDAOImpl.class);
 
 	public TechnicalVerificationDAOImpl() {
@@ -154,8 +154,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		technicalVerification.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(
-				" Select custcif, keyreference, collateraltype, Collateralref,");
+		selectSql.append(" Select custcif, keyreference, collateraltype, Collateralref,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  Technical_Verification");

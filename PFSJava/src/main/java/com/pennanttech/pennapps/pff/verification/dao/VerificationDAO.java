@@ -61,6 +61,8 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	 * @return Verification
 	 */
 	List<Verification> getFiVeriFications(String keyReference);
-	void updateVerifiaction(long verificationId,Date verificationDate,int status);
+
+	void updateVerifiaction(long verificationId, Date verificationDate, int status);
+
 	void updateReInit(Verification verification, TableType tableType);
 }
