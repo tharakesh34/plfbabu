@@ -1511,8 +1511,8 @@
 	<menuItem id="menu_Item_CoreProvision"
 		zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"
 		rightName="menuItem_FinanceManagement_CoreProvision" />
-	<!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
-		rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->
+	 <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
+		rightName="menuItem_FinanceManagement_ReinstateFinance"/> 
 	<menuItem id="menu_Item_CancelRepay"
 		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 		rightName="menuItem_FinanceManagement_RepayCancel" />
