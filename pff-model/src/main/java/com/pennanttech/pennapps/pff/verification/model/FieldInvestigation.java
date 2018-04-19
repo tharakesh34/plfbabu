@@ -13,11 +13,15 @@ package com.pennanttech.pennapps.pff.verification.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -77,7 +81,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private Long custId;
 	private Long agencyId;
 	private String agencyName;
-
+	private List<DocumentDetails> documents					= null;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -86,6 +90,8 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private FieldInvestigation befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	
 
 	public FieldInvestigation() {
 		super();
@@ -109,6 +115,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		excludeFields.add("custId");
 		excludeFields.add("agencyId");
 		excludeFields.add("agencyName");
+		excludeFields.add("documents");
 		return excludeFields;
 	}
 
@@ -528,4 +535,20 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		this.agencyName = agencyName;
 	}
 
+	public List<DocumentDetails> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<DocumentDetails> documents) {
+		this.documents = documents;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+	
 }

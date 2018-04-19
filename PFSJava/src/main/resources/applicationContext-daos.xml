@@ -11232,8 +11232,11 @@
 	
 	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl" >
 	<property name="fieldInvestigationDAO" ref="fieldInvestigationDAO" />
-	<property name="verificationDAO" ref="verificationDAO"></property>
-	<property name="auditHeaderDAO" ref="auditHeaderDAO"></property>
+	<property name="verificationDAO" ref="verificationDAO"/>
+	<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+	<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+	<property name="documentManagerDAO" ref="documentManagerDAO" />
+	<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 	</bean>
 	
 	<!-- Technical Verification -->

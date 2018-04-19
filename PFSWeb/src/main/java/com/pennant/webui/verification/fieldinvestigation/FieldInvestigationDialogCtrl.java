@@ -14,7 +14,9 @@ package com.pennant.webui.verification.fieldinvestigation;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,15 +24,23 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.South;
@@ -44,18 +54,24 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FILivingStandard;
 import com.pennanttech.pennapps.pff.verification.fi.FINeighbourHoodFeedBack;
 import com.pennanttech.pennapps.pff.verification.fi.FIOwnerShipStatus;
@@ -64,6 +80,7 @@ import com.pennanttech.pennapps.pff.verification.fi.FIVerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * This is the controller class for the
@@ -127,13 +144,17 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 	protected Space space_Reason;
 	protected Tab documentDetails;
-
 	private FieldInvestigation fieldInvestigation;
-
+	protected Listbox listBoxVerificationDocuments;
+    protected Map<String, DocumentDetails>		docDetailMap			= null;
+    private List<DocumentDetails>				documentDetailsList		= new ArrayList<DocumentDetails>();
+    @Autowired
+	private transient FieldInvestigationDocumentDialogCtrl fieldInvestigationDocumentDialogCtrl;
 	private transient FieldInvestigationListCtrl fieldInvestigationListCtrl;
 
 	@Autowired
 	private transient FieldInvestigationService fieldInvestigationService;
+	private ExternalDocumentManager				externalDocumentManager			= null;
 	
 	private boolean fromLoanOrg;
 
@@ -259,6 +280,94 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onClick$btnNew_FieldInvestigationDocuments(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("newRecord", "true");
+		map.put("roleCode", getRole());
+		DocumentDetails documentDetails = new DocumentDetails();
+		documentDetails.setNewRecord(true);
+		documentDetails.setWorkflowId(0);
+		map.put("fieldInvestigationDialogCtrl", this);
+		map.put("documentDetails", documentDetails);
+		
+		try {
+			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDocumentDialog.zul",
+					null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onFIDocumentItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxVerificationDocuments.getSelectedItem();
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			DocumentDetails fIDocumentDetail = (DocumentDetails) item.getAttribute("data");
+			if (StringUtils.trimToEmpty(fIDocumentDetail.getRecordType()).equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_CAN)) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				if (fIDocumentDetail.getDocImage()== null) {
+					if (fIDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+						fIDocumentDetail.setDocImage(
+								PennantApplicationUtil.getDocumentImage(fIDocumentDetail.getDocRefId()));
+					} else if (StringUtils.isNotBlank(fIDocumentDetail.getDocUri())) {
+						try {
+							// Fetch document from interface
+							String custCif = this.custCIF.getValue();
+							// here document name is required to identify the file type
+							DocumentDetails detail = externalDocumentManager.getExternalDocument(
+									fIDocumentDetail.getDocName(), fIDocumentDetail.getDocUri(), custCif);
+							if (detail != null && detail.getDocImage() != null) {
+								fIDocumentDetail.setDocImage(detail.getDocImage());
+								fIDocumentDetail.setDocName(detail.getDocName());
+							}
+						} catch (InterfaceException e) {
+							MessageUtil.showError(e);
+						}
+					}
+				}
+				fIDocumentDetail.setLovDescCustCIF(this.custCIF.getValue());
+				
+				fIDocumentDetail.setWorkflowId(fieldInvestigation.getWorkflowId());
+				map.put("documentDetails", fIDocumentDetail);
+				map.put("fieldInvestigationDialogCtrl", this);
+				map.put("roleCode", getRole());
+				
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDocumentDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+			/*Map<String, Object> map = new HashMap<>();
+			map.put("documentDetails", fIDocumentDetail);
+			map.put("fieldInvestigationDialogCtrl", this);
+			// call the zul-file with the parameters packed in a map
+			try {
+				Executions.createComponents(
+						"/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDocumentDialog.zul", null,
+						map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}*/
+			
+		}
+		
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -444,6 +553,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		fillComboBox(this.neighbourhoodCheckFeedBack, fi.getNeighbourhoodFeedBack(), FINeighbourHoodFeedBack.getList());
 
 		this.recordStatus.setValue(fi.getRecordStatus());
+		doFillDocumentDetails(fi.getDocuments());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -595,14 +705,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		doRemoveValidation();
 
-		if (!wve.isEmpty()) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
-			}
-			throw new WrongValuesException(wvea);
-		}
-
+		showErrorDetails(wve, this.verificationDetails);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -655,6 +758,34 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method to show error details if occurred
+	 * 
+	 **/
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug("Entering");
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			tab.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+				if(i == 0){
+					Component comp = wvea[i].getComponent();
+					if(comp instanceof HtmlBasedComponent){
+						Clients.scrollIntoView(comp);
+					}
+				}
+				logger.debug(wvea[i]);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -930,6 +1061,13 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
+		//TODO
+		if (fieldInvestigationDocumentDialogCtrl != null) {
+			fi.setDocuments(getDocumentDetailsList());
+		}else{
+			fi.setDocuments(getFieldInvestigation().getDocuments());
+		}
+		
 
 		try {
 			if (doProcess(fi, tranType)) {
@@ -1010,6 +1148,33 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			fieldInvestigation.setRoleCode(getRole());
 			fieldInvestigation.setNextRoleCode(nextRoleCode);
 
+			//Document Details
+			if (fieldInvestigation.getDocuments() != null && !fieldInvestigation.getDocuments().isEmpty()) {
+				for (DocumentDetails details : fieldInvestigation.getDocuments()) {
+					
+					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
+						continue;
+					}
+					details.setReferenceId(String.valueOf(fieldInvestigation.getVerificationId()));
+					details.setDocModule(VerificationType.FI.getCode());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(fieldInvestigation.getRecordStatus());
+					details.setWorkflowId(fieldInvestigation.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(fieldInvestigation.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(fieldInvestigation.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
+			
 			auditHeader = getAuditHeader(fieldInvestigation, tranType);
 			String operationRefs = getServiceOperations(taskId, fieldInvestigation);
 
@@ -1130,9 +1295,42 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	protected String getReference() {
 		return String.valueOf(this.fieldInvestigation.getId());
 	}
+	
+	public FieldInvestigation getFieldInvestigation() {
+		return fieldInvestigation;
+	}
+
+	public void setFieldInvestigation(FieldInvestigation fieldInvestigation) {
+		this.fieldInvestigation = fieldInvestigation;
+	}
+	
+	public FieldInvestigationListCtrl getFieldInvestigationListCtrl() {
+		return fieldInvestigationListCtrl;
+	}
+
+	public void setFieldInvestigationListCtrl(FieldInvestigationListCtrl fieldInvestigationListCtrl) {
+		this.fieldInvestigationListCtrl = fieldInvestigationListCtrl;
+	}
 
 	public void setFieldInvestigationService(FieldInvestigationService fieldInvestigationService) {
 		this.fieldInvestigationService = fieldInvestigationService;
+	}
+
+	public List<DocumentDetails> getDocumentDetailsList() {
+		return documentDetailsList;
+	}
+
+	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
+		this.documentDetailsList = documentDetailsList;
+	}
+
+	public FieldInvestigationDocumentDialogCtrl getFieldInvestigationDocumentDialogCtrl() {
+		return fieldInvestigationDocumentDialogCtrl;
+	}
+
+	public void setFieldInvestigationDocumentDialogCtrl(
+			FieldInvestigationDocumentDialogCtrl fieldInvestigationDocumentDialogCtrl) {
+		this.fieldInvestigationDocumentDialogCtrl = fieldInvestigationDocumentDialogCtrl;
 	}
 
 	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
@@ -1147,4 +1345,35 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			}
 		}
 	}
+	public void doFillDocumentDetails(List<DocumentDetails> documentDetails) {
+		logger.debug("Entering");
+
+		docDetailMap = new HashMap<String, DocumentDetails>();
+		this.listBoxVerificationDocuments.getItems().clear();
+		setDocumentDetailsList(documentDetails);
+		ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
+		List<DocumentDetails> sortdocumentDetails = documentDetails;
+		//sortdocumentDetails.addAll(sortDocumentDetails(documentDetails));
+
+		for (DocumentDetails documentDetail : sortdocumentDetails) {
+			Listitem listitem = new Listitem();
+			Listcell listcell;
+			listcell = new Listcell(documentDetail.getDocName());
+			listitem.appendChild(listcell);
+			listcell = new Listcell(documentDetail.getDocName());
+			listitem.appendChild(listcell);
+			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordStatus()));
+			listitem.appendChild(listcell);
+			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
+			listitem.appendChild(listcell);
+			listitem.setAttribute("data", documentDetail);
+			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFIDocumentItemDoubleClicked");
+			if (!documentDetail.isDocIsCustDoc()) {
+				this.listBoxVerificationDocuments.appendChild(listitem);
+			}
+			docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
+		}
+		logger.debug("Leaving");
+	}
+	
 }

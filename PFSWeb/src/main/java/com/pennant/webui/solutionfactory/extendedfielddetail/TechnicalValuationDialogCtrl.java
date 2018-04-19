@@ -296,45 +296,6 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			}
 		}
 
-		// Adding Default Columns for Extended field Detail List (Number of units & Unit Price)
-		/*if (aExtendedFieldHeader.isNewRecord()) {
-
-			if (aExtendedFieldHeader.getExtendedFieldDetails() == null) {
-				aExtendedFieldHeader.setExtendedFieldDetails(new ArrayList<ExtendedFieldDetail>());
-			}
-			if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
-					|| StringUtils.equals(aExtendedFieldHeader.getModuleName(), AssetConstants.EXTENDEDFIELDS_MODULE)) {
-				//TODO: Modify dynamic from static
-				ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
-				unitCount.setFieldName("NOOFUNITS");
-				unitCount.setFieldLabel("Number of Units");
-				unitCount.setFieldType(ExtendedFieldConstants.FIELDTYPE_INT);
-				unitCount.setFieldLength(3);
-				unitCount.setFieldSeqOrder(10);
-				unitCount.setFieldMandatory(true);
-				unitCount.setRecordType(PennantConstants.RCD_ADD);
-				unitCount.setVersion(1);
-				unitCount.setInputElement(true);
-				unitCount.setEditable(true);
-
-				ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
-				unitPrice.setFieldName("UNITPRICE");
-				unitPrice.setFieldLabel("Unit Price");
-				unitPrice.setFieldType(ExtendedFieldConstants.FIELDTYPE_AMOUNT);
-				unitPrice.setFieldLength(18);
-				unitPrice.setFieldSeqOrder(20);
-				unitPrice.setFieldMandatory(true);
-				unitPrice.setRecordType(PennantConstants.RCD_ADD);
-				unitPrice.setVersion(1);
-				unitPrice.setInputElement(true);
-				unitPrice.setEditable(true);
-
-				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
-				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
-			}
-
-		}*/
-
 		// Extended Fields Rendering
 		doFillFieldsList(aExtendedFieldHeader.getTechnicalValuationDetailList());
 
