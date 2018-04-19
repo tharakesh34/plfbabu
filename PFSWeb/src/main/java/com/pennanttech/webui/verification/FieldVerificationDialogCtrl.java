@@ -470,8 +470,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
