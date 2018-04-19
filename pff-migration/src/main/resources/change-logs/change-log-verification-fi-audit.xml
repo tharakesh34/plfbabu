@@ -98,6 +98,14 @@
 			alter table adtverifications add constraint adtverifications_rtype default 0 for RequestType;
 		</sql>	
 	</changeSet>
+	<changeSet id="1.2" author="manikanta.p" dbms="postgresql">
+		<addDefaultValue columnName="VerificationType" 		tableName="adtverifications" defaultValue="0"/>
+		<addDefaultValue columnName="RequestType" 		tableName="adtverifications" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="1.2" author="manikanta.p" dbms="oracle">
+		<addDefaultValue columnName="VerificationType" 		tableName="adtverifications" defaultValue="0"/>
+		<addDefaultValue columnName="RequestType" 		tableName="adtverifications" defaultValue="0"/>
+	</changeSet>
 	
 	<changeSet id="2" author="murthy.y">
 		<createTable tableName="adtverification_fi">
@@ -197,6 +205,15 @@
 		<addDefaultValue columnName="NoofAttempts" 			tableName="adtverification_fi" defaultValue="0"/>
 		<addDefaultValue columnName="Version" 				tableName="adtverification_fi" defaultValue="0"/>
 	</changeSet>
+	<changeSet id="2.2" author="manikanta.p" dbms="oracle">
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="adtverification_fi" defaultValue="0"/>
+		<addDefaultValue columnName="Version" 				tableName="adtverification_fi" defaultValue="0"/>
+	</changeSet>
 	<changeSet id="3" author="manikanta.p">
 		<addColumn tableName="adtbmtaddresstypes">
 	        <column name="AddrTypeFIRequired" type="smallint"/>
@@ -216,6 +233,9 @@
 		</sql>	
 	</changeSet>
 	<changeSet id="3.2" author="manikanta.p" dbms="postgresql">
+		<addDefaultValue columnName="AddrTypeFIRequired" tableName="adtbmtaddresstypes" defaultValueNumeric="0"/>	
+	</changeSet>
+	<changeSet id="3.2" author="manikanta.p" dbms="oracle">
 		<addDefaultValue columnName="AddrTypeFIRequired" tableName="adtbmtaddresstypes" defaultValueNumeric="0"/>	
 	</changeSet>
 	<changeSet id="4" author="murthy.y" dbms="postgresql">
