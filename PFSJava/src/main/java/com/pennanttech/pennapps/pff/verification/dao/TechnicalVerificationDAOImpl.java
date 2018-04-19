@@ -134,11 +134,11 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(
 				" set date = :date, type = :type, agentCode = :agentCode, agentName = :agentName, status = :status, ");
 		sql.append(
-				" reason = :reason, summaryremarks = :summaryRemarks,  valuationAmount, = :valuationAmount, Version = :Version, LastMntBy = :LastMntBy,");
+				" reason = :reason, summaryremarks = :summaryRemarks,  valuationAmount = :valuationAmount, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where verificationId = :id ");
+		sql.append(" where VerificationId = :VerificationId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.

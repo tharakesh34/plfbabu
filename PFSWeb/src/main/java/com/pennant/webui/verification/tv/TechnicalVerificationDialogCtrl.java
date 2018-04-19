@@ -50,6 +50,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -493,16 +494,19 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			tableName.append(extendedFieldHeader.getSubModuleName());
 			tableName.append("_TV");
 			
+			
+			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
 			int fieldSize = 0;
-			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(),  "_View");
-			if(extendedFieldRender.getMapValues() != null){
-				fieldSize = extendedFieldRender.getMapValues().size();
+			if (detailsList != null && !detailsList.isEmpty()) {
+				fieldSize = detailsList.size();
 				if (fieldSize != 0) {
 					fieldSize = fieldSize / 2;
 					fieldSize = fieldSize + 1;
 				}
 			}
 			this.observationsFieldTabPanel.setHeight((fieldSize * 37) + "px");
+			
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(),  "_View");
 			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
 			tv.setExtendedFieldHeader(extendedFieldHeader);
 			tv.setExtendedFieldRender(extendedFieldRender);
@@ -512,7 +516,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				tv.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			extendedFieldCtrl.setReadOnly(isReadOnly("TechnicalVerificationDialog_TechVerificationExtFields"));
+			extendedFieldCtrl.setReadOnly(isReadOnly("TechnicalVerificationDialog_Recommendations"));/*"TechnicalVerificationDialog_TechVerificationExtFields"*/
 			extendedFieldCtrl.setWindow(this.window_TechnicalVerificationDialog);
 			extendedFieldCtrl.render();
 		} catch (Exception e) {

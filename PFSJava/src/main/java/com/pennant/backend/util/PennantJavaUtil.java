@@ -2203,9 +2203,13 @@ public class PennantJavaUtil {
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 300));
 		
+		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
+				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
+				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 300));
+		
 		/*Technical Verification*/
 		ModuleUtil.register("TechnicalVerification", new ModuleMapping("TechnicalVerification", TechnicalVerification.class,
-				new String[] { "Technical_Verification_View", "Technical_Verification_View" }, masterWF, null, null, 600));
+				new String[] { "Verification_Tv", "Verification_Tv_AView" }, masterWF, null, null, 600));
 		
 		ModuleUtil.register("TVAgencies",
 				new ModuleMapping("TVAgencies", VehicleDealer.class,

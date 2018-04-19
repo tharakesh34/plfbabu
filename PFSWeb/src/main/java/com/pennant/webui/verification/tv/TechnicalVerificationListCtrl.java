@@ -254,4 +254,12 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
+
+	public TechnicalVerificationService getTechnicalVerificationService() {
+		return technicalVerificationService;
+	}
+
+	public void setTechnicalVerificationService(TechnicalVerificationService technicalVerificationService) {
+		this.technicalVerificationService = technicalVerificationService;
+	}
 }

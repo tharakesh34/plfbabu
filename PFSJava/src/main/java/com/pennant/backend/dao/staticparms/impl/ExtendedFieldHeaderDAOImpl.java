@@ -313,7 +313,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				} else {
 					syntax.append(" ( ");
 					if (i == 3) {
-						syntax.append(" Id 		bigint NOT NULL, ");
+						syntax.append(" VerificationId 		bigint NOT NULL, ");
 					}
 				}
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
@@ -333,7 +333,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					if (i == 3) {
-						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
 						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 					}
@@ -351,7 +351,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				} else {
 					syntax.append(" ( ");
 					if (i == 3) {
-						syntax.append(" Id 		number(19,0) NOT NULL, ");
+						syntax.append(" VerificationId 		number(19,0) NOT NULL, ");
 					}
 				}
 				syntax.append(" Reference 		varchar2(20) NOT NULL, ");
@@ -371,7 +371,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					if (i == 3) {
-						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
 						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 					}
@@ -387,7 +387,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				} else {
 					syntax.append(" ( ");
 					if (i == 3) {
-						syntax.append(" Id 		bigint NOT NULL, ");
+						syntax.append(" VerificationId 		bigint NOT NULL, ");
 					}
 				}
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
@@ -407,7 +407,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
 					if (i == 3) {
-						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
 						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
 					}

@@ -414,18 +414,18 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type) {
+	public List<Map<String, Object>> getExtendedFieldMap(long VerificationId, String tableName, String type) {
 		logger.debug("Entering");
 
 		List<Map<String, Object>> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Id", id);
+		source.addValue("VerificationId", VerificationId);
 
 		StringBuilder sql = null;
 		sql = new StringBuilder("Select * from ");
 		sql.append(tableName);
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where  Id = :Id ");
+		sql.append(" where  VerificationId = :VerificationId ");
 
 		logger.debug("selectSql: " + sql.toString());
 		try {

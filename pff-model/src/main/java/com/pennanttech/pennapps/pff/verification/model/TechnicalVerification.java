@@ -39,7 +39,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String agentName;
 	private int type;
 	private Date date;
-	private int status;// Recomondations
+	private int status;
 	private Long reason;
 	private String summaryRemarks;
 	private String sourceFormName;
@@ -104,6 +104,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("collateralLoc");
 		excludeFields.add("contactNumber1");
 		excludeFields.add("contactNumber2");
+		excludeFields.add("lovrelationdesc");
 		return excludeFields;
 	}
 
@@ -197,6 +198,14 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public void setContactNumber2(String contactNumber2) {
 		this.contactNumber2 = contactNumber2;
+	}
+
+	public String getLovrelationdesc() {
+		return lovrelationdesc;
+	}
+
+	public void setLovrelationdesc(String lovrelationdesc) {
+		this.lovrelationdesc = lovrelationdesc;
 	}
 
 	public String getAgentCode() {
@@ -382,7 +391,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
