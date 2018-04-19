@@ -86,21 +86,6 @@ public class ReportCreationUtil {
 			excelExporter.exportReport();
 			Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 		} else {
-			try {
-				GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-				Font font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(
-						new File(PathUtil.getPath(PathUtil.REPORTS_FONT) + "Montserrat-Regular.ttf")));
-				graphicsEnvironment.registerFont(font);
-
-				Font font1 = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(
-						new File(PathUtil.getPath(PathUtil.REPORTS_FONT) + "Montserrat-Medium.ttf")));
-				graphicsEnvironment.registerFont(font);
-				graphicsEnvironment.registerFont(font1);
-			}
-			catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
 				byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, mainDS);
 				logger.debug("Leaving");
 				return buf;

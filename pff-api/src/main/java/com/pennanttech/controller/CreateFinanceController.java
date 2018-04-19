@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -323,9 +324,17 @@ public class CreateFinanceController extends SummaryDetailService {
 			if(stp && !financeMain.isQuickDisb()){
 				auditHeader = financeDetailService.doApprove(auditHeader, false);
 			} else if(financeMain.isQuickDisb() || !stp) {
-				String usrAction = "Approve";
+				String usrAction = null;
+				String role = null;
+				if(ImplementationConstants.CLIENT_NFL) {
+				usrAction = "Approve";
 				financeMain.setRecordStatus("Approve");
-				String role = workFlow.firstTaskOwner();
+				role = workFlow.firstTaskOwner();
+				} else {
+					usrAction = "Save";
+					financeMain.setRecordStatus("Saved");
+					role = workFlow.firstTaskOwner();
+				}
 				auditHeader = financeDetailService.executeWorkflowServiceTasks(auditHeader, role, usrAction, workFlow);
 				//auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
 			}
@@ -442,7 +451,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		if(stp && !quickDisb) {
 			return PennantConstants.RCD_STATUS_APPROVED;
 		} else {
+			if(ImplementationConstants.CLIENT_NFL) {
 			return PennantConstants.RCD_STATUS_SUBMITTED;
+			} else {
+				return PennantConstants.RCD_STATUS_SAVED;
+			}
 		} 
 	}
 
@@ -1471,6 +1484,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
 		financeDetail.setFinFlagsDetails(null);
 		financeDetail.setCovenantTypeList(null);
+		//ReqStage and Status
+		financeDetail.getFinScheduleData().getFinanceMain().setStatus(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus());
+		financeDetail.getFinScheduleData().getFinanceMain().setStage(financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
 		//disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {

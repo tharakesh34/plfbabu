@@ -2512,7 +2512,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , AlwMultiDisb, ");
 		selectSql.append(
 				"  UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, PromotionCode ");
-		selectSql.append(" From FinanceMain");
+		selectSql.append(" From FinanceMain_View");
 		selectSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());

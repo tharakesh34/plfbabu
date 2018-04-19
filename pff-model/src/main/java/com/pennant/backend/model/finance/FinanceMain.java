@@ -83,7 +83,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
 		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "quickDisb", "unPlanEMIHLockPeriod",
 		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "planEMIHAlw",
-		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate" })
+		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate","stage","status"})
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -617,6 +617,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int dueBucket=0;
 	private int reAgeBucket=0;
 	private String finCategory;
+	@XmlElement
+	private String stage;
+	@XmlElement
+	private String status;
+
 
 	//For Fee Reca Calculation
 	private BigDecimal recalFee = BigDecimal.ZERO;
@@ -763,6 +768,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalIGSTFee");
 		excludeFields.add("recalSGSTFee");
 		excludeFields.add("recalUGSTFee");
+		excludeFields.add("stage");
+		excludeFields.add("status");
 
 		return excludeFields;
 	}
@@ -3574,6 +3581,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setLovDescEntityCode(String lovDescEntityCode) {
 		this.lovDescEntityCode = lovDescEntityCode;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
