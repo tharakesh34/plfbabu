@@ -229,6 +229,12 @@
 			<menuItem id="menu_Item_BounceReason"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul"
 				rightName="menuItem_applicationmaster_BounceReason" />
+			<menuItem id="menu_Item_CostOfFundCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CostOfFundCode/CostOfFundCodeList.zul"
+				rightName="menuItem_ApplicationMaster_CostOfFundCodes" />
+			<menuItem id="menu_Item_CostOfFund"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CostOfFundRate/CostOfFundList.zul"
+				rightName="menuItem_ApplicationMaster_CostOfFunds" />
 			<menuItem id="menu_Item_Currency"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"
 				rightName="menuItem_ApplicationMaster_Currency" />

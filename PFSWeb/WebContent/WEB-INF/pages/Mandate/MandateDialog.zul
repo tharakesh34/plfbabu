@@ -282,7 +282,9 @@
 									<space spacing="2px" />
 									<uppercasebox id = "barCodeNumber" width="200px"/>
 									</hbox>
-									<label id="label_UmrNumber"
+								</row>
+								<row>
+								<label id="label_UmrNumber"
 										value="${c:l('label_MandateDialog_UmrNumber.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -296,7 +298,9 @@
 										<space spacing="2px" />
 										<checkbox id="swapIsActive" />
 									</hbox>
-									<label id = "label_RegStatus" value="${c:l('label_MandateDialog_RegStatus.value')}"/>
+								</row>
+								<row>
+								<label id = "label_RegStatus" value="${c:l('label_MandateDialog_RegStatus.value')}"/>
 									<hbox>
 									<space spacing="2px"/>
 									<label id = "regStatus" style="font-weight:bold;"/>

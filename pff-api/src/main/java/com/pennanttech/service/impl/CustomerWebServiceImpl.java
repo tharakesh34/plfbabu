@@ -156,12 +156,38 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		return response;
 	}
 
+	/**
+	 * Method for verifying empty objects and set "null" value.
+	 * 
+	 * This method mainly written to handle API requests to resolve foreign key issues.
+	 * 
+	 * @param customerDetails
+	 */
 	private void setDefaults(CustomerDetails customerDetails) {
-		if(StringUtils.isBlank(customerDetails.getCustomer().getCustSegment())) {
-			customerDetails.getCustomer().setCustSegment(StringUtils.trimToNull(customerDetails.getCustomer().getCustSegment()));
-			customerDetails.getCustomer().setCustEmpSts(StringUtils.trimToNull(customerDetails.getCustomer().getCustEmpSts()));
+		if (customerDetails.getCustomer() != null) {
+			Customer customer = customerDetails.getCustomer();
+			customer.setCustSegment(StringUtils.trimToNull(customer.getCustSegment()));
+			customer.setCustEmpSts(StringUtils.trimToNull(customer.getCustEmpSts()));
+			customer.setCustCOB(StringUtils.trimToNull(customer.getCustCOB()));
+			customer.setCustParentCountry(StringUtils.trimToNull(customer.getCustParentCountry()));
+			customer.setCustResdCountry(StringUtils.trimToNull(customer.getCustResdCountry()));
+			customer.setCustRiskCountry(StringUtils.trimToNull(customer.getCustRiskCountry()));
+			customer.setCustCtgCode(StringUtils.trimToNull(customer.getCustCtgCode()));
+			customer.setCustDSADept(StringUtils.trimToNull(customer.getCustDSADept()));
+			customer.setCustEmpSts(StringUtils.trimToNull(customer.getCustEmpSts()));
+			customer.setCustGenderCode(StringUtils.trimToNull(customer.getCustGenderCode()));
+			customer.setCustGroupSts(StringUtils.trimToNull(customer.getCustGroupSts()));
+			customer.setCustLng(StringUtils.trimToNull(customer.getCustLng()));
+			customer.setCustSalutationCode(StringUtils.trimToNull(customer.getCustSalutationCode()));
+			customer.setCustSector(StringUtils.trimToNull(customer.getCustSector()));
+			customer.setCustSegment(StringUtils.trimToNull(customer.getCustSegment()));
+			customer.setCustDftBranch(StringUtils.trimToNull(customer.getCustDftBranch()));
+			customer.setCustBaseCcy(StringUtils.trimToNull(customer.getCustBaseCcy()));
+			customer.setCustTypeCode(StringUtils.trimToNull(customer.getCustTypeCode()));
+			customer.setCustAddlVar82(StringUtils.trimToNull(customer.getCustAddlVar82()));
+			customer.setCustMaritalSts(StringUtils.trimToNull(customer.getCustMaritalSts()));
+			customer.setCustNationality(StringUtils.trimToNull(customer.getCustNationality()));
 		}
-		
 	}
 
 	/**
