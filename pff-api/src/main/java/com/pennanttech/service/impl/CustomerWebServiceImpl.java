@@ -179,9 +179,15 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
 		//set empty to null
 		setDefaults(customerDetails);
+		WSReturnStatus status=null;
 		// customer validations
-		WSReturnStatus status = validateCustomerCIF(customerDetails.getCustCIF());
+		status = validateCustomerCIF(customerDetails.getCustCIF());
 		if(status != null) {
+			return status;
+		}
+		// customer catageory validations
+		status = validateCustomerCatageory(customerDetails);
+		if (status != null) {
 			return status;
 		}
 		
@@ -2378,6 +2384,28 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
 				return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+			}
+		}
+		return returnStatus;
+	}
+	
+	/**
+	 * Method for validate customer Catageory
+	 * 
+	 * @param customerDetails
+	 * @return
+	 */
+	private WSReturnStatus validateCustomerCatageory(CustomerDetails customerDetails) {
+		WSReturnStatus returnStatus = null;
+		Customer customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
+		if (customer != null) {
+			if (StringUtils.isBlank(customerDetails.getCustCtgCode())) {
+				customerDetails.setCustCtgCode(customer.getCustCtgCode());
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "categoryCode";
+				valueParm[1] = "update Customer";
+				return APIErrorHandlerService.getFailedStatus("90329", valueParm);
 			}
 		}
 		return returnStatus;
