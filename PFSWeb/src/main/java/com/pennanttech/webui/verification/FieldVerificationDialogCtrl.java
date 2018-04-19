@@ -231,7 +231,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChnageDecision(ForwardEvent event) throws Exception {
+	public void onChangeDecision(ForwardEvent event) throws Exception {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Combobox decision = (Combobox) getComponent(listitem, "Decision");
@@ -264,7 +264,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			MessageUtil.showMessage("Initiation request not avilable in Field Investigation Module.");
 		}
-
 	}
 
 	/**
@@ -424,7 +423,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitRemarks);
 				listCell.setParent(item);
 
-				decision.addForward("onChange", self, "onChnageDecision", item);
+				decision.addForward("onChange", self, "onChangeDecision", item);
 				reInitAgency.addForward("onFulfill", self, "onChangeReInitAgency", item);
 			}
 
