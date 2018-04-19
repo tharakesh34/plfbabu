@@ -404,5 +404,142 @@ UNION ALL
 			tableName="CustomerExtLiability_Temp" />
 	</changeSet>
 	
+	<changeSet id="9" author="Vinay">
+		<createView viewName="customerextliability_aview" replaceIfExists="true">
+			SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+			t1.roi,
+			t1.tenure,
+			t1.tenureBal,
+			t1.bounceNo,
+			t1.pos,
+			t1.overdue,
+			t1.emiCnsdrForFOIR,
+			t1.source,
+			t1.checkedBy,
+			t1.securityDetail,
+			t1.endUseOfFunds,
+			t1.repayFrom,
+			t6.loanpurposedesc,
+			t7.bankname AS lovdescrepayfrom
+		   FROM customerextliability_TEMP t1
+			 INNER JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     INNER JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus 
+			 INNER JOIN LOANPURPOSES t6 ON t6.Loanpurposecode = t1.endUseOfFunds
+			 INNER JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayFrom
+		</createView>
+		
+		<createView viewName="customerextliability_view" replaceIfExists="true">
+			SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+			t1.roi,
+			t1.tenure,
+			t1.tenureBal,
+			t1.bounceNo,
+			t1.pos,
+			t1.overdue,
+			t1.emiCnsdrForFOIR,
+			t1.source,
+			t1.checkedBy,
+			t1.securityDetail,
+			t1.endUseOfFunds,
+			t1.repayFrom,
+			t6.loanpurposedesc,
+			t7.bankname AS lovdescrepayfrom
+		   FROM customerextliability_temp t1
+		     INNER JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     INNER JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus
+			 INNER JOIN LOANPURPOSES t6 ON t6.Loanpurposecode = t1.endUseOfFunds
+			 INNER JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayFrom
+		UNION ALL
+		 SELECT t1.custid,
+		    t1.liabilityseq,
+		    t1.findate,
+		    t1.fintype,
+		    t1.bankname,
+		    t1.originalamount,
+		    t1.instalmentamount,
+		    t1.outstandingbal,
+		    t1.finstatus,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t3.bankname AS lovdescbankname,
+		    t4.fintypedesc AS lovdescfintype,
+		    t5.custstsdescription AS lovdescfinstatus,
+			t1.roi,
+			t1.tenure,
+			t1.tenureBal,
+			t1.bounceNo,
+			t1.pos,
+			t1.overdue,
+			t1.emiCnsdrForFOIR,
+			t1.source,
+			t1.checkedBy,
+			t1.securityDetail,
+			t1.endUseOfFunds,
+			t1.repayFrom,
+			t6.loanpurposedesc,
+			t7.bankname AS lovdescrepayfrom
+			FROM customerextliability t1
+		     INNER JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+		     INNER JOIN otherbankfinancetype t4 ON t4.fintype = t1.fintype
+		     LEFT JOIN bmtcuststatuscodes t5 ON t5.custstscode = t1.finstatus 
+			 INNER JOIN LOANPURPOSES t6 ON t6.Loanpurposecode = t1.endUseOfFunds
+			 INNER JOIN bmtbankdetail t7 ON t7.bankcode = t1.repayFrom
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM customerextliability_temp
+		          WHERE customerextliability_temp.custid = t1.custid AND customerextliability_temp.liabilityseq = t1.liabilityseq))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
