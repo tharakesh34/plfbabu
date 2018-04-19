@@ -310,10 +310,13 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditDate 		datetime NOT NULL, ");
 					syntax.append(" AuditSeq 		int NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
-					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				} else {
-					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+					syntax.append(" ( ");
+					if (i == 3) {
+						syntax.append(" Id 		bigint NOT NULL, ");
+					}
 				}
+				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo			int NOT NULL, ");
 				syntax.append("	Version			int NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
@@ -329,7 +332,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
-					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					if (i == 3) {
+						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+					} else {
+						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					}
 				}
 
 				// Oracle DB Scripts
@@ -341,10 +348,13 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditDate 		date NOT NULL, ");
 					syntax.append(" AuditSeq 		number(10,0) NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
-					syntax.append(" Reference 		varchar2(20) NOT NULL, ");
 				} else {
-					syntax.append(" (Reference 		varchar2(20) NOT NULL, ");
+					syntax.append(" ( ");
+					if (i == 3) {
+						syntax.append(" Id 		number(19,0) NOT NULL, ");
+					}
 				}
+				syntax.append(" Reference 		varchar2(20) NOT NULL, ");
 				syntax.append(" SeqNo 			number(10,0) NOT NULL, ");
 				syntax.append("	Version 		number(10,0) NOT NULL,");
 				syntax.append("	LastMntBy 		number(19,0) NULL,");
@@ -360,7 +370,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
-					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					if (i == 3) {
+						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+					} else {
+						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					}
 				}
 			} else if (App.DATABASE == App.Database.POSTGRES) {
 				syntax.append("create table ");
@@ -370,10 +384,13 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					syntax.append(" AuditDate 		timestamp NOT NULL, ");
 					syntax.append(" AuditSeq 		integer NOT NULL, ");
 					syntax.append(" AuditImage 		char(1) NOT NULL, ");
-					syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				} else {
-					syntax.append(" (Reference 		varchar(20) NOT NULL, ");
+					syntax.append(" ( ");
+					if (i == 3) {
+						syntax.append(" Id 		bigint NOT NULL, ");
+					}
 				}
+				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo 			integer NOT NULL, ");
 				syntax.append("	Version 		integer NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
@@ -389,7 +406,11 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
-					syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					if (i == 3) {
+						syntax.append(" PRIMARY KEY (Id , Reference ,  SeqNo ))");
+					} else {
+						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+					}
 				}
 			}
 
