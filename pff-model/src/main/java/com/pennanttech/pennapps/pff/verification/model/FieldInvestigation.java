@@ -26,66 +26,66 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class FieldInvestigation extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				cif;
-	private String				keyReference;
-	private String				name;
-	private String				addressType;
-	private String				houseNumber;
-	private String				flatNumber;
-	private String				street;
-	private String				addressLine1;
-	private String				addressLine2;
-	private long				verificationId;
-	private String				addressLine3;
-	private String				addressLine4;
-	private String				addressLine5;
-	private String				poBox;
-	private String				country;
-	private String				province;
-	private String				city;
-	private String				zipCode;
-	private String				contactNumber1;
-	private String				contactNumber2;
+	private String cif;
+	private String keyReference;
+	private String name;
+	private String addressType;
+	private String houseNumber;
+	private String flatNumber;
+	private String street;
+	private String addressLine1;
+	private String addressLine2;
+	private long verificationId;
+	private String addressLine3;
+	private String addressLine4;
+	private String addressLine5;
+	private String poBox;
+	private String country;
+	private String province;
+	private String city;
+	private String zipCode;
+	private String contactNumber1;
+	private String contactNumber2;
 
-	private Date				date;
-	private int					type;
-	private int					yearsAtPresentAddress;
-	private String				personMet;
-	private int					ownershipStatus;
-	private String				relationship;
-	private int					neighbourhoodFeedBack;
-	private String				contactNumber;
-	private String				observationRemarks;
-	private int					livingStandard;
-	private boolean				negativeCheck;
-	private int					noofAttempts;
+	private Date date;
+	private int type;
+	private int yearsAtPresentAddress;
+	private String personMet;
+	private int ownershipStatus;
+	private String relationship;
+	private int neighbourhoodFeedBack;
+	private String contactNumber;
+	private String observationRemarks;
+	private int livingStandard;
+	private boolean negativeCheck;
+	private int noofAttempts;
 
-	private String				agentCode;
-	private String				agentName;
-	private int					status;
-	private Long				reason;
-	private String				summaryRemarks;
+	private String agentCode;
+	private String agentName;
+	private int status;
+	private Long reason;
+	private String summaryRemarks;
 
-	private String				statusName;
-	private String				reasonName;
-	private Date				createdOn;
-	private String				reasonCode;
-	private String				reasonDesc;
-	private String				lovrelationdesc;
-	private Long				custId;
-	private Long 				agencyId;
-	private String 				agencyName;
+	private String statusName;
+	private String reasonName;
+	private Date createdOn;
+	private String reasonCode;
+	private String reasonDesc;
+	private String lovrelationdesc;
+	private Long custId;
+	private Long agencyId;
+	private String agencyName;
 
 	@XmlTransient
-	private boolean				newRecord			= false;
+	private boolean newRecord = false;
 	@XmlTransient
-	private String				lovValue;
+	private String lovValue;
 	@XmlTransient
-	private FieldInvestigation	befImage;
+	private FieldInvestigation befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public FieldInvestigation() {
 		super();

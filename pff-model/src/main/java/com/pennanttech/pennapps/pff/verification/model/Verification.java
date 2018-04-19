@@ -26,43 +26,43 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class Verification extends AbstractWorkflowEntity {
-	private static final long		serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long					id;
-	private int						verificationType;
-	private int						module;
-	private String					keyReference;
-	private String					referenceType;
-	private String					reference;
-	private String					referenceFor;
-	private Long					custId;
-	private int						requestType;
-	private Long 					reinitid;
-	private Long					agency;
-	private Long					reason;
-	private String					remarks;
-	private long					createdBy;
-	private Timestamp				createdOn;
-	private int						status;
-	private Long					agencyReason;
-	private String					agencyRemarks;
-	private Timestamp				verificationDate;
-	private int						decision;
-	private String					decisionRemarks;
-	private Verification			befImage;
-	private LoggedInUser			userDetails;
+	private long id;
+	private int verificationType;
+	private int module;
+	private String keyReference;
+	private String referenceType;
+	private String reference;
+	private String referenceFor;
+	private Long custId;
+	private int requestType;
+	private Long reinitid;
+	private Long agency;
+	private Long reason;
+	private String remarks;
+	private long createdBy;
+	private Timestamp createdOn;
+	private int status;
+	private Long agencyReason;
+	private String agencyRemarks;
+	private Timestamp verificationDate;
+	private int decision;
+	private String decisionRemarks;
+	private Verification befImage;
+	private LoggedInUser userDetails;
 
-	private String					cif;
-	private String					customerName;
-	private String					agencyName;
-	private String					reasonName;
+	private String cif;
+	private String customerName;
+	private String agencyName;
+	private String reasonName;
 
-	private List<Verification>		verifications		= new ArrayList<>();
-	private FieldInvestigation		fieldInvestigation;
-	private List<CustomerDetails>	customerDetailsList	= new ArrayList<>();
-	private boolean					newRecord			= false;
-	private Long					reInitAgency;
-	private String					reInitRemarks;
+	private List<Verification> verifications = new ArrayList<>();
+	private FieldInvestigation fieldInvestigation;
+	private List<CustomerDetails> customerDetailsList = new ArrayList<>();
+	private boolean newRecord = false;
+	private Long reInitAgency;
+	private String reInitRemarks;
 
 	public Verification() {
 		super();
@@ -163,7 +163,7 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setRequestType(int requestType) {
 		this.requestType = requestType;
 	}
-	
+
 	public Long getReinitid() {
 		return reinitid;
 	}

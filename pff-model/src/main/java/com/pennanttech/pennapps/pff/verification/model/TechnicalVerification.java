@@ -55,11 +55,11 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String reasonCode;
 	private String reasonDesc;
 	private String lovrelationdesc;
-	
-	private ExtendedFieldHeader	extendedFieldHeader;
+
+	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
+
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -322,5 +322,5 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-	
+
 }
