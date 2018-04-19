@@ -891,49 +891,49 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param detail
 	 */
 	private void dateValidation(Datebox datebox, ExtendedFieldDetail detail) {
-		String[] value = detail.getFieldConstraint().split(",");
-
-		PTDateValidator dateValidator = null;
-
-		String label = detail.getFieldLabel();
-		boolean isMandatory = detail.isFieldMandatory();
-
-		switch (value[0]) {
-		case "RANGE":
-			dateValidator = new PTDateValidator(label, isMandatory,
-					DateUtility.getUtilDate(value[1], PennantConstants.dateFormat),
-					DateUtility.getUtilDate(value[2], PennantConstants.dateFormat), true);
-			break;
-		case "FUTURE_DAYS":
-			dateValidator = new PTDateValidator(label, isMandatory, null,
-					DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])), true);
-			break;
-		case "PAST_DAYS":
-			dateValidator = new PTDateValidator(label, isMandatory,
-					DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
-			break;
-		case "FUTURE_TODAY":
-			dateValidator = new PTDateValidator(label, isMandatory, true, null, true);
-			break;
-		case "PAST_TODAY":
-			if (!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
-				dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
-			} else {
+		if (StringUtils.isNotBlank(detail.getFieldConstraint())) {
+		
+			String[] value = detail.getFieldConstraint().split(",");
+			PTDateValidator dateValidator = null;
+			String label = detail.getFieldLabel();
+			boolean isMandatory = detail.isFieldMandatory();
+			switch (value[0]) {
+			case "RANGE":
+				dateValidator = new PTDateValidator(label, isMandatory,
+						DateUtility.getUtilDate(value[1], PennantConstants.dateFormat),
+						DateUtility.getUtilDate(value[2], PennantConstants.dateFormat), true);
+				break;
+			case "FUTURE_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory, null,
-						DateUtility.addDays(DateUtility.getAppDate(), 1), false);
-			}
-			break;
-		case "FUTURE":
-			dateValidator = new PTDateValidator(label, isMandatory, false, null, false);
-			break;
-		case "PAST":
-			dateValidator = new PTDateValidator(label, isMandatory, null, false, false);
-			break;
+						DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])), true);
+				break;
+			case "PAST_DAYS":
+				dateValidator = new PTDateValidator(label, isMandatory,
+						DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
+				break;
+			case "FUTURE_TODAY":
+				dateValidator = new PTDateValidator(label, isMandatory, true, null, true);
+				break;
+			case "PAST_TODAY":
+				if (!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+					dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
+				} else {
+					dateValidator = new PTDateValidator(label, isMandatory, null,
+							DateUtility.addDays(DateUtility.getAppDate(), 1), false);
+				}
+				break;
+			case "FUTURE":
+				dateValidator = new PTDateValidator(label, isMandatory, false, null, false);
+				break;
+			case "PAST":
+				dateValidator = new PTDateValidator(label, isMandatory, null, false, false);
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
+			datebox.setConstraint(dateValidator);
 		}
-		datebox.setConstraint(dateValidator);
 	}
 
 	/**
