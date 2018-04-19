@@ -39,7 +39,7 @@ public interface FieldInvestigationService {
 
 	List<FieldInvestigation> getList(String keyReference);
 
-	List<Long> getFieldInvestigationIds(List<Verification> verifications,String keyRef);
+	List<Long> getFieldInvestigationIds(List<Verification> verifications, String keyRef);
 
 	void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item);
 

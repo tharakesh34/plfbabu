@@ -47,8 +47,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 /**
- * Service implementation for methods that depends on
- * <b>TechnicalVerification</b>.<br>
+ * Service implementation for methods that depends on <b>TechnicalVerification</b>.<br>
  */
 public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVerification>
 		implements TechnicalVerificationService {
@@ -59,18 +58,15 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	private VerificationDAO verificationDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
-	private CollateralSetupDAO				collateralSetupDAO;
+	private CollateralSetupDAO collateralSetupDAO;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using verification_fiDAO's update method 3) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -87,7 +83,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			return auditHeader;
 		}
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
+		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
+				.getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (technicalVerification.isWorkflow()) {
@@ -95,7 +92,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		}
 
 		if (technicalVerification.isNew()) {
-			technicalVerification.setId(Long.parseLong(getTechnicalVerificationDAO().save(technicalVerification, tableType)));
+			technicalVerification
+					.setId(Long.parseLong(getTechnicalVerificationDAO().save(technicalVerification, tableType)));
 			auditHeader.getAuditDetail().setModelData(technicalVerification);
 			auditHeader.setAuditReference(String.valueOf(technicalVerification.getId()));
 		} else {
@@ -107,15 +105,16 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			List<AuditDetail> details = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
 			//Table Name
 			StringBuilder tableName = new StringBuilder();
-			tableName.append( CollateralConstants.VERIFICATION_MODULE);
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(technicalVerification.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_TV");
-			
-			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, technicalVerification.getExtendedFieldHeader(), tableName.toString(), tableType.name());
+
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					technicalVerification.getExtendedFieldHeader(), tableName.toString(), tableType.name());
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -123,12 +122,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table verification_fi by using verification_fiDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -148,8 +145,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail() .getModelData();
-		auditDetails .addAll(getListAuditDetails(listDeletion(technicalVerification, "", auditHeader.getAuditTranType())));
+		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
+				.getModelData();
+		auditDetails
+				.addAll(getListAuditDetails(listDeletion(technicalVerification, "", auditHeader.getAuditTranType())));
 
 		getTechnicalVerificationDAO().delete(technicalVerification, TableType.MAIN_TAB);
 
@@ -161,20 +160,22 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	// Method for Deleting all records related to Customer in _Temp/Main tables depend on method type
-	public List<AuditDetail> listDeletion(TechnicalVerification technicalVerification, String tableType, String auditTranType) {
+	public List<AuditDetail> listDeletion(TechnicalVerification technicalVerification, String tableType,
+			String auditTranType) {
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
 		if (extendedDetails != null && extendedDetails.size() > 0) {
-			auditList.addAll(extendedFieldDetailsService.delete(technicalVerification.getExtendedFieldHeader(), technicalVerification.getCollateralRef(), tableType, auditTranType, extendedDetails));
+			auditList.addAll(extendedFieldDetailsService.delete(technicalVerification.getExtendedFieldHeader(),
+					technicalVerification.getCollateralRef(), tableType, auditTranType, extendedDetails));
 		}
 		return auditList;
 	}
-	
+
 	/**
 	 * Common Method for Customers list validation
 	 * 
@@ -224,10 +225,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return auditDetailsList;
 	}
 
-
 	/**
-	 * getverification_fi fetch the details by using verification_fiDAO's
-	 * getverification_fiById method.
+	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
 	 * 
 	 * @param id
 	 *            id of the TechnicalVerification.
@@ -235,39 +234,32 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 */
 	@Override
 	public TechnicalVerification getTechnicalVerification(long id) {
-		return getTechnicalVerificationDAO().getTechnicalVerification(id,"_View");
+		return getTechnicalVerificationDAO().getTechnicalVerification(id, "_View");
 	}
 
 	/**
-	 * getApprovedverification_fiById fetch the details by using
-	 * verification_fiDAO's getverification_fiById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * verification_fi.
+	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
+	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
 	 * 
 	 * @param id
 	 *            id of the TechnicalVerification. (String)
 	 * @return verification_fi
 	 */
 	public TechnicalVerification getApprovedTechnicalVerification(long id) {
-		return getTechnicalVerificationDAO().getTechnicalVerification(id,"__AView");
+		return getTechnicalVerificationDAO().getTechnicalVerification(id, "__AView");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getTechnicalVerificationDAO().delete with parameters
-	 * technicalVerification,"" b) NEW Add new record in to main table by using
-	 * getTechnicalVerificationDAO().save with parameters technicalVerification,"" c)
-	 * EDIT Update record in the main table by using
-	 * getTechnicalVerificationDAO().update with parameters technicalVerification,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getTechnicalVerificationDAO().delete with parameters
-	 * technicalVerification,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and Adtverification_fi by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getTechnicalVerificationDAO().delete
+	 * with parameters technicalVerification,"" b) NEW Add new record in to main table by using
+	 * getTechnicalVerificationDAO().save with parameters technicalVerification,"" c) EDIT Update record in the main
+	 * table by using getTechnicalVerificationDAO().update with parameters technicalVerification,"" 3) Delete the record
+	 * from the workFlow table by using getTechnicalVerificationDAO().delete with parameters
+	 * technicalVerification,"_Temp" 4) Audit the record in to AuditHeader and Adtverification_fi by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverification_fi
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -290,10 +282,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		TechnicalVerification technicalVerification = new TechnicalVerification();
-		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(), technicalVerification);
+		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(),
+				technicalVerification);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(technicalVerification.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(technicalVerificationDAO.getTechnicalVerification(technicalVerification.getId(),""));
+			auditHeader.getAuditDetail()
+					.setBefImage(technicalVerificationDAO.getTechnicalVerification(technicalVerification.getId(), ""));
 		}
 
 		if (technicalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -311,26 +305,29 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				tranType = PennantConstants.TRAN_ADD;
 				technicalVerification.setRecordType("");
 				getTechnicalVerificationDAO().save(technicalVerification, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(), technicalVerification.getStatus());
+				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(),
+						technicalVerification.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				technicalVerification.setRecordType("");
 				getTechnicalVerificationDAO().update(technicalVerification, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(), technicalVerification.getStatus());
+				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(),
+						technicalVerification.getStatus());
 			}
-			
+
 			// Extended field Details
 			if (technicalVerification.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
-				
+
 				//Table Name
 				StringBuilder tableName = new StringBuilder();
-				tableName.append( CollateralConstants.VERIFICATION_MODULE);
+				tableName.append(CollateralConstants.VERIFICATION_MODULE);
 				tableName.append("_");
 				tableName.append(technicalVerification.getExtendedFieldHeader().getSubModuleName());
 				tableName.append("_TV");
-				
-				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, technicalVerification.getExtendedFieldHeader(), tableName.toString(), "");
+
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+						technicalVerification.getExtendedFieldHeader(), tableName.toString(), "");
 				auditDetails.addAll(details);
 			}
 		}
@@ -340,24 +337,24 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		getTechnicalVerificationDAO().delete(technicalVerification, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(), technicalVerification.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], technicalVerification.getBefImage(), technicalVerification));
+		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(),
+				technicalVerification.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				technicalVerification.getBefImage(), technicalVerification));
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
- 
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getTechnicalVerificationDAO().delete with
-	 * parameters technicalVerification,"_Temp" 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getTechnicalVerificationDAO().delete with parameters technicalVerification,"_Temp" 3)
+	 * Audit the record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -373,7 +370,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			return auditHeader;
 		}
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
+		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
+				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getTechnicalVerificationDAO().delete(technicalVerification, TableType.TEMP_TAB);
@@ -385,10 +383,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -402,21 +398,22 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
+
+		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
+				.getModelData();
 		String usrLanguage = technicalVerification.getUserDetails().getLanguage();
 
 		// Extended field details Validation
 		if (technicalVerification.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
 			ExtendedFieldHeader extHeader = technicalVerification.getExtendedFieldHeader();
-			
+
 			StringBuilder tableName = new StringBuilder();
-			tableName.append( CollateralConstants.VERIFICATION_MODULE);
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
 			tableName.append(extHeader.getSubModuleName());
 			tableName.append("_TV");
-			
+
 			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
 			auditDetails.addAll(details);
 		}
@@ -430,11 +427,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
+		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
+				.getModelData();
 
 		String auditTranType = "";
 
@@ -443,10 +441,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		
+
 		// Extended Field Details
 		if (technicalVerification.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(technicalVerification.getExtendedFieldRender(), auditTranType, method));
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(technicalVerification.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -459,10 +458,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	@Override
 	public void setTVVerification(FinanceDetail financeDetail, Verification verification) {
-		Customer customer =financeDetail.getCustomerDetails().getCustomer();
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup=collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),"_view");
-			Verification vrf=new Verification();
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
+					"_view");
+			Verification vrf = new Verification();
 			vrf.setModule(verification.getModule());
 			vrf.setVerificationType(verification.getVerificationType());
 			vrf.setReferenceType(collateralSetup.getCollateralType());
@@ -479,17 +479,17 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			vrf.setRecordType(CollAsmt.getRecordType());
 			vrf.setCreatedBy(verification.getCreatedBy());
 			vrf.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-			
+
 			verification.getVerifications().add(vrf);
-			
+
 		}
 		financeDetail.setTvVerification(verification);
 	}
+
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getTechnicalVerificationDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getTechnicalVerificationDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

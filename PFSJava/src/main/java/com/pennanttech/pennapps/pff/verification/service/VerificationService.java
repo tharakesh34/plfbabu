@@ -50,7 +50,8 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public interface VerificationService {
 
-	List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType, boolean isInitTab);
+	List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
+			boolean isInitTab);
 
 	List<Verification> getVerifications(String keyReference);
 
@@ -60,5 +61,5 @@ public interface VerificationService {
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
-	AuditHeader doReject(AuditHeader auditHeader);	
+	AuditHeader doReject(AuditHeader auditHeader);
 }

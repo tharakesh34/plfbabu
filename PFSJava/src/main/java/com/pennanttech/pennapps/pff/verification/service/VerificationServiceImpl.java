@@ -75,33 +75,36 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Verification</b>.<br>
  */
 public class VerificationServiceImpl extends GenericService<Verification> implements VerificationService {
-	private static final Logger		logger	= LogManager.getLogger(VerificationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VerificationServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
 	@Autowired
 	private VerificationDAO verificationDAO;
-	
+
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
-	
-	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType, boolean isInitTab) {
+
+	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
+			boolean isInitTab) {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<Long> idList = null;
 		List<CustomerDetails> customerDetailsList = null;
-		
+
 		VerificationType verificationType = VerificationType.getRequestType(verification.getVerificationType());
 
 		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
-		
+
 		if (verificationType == VerificationType.FI) {
 			customerDetailsList = verification.getCustomerDetailsList();
-			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),verification.getKeyReference());
+			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),
+					verification.getKeyReference());
 		}
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
+		WorkflowEngine engine = new WorkflowEngine(
+				WorkFlowUtil.getWorkflow(verification.getWorkflowId()).getWorkFlowXml());
 		int i = 0;
 
 		for (Verification item : verification.getVerifications()) {
@@ -118,67 +121,67 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (StringUtils.isEmpty(item.getRecordType())) {
 				item.setRecordType(verification.getRecordType());
 			}
-			
+
 			if (isInitTab) {
 				if (item.isNew()) {
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
-				
+
 				if (!idList.contains(item.getId()) && engine.compareTo(verification.getTaskId(),
-						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR ) {
-					
+						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
+
 					if (verificationType == VerificationType.FI) {
 						saveFI(customerDetailsList, item);
 					}
-					
+
 				}
 			} else {
-				if(item.getDecision() == Decision.RE_INITIATE.getKey()){
+				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
 					item.setCreatedOn(item.getLastMntOn());
 					item.setCreatedBy(item.getLastMntBy());
-					
+
 					Verification reInit = new Verification();
 					reInit.setId(item.getId());
 					reInit.setLastMntOn(item.getLastMntOn());
 					reInit.setLastMntBy(item.getLastMntBy());
-										
+
 					if (verificationType == VerificationType.FI) {
 						item.setStatus(FIStatus.SELECT.getKey());
 					}
-					
+
 					item.setVerificationDate(null);
 					item.setDecision(Decision.SELECT.getKey());
 					item.setAgency(item.getReInitAgency());
 					item.setRemarks(item.getReInitRemarks());
 					item.setRequestType(RequestType.INITIATE.getKey());
 					item.setReason(null);
-					verificationDAO.save(item, TableType.MAIN_TAB);	
-					
+					verificationDAO.save(item, TableType.MAIN_TAB);
+
 					reInit.setReinitid(item.getId());
 					verificationDAO.updateReInit(reInit, TableType.MAIN_TAB);
-					
+
 					if (verificationType == VerificationType.FI) {
 						saveFI(customerDetailsList, item);
 					}
-				}else{
+				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 			}
-			
+
 			auditDetails.add(new AuditDetail(auditTranType, i++, fields[0], fields[1], item.getBefImage(), item));
 		}
 
 		return auditDetails;
 	}
 
-	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {		
+	private void saveFI(List<CustomerDetails> customerDetailsList, Verification item) {
 		if (item.getFieldInvestigation() == null) {
 			for (CustomerDetails customerDetails : customerDetailsList) {
 				fieldInvestigationService.save(customerDetails, customerDetails.getCustomerPhoneNumList(), item);
 			}
-		} else if(item.getRequestType() == RequestType.INITIATE.getKey()){
+		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
 			item.getFieldInvestigation().setVerificationId(item.getId());
 			item.getFieldInvestigation().setLastMntOn(item.getLastMntOn());
 			fieldInvestigationService.save(item.getFieldInvestigation(), TableType.TEMP_TAB);
@@ -213,7 +216,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
-	
+
 	/**
 	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
 	 * parameter id and type as blank. it fetches the approved records from the verifications.
@@ -367,9 +370,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	@Override
 	public List<Verification> getVerifications(String keyReference) {
-		List<Verification> verifications= verificationDAO.getFiVeriFications(keyReference);
+		List<Verification> verifications = verificationDAO.getFiVeriFications(keyReference);
 		for (Verification verification : verifications) {
-			if(verification.getStatus() == Status.POSITIVE.getKey() || verification.getRequestType() ==RequestType.NOT_REQUIRED.getKey()){
+			if (verification.getStatus() == Status.POSITIVE.getKey()
+					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
 			}
 		}

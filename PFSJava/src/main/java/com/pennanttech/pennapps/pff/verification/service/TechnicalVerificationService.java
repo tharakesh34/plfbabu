@@ -31,6 +31,6 @@ public interface TechnicalVerificationService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	void setTVVerification(FinanceDetail financeDetail, Verification verification);
 }

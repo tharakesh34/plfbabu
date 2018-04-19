@@ -48,8 +48,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FieldInvestigation</b>.<br>
+ * Service implementation for methods that depends on <b>FieldInvestigation</b>.<br>
  */
 public class FieldInvestigationServiceImpl extends GenericService<FieldInvestigation>
 		implements FieldInvestigationService {
@@ -58,11 +57,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	private AuditHeaderDAO auditHeaderDAO;
 	private FieldInvestigationDAO fieldInvestigationDAO;
 	private VerificationDAO verificationDAO;
-	
+
 	@Autowired
-	private AddressTypeDAO			addressTypeDAO;
-	
-	
+	private AddressTypeDAO addressTypeDAO;
+
 	@Override
 	public void save(FieldInvestigation fieldInvestigation, TableType tempTab) {
 		setAudit(fieldInvestigation);
@@ -70,15 +68,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using verification_fiDAO's update method 3) Audit the
-	 * record in to AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * verification_fi/verification_fi_Temp by using verification_fiDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -116,12 +111,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table verification_fi by using verification_fiDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -147,8 +140,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * getverification_fi fetch the details by using verification_fiDAO's
-	 * getverification_fiById method.
+	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation.
@@ -156,39 +148,32 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 */
 	@Override
 	public FieldInvestigation getFieldInvestigation(long id) {
-		return getFieldInvestigationDAO().getFieldInvestigation(id,"_View");
+		return getFieldInvestigationDAO().getFieldInvestigation(id, "_View");
 	}
 
 	/**
-	 * getApprovedverification_fiById fetch the details by using
-	 * verification_fiDAO's getverification_fiById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * verification_fi.
+	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
+	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation. (String)
 	 * @return verification_fi
 	 */
 	public FieldInvestigation getApprovedFieldInvestigation(long id) {
-		return getFieldInvestigationDAO().getFieldInvestigation(id,"");
+		return getFieldInvestigationDAO().getFieldInvestigation(id, "");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFieldInvestigationDAO().delete with parameters
-	 * fieldInvestigation,"" b) NEW Add new record in to main table by using
-	 * getFieldInvestigationDAO().save with parameters fieldInvestigation,"" c)
-	 * EDIT Update record in the main table by using
-	 * getFieldInvestigationDAO().update with parameters fieldInvestigation,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getFieldInvestigationDAO().delete with parameters
-	 * fieldInvestigation,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and Adtverification_fi by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFieldInvestigationDAO().delete with
+	 * parameters fieldInvestigation,"" b) NEW Add new record in to main table by using getFieldInvestigationDAO().save
+	 * with parameters fieldInvestigation,"" c) EDIT Update record in the main table by using
+	 * getFieldInvestigationDAO().update with parameters fieldInvestigation,"" 3) Delete the record from the workFlow
+	 * table by using getFieldInvestigationDAO().delete with parameters fieldInvestigation,"_Temp" 4) Audit the record
+	 * in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -212,7 +197,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		getFieldInvestigationDAO().delete(fi, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fi.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(fieldInvestigationDAO.getFieldInvestigation(fi.getId(),""));
+			auditHeader.getAuditDetail().setBefImage(fieldInvestigationDAO.getFieldInvestigation(fi.getId(), ""));
 		}
 
 		if (fi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -252,13 +237,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFieldInvestigationDAO().delete with
-	 * parameters fieldInvestigation,"_Temp" 3) Audit the record in to
-	 * AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFieldInvestigationDAO().delete with parameters fieldInvestigation,"_Temp" 3) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -286,10 +268,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -308,10 +288,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFieldInvestigationDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFieldInvestigationDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -326,12 +305,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
-	
-	
-	
+
 	@Override
-	public List<Long> getFieldInvestigationIds(List<Verification> verifications,String keyRef) {
+	public List<Long> getFieldInvestigationIds(List<Verification> verifications, String keyRef) {
 		List<Long> fiIds = new ArrayList<>();
 		List<FieldInvestigation> fiList = fieldInvestigationDAO.getList(keyRef);
 		for (FieldInvestigation fieldInvestigation : fiList) {
@@ -344,7 +320,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 		return fiIds;
 	}
-	
+
 	@Override
 	public void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item) {
 		for (CustomerAddres address : applicant.getAddressList()) {
@@ -357,10 +333,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			}
 		}
 	}
-	
+
 	private void setFiFields(Verification verification, CustomerAddres address,
 			List<CustomerPhoneNumber> phoneNumbers) {
-		
+
 		FieldInvestigation fi = new FieldInvestigation();
 
 		fi.setVerificationId(verification.getId());
@@ -391,7 +367,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		verification.setFieldInvestigation(fi);
 	}
-	
+
 	private void setAudit(FieldInvestigation fi) {
 		String workFlowType = ModuleUtil.getWorkflowType("FieldInvestigation");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
@@ -446,13 +422,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 		return verifications;
 	}
-	
+
 	@Override
 	public Verification getFiVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
 		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
-		
+
 		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
@@ -466,10 +442,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 			}
 		}
-		
-		screenVerifications.addAll(getChangedVerifications(preVerifications, screenVerifications,verification.getKeyReference()));
-		verification.setVerifications(compareVerifications(screenVerifications, preVerifications,verification.getKeyReference()));
-		
+
+		screenVerifications
+				.addAll(getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference()));
+		verification.setVerifications(
+				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
+
 		logger.info(Literal.LEAVING);
 		return verification;
 	}
@@ -498,9 +476,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 	}
 
-	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,String keyReference) {
+	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,
+			String keyReference) {
 		List<Verification> verifications = new ArrayList<>();
-		List<Long> fiIds=getFieldInvestigationIds(oldList,keyReference);
+		List<Long> fiIds = getFieldInvestigationIds(oldList, keyReference);
 		for (Verification oldVer : oldList) {
 			for (Verification newVer : newList) {
 				if (oldVer.getCustId().compareTo(newVer.getCustId()) == 0
@@ -566,8 +545,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		List<Verification> tempList = new ArrayList<>();
 		tempList.addAll(screenVerifications);
 		tempList.addAll(preVerifications);
-		List<Long> fiIds=getFieldInvestigationIds(preVerifications,keyReference);
-		
+		List<Long> fiIds = getFieldInvestigationIds(preVerifications, keyReference);
+
 		screenVerifications.addAll(preVerifications);
 
 		for (Verification vrf : tempList) {
@@ -587,7 +566,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		return screenVerifications;
 	}
-	
+
 	@Override
 	public boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses,
 			List<CustomerAddres> savedCustomerAddresses) {
@@ -650,7 +629,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		return false;
 	}
-	
+
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
 		@Override
 		public int compare(CustomerPhoneNumber o1, CustomerPhoneNumber o2) {
@@ -658,9 +637,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 
 	}
-	
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
