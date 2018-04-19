@@ -101,4 +101,9 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="4" author="Vinay">
+		<renameColumn newColumnName="EmiCnsdrForFOIR" oldColumnName="IsEmiCnsdrForFOIR"
+			tableName="AdtCustomerExtLiability" />
+	</changeSet>
+	
 	</databaseChangeLog>
