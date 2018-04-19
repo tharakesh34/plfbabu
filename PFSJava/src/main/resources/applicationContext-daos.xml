@@ -11259,9 +11259,11 @@
 	</bean>
 	
 	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl" >
+		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
 		<property name="technicalVerificationDAO" ref="technicalVerificationDAO" />
-		<property name="verificationDAO" ref="verificationDAO"></property>
-		<property name="auditHeaderDAO" ref="auditHeaderDAO"></property>
+		<property name="verificationDAO" ref="verificationDAO"/>
+		<property name="collateralSetupDAO" ref="collateralSetupDAO"/>
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService"/>
 	</bean>
 	
 	<!-- Authorization Limit -->

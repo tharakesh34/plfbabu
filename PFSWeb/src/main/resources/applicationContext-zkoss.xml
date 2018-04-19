@@ -5240,9 +5240,13 @@
 	</bean>
 	
 	<!--============ Technical Verification Module ============== -->
-	<bean id="technicalVerificationListCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="technicalVerificationListCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="technicalVerificationService" ref="technicalVerificationService" />
+	</bean>
+	
 	<bean id="technicalVerificationDialogCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationDialogCtrl" parent="basisCtrl" scope="prototype">
-	<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="technicalVerificationService" ref="technicalVerificationService" />
 	</bean>
 	
 	<bean id="technicalValuationDialogCtrl"
