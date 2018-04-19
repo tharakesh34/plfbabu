@@ -425,8 +425,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
 			}
+			Filedownload.save(amedia);
 		}
-		Filedownload.save(amedia);
 		logger.debug("Leaving");
 	}
 
@@ -633,6 +633,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			// fill the components with the data
 			doWriteBeanToComponents(aDocumentDetails);
 			doSetDownLoadVisible();
+			boolean isContainsDocImg=aDocumentDetails.getDocImage()!=null?true:false;
+			this.btnDownload.setDisabled(!isContainsDocImg);
 			
 			if (isCheckList && StringUtils.trimToEmpty(aDocumentDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_CAN)) {
 				viewProcess=true;
