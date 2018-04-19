@@ -66,6 +66,7 @@ import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
@@ -106,6 +107,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -218,6 +220,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.Module;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
+import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
@@ -299,6 +302,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FieldInvestigationService fieldInvestigationService;
 	@Autowired
 	private TechnicalVerificationService technicalVerificationService;
+	@Autowired
+	private CollateralSetupDAO collateralSetupDAO;
 	@Autowired
 	private DeviationHelper deviationHelper;
 		
@@ -569,7 +574,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						.add(getCustomerDetailsService().getApprovedCustomerById(jointAccountDetail.getCustID()));
 			}
 			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-			List<Verification> verifications = verificationService.getVerifications(keyRef);
+			List<Verification> verifications = verificationService.getVerifications(keyRef,VerificationType.FI.getKey());
 			List<FieldInvestigation> fiList = fieldInvestigationService.getList(keyRef);
 			for (Verification vrf : verifications) {
 				for (FieldInvestigation fi : fiList) {
@@ -584,6 +589,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		// TV Verification Initiation
 		if (financeDetail.isTvInitTab()) {
+			Customer customer =financeDetail.getCustomerDetails().getCustomer();
 			Verification verification=new Verification();
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 			verification.setVerificationType(VerificationType.TV.getKey());
@@ -591,7 +597,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			verification.setKeyReference(financeMain.getFinReference());
 			verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			verification.setCreatedBy(financeMain.getLastMntBy());
-			technicalVerificationService.setTVVerification(financeDetail, verification);
+			verification.setCustId(customer.getCustID());
+			verification.setCustomerName(customer.getCustShrtName());
+			for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
+				CollateralSetup collateralSetup =collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
+				collateralSetup.setRecordType(CollAsmt.getRecordType());
+				verification.getCollateralSetupList().add(collateralSetup);
+			}
+			technicalVerificationService.getTvVeriFication(verification);
+			financeDetail.setTvVerification(verification);
+		}
+		
+		// TV Verification Approval
+		if (financeDetail.isTvApprovalTab()) {
+			Verification verification = new Verification();
+			for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
+				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
+				collateralSetup.setRecordType(CollAsmt.getRecordType());
+				verification.getCollateralSetupList().add(collateralSetup);
+			}
+			String keyRef = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+			List<Verification> verifications = verificationService.getVerifications(keyRef,
+					VerificationType.TV.getKey());
+			List<TechnicalVerification> tvList = technicalVerificationService.getList(keyRef);
+			for (Verification vrf : verifications) {
+				for (TechnicalVerification tv : tvList) {
+					if (vrf.getId() == tv.getVerificationId()) {
+						vrf.setTechnicalVerification(tv);
+					}
+				}
+			}
+			verification.setVerifications(verifications);
+			financeDetail.setTvVerification(verification);
 		}
 		
 		logger.debug("Leaving");
@@ -630,6 +667,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setFiVerification(verification);
 	}
 	
+	public void setTvInitVerification(FinanceDetail financeDetail) {
+		Verification verification = financeDetail.getTvVerification();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		verification.getCollateralSetupList().clear();
+		for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(),
+					"_Aview");
+			collateralSetup.setRecordType(CollAsmt.getRecordType());
+			verification.getCollateralSetupList().add(collateralSetup);
+		}
+		List<CollateralSetup> screenCollaterals = new ArrayList<>();
+		screenCollaterals.addAll(verification.getCollateralSetupList());
+
+		//removing the deleted Collaterals
+		for (CollateralSetup screenCollateral : screenCollaterals) {
+			if (StringUtils.isNotEmpty(screenCollateral.getRecordType())
+					&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+				verification.getCollateralSetupList().remove(screenCollateral);
+			}
+		}
+		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+		verification.setVerificationType(VerificationType.TV.getKey());
+		verification.setModule(Module.LOAN.getKey());
+		verification.setKeyReference(financeMain.getFinReference());
+		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		verification.setCreatedBy(financeMain.getLastMntBy());
+
+		verification = technicalVerificationService.getTvVeriFication(verification);
+		financeDetail.setTvVerification(verification);
+	}
+
 	/**
 	 * Method for Fetching Extended Field Details for the Asset Types
 	 * 
@@ -2389,26 +2458,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableType.getSuffix(), auditTranType));
 			}
 
-			// Verification details
+			// FI Verification details
 			if (financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()) {
-				Verification verification = financeDetail.getFiVerification();
-				verification.setReference(financeMain.getFinReference());
-				verification.setLastMntBy(financeMain.getLastMntBy());
-				verification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				verification.setRecordType(financeMain.getRecordType());
-				verification.setVersion(financeMain.getVersion());
-				verification.setWorkflowId(financeMain.getWorkflowId());
-				verification.setRoleCode(financeMain.getRoleCode());
-				verification.setNextRoleCode(financeMain.getNextRoleCode());
-				verification.setTaskId(financeMain.getTaskId());
-				verification.setNextTaskId(financeMain.getNextTaskId());
-				verification.setRecordStatus(financeMain.getRecordStatus());
-				if (PennantConstants.RECORD_TYPE_DEL.equals(financeMain.getRecordType())) {
-					if (StringUtils.trimToNull(verification.getRecordType()) == null) {
-						verification.setRecordType(financeMain.getRecordType());
-						verification.setNewRecord(true);
-					}
-				}
+				setVerificationAuditDetails(financeDetail.getFiVerification(), financeMain);
+			}
+			
+			// Technical Verification details
+			if (financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()) {
+				setVerificationAuditDetails(financeDetail.getTvVerification(), financeMain);
 			}
 			// set FI Initiation details
 			//=======================================
@@ -2418,7 +2475,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
 			}
-			
+
 			// set FI Approval details
 			//=======================================
 			if (financeDetail.isFiApprovalTab()) {
@@ -2428,6 +2485,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
 			}
 
+			// set TV Initiation details
+			//=======================================
+			if (financeDetail.isTvInitTab()) {
+				Verification verification = financeDetail.getTvVerification();
+				verification.setVerificationType(VerificationType.TV.getKey());
+				auditDetails.addAll(
+						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, true));
+			}
+
+			// set TV Approval details
+			//=======================================
+			if (financeDetail.isTvApprovalTab()) {
+				Verification verification = financeDetail.getTvVerification();
+				verification.setVerificationType(VerificationType.TV.getKey());
+				auditDetails.addAll(
+						verificationService.saveOrUpdate(verification, tableType.getSuffix(), auditTranType, false));
+			}
 		}
 
 		// Finance Fee Details
@@ -2498,6 +2572,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditHeader;
 		
+	}
+
+	private void setVerificationAuditDetails(Verification verification, FinanceMain financeMain) {
+		verification.setLastMntBy(financeMain.getLastMntBy());
+		verification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		verification.setRecordType(financeMain.getRecordType());
+		verification.setVersion(financeMain.getVersion());
+		verification.setWorkflowId(financeMain.getWorkflowId());
+		verification.setRoleCode(financeMain.getRoleCode());
+		verification.setNextRoleCode(financeMain.getNextRoleCode());
+		verification.setTaskId(financeMain.getTaskId());
+		verification.setNextTaskId(financeMain.getNextTaskId());
+		verification.setRecordStatus(financeMain.getRecordStatus());
+		if (PennantConstants.RECORD_TYPE_DEL.equals(financeMain.getRecordType())) {
+			if (StringUtils.trimToNull(verification.getRecordType()) == null) {
+				verification.setRecordType(financeMain.getRecordType());
+				verification.setNewRecord(true);
+			}
+		}
 	}
 
 	/**

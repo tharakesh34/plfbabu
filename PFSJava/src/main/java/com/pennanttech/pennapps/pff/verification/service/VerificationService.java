@@ -53,7 +53,7 @@ public interface VerificationService {
 	List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
 			boolean isInitTab);
 
-	List<Verification> getVerifications(String keyReference);
+	List<Verification> getVerifications(String keyReference, int verificationType);
 
 	Verification getApprovedVerification(long id);
 

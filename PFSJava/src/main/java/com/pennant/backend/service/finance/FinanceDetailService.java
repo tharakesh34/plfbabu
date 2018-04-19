@@ -199,4 +199,6 @@ public interface FinanceDetailService {
 	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail);
 	
 	void setFIInitVerification(FinanceDetail financeDetail);
+
+	void setTvInitVerification(FinanceDetail financeDetail);
  }

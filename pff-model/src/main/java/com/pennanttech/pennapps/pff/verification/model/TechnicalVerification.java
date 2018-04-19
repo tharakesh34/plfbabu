@@ -314,6 +314,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -381,6 +382,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+	
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}

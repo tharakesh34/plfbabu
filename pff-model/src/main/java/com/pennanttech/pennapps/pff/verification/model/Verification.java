@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -63,6 +64,8 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean newRecord = false;
 	private Long reInitAgency;
 	private String reInitRemarks;
+	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
+	private TechnicalVerification technicalVerification;
 
 	public Verification() {
 		super();
@@ -85,6 +88,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("coApplicant");
 		excludeFields.add("reInitAgency");
 		excludeFields.add("reInitRemarks");
+		excludeFields.add("technicalVerification");
 		return excludeFields;
 	}
 
@@ -359,4 +363,21 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setReInitRemarks(String reInitRemarks) {
 		this.reInitRemarks = reInitRemarks;
 	}
+
+	public List<CollateralSetup> getCollateralSetupList() {
+		return collateralSetupList;
+	}
+
+	public void setCollateralSetupList(List<CollateralSetup> collateralSetupList) {
+		this.collateralSetupList = collateralSetupList;
+	}
+
+	public TechnicalVerification getTechnicalVerification() {
+		return technicalVerification;
+	}
+
+	public void setTechnicalVerification(TechnicalVerification technicalVerification) {
+		this.technicalVerification = technicalVerification;
+	}
+
 }

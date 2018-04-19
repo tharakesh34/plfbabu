@@ -934,9 +934,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		// get the Initiation Stages and Approval Stage
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
 			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
-			if (StringUtils.equals(financeReferenceDetail.getLovDescRefDesc(),initId)) {
+			if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
 				initStages = financeReferenceDetail.getMandInputInStage().split(",");
-			} else if (StringUtils.equals(financeReferenceDetail.getLovDescRefDesc(),approvalId)) {
+			} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
 				apprStage = financeReferenceDetail.getMandInputInStage().replace(",", "");
 			}
 		}

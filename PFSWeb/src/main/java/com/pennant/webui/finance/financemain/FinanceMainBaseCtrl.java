@@ -147,6 +147,7 @@ import com.pennant.app.util.SMSUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -158,6 +159,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
@@ -284,6 +286,7 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
+import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 import freemarker.template.TemplateException;
@@ -753,6 +756,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient ManualScheduleDetailDialogCtrl		manualScheduleDetailDialogCtrl;
 	private transient OverdraftScheduleDetailDialogCtrl		overdraftScheduleDetailDialogCtrl;
 	private transient FieldVerificationDialogCtrl			fieldVerificationDialogCtrl;
+	private transient TVerificationDialogCtrl				tVerificationDialogCtrl;
 	
 	private transient FinBasicDetailsCtrl					finBasicDetailsCtrl;
 	private transient CustomerInterfaceService				customerInterfaceService;
@@ -866,7 +870,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private VehicleDealerService                            vehicleDealerService;
 	
 	@Autowired
-	private FieldInvestigationService                       fieldInvestigationService;
+	private FieldInvestigationService						fieldInvestigationService;
+	@Autowired
+	private CollateralSetupDAO								collateralSetupDAO;
 
 	/**
 	 * default constructor.<br>
@@ -1492,9 +1498,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//FI Approval Tab
 		appendFIApprovalTab(onLoad);
-
+		
 		//TV Initiation Tab
-		//appendTVInitiationTab(onLoad);
+		appendTVInitiationTab(onLoad);
+
+		//TV Approval Tab
+		appendTVApprovalTab(onLoad);
+		
 
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -5670,7 +5680,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
-					if(aFinanceDetail.isFiInitTab() && addChangedAddress(aFinanceDetail, verification,false)){
+					if(aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification,false)){
 						return;
 					}
 				}
@@ -5728,7 +5738,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail);
 				if (financeDetail.isFiInitTab()) {
 					Verification verification = financeDetail.getFiVerification();
-					if(aFinanceDetail.isFiInitTab() && addChangedAddress(aFinanceDetail, verification,true)){
+					if (aFinanceDetail.isFiInitTab() && isAddressChanged(aFinanceDetail, verification, true)) {
 						return;
 					}
 				}
@@ -5897,7 +5907,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setCollateralAssignmentList(collateralHeaderDialogCtrl.getCollateralAssignments());
 			aFinanceDetail.setFinAssetTypesList(collateralHeaderDialogCtrl.getFinAssetTypes());
 			aFinanceDetail.setExtendedFieldRenderList(collateralHeaderDialogCtrl.getExtendedFieldRenderList());
-
+			//adding new Collateral Verifications
+			if(aFinanceDetail.isTvInitTab() && isCollateralChanged(aFinanceDetail,aFinanceDetail.getTvVerification())){
+				addNewTvVerification(aFinanceDetail);
+				return;
+			}
 		} else {
 			aFinanceDetail.setCollateralAssignmentList(null);
 			aFinanceDetail.setFinAssetTypesList(null);
@@ -6060,6 +6074,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
 					MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
+					return;
+				}
+			}
+		}
+		
+		// TV Init Verification Detail
+		Tab tvInitTab = getTab(AssetConstants.UNIQUE_ID_TVINITIATION);
+		if ((tvInitTab != null && tvInitTab.isVisible()) && tVerificationDialogCtrl != null) {
+			tVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, tvInitTab, recSave);
+		}
+
+		// TV Approval Verification Detail
+		Tab tvApprovalTab = getTab(AssetConstants.UNIQUE_ID_TVAPPROVAL);
+		if ((tvApprovalTab != null && tvApprovalTab.isVisible()) && tVerificationDialogCtrl != null) {
+			tVerificationDialogCtrl.doSave_FiVerification(aFinanceDetail, tvApprovalTab, recSave);
+			for (Verification verification : aFinanceDetail.getTvVerification().getVerifications()) {
+				if (verification.getDecision() == Decision.RE_INITIATE.getKey()
+						&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+					MessageUtil.showError("Technical Verification Re-Initiation is allowed only when user action is save");
 					return;
 				}
 			}
@@ -16346,6 +16379,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.fieldVerificationDialogCtrl = fieldVerificationDialogCtrl;
 	}
 	
+	public TVerificationDialogCtrl gettVerificationDialogCtrl() {
+		return tVerificationDialogCtrl;
+	}
+
+	public void settVerificationDialogCtrl(TVerificationDialogCtrl tVerificationDialogCtrl) {
+		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
+	}
+
 	/**
 	 * Method for Rendering FIV Initiation Data in finance
 	 */
@@ -16366,7 +16407,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
 			final HashMap<String, Object> map = getDefaultArguments();
-			if (financeDetail.getFiVerification() == null) {
+			if(financeDetail.getFiVerification() ==null){
 				financeDetail.setFiVerification(new Verification());
 			}
 			map.put("financeMainBaseCtrl",this);
@@ -16406,7 +16447,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private boolean addChangedAddress(FinanceDetail aFinanceDetail, Verification verification,boolean jointAcc) {
+	private boolean isAddressChanged(FinanceDetail aFinanceDetail, Verification verification,boolean jointAcc) {
 		List<CustomerDetails> screenCustomers = new ArrayList<>();
 		screenCustomers.add(aFinanceDetail.getCustomerDetails());
 		for (JointAccountDetail jointAccountDetail : aFinanceDetail.getJountAccountDetailList()) {
@@ -16414,7 +16455,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (screenCustomers.size() != verification.getCustomerDetailsList().size() && jointAcc) {
-			setNewVerification(aFinanceDetail);
+			addNewFiVerification(aFinanceDetail);
 			return true;
 		}
 		for (CustomerDetails screenCustomer : screenCustomers) {
@@ -16424,7 +16465,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							savedcustomer.getAddressList())
 							|| fieldInvestigationService.isAddressesAdded(savedcustomer.getAddressList(),
 									screenCustomer.getAddressList())) {
-						setNewVerification(aFinanceDetail);
+						addNewFiVerification(aFinanceDetail);
 						return true;
 					} else {
 						for (CustomerAddres screenaddres : screenCustomer.getAddressList()) {
@@ -16434,7 +16475,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)))
 										|| (oldAddres.getCustAddrType().equals(screenaddres.getCustAddrType())
 												&& fieldInvestigationService.isAddressChanged(screenaddres, oldAddres))) {
-									setNewVerification(aFinanceDetail);
+									addNewFiVerification(aFinanceDetail);
 									return true;
 								}
 							}
@@ -16446,7 +16487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	private void setNewVerification(FinanceDetail aFinanceDetail) {
+	private void addNewFiVerification(FinanceDetail aFinanceDetail) {
 		financeDetailService.setFIInitVerification(aFinanceDetail);
 		financeDetail.setFiVerification(aFinanceDetail.getFiVerification());
 		fieldVerificationDialogCtrl.renderFIVerificationList(financeDetail.getFiVerification());
@@ -16481,5 +16522,64 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVINITIATION), map);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for Rendering TV Approval Data in finance
+	 */
+	protected void appendTVApprovalTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isTvApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_TVAPPROVAL) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_TVAPPROVAL, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVAPPROVAL);
+		}
+		if (getFinanceDetail().isTvApprovalTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl",this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getTvVerification());
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVApproval.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVAPPROVAL), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private boolean isCollateralChanged(FinanceDetail aFinanceDetail, Verification verification) {
+		boolean flag=true;
+		List<CollateralSetup> savedCollaterals = verification.getCollateralSetupList();
+		List<CollateralSetup> screenCollaterals = new ArrayList<>();
+		for (CollateralAssignment CollAsmt : aFinanceDetail.getCollateralAssignmentList()) {
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
+			collateralSetup.setRecordType(CollAsmt.getRecordType());
+			screenCollaterals.add(collateralSetup);
+		}
+		for (CollateralSetup screenCollateral : screenCollaterals) {
+			for (CollateralSetup savedCollateral : savedCollaterals) {
+				if(screenCollateral.getCollateralRef().equals(savedCollateral.getCollateralRef()) || (StringUtils.isNotEmpty(screenCollateral.getRecordType())
+						&& screenCollateral.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))){
+					flag = false;
+				}
+			}
+			if(flag){
+				return flag;
+			}
+			flag = true;
+		}
+		return false;
+	}
+	private void addNewTvVerification(FinanceDetail aFinanceDetail) {
+		financeDetailService.setTvInitVerification(aFinanceDetail);
+		financeDetail.setTvVerification(aFinanceDetail.getTvVerification());
+		tVerificationDialogCtrl.renderTechnicalVerificationList(financeDetail.getTvVerification());
+		getTab(AssetConstants.UNIQUE_ID_TVINITIATION).setSelected(true);
+		MessageUtil.showMessage("Collateral details are added or changed, please take respective actions");
 	}
 }

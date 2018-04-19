@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
@@ -84,6 +85,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	@Autowired
 	private FieldInvestigationService fieldInvestigationService;
+	@Autowired
+	private TechnicalVerificationService technicalVerificationService;
 
 	public List<AuditDetail> saveOrUpdate(Verification verification, String tableType, String auditTranType,
 			boolean isInitTab) {
@@ -91,6 +94,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 		List<Long> idList = null;
 		List<CustomerDetails> customerDetailsList = null;
+		List<CollateralSetup> collateralSetupList = null;
 
 		VerificationType verificationType = VerificationType.getRequestType(verification.getVerificationType());
 
@@ -99,6 +103,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (verificationType == VerificationType.FI) {
 			customerDetailsList = verification.getCustomerDetailsList();
 			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),
+					verification.getKeyReference());
+		} else if (verificationType == VerificationType.TV) {
+			collateralSetupList = verification.getCollateralSetupList();
+			idList = technicalVerificationService.getTechnicalVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
 		}
 
@@ -134,6 +142,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 					if (verificationType == VerificationType.FI) {
 						saveFI(customerDetailsList, item);
+					} else if (verificationType == VerificationType.TV) {
+						saveTV(collateralSetupList, item);
 					}
 
 				}
@@ -164,6 +174,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 					if (verificationType == VerificationType.FI) {
 						saveFI(customerDetailsList, item);
+					} else if (verificationType == VerificationType.TV) {
+						saveTV(collateralSetupList, item);
 					}
 				} else {
 					verificationDAO.update(item, TableType.MAIN_TAB);
@@ -185,6 +197,18 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.getFieldInvestigation().setVerificationId(item.getId());
 			item.getFieldInvestigation().setLastMntOn(item.getLastMntOn());
 			fieldInvestigationService.save(item.getFieldInvestigation(), TableType.TEMP_TAB);
+		}
+	}
+
+	private void saveTV(List<CollateralSetup> collateralSetupList, Verification item) {
+		if (item.getTechnicalVerification() == null) {
+			for (CollateralSetup ollateralSetup : collateralSetupList) {
+				technicalVerificationService.save(ollateralSetup, item);
+			}
+		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			item.getTechnicalVerification().setVerificationId(item.getId());
+			item.getTechnicalVerification().setLastMntOn(item.getLastMntOn());
+			technicalVerificationService.save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}
 	}
 
@@ -369,8 +393,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public List<Verification> getVerifications(String keyReference) {
-		List<Verification> verifications = verificationDAO.getFiVeriFications(keyReference);
+	public List<Verification> getVerifications(String keyReference, int verificationType) {
+		List<Verification> verifications = verificationDAO.getFiVeriFications(keyReference, verificationType);
 		for (Verification verification : verifications) {
 			if (verification.getStatus() == Status.POSITIVE.getKey()
 					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {

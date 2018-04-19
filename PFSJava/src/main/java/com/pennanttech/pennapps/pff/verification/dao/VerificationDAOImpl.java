@@ -49,9 +49,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public List<Verification> getFiVeriFications(String keyReference) {
+	public List<Verification> getFiVeriFications(String keyReference, int verificationType) {
 		logger.debug(Literal.ENTERING);
-		return getVeriFications(keyReference, VerificationType.FI.getKey());
+		return getVeriFications(keyReference, verificationType);
 	}
 
 	private List<Verification> getVeriFications(String keyReference, int verificationType) {
@@ -75,8 +75,13 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("dealerType", Agencies.FIAGENCY.getKey());
-		parameterSource.addValue("reasontypecode", WaiverReasons.FIWRES.getKey());
+		if (verificationType == VerificationType.FI.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.FIAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.FIWRES.getKey());
+		} else if (verificationType == VerificationType.TV.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.TVAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.TVWRES.getKey());
+		}
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 

@@ -32,18 +32,18 @@ public interface TechnicalVerificationService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	Verification getTvVeriFication(Verification verification);
-	
-	List<Long> getTechnicalVerificaationIds(List<Verification> verifications,String keyRef);
-	
+
+	List<Long> getTechnicalVerificaationIds(List<Verification> verifications, String keyRef);
+
 	TechnicalVerification getApprovedTechnicalVerification(long id);
 
 	TechnicalVerification getTechnicalVerification(long id);
 
 	void save(CollateralSetup collateralSetup, Verification item);
-	
+
 	void save(TechnicalVerification technicalVerification, TableType tempTab);
-	
-	void saveCollateral(String reference,String collateralType);
-	
+
+	void saveCollateral(String reference, String collateralType);
+
 	List<TechnicalVerification> getList(String keyReference);
 }

@@ -97,11 +97,11 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/LMTMasters/FinanceReferenceDetail
@@ -578,11 +578,13 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 				//Verification Approval Event validations in Miscellaneous Tab
 				if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT) {
-					 if (StringUtils.equals(aFinanceReferenceDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
+					if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
+							FinanceConstants.PROCEDT_VERIFICATION_FI_APPR)
 							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
 						throw new WrongValueException(this.listboxmandInputInStage,
 								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.FI.toString()}));
-					}else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescRefDesc(),FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
+					} else if (StringUtils.equals(aFinanceReferenceDetail.getLovDescNamelov(),
+							FinanceConstants.PROCEDT_VERIFICATION_TV_APPR)
 							&& getCheckedValues(listboxmandInputInStage).split(",").length > 1) {
 						throw new WrongValueException(this.listboxmandInputInStage,
 								Labels.getLabel("message.error.onlyOneStage", new String[] {VerificationType.TV.toString()}));

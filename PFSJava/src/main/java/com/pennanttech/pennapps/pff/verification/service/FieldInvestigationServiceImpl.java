@@ -426,7 +426,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	@Override
 	public Verification getFiVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
-		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference());
+		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference(),
+				VerificationType.FI.getKey());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
 
 		setLastStatus(screenVerifications);
@@ -556,7 +557,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
 						&& !isAddressChange(preVrf.getFieldInvestigation(), vrf.getFieldInvestigation())
-						&& !fiIds.contains(vrf.getId()) && vrf.getVerificationDate() != null) {
+						&& !fiIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);
 					preVerifications.remove(preVrf);
 					break;
