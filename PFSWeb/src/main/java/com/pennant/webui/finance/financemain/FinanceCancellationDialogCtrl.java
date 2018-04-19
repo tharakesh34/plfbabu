@@ -62,9 +62,9 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
@@ -107,7 +107,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	protected Row							row_ManualSchedule;
 	protected Textbox						finDivisionName;
 	protected Hbox							hbox_PromotionProduct;
-	private Label							label_FinanceMainDialog_PromoProduct;
+	private Label                            label_FinanceMainDialog_PromotionProduct;                                       ;
 	private Label							label_FinanceMainDialog_FinType;
 
 	/**
@@ -433,7 +433,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
 			this.hbox_PromotionProduct.setVisible(true);
-			this.getLabel_FinanceMainDialog_PromoProduct().setVisible(true);
+			this.getLabel_FinanceMainDialog_PromotionProduct().setVisible(true);
 			this.promotionProduct.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct() + " - "
 					+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescPromoFinTypeDesc());
 			this.label_FinanceMainDialog_FinType.setValue(Labels
@@ -1588,12 +1588,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
 
-	public Label getLabel_FinanceMainDialog_PromoProduct() {
-		return label_FinanceMainDialog_PromoProduct;
+	public Label getLabel_FinanceMainDialog_PromotionProduct() {
+		return label_FinanceMainDialog_PromotionProduct;
 	}
 
-	public void setLabel_FinanceMainDialog_PromoProduct(Label label_FinanceMainDialog_PromoProduct) {
-		this.label_FinanceMainDialog_PromoProduct = label_FinanceMainDialog_PromoProduct;
+	public void setLabel_FinanceMainDialog_PromotionProduct(Label label_FinanceMainDialog_PromotionProduct) {
+		this.label_FinanceMainDialog_PromotionProduct = label_FinanceMainDialog_PromotionProduct;
 	}
 
 	public FinFeeDetailListCtrl getFinFeeDetailListCtrl() {

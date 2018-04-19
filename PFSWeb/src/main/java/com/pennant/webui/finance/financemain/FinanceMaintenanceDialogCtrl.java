@@ -134,11 +134,11 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -210,7 +210,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Row							row_ManualSchedule;
 	protected Textbox						finDivisionName;
 	protected Hbox							hbox_PromotionProduct;
-	private Label							label_FinanceMainDialog_PromoProduct;
+	private Label							label_FinanceMainDialog_PromotionProduct;
 	private Label							label_FinanceMainDialog_FinType;
 	private Label							label_FinanceMainDialog_FinReference;
 	private Label							label_FinanceMainDialog_FinBranch;
@@ -723,7 +723,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
 			this.hbox_PromotionProduct.setVisible(true);
-			this.getLabel_FinanceMainDialog_PromoProduct().setVisible(true);
+			this.getLabel_FinanceMainDialog_PromotionProduct().setVisible(true);
 			this.promotionProduct.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct() + " - "
 					+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescPromoFinTypeDesc());
 			this.label_FinanceMainDialog_FinType.setValue(Labels
@@ -3687,11 +3687,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finFlagsDetailList = finFlagsDetailList;
 	}
 
-	public Label getLabel_FinanceMainDialog_PromoProduct() {
-		return label_FinanceMainDialog_PromoProduct;
+	public Label getLabel_FinanceMainDialog_PromotionProduct() {
+		return label_FinanceMainDialog_PromotionProduct;
 	}
 
-	public void setLabel_FinanceMainDialog_PromoProduct(Label label_FinanceMainDialog_PromoProduct) {
-		this.label_FinanceMainDialog_PromoProduct = label_FinanceMainDialog_PromoProduct;
+	public void setLabel_FinanceMainDialog_PromotionProduct(Label label_FinanceMainDialog_PromotionProduct) {
+		this.label_FinanceMainDialog_PromotionProduct = label_FinanceMainDialog_PromotionProduct;
 	}
 }
