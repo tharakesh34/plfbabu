@@ -2,6 +2,7 @@ package com.pennant.webui.verification.technicalverification.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -22,21 +23,33 @@ public class TechnicalVerificationListModelItemRenderer implements ListitemRende
 	}
 
 	@Override
-	public void render(Listitem item, TechnicalVerification fi, int count) throws Exception {
+	public void render(Listitem item, TechnicalVerification tv, int count) throws Exception {
 		Listcell lc;
-		lc = new Listcell(String.valueOf(fi.getCustCif()));
+		
+		String customerName = tv.getCustCif();
+		if (StringUtils.trimToNull(tv.getCustName()) != null) {
+			customerName = customerName.concat(" - ").concat(tv.getCustName());
+		}
+		
+		lc = new Listcell(customerName);
 		lc.setParent(item);
-		lc = new Listcell(fi.getCollateralType());
+		
+		lc = new Listcell(tv.getCollateralType());
 		lc.setParent(item);
-		lc = new Listcell(fi.getCollateralRef());
+		
+		lc = new Listcell(tv.getCollateralRef());
 		lc.setParent(item);
-		lc = new Listcell(fi.getKeyReference());
+		
+		lc = new Listcell(tv.getKeyReference());
 		lc.setParent(item);
-		lc = new Listcell(fi.getRecordStatus());
+		
+		lc = new Listcell(tv.getRecordStatus());
 		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(fi.getRecordType()));
+		
+		lc = new Listcell(PennantJavaUtil.getLabel(tv.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("id", fi.getId());
+		
+		item.setAttribute("id", tv.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onTechnicalVerificationItemDoubleClicked");
 	}

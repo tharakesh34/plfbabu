@@ -13,18 +13,17 @@
 
 package com.pennanttech.pennapps.pff.verification.service;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.core.TableType;
 
 public interface TechnicalVerificationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	TechnicalVerification getTechnicalVerification(long id);
-
-	TechnicalVerification getApprovedTechnicalVerification(long id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -32,5 +31,19 @@ public interface TechnicalVerificationService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	void setTVVerification(FinanceDetail financeDetail, Verification verification);
+	Verification getTvVeriFication(Verification verification);
+	
+	List<Long> getTechnicalVerificaationIds(List<Verification> verifications,String keyRef);
+	
+	TechnicalVerification getApprovedTechnicalVerification(long id);
+
+	TechnicalVerification getTechnicalVerification(long id);
+
+	void save(CollateralSetup collateralSetup, Verification item);
+	
+	void save(TechnicalVerification technicalVerification, TableType tempTab);
+	
+	void saveCollateral(String reference,String collateralType);
+	
+	List<TechnicalVerification> getList(String keyReference);
 }

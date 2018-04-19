@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.collateral;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralStructure;
 
@@ -59,4 +61,6 @@ public interface CollateralStructureService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<String> getCollateralValuatorRequiredCodes();
 }

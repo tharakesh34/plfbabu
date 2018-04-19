@@ -11,6 +11,7 @@
  */
 package com.pennanttech.pennapps.pff.verification.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,27 +34,33 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class TechnicalVerification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long verificationId;
+	private String agentCode;
+	private String agentName;
+	private int type;
+	private Date date;
+	private int status;// Recomondations
+	private Long reason;
+	private String summaryRemarks;
+	private String sourceFormName;
+	private String verificationFormName;
+	private String observationRemarks;
+	private BigDecimal valuationAmount;
+
+	private String reasonCode;
+	private String reasonDesc;
+	private String agencyName;
+	private String agency;
+	private Timestamp createdOn;
 	private String custCif;
+	private String custName;
 	private String keyReference;
 	private String collateralType;
 	private String collateralRef;
-	private long verificationId;
-	private String name;
+	private String collateralCcy;
+	private String collateralLoc;
 	private String contactNumber1;
 	private String contactNumber2;
-	private Date date;
-
-	private String agentCode;
-	private String agentName;
-	private int status;
-	private Long reason;
-	private String summaryRemarks;
-
-	private String statusName;
-	private String reasonName;
-	private Date createdOn;
-	private String reasonCode;
-	private String reasonDesc;
 	private String lovrelationdesc;
 
 	private ExtendedFieldHeader extendedFieldHeader;
@@ -80,14 +87,23 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
-		excludeFields.add("statusName");
-		excludeFields.add("reasonName");
-		excludeFields.add("keyReference");
-		excludeFields.add("cif");
-		excludeFields.add("createdOn");
+
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
 		excludeFields.add("reasonCode");
 		excludeFields.add("reasonDesc");
-		excludeFields.add("lovrelationdesc");
+		excludeFields.add("agencyName");
+		excludeFields.add("agency");
+		excludeFields.add("createdOn");
+		excludeFields.add("custCif");
+		excludeFields.add("custName");
+		excludeFields.add("keyReference");
+		excludeFields.add("collateralType");
+		excludeFields.add("collateralRef");
+		excludeFields.add("collateralCcy");
+		excludeFields.add("collateralLoc");
+		excludeFields.add("contactNumber1");
+		excludeFields.add("contactNumber2");
 		return excludeFields;
 	}
 
@@ -109,6 +125,78 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public void setVerificationId(long verificationId) {
 		this.verificationId = verificationId;
+	}
+
+	public String getCustCif() {
+		return custCif;
+	}
+
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getKeyReference() {
+		return keyReference;
+	}
+
+	public void setKeyReference(String keyReference) {
+		this.keyReference = keyReference;
+	}
+
+	public String getCollateralType() {
+		return collateralType;
+	}
+
+	public void setCollateralType(String collateralType) {
+		this.collateralType = collateralType;
+	}
+
+	public String getCollateralRef() {
+		return collateralRef;
+	}
+
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
+	}
+
+	public String getCollateralCcy() {
+		return collateralCcy;
+	}
+
+	public void setCollateralCcy(String collateralCcy) {
+		this.collateralCcy = collateralCcy;
+	}
+
+	public String getCollateralLoc() {
+		return collateralLoc;
+	}
+
+	public void setCollateralLoc(String collateralLoc) {
+		this.collateralLoc = collateralLoc;
+	}
+
+	public String getContactNumber1() {
+		return contactNumber1;
+	}
+
+	public void setContactNumber1(String contactNumber1) {
+		this.contactNumber1 = contactNumber1;
+	}
+
+	public String getContactNumber2() {
+		return contactNumber2;
+	}
+
+	public void setContactNumber2(String contactNumber2) {
+		this.contactNumber2 = contactNumber2;
 	}
 
 	public String getAgentCode() {
@@ -143,46 +231,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.reason = reason;
 	}
 
-	public String getReasonCode() {
-		return reasonCode;
-	}
-
-	public void setReasonCode(String reasonCode) {
-		this.reasonCode = reasonCode;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getContactNumber1() {
-		return contactNumber1;
-	}
-
-	public void setContactNumber1(String contactNumber1) {
-		this.contactNumber1 = contactNumber1;
-	}
-
-	public String getContactNumber2() {
-		return contactNumber2;
-	}
-
-	public void setContactNumber2(String contactNumber2) {
-		this.contactNumber2 = contactNumber2;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
 	public String getSummaryRemarks() {
 		return summaryRemarks;
 	}
@@ -191,44 +239,44 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.summaryRemarks = summaryRemarks;
 	}
 
-	public String getStatusName() {
-		return statusName;
+	public String getSourceFormName() {
+		return sourceFormName;
 	}
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
+	public void setSourceFormName(String sourceFormName) {
+		this.sourceFormName = sourceFormName;
 	}
 
-	public String getReasonName() {
-		return reasonName;
+	public String getVerificationFormName() {
+		return verificationFormName;
 	}
 
-	public void setReasonName(String reasonName) {
-		this.reasonName = reasonName;
+	public void setVerificationFormName(String verificationFormName) {
+		this.verificationFormName = verificationFormName;
 	}
 
-	public String getCustCif() {
-		return custCif;
+	public String getObservationRemarks() {
+		return observationRemarks;
 	}
 
-	public void setCustCif(String custCif) {
-		this.custCif = custCif;
+	public void setObservationRemarks(String observationRemarks) {
+		this.observationRemarks = observationRemarks;
 	}
 
-	public String getKeyReference() {
-		return keyReference;
+	public BigDecimal getValuationAmount() {
+		return valuationAmount;
 	}
 
-	public void setKeyReference(String keyReference) {
-		this.keyReference = keyReference;
+	public void setValuationAmount(BigDecimal valuationAmount) {
+		this.valuationAmount = valuationAmount;
 	}
 
-	public Date getCreatedOn() {
-		return createdOn;
+	public String getReasonCode() {
+		return reasonCode;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
 	}
 
 	public String getReasonDesc() {
@@ -239,14 +287,33 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.reasonDesc = reasonDesc;
 	}
 
-	public String getLovrelationdesc() {
-		return lovrelationdesc;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setLovrelationdesc(String lovrelationdesc) {
-		this.lovrelationdesc = lovrelationdesc;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -279,48 +346,42 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public String getCollateralType() {
-		return collateralType;
+	public int getType() {
+		return type;
 	}
 
-	public void setCollateralType(String collateralType) {
-		this.collateralType = collateralType;
+	public void setType(int type) {
+		this.type = type;
 	}
 
-	public String getCollateralRef() {
-		return collateralRef;
+	public String getAgencyName() {
+		return agencyName;
 	}
 
-	public void setCollateralRef(String collateralRef) {
-		this.collateralRef = collateralRef;
+	public void setAgencyName(String agencyName) {
+		this.agencyName = agencyName;
+	}
+
+	public String getAgency() {
+		return agency;
+	}
+
+	public void setAgency(String agency) {
+		this.agency = agency;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-
-	public ExtendedFieldHeader getExtendedFieldHeader() {
-		return extendedFieldHeader;
-	}
-
-	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
-		this.extendedFieldHeader = extendedFieldHeader;
-	}
-
-	public ExtendedFieldRender getExtendedFieldRender() {
-		return extendedFieldRender;
-	}
-
-	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
-		this.extendedFieldRender = extendedFieldRender;
-	}
-
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-		return auditDetailMap;
-	}
-
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-
 }

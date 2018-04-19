@@ -45,7 +45,6 @@ package com.pennant.backend.service.solutionfactory;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -54,9 +53,9 @@ public interface ExtendedFieldDetailService {
 	
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName);
+	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName,  int extendedType);
 
-	ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id, String fieldName);
+	ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id, String fieldName, int extendedType);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

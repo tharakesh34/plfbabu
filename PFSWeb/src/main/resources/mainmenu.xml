@@ -524,9 +524,9 @@
 	<menuItem id="menu_Item_FieldInvestigation"
 		zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul"
 		rightName="menuItem_Verification_FieldInvestigation" />	
-	<!-- <menuItem id="menu_Item_TechnicalVerification"
+	<menuItem id="menu_Item_TechnicalVerification"
 		zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
-		rightName="menuItem_Verification_FieldInvestigation" />	 -->
+		rightName="menuItem_Verification_TechnicalVerification" />	
 	</menu>
 
 	<!-- Loan Management -->

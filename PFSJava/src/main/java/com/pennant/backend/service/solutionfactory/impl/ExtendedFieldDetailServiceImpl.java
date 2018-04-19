@@ -406,8 +406,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * @return ExtendedFieldDetail
 	 */
 	@Override
-	public ExtendedFieldDetail getExtendedFieldDetailById(long id,String fieldName) {
-		return getExtendedFieldDetailDAO().getExtendedFieldDetailById(id,fieldName,"_View");
+	public ExtendedFieldDetail getExtendedFieldDetailById(long id,String fieldName, int extendedType) {
+		return getExtendedFieldDetailDAO().getExtendedFieldDetailById(id, fieldName, extendedType, "_View");
 	}	
 
 	/**
@@ -420,8 +420,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 *            (int)
 	 * @return ExtendedFieldDetail
 	 */
-	public ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id,String fieldName) {
-		return getExtendedFieldDetailDAO().getExtendedFieldDetailById(id,fieldName,"_AView");
+	public ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id,String fieldName, int extendedType) {
+		return getExtendedFieldDetailDAO().getExtendedFieldDetailById(id, fieldName, extendedType, "_AView");
 	}
 
 	/**
@@ -602,30 +602,30 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		logger.debug("Entering");
 		
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		ExtendedFieldDetail extendedFieldDetail= (ExtendedFieldDetail) auditDetail.getModelData();
+		ExtendedFieldDetail details= (ExtendedFieldDetail) auditDetail.getModelData();
 
 		ExtendedFieldDetail tempExtendedFieldDetail= null;
-		if (extendedFieldDetail.isWorkflow()){
-			tempExtendedFieldDetail = getExtendedFieldDetailDAO().getExtendedFieldDetailById(extendedFieldDetail.getId(),extendedFieldDetail.getFieldName(), "_Temp");
+		if (details.isWorkflow()){
+			tempExtendedFieldDetail = getExtendedFieldDetailDAO().getExtendedFieldDetailById(details.getId(),details.getFieldName(), details.getExtendedType(), "_Temp");
 			
 		}
-		ExtendedFieldDetail befExtendedFieldDetail= getExtendedFieldDetailDAO().getExtendedFieldDetailById(extendedFieldDetail.getId(),extendedFieldDetail.getFieldName(), "");
+		ExtendedFieldDetail befExtendedFieldDetail= getExtendedFieldDetailDAO().getExtendedFieldDetailById(details.getId(),details.getFieldName(), details.getExtendedType(), "");
 		
-		ExtendedFieldDetail oldExtendedFieldDetail= extendedFieldDetail.getBefImage();
+		ExtendedFieldDetail oldExtendedFieldDetail= details.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(extendedFieldDetail.getId());
+		valueParm[0]=String.valueOf(details.getId());
 		errParm[0]=PennantJavaUtil.getLabel("label_ModuleId")+":"+valueParm[0];
 
-		if (extendedFieldDetail.isNew()){ // for New record or new record into work flow
+		if (details.isNew()){ // for New record or new record into work flow
 
-			if (!extendedFieldDetail.isWorkflow()){// With out Work flow only new records  
+			if (!details.isWorkflow()){// With out Work flow only new records  
 				if (befExtendedFieldDetail !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
-				if (extendedFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+				if (details.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befExtendedFieldDetail !=null || tempExtendedFieldDetail!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
@@ -637,7 +637,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			}
 		}else{
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!extendedFieldDetail.isWorkflow()){	// With out Work flow for update and delete
+			if (!details.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befExtendedFieldDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
@@ -664,7 +664,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !extendedFieldDetail.isWorkflow()){
+		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !details.isWorkflow()){
 			auditDetail.setBefImage(befExtendedFieldDetail);	
 		}
 

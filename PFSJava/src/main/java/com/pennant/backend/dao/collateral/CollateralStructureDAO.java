@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.collateral;
 
+import java.util.List;
+
 import com.pennant.backend.model.collateral.CollateralStructure;
 
 public interface CollateralStructureDAO {
@@ -52,4 +54,6 @@ public interface CollateralStructureDAO {
 	void delete(CollateralStructure collateralStructure, String type);
 
 	String save(CollateralStructure collateralStructure, String type);
+
+	List<String> getCollateralValuatorRequiredCodes();
 }

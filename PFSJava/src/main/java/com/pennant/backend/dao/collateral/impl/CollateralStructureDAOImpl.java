@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.collateral.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -240,4 +243,21 @@ public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure
 		}
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public List<String> getCollateralValuatorRequiredCodes() {
+		List<String> codes;
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("collateralValuatorReq", 1);
+
+		try {
+			codes = jdbcTemplate.queryForList(
+					"select CollateralType from CollateralStructure where collateralValuatorReq=:collateralValuatorReq",
+					parameterSource, String.class);
+		} catch (Exception e) {
+			codes = new ArrayList<>();
+		}
+
+		return codes;
+	}	
 }

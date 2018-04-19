@@ -329,7 +329,7 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.LEAVING);
 		return deatils;
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Extended FieldDetails
 	 * 
@@ -576,18 +576,27 @@ public class ExtendedFieldDetailsService {
 		return details;
 	}
 
-	public List<AuditDetail> delete(ExtendedFieldHeader extFldHeader, String reference, String tableType,
-			String tranType, List<AuditDetail> deatils) {
-		logger.debug(Literal.ENTERING);
-		ExtendedFieldRender fieldRender;
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-
+	public List<AuditDetail> delete(ExtendedFieldHeader extFldHeader, String reference, String tableType, String tranType, List<AuditDetail> deatils) {
+		
 		StringBuilder tableName = new StringBuilder();
 		tableName.append(extFldHeader.getModuleName());
 		tableName.append("_");
 		tableName.append(extFldHeader.getSubModuleName());
 		tableName.append("_ED");
+		
+		return deleteDetails(reference, tableType, tranType, deatils, tableName.toString());
+	}
+	
+	public List<AuditDetail> delete(ExtendedFieldHeader extFldHeader, String reference, String tableName, String tableType, String tranType, List<AuditDetail> deatils) {
+		return deleteDetails(reference, tableType, tranType, deatils, tableName);
+	}
 
+	private List<AuditDetail> deleteDetails(String reference, String tableType, String tranType, List<AuditDetail> deatils, String tableName) {
+		logger.debug(Literal.ENTERING);
+		
+		ExtendedFieldRender fieldRender;
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+		
 		for (int i = 0; i < deatils.size(); i++) {
 			fieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
 			fieldRender.setTableName(tableName.toString());

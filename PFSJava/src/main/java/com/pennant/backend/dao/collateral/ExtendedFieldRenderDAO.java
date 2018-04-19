@@ -27,4 +27,6 @@ public interface ExtendedFieldRenderDAO {
 	boolean isExists(String reference, int seqNo, String tableName);
 
 	int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters, String fieldValue);
+	
+	List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type);
 }

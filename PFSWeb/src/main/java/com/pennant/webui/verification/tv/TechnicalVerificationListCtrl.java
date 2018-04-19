@@ -33,6 +33,7 @@ import com.pennant.webui.verification.technicalverification.model.TechnicalVerif
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -87,9 +88,17 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected void doSetProperties() {
 		super.moduleCode = "TechnicalVerification";
 		super.pageRightName = "TechnicalVerificationList";
-		super.tableName = "Technical_Verification_View";
-		super.queueTableName = "Technical_Verification_View";
-		super.enquiryTableName = "Technical_Verification_View";
+		super.tableName = "Verification_Tv_View";
+		super.queueTableName = "Verification_Tv_View";
+		super.enquiryTableName = "Verification_Tv_View";
+	}
+	
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!enqiryModule) {
+			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
+		}
 	}
 
 	/**
@@ -102,8 +111,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	public void onCreate$window_TechnicalVerification(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_TechnicalVerification, borderLayout_TechnicalVerificationList,
-				listBoxTechnicalVerification, pagingTechnicalVerificationList);
+		setPageComponents(window_TechnicalVerification, borderLayout_TechnicalVerificationList, listBoxTechnicalVerification, pagingTechnicalVerificationList);
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -111,12 +119,11 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		registerButton(button_TechnicalVerificationList_NewTechnicalVerification, "button_TechnicalVerificationList_btnNew", false);
 
 		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType,
-				sortOperator_CollateralType, Operators.STRING);
-		registerField("CollateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference,
-				sortOperator_CollateralReference, Operators.STRING);
-		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
-				sortOperator_LoanReference, Operators.STRING);
+		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
+		registerField("collateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
+		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference, sortOperator_LoanReference, Operators.STRING);
+		registerField("verificationId");
+		registerField("custName");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -147,16 +154,6 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_TechnicalVerificationList_NewTechnicalVerification(Event event) {
-	}
-
-	/**
 	 * The framework calls this event handler when user opens a record to view
 	 * it's details. Show the dialog page with the selected entity.
 	 * 
@@ -169,7 +166,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxTechnicalVerification.getSelectedItem();
-		final long id = (long) selectedItem.getAttribute("id");
+		long id = (long) selectedItem.getAttribute("id");
 		TechnicalVerification tv = technicalVerificationService.getTechnicalVerification(id);
 
 		if (tv == null) {
@@ -210,10 +207,9 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		arg.put("technicalVerificationListCtrl", this);
 
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 

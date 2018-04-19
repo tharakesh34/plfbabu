@@ -51,7 +51,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 
 public interface ExtendedFieldDetailDAO {
 
-	ExtendedFieldDetail getExtendedFieldDetailById(long id, String name, String type);
+	ExtendedFieldDetail getExtendedFieldDetailById(long id, String name, int extendedType, String type);
 
 	void update(ExtendedFieldDetail extendedFieldDetail, String type);
 

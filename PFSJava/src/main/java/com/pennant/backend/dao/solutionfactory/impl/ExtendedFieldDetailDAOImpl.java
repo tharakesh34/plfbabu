@@ -101,17 +101,18 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 * @return ExtendedFieldDetail
 	 */
 	@Override
-	public ExtendedFieldDetail getExtendedFieldDetailById(final long id,String name,String type) {
+	public ExtendedFieldDetail getExtendedFieldDetailById(final long id,String name,  int extendedType, String type) {
 		logger.debug("Entering");
 
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
 		extendedFieldDetail.setFieldName(name);
+		extendedFieldDetail.setExtendedType(extendedType);
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, " );
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, " );
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable, ");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,Editable,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -121,7 +122,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		}
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName ");
+		selectSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName AND ExtendedType = :ExtendedType");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
@@ -172,7 +173,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 
 		StringBuilder deleteSql = new StringBuilder("Delete From ExtendedFieldDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName");
+		deleteSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName  AND ExtendedType = :ExtendedType");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
@@ -279,7 +280,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName");
+		updateSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName AND ExtendedType = :ExtendedType");
 
 		if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");

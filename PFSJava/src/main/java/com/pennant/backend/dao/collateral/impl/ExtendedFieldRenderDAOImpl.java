@@ -412,4 +412,30 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		logger.debug("Leaving");
 		return false;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type) {
+		logger.debug("Entering");
+
+		List<Map<String, Object>> renderMap = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+
+		StringBuilder sql = null;
+		sql = new StringBuilder("Select * from ");
+		sql.append(tableName);
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where  Id = :Id ");
+
+		logger.debug("selectSql: " + sql.toString());
+		try {
+			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exceprtion ", e);
+			renderMap = null;
+		}
+		
+		logger.debug("Leaving");
+		return renderMap;
+	}
 }

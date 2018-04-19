@@ -59,6 +59,7 @@
 									<listbox id="sortOperator_CollateralType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id = "collateralType" width="155px" maxlength="20" />
 								</row>
+								
 								<row>
 									<label id="label_TechnicalVerificationList_CollateralReference" value="${c:l('label_TechnicalVerificationList_CollateralReference.value')}" />
 									<listbox id="sortOperator_CollateralReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
@@ -66,8 +67,8 @@
 									<label id="label_TechnicalVerificationList_LoanReference" value="${c:l('label_TechnicalVerificationList_LoanReference.value')}" />
 									<listbox id="sortOperator_LoanReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id = "loanReference" width="155px" maxlength="20" />
-									
 								</row>
+								
 								<row>
 									<label id="label_TechnicalVerificationList_RecordStatus" value="${c:l('label_TechnicalVerificationList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />

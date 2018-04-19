@@ -693,6 +693,11 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		return auditDetail;
 	}
 
+	@Override
+	public List<String> getCollateralValuatorRequiredCodes() {
+		return collateralStructureDAO.getCollateralValuatorRequiredCodes();
+	}
+	
 	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
 		return financeWorkFlowDAO;
 	}
@@ -700,5 +705,5 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
-
+	
 }
