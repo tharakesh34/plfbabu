@@ -13,8 +13,14 @@
 
 package com.pennanttech.pennapps.pff.verification.dao;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
@@ -22,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -102,20 +109,95 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	}
 
 	@Override
-	public void saveCollateral(String reference, String collateralType) {
+	public List<TechnicalVerification> getList(String[] custCif) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from verification_tv_view");
+		sql.append(" Where custcif in(:custCif) and date is not null");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("custCif", Arrays.asList(custCif));
+
+		RowMapper<TechnicalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(TechnicalVerification.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	public Map<String, Object> getcollateral(String reference, String collateralType, long verificationId, long seqNo,
+			boolean verificationTable) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select * from");
+		sql.append(collateralType);
+		if (verificationTable) {
+			sql.append("_ed_tv");
+			sql.append(" where verificationId= :verificationId and reference = :reference and seqNo=:seqNo");
+		} else {
+			sql.append("_ed");
+			sql.append(" where reference = :reference and seqNo=:seqNo");
+		}
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("reference", reference);
+		paramSource.addValue("verificationId", verificationId);
+		paramSource.addValue("seqNo", seqNo);
+
+		Map<String, Object> map = new LinkedHashMap<>();
+
+		try {
+			jdbcTemplate.query(sql.toString(), paramSource, new RowCallbackHandler() {
+
+				@Override
+				public void processRow(ResultSet rs) throws SQLException {
+					ResultSetMetaData rsmd = rs.getMetaData();
+
+					for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+						if (verificationTable && rsmd.getColumnName(i).toLowerCase().equals("verificationid")) {
+							continue;
+						}
+						map.put(rsmd.getColumnName(i), rs.getObject(i));
+					}
+
+				}
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
+
+	}
+	@Override
+	public void saveCollateral(String reference, String collateralType, long verificationId) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into collateral_");
 		sql.append(collateralType);
 		sql.append("_ed_tv");
-		sql.append(" select * from collateral_");
+		sql.append(" select :verificationId,* from collateral_");
 		sql.append(collateralType);
 		sql.append("_ed  Where reference = :reference ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("reference", reference);
+		paramSource.addValue("verificationId", verificationId);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {

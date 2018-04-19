@@ -589,23 +589,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		// TV Verification Initiation
 		if (financeDetail.isTvInitTab()) {
-			Customer customer =financeDetail.getCustomerDetails().getCustomer();
-			Verification verification=new Verification();
-			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			verification.setVerificationType(VerificationType.TV.getKey());
-			verification.setModule(Module.LOAN.getKey());
-			verification.setKeyReference(financeMain.getFinReference());
-			verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-			verification.setCreatedBy(financeMain.getLastMntBy());
-			verification.setCustId(customer.getCustID());
-			verification.setCustomerName(customer.getCustShrtName());
-			for (CollateralAssignment CollAsmt : financeDetail.getCollateralAssignmentList()) {
-				CollateralSetup collateralSetup =collateralSetupDAO.getCollateralSetupByRef(CollAsmt.getCollateralRef(), "_Aview");
-				collateralSetup.setRecordType(CollAsmt.getRecordType());
-				verification.getCollateralSetupList().add(collateralSetup);
-			}
-			technicalVerificationService.getTvVeriFication(verification);
-			financeDetail.setTvVerification(verification);
+			financeDetail.setTvVerification(new Verification());
+			setTvInitVerification(financeDetail);
 		}
 		
 		// TV Verification Approval
@@ -662,7 +647,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		verification.setKeyReference(financeMain.getFinReference());
 		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		verification.setCreatedBy(financeMain.getLastMntBy());
-
 		verification = fieldInvestigationService.getFiVeriFication(verification);
 		financeDetail.setFiVerification(verification);
 	}
@@ -688,13 +672,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				verification.getCollateralSetupList().remove(screenCollateral);
 			}
 		}
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		verification.setVerificationType(VerificationType.TV.getKey());
 		verification.setModule(Module.LOAN.getKey());
 		verification.setKeyReference(financeMain.getFinReference());
+		verification.setCustId(customer.getCustID());
+		verification.setCustomerName(customer.getCustShrtName());
 		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		verification.setCreatedBy(financeMain.getLastMntBy());
-
+		verification.setCreatedBy(1000);
 		verification = technicalVerificationService.getTvVeriFication(verification);
 		financeDetail.setTvVerification(verification);
 	}

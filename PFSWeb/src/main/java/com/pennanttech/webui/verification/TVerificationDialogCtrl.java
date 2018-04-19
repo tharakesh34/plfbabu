@@ -258,7 +258,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", tvInquiry,
 					map);
 		} else {
-			MessageUtil.showMessage("Initiation request not avilable in Field Investigation Module.");
+			MessageUtil.showMessage("Initiation request not available in Technical Verification Module.");
 		}
 
 	}

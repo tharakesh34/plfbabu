@@ -16515,6 +16515,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (getFinanceDetail().isTvInitTab() && !onLoadProcess) {
 			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getTvVerification() == null) {
+				financeDetail.setTvVerification(new Verification());
+			}
 			map.put("financeMainBaseCtrl",this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getTvVerification());

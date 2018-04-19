@@ -452,6 +452,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		logger.info(Literal.ENTERING);
 		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference(),
 				VerificationType.TV.getKey());
+		List<Verification> screenVerifications = getScreenVerifications(verification);
+		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
 			List<TechnicalVerification> tvList = technicalVerificationDAO.getList(verification.getKeyReference());
@@ -465,7 +467,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			}
 
 		}
-		List<Verification> screenVerifications = getScreenVerifications(verification);
 		//screenVerifications.addAll(getChangedVerifications(preVerifications, screenVerifications,verification.getKeyReference()));
 		verification.setVerifications(
 				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
@@ -474,12 +475,36 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return verification;
 	}
 
+	private void setLastStatus(List<Verification> verifications) {
+		String[] cif = new String[verifications.size()];
+
+		int i = 0;
+		for (Verification verification : verifications) {
+			cif[i++] = verification.getCif();
+		}
+
+		List<TechnicalVerification> list = technicalVerificationDAO.getList(cif);
+
+		for (Verification verification : verifications) {
+			TechnicalVerification current = verification.getTechnicalVerification();
+			for (TechnicalVerification previous : list) {
+				if (previous.getCustCif().equals(verification.getCif())
+						&& previous.getCollateralRef().equals(current.getCollateralRef())) {
+					//if (!isAddressChange(previous, current)) {
+						verification.setStatus(previous.getStatus());
+						verification.setVerificationDate(new Timestamp(previous.getDate().getTime()));
+					//}
+				}
+			}
+		}
+	}
+
 	@Override
 	public void save(TechnicalVerification technicalVerification, TableType tempTab) {
 		setAudit(technicalVerification);
 		technicalVerificationDAO.save(technicalVerification, tempTab);
 		technicalVerificationDAO.saveCollateral(technicalVerification.getCollateralRef(),
-				technicalVerification.getCollateralType());
+				technicalVerification.getCollateralType(), technicalVerification.getVerificationId());
 	}
 
 	/*
@@ -528,7 +553,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 						&& vrf.getReferenceFor().equals(preVrf.getReferenceFor())
 						&& (StringUtils.isEmpty(vrf.getRecordType())
 								|| !vrf.getRecordType().equals(PennantConstants.RCD_UPD))
-						/* && !isAddressChange(preVrf.getFieldInvestigation(), vrf.getFieldInvestigation()) */
+						/* && !isCollateralChanged(preVrf.getTechnicalVerification(), vrf.getTechnicalVerification()) */
 						&& !tvIds.contains(vrf.getId())) {
 					screenVerifications.remove(vrf);
 					preVerifications.remove(preVrf);
@@ -553,7 +578,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	private void setAudit(TechnicalVerification tv) {
-		String workFlowType = ModuleUtil.getWorkflowType("FieldInvestigation");
+		String workFlowType = ModuleUtil.getWorkflowType("TechnicalVerification");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
 		WorkflowEngine engine = new WorkflowEngine(
 				WorkFlowUtil.getWorkflow(workFlowDetails.getWorkFlowId()).getWorkFlowXml());
@@ -578,8 +603,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	public void saveCollateral(String reference, String collateralType) {
-		technicalVerificationDAO.saveCollateral(reference, collateralType);
+	public void saveCollateral(String reference, String collateralType, long verificationId) {
+		technicalVerificationDAO.saveCollateral(reference, collateralType, verificationId);
 	}
 
 	/**

@@ -43,7 +43,7 @@ public interface TechnicalVerificationService {
 
 	void save(TechnicalVerification technicalVerification, TableType tempTab);
 
-	void saveCollateral(String reference, String collateralType);
+	void saveCollateral(String reference, String collateralType, long verificationId);
 
 	List<TechnicalVerification> getList(String keyReference);
 }

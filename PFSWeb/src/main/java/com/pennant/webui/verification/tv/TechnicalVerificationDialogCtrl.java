@@ -168,7 +168,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
 				enqiryModule = true;
-				technicalVerification.setWorkflowId(1);
 			}
 			// Store the before image.
 			TechnicalVerification technicalVerification = new TechnicalVerification();
@@ -179,13 +178,11 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			doLoadWorkFlow(this.technicalVerification.isWorkflow(), this.technicalVerification.getWorkflowId(),
 					this.technicalVerification.getNextTaskId());
 
-			if (isWorkFlowEnabled()) {
-				if (!enqiryModule) {
-					this.userAction = setListRecordStatus(this.userAction);
-				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-			} else {
-				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			} else if (fromLoanOrg) {
+				setWorkFlowEnabled(true);
 			}
 
 			doSetFieldProperties();
@@ -665,7 +662,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		if(fromLoanOrg) {
 			north.setVisible(false);
 			south.setVisible(false);
-			gb_basicDetails.setVisible(false);
 		}
 
 		doWriteBeanToComponents(technicalVerification);

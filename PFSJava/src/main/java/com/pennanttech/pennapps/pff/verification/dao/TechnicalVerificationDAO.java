@@ -13,6 +13,7 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -32,5 +33,10 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 
 	List<TechnicalVerification> getList(String keyReference);
 
-	void saveCollateral(String reference, String collateralType);
+	void saveCollateral(String reference, String collateralType, long verificationId);
+
+	List<TechnicalVerification> getList(String[] custCif);
+
+	Map<String, Object> getcollateral(String reference, String collateralType, long verificationId, long seqNo,
+			boolean verificationTable);
 }

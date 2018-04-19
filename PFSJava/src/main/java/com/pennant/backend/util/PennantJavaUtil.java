@@ -2182,26 +2182,31 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("IRRFinanceType", new ModuleMapping("IRRFinanceTypes", IRRFinanceType.class, new String[] { "IRRFinanceTypes",
 		"IRRFinanceTypes_AView" }, masterWF, new String[] { "finType" }, null, 500));
-		
+
 		ModuleUtil.register("Verification",
 				new ModuleMapping("Verification", Verification.class, new String[] { "Verifications", "Verifications" },
 						null, new String[] { "VerificationType", "KeyReference" }, null, 300));
-		ModuleUtil.register("FIVAgencies",
-				new ModuleMapping("FIVAgencies", VehicleDealer.class,
-						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
-						new String[] { "DealerName", "DealerCity" },
-						new Object[][] { { "DealerType", "0", Agencies.FIAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
+		ModuleUtil.register("FIVAgencies", new ModuleMapping("FIVAgencies", VehicleDealer.class,
+				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
+				new String[] { "DealerName", "DealerCity" },
+				new Object[][] { { "DealerType", "0", Agencies.FIAGENCY.getKey() }, { "Active", "0", 1 } }, 450));
 
 		ModuleUtil.register("FIWaiverReason", new ModuleMapping("FIWaiverReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
-				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.FIWRES.getKey() }, { "Active", "0", 1 } }, 300));
-			
+				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.FIWRES.getKey() }, { "Active", "0", 1 } },
+				300));
+
 		ModuleUtil.register("FieldInvestigation", new ModuleMapping("FieldInvestigation", FieldInvestigation.class,
 				new String[] { "verification_fi", "verification_fi_AView" }, masterWF, null, null, 600));
-		
+
 		ModuleUtil.register("FIStatusReason", new ModuleMapping("FIStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "ReasonTypecode", "0", StatuReasons.FISRES.getKey() }, { "Active", "0", 1 } }, 300));
+
+		
+		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
+				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
+				new Object[][] { { "ReasonTypecode", "0", StatuReasons.TVSRES.getKey() }, { "Active", "0", 1 } }, 300));
 		
 		ModuleUtil.register("TVStatusReason", new ModuleMapping("TVStatusReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
@@ -2220,6 +2225,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("TVWaiverReason", new ModuleMapping("TVWaiverReason", ReasonCode.class,
 				new String[] { "Reasons", "Reasons_AView" }, null, new String[] { "Code", "Description" },
 				new Object[][] { { "ReasonTypecode", "0", WaiverReasons.TVWRES.getKey() }, { "Active", "0", 1 } }, 300));
+		
 
 		ModuleUtil.register("AuthorizationLimit", new ModuleMapping("AuthorizationLimit", AuthorizationLimit.class, new String[] { "Auth_Limits",
 		"Auth_Limits_AView" }, masterWF, new String[] {"UserID","RoleId","LimitAmount","StartDate","ExpiryDate","Active"},null, 600));
