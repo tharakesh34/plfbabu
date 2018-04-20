@@ -199,6 +199,10 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				enqiryModule = true;
 			}
 			
+			if (arguments.get("enqiryModule") != null) {
+				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
+			
 
 			if (this.fieldInvestigation == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
@@ -344,6 +348,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				map.put("documentDetails", fIDocumentDetail);
 				map.put("fieldInvestigationDialogCtrl", this);
 				map.put("roleCode", getRole());
+				map.put("enqiryModule", enqiryModule);
 				
 				// call the zul-file with the parameters packed in a map
 				try {

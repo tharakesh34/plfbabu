@@ -73,6 +73,8 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Textbox collateralType;
 	protected Textbox collateralReference;
 	protected Textbox loanReference;
+	
+	private String module = "";
 
 	@Autowired
 	private transient TechnicalVerificationService technicalVerificationService;
@@ -91,6 +93,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		super.tableName = "Verification_Tv_View";
 		super.queueTableName = "Verification_Tv_View";
 		super.enquiryTableName = "Verification_Tv_View";
+		this.module = getArgument("module");
 	}
 	
 	@Override
@@ -111,6 +114,11 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	public void onCreate$window_TechnicalVerification(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
+		
+		if ("ENQ".equals(this.module)) {
+			enqiryModule = true;
+		}
+		
 		setPageComponents(window_TechnicalVerification, borderLayout_TechnicalVerificationList, listBoxTechnicalVerification, pagingTechnicalVerificationList);
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
@@ -205,7 +213,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("technicalVerification", technicalVerification);
 		arg.put("technicalVerificationListCtrl", this);
-
+		arg.put("enqiryModule", enqiryModule);
 		try {
 			Executions.createComponents("/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", null, arg);
 		} catch (Exception e) {

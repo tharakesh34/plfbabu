@@ -169,6 +169,11 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				fromLoanOrg = true;
 				enqiryModule = true;
 			}
+			
+			if (arguments.get("enqiryModule") != null) {
+				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
+			
 			// Store the before image.
 			TechnicalVerification technicalVerification = new TechnicalVerification();
 			BeanUtils.copyProperties(this.technicalVerification, technicalVerification);

@@ -78,6 +78,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Textbox pinCode;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency; 
+	
+	private String module = "";
 
 	@Autowired
 	private transient FieldInvestigationService fieldInvestigationService;
@@ -96,6 +98,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		super.tableName = "verification_fi_view";
 		super.queueTableName = "verification_fi_view";
 		super.enquiryTableName = "verification_fi_view";
+		this.module = getArgument("module");
 	}
 
 	/**
@@ -107,6 +110,10 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	 */
 	public void onCreate$window_FieldInvestigationList(Event event) {
 		logger.debug(Literal.ENTERING);
+		
+		if ("ENQ".equals(this.module)) {
+			enqiryModule = true;
+		}
 		
 		doSetFieldProperties();
 		// Set the page level components.
@@ -267,6 +274,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("fieldInvestigation", fieldInvestigation);
 		arg.put("fieldInvestigationListCtrl", this);
+		arg.put("enqiryModule", enqiryModule);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
