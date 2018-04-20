@@ -120,11 +120,11 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -436,8 +436,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Date appDate = DateUtility.getAppDate();
 			Date wifAvailableDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
 			filters[1] = new Filter("lovDescProductCodeName", this.productCategory, Filter.OP_EQUAL);
-			filters[2] = new Filter("LastMntOn", DateUtility.formateDate(wifAvailableDate,
-					PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL);
+			filters[2] = new Filter("LastMntOn", wifAvailableDate, Filter.OP_GREATER_OR_EQUAL);
 		}
 
 		this.wIfFinaceRef.setFilters(filters);
