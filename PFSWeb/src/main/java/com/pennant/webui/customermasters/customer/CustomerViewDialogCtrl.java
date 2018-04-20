@@ -2320,8 +2320,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.listBoxCustomerDirectory.getItems().clear();
 		if (customerDirectory != null && customerDirectory.size() > 0) {
 			directorList = customerDirectory;
-			Listitem item = new Listitem();
 			for (DirectorDetail directorDetail : customerDirectory) {
+				Listitem item = new Listitem();
 				if (item instanceof Listgroup) {
 					item.appendChild(new Listcell(String.valueOf(directorDetail.getLovDescCustCIF())));
 				} else if (item instanceof Listgroupfoot) {
