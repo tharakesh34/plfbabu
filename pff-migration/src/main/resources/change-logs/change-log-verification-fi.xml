@@ -1458,4 +1458,26 @@
 	  	</sql>
 	  </changeSet>
 	  
+	  <changeSet id="16" author="Durgaprasad G">
+	  	<sql>
+	  	 <![CDATA[
+	  	 	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_FieldInvestigationDocumentDialog_btnNew', 'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_FieldInvestigationDocumentDialog_btnEdit', 'FieldInvestigationDocumentDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_FieldInvestigationDocumentDialog_btnDelete', 'FieldInvestigationDocumentDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_FieldInvestigationDocumentDialog_btnSave', 'FieldInvestigationDocumentDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='button_FieldInvestigationDocumentDialog_btnNew'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='button_FieldInvestigationDocumentDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='button_FieldInvestigationDocumentDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='button_FieldInvestigationDocumentDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+	     	
+	     	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	     ]]>
+	  </sql>
+	  </changeSet>
+	  
 </databaseChangeLog>
