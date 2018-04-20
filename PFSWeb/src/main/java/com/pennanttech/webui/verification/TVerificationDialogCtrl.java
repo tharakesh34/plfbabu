@@ -279,6 +279,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		int i = 0;
 		for (Verification vrf : verification.getVerifications()) {
+			if (vrf.getReinitid() != null && vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+				continue;
+			}
+
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;

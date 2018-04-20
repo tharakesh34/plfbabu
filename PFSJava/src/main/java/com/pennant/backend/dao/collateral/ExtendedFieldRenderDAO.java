@@ -2,6 +2,7 @@ package com.pennant.backend.dao.collateral;
 
 import java.util.List;
 import java.util.Map;
+
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 
 public interface ExtendedFieldRenderDAO {
@@ -29,4 +30,6 @@ public interface ExtendedFieldRenderDAO {
 	int validateExtendedComboBoxData(String tableName, String lovField, Object[][] filters, String fieldValue);
 	
 	List<Map<String, Object>> getExtendedFieldMap(long id, String tableName, String type);
+
+	List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName);
 }

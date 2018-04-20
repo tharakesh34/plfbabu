@@ -86,7 +86,7 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 			selectSql = new StringBuilder("Select * from ");
 			selectSql.append(tableName);
 			selectSql.append(StringUtils.trimToEmpty(type));
-			selectSql.append(" where  Reference = :Reference ");
+			selectSql.append(" where  Reference = :Reference order by seqno");
 		}
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -94,13 +94,40 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 			renderMap = this.jdbcTemplate.queryForList(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exceprtion ", e);
-			renderMap = null;
+			renderMap = new ArrayList<>();
 		}
 
 		logger.debug("Leaving");
 		return renderMap;
 	}
 	
+	/**
+	 * Get Extended field details Maps by verificationId
+	 */
+	@Override
+	public List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName) {
+		logger.debug("Entering");
+
+		List<Map<String, Object>> renderMap = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("verificationId", verificationId);
+
+		StringBuilder selectSql = new StringBuilder("Select * from ");
+		selectSql.append(tableName);
+		selectSql.append(" where  verificationId = :verificationId order by seqno");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			renderMap = this.jdbcTemplate.queryForList(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exceprtion ", e);
+			renderMap = new ArrayList<>();
+		}
+
+		logger.debug("Leaving");
+		return renderMap;
+	}
+
 	/**
 	 * Get Extended field details Maps by Reference
 	 */
