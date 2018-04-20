@@ -63,7 +63,7 @@ public class FieldInvestigationDocumentDialogCtrl extends GFCBaseCtrl<DocumentDe
 	
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "FieldInvestigationDialog";
+		super.pageRightName = "FieldInvestigationDocumentDialog";
 	}
 	
 	/**
@@ -91,6 +91,10 @@ public class FieldInvestigationDocumentDialogCtrl extends GFCBaseCtrl<DocumentDe
 				setDocumentDetails(null);
 			}
 			
+			if (getDocumentDetails().isNewRecord()) {
+				setNewRecord(true);
+			}
+			
 			if (arguments.containsKey("fieldInvestigationDialogCtrl")) {
 
 				setFieldInvestigationDialogCtrl(
@@ -101,24 +105,21 @@ public class FieldInvestigationDocumentDialogCtrl extends GFCBaseCtrl<DocumentDe
 				} else {
 					setNewRecord(false);
 				}
+				this.documentDetails.setWorkflowId(0);
+				
 				if (arguments.containsKey("roleCode")) {
-					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "FIDocumentDialog");
+					userRole = arguments.get("roleCode").toString();
+					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), this.pageRightName);
 				}
 			}
 			
-			if (getDocumentDetails().isNewRecord()) {
-				setNewRecord(true);
-			}
-			
-			if (arguments.containsKey("roleCode")) {
-				userRole = arguments.get("roleCode").toString();
-				getUserWorkspace().allocateRoleAuthorities(userRole,
-						"FieldInvestigationDialog");
-			}
-			
-			doLoadWorkFlow(this.documentDetails.isWorkflow(),
-					this.documentDetails.getWorkflowId(),
+			doLoadWorkFlow(this.documentDetails.isWorkflow(), this.documentDetails.getWorkflowId(),
 					this.documentDetails.getNextTaskId());
+			
+			if (isWorkFlowEnabled()) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			}
 			
 			this.finDocumentDiv.setHeight(this.borderLayoutHeight - 260 + "px");// 425px
 			this.finDocumentPdfView.setHeight(this.borderLayoutHeight - 220 + "px");// 425px
@@ -152,18 +153,9 @@ public class FieldInvestigationDocumentDialogCtrl extends GFCBaseCtrl<DocumentDe
 		} else {
 			if (isNewDocument()){
 				doEdit();
-				if (getRole().equals(getFirstTaskOwner())) {
-					this.btnCtrl.setWFBtnStatus_Edit(true);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(false);
-				}
 			}else if (isWorkFlowEnabled()) {
+				this.btnNotes.setVisible(true);
 				doEdit();
-				if (getRole().equals(getFirstTaskOwner())) {
-					this.btnCtrl.setWFBtnStatus_Edit(true);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(false);
-				}
 			}else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
@@ -253,7 +245,6 @@ public class FieldInvestigationDocumentDialogCtrl extends GFCBaseCtrl<DocumentDe
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-
 			if (newDocument) {
 				  if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();

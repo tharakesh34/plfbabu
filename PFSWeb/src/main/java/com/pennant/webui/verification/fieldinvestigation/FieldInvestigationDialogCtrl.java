@@ -32,6 +32,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -142,6 +143,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	protected North north;
 	protected South south;
 
+	protected Button btnNew_FieldInvestigationDocuments;
 	protected Space space_Reason;
 	protected Tab documentDetails;
 	private FieldInvestigation fieldInvestigation;
@@ -184,6 +186,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		// Set the page level components.
 		setPageComponents(window_FieldInvestigationDialog);
+		registerButton(btnNew_FieldInvestigationDocuments, "button_FieldInvestigationDocumentDialog_btnNew", true);
 
 		try {
 			// Get the required arguments.
@@ -276,11 +279,15 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
+		
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_btnSave"));
+		
+		this.btnNew_FieldInvestigationDocuments.setVisible(getUserWorkspace().isAllowed("button_FieldInvestigationDialog_NewDocuments"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -342,9 +349,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 						}
 					}
 				}
-				fIDocumentDetail.setLovDescCustCIF(this.custCIF.getValue());
 				
-				fIDocumentDetail.setWorkflowId(fieldInvestigation.getWorkflowId());
 				map.put("documentDetails", fIDocumentDetail);
 				map.put("fieldInvestigationDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -358,18 +363,6 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					MessageUtil.showError(e);
 				}
 			}
-			/*Map<String, Object> map = new HashMap<>();
-			map.put("documentDetails", fIDocumentDetail);
-			map.put("fieldInvestigationDialogCtrl", this);
-			// call the zul-file with the parameters packed in a map
-			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDocumentDialog.zul", null,
-						map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}*/
-			
 		}
 		
 		logger.debug("Leaving" + event.toString());

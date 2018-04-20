@@ -7,6 +7,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 
@@ -36,6 +37,8 @@ public class FieldInvestigationListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(fi.getAgencyName());
 		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatToLongDate(fi.getDate()));
+	  	lc.setParent(item);
 	  	lc = new Listcell(fi.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(fi.getRecordType()));

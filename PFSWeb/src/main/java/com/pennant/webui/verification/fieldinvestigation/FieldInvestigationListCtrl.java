@@ -21,6 +21,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -61,6 +62,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listheader listheader_PinCode;
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
+	protected Listheader listheader_VerificationDate;
 
 	// checkRights
 	protected Button button_FieldInvestigationList_NewFieldInvestigation;
@@ -72,12 +74,15 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
+	protected Listbox sortOperator_VerificationDate;
 
 	protected Textbox cif;
 	protected Textbox addressType;
 	protected Textbox pinCode;
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency; 
+	protected Datebox verificationDate;
+
 	
 	private String module = "";
 
@@ -133,8 +138,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		registerField("zipCode", listheader_PinCode, SortOrder.ASC, pinCode, sortOperator_PinCode, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
-		registerField("agency", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
-		registerField("agencyName");
+		registerField("date", listheader_VerificationDate, SortOrder.NONE, verificationDate, sortOperator_VerificationDate, Operators.DATE);
+		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
