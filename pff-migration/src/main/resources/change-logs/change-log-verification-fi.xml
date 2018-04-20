@@ -1424,4 +1424,38 @@
 		]]>
 	  </sql>
 	  </changeSet>
+	  
+	  <changeSet id="15" author="Durgaprasad G">
+	  	<sql>
+	  	 <![CDATA[
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			Delete From SecRights Where RightName = 'menuItem_Verification_FieldInvestigation_Enquiry';
+			Delete From SecRights Where RightName = 'menuItem_Verification_TechnicalVerification_Enquiry';
+            
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_FieldInvestigation_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_TechnicalVerification_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+					
+			INSERT INTO SecGroups values((Select MAX(GrpID)+1 From secGroups),'FIELDINVESTIGATION_ENQUIRY','Enquiry for TechnicalVerification',0,1000,current_timestamp,'Approved','','','','','',0);
+			INSERT INTO SecGroups values((Select MAX(GrpID)+1 From secGroups),'TECHNICALVERIFICATION_ENQUIRY','Enquiry for TechnicalVerification',0,1000,current_timestamp,'Approved','','','','','',0);
+			
+			Insert Into SecGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_ENQUIRY'),(select RightId from secRights where RightName='menuItem_Verification_FieldInvestigation_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into SecGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='TECHNICALVERIFICATION_ENQUIRY'),(select RightId from secRights where RightName='menuItem_Verification_TechnicalVerification_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			     
+			Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FIELDINVESTIGATION_ENQUIRY'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups  Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FIELDINVESTIGATION_ENQUIRY'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='TECHNICALVERIFICATION_ENQUIRY'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups  Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='TECHNICALVERIFICATION_ENQUIRY'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved','','','','','',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		  ]]>
+	  	</sql>
+	  </changeSet>
+	  
 </databaseChangeLog>
