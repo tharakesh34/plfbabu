@@ -1222,7 +1222,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (!this.batch.isReadonly()) {
 			this.batch.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_JVPostingDialog_Batch.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 			//Exp Reference
 		if (!this.expReference.isReadonly()) {
