@@ -99,6 +99,7 @@ public class FinanceConstants {
 	public static final String	DEDUP_POLICE					= "Police";
 	public static final String	DEDUP_RETCHQ					= "Cheque";
 	public static final String	DEDUP_LIMITS					= "Limits";
+	public static final String	DEDUP_COLLATERAL				= "Collateral";
 
 	// Schedule Overdue Calculation Types
 	public static final String	ODCALON_SPRI					= "SPRI";
