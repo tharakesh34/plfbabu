@@ -401,7 +401,8 @@ public class PennantJavaUtil {
 	private static String finMaintainWF = "FIN_RATECHANGE";
 	private static String securityWF = "SECURITY_USERS";
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
-	private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";
+	//private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";
+	private static String crReviewCorpWF = "CORPORATECREDITREVIEW";
 	private static String facilityCommitWF = "FACILITY_COMMITMENT";
 	//private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
@@ -443,7 +444,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LoanPurpose.class, new String[] {
 				"LoanPurposes", "LoanPurposes_AView" }, masterWF, new String[] { "LoanPurposeCode", "LoanPurposeDesc" },
-				new String[][] { { "LoanPurposeIsActive", "0", "1" } }, 300));
+				new Object[][] { { "LoanPurposeIsActive", "0", 1 } }, 350));
 		
 		ModuleUtil.register("AddressType", new ModuleMapping("AddressType", AddressType.class, new String[] {
 				"BMTAddressTypes", "BMTAddressTypes_AView" }, masterWF, new String[] { "AddrTypeCode", "AddrTypeDesc" },
@@ -2115,9 +2116,10 @@ public class PennantJavaUtil {
 		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
 
 		/* RMT Lov Filed Details */
-		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class,
+		//Two modules are there ,Need to check it. FIXME:
+		/*ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class,
 				new String[] { "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" },
-				new String[][] { { "FieldCode", "0", "PUR_LOAN" } }, 300));
+				new String[][] { { "FieldCode", "0", "PUR_LOAN" } }, 300));*/
 		
 		ModuleUtil.register("DocumentDataMapping", new ModuleMapping("DocumentDataMapping", DocumentDataMapping.class, 
 				new String[] { "DocumentDataMapping", "DocumentDataMapping"}, masterWF, new String[] { "Type", "TypeDescription" }, null, 350));
