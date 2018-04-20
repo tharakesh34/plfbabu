@@ -764,6 +764,20 @@ UNION ALL
 									WHERE FinReference = T1.FinReference AND OriginationFee = T1.OriginationFee AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID)
 		</createView>
 	</changeSet>
+
+		<changeSet id="15" author="VijayKumar.I">
+		<createView viewName="FINFEEDETAIL_AVIEW" replaceIfExists="true">
+			SELECT  	T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, 
+						T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+						T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.VasReference, T1.Status, T1.TaxApplicable, T1.TaxComponent, T1.PaidAmountOriginal, T1.PaidAmountGST,
+						T1.NetAmountOriginal, T1.NetAmountGST, T1.NetAmount, T1.RemainingFeeOriginal, T1.RemainingFeeGST, T1.ActualAmountOriginal,T1.ActualAmountGST, T1.FeeAmz, 
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+						T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    	FinFeeDetail T1 
+			LEFT JOIN 	FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		</createView>
+	</changeSet>
+
 	<changeSet id="15" author="Ganesh.p">
 		<sql>
 			INSERT INTO ErrorDetails VALUES('92006','EN','E','{0} is mandatory in the header.','','Approved','','','','','',0,current_timestamp,1000,0);
