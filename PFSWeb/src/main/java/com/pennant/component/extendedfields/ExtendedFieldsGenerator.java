@@ -1185,6 +1185,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<ExtendedFieldDetail> nonInputElements) {
 
 		HashMap<ExtendedFieldDetail, List<WrongValueException>> map = new HashMap<>();
+		//Root TabPanel First Element.
+		ExtendedFieldDetail rootTabExtDetails = null;
 		for (Entry<ExtendedFieldDetail, WrongValueException> entryset : wveMap.entrySet()) {
 
 			ExtendedFieldDetail extDetails = entryset.getKey();
@@ -1203,9 +1205,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					map.put(extParentDetails, errorlist);
 				}
 			} else {
-				List<WrongValueException> errorlist = new ArrayList<>();
-				errorlist.add(value);
-				map.put(extDetails, errorlist);
+				if (rootTabExtDetails != null && map.containsKey(rootTabExtDetails)) {
+					map.get(rootTabExtDetails).add(value);
+				} else {
+					rootTabExtDetails = extDetails;
+					List<WrongValueException> errorlist = new ArrayList<>();
+					errorlist.add(value);
+					map.put(rootTabExtDetails, errorlist);
+				}
 			}
 		}
 		return map;
