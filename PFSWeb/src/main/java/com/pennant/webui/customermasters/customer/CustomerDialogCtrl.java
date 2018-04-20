@@ -3019,8 +3019,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
+				// User Notification for Role Identification
+				if (StringUtils.isBlank(aCustomer.getNextTaskId())) {
+					aCustomer.setNextRoleCode("");
+				}
+
+				String msg = PennantApplicationUtil.getSavingStatus(aCustomer.getRoleCode(),
+						aCustomer.getNextRoleCode(), aCustomer.getCustCIF(), " Customer ", aCustomer.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 				refreshList();
 				closeDialog();
+
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {
