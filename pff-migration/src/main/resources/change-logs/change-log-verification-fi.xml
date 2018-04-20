@@ -1480,4 +1480,12 @@
 	  </sql>
 	  </changeSet>
 	  
+	  <changeSet id="17" author="Durgaprasad G">
+	   	<sql>
+	  	 <![CDATA[
+	  		UPDATE SECRIGHTS SET RIGHTNAME= 'button_FieldInvestigationDialog_NewDocuments' WHERE rightname='button_FieldInvestigationDocumentDialog_btnNew';
+	 	 ]]>
+	   </sql>
+	  </changeSet>
+	  
 </databaseChangeLog>
