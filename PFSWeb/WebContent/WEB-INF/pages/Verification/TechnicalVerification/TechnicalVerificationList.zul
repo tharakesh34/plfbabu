@@ -70,6 +70,15 @@
 								</row>
 								
 								<row>
+									<label id="label_FieldInvestigationList_Agency" value="${c:l('label_FieldInvestigationList_Agency.value')}" />
+									<listbox id="sortOperator_Agency" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+	   								<extendedcombobox id ="agency" />
+	   								<label id="label_FieldInvestigationList_VerificationDate" value="${c:l('label_FieldInvestigationList_VerificationDate.value')}" />
+									<listbox id="sortOperator_VerificationDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+	   								<datebox id ="verificationDate" />
+	   							</row>
+	   							
+								<row>
 									<label id="label_TechnicalVerificationList_RecordStatus" value="${c:l('label_TechnicalVerificationList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
@@ -93,6 +102,12 @@
 								hflex="min" />
 							<listheader id="listheader_LoanReference"
 								label="${c:l('listheader_LoanReference.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Agency"
+								label="${c:l('listheader_Agency.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_VerificationDate"
+								label="${c:l('listheader_VerificationDate.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />

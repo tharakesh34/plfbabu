@@ -738,6 +738,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 
 		if (enqiryModule) {
+			doReadOnly();
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
@@ -996,22 +997,22 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.contactNumber1.setReadonly(true);
 		this.contactNumber2.setReadonly(true);
 		
-		this.verificationDate.setReadonly(true);		
-		this.verificationType.setReadonly(true);
+		this.verificationDate.setDisabled(true);
+		this.verificationType.setDisabled(true);
 		this.yearsAtPresentAddress.setReadonly(true);
 		this.personMet.setReadonly(true);
-		this.ownerShipStatus.setReadonly(true);
+		this.ownerShipStatus.setDisabled(true);
 		this.relationShip.setReadonly(true);
-		this.neighbourhoodCheckFeedBack.setReadonly(true);
+		this.neighbourhoodCheckFeedBack.setDisabled(true);
 		this.contactNo.setReadonly(true);
 		this.observationRemarks.setReadonly(true);
-		this.livingStandard.setReadonly(true);
+		this.livingStandard.setDisabled(true);
 		this.negativeCheck.setDisabled(true);
 		this.noOfAttempts.setReadonly(true);
 
 		this.agentCode.setReadonly(true);
 		this.agentName.setReadonly(true);
-		this.recommendations.setReadonly(true);
+		this.recommendations.setDisabled(true);
 		this.reason.setReadonly(true);
 		this.summaryRemarks.setReadonly(true);
 
@@ -1020,7 +1021,10 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
+			if(!enqiryModule){
+				this.userAction.setSelectedIndex(0);
+			}
+				
 		}
 		logger.debug(Literal.LEAVING);
 	}

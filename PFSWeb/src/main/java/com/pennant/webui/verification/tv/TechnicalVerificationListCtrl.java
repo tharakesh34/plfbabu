@@ -21,6 +21,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -28,6 +29,8 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.technicalverification.model.TechnicalVerificationListModelItemRenderer;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -58,6 +61,8 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Listheader listheader_CollateralType;
 	protected Listheader listheader_CollateralReference;
 	protected Listheader listheader_LoanReference;
+	protected Listheader listheader_Agency;
+	protected Listheader listheader_VerificationDate;
 
 	// checkRights
 	protected Button button_TechnicalVerificationList_TechnicalVerificationSearch;
@@ -67,11 +72,15 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Listbox sortOperator_CollateralType;
 	protected Listbox sortOperator_CollateralReference;
 	protected Listbox sortOperator_LoanReference;
+	protected Listbox sortOperator_Agency;
+	protected Listbox sortOperator_VerificationDate;
 
 	protected Textbox cif;
 	protected Textbox collateralType;
 	protected Textbox collateralReference;
 	protected Textbox loanReference;
+	protected ExtendedCombobox agency; 
+	protected Datebox verificationDate;
 	
 	private String module = "";
 
@@ -101,6 +110,12 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
+		if (agency.getAttribute("agency") != null) {
+			this.searchObject.removeFiltersOnProperty("agency");
+			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
+			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
+		}
+		
 	}
 
 	/**
@@ -117,7 +132,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		if ("ENQ".equals(this.module)) {
 			enqiryModule = true;
 		}
-		
+		doSetFieldProperties();
 		setPageComponents(window_TechnicalVerification, borderLayout_TechnicalVerificationList, listBoxTechnicalVerification, pagingTechnicalVerificationList);
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
@@ -126,6 +141,8 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
 		registerField("collateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference, sortOperator_LoanReference, Operators.STRING);
+		registerField("date", listheader_VerificationDate, SortOrder.NONE, verificationDate, sortOperator_VerificationDate, Operators.DATE);
+		registerField("agencyName",listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
 		registerField("verificationId");
 		registerField("custName");
 
@@ -134,6 +151,43 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		search();
 	}
 
+	private void doSetFieldProperties() {
+		logger.debug(Literal.ENTERING);
+
+		// Agency
+		this.agency.setMaxlength(50);
+		this.agency.setTextBoxWidth(120);
+		this.agency.setModuleName("TVAgencies");
+		this.agency.setValueColumn("DealerName");
+		this.agency.setDescColumn("DealerCity");
+		this.agency.setValidateColumns(new String[] { "DealerName" ,"DealerCity" });
+		
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$agency(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = agency.getObject();
+		if (dataObject instanceof String) {
+			this.agency.setValue(dataObject.toString());
+			this.agency.setDescription("");
+			this.agency.setAttribute("agency", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.agency.setAttribute("agency", details.getId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	protected void doReset() {
+		super.doReset();
+		this.agency.setAttribute("agency", null);
+	}
+	
+	
 	/**
 	 * The framework calls this event handler when user clicks the search
 	 * button.
