@@ -549,6 +549,7 @@
 														id="listheader_Description2"
 														label="${c:l('listheader_OperatorDesc.label')}"
 														sort="auto" hflex="min" />
+												</listhead>
 											</listbox>
 										</tabpanel>
 									</tabpanels>

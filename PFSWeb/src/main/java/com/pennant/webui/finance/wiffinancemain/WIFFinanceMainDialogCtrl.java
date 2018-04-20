@@ -149,12 +149,12 @@ import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -2693,7 +2693,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// fill the components with the data
 			doWriteBeanToComponents(afinanceDetail, true);
 			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()) {
-				changeFrequencies();
+				//As per mail below code is commented
+				//changeFrequencies();
 			}
 
 			if (isEnquiry) {
@@ -5354,7 +5355,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$finStartDate(Event event) {
 		logger.debug("Entering");
 
-		changeFrequencies();
+		//As per mail below functionality implemented
+		//changeFrequencies();
 
 		//Fee charge Calculations
 		if (this.finStartDate.getValue() != null) {

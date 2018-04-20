@@ -64,7 +64,7 @@
 					<grid sclass="GridLayoutNoBorder"
 						fixedLayout="true">
 						<columns>
-							<column width="200px" />
+							<column width="220px" />
 							<column />
 						</columns>
 						<rows>
@@ -90,7 +90,7 @@
 									value="${c:l('label_CustomerExtLiabilityDialog_LiabilitySeq.value')}" />
 								<hbox>
 									<space id="space_ItemNumber" spacing="2px" />
-									<intbox id="liabilitySeq" width="149px" readonly="true" />
+									<intbox id="liabilitySeq" style="text-align:right" width="149px" readonly="true" />
 								</hbox>
 							</row>
 							<row>
@@ -140,6 +140,107 @@
 								<hbox>
 									<extendedcombobox id="finStatus" />
 								</hbox>
+							</row>
+							
+							<!-- As per Profectus Document development  -->
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_ROI"
+									value="${c:l('label_CustomerExtLiabilityDialog_ROI.value')}" />
+								<hbox>
+									<currencyBox id="roi" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_TotalTenure"
+									value="${c:l('label_CustomerExtLiabilityDialog_TotalTenure.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<intbox id="totalTenure" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_BalanceTenure"
+									value="${c:l('label_CustomerExtLiabilityDialog_BalanceTenure.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<intbox id="balanceTenure" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_NoOfBounces"
+									value="${c:l('label_CustomerExtLiabilityDialog_NoOfBounces.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="noOfBounces" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_POS"
+									value="${c:l('label_CustomerExtLiabilityDialog_POS.value')}" />
+								<hbox>
+									<currencyBox id="pos" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_Overdue"
+									value="${c:l('label_CustomerExtLiabilityDialog_Overdue.value')}" />
+								<hbox>
+									<currencyBox id="overdue" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_EMIFoir"
+									value="${c:l('label_CustomerExtLiabilityDialog_EMIFoir.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="emiFoir" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_Source"
+									value="${c:l('label_CustomerExtLiabilityDialog_Source.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="source" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_CheckedBy"
+									value="${c:l('label_CustomerExtLiabilityDialog_CheckedBy.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="checkedBy" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_SecurityDetail"
+									value="${c:l('label_CustomerExtLiabilityDialog_SecurityDetail.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<textbox id="securityDetail" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_EndUseOfFunds"
+									value="${c:l('label_CustomerExtLiabilityDialog_EndUseOfFunds.value')}" />
+								<extendedcombobox id="endUseOfFunds" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerExtLiabilityDialog_RepayFrom"
+									value="${c:l('label_CustomerExtLiabilityDialog_RepayFrom.value')}" />
+								<extendedcombobox id="repayFrom" />
 							</row>
 						</rows>
 					</grid>

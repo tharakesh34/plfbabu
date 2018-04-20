@@ -102,6 +102,9 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		customerBankInfo.setBankId(bankId);
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT bankId, CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
+		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
+		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
@@ -137,6 +140,9 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
+		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
+		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
@@ -242,9 +248,16 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		insertSql.append(" Insert Into CustomerBankInfo");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount," );
+		insertSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		insertSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
+		insertSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
+
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:BankId, :CustID, :BankName, :AccountNumber, :AccountType, :SalaryAccount,");
+		insertSql.append(" :CreditTranNo, :CreditTranAmt, :CreditTranAvg, :DebitTranNo, :DebitTranAmt, :CashDepositNo, :CashDepositAmt,");
+		insertSql.append(" :CashWithdrawalNo, :CashWithdrawalAmt, :ChqDepositNo, :ChqDepositAmt, :ChqIssueNo, :ChqIssueAmt,");
+		insertSql.append(" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -278,6 +291,11 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		updateSql.append(StringUtils.trimToEmpty(type));
 		
 		updateSql.append(" Set AccountNumber = :AccountNumber, AccountType = :AccountType,SalaryAccount = :SalaryAccount,");
+		updateSql.append(" CreditTranNo = :CreditTranNo, CreditTranAmt = :CreditTranAmt, CreditTranAvg = :CreditTranAvg, DebitTranNo = :DebitTranNo,");
+		updateSql.append("DebitTranAmt = :DebitTranAmt, CashDepositNo = :CashDepositNo, CashDepositAmt = :CashDepositAmt,");
+		updateSql.append("CashWithdrawalNo = :CashWithdrawalNo,CashWithdrawalAmt = :CashWithdrawalAmt, ChqDepositNo = :ChqDepositNo, ChqDepositAmt = :ChqDepositAmt,");
+		updateSql.append("ChqIssueNo = :ChqIssueNo, ChqIssueAmt = :ChqIssueAmt, InwardChqBounceNo = :InwardChqBounceNo, OutwardChqBounceNo = :OutwardChqBounceNo, EodBalMin = :EodBalMin,");
+		updateSql.append("EodBalMax = :EodBalMax, EodBalAvg = :EodBalAvg,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -421,6 +439,9 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT bankId, CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
+		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
+		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
 		}

@@ -31,7 +31,8 @@
  ********************************************************************************************
  * 26-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 18-04-2018       Vinay                    0.2          As per Profectus document added 
+ * 														  some fields                       * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -50,20 +51,25 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -76,6 +82,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -106,6 +115,28 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected ExtendedCombobox 	accountType; 			
 	protected Checkbox 	salaryAccount; 		
 	protected Row row_salaryAccount;
+	
+	//####_0.2
+	protected Intbox creditTranNo;
+	protected CurrencyBox creditTranAmt;
+	protected CurrencyBox creditTranAvg;
+	protected Intbox debitTranNo;
+	protected CurrencyBox debitTranAmt;
+	protected Intbox cashDepositNo;
+	protected CurrencyBox cashDepositAmt;
+	protected Intbox cashWithdrawalNo;
+	protected CurrencyBox cashWithdrawalAmt;
+	protected Intbox chqDepositNo;
+	protected CurrencyBox chqDepositAmt;
+	protected Intbox chqIssueNo;
+	protected CurrencyBox chqIssueAmt;
+	protected Intbox inwardChqBounceNo;
+	protected Intbox outwardChqBounceNo;
+	protected CurrencyBox eodBalMin;
+	protected CurrencyBox eodBalMax;
+	protected CurrencyBox eodBalAvg;
+	
+	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	
 	// not auto wired variables
 	private CustomerBankInfo customerBankInfo; // overHanded per parameter
@@ -273,6 +304,37 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
 		}
 
+		//###_0.2
+		this.creditTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.creditTranAmt.setScale(finFormatter);
+		
+		this.creditTranAvg.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.creditTranAvg.setScale(finFormatter);
+		
+		this.debitTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.debitTranAmt.setScale(finFormatter);
+		
+		this.cashDepositAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.cashDepositAmt.setScale(finFormatter);
+		
+		this.cashWithdrawalAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.cashWithdrawalAmt.setScale(finFormatter);
+	
+		this.chqDepositAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.chqDepositAmt.setScale(finFormatter);
+	
+		this.chqIssueAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.chqIssueAmt.setScale(finFormatter);
+		
+		this.eodBalMin.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.eodBalMin.setScale(finFormatter);
+		
+		this.eodBalMax.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.eodBalMax.setScale(finFormatter);
+		
+		this.eodBalAvg.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.eodBalAvg.setScale(finFormatter);
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -415,6 +477,26 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (aCustomerBankInfo.isSalaryAccount()) {
 			this.salaryAccount.setDisabled(false);
 		}
+		
+		this.creditTranNo.setValue(aCustomerBankInfo.getCreditTranNo());
+		this.creditTranAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getCreditTranAmt(),finFormatter));
+		this.creditTranAvg.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getCreditTranAvg(),finFormatter));
+		this.debitTranNo.setValue(aCustomerBankInfo.getDebitTranNo());
+		this.debitTranAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getDebitTranAmt(),finFormatter));
+		this.cashDepositNo.setValue(aCustomerBankInfo.getCashDepositNo());
+		this.cashDepositAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getCashDepositAmt(),finFormatter));
+		this.cashWithdrawalNo.setValue(aCustomerBankInfo.getCashWithdrawalNo());
+		this.cashWithdrawalAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getCashWithdrawalAmt(),finFormatter));
+		this.chqDepositNo.setValue(aCustomerBankInfo.getChqDepositNo());
+		this.chqDepositAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getChqDepositAmt(),finFormatter));
+		this.chqIssueNo.setValue(aCustomerBankInfo.getChqIssueNo());
+		this.chqIssueAmt.setValue(aCustomerBankInfo.getChqIssueAmt());
+		this.inwardChqBounceNo.setValue(aCustomerBankInfo.getInwardChqBounceNo());
+		this.outwardChqBounceNo.setValue(aCustomerBankInfo.getOutwardChqBounceNo());
+		this.eodBalMin.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalMin(),finFormatter));
+		this.eodBalMax.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalMax(),finFormatter));
+		this.eodBalAvg.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalAvg(),finFormatter));
+		
 		this.recordStatus.setValue(aCustomerBankInfo.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -467,15 +549,110 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		try {
+			aCustomerBankInfo.setCreditTranNo(this.creditTranNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCreditTranAmt(PennantAppUtil.unFormateAmount(this.creditTranAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCreditTranAvg(PennantAppUtil.unFormateAmount(this.creditTranAvg.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setDebitTranNo(this.debitTranNo.intValue());
+		} catch (WrongValueException we) {
+			
+		}
+		try {
+			aCustomerBankInfo.setDebitTranAmt(PennantAppUtil.unFormateAmount(this.debitTranAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCashDepositNo(this.cashDepositNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCashDepositAmt(PennantAppUtil.unFormateAmount(this.cashDepositAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCashWithdrawalNo(this.cashWithdrawalNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCashWithdrawalAmt(PennantAppUtil.unFormateAmount(this.cashWithdrawalAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setChqDepositNo(this.chqDepositNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setChqDepositAmt(PennantAppUtil.unFormateAmount(this.chqDepositAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setChqIssueNo(this.chqIssueNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setChqIssueAmt(PennantAppUtil.unFormateAmount(this.chqIssueAmt.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setInwardChqBounceNo(this.inwardChqBounceNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setOutwardChqBounceNo(this.outwardChqBounceNo.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setEodBalMin(PennantAppUtil.unFormateAmount(this.eodBalMin.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setEodBalMax(PennantAppUtil.unFormateAmount(this.eodBalMax.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setEodBalAvg(PennantAppUtil.unFormateAmount(this.eodBalAvg.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
+		boolean focus = false;
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
+				Component component = wve.get(i).getComponent();
+				if(!focus){
+					focus = setComponentFocus(component);
+				}
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -484,7 +661,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		setCustomerBankInfo(aCustomerBankInfo);
 		logger.debug("Leaving");
 	}
-	
 	
 	/**
 	 * when clicks on button "CommitmentRef"
@@ -554,7 +730,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
             	this.accountNumber.setTooltiptext(this.accountNumber.getValue());
             }
             if(isNewCustomer()){
-				this.window_CustomerBankInfoDialog.setHeight("35%");
+				this.window_CustomerBankInfoDialog.setHeight("55%");
 				this.window_CustomerBankInfoDialog.setWidth("60%");
 				this.groupboxWf.setVisible(false);
 				this.window_CustomerBankInfoDialog.doModal() ;
@@ -579,6 +755,26 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.bankName.setReadonly(true);
 			this.accountType.setReadonly(true);
 			this.accountNumber.setReadonly(true);
+			
+			this.creditTranNo.setReadonly(true);
+			this.creditTranAmt.setReadonly(true);
+			this.creditTranAvg.setReadonly(true);
+			this.debitTranNo.setReadonly(true);
+			this.debitTranAmt.setReadonly(true);
+			this.cashDepositNo.setReadonly(true);
+			this.cashDepositAmt.setReadonly(true);
+			this.cashWithdrawalNo.setReadonly(true);
+			this.cashWithdrawalAmt.setReadonly(true);
+			this.chqDepositNo.setReadonly(true);
+			this.chqDepositAmt.setReadonly(true);
+			this.chqIssueNo.setReadonly(true);
+			this.chqIssueAmt.setReadonly(true);
+			this.inwardChqBounceNo.setReadonly(true);
+			this.outwardChqBounceNo.setReadonly(true);
+			this.eodBalMin.setReadonly(true);
+			this.eodBalMax.setReadonly(true);
+			this.eodBalAvg.setReadonly(true);
+			
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
 		}
@@ -598,6 +794,61 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 							true));
 			
 		}
+		
+		if(!this.creditTranNo.isDisabled()){
+			this.creditTranNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_CreditTranNo.value"), false, false));
+		}
+		if(!this.creditTranAmt.isDisabled()){
+			this.creditTranAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_CreditTranAmt.value"), 0, false, false));
+		}
+		if(!this.creditTranAvg.isDisabled()){
+			this.creditTranAvg.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_CreditTranAvg.value"), 0, false, false));
+		}
+		if(!this.debitTranNo.isDisabled()){
+			this.debitTranNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_DebitTranNo.value"), false, false));
+		}
+		if(!this.debitTranAmt.isDisabled()){
+			this.debitTranAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_DebitTranAmt.value"), 0, false, false));
+		}
+		if(!this.cashDepositNo.isDisabled()){
+			this.cashDepositNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_CashDepositNo.value"), false, false));
+		}
+		if(!this.cashDepositAmt.isDisabled()){
+			this.cashDepositAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_CashDepositAmt.value"), 0, false, false));
+		}
+		if(!this.cashWithdrawalNo.isDisabled()){
+			this.cashWithdrawalNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_CashWithdrawalNo.value"), false, false));
+		}
+		if(!this.cashWithdrawalAmt.isDisabled()){
+			this.cashWithdrawalAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_CashWithdrawalAmt.value"), 0, false, false));
+		}
+		if(!this.chqDepositNo.isDisabled()){
+			this.chqDepositNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_ChqDepositNo.value"), false, false));
+		}
+		if(!this.chqDepositAmt.isDisabled()){
+			this.chqDepositAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_ChqDepositAmt.value"), 0, false, false));
+		}
+		if(!this.chqIssueNo.isDisabled()){
+			this.chqIssueNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_ChqIssueNo.value"), false, false));
+		}
+		if(!this.chqIssueAmt.isDisabled()){
+			this.chqIssueAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_ChqIssueAmt.value"), 0, false, false));
+		}
+		if(!this.inwardChqBounceNo.isDisabled()){
+			this.inwardChqBounceNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_InwardChqBounceNo.value"), false, false));
+		}
+		if(!this.outwardChqBounceNo.isDisabled()){
+			this.outwardChqBounceNo.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerBankInfoDialog_OutwardChqBounceNo.value"), false, false));
+		}
+		if(!this.eodBalMin.isDisabled()){
+			this.eodBalMin.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_EodBalMin.value"), 0, false, false));
+		}
+		if(!this.eodBalMax.isDisabled()){
+			this.eodBalMax.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_EodBalMax.value"), 0, false, false));
+		}
+		if(!this.eodBalAvg.isDisabled()){
+			this.eodBalAvg.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerBankInfoDialog_EodBalAvg.value"), 0, false, false));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -608,6 +859,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.accountNumber.setConstraint("");
+
+		this.creditTranNo.setConstraint("");
+		this.creditTranAmt.setConstraint("");
+		this.creditTranAvg.setConstraint("");
+		this.debitTranNo.setConstraint("");
+		this.debitTranAmt.setConstraint("");
+		this.cashDepositNo.setConstraint("");
+		this.cashDepositAmt.setConstraint("");
+		this.cashWithdrawalNo.setConstraint("");
+		this.cashWithdrawalAmt.setConstraint("");
+		this.chqDepositNo.setConstraint("");
+		this.chqDepositAmt.setConstraint("");
+		this.chqIssueNo.setConstraint("");
+		this.chqIssueAmt.setConstraint("");
+		this.inwardChqBounceNo.setConstraint("");
+		this.outwardChqBounceNo.setConstraint("");
+		this.eodBalMin.setConstraint("");
+		this.eodBalMax.setConstraint("");
+		this.eodBalAvg.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -640,6 +910,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.accountNumber.setErrorMessage("");
 		this.bankName.setErrorMessage("");
 		this.accountType.setErrorMessage("");
+
+		this.creditTranNo.setErrorMessage("");
+		this.creditTranAmt.setErrorMessage("");
+		this.creditTranAvg.setErrorMessage("");
+		this.debitTranNo.setErrorMessage("");
+		this.debitTranAmt.setErrorMessage("");
+		this.cashDepositNo.setErrorMessage("");
+		this.cashDepositAmt.setErrorMessage("");
+		this.cashWithdrawalNo.setErrorMessage("");
+		this.cashWithdrawalAmt.setErrorMessage("");
+		this.chqDepositNo.setErrorMessage("");
+		this.chqDepositAmt.setErrorMessage("");
+		this.chqIssueNo.setErrorMessage("");
+		this.chqIssueAmt.setErrorMessage("");
+		this.inwardChqBounceNo.setErrorMessage("");
+		this.outwardChqBounceNo.setErrorMessage("");
+		this.eodBalMin.setErrorMessage("");
+		this.eodBalMax.setErrorMessage("");
+		this.eodBalAvg.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -723,7 +1012,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
-		
+
+		this.creditTranNo.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranNo"));
+		this.creditTranAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranAmt"));
+		this.creditTranAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranAvg"));
+		this.debitTranNo.setReadonly(isReadOnly("CustomerBankInfoDialog_DebitTranNo"));
+		this.debitTranAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_DebitTranAmt"));
+		this.cashDepositNo.setReadonly(isReadOnly("CustomerBankInfoDialog_CashDepositNo"));
+		this.cashDepositAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_CashDepositAmt"));
+		this.cashWithdrawalNo.setReadonly(isReadOnly("CustomerBankInfoDialog_CashWithdrawalNo"));
+		this.cashWithdrawalAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_CashWithdrawalAmt"));
+		this.chqDepositNo.setReadonly(isReadOnly("CustomerBankInfoDialog_ChqDepositNo"));
+		this.chqDepositAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_ChqDepositAmt"));
+		this.chqIssueNo.setReadonly(isReadOnly("CustomerBankInfoDialog_ChqIssueNo"));
+		this.chqIssueAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_ChqIssueAmt"));
+		this.inwardChqBounceNo.setReadonly(isReadOnly("CustomerBankInfoDialog_InwardChqBounceNo"));
+		this.outwardChqBounceNo.setReadonly(isReadOnly("CustomerBankInfoDialog_OutwardChqBounceNo"));
+		this.eodBalMin.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMin"));
+		this.eodBalMax.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMax"));
+		this.eodBalAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalAvg"));
 
 
 		if (isWorkFlowEnabled()) {
@@ -779,6 +1086,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.bankName.setReadonly(true);
 		this.accountType.setReadonly(true);
 		this.accountNumber.setReadonly(true);
+
+		this.creditTranNo.setReadonly(true);
+		this.creditTranAmt.setReadonly(true);
+		this.creditTranAvg.setReadonly(true);
+		this.debitTranNo.setReadonly(true);
+		this.debitTranAmt.setReadonly(true);
+		this.cashDepositNo.setReadonly(true);
+		this.cashDepositAmt.setReadonly(true);
+		this.cashWithdrawalNo.setReadonly(true);
+		this.cashWithdrawalAmt.setReadonly(true);
+		this.chqDepositNo.setReadonly(true);
+		this.chqDepositAmt.setReadonly(true);
+		this.chqIssueNo.setReadonly(true);
+		this.chqIssueAmt.setReadonly(true);
+		this.inwardChqBounceNo.setReadonly(true);
+		this.outwardChqBounceNo.setReadonly(true);
+		this.eodBalMin.setReadonly(true);
+		this.eodBalMax.setReadonly(true);
+		this.eodBalAvg.setReadonly(true);
 		
 
 		if (isWorkFlowEnabled()) {
@@ -806,6 +1132,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.accountType.setValue("");
 		this.accountType.setDescription("");
 		this.accountNumber.setValue("");
+
+		this.creditTranNo.setValue(0);
+		this.creditTranAmt.setValue("");
+		this.creditTranAvg.setValue("");
+		this.debitTranNo.setValue(0);
+		this.debitTranAmt.setValue("");
+		this.cashDepositNo.setValue(0);
+		this.cashDepositAmt.setValue("");
+		this.cashWithdrawalNo.setValue(0);
+		this.cashWithdrawalAmt.setValue("");
+		this.chqDepositNo.setValue(0);
+		this.chqDepositAmt.setValue("");
+		this.chqIssueNo.setValue(0);
+		this.chqIssueAmt.setValue("");
+		this.inwardChqBounceNo.setValue(0);
+		this.outwardChqBounceNo.setValue(0);
+		this.eodBalMin.setValue("");
+		this.eodBalMax.setValue("");
+		this.eodBalAvg.setValue("");
 		logger.debug("Leaving");
 	}
 

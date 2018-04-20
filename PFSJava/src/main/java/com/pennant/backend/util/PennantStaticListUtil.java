@@ -236,6 +236,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> subCategoriesList;
 
 	private static ArrayList<ValueLabel> statusCodes;
+	private static ArrayList<ValueLabel> sourceInfoList;
+	private static ArrayList<ValueLabel> trackCheckList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3094,6 +3096,26 @@ public class PennantStaticListUtil {
 			subCategoriesList.add(new ValueLabel(PennantConstants.SUBCATEGORY_NRI, Labels.getLabel("label_Subcategory_NRI")));
 		}
 		return subCategoriesList;
+	}
+	
+	public static ArrayList<ValueLabel> getSourceInfoList() {
+		if (sourceInfoList == null) {
+			sourceInfoList = new ArrayList<ValueLabel>(2);
+			sourceInfoList.add(new ValueLabel("0", Labels.getLabel("label_SourceInfo_Cibil")));
+			sourceInfoList.add(new ValueLabel("1", Labels.getLabel("label_SourceInfo_MCA")));
+			sourceInfoList.add(new ValueLabel("2", Labels.getLabel("label_SourceInfo_BSheet")));
+		}
+		return sourceInfoList;
+	}
+	
+	public static ArrayList<ValueLabel> getTrackCheckList() {
+		if (trackCheckList == null) {
+			trackCheckList = new ArrayList<ValueLabel>(2);
+			trackCheckList.add(new ValueLabel("0", Labels.getLabel("label_TrackCheck_SOA")));
+			trackCheckList.add(new ValueLabel("1", Labels.getLabel("label_TrackCheck_Banking")));
+			trackCheckList.add(new ValueLabel("2", Labels.getLabel("label_TrackCheck_Cibil")));
+		}
+		return trackCheckList;
 	}
 
 }

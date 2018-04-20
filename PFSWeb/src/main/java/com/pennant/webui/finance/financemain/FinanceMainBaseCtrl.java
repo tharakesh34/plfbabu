@@ -31,7 +31,20 @@
  ********************************************************************************************
  * 26-04-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 17-04-2018		Vinay					 0.2	   	As per the existing functionality 	*
+ * 														developed for AIB, application will *
+ * 														automatically set the frequency 	*
+ * 														cycle date with the day of the Loan *
+ * 														Start Date. Due to this, default 	*
+ * 														cycle date provided in the Loan 	*
+ * 														Type is not getting defaulted in 	*
+ * 														the Loan Origination, if the date 	*
+ * 														in the loan start date is not part	*
+ * 														of the default frequency cycle 		*
+ * 														date.As discussed with Raju, this 	*
+ * 														has to be removed for Core 			*
+ * 														Functionality and hence the 		*
+ * 														Condition is removed and committed. *                                                                                    * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -2664,6 +2677,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fieldVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
 			}
 			break;
+		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
+			appendCreditReviewDetailTab(true);
+			break;
 		default:
 			break;
 		}
@@ -3688,6 +3704,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	
 	/**
+	 * Method for Credit Review Details Data in finance
+	 */
+	protected void appendCreditReviewDetailTab(boolean onLoadProcess) {
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW);
+		}
+		if (onLoadProcess) {
+			map.put("facility", "");
+			map.put("custCIF", this.custCIF.getValue());
+			map.put("custID", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+			map.put("userRole", getRole());
+			map.put("custCtgType", getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode());
+
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW), map);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
 	 * This method is for append extended field details
 	 */
 	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail) {
@@ -3883,7 +3928,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			onCheckODPenalty(false);
 			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()
 					&& !afinanceDetail.getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
-				changeFrequencies();
+				//####_0.2
+				//changeFrequencies();
 				this.finAmount.focus();
 			}
 
@@ -6967,7 +7013,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 
 		if (this.finStartDate.getValue() != null) {
-			changeFrequencies();
+			//####_0.2
+			//changeFrequencies();
 			onChangefinStartDate();
 
 			// To set the Maturitydate when fincategory is Overdraft 
@@ -11046,8 +11093,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (wve.isEmpty()) {
 
-			//Finance Overdue Details set to Penalty Rate Object
-			aFinanceSchData.setFinODPenaltyRate(penaltyRate);
+			// Finance Overdue Details set to Penalty Rate Object FIXME:
+			if (!this.buildEvent) {
+				aFinanceSchData.setFinODPenaltyRate(penaltyRate);
+			}
 
 			if (this.allowGrace.isChecked()) {
 				aFinanceMain.setGrcRateBasis(this.grcRateBasis.getSelectedItem().getValue().toString());
@@ -14555,6 +14604,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
+		
+		//Credit Review Details
+		if(customer.getCustID() != 0){
+			appendCreditReviewDetailTab(false);
+		}
 
 		logger.debug("Leaving");
 	}

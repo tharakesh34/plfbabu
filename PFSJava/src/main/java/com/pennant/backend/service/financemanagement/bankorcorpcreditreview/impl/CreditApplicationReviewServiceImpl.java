@@ -123,7 +123,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -287,14 +287,14 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, creditReviewDetails.getBefImage(), creditReviewDetails));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(creditReviewDetails);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -329,7 +329,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_Temp", auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;

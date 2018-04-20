@@ -59,6 +59,7 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -82,6 +83,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -126,6 +128,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label label_CoreCustomerDialog_CustNationality;
 	protected Row row_EIDNumber;
 	protected Uppercasebox eidNumber;
+	protected Space space_EIDNumber;
 	protected Label label_CoreCustomerDialog_EIDNumber;
 	
 	private boolean isCountryBehrain = false;
@@ -139,6 +142,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private RelationshipOfficerService relationshipOfficerService;
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
+	private String isPANMandatory = "";
 	
 	/**
 	 * default constructor.<br>
@@ -177,6 +181,15 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doSetFieldProperties();
 
 		fillComboBox(custCtgType, "", PennantAppUtil.getcustCtgCodeList(), "");
+		
+		//As per mail below functionality added for Profectus 
+		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
+		if (StringUtils.equals("Y",isPANMandatory)) {
+			this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
+		}else{
+			this.space_EIDNumber.setSclass("");
+		}
+		
 		this.custCIF.setFocus(true);
 		this.custCPR.setMaxlength(9);
 		this.custCR1.setMaxlength(5);
@@ -225,6 +238,12 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 							PennantRegularExpressions.REGEX_PANNUMBER,true));
 				}
 			}
+		}
+		
+		//As per mail this changes for Profectus 
+		if(StringUtils.equals(isPANMandatory, "Y")){
+			this.eidNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
+					PennantRegularExpressions.REGEX_PANNUMBER,true));
 		}
 		logger.debug("Leaving");
 	}

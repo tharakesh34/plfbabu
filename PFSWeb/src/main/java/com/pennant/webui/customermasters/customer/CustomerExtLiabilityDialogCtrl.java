@@ -31,7 +31,8 @@
  ********************************************************************************************
  * 26-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
- *                                                                                          * 
+ * 19-04-2018       Vinay					 0.2        As per Profectus documnet 			*
+ * 														below fields are added 				* 	
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -51,11 +52,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -68,6 +72,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -77,10 +82,12 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -114,7 +121,21 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	protected CurrencyBox 	outStandingBal; 		
 	protected Intbox liabilitySeq;          	    
 	
-	
+	//###_0.2
+	protected CurrencyBox 	roi; 		
+	protected Intbox totalTenure;          	    
+	protected Intbox balanceTenure;          	    
+	protected Intbox noOfBounces;          	    
+	protected CurrencyBox 	pos; 		
+	protected CurrencyBox 	overdue; 		
+	protected Checkbox 	emiFoir; 		
+	protected Combobox 	source; 		
+	protected Combobox 	checkedBy; 		
+	protected Textbox 	securityDetail; 		
+	protected ExtendedCombobox 	endUseOfFunds; 			
+	protected ExtendedCombobox 	repayFrom; 			
+	private final List<ValueLabel>					sourceInfoList				= PennantStaticListUtil.getSourceInfoList();
+	private final List<ValueLabel>					trackCheckList				= PennantStaticListUtil.getTrackCheckList();
 	// not auto wired variables
 	private CustomerExtLiability customerExtLiability; // overHanded per parameter
 
@@ -289,6 +310,33 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.outStandingBal.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.outStandingBal.setScale(finFormatter);
 		
+		this.roi.setMandatory(true);
+		this.roi.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.roi.setScale(finFormatter);
+		
+		this.pos.setMandatory(true);
+		this.pos.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.pos.setScale(finFormatter);
+		
+		this.overdue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.overdue.setScale(finFormatter);
+		
+		this.endUseOfFunds.setMaxlength(8);
+		this.endUseOfFunds.setMandatoryStyle(true);
+		this.endUseOfFunds.setTextBoxWidth(116);
+		this.endUseOfFunds.setModuleName("LoanPurpose");
+		this.endUseOfFunds.setValueColumn("LoanPurposeCode");
+		this.endUseOfFunds.setDescColumn("LoanPurposeDesc");
+		this.endUseOfFunds.setValidateColumns(new String[] { "LoanPurposeCode" });
+		
+		this.repayFrom.setMaxlength(8);
+		this.repayFrom.setMandatoryStyle(true);
+		this.repayFrom.setTextBoxWidth(116);
+		this.repayFrom.setModuleName("BankDetail");
+		this.repayFrom.setValueColumn("BankCode");
+		this.repayFrom.setDescColumn("BankName");
+		this.repayFrom.setValidateColumns(new String[] { "BankCode" });
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -459,10 +507,25 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.originalAmount.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getOriginalAmount(),finFormatter));
 		this.installmentAmount.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getInstalmentAmount(),finFormatter));
 		this.outStandingBal.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getOutStandingBal(),finFormatter));
-
+		
 		this.custCIF.setValue(StringUtils.trimToEmpty(aCustomerExtLiability.getLovDescCustCIF()));
 		this.custShrtName.setValue(StringUtils.trimToEmpty(aCustomerExtLiability.getLovDescCustShrtName()));
 
+		//###_0.2
+		this.roi.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getRoi(),finFormatter));
+		this.pos.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getPos(),finFormatter));
+		this.overdue.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getOverdue(),finFormatter));
+		this.totalTenure.setValue(aCustomerExtLiability.getTenure());
+		this.balanceTenure.setValue(aCustomerExtLiability.getTenureBal());
+		this.noOfBounces.setValue(aCustomerExtLiability.getBounceNo());
+		this.emiFoir.setChecked(aCustomerExtLiability.isEmiCnsdrForFOIR());
+		this.securityDetail.setValue(aCustomerExtLiability.getSecurityDetail());
+		this.endUseOfFunds.setValue(aCustomerExtLiability.getEndUseOfFunds());
+		this.endUseOfFunds.setDescription(aCustomerExtLiability.getLoanpurposedesc());
+		this.repayFrom.setValue(aCustomerExtLiability.getRepayFrom());
+		this.repayFrom.setDescription(aCustomerExtLiability.getLovdescrepayfrom());
+		fillComboBox(this.source, aCustomerExtLiability.getSource(), sourceInfoList, "");
+		fillComboBox(this.checkedBy, aCustomerExtLiability.getCheckedBy(), trackCheckList, "");
 		
 		this.recordStatus.setValue(aCustomerExtLiability.getRecordStatus());
 		logger.debug("Leaving");
@@ -539,14 +602,89 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			wve.add(we);
 		}
 
+		//###_0.2
+		try {
+			aCustomerExtLiability.setRoi(PennantAppUtil.unFormateAmount(this.roi.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aCustomerExtLiability.setPos(PennantAppUtil.unFormateAmount(this.pos.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setOverdue(PennantAppUtil.unFormateAmount(this.overdue.getValidateValue(),finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setTenure(this.totalTenure.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setTenureBal(this.balanceTenure.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setBounceNo(this.noOfBounces.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setEmiCnsdrForFOIR(this.emiFoir.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (getComboboxValue(this.source).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.source, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_CustomerExtLiabilityDialog_Source.value") }));
+			}
+			aCustomerExtLiability.setSource(this.source.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (getComboboxValue(this.checkedBy).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.checkedBy, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_CustomerExtLiabilityDialog_CheckedBy.value") }));
+			}
+			aCustomerExtLiability.setCheckedBy(this.checkedBy.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setSecurityDetail(this.securityDetail.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setEndUseOfFunds(this.endUseOfFunds.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerExtLiability.setRepayFrom(this.repayFrom.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
+		boolean focus = false;
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
+				Component component = wve.get(i).getComponent();
+				if(!focus){
+					focus = setComponentFocus(component);
+				}
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -624,6 +762,19 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.liabilitySeq.setReadonly(true);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
+			
+			this.roi.setReadonly(true);	
+			this.totalTenure.setReadonly(true);          	    
+			this.balanceTenure.setReadonly(true);          	    
+			this.noOfBounces.setReadonly(true);          	    
+			this.pos.setReadonly(true); 		
+			this.overdue.setReadonly(true); 		
+			this.emiFoir.setDisabled(true); 		
+			this.source.setReadonly(true); 		
+			this.checkedBy.setReadonly(true); 		
+			this.securityDetail.setReadonly(true); 		
+			this.endUseOfFunds.setReadonly(true); 			
+			this.repayFrom.setReadonly(true); 
 		}
 	}
 
@@ -649,6 +800,34 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (!this.outStandingBal.isDisabled()) {
 			this.outStandingBal.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_OutStandingBal.value"), 0, true, false));
 		}
+		//###_0.2
+		if (!this.pos.isDisabled()) {
+			this.pos.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_POS.value"), 0, true, false));
+		}
+		if (!this.roi.isDisabled()) {
+			this.roi.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_ROI.value"), 0, true, false));
+		}
+		if (!this.overdue.isDisabled()) {
+			this.overdue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_Overdue.value"), 0, false, false));
+		}
+		if (!this.totalTenure.isDisabled()) {
+			this.totalTenure.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_TotalTenure.value"), true, false));
+		}
+		if (!this.balanceTenure.isDisabled()) {
+			this.balanceTenure.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_BalanceTenure.value"), true, false));
+		}
+		if (!this.noOfBounces.isDisabled()) {
+			this.noOfBounces.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_NoOfBounces.value"), true, false));
+		}
+		if (!this.source.isReadonly()) {
+			this.source.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_Source.value"),null,true));
+		}
+		if (!this.checkedBy.isReadonly()) {
+			this.checkedBy.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_CheckedBy.value"),null,true));
+		}
+		if (!this.securityDetail.isReadonly()) {
+			this.securityDetail.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_SecurityDetail.value"), null, false, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -673,6 +852,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (!this.finType.isReadonly()) {
 			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_finType.value"),null,true,true));
 		}
+		if (!this.endUseOfFunds.isReadonly()) {
+			this.endUseOfFunds.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_EndUseOfFunds.value"), null, true, true));
+		}
+		if (!this.repayFrom.isReadonly()) {
+			this.repayFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_RepayFrom.value"), null, true, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -686,6 +871,18 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.originalAmount.setConstraint("");
 		this.installmentAmount.setConstraint("");
 		this.outStandingBal.setConstraint("");
+		
+		this.roi.setConstraint("");
+		this.totalTenure.setConstraint("");    	    
+		this.balanceTenure.setConstraint("");    	    
+		this.noOfBounces.setConstraint("");    	    
+		this.pos.setConstraint(""); 		
+		this.overdue.setConstraint(""); 		
+		this.source.setConstraint(""); 		
+		this.checkedBy.setConstraint(""); 		
+		this.securityDetail.setConstraint(""); 		
+		this.endUseOfFunds.setConstraint(""); 			
+		this.repayFrom.setConstraint(""); 	
 		logger.debug("Leaving");
 	}
 
@@ -702,6 +899,18 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.originalAmount.setErrorMessage("");
 		this.installmentAmount.setErrorMessage("");
 		this.outStandingBal.setErrorMessage("");
+		
+		this.roi.setErrorMessage("");
+		this.totalTenure.setErrorMessage("");    	    
+		this.balanceTenure.setErrorMessage("");    	    
+		this.noOfBounces.setErrorMessage("");    	    
+		this.pos.setErrorMessage(""); 		
+		this.overdue.setErrorMessage(""); 		
+		this.source.setErrorMessage(""); 		
+		this.checkedBy.setErrorMessage(""); 		
+		this.securityDetail.setErrorMessage(""); 		
+		this.endUseOfFunds.setErrorMessage(""); 			
+		this.repayFrom.setErrorMessage(""); 	
 		logger.debug("Leaving");
 	}
 
@@ -784,6 +993,20 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.installmentAmount.setReadonly(isReadOnly("CustomerExtLiabilityDialog_installmentAmount"));
 		this.outStandingBal.setReadonly(isReadOnly("CustomerExtLiabilityDialog_outStandingBal"));
 
+		this.roi.setReadonly(isReadOnly("CustomerExtLiabilityDialog_ROI"));	
+		this.totalTenure.setReadonly(isReadOnly("CustomerExtLiabilityDialog_TotalTenure"));          	    
+		this.balanceTenure.setReadonly(isReadOnly("CustomerExtLiabilityDialog_BalanceTenure"));          	    
+		this.noOfBounces.setReadonly(isReadOnly("CustomerExtLiabilityDialog_NoOfBounces"));          	    
+		this.pos.setReadonly(isReadOnly("CustomerExtLiabilityDialog_POS")); 		
+		this.overdue.setReadonly(isReadOnly("CustomerExtLiabilityDialog_Overdue")); 		
+		this.emiFoir.setDisabled(isReadOnly("CustomerExtLiabilityDialog_EMIFoir")); 		
+		this.source.setReadonly(isReadOnly("CustomerExtLiabilityDialog_Source")); 	
+		this.source.setDisabled(isReadOnly("CustomerExtLiabilityDialog_Source")); 	
+		this.checkedBy.setReadonly(isReadOnly("CustomerExtLiabilityDialog_CheckedBy")); 		
+		this.checkedBy.setDisabled(isReadOnly("CustomerExtLiabilityDialog_CheckedBy")); 		
+		this.securityDetail.setReadonly(isReadOnly("CustomerExtLiabilityDialog_SecurityDetail")); 		
+		this.endUseOfFunds.setReadonly(isReadOnly("CustomerExtLiabilityDialog_EndUseOfFunds")); 			
+		this.repayFrom.setReadonly(isReadOnly("CustomerExtLiabilityDialog_RepayFrom")); 
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -842,6 +1065,20 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.installmentAmount.setReadonly(true);
 		this.originalAmount.setReadonly(true);
 		this.liabilitySeq.setReadonly(true);
+		
+		this.roi.setReadonly(true);	
+		this.totalTenure.setReadonly(true);          	    
+		this.balanceTenure.setReadonly(true);          	    
+		this.noOfBounces.setReadonly(true);          	    
+		this.pos.setReadonly(true); 		
+		this.overdue.setReadonly(true); 		
+		this.emiFoir.setDisabled(true); 		
+		this.source.setReadonly(true); 		
+		this.checkedBy.setReadonly(true); 		
+		this.securityDetail.setReadonly(true); 		
+		this.endUseOfFunds.setReadonly(true); 			
+		this.repayFrom.setReadonly(true); 	
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -870,6 +1107,19 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.installmentAmount.setValue("");
 		this.outStandingBal.setValue("");
 		this.finType.setDescription("");
+		
+		this.roi.setValue("");	
+		this.totalTenure.setValue(0);          	    
+		this.balanceTenure.setValue(0);          	    
+		this.noOfBounces.setValue(0);          	    
+		this.pos.setValue(""); 		
+		this.overdue.setValue(""); 		
+		this.source.setValue(""); 		
+		this.checkedBy.setValue(""); 		
+		this.securityDetail.setValue(""); 		
+		this.endUseOfFunds.setValue(""); 			
+		this.repayFrom.setValue(""); 
+		
 		logger.debug("Leaving");
 	}
 

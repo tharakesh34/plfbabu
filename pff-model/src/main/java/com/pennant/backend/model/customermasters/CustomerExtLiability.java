@@ -49,6 +49,22 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String lovDescCustShrtName;
 	private String sourceId;
 	
+	//As per Profectus documnet below fields added
+	private BigDecimal roi = BigDecimal.ZERO;
+	private int tenure;
+	private int tenureBal;
+	private int bounceNo;
+	private BigDecimal pos = BigDecimal.ZERO;
+	private BigDecimal overdue = BigDecimal.ZERO;
+	private boolean emiCnsdrForFOIR;
+	private String source;
+	private String checkedBy;
+	private String securityDetail;
+	private String endUseOfFunds;
+	private String repayFrom;
+	private String loanpurposedesc;
+	private String lovdescrepayfrom;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -65,6 +81,8 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 		excludeFields.add("sourceId");
+		excludeFields.add("lovdescrepayfrom");
+		excludeFields.add("loanpurposedesc");
 		return excludeFields;
 	}
 	
@@ -227,5 +245,116 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		this.sourceId = sourceId;
 	}
 
-	
+	public BigDecimal getRoi() {
+		return roi;
+	}
+
+	public void setRoi(BigDecimal roi) {
+		this.roi = roi;
+	}
+
+	public int getTenure() {
+		return tenure;
+	}
+
+	public void setTenure(int tenure) {
+		this.tenure = tenure;
+	}
+
+	public int getTenureBal() {
+		return tenureBal;
+	}
+
+	public void setTenureBal(int tenureBal) {
+		this.tenureBal = tenureBal;
+	}
+
+	public int getBounceNo() {
+		return bounceNo;
+	}
+
+	public void setBounceNo(int bounceNo) {
+		this.bounceNo = bounceNo;
+	}
+
+	public BigDecimal getPos() {
+		return pos;
+	}
+
+	public void setPos(BigDecimal pos) {
+		this.pos = pos;
+	}
+
+	public BigDecimal getOverdue() {
+		return overdue;
+	}
+
+	public void setOverdue(BigDecimal overdue) {
+		this.overdue = overdue;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getCheckedBy() {
+		return checkedBy;
+	}
+
+	public void setCheckedBy(String checkedBy) {
+		this.checkedBy = checkedBy;
+	}
+
+	public String getSecurityDetail() {
+		return securityDetail;
+	}
+
+	public void setSecurityDetail(String securityDetail) {
+		this.securityDetail = securityDetail;
+	}
+
+	public String getEndUseOfFunds() {
+		return endUseOfFunds;
+	}
+
+	public void setEndUseOfFunds(String endUseOfFunds) {
+		this.endUseOfFunds = endUseOfFunds;
+	}
+
+	public String getRepayFrom() {
+		return repayFrom;
+	}
+
+	public void setRepayFrom(String repayFrom) {
+		this.repayFrom = repayFrom;
+	}
+
+	public String getLovdescrepayfrom() {
+		return lovdescrepayfrom;
+	}
+
+	public void setLovdescrepayfrom(String lovdescrepayfrom) {
+		this.lovdescrepayfrom = lovdescrepayfrom;
+	}
+
+	public String getLoanpurposedesc() {
+		return loanpurposedesc;
+	}
+
+	public void setLoanpurposedesc(String loanpurposedesc) {
+		this.loanpurposedesc = loanpurposedesc;
+	}
+
+	public boolean isEmiCnsdrForFOIR() {
+		return emiCnsdrForFOIR;
+	}
+
+	public void setEmiCnsdrForFOIR(boolean emiCnsdrForFOIR) {
+		this.emiCnsdrForFOIR = emiCnsdrForFOIR;
+	}
+
 }

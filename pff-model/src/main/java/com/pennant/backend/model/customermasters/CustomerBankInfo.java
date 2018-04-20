@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.customermasters;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -87,6 +88,26 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  
 	@XmlElement
 	private boolean salaryAccount;
 	private String sourceId;
+	
+	//As per Profectus documnet below fields added
+	private int creditTranNo;
+	private BigDecimal creditTranAmt = BigDecimal.ZERO;
+	private BigDecimal creditTranAvg = BigDecimal.ZERO;
+	private int debitTranNo;
+	private BigDecimal debitTranAmt = BigDecimal.ZERO;
+	private int cashDepositNo;
+	private BigDecimal cashDepositAmt = BigDecimal.ZERO;
+	private int cashWithdrawalNo;
+	private BigDecimal cashWithdrawalAmt = BigDecimal.ZERO;
+	private int chqDepositNo;
+	private BigDecimal chqDepositAmt = BigDecimal.ZERO;
+	private int chqIssueNo;
+	private BigDecimal chqIssueAmt = BigDecimal.ZERO;
+	private int inwardChqBounceNo;
+	private int outwardChqBounceNo;
+	private BigDecimal eodBalMin = BigDecimal.ZERO;
+	private BigDecimal eodBalMax = BigDecimal.ZERO;
+	private BigDecimal eodBalAvg = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -260,4 +281,149 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
+
+	public int getCreditTranNo() {
+		return creditTranNo;
+	}
+
+	public void setCreditTranNo(int creditTranNo) {
+		this.creditTranNo = creditTranNo;
+	}
+
+	public BigDecimal getCreditTranAmt() {
+		return creditTranAmt;
+	}
+
+	public void setCreditTranAmt(BigDecimal creditTranAmt) {
+		this.creditTranAmt = creditTranAmt;
+	}
+
+	public BigDecimal getCreditTranAvg() {
+		return creditTranAvg;
+	}
+
+	public void setCreditTranAvg(BigDecimal creditTranAvg) {
+		this.creditTranAvg = creditTranAvg;
+	}
+
+	public int getDebitTranNo() {
+		return debitTranNo;
+	}
+
+	public void setDebitTranNo(int debitTranNo) {
+		this.debitTranNo = debitTranNo;
+	}
+
+	public BigDecimal getDebitTranAmt() {
+		return debitTranAmt;
+	}
+
+	public void setDebitTranAmt(BigDecimal debitTranAmt) {
+		this.debitTranAmt = debitTranAmt;
+	}
+
+	public int getCashDepositNo() {
+		return cashDepositNo;
+	}
+
+	public void setCashDepositNo(int cashDepositNo) {
+		this.cashDepositNo = cashDepositNo;
+	}
+
+	public BigDecimal getCashDepositAmt() {
+		return cashDepositAmt;
+	}
+
+	public void setCashDepositAmt(BigDecimal cashDepositAmt) {
+		this.cashDepositAmt = cashDepositAmt;
+	}
+
+	public int getCashWithdrawalNo() {
+		return cashWithdrawalNo;
+	}
+
+	public void setCashWithdrawalNo(int cashWithdrawalNo) {
+		this.cashWithdrawalNo = cashWithdrawalNo;
+	}
+
+	public BigDecimal getCashWithdrawalAmt() {
+		return cashWithdrawalAmt;
+	}
+
+	public void setCashWithdrawalAmt(BigDecimal cashWithdrawalAmt) {
+		this.cashWithdrawalAmt = cashWithdrawalAmt;
+	}
+
+	public int getChqDepositNo() {
+		return chqDepositNo;
+	}
+
+	public void setChqDepositNo(int chqDepositNo) {
+		this.chqDepositNo = chqDepositNo;
+	}
+
+	public BigDecimal getChqDepositAmt() {
+		return chqDepositAmt;
+	}
+
+	public void setChqDepositAmt(BigDecimal chqDepositAmt) {
+		this.chqDepositAmt = chqDepositAmt;
+	}
+
+	public int getChqIssueNo() {
+		return chqIssueNo;
+	}
+
+	public void setChqIssueNo(int chqIssueNo) {
+		this.chqIssueNo = chqIssueNo;
+	}
+
+	public BigDecimal getChqIssueAmt() {
+		return chqIssueAmt;
+	}
+
+	public void setChqIssueAmt(BigDecimal chqIssueAmt) {
+		this.chqIssueAmt = chqIssueAmt;
+	}
+
+	public int getInwardChqBounceNo() {
+		return inwardChqBounceNo;
+	}
+
+	public void setInwardChqBounceNo(int inwardChqBounceNo) {
+		this.inwardChqBounceNo = inwardChqBounceNo;
+	}
+
+	public int getOutwardChqBounceNo() {
+		return outwardChqBounceNo;
+	}
+
+	public void setOutwardChqBounceNo(int outwardChqBounceNo) {
+		this.outwardChqBounceNo = outwardChqBounceNo;
+	}
+
+	public BigDecimal getEodBalMin() {
+		return eodBalMin;
+	}
+
+	public void setEodBalMin(BigDecimal eodBalMin) {
+		this.eodBalMin = eodBalMin;
+	}
+
+	public BigDecimal getEodBalMax() {
+		return eodBalMax;
+	}
+
+	public void setEodBalMax(BigDecimal eodBalMax) {
+		this.eodBalMax = eodBalMax;
+	}
+
+	public BigDecimal getEodBalAvg() {
+		return eodBalAvg;
+	}
+
+	public void setEodBalAvg(BigDecimal eodBalAvg) {
+		this.eodBalAvg = eodBalAvg;
+	}
+	
 }

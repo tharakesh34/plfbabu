@@ -62,6 +62,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.security.core.service.UserService;
@@ -1320,4 +1321,73 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/ActivityLog.zul", window, arg);
 	}
 	
+	/**
+	 * Set Focus Component true when multiple group boxes  
+	 * @param component
+	 * @return
+	 */
+	protected boolean setComponentFocus(Component component){
+		logger.debug("Entering");
+
+		if(!(component instanceof Button)){
+			if(component instanceof CurrencyBox){
+				CurrencyBox ccyBox = (CurrencyBox)component;
+				ccyBox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Textbox){
+				Textbox textbox = (Textbox)component;
+				textbox.setFocus(true);
+				return true;
+			}
+			if(component instanceof ExtendedCombobox){
+				ExtendedCombobox extendedCombobox = (ExtendedCombobox)component;
+				extendedCombobox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Intbox){
+				Intbox intbox = (Intbox)component;
+				intbox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Combobox){
+				Combobox combobox = (Combobox)component;
+				combobox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Uppercasebox){
+				Uppercasebox uppercasebox = (Uppercasebox)component;
+				uppercasebox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Longbox){
+				Longbox longbox = (Longbox)component;
+				longbox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Decimalbox){
+				Decimalbox decimalbox = (Decimalbox)component;
+				decimalbox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Datebox){
+				Datebox datebox = (Datebox)component;
+				datebox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Checkbox){
+				Checkbox checkbox = (Checkbox)component;
+				checkbox.setFocus(true);
+				return true;
+			}
+			if(component instanceof Radiogroup){
+				Radiogroup radiogroup = (Radiogroup)component;
+				radiogroup.setFocus(true);
+				return true;
+			}
+		}
+		logger.debug("Leaving");
+		return false;
+	}
+
 }

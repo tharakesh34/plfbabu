@@ -102,8 +102,10 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
+		selectSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
+		selectSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,loanpurposedesc,lovdescrepayfrom,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -139,8 +141,10 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
+		selectSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
+		selectSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,loanpurposedesc,lovdescrepayfrom,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -239,9 +243,13 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		insertSql.append(" Insert Into CustomerExtLiability");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustID, LiabilitySeq, FinDate, FinType, BankName, OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus," );
+		insertSql.append(" Roi,Tenure,TenureBal,BounceNo,Pos,Overdue,EmiCnsdrForFOIR, ");
+		insertSql.append(" Source,CheckedBy,SecurityDetail,EndUseOfFunds,RepayFrom , ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustID, :LiabilitySeq, :FinDate, :FinType, :BankName, :OriginalAmount, :InstalmentAmount, :OutStandingBal, :FinStatus,");
+		insertSql.append(" :Roi,:Tenure,:TenureBal,:BounceNo,:Pos,:Overdue,:EmiCnsdrForFOIR, ");
+		insertSql.append(" :Source,:CheckedBy,:SecurityDetail,:EndUseOfFunds,:RepayFrom , ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -275,6 +283,9 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set FinDate = :FinDate, FinType = :FinType, BankName = :BankName, OriginalAmount = :OriginalAmount,");
 		updateSql.append(" InstalmentAmount = :InstalmentAmount, OutStandingBal = :OutStandingBal, FinStatus = :FinStatus,");
+		updateSql.append(" Roi = :Roi,Tenure = :Tenure,TenureBal = :TenureBal,BounceNo = :BounceNo,Pos = :Pos,");
+		updateSql.append("Overdue = :Overdue,EmiCnsdrForFOIR = :EmiCnsdrForFOIR, Source = :Source,");
+		updateSql.append("CheckedBy = :CheckedBy,SecurityDetail = :SecurityDetail,EndUseOfFunds = :EndUseOfFunds,RepayFrom = :RepayFrom , ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");

@@ -64,7 +64,7 @@
 					<grid sclass="GridLayoutNoBorder"
 						fixedLayout="true">
 						<columns>
-							<column width="150px" />
+							<column width="220px" />
 							<column />
 						</columns>
 						<rows>
@@ -117,6 +117,140 @@
 									<space spacing="2px" />
 									<checkbox id="salaryAccount"/>
 								</hbox>
+							</row>
+							
+							<!-- As per Profectus documnet below fields are added -->
+							<row id="row_creditTranNo">
+								<label
+									id="label_CustomerBankInfoDialog_CreditTranNo"
+									value="${c:l('label_CustomerBankInfoDialog_CreditTranNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="creditTranNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_creditTranAmt">
+								<label
+									id="label_CustomerBankInfoDialog_CreditTranAmt"
+									value="${c:l('label_CustomerBankInfoDialog_CreditTranAmt.value')}" />
+								<currencyBox id="creditTranAmt" />
+							</row>
+							<row id="row_creditTranAvg">
+								<label
+									id="label_CustomerBankInfoDialog_CreditTranAvg"
+									value="${c:l('label_CustomerBankInfoDialog_CreditTranAvg.value')}" />
+								<currencyBox id="creditTranAvg" />
+							</row>
+							<row id="row_debitTranNo">
+								<label
+									id="label_CustomerBankInfoDialog_DebitTranNo"
+									value="${c:l('label_CustomerBankInfoDialog_DebitTranNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="debitTranNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_debitTranAmt">
+								<label
+									id="label_CustomerBankInfoDialog_DebitTranAmt"
+									value="${c:l('label_CustomerBankInfoDialog_DebitTranAmt.value')}" />
+								<currencyBox id="debitTranAmt" />
+							</row>
+							<row id="row_cashDepositNo">
+								<label
+									id="label_CustomerBankInfoDialog_CashDepositNo"
+									value="${c:l('label_CustomerBankInfoDialog_CashDepositNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="cashDepositNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_cashDepositAmt">
+								<label
+									id="label_CustomerBankInfoDialog_CashDepositAmt"
+									value="${c:l('label_CustomerBankInfoDialog_CashDepositAmt.value')}" />
+								<currencyBox id="cashDepositAmt" />
+							</row>
+							<row id="row_cashWithdrawalNo">
+								<label
+									id="label_CustomerBankInfoDialog_CashWithdrawalNo"
+									value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="cashWithdrawalNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_cashWithdrawalAmt">
+								<label
+									id="label_CustomerBankInfoDialog_CashWithdrawalAmt"
+									value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalAmt.value')}" />
+								<currencyBox id="cashWithdrawalAmt" />
+							</row>
+							<row id="row_chqDepositNo">
+								<label
+									id="label_CustomerBankInfoDialog_ChqDepositNo"
+									value="${c:l('label_CustomerBankInfoDialog_ChqDepositNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="chqDepositNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_chqDepositAmt">
+								<label
+									id="label_CustomerBankInfoDialog_ChqDepositAmt"
+									value="${c:l('label_CustomerBankInfoDialog_ChqDepositAmt.value')}" />
+								<currencyBox id="chqDepositAmt" />
+							</row>
+							<row id="row_chqIssueNo">
+								<label
+									id="label_CustomerBankInfoDialog_ChqIssueNo"
+									value="${c:l('label_CustomerBankInfoDialog_ChqIssueNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="chqIssueNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_chqIssueAmt">
+								<label
+									id="label_CustomerBankInfoDialog_ChqIssueAmt"
+									value="${c:l('label_CustomerBankInfoDialog_ChqIssueAmt.value')}" />
+								<currencyBox id="chqIssueAmt" />
+							</row>
+							<row id="row_inwardChqBounceNo">
+								<label
+									id="label_CustomerBankInfoDialog_InwardChqBounceNo"
+									value="${c:l('label_CustomerBankInfoDialog_InwardChqBounceNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="inwardChqBounceNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_outwardChqBounceNo">
+								<label
+									id="label_CustomerBankInfoDialog_OutwardChqBounceNo"
+									value="${c:l('label_CustomerBankInfoDialog_OutwardChqBounceNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="outwardChqBounceNo" style="text-align:right"/>
+								</hbox>
+							</row>
+							<row id="row_eodBalMin">
+								<label
+									id="label_CustomerBankInfoDialog_EodBalMin"
+									value="${c:l('label_CustomerBankInfoDialog_EodBalMin.value')}" />
+								<currencyBox id="eodBalMin" />
+							</row>
+							<row id="row_eodBalMax">
+								<label
+									id="label_CustomerBankInfoDialog_EodBalMax"
+									value="${c:l('label_CustomerBankInfoDialog_EodBalMax.value')}" />
+								<currencyBox id="eodBalMax" />
+							</row>
+							<row id="row_eodBalAvg">
+								<label
+									id="label_CustomerBankInfoDialog_EodBalAvg"
+									value="${c:l('label_CustomerBankInfoDialog_EodBalAvg.value')}" />
+								<currencyBox id="eodBalAvg" />
 							</row>
 						</rows>
 					</grid>
