@@ -1488,4 +1488,23 @@
 	   </sql>
 	  </changeSet>
 	  
+	  <changeSet id="18" author="Durgaprasad G">
+		  <sql>
+		  	 <![CDATA[
+			delete from REPORTLIST Where Code = 'TechnicalVerification';
+			delete from REPORTLIST Where Code = 'FieldInvestigation';
+			
+			 INSERT INTO REPORTLIST  
+			 Values ('TechnicalVerification','TechnicalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label',
+			 'custCif,collateralType,collateralRef,keyReference','String,String,String,String',' ','ReportList04','Technical Verification','Technical Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+			 
+			
+			 INSERT INTO REPORTLIST  
+			 Values ('FieldInvestigation','FieldInvestigation',
+			 'listheader_CIF.label,listheader_AddressType.label,listheader_PinCode.label,listheader_LoanReference.label,listheader_Agency.label,listheader_VerificationDate.label',
+			 'cif,addressType,zipCode,keyReference,agencyName,date','String,String,String,String,String,Date',' ','ReportList06','Field Investigation','Field Investigation',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		 	 ]]>
+		   </sql>
+	  </changeSet>
+	  
 </databaseChangeLog>
