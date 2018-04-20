@@ -1189,7 +1189,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			ExtendedFieldDetail extDetails = entryset.getKey();
 			WrongValueException value = entryset.getValue();
-			if (!isRootComponentVisible(nonInputElements, extDetails)) {
+			if (getUserWorkspace() != null && !isRootComponentVisible(nonInputElements, extDetails)) {
 				map.remove(extDetails);
 				continue;
 			}
