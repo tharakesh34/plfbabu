@@ -1019,13 +1019,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceMain financeMain, FinanceDetail financeDetail) {
+	public void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail, String branchCode) {
 		logger.debug(Literal.ENTERING);
 		
+		 FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finCcy = financeMain.getFinCcy();
 		int formatter = CurrencyUtil.getFormat(finCcy);
 		
-		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail);
+		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail, branchCode);
 		BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		
@@ -1068,11 +1069,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceMain financeMain, FinanceDetail financeDetail) {
+	public void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail, String branchCode) {
 		logger.debug(Literal.ENTERING);
 		
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finCcy = financeMain.getFinCcy();
-		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail);
+		HashMap<String, Object> gstExecutionMap = prepareGstMappingDetails(financeDetail, branchCode);
 		BigDecimal gstPercentage = actualGSTFees(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(finCcy);
@@ -1300,7 +1302,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setNetTGST(netTGST);
 				
 				//Actual Amounts
-				BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
+				//BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
 				BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(finFeeDetail.getWaivedAmount()), tgstPercentage, financeMain);
 				actualGst = CalculationUtil.roundAmount(actualGst, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 				
@@ -1411,62 +1413,101 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 	
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail) {
+	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode) {
 		
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String fromBranchCode = financeMain.getFinBranch();
 		boolean gstExempted = false;
-		if (fromBranchCode == null) {
-			fromBranchCode = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-		}
 		
-		Branch fromBranch = this.branchService.getApprovedBranchById(fromBranchCode);
-		Province fromState = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
-		
-		if (fromState != null) {
-			gstExecutionMap.put("fromState", fromState.getCPProvince());
-			gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-			gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
-		}
-		
-		String toStateCode = "";
-		String toCountryCode = "";
-		FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
-		
-		if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) 
-				&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())
-				&& StringUtils.isNotBlank(finTaxDetail.getProvince())
-				&& StringUtils.isNotBlank(finTaxDetail.getCountry())) {
-			toStateCode = finTaxDetail.getProvince();
-			toCountryCode = finTaxDetail.getCountry();
-			gstExempted = finTaxDetail.isTaxExempted();
-		} else {
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
-						toStateCode = customerAddres.getCustAddrProvince();
-						toCountryCode = customerAddres.getCustAddrCountry();
-						break;
+		if (financeDetail.getCustomerDetails() != null) {
+			if (fromBranchCode == null) {
+				fromBranchCode = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			}
+			
+			Branch fromBranch = this.branchService.getApprovedBranchById(fromBranchCode);
+			Province fromState = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
+			
+			if (fromState != null) {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
+			
+			String toStateCode = "";
+			String toCountryCode = "";
+			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
+			
+			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) 
+					&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())
+					&& StringUtils.isNotBlank(finTaxDetail.getProvince())
+					&& StringUtils.isNotBlank(finTaxDetail.getCountry())) {
+				toStateCode = finTaxDetail.getProvince();
+				toCountryCode = finTaxDetail.getCountry();
+				gstExempted = finTaxDetail.isTaxExempted();
+			} else {
+				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+							toStateCode = customerAddres.getCustAddrProvince();
+							toCountryCode = customerAddres.getCustAddrCountry();
+							break;
+						}
 					}
 				}
 			}
+			
+			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {	//TODO if toCountry is not available 
+				gstExecutionMap.put("toState", "");
+				gstExecutionMap.put("toUnionTerritory", 2);
+				gstExecutionMap.put("toStateGstExempted", "");
+			} else {
+				Province toState = this.provinceService.getApprovedProvinceById(toCountryCode, toStateCode);
+				gstExecutionMap.put("toState", toState.getCPProvince());
+				gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
+				gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+			}
+			
+			gstExecutionMap.put("gstExempted", gstExempted);
+			
+		} else if (StringUtils.isNotBlank(branchCode)) {
+			Branch fromBranch = this.branchService.getApprovedBranchById(branchCode);
+			Province fromState = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
+			
+			if (fromState != null) {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
+			
+			String toStateCode = "";
+			String toCountryCode = "";
+			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetails();
+			
+			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor()) 
+					&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())
+					&& StringUtils.isNotBlank(finTaxDetail.getProvince())
+					&& StringUtils.isNotBlank(finTaxDetail.getCountry())) {
+				toStateCode = finTaxDetail.getProvince();
+				toCountryCode = finTaxDetail.getCountry();
+				gstExempted = finTaxDetail.isTaxExempted();
+			}
+			
+			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {
+				gstExecutionMap.put("toState", fromState.getCPProvince());
+				gstExecutionMap.put("toUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("toStateGstExempted", fromState.isTaxExempted());
+			} else {
+				Province toState = this.provinceService.getApprovedProvinceById(toCountryCode, toStateCode);
+				gstExecutionMap.put("toState", toState.getCPProvince());
+				gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
+				gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+			}
+			
+			gstExecutionMap.put("gstExempted", gstExempted);
+			
 		}
-		
-		if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {	//TODO if toCountry is not available 
-			gstExecutionMap.put("toState", "");
-			gstExecutionMap.put("toUnionTerritory", 2);
-			gstExecutionMap.put("toStateGstExempted", "");
-		} else {
-			Province toState = this.provinceService.getApprovedProvinceById(toCountryCode, toStateCode);
-			gstExecutionMap.put("toState", toState.getCPProvince());
-			gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
-			gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
-		}
-		
-		
-		gstExecutionMap.put("gstExempted", gstExempted);
 		
 		return gstExecutionMap;
 	}

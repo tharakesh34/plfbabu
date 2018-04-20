@@ -118,4 +118,6 @@ public class ImplementationConstants {
 	public static final boolean	VARTUAL_DPD						= true;
 	public static final boolean	ALLOW_COSTOFFUNDS	           	= true;		// Cost Of Funds For Loan Type.
 	public static final boolean	ALLOW_IRRCODES	           		= false;	// IRR Codes For Loan Type.
+	
+	public static final boolean	ALLOW_FEES_RECALCULATE     		= true;		//Fees Recalculate always
 }

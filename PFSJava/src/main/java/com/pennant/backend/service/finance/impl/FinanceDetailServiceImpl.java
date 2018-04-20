@@ -9375,8 +9375,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail) {
-		return getFinFeeDetailService().prepareGstMappingDetails(financeDetail);
+	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode) {
+		return getFinFeeDetailService().prepareGstMappingDetails(financeDetail, branchCode);
 	}
 	 
 	public ReasonDetailDAO getReasonDetailDAO() {

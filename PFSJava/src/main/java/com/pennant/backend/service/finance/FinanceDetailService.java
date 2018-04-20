@@ -196,7 +196,7 @@ public interface FinanceDetailService {
 	DocumentDetails getDocumentDetails(long id, String type);
 	
 	//GST
-	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail);
+	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
 	
 	void setFIInitVerification(FinanceDetail financeDetail);
 

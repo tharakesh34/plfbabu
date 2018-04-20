@@ -11381,7 +11381,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 		
 		//GST Added		
-		HashMap<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail());
+		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		HashMap<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail(), branch);
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {
