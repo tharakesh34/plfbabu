@@ -176,7 +176,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 			String auditYears = "'" + dateAppCurrentYear + "','" + dateAppPrevYear + "','" + (dateAppPrevYear - 1)
 					+ "'";
 			String whereCondition = "AuditYear IN(" + auditYears + ")" + " OR " + " (AuditYear < "
-					+ (dateAppPrevYear - 1) + " AND RecordStatus <> 'Approved')";
+					+"'"+(dateAppPrevYear - 1)+"'" +")";
 			this.searchObject.addWhereClause(whereCondition);
 		}
 
@@ -208,6 +208,10 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		registerButton(button_CreditAppReviewList_CreditAppReviewSearch);
 
 		registerField("DetailId");
+		registerField("Division");
+		if ("CorpCreditAppReview".equals(moduleCode)) {
+			registerField("AuditPeriod");
+		}
 		registerField("lovDescCustCIF", listheader_CreditCustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF,
 				Operators.STRING);
 		registerField("lovDescCustShrtName", listheader_CreditCustShrtName, SortOrder.NONE, custName,

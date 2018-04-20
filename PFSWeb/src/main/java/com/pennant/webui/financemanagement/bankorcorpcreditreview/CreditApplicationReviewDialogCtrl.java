@@ -360,6 +360,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		this.btnCancel.setVisible(false);
 		this.btnCopyTo.setVisible(getUserWorkspace().isAllowed("button_CreditApplicationReviewDialog_btnCopyTo"));
 		this.custCIF.setReadonly(true);
+		this.btnPrint.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -771,7 +772,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			}
 			setLables();
 			setDialog(DialogType.EMBEDDED);
-			groupboxWf.setVisible(false); // For Present Requirement
+			//groupboxWf.setVisible(false); // For Present Requirement
 		} catch (UiException e){
 			logger.error("Exception: ", e);
 			this.window_CreditApplicationReviewDialog.onClose();
@@ -1641,7 +1642,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		//div.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 0 + "px");
 		div.setHeight("100%");
 		Listbox listbox = new Listbox();
-		listbox.setVflex(true);
+		//listbox.setVflex(true);
 		listbox.setSpan(true);
 
 		//listbox.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 0 + "px");
@@ -1827,7 +1828,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		div.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 0 + "px");
 		//div.setHeight("100%");
 		Listbox listbox = new Listbox();
-		listbox.setVflex(true);
+		//listbox.setVflex(true);
 		listbox.setSpan(true);
 
 		listbox.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 0 + "px");

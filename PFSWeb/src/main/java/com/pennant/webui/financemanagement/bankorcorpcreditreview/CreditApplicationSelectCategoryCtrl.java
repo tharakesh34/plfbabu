@@ -212,18 +212,13 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	
 	
 	private List<Filter> getFilterList() {
-		filterList = new ArrayList<Filter>();		
+		filterList = new ArrayList<Filter>();
 
-		if(this.custType.getSelectedIndex() == 1){
-			filterList.add(new Filter("CustCoreBank",  "", Filter.OP_EQUAL));
-		}else{
-			filterList.add(new Filter("CustCoreBank",  "", Filter.OP_NOT_EQUAL));
-		}
-		
-		if(StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_COMMERCIAL)){
-			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_SME, Filter.OP_EQUAL));
-		} else if(StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_CORPORATE)){
-			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_CORP, Filter.OP_EQUAL));
+		if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_COMMERCIAL)) {
+
+			filterList.add(new Filter("CustCtgCode", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL));
+		} else if (StringUtils.equals(creditReviewDetail.getDivision(), FacilityConstants.CREDIT_DIVISION_CORPORATE)) {
+			filterList.add(new Filter("CustCtgCode", PennantConstants.PFF_CUSTCTG_CORP, Filter.OP_EQUAL));
 		}
 
 		return filterList;

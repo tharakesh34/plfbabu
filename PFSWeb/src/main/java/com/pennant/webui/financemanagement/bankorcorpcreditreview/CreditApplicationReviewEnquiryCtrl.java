@@ -1130,7 +1130,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		listHead.setSizable(true);
 		
 		Listheader listheader_bankName = new Listheader();
-		listheader_bankName.setLabel(Labels.getLabel("listheader_bankName.value",new String[]{"Albaraka"}));
+		//listheader_bankName.setLabel(Labels.getLabel("listheader_bankName.value",new String[]{"Albaraka"}));
 		listheader_bankName.setStyle("font-size: 12px");
 		listheader_bankName.setHflex("min");
 		listheader_bankName.setParent(listHead);
