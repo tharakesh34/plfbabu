@@ -60,7 +60,6 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	protected Listheader listheader_LoanReference;
 
 	// checkRights
-	protected Button button_TechnicalVerificationList_NewTechnicalVerification;
 	protected Button button_TechnicalVerificationList_TechnicalVerificationSearch;
 
 	// Search Fields
@@ -123,9 +122,6 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_TechnicalVerificationList_NewTechnicalVerification);
-		registerButton(button_TechnicalVerificationList_NewTechnicalVerification, "button_TechnicalVerificationList_btnNew", false);
-
 		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
 		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType, Operators.STRING);
 		registerField("collateralRef", listheader_CollateralReference, SortOrder.ASC, collateralReference, sortOperator_CollateralReference, Operators.STRING);

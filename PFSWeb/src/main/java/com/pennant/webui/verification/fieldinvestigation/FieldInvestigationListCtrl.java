@@ -65,7 +65,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listheader listheader_VerificationDate;
 
 	// checkRights
-	protected Button button_FieldInvestigationList_NewFieldInvestigation;
 	protected Button button_FieldInvestigationList_FieldInvestigationSearch;
 
 	// Search Fields
@@ -128,8 +127,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 
 		// Register buttons and fields.
 		registerButton(button_FieldInvestigationList_FieldInvestigationSearch);
-		registerButton(button_FieldInvestigationList_NewFieldInvestigation, "button_FieldInvestigationList_btnNew",
-				false);
 
 		registerField("verificationid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
@@ -215,16 +212,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	public void onClick$btnRefresh(Event event) {
 		doReset();
 		search();
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_FieldInvestigationList_NewFieldInvestigation(Event event) {
 	}
 
 	/**
