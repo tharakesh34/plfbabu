@@ -433,6 +433,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		final Listitem item = this.listBoxTaxDetails.getSelectedItem();
 		if (item != null) {
 			final TaxDetail taxDetail = (TaxDetail) item.getAttribute("data");
+			
+			if (!StringUtils.trimToEmpty(taxDetail.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+				taxDetail.setNewRecord(false);
+			}
+			
 			if (StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
 					|| StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
