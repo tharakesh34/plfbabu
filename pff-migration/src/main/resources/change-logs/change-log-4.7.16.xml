@@ -764,5 +764,22 @@ UNION ALL
 									WHERE FinReference = T1.FinReference AND OriginationFee = T1.OriginationFee AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID)
 		</createView>
 	</changeSet>
+	<changeSet id="15" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('92006','EN','E','{0} is mandatory in the header.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('92007','EN','E','{0}  is invalid in header.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('92008','EN','E','{0} in header should be {1} format.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
