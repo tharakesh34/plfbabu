@@ -175,7 +175,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			Component container;
 			if (parentTag == null) {
 				container = processContainer(containerElement, this.tabpanel, isReadOnly);
-				if (getUserWorkspace() != null) {
+				if (!isReadOnly && getUserWorkspace() != null) {
 					doCheckContainerRights(container, containerElement);
 				}
 			} else {
@@ -185,7 +185,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				}
 				if (existting != null) {
 					container = processContainer(containerElement, existting, isReadOnly);
-					if (getUserWorkspace() != null) {
+					if (!isReadOnly && getUserWorkspace() != null) {
 						doCheckContainerRights(container, containerElement);
 					}
 				}
