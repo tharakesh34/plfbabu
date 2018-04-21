@@ -663,7 +663,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 			component.appendChild(comboitem);
 
-			if (selectedKey != null && StringUtils.equals((String) selectedKey, (String) property.getKey())) {
+			if (property.getKey().equals(selectedKey)) {
 				component.setSelectedItem(comboitem);
 			}
 		}

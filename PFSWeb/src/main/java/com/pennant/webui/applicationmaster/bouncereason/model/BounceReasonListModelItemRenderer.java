@@ -74,11 +74,11 @@ public class BounceReasonListModelItemRenderer implements ListitemRenderer<Bounc
 		Listcell lc;
 	  	lc = new Listcell(bounceReason.getBounceCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(bounceReason.getReasonType()),
-				PennantStaticListUtil.getReasonType()));
+		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getReasonType(),
+				bounceReason.getReasonType()));
 	  	lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(bounceReason.getCategory()),
-				PennantStaticListUtil.getCategoryType()));
+		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getCategoryType(),
+				bounceReason.getCategory()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(bounceReason.getReturnCode());
 		lc.setParent(item);

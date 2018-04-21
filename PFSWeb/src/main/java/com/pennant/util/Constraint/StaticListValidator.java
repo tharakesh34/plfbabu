@@ -50,29 +50,41 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 
 public class StaticListValidator implements Constraint{
 
-	List<ValueLabel> valueList;
+	List<?> valueList;
 	private String fieldParm="";
 
-	public StaticListValidator(List<ValueLabel> valueList,String fieldParm) {
+	public StaticListValidator(List<?> valueList, String fieldParm) {
 		this.valueList=valueList;	
 		setFieldParm(fieldParm);
 	}
-	
-	public void validate(Component comp, Object value) throws WrongValueException {
+
+	public void validate(Component comp, Object value) {
 
 		boolean validate=false;
 		
-		if (value ==null || ("").equals(value)){
+		if (value == null || "".equals(value)) {
 			validate =false;
 		}else{ 
 			for (int i = 0; i < this.valueList.size(); i++) {
-				if (value.equals(this.valueList.get(i).getLabel()) ){
-					validate =true;
-					break;
+				Object object = this.valueList.get(i);
+
+				if (object instanceof ValueLabel) {
+					if (value.equals(((ValueLabel) object).getLabel())) {
+						validate = true;
+						break;
+					}
+				} else if (object instanceof Property) {
+					if (value.equals(((Property) object).getValue())) {
+						validate = true;
+						break;
+					}
+				} else {
+					throw new IllegalArgumentException("Unsupported List.");
 				}	
 			} 
 		}

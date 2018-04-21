@@ -65,10 +65,10 @@ import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.applicationmaster.bouncereason.model.BounceReasonListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/BounceReason/BounceReasonList.zul file.
@@ -142,13 +142,15 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		registerButton(button_BounceReasonList_BounceReasonSearch);
 		registerButton(button_BounceReasonList_NewBounceReason, "button_BounceReasonList_NewBounceReason", true);
 		
-		fillComboBox(this.reasonType,"", PennantStaticListUtil.getReasonType(),"");
-		fillComboBox(this.category,"", PennantStaticListUtil.getCategoryType(),"");
+		fillList(reasonType, PennantStaticListUtil.getReasonType(), null);
+		fillList(category, PennantStaticListUtil.getCategoryType(), null);
 		
 		registerField("bounceID");
 		registerField("bounceCode", listheader_BounceCode, SortOrder.NONE, bounceCode, sortOperator_BounceCode, Operators.STRING);
-		registerField("reasonType", listheader_ReasonType, SortOrder.NONE, reasonType, sortOperator_ReasonType, Operators.STRING);
-		registerField("category", listheader_Category, SortOrder.NONE, category, sortOperator_Category, Operators.STRING);
+		registerField("reasonType", listheader_ReasonType, SortOrder.NONE, reasonType, sortOperator_ReasonType,
+				Operators.SIMPLE_NUMARIC);
+		registerField("category", listheader_Category, SortOrder.NONE, category, sortOperator_Category,
+				Operators.SIMPLE_NUMARIC);
 		registerField("reason");		
 		registerField("action");		
 		registerField("ruleID");		

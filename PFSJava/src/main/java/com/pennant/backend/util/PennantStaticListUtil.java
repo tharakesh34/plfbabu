@@ -194,8 +194,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
 	private static ArrayList<ValueLabel> ManualAdviseTypes;
-	private static ArrayList<ValueLabel> reasonTypeList;
-	private static ArrayList<ValueLabel> categoryTypeList;
+	private static List<Property> reasonTypeList;
+	private static List<Property> categoryTypeList;
 	private static ArrayList<ValueLabel> actionList;
 	private static ArrayList<ValueLabel> purposeList;
 	private static ArrayList<ValueLabel> presentmentExclusionList;
@@ -245,6 +245,16 @@ public class PennantStaticListUtil {
 				return list.get(i).getLabel();
 			}
 		}
+		return "";
+	}
+
+	public static String getPropertyValue(List<Property> properties, Object key) {
+		for (Property property : properties) {
+			if (property.getKey().equals(key)) {
+				return property.getValue();
+			}
+		}
+
 		return "";
 	}
 
@@ -2689,25 +2699,25 @@ public class PennantStaticListUtil {
 		}
 		return ManualAdviseTypes;
 	}
-	
-	public static ArrayList<ValueLabel> getReasonType(){
-	
-		if(reasonTypeList == null){
-			reasonTypeList = new ArrayList<ValueLabel>(2);
-			reasonTypeList.add(new ValueLabel("1",Labels.getLabel("label_CancelledCheq")));
-			reasonTypeList.add(new ValueLabel("2",Labels.getLabel("label_BouncedCheq")));
-			reasonTypeList.add(new ValueLabel("3",Labels.getLabel("label_Holdheq")));
+
+	public static List<Property> getReasonType() {
+		if (reasonTypeList == null) {
+			reasonTypeList = new ArrayList<>(3);
+			reasonTypeList.add(new Property(1, Labels.getLabel("label_CancelledCheq")));
+			reasonTypeList.add(new Property(2, Labels.getLabel("label_BouncedCheq")));
+			reasonTypeList.add(new Property(3, Labels.getLabel("label_Holdheq")));
 		}
+
 		return reasonTypeList;
 	}
-	
-	public static ArrayList<ValueLabel> getCategoryType(){
-		
-		if(categoryTypeList == null){
-			categoryTypeList = new ArrayList<ValueLabel>(2);
-			categoryTypeList.add(new ValueLabel("1",Labels.getLabel("label_Technical")));
-			categoryTypeList.add(new ValueLabel("2",Labels.getLabel("label_NonTechnical")));
+
+	public static List<Property> getCategoryType() {
+		if (categoryTypeList == null) {
+			categoryTypeList = new ArrayList<>(2);
+			categoryTypeList.add(new Property(1, Labels.getLabel("label_Technical")));
+			categoryTypeList.add(new Property(2, Labels.getLabel("label_NonTechnical")));
 		}
+
 		return categoryTypeList;
 	}
 

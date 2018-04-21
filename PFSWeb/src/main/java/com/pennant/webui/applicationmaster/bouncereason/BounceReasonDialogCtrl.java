@@ -60,6 +60,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -73,10 +74,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -106,8 +107,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	private transient BounceReasonListCtrl bounceReasonListCtrl; // overhanded per param
 	private transient BounceReasonService bounceReasonService;
 	
-	private List<ValueLabel> listReasonType=PennantStaticListUtil.getReasonType();
-	private List<ValueLabel> listCategory=PennantStaticListUtil.getCategoryType();
+	private List<Property> listReasonType = PennantStaticListUtil.getReasonType();
+	private List<Property> listCategory = PennantStaticListUtil.getCategoryType();
 	private List<ValueLabel> listAction=PennantStaticListUtil.getAction();
 
 	/**
@@ -338,8 +339,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.ENTERING);
 	
 			this.bounceCode.setValue(aBounceReason.getBounceCode());
-			fillComboBox(this.reasonType, String.valueOf(aBounceReason.getReasonType()), listReasonType,"");
-			fillComboBox(this.category, String.valueOf(aBounceReason.getCategory()), listCategory,"");
+		fillList(reasonType, listReasonType, aBounceReason.getReasonType());
+		fillList(category, listCategory, aBounceReason.getCategory());
 			this.reason.setValue(aBounceReason.getReason());
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
 			
