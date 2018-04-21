@@ -78,9 +78,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/financemanagement/PresentmentHeader/presentmentHeaderDialog.zul
@@ -334,8 +334,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 		
 		this.label_PresentmentReference.setValue(presentmentHeader.getReference());
-		this.label_PresentmentStatus.setValue(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentHeader.getStatus()),
-				PennantStaticListUtil.getPresentmentBatchStatusList()));
+		this.label_PresentmentStatus.setValue(PennantStaticListUtil.getPropertyValue(
+				PennantStaticListUtil.getPresentmentBatchStatusList(), presentmentHeader.getStatus()));
 		
 		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
 		boolean isApprove = "A".equals(moduleType);
