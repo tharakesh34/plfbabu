@@ -87,7 +87,7 @@
 								<listbox id="sortOperator_custGrpDesc"
 									width="43px" mold="select" rows="1" />
 								<textbox id="custGrpDesc" width="150px"
-									maxlength="8" />
+									maxlength="15" />
 
 							</row>
 							<row>
