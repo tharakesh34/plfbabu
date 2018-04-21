@@ -193,13 +193,13 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptModes;
 	private static ArrayList<ValueLabel> receiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
-	private static ArrayList<ValueLabel> ManualAdviseTypes;
+	private static  List<Property> ManualAdviseTypes;
 	private static List<Property> reasonTypeList;
 	private static List<Property> categoryTypeList;
 	private static ArrayList<ValueLabel> actionList;
 	private static ArrayList<ValueLabel> purposeList;
 	private static ArrayList<ValueLabel> presentmentExclusionList;
-	private static ArrayList<ValueLabel> presentmentBatchStatusList;
+	private static List<Property> presentmentBatchStatusList;
 	private static ArrayList<RoundingTarget> roundingTargetList;
 	private static ArrayList<ValueLabel> postingPurposeList;
 	private static ArrayList<ValueLabel> authTypes;
@@ -2691,11 +2691,11 @@ public class PennantStaticListUtil {
 		return allocationMethods;
 	}
 	
-	public static ArrayList<ValueLabel> getManualAdviseTypes(){
+	public static List<Property> getManualAdviseTypes(){
 		if(ManualAdviseTypes == null){
-			ManualAdviseTypes = new ArrayList<ValueLabel>(2);
-			ManualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE), Labels.getLabel("label_ManualAdvise_Receivable")));
-			ManualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE), Labels.getLabel("label_ManualAdvise_Payable")));
+			ManualAdviseTypes = new ArrayList<Property>(2);
+			ManualAdviseTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, Labels.getLabel("label_ManualAdvise_Receivable")));
+			ManualAdviseTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_PAYABLE, Labels.getLabel("label_ManualAdvise_Payable")));
 		}
 		return ManualAdviseTypes;
 	}
@@ -2743,14 +2743,14 @@ public class PennantStaticListUtil {
 	}
 	
 	
-	public static ArrayList<ValueLabel> getPresentmentBatchStatusList() {
+	public static List<Property> getPresentmentBatchStatusList() {
 		if (presentmentBatchStatusList == null) {
-			presentmentBatchStatusList = new ArrayList<ValueLabel>(5);
-			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_EXTRACT), Labels.getLabel("label_Presentment_Extract")));
-			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_BATCH_CREATED), Labels.getLabel("label_Presentment_Batch_Created")));
-			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_AWAITING_CONF), Labels.getLabel("label_Presentment_Awaiting_Conf")));
-			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_SEND_PRESENTMENT), Labels.getLabel("label_Presentment_Send_Represent")));
-			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_RECEIVED), Labels.getLabel("label_Presentment_Received")));
+			presentmentBatchStatusList = new ArrayList<Property>(5);
+			presentmentBatchStatusList.add(new Property(RepayConstants.PEXC_EXTRACT, Labels.getLabel("label_Presentment_Extract")));
+			presentmentBatchStatusList.add(new Property(RepayConstants.PEXC_BATCH_CREATED, Labels.getLabel("label_Presentment_Batch_Created")));
+			presentmentBatchStatusList.add(new Property(RepayConstants.PEXC_AWAITING_CONF, Labels.getLabel("label_Presentment_Awaiting_Conf")));
+			presentmentBatchStatusList.add(new Property(RepayConstants.PEXC_SEND_PRESENTMENT, Labels.getLabel("label_Presentment_Send_Represent")));
+			presentmentBatchStatusList.add(new Property(RepayConstants.PEXC_RECEIVED, Labels.getLabel("label_Presentment_Received")));
 		}
 		return presentmentBatchStatusList;
 	}
