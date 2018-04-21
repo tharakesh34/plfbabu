@@ -13,10 +13,7 @@ import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
-import org.zkoss.zk.ui.WrongValuesException;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -44,6 +41,7 @@ import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -56,7 +54,6 @@ public class ExtendedFieldCtrl {
 	private int								ccyFormat;
 	private int								tabHeight;
 	private boolean							isReadOnly	= false;
-	private Tab								parentTab;
 	private Tab								tab;
 	private boolean							isNewRecord	= false;
 	private Tabpanel						tabpanel;
@@ -181,38 +178,50 @@ public class ExtendedFieldCtrl {
 		if (errorList == null || errorList.isEmpty()) {
 			return;
 		}
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<ExtendedFieldDetail> notInputElements = new ArrayList<>();
+		HashMap<ExtendedFieldDetail, WrongValueException> wveMap = new HashMap<>();
+		List<Component> compList = new ArrayList<Component>();
+
+		for (ExtendedFieldDetail detail : extendedFieldHeader.getExtendedFieldDetails()) {
+			if (!detail.isInputElement()) {
+				notInputElements.add(detail);
+			}
+		}
+
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
 			if (tabpanel != null && tabpanel.getFellowIfAny("ad_" + error.getProperty()) != null) {
 				Component component = tabpanel.getFellowIfAny("ad_" + error.getProperty());
 				WrongValueException we = new WrongValueException(component, error.getValue());
-				wve.add(we);
-			}
-		}
-
-		if (wve.size() > 0) {
-			if (this.parentTab != null) {
-				this.parentTab.setSelected(true);
-			}
-			this.tab.setSelected(true);
-
-			logger.debug("Throwing occured Errors By using WrongValueException");
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = wve.get(i);
-				if (i == 0) {
-					Component comp = wvea[i].getComponent();
-					if (comp instanceof HtmlBasedComponent) {
-						Clients.scrollIntoView(comp);
-					}
+				ExtendedFieldDetail detail = getExtendedFieldByCompId(component.getId());
+				if (detail != null) {
+					wveMap.put(detail, we);
+					compList.add(component);
 				}
-				logger.debug(wvea[i]);
 			}
-			throw new WrongValuesException(wvea);
 		}
+		generator.showErrorDetails(wveMap, compList, notInputElements);
 	}
 
+	/**
+	 * Method to fetch the ExtemdedFieldDetails based on FieldName.
+	 * 
+	 * @param compId
+	 * @return
+	 */
+	public ExtendedFieldDetail getExtendedFieldByCompId(String compId) {
+		if (StringUtils.isNotBlank(compId) || compId.contains("ad_"))
+			if (extendedFieldHeader != null && !extendedFieldHeader.getExtendedFieldDetails().isEmpty()) {
+				String fieldName = compId.substring(3, compId.length());
+				for (ExtendedFieldDetail detail : extendedFieldHeader.getExtendedFieldDetails()) {
+					if (StringUtils.equalsIgnoreCase(fieldName, detail.getFieldName())) {
+						return detail;
+					}
+				}
+			}
+		return null;
+
+	}
 	/**
 	 * Method to show error details if occurred
 	 * 
@@ -682,13 +691,6 @@ public class ExtendedFieldCtrl {
 		}
 	}
 
-	/**
-	 * @param parentTab
-	 *            the parentTab to set
-	 */
-	public void setParentTab(Tab parentTab) {
-		this.parentTab = parentTab;
-	}
 
 	/**
 	 * @param extendedFieldHeader

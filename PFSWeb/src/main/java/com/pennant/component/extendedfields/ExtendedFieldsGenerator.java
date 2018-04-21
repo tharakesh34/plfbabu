@@ -1068,7 +1068,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param wveMap
 	 * @param notInputElements
 	 */
-	private void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<Component> compList,
+	protected void showErrorDetails(HashMap<ExtendedFieldDetail, WrongValueException> wveMap, List<Component> compList,
 			List<ExtendedFieldDetail> notInputElements) {
 		logger.debug(Literal.ENTERING);
 
