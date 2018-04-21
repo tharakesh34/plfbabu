@@ -61,16 +61,17 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.ExtendedCombobox.Type;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.financemanagement.presentmentheader.model.PresentmentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -172,8 +173,8 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate, sortOperator_PresentmentDate, Operators.DATE);
 		registerField("bankCode",bankCode,SortOrder.NONE,sortOperator_BankCode,Operators.STRING);
 		registerField("bankName", listheader_BankCode, SortOrder.NONE);
-		registerField("partnerBankId", listheader_PartnerBankId, SortOrder.NONE, partnerBank, sortOperator_PartnerBankId, Operators.STRING);
-		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
+		registerField("partnerBankId", listheader_PartnerBankId, SortOrder.NONE, partnerBank, sortOperator_PartnerBankId, Operators.SIMPLE_NUMARIC);
+		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.SIMPLE_NUMARIC);
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
 		registerField("schdate", listheader_Schdate, SortOrder.NONE, schdate, sortOperator_Schdate, Operators.DATE);
 		registerField("id");
@@ -195,6 +196,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setDescColumn("PartnerBankCode");
+		this.partnerBank.setValueType(Type.LONG);
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		
 		this.entityCode.setModuleName("Entity");
@@ -204,7 +206,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 		
-		fillComboBox(this.status, "", PennantStaticListUtil.getPresentmentBatchStatusList(), "");
+		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(),null);
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
