@@ -102,8 +102,8 @@ public class ErrorUtil implements Serializable {
 
 		for (ErrorDetail errorDetail : errorDetails) {
 			//errorDetail = getError(errorDetail.getErrorCode());
-			errorDetail = getErrorDetail(errorDetail.getCode());
-			hashMap.put(StringUtils.trimToEmpty(errorDetail.getCode()), errorDetail);
+			ErrorDetail errDetail = getErrorDetail(errorDetail.getCode());
+			hashMap.put(StringUtils.trimToEmpty(errorDetail.getCode()), errDetail);
 		}
 		return hashMap;
 	}

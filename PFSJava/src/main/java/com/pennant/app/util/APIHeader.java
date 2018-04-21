@@ -22,15 +22,16 @@ public class APIHeader {
     private Date responseTime;
     
     // Public Constants
-    public static final String API_HEADER_KEY = "HeaderKey";
-	public static final String API_AUTHORIZATION = "Authorization";
-	public static final String API_SERVICENAME = "ServiceName";
-	public static final String API_SERVICEVERSION = "ServiceVersion";
-	public static final String API_ENTITYID = "EntityId";
-	public static final String API_MESSAGEID = "MessageId";
-	public static final String API_LANGUAGE = "Language";
-	public static final String API_REQ_TIME = "RequestTime";
-	public static final String API_RES_TIME = "ResponseTime";
+	public static final String	API_HEADER_KEY		= "HEADERKEY";
+	public static final String	API_AUTHORIZATION	= "AUTHORIZATION";
+	public static final String	API_SERVICENAME		= "SERVICENAME";
+	public static final String	API_SERVICEVERSION	= "SERVICEVERSION";
+	public static final String	API_ENTITYID		= "ENTITYID";
+	public static final String	API_MESSAGEID		= "MESSAGEID";
+	public static final String	API_LANGUAGE		= "LANGUAGE";
+	public static final String	API_REQ_TIME		= "REQUESTTIME";
+	public static final String	API_RES_TIME		= "RESPONSETIME";
+
 	public static final String API_RETURNCODE = "ReturnCode";
 	public static final String API_RETURNDESC = "ReturnText";
 	public static final String API_LOG_KEY = "LogDetails";

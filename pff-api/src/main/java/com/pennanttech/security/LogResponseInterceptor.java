@@ -46,6 +46,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 
 	private static final Logger LOG = Logger.getLogger(LogResponseInterceptor.class);
 	private APILogDetailDAO apiLogDetailDAO;
+	private String returnCode;
 	public LogResponseInterceptor() {
 		super(Phase.PRE_STREAM);
 	}
@@ -84,7 +85,6 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			message.put(Message.PROTOCOL_HEADERS, headers);
 		}
 		if (apiHeader != null) {
-			String returnCode = null;
 			String returnDesc = null;
 			Object obj = message.getContent(List.class).get(0);
 			//here we check the Return code and based on that we set the ReturnDesc to the Header.
@@ -178,7 +178,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
 				apiLogDetail.setResponse(String.valueOf(buffer.getPayload()));
 				if(StringUtils.isBlank(apiLogDetail.getStatusCode())){
-					apiLogDetail.setStatusCode(LogUtility.getReturnCode(buffer.getPayload().toString()));					
+					apiLogDetail.setStatusCode(returnCode);					
 				}
 				// save API logging details
 				apiLogDetailDAO.saveLogDetails(apiLogDetail);
@@ -269,10 +269,10 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 		public static String getReturnCode(String responseString) {
 			String returnCode = null;
 			String keypath1 = "$.returnStatus.returnCode";
-			String keypath2 = "$.returnCode";
 
 			returnCode = getValueFromResponse(keypath1, responseString);
 			if (StringUtils.isEmpty(returnCode)) {
+				String keypath2 = "$.returnCode";
 				returnCode = getValueFromResponse(keypath2, responseString);
 			}
 
