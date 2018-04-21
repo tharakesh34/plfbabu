@@ -61,18 +61,18 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.finance/ManualAdvise/ManualAdviseList.zul file.
@@ -106,7 +106,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listbox sortOperator_FeeTypeID;
 	
 	private transient ManualAdviseService manualAdviseService;
-	private List<ValueLabel> listAdviseType=PennantStaticListUtil.getManualAdviseTypes();
+	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 	private FinanceMain financeMain =null;
 	/**
 	 * default constructor.<br>
@@ -150,12 +150,12 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerButton(button_ManualAdviseList_NewManualAdvise, "button_ManualAdviseList_NewManualAdvise", true);
 
 		registerField("adviseID");
-		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType, Operators.STRING);
+		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType, Operators.SIMPLE_NUMARIC);
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
 		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID, Operators.STRING);
  	
 		//comboBox list
-		fillComboBox(this.adviseType, "", listAdviseType,"");
+		fillList(adviseType, PennantStaticListUtil.getManualAdviseTypes(), null);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
