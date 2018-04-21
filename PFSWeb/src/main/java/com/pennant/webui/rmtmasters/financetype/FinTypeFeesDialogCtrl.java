@@ -625,7 +625,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeFees);
-			allowFeeZero = SysParamUtil.getValueAsString(SMTParameterConstants.FEESALLOWZRO);
+			allowFeeZero = SysParamUtil.getValueAsString(SMTParameterConstants.FEESALLOWZERO);
 			if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString()) &&
 					StringUtils.equals("Y",allowFeeZero)) {
 				this.amount.setMandatory(false);
