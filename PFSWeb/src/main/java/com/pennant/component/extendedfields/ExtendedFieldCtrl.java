@@ -54,6 +54,7 @@ public class ExtendedFieldCtrl {
 	private int								ccyFormat;
 	private int								tabHeight;
 	private boolean							isReadOnly	= false;
+	private Tab								parentTab;
 	private Tab								tab;
 	private boolean							isNewRecord	= false;
 	private Tabpanel						tabpanel;
@@ -692,6 +693,13 @@ public class ExtendedFieldCtrl {
 		}
 	}
 
+	/**
+	 * @param parentTab
+	 *            the parentTab to set
+	 */
+	public void setParentTab(Tab parentTab) {
+		this.parentTab = parentTab;
+	}
 
 	/**
 	 * @param extendedFieldHeader
