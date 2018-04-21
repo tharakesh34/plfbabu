@@ -867,5 +867,11 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="21" author="Durga Prasad D">
+		<sql>
+			update SeqPinCodes set seqNo = (select max(pincodeid) from PinCodes);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
