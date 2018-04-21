@@ -106,4 +106,12 @@
 			tableName="AdtCustomerExtLiability" />
 	</changeSet>
 	
+	<changeSet id="5" author="Vinay">
+		<addColumn tableName="AdtCollateralStructure"  >
+			 <column name="valuationFrequency"  type="varchar(5)" defaultValue=""/>
+			 <column name="nextValuationDate" type="datetime" defaultValue="now()" />
+			 <column name="valuationPending" type="boolean" defaultValue="0" />
+			 <column name="queryId"  type="number(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
