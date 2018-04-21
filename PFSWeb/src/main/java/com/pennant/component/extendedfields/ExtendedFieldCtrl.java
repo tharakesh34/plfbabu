@@ -200,6 +200,7 @@ public class ExtendedFieldCtrl {
 				}
 			}
 		}
+		//component visibility based validation thrown in this method, if the component is not visible validation not thrown
 		generator.showErrorDetails(wveMap, compList, notInputElements);
 	}
 
