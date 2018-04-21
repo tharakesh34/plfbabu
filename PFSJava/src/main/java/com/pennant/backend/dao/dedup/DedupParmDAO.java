@@ -43,7 +43,9 @@
 
 package com.pennant.backend.dao.dedup;
 import java.util.List;
+import java.util.Map;
 
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -65,5 +67,6 @@ public interface DedupParmDAO {
 	List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
 	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType);
 	List<String> getRuleFieldNames(String blacklistType);
+	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
 	
 }

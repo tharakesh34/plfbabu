@@ -304,6 +304,9 @@
 			<menuItem id="menu_Item_LoanDedupParm"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"
 				rightName="menuItem_RulesFactory_LoanDedupParm" />
+			<menuItem id="menu_Item_CollateralDedupParm" 
+				zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/CollateralDedupParmList.zul"  
+				rightName="menuItem_RulesFactory_CollateralDedupParm"/>
 		</menu>
 		<menu id="menu_Category_EligibilityScoringRules">
 			<menuItem id="menu_Item_EligibilityRules"

@@ -44,6 +44,7 @@ package com.pennant.backend.dao.dedup.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -60,6 +61,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -401,4 +403,27 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("Leaving");
 		return fieldNames;
     }
+	
+	@Override
+	public List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		// mapSqlParameterSource.addValues(fielValueMap);
+
+		for (String key : fielValueMap.keySet()) {
+			mapSqlParameterSource.addValue(key, fielValueMap.get(key));
+		}
+
+		List<CollateralSetup> collateralSetups = null;
+		logger.debug("selectSql: " + query);
+
+		try {
+			collateralSetups = this.namedParameterJdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return collateralSetups;
+	}
 }

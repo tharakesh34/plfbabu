@@ -929,6 +929,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("postValidationScript", getCollateralSetup().getCollateralStructure().getPostValidation());
 			map.put("roleCode", getRole());
 			map.put("moduleType",moduleType);
+			map.put("queryId", getCollateralSetup().getCollateralStructure().getQueryId());
+			map.put("querySubCode", getCollateralSetup().getCollateralStructure().getQuerySubCode());
+			map.put("queryCode", getCollateralSetup().getCollateralStructure().getQueryCode());
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldRenderDialog.zul",
 					extendedFieldTabpanel, map);

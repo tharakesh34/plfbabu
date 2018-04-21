@@ -140,6 +140,16 @@
 												width="165px" readonly="true" />
 										</hbox>
 									</row>
+									
+									<row id="row_Collateral" visible="false">
+										<label
+											id="label_CustomerDialog_CollateralType"
+											value="${c:l('label_CustomerDialog_CollateralType.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="collateralType" readonly="true" />
+										</hbox>
+									</row>
 								</rows>
 							</grid>
 						</groupbox>

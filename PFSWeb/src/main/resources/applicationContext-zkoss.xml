@@ -4370,6 +4370,7 @@
 	<bean id="extendedFieldCaptureDialogCtrl" scope="prototype"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldCaptureDialogCtrl">
 		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="dedupParmService" ref="dedupParmService" />
 	</bean>
 
 	<!-- CoOwner Details -->

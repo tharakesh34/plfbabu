@@ -47,6 +47,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -84,7 +86,12 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.FrequencyBox;
 import com.pennant.JavaScriptBuilder;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralStructure;
@@ -92,6 +99,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -106,6 +114,7 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialog
 import com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -131,6 +140,11 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Checkbox collateralLocReq;
 	protected Checkbox collateralValuatorReq;
 	protected Textbox remarks;
+	
+	protected FrequencyBox valuationFrequency;
+	protected Datebox nextValuationDate;
+	protected Checkbox valuationPending;
+	protected ExtendedCombobox queryId;
 
 	protected Label moduleDesc;
 	protected Label subModuleDesc;
@@ -312,8 +326,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.ltvPercentage.setScale(2);
 		this.remarks.setMaxlength(1000);
-		setStatusDetails();
+		
+		this.valuationFrequency.setMandatoryStyle(true);
+		this.queryId.setModuleName("DedupParm");
+		this.queryId.setValueColumn("QueryId");
+		this.queryId.setDescColumn("QueryCode");
+		this.queryId.setValidateColumns(new String[] {  "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
+		setStatusDetails();
 		logger.debug("Leaving");
 	}
 
@@ -793,6 +813,15 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 			fillComboBox(this.ltvType, dftLtvType, PennantStaticListUtil.getListLtvTypes(), "");
 		} else {
+			Filter[] filter = new Filter[2];
+			filter[0] = new Filter("QueryModule", FinanceConstants.DEDUP_COLLATERAL, Filter.OP_EQUAL);
+			filter[1] = new Filter("QuerySubCode", collateralStructure.getCollateralType(), Filter.OP_EQUAL);
+			this.queryId.setFilters(filter);
+			
+			if (collateralStructure.getQueryId() != 0) {
+				this.queryId.setValue(String.valueOf(collateralStructure.getQueryId()), collateralStructure.getQueryCode());
+			}
+			
 			this.active.setChecked(collateralStructure.isActive());
 			fillComboBox(this.ltvType, collateralStructure.getLtvType(), PennantStaticListUtil.getListLtvTypes(), "");
 		}
@@ -813,6 +842,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		setLtvType(getComboboxValue(this.ltvType), false);
 		this.ltvPercentage.setValue(collateralStructure.getLtvPercentage());
 
+		this.valuationFrequency.setValue(collateralStructure.getValuationFrequency());
+		this.nextValuationDate.setValue(collateralStructure.getNextValuationDate());
+		this.valuationPending.setChecked(collateralStructure.isValuationPending());
+		
 		// LTVRule tab
 		this.moduleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.subModuleDesc.setValue(collateralStructure.getCollateralType());
@@ -898,6 +931,44 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			wve.add(we);
 		}
 
+		// valuation Frequency && valuation Pending &&  valuation Frequency Date
+				try {
+					this.valuationFrequency.isValidComboValue();
+					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
+					
+					if (!FrequencyUtil.isFrqDate(this.valuationFrequency.getValue(), this.nextValuationDate.getValue())) {
+						throw new WrongValueException(this.valuationFrequency, Labels.getLabel("FRQ_DATE_MISMATCH",
+										new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
+												Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
+					}
+
+					Date appDate = DateUtility.getAppDate();
+					Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+
+					if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
+							|| this.nextValuationDate.getValue().after(appEndDate)) {
+						throw new WrongValueException(this.nextValuationDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
+										Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
+										DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
+					}
+					
+					collateralStructure.setNextValuationDate(this.nextValuationDate.getValue());
+					collateralStructure.setValuationPending(this.valuationPending.isChecked());
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+				
+				try {
+					String query = this.queryId.getValue();
+					if (StringUtils.isNotBlank(query)) {
+						collateralStructure.setQueryId(Long.valueOf(query));
+					} else {
+						collateralStructure.setQueryId(0);
+					}
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+				
 		showErrorDetails(wve, basicDetailsTab);
 		
 		ExtendedFieldHeader extendedFieldHeader=null;
@@ -1106,6 +1177,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvType.setConstraint("");
 		this.ltvPercentage.setConstraint("");
 		this.remarks.setConstraint("");
+		this.nextValuationDate.setConstraint("");
+		this.queryId.setConstraint("");
 		Clients.clearWrongValue(this.preValidation);
 		Clients.clearWrongValue(this.postValidation);
 		logger.debug("Leaving");
@@ -1137,6 +1210,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvType.setErrorMessage("");
 		this.ltvPercentage.setErrorMessage("");
 		this.remarks.setErrorMessage("");
+		this.valuationFrequency.setErrorMessage("");
+		this.nextValuationDate.setErrorMessage("");
+		this.queryId.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1312,6 +1388,11 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.javaScriptSqlRule.setTreeTabVisible(!isReadOnly("CollateralStructureDialog_JavaScriptSqlRule"));
 		this.preValidation.setReadonly(isReadOnly("CollateralStructureDialog_PreValidation"));
 		this.postValidation.setReadonly(isReadOnly("CollateralStructureDialog_PostValidation"));
+		
+		readOnlyComponent(isReadOnly("CollateralStructureDialog_CollateralDedup"), this.queryId);
+		this.valuationFrequency.setDisabled(isReadOnly("CollateralStructureDialog_ValuationFrequency"));
+		this.valuationPending.setDisabled(isReadOnly("CollateralStructureDialog_ValuationPending"));
+		this.nextValuationDate.setDisabled(isReadOnly("CollateralStructureDialog_NextValuationDate"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1348,7 +1429,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.remarks.setReadonly(true);
 		this.allowLtvWaiver.setDisabled(true);
 		this.maxLtvWaiver.setDisabled(true);
-
+		
+		this.valuationFrequency.setDisabled(true);
+		this.valuationPending.setDisabled(true);
+		this.nextValuationDate.setDisabled(true);
+		readOnlyComponent(true, this.queryId);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);

@@ -717,6 +717,16 @@ public class PennantConstants {
 	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC";	//Domestic
 	public static final String SUBCATEGORY_NRI 		= "NRI";		//NRI
 	
-	
+	//WorkFlow Fields
+	public static final String WORKFLOW_VERSION 		= "VERSION";
+	public static final String WORKFLOW_LASTMNTBY 		= "LASTMNTBY";
+	public static final String WORKFLOW_LASTMNTON 		= "LASTMNTON";
+	public static final String WORKFLOW_RECORDSTATUS 	= "RECORDSTATUS";
+	public static final String WORKFLOW_RECORDTYPE 		= "RECORDTYPE";
+	public static final String WORKFLOW_ROLECODE 		= "ROLECODE";
+	public static final String WORKFLOW_NEXTROLECODE 	= "NEXTROLECODE";
+	public static final String WORKFLOW_NEXTTASKID 		= "NEXTTASKID";
+	public static final String WORKFLOW_TASKID 			= "TASKID";
+	public static final String WORKFLOW_WORKFLOWID 		= "WORKFLOWID";
 	
 }

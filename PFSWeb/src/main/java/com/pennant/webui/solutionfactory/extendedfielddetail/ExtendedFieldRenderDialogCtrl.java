@@ -75,7 +75,10 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	private String 				postValidationScript = null;
 	private String 				moduleType = "";
 	private String 				moduleName = "";
-
+	private String 				querySubCode = "";
+	private String 				queryCode = "";
+	private long 				queryId;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -125,7 +128,16 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		if (arguments.containsKey("fieldRenderList")) {
 			extendedFieldRenderList = (List<ExtendedFieldRender>) arguments.get("fieldRenderList");
 		}
+		if (arguments.containsKey("queryId")) {
+			this.queryId = (long) arguments.get("queryId");
+		}
+		if (arguments.containsKey("querySubCode")) {
+			this.querySubCode = (String) arguments.get("querySubCode");
+		}
 		
+		if (arguments.containsKey("queryCode")) {
+			this.queryCode = (String) arguments.get("queryCode");
+		}
 		if (arguments.containsKey("roleCode")) {
 			setRole((String) arguments.get("roleCode"));
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "ExtendedFieldRenderDialog", menuItemRightName);	
@@ -206,6 +218,9 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				map.put("ccyFormat",getFormat());
 				map.put("isReadOnly",getUserWorkspace().isAllowed("button_ExtendedFieldRenderDialog_btnNew"));
 				map.put("moduleType",moduleType);
+				map.put("queryId", this.queryId);
+				map.put("querySubCode", this.querySubCode);
+				map.put("queryCode", this.queryCode);
 				
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -251,6 +266,9 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		map.put("preValidationScript",getPreValidationScript());
 		map.put("postValidationScript",getPostValidationScript());
 		map.put("isReadOnly",getUserWorkspace().isAllowed("button_ExtendedFieldRenderDialog_btnNew"));
+		map.put("queryId", this.queryId);
+		map.put("querySubCode", this.querySubCode);
+		map.put("queryCode", this.queryCode);
 		
 		Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldCaptureDialog.zul",window_ExtendedFieldRenderDialog,map);
 

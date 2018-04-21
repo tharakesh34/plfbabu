@@ -68,6 +68,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -86,8 +87,10 @@ import com.pennant.backend.model.applicationmaster.TargetDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.dedup.DynamicCollateralType;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
@@ -117,6 +120,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -2103,4 +2108,75 @@ public class PennantAppUtil {
 		
 	}
 	
+	/**
+	 * To get list of BuilderTable which are active from Dynamic Collateral created table
+	 * @return
+	 */
+	public static List<BuilderTable> getDynamicColumnsList(String tableName) {
+		ArrayList<BuilderTable> builderTablesList = new ArrayList<BuilderTable>();
+		
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<DynamicCollateralType> searchObject = new JdbcSearchObject<DynamicCollateralType>(DynamicCollateralType.class);
+
+		//BFLW2 it is working for oracle only, should be write code for remaining databases.
+		 if(App.DATABASE == Database.POSTGRES || App.DATABASE == Database.SQL_SERVER){
+			 searchObject.addTabelName("information_schema.columns");
+			 searchObject.addFilterEqual("table_name", tableName.toLowerCase());
+		}else{
+			searchObject.addTabelName("user_tab_columns");
+			searchObject.addFilterEqual("table_name", tableName);
+		}
+		searchObject.addField("COLUMN_NAME ColumnName");
+		searchObject.addField("DATA_TYPE DataType");
+		
+		List<DynamicCollateralType> dynamicCollateralTypes = pagedListService.getBySearchObject(searchObject);
+		
+		BuilderTable builderTable;
+		for (DynamicCollateralType dynamicCollateralType : dynamicCollateralTypes) {
+			if (StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_VERSION) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_LASTMNTBY) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_LASTMNTON) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_ROLECODE) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_NEXTROLECODE) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_TASKID) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_NEXTTASKID) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_RECORDSTATUS) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_RECORDTYPE) ||
+					StringUtils.equalsIgnoreCase(dynamicCollateralType.getColumnName(), PennantConstants.WORKFLOW_WORKFLOWID)) {
+				continue;
+			}
+			builderTable = new BuilderTable();
+			builderTable.setFieldName(dynamicCollateralType.getColumnName());
+			builderTable.setFieldDesc(dynamicCollateralType.getColumnName());
+			builderTable.setFieldControl(dynamicCollateralType.getDataType());
+			builderTablesList.add(builderTable);
+		}
+		
+		return builderTablesList;
+	}
+	
+	/**
+	 * To get list of Collateral Types which are active from CollateralStructure table
+	 * @return
+	 */
+	public static List<ValueLabel> getCollateralTypesList() {
+		ArrayList<ValueLabel> collateralTypes = new ArrayList<ValueLabel>();
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<CollateralStructure> searchObject = new JdbcSearchObject<CollateralStructure>(
+				CollateralStructure.class);
+		searchObject.addTabelName("CollateralStructure");
+		searchObject.addFilterEqual("ACTIVE", 1);
+		searchObject.addField("COLLATERALTYPE");
+		searchObject.addField("COLLATERALDESC");
+
+		List<CollateralStructure> collateralStructureList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < collateralStructureList.size(); i++) {
+			ValueLabel collaterals = new ValueLabel(collateralStructureList.get(i).getCollateralType(),
+					collateralStructureList.get(i).getCollateralType() + "  -  " + collateralStructureList.get(i).getCollateralDesc());
+			collateralTypes.add(collaterals);
+		}
+
+		return collateralTypes;
+	}
 }

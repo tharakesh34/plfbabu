@@ -69,6 +69,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -1561,5 +1562,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	@Override
 	public List<DedupParm> getDedupParmByModule(String queryModule, String querySubCode, String type) {
 		return	   getDedupParmDAO().getDedupParmByModule(queryModule, querySubCode, type);
+	}
+	
+	@Override
+	public List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap) {
+		return getDedupParmDAO().queryExecution(query, fielValueMap);
 	}
 }

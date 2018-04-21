@@ -305,6 +305,26 @@
 															id="collateralValuatorReq" checked="false" />
 													</hbox>
 												</row>
+												<row>
+													<label
+														value="${c:l('label_CollateralStructureDialog_ValuationFrequency.value')}" />
+													<frequencybox id="valuationFrequency"/>
+													
+													<label
+														value="${c:l('label_CollateralStructureDialog_NextValuationDate.value')}" />
+													<hbox>
+														<space
+															id="space_NextValuationDate" spacing="2px" sclass="mandatory"/>
+														<datebox id="nextValuationDate" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														value="${c:l('label_CollateralStructureDialog_ValuationPending.value')}" />
+													<checkbox id="valuationPending" />
+													<label value="${c:l('label_CollateralStructureDialog_Rule.value')}" />
+													<extendedcombobox id="queryId" />
+												</row>
 												<row spans="1,3">
 													<label
 														value="${c:l('label_CollateralStructureDialog_Remarks.value')}" />

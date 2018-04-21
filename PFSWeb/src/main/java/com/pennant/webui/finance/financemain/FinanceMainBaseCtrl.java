@@ -2678,6 +2678,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW:
+			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
 			appendCreditReviewDetailTab(true);
 			break;
 		default:

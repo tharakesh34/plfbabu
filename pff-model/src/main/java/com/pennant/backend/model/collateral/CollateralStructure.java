@@ -43,6 +43,7 @@
 package com.pennant.backend.model.collateral;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -119,6 +120,13 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	private String sQLRule;
 	private String				preValidation;
 	private String				postValidation;
+	
+	private String				valuationFrequency;
+	private Date 				nextValuationDate;
+	private boolean 			valuationPending;
+	private long				queryId;
+	private String				queryCode;
+	private String				querySubCode;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -140,6 +148,8 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldList");
 		excludeFields.add("returnStatus");
+		excludeFields.add("queryCode");
+		excludeFields.add("querySubCode");
 		return excludeFields;
 	}
 
@@ -368,4 +378,53 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	public void setPostValidation(String postValidation) {
 		this.postValidation = postValidation;
 	}
+
+	public String getValuationFrequency() {
+		return valuationFrequency;
+	}
+
+	public void setValuationFrequency(String valuationFrequency) {
+		this.valuationFrequency = valuationFrequency;
+	}
+
+	public Date getNextValuationDate() {
+		return nextValuationDate;
+	}
+
+	public void setNextValuationDate(Date nextValuationDate) {
+		this.nextValuationDate = nextValuationDate;
+	}
+
+	public boolean isValuationPending() {
+		return valuationPending;
+	}
+
+	public void setValuationPending(boolean valuationPending) {
+		this.valuationPending = valuationPending;
+	}
+
+	public long getQueryId() {
+		return queryId;
+	}
+
+	public void setQueryId(long queryId) {
+		this.queryId = queryId;
+	}
+
+	public String getQueryCode() {
+		return queryCode;
+	}
+
+	public void setQueryCode(String queryCode) {
+		this.queryCode = queryCode;
+	}
+
+	public String getQuerySubCode() {
+		return querySubCode;
+	}
+
+	public void setQuerySubCode(String querySubCode) {
+		this.querySubCode = querySubCode;
+	}
+	
 }

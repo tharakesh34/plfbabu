@@ -34,18 +34,22 @@ import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
+import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 
 public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHeader> {
 
@@ -68,11 +72,15 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	private ExtendedFieldsGenerator generator;
 	private List<ExtendedFieldRender> extendedList = null;
 	private int ccyFormat = 0;
+	private long queryId = 0;
+	private String querySubCode = "";
+	private String queryCode = "";
 	private boolean newRecord = false;
 	private boolean isReadOnly = false;
 	private boolean	newExtendedField	      = false;
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
+	private DedupParmService dedupParmService;
 
 	/**
 	 * default constructor.<br>
@@ -117,7 +125,15 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		if (arguments.containsKey("isReadOnly")) {
 			isReadOnly = (Boolean) arguments.get("isReadOnly");
 		}
-
+		if (arguments.containsKey("queryId")) {
+			queryId = (long) arguments.get("queryId");
+		}
+		if (arguments.containsKey("querySubCode")) {
+			querySubCode = (String) arguments.get("querySubCode");
+		}
+		if (arguments.containsKey("queryCode")) {
+			queryCode = (String) arguments.get("queryCode");
+		}
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
@@ -375,6 +391,45 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		// Do data level validations here
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
+		
+		if (this.queryId > 0) {
+			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode, FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
+			
+			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
+					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
+					+ this.querySubCode + "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
+					+ " union all " 
+					+ " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
+					+ this.querySubCode + "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
+					+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + this.querySubCode
+					+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
+			
+			List<CollateralSetup> collateralSetupList =  this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
+			
+			if(collateralSetupList != null && !collateralSetupList.isEmpty()) {
+				boolean recordFound = true;
+				
+				if (collateralSetupList.size() == 1) {
+					if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils.equals(
+							collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
+						recordFound = false;
+					}
+				} else {
+					recordFound = false;
+					for (CollateralSetup collateralSetup : collateralSetupList) {
+						if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
+								.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
+							recordFound = true;
+						}
+					}
+				}
+				if(recordFound) {
+					MessageUtil.showError("This collateral already used by some other customer.");
+					return;
+				}
+			}
+		}
 		
 		// Post Validations for the Extended fields
 		String postValidationScript = getExtendedFieldRenderDialogCtrl().getPostValidationScript();
@@ -700,4 +755,13 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		this.newExtendedField = newExtendedField;
 	}
 
+	public DedupParmService getDedupParmService() {
+		return dedupParmService;
+	}
+
+	public void setDedupParmService(DedupParmService dedupParmService) {
+		this.dedupParmService = dedupParmService;
+	}
+
+	
 }

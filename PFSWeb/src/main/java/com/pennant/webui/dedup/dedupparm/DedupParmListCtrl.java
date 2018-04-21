@@ -154,8 +154,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 				Operators.STRING);
 		registerField("queryModule", queryModules, SortOrder.NONE, sortOperator_queryModules, Operators.STRING);
 		fillComboBox(this.querySubCode, "", this.listCustCtgCode, "");
-		registerField("querySubCode", listheader_CustCtgCode, SortOrder.NONE, querySubCode, sortOperator_querySubCode,
-				Operators.STRING);
+		registerField("querySubCode");
 
 		// Render the page and display the data.
 		doRenderPage();

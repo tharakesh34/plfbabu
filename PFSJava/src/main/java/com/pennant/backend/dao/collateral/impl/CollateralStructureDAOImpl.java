@@ -105,9 +105,10 @@ public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure
 		sql.append(" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active,");
 		sql.append(" Fields, ActualBlock, SQLRule, ");
 		if (type.contains("View")) {
-			sql.append("");
+			sql.append("QueryCode, QuerySubCode, ");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ValuationFrequency, nextValuationDate, valuationPending, QueryId ");
 		sql.append(" From CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralType = :CollateralType");
@@ -188,12 +189,14 @@ public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure
 		sql.append(" (CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
 		sql.append(" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver, PostValidation, PreValidation, Active,");
 		sql.append(" Fields, ActualBlock, SQLRule, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ValuationFrequency, NextValuationDate, ValuationPending, QueryId)");
 		sql.append(" Values(");
 		sql.append(" :CollateralType, :CollateralDesc, :LtvType, :LtvPercentage, :MarketableSecurities, :PreValidationReq,");
 		sql.append(" :PostValidationReq, :CollateralLocReq, :CollateralValuatorReq, :Remarks, :AllowLtvWaiver, :MaxLtvWaiver, :PostValidation, :PreValidation, :Active,");
 		sql.append(" :Fields, :ActualBlock, :SQLRule, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		sql.append(", :ValuationFrequency, :NextValuationDate, :ValuationPending, :QueryId)");
 
 		logger.debug("InsertSql: " + sql.toString());
 
@@ -231,6 +234,7 @@ public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure
 		sql.append(" Fields = :Fields, ActualBlock = :ActualBlock, SQLRule = :SQLRule, ");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" , ValuationFrequency = :ValuationFrequency, NextValuationDate = :NextValuationDate, ValuationPending = :ValuationPending, QueryId = :QueryId ");
 		sql.append(" Where CollateralType = :CollateralType");
 
 		logger.debug("Sql: " + sql.toString());

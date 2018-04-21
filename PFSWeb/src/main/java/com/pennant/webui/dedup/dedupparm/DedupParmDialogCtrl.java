@@ -123,7 +123,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	protected Combobox 	custCtgCode; 			// autoWired
 	protected Codemirror sQLQuery; 				// autoWired
 	protected Combobox 	combo;
+	protected Combobox 	collateralType;
 	protected Row 		rowCustCtgCode;
+	protected Row 		row_Collateral;
 	protected Tabpanel 	tabPanel_tree;
 	protected Tabpanel 	tabPanel_QueryResult;
 	protected Tab 		tab_queryDesign;
@@ -177,6 +179,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private boolean selectedField = false;
 	private String moduleName = "";
 	List<ValueLabel> custCategoryList = PennantAppUtil.getcustCtgCodeList();
+	List<ValueLabel> collateralTypesList = PennantAppUtil.getCollateralTypesList();
 	
 	/**
 	 * default constructor.<br>
@@ -254,10 +257,18 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 						|| moduleName.equals(FinanceConstants.DEDUP_POLICE) 
 						|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 					this.rowCustCtgCode.setVisible(true);
+					this.row_Collateral.setVisible(false);
 				}
 				if (moduleName.equals(FinanceConstants.DEDUP_FINANCE)) {
 					this.rowCustCtgCode.setVisible(false);
+					this.row_Collateral.setVisible(false);
 				}
+				
+				if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+					this.rowCustCtgCode.setVisible(false);
+					this.row_Collateral.setVisible(true);
+				}
+				
 				setDedupParmListCtrl((DedupParmListCtrl) arguments
 						.get("dedupParmListCtrl"));
 
@@ -268,6 +279,11 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getDedupParm());
+			
+			//BFLW2 only for Bajaj Demo button is visible false, should be implement this.
+			if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+				this.btnValidation.setVisible(false);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_DedupParmDialog.onClose();
@@ -324,9 +340,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering");
-		
 		doSave();
-		
 		logger.debug("Leaving");
 	}
 
@@ -415,6 +429,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}else if(moduleName.equals(FinanceConstants.DEDUP_LIMITS)){
 			custCategoryList=PennantStaticListUtil.getLimitCategories();			
 			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),this.custCategoryList,"");		
+		}else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
+			fillComboBox(this.collateralType, aDedupParm.getQuerySubCode(), this.collateralTypesList, "");
 		}
 		this.queryModule.setValue(moduleName);
 		this.queryCode.setValue(aDedupParm.getQueryCode());
@@ -453,6 +470,14 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				aDedupParm.setQuerySubCode(this.custCtgCode.getSelectedItem().getValue().toString());
 			}else if(moduleName.equals(FinanceConstants.DEDUP_FINANCE)){
 				aDedupParm.setQuerySubCode("L");
+			}else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+				if(!this.collateralType.isDisabled() && this.collateralType.getSelectedIndex()<1){
+					this.sQLQuery.setValue("");
+					this.tab_queryDesign.setSelected(true);
+					throw new WrongValueException(collateralType, Labels.getLabel("STATIC_INVALID",
+							new String[]{Labels.getLabel("label_DedupParmDialog_CustCtgCode.value")}));
+				}
+				aDedupParm.setQuerySubCode(this.collateralType.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -550,6 +575,15 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				buildingTree(sqlQueryValueList, aDedupParm);
 			}
 			
+			// Fetches the List of DedupFields
+			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_COLLATERAL)) {
+				if (!aDedupParm.isNewRecord()) {
+					objectFieldList = PennantAppUtil.getDynamicColumnsList("COLLATERAL_" + aDedupParm.getQuerySubCode() + "_ED");
+					// Method for Building tree with /Without existing params
+					buildingTree(sqlQueryValueList, aDedupParm);
+				}
+			}
+			
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_CUSTOMER) || StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)
 					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_POLICE)) {
 				if(!aDedupParm.isNewRecord()){
@@ -569,6 +603,50 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			throw e;
 		}
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This Method/Event for setting the rule modules and it clears tree if we
+	 * select another module and it also prompt the message
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onChange$collateralType(Event event) throws Exception {		
+		logger.debug("Entering" +event.toString());	
+		
+		if(collateralType.getSelectedIndex() == 0){
+			this.sQLQuery.setValue("");
+			tree.getChildren().clear();
+		}else{
+			
+			this.sQLQuery.setValue("");
+			this.tab_queryDesign.setSelected(true);
+			if(treechildren != null){
+				Component comp=(Component)combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNextSibling();
+				Combobox cb =new Combobox();
+				Textbox tb = new Textbox();
+				if(comp instanceof Combobox){
+					cb= (Combobox)comp;
+				}else if(comp instanceof Textbox){
+					tb= (Textbox)comp;
+				}
+				if(StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())){
+					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
+					
+					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+						clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
+						this.sQLQuery.setValue("");
+					}
+				}else{
+					clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString()); 
+				}
+			}else{
+				clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
+			}
+		}
+		
+		logger.debug("Leaving" +event.toString());
 	}
 	
 	/**
@@ -624,8 +702,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		itemCount = 1;
 		tree.getChildren().clear();
 		objectFieldList = new ArrayList<BuilderTable>();
-		objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
-				this.custCtgCode.getSelectedItem().getValue().toString()+getDedupParm().getQueryModule());
+		if (StringUtils.equals(getDedupParm().getQueryModule(), FinanceConstants.DEDUP_COLLATERAL)) {
+			ctgCode = "COLLATERAL_" + ctgCode + "_ED";
+			objectFieldList = PennantAppUtil.getDynamicColumnsList(ctgCode);
+		} else {
+			objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
+					this.custCtgCode.getSelectedItem().getValue().toString()+getDedupParm().getQueryModule());
+		}
 		// Method for Building tree with /Without existing params
 		buildingTree(sqlQueryValueList, new DedupParm());
 		logger.debug("Leaving");
@@ -1519,6 +1602,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 		this.sQLQuery.setReadonly(true);
 		this.queryDesc.setReadonly(isReadOnly("DedupParmDialog_queryDesc"));
+		readOnlyComponent(isReadOnly("DedupParmDialog_CollateralType"), this.collateralType);
 		
 		if(this.tab_queryDesign.isVisible()){
 			this.tab_queryDesign.setSelected(true);

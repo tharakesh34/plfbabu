@@ -44,10 +44,12 @@
 package com.pennant.backend.service.dedup;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
@@ -80,4 +82,5 @@ public interface DedupParmService {
 	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws InterfaceException;
 	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException;
 	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail,String finType,String ref) throws Exception; 
+	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
 }
