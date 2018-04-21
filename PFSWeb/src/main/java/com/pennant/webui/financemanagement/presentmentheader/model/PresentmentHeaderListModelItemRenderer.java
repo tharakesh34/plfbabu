@@ -92,8 +92,9 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 	  	lc = new Listcell(presentmentHeader.getPartnerBankName());
 		lc.setParent(item);
 		
-	  	lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentHeader.getStatus()),
-				PennantStaticListUtil.getPresentmentBatchStatusList()));
+	  	lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getPresentmentBatchStatusList(),
+				presentmentHeader.getStatus()));
+				
 	  	lc.setParent(item);
 	  	
 		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getMandateType(), PennantStaticListUtil.getMandateTypeList()));
