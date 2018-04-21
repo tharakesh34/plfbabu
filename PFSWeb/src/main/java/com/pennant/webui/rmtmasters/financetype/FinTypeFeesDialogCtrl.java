@@ -67,6 +67,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -76,6 +77,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -131,6 +133,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private int ccyFormat=0;
 	boolean isOriginationFee = false;
 	boolean isOverdraft = false;
+	private String allowFeeZero = "";
 
 	/**
 	 * default constructor.<br>
@@ -622,6 +625,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeFees);
+			allowFeeZero = SysParamUtil.getValueAsString(SMTParameterConstants.FEESALLOWZRO);
+			if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString()) &&
+					StringUtils.equals("Y",allowFeeZero)) {
+				this.amount.setMandatory(false);
+			}
 			this.window_FinTypeFeesDialog.doModal();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1021,6 +1029,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.percentage.setValue(BigDecimal.ZERO);
 		this.calculationOn.setValue("");
 		doSetCalculationTypeProp();
+		//Fees allowed zero when calculation type is Fixed Amount
+		if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString()) &&
+				StringUtils.equals("Y",allowFeeZero)) {
+			this.amount.setMandatory(false);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1094,6 +1107,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 	
 	private void doSetCalculationTypeProp(){
+		if (StringUtils.equals("Y",allowFeeZero)) {
+			this.amount.setMandatory(false);
+		}else{
+			this.amount.setMandatory(true);
+		}
 		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_RULE, this.calculationType.getSelectedItem().getValue().toString())) {
 			this.ruleCode.setVisible(true);
 			this.amount.setVisible(false);

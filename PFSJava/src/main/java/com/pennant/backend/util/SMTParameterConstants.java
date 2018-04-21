@@ -56,4 +56,5 @@ public class SMTParameterConstants {
 	public static final String	PANCARD_REQ			= "PAN_REQ";
 	public static final String	LOAN_REF_FORMAT		= "LOAN_REF_FORMAT";
 	public static final String	LOAN_REF_PREFIX		= "LOAN_REF_PREFIX";
+	public static final String	FEESALLOWZRO		= "FEESALLOWZRO";
 }
