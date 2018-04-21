@@ -42,6 +42,7 @@
 */
 package com.pennant.webui.authorization.authorizationlimit;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -288,9 +289,25 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			}
 		}
 	
-			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
-			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
-			
+			if(StringUtils.equals("Y",hold )){
+				readOnlyComponent(true, this.startDate);
+				readOnlyComponent(true, this.expiryDate);
+
+				holdRow.setVisible(true);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldStartDate"), this.holdStartDate);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldExpiryDate"), this.holdExpiryDate);
+
+				readOnlyComponent(true, this.active);
+				readOnlyComponent(true, this.limitAmount);
+
+			}else{
+				holdRow.setVisible(false);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
+			}
+
 			if(this.startDate.isReadonly()){
 				space_StartDate.setSclass("");
 			}
@@ -298,17 +315,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			if(this.expiryDate.isReadonly()){
 				space_ExpiryDate.setSclass("");
 			}
-			
-			if(StringUtils.equals("Y",hold )){
-				holdRow.setVisible(true);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldStartDate"), this.holdStartDate);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldExpiryDate"), this.holdExpiryDate);
-			}else{
-				holdRow.setVisible(false);
-			}
 
-			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
-			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
 			
 			if(limitAmount.isReadonly()){
 				limitAmount.setMandatory(false);
@@ -807,7 +814,6 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			this.holdExpiryDate.setValue(aAuthorizationLimit.getHoldExpiryDate());
 			this.active.setChecked(aAuthorizationLimit.isActive());
 			refreshListBox(aAuthorizationLimit.getAuthorizationLimitDetails());
-			
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -822,7 +828,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		doSetLOVValidation();
 		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+		boolean validAmount=false;
 		if(aAuthorizationLimit.getLimitType()==1){
 			//User I D
 			try {
@@ -854,6 +860,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		//Limit Amount
 		try {
 		 	aAuthorizationLimit.setLimitAmount(PennantApplicationUtil.unFormateAmount(this.limitAmount.getValidateValue(),CurrencyUtil.getFormat("")));
+		 	validAmount=true;
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -917,7 +924,26 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 					}
 
 					try {
-						detail.setLimitAmount(PennantApplicationUtil.unFormateAmount(codeLimitAmount.getValidateValue(),CurrencyUtil.getFormat("")));
+						String[] parameters = new String[3];
+						parameters[0]= Labels.getLabel("listheader_AuthLimitAmount");
+						parameters[1]="0";
+
+						BigDecimal amount = PennantApplicationUtil.unFormateAmount(codeLimitAmount.getValidateValue(),CurrencyUtil.getFormat(""));
+						
+						if(amount.compareTo(BigDecimal.ZERO)<=0){
+							throw new WrongValueException(codeLimitAmount,Labels.getLabel("NUMBER_MINVALUE", parameters));	
+
+						}
+							
+						if(validAmount){
+							if(aAuthorizationLimit.getLimitAmount().compareTo(amount)<0){
+								parameters[1]=this.limitAmount.getCcyTextBox().getValue();
+								throw new WrongValueException(codeLimitAmount,Labels.getLabel("NUMBER_MAXVALUE_EQ", parameters));	
+							}
+						}
+						detail.setLimitAmount(amount);
+						
+						
 					}catch (WrongValueException we ) {
 						wve.add(we);
 						valid =false;
@@ -1167,12 +1193,6 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				BeanUtils.copyProperties(detail, limitDetail);
 				detail.setBefImage(limitDetail);
 				addListIteam(detail);
-
-				
-				/*if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-					deletedLimitList.add(detail);	
-				}else{
-				}*/
 			}
 		}
 
@@ -1232,7 +1252,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			codeLimitAmount.setFormat(PennantConstants.amountFormate2);
 			codeLimitAmount.setValue(PennantApplicationUtil.formateAmount(detail.getLimitAmount(), CurrencyUtil.getFormat("")));
 			
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
+			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType()) || StringUtils.equals("Y",hold )){
 				readOnlyComponent(true, codeLimitAmount);
 			}else{
 				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), codeLimitAmount);
@@ -1256,12 +1276,12 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			}else{
 				delete.setLabel(Labels.getLabel("btnDelete.label"));	
 			}
-
+			
 			lc3.appendChild(delete);
 			delete.addForward("onClick", self, "onClick_Delete");
 			item.appendChild(lc3);
 			delete.setVisible(true);
-			delete.setDisabled(!getUserWorkspace().isAllowed("AuthorizationLimitDialog_LimitAmount"));
+			delete.setDisabled(codeLimitAmount.isReadonly());
 			
 			
 			Listcell lc4 = new Listcell();

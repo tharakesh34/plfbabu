@@ -1635,5 +1635,13 @@
 	<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul" 
 		rightName="menuItem_Enquiry_DeviationEnquiry"/> -->
 
+<menu id="menu_Category_AuthorizationLimit">
+	<menu id="menu_Category_FinanceAuthorizationLimit">
+		<menuItem id="menu_Item_FinanceUserAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N" rightName="menu_Item_FinanceUserAuthorizationLimit" />
+		<menuItem id="menu_Item_FinanceRoleAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=N" rightName="menu_Item_FinanceRoleAuthorizationLimit1" />
+		<menuItem id="menu_Item_FinanceUserAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=Y" rightName="menuItem_Authorization_FinanceUserAuthorizationLimitHold1"/>
+		<menuItem id="menu_Item_FinanceRoleAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=Y" rightName="menuItem_Authorization_FinanceRoleAuthorizationLimitHold1" />
+	</menu>
+</menu>
 	<!--//APPEND AFTER THIS// -->
 </ns2:XMLRootMenu>

@@ -186,8 +186,13 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 
 		// Register buttons and fields.
 		registerButton(button_AuthorizationLimitList_AuthorizationLimitSearch);
-		registerButton(button_AuthorizationLimitList_NewAuthorizationLimit, "button_AuthorizationLimitList_NewAuthorizationLimit", true);
-
+		
+		if(StringUtils.equals("Y",hold )){
+			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit, "button_AuthorizationLimitList_NewAuthorizationLimit", false);	
+		}else{
+			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit, "button_AuthorizationLimitList_NewAuthorizationLimit", true);
+		}
+		
 		registerField("id");
 		registerField("limitType");		
 		
