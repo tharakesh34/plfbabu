@@ -71,8 +71,8 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 	public void render(Listitem item, ManualAdvise manualAdvise, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(manualAdvise.getAdviseType()),
-					PennantStaticListUtil.getManualAdviseTypes()));
+		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getManualAdviseTypes(),
+				manualAdvise.getAdviseType()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(manualAdvise.getFinReference());
 		lc.setParent(item);
