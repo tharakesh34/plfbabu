@@ -67,17 +67,18 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<div width="100%" height="100%">
-				<tabbox width="100%" height="100%">
-							<tabs id="tabsIndexCenter">
-								<tab
-									label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}"
-									id="verificationDetails" />
-								<tab
-									label="${c:l('label_FieldInvestigationDialog_Documents.value')}"
-									id="documentDetails" />
-							</tabs>
-							<tabpanels>
-							 <tabpanel style="overflow:auto" ca:data-scrollable="true" >
+					<tabbox width="100%" height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab
+								label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}"
+								id="verificationDetails" />
+							<!-- <tab
+								label="${c:l('label_FieldInvestigationDialog_Documents.value')}"
+								id="documentDetails" /> -->
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true">
 								<groupbox id="gb_basicDetails"
 									sclass="gb-dialog">
 									<caption
@@ -443,78 +444,28 @@
 											</row>
 											<row id="row16">
 												<cell>
-												<label
-													id="label_summaryRemarks"
-													value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
+													<label
+														id="label_summaryRemarks"
+														value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
 												</cell>
 												<cell colspan="4">
-												<hbox>
-													<space
-														id="space_AgentRemarks" spacing="2px" />
-													<textbox multiline="true"
-													 id="summaryRemarks" width="850px"
-														height="80px" />
-												</hbox>
+													<hbox>
+														<space
+															id="space_AgentRemarks" spacing="2px" />
+														<textbox
+															multiline="true" id="summaryRemarks" width="850px"
+															height="80px" />
+													</hbox>
 												</cell>
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
-								</tabpanel>
-								<tabpanel>
-								<groupbox sclass="gb_dialog">
-									<div sclass="z-toolbar"
-										style="padding:0">
-										<hbox pack="stretch"
-											sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-											width="100%">
-											<toolbar align="start"
-												style="border:none;">
-												<label
-													value="${c:l('label_FieldInvestigationDialog_Documents.value')}"
-													sclass="listboxHeading">
-												</label>
-											</toolbar>
-											<toolbar align="end"
-												style="float:right; border-style: none; padding:0px;">
-												<button
-													id="btnNew_FieldInvestigationDocuments" label="${c:l('label_New')}"
-													tooltiptext="${c:l('button_FieldInvestigationDocumentList_NewCustomerDocument.tooltiptext')}"
-													autodisable="btnNew_FieldInvestigationDocuments" />
-											</toolbar>
-										</hbox>
-									</div>
-									<listbox
-										id="listBoxVerificationDocuments" span="true"
-										sizedByContent="true"
-										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-										multiple="false"
-										emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead sizable="true">
-											<listheader
-												id="listheader_VerificationDocType"
-												label="${c:l('listheader_VerificationDocType.label')}"
-												sort="false" hflex="min" />
-											<listheader
-												id="listheader_VerificationDocTitle"
-												label="${c:l('listheader_VerificationDocTitle.label')}"
-												sort="false" hflex="min" />
-											<listheader
-												id="listheader_VerificationDoc_RecordType"
-												label="${c:l('listheader_RecordType.label')}" sort="false"
-												hflex="min" />
-											<listheader
-												id="listheader_VerificationDoc_RecordStatus"
-												label="${c:l('listheader_RecordStatus.label')}" sort="false"
-												hflex="min" />
-										</listhead>
-									</listbox>
-									</groupbox>
-								</tabpanel>
-							</tabpanels>
-							</tabbox>
-						</div>
-					</center>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
 			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />

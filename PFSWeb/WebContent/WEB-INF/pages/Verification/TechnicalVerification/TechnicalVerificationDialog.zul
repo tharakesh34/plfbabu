@@ -72,10 +72,8 @@
 							<tab id="verificationDetails"
 								label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}" />
 							<tab id="extendedDetailsTab" />
-							<tab id="documentDetails"
-								label="${c:l('label_FieldInvestigationDialog_Documents.value')}" />
 						</tabs>
-						<tabpanels>
+						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto"
 								ca:data-scrollable="true">
 								<!-- Basic Details -->
@@ -264,8 +262,11 @@
 												</hbox>
 											</row>
 											<row>
-												<label id="label_ValuationAmount" value="${c:l('label_TechnicalVerificationDialog_ValuationAmount.value')}" />
-												<currencyBox id="valuationAmount" />
+												<label
+													id="label_ValuationAmount"
+													value="${c:l('label_TechnicalVerificationDialog_ValuationAmount.value')}" />
+												<currencyBox
+													id="valuationAmount" />
 											</row>
 										</rows>
 									</grid>
@@ -275,59 +276,6 @@
 							<!-- extendedFieldTabpanel -->
 							<tabpanel id="extendedFieldTabpanel"
 								style="overflow:auto" />
-
-							<!-- Documents -->
-							<tabpanel>
-								<groupbox sclass="gb_dialog">
-									<div sclass="z-toolbar"
-										style="padding:0">
-										<hbox pack="stretch"
-											sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-											width="100%">
-											<toolbar align="start"
-												style="border:none;">
-												<label
-													value="${c:l('label_FieldInvestigationDialog_Documents.value')}"
-													sclass="listboxHeading">
-												</label>
-											</toolbar>
-											<toolbar align="end"
-												style="float:right; border-style: none; padding:0px;">
-												<button
-													id="btnNew_FieldInvestigationDocuments"
-													label="${c:l('label_New')}"
-													tooltiptext="${c:l('button_FieldInvestigationDocumentList_NewCustomerDocument.tooltiptext')}"
-													autodisable="btnNew_FieldInvestigationDocuments" />
-											</toolbar>
-										</hbox>
-									</div>
-									<listbox
-										id="listBoxVerificationDocuments" span="true"
-										sizedByContent="true"
-										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-										multiple="false"
-										emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead sizable="true">
-											<listheader
-												id="listheader_VerificationDocType"
-												label="${c:l('listheader_VerificationDocType.label')}"
-												sort="false" hflex="min" />
-											<listheader
-												id="listheader_VerificationDocTitle"
-												label="${c:l('listheader_VerificationDocTitle.label')}"
-												sort="false" hflex="min" />
-											<listheader
-												id="listheader_VerificationDoc_RecordType"
-												label="${c:l('listheader_RecordType.label')}" sort="false"
-												hflex="min" />
-											<listheader
-												id="listheader_VerificationDoc_RecordStatus"
-												label="${c:l('listheader_RecordStatus.label')}" sort="false"
-												hflex="min" />
-										</listhead>
-									</listbox>
-								</groupbox>
-							</tabpanel>
 						</tabpanels>
 					</tabbox>
 				</div>

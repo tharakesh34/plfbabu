@@ -25,15 +25,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
+import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -47,6 +52,7 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
+import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -59,15 +65,25 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		implements TechnicalVerificationService {
 	private static final Logger logger = Logger.getLogger(TechnicalVerificationServiceImpl.class);
 
+	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
+	@Autowired
 	private TechnicalVerificationDAO technicalVerificationDAO;
+	@Autowired
 	private VerificationDAO verificationDAO;
-	private CollateralSetupDAO collateralSetupDAO;
+	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
 	private CollateralStructureService collateralStructureService;
+	@Autowired
+	private DocumentDetailsDAO documentDetailsDAO;
+	@Autowired
+	private DocumentManagerDAO documentManagerDAO;
+	@Autowired
+	private CustomerDocumentDAO customerDocumentDAO;
+	private DocumentDetailValidation documentValidation;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -100,11 +116,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		}
 
 		if (tv.isNew()) {
-			tv.setId(Long.parseLong(getTechnicalVerificationDAO().save(tv, tableType)));
+			tv.setId(Long.parseLong(technicalVerificationDAO.save(tv, tableType)));
 			auditHeader.getAuditDetail().setModelData(tv);
 			auditHeader.setAuditReference(String.valueOf(tv.getId()));
 		} else {
-			getTechnicalVerificationDAO().update(tv, tableType);
+			technicalVerificationDAO.update(tv, tableType);
 		}
 
 		// Extended field Details
@@ -119,9 +135,16 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 					tv.getExtendedFieldHeader(), tableName.toString(), tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-
-		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		// FI documents
+		if (tv.getDocuments() != null && !tv.getDocuments().isEmpty()) {
+			List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
+			details = saveOrUpdateDocuments(details, tv, tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+		
+		auditHeader.setAuditDetails(auditDetails);				
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -153,36 +176,49 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
 				.getModelData();
 		auditDetails.addAll(
-				listDeletion(technicalVerification, TableType.MAIN_TAB.getSuffix(), auditHeader.getAuditTranType()));
+				deleteChilds(technicalVerification, TableType.MAIN_TAB.getSuffix(), auditHeader.getAuditTranType()));
 
-		getTechnicalVerificationDAO().delete(technicalVerification, TableType.MAIN_TAB);
+		technicalVerificationDAO.delete(technicalVerification, TableType.MAIN_TAB);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(),
 				technicalVerification.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				technicalVerification.getBefImage(), technicalVerification));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	// Method for Deleting all records related to Customer in _Temp/Main tables depend on method type
-	public List<AuditDetail> listDeletion(TechnicalVerification technicalVerification, String tableType,
-			String auditTranType) {
-
+	public List<AuditDetail> deleteChilds(TechnicalVerification tv, String tableType, String auditTranType) {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 		// Extended field Render Details.
-		List<AuditDetail> extendedDetails = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
+		List<AuditDetail> extendedDetails = tv.getAuditDetailMap().get("ExtendedFieldDetails");
 		if (extendedDetails != null && extendedDetails.size() > 0) {
-			//Table Name
+			// Table Name
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
 			tableName.append("_");
-			tableName.append(technicalVerification.getExtendedFieldHeader().getSubModuleName());
+			tableName.append(tv.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_TV");
-			auditList.addAll(extendedFieldDetailsService.delete(technicalVerification.getExtendedFieldHeader(),
-					technicalVerification.getCollateralRef(), tableName.toString(), tableType, auditTranType,
-					extendedDetails));
+			auditList.addAll(extendedFieldDetailsService.delete(tv.getExtendedFieldHeader(), tv.getCollateralRef(),
+					tableName.toString(), tableType, auditTranType, extendedDetails));
+		}
+		
+		// Document Details.
+		List<AuditDetail> documentDetails = tv.getAuditDetailMap().get("DocumentDetails");
+		if (documentDetails != null && documentDetails.size() > 0) {
+			DocumentDetails document = new DocumentDetails();
+			List<DocumentDetails> documents = new ArrayList<>();
+			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+			for (int i = 0; i < documentDetails.size(); i++) {
+				document = (DocumentDetails) documentDetails.get(i).getModelData();
+				document.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				documents.add(document);
+				auditList.add(
+						new AuditDetail(auditTranType, i + 1, fields[0], fields[1], document.getBefImage(), document));
+			}
+			documentDetailsDAO.deleteList(documents, tableType);
 		}
 		return auditList;
 	}
@@ -196,7 +232,18 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 */
 	@Override
 	public TechnicalVerification getTechnicalVerification(long id) {
-		return getTechnicalVerificationDAO().getTechnicalVerification(id, "_View");
+		TechnicalVerification technicalVerification = technicalVerificationDAO.getTechnicalVerification(id, "_View");
+		if (technicalVerification != null) {
+			// FI Document Details
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
+					VerificationType.TV.getCode(), "", "_View");
+			if (technicalVerification.getDocuments() != null && !technicalVerification.getDocuments().isEmpty()) {
+				technicalVerification.getDocuments().addAll(documentList);
+			} else {
+				technicalVerification.setDocuments(documentList);
+			}
+		}
+		return technicalVerification;
 	}
 
 	/**
@@ -208,20 +255,20 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * @return verification_fi
 	 */
 	public TechnicalVerification getApprovedTechnicalVerification(long id) {
-		return getTechnicalVerificationDAO().getTechnicalVerification(id, "__AView");
+		return technicalVerificationDAO.getTechnicalVerification(id, "__AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getTechnicalVerificationDAO().delete
-	 * with parameters technicalVerification,"" b) NEW Add new record in to main table by using
-	 * getTechnicalVerificationDAO().save with parameters technicalVerification,"" c) EDIT Update record in the main
-	 * table by using getTechnicalVerificationDAO().update with parameters technicalVerification,"" 3) Delete the record
-	 * from the workFlow table by using getTechnicalVerificationDAO().delete with parameters
-	 * technicalVerification,"_Temp" 4) Audit the record in to AuditHeader and Adtverification_fi by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverification_fi
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using technicalVerificationDAO.delete with
+	 * parameters technicalVerification,"" b) NEW Add new record in to main table by using technicalVerificationDAO.save
+	 * with parameters technicalVerification,"" c) EDIT Update record in the main table by using
+	 * technicalVerificationDAO.update with parameters technicalVerification,"" 3) Delete the record from the workFlow
+	 * table by using technicalVerificationDAO.delete with parameters technicalVerification,"_Temp" 4) Audit the record
+	 * in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -243,70 +290,72 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		TechnicalVerification technicalVerification = new TechnicalVerification();
-		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(),
-				technicalVerification);
+		TechnicalVerification tv = new TechnicalVerification();
+		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(), tv);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(technicalVerification.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(technicalVerificationDAO
-					.getTechnicalVerification(technicalVerification.getId(), TableType.MAIN_TAB.getSuffix()));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(tv.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					technicalVerificationDAO.getTechnicalVerification(tv.getId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
-		if (technicalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (tv.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			auditDetails.addAll(listDeletion(technicalVerification, TableType.MAIN_TAB.getSuffix(), tranType));
-			getTechnicalVerificationDAO().delete(technicalVerification, TableType.MAIN_TAB);
+			auditDetails.addAll(deleteChilds(tv, TableType.MAIN_TAB.getSuffix(), tranType));
+			technicalVerificationDAO.delete(tv, TableType.MAIN_TAB);
 		} else {
-			technicalVerification.setRoleCode("");
-			technicalVerification.setNextRoleCode("");
-			technicalVerification.setTaskId("");
-			technicalVerification.setNextTaskId("");
-			technicalVerification.setWorkflowId(0);
+			tv.setRoleCode("");
+			tv.setNextRoleCode("");
+			tv.setTaskId("");
+			tv.setNextTaskId("");
+			tv.setWorkflowId(0);
 
-			if (technicalVerification.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (tv.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				technicalVerification.setRecordType("");
-				getTechnicalVerificationDAO().save(technicalVerification, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(),
-						technicalVerification.getStatus());
+				tv.setRecordType("");
+				technicalVerificationDAO.save(tv, TableType.MAIN_TAB);
+				verificationDAO.updateVerifiaction(tv.getId(), tv.getDate(), tv.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				technicalVerification.setRecordType("");
-				getTechnicalVerificationDAO().update(technicalVerification, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(technicalVerification.getId(), technicalVerification.getDate(),
-						technicalVerification.getStatus());
+				tv.setRecordType("");
+				technicalVerificationDAO.update(tv, TableType.MAIN_TAB);
+				verificationDAO.updateVerifiaction(tv.getId(), tv.getDate(), tv.getStatus());
 			}
 
 			// Extended field Details
-			if (technicalVerification.getExtendedFieldRender() != null) {
-				List<AuditDetail> details = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
+			if (tv.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = tv.getAuditDetailMap().get("ExtendedFieldDetails");
 
-				//Table Name
+				// Table Name
 				StringBuilder tableName = new StringBuilder();
 				tableName.append(CollateralConstants.VERIFICATION_MODULE);
 				tableName.append("_");
-				tableName.append(technicalVerification.getExtendedFieldHeader().getSubModuleName());
+				tableName.append(tv.getExtendedFieldHeader().getSubModuleName());
 				tableName.append("_TV");
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						technicalVerification.getExtendedFieldHeader(), tableName.toString(),
-						TableType.MAIN_TAB.getSuffix());
+						tv.getExtendedFieldHeader(), tableName.toString(), TableType.MAIN_TAB.getSuffix());
+				auditDetails.addAll(details);
+			}
+
+			// FI Document Details
+			List<DocumentDetails> documentsList = tv.getDocuments();
+			if (documentsList != null && documentsList.size() > 0) {
+				List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
+				details = saveOrUpdateDocuments(details, tv, "");
 				auditDetails.addAll(details);
 			}
 		}
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		auditDetailList.addAll(
-				listDeletion(technicalVerification, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
-		getTechnicalVerificationDAO().delete(technicalVerification, TableType.TEMP_TAB);
+		auditDetailList.addAll(deleteChilds(tv, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
+		technicalVerificationDAO.delete(tv, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(),
-				technicalVerification.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				technicalVerification.getBefImage(), technicalVerification));
+		String[] fields = PennantJavaUtil.getFieldDetails(new TechnicalVerification(), tv.getExcludeFields());
+		auditHeader.setAuditDetail(
+				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], tv.getBefImage(), tv));
 		auditHeader.setAuditDetails(auditDetailList);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -316,9 +365,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getTechnicalVerificationDAO().delete with parameters technicalVerification,"_Temp" 3)
-	 * Audit the record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * workFlow table by using technicalVerificationDAO.delete with parameters technicalVerification,"_Temp" 3) Audit
+	 * the record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -333,14 +381,15 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
-				.getModelData();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		TechnicalVerification tv = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getTechnicalVerificationDAO().delete(technicalVerification, TableType.TEMP_TAB);
+		auditDetails.addAll(deleteChilds(tv, "_Temp", auditHeader.getAuditTranType()));
+		technicalVerificationDAO.delete(tv, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -363,14 +412,13 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
-				.getModelData();
-		String usrLanguage = technicalVerification.getUserDetails().getLanguage();
+		TechnicalVerification tv = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = tv.getUserDetails().getLanguage();
 
 		// Extended field details Validation
-		if (technicalVerification.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = technicalVerification.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extHeader = technicalVerification.getExtendedFieldHeader();
+		if (tv.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = tv.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = tv.getExtendedFieldHeader();
 
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(CollateralConstants.VERIFICATION_MODULE);
@@ -379,6 +427,14 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			tableName.append("_TV");
 
 			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
+			auditDetails.addAll(details);
+		}
+		
+		// TV Document details Validation
+		List<DocumentDetails> docuemnts = tv.getDocuments();
+		if (docuemnts != null && !docuemnts.isEmpty()) {
+			List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
+			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
@@ -395,31 +451,102 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
-				.getModelData();
+		TechnicalVerification tv = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
 
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (technicalVerification.isWorkflow()) {
+			if (tv.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
 		// Extended Field Details
-		if (technicalVerification.getExtendedFieldRender() != null) {
+		if (tv.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(technicalVerification.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
+		
+		// FI Document Details
+				if (tv.getDocuments() != null && tv.getDocuments().size() > 0) {
+					auditDetailMap.put("DocumentDetails",
+							setDocumentDetailsAuditData(tv, auditTranType, method));
+					auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+				}
 
-		technicalVerification.setAuditDetailMap(auditDetailMap);
-		auditHeader.getAuditDetail().setModelData(technicalVerification);
+		tv.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(tv);
 		auditHeader.setAuditDetails(auditDetails);
 
 		return auditHeader;
 	}
 
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param detail
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	public List<AuditDetail> setDocumentDetailsAuditData(TechnicalVerification fieldInvestigation, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		DocumentDetails document = new DocumentDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+
+		for (int i = 0; i < fieldInvestigation.getDocuments().size(); i++) {
+			DocumentDetails documentDetails = fieldInvestigation.getDocuments().get(i);
+
+			if (StringUtils.isEmpty(StringUtils.trimToEmpty(documentDetails.getRecordType()))) {
+				continue;
+			}
+
+			documentDetails.setWorkflowId(fieldInvestigation.getWorkflowId());
+			boolean isRcdType = false;
+
+			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (fieldInvestigation.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				documentDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			documentDetails.setRecordStatus(fieldInvestigation.getRecordStatus());
+			documentDetails.setUserDetails(fieldInvestigation.getUserDetails());
+			documentDetails.setLastMntOn(fieldInvestigation.getLastMntOn());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetails.getBefImage(),
+					documentDetails));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
 	private List<Verification> getScreenVerifications(Verification verification) {
 		List<Verification> verifications = new ArrayList<>();
 		List<String> requiredCodes = collateralStructureService.getCollateralValuatorRequiredCodes();
@@ -510,8 +637,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				technicalVerification.getCollateralType(), technicalVerification.getVerificationId());
 	}
 
-	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList,
-			String keyReference) {
+	private void getChangedVerifications(List<Verification> oldList, List<Verification> newList, String keyReference) {
 		List<Long> tvIds = getTechnicalVerificaationIds(oldList, keyReference);
 		for (Verification oldVer : oldList) {
 			for (Verification newVer : newList) {
@@ -654,8 +780,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getTechnicalVerificationDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
+	 * from technicalVerificationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -670,48 +796,137 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
+	/**
+	 * Method For Preparing List of AuditDetails for Document Details
+	 * 
+	 * @param auditDetails
+	 * @param tv
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> saveOrUpdateDocuments(List<AuditDetail> auditDetails, TechnicalVerification tv,
+			String type) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
+
+			if (StringUtils.isBlank(documentDetails.getRecordType())) {
+				continue;
+			}
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			boolean isTempRecord = false;
+			if (StringUtils.isEmpty(type) || type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+				approveRec = true;
+				documentDetails.setRoleCode("");
+				documentDetails.setNextRoleCode("");
+				documentDetails.setTaskId("");
+				documentDetails.setNextTaskId("");
+			}
+			documentDetails.setLastMntBy(tv.getLastMntBy());
+			documentDetails.setWorkflowId(0);
+
+			if (documentDetails.isDocIsCustDoc()) {
+				approveRec = true;
+			}
+
+			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+				isTempRecord = true;
+			} else if (documentDetails.isNewRecord()) {
+				saveRecord = true;
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (documentDetails.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = documentDetails.getRecordType();
+				recordStatus = documentDetails.getRecordStatus();
+				documentDetails.setRecordType("");
+				documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
+					documentDetails.setReferenceId(String.valueOf(tv.getVerificationId()));
+				}
+				if (documentDetails.getDocRefId() <= 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(documentDetails.getDocImage());
+					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+				}
+				// Pass the docRefId here to save this in place of docImage column. Or add another column for now to
+				// save this.
+				documentDetailsDAO.save(documentDetails, type);
+			}
+
+			if (updateRecord) {
+				// When a document is updated, insert another file into the DocumentManager table's.
+				// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
+				if (documentDetails.getDocRefId() <= 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(documentDetails.getDocImage());
+					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+				}
+				documentDetailsDAO.update(documentDetails, type);
+			}
+
+			if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
+				if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+					documentDetailsDAO.delete(documentDetails, type);
+				}
+			}
+
+			if (approveRec) {
+				documentDetails.setFinEvent("");
+				documentDetails.setRecordType(rcdType);
+				documentDetails.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(documentDetails);
+
+		}
+		logger.debug("Leaving");
+		return auditDetails;
 	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
+	
+	public DocumentDetailValidation getDocumentValidation() {
+		if (documentValidation == null) {
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO, customerDocumentDAO);
+		}
+		return documentValidation;
 	}
-
-	public TechnicalVerificationDAO getTechnicalVerificationDAO() {
-		return technicalVerificationDAO;
-	}
-
-	public void setTechnicalVerificationDAO(TechnicalVerificationDAO technicalVerificationDAO) {
-		this.technicalVerificationDAO = technicalVerificationDAO;
-	}
-
-	public VerificationDAO getVerificationDAO() {
-		return verificationDAO;
-	}
-
-	public void setVerificationDAO(VerificationDAO verificationDAO) {
-		this.verificationDAO = verificationDAO;
-	}
-
-	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
-		return extendedFieldDetailsService;
-	}
-
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
-	}
-
 }

@@ -56,30 +56,39 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FieldInvestigation</b>.<br>
+ * Service implementation for methods that depends on <b>FieldInvestigation</b>.<br>
  */
 public class FieldInvestigationServiceImpl extends GenericService<FieldInvestigation>
 		implements FieldInvestigationService {
 	private static final Logger logger = Logger.getLogger(FieldInvestigationServiceImpl.class);
 
+	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
+	@Autowired
 	private FieldInvestigationDAO fieldInvestigationDAO;
+	@Autowired
 	private VerificationDAO verificationDAO;
-	private DocumentDetailValidation		documentValidation;
-	private DocumentDetailsDAO				documentDetailsDAO;
-	private DocumentManagerDAO				documentManagerDAO;
-	private CustomerDocumentDAO				customerDocumentDAO;
-	
 	@Autowired
 	private AddressTypeDAO addressTypeDAO;
-
-	@Override
-	public void save(FieldInvestigation fieldInvestigation, TableType tempTab) {
-		setAudit(fieldInvestigation);
-		fieldInvestigationDAO.save(fieldInvestigation, tempTab);
+	@Autowired
+	private DocumentDetailsDAO documentDetailsDAO;
+	@Autowired
+	private DocumentManagerDAO documentManagerDAO;
+	@Autowired
+	private CustomerDocumentDAO customerDocumentDAO;
+	private DocumentDetailValidation documentValidation;
+	
+	
+	public FieldInvestigationServiceImpl() {
+		super();
 	}
 
+	@Override
+	public void save(FieldInvestigation fi, TableType tempTab) {
+		setAudit(fi);
+		fieldInvestigationDAO.save(fi, tempTab);
+	}
+	
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -102,33 +111,31 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			return auditHeader;
 		}
 
-		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
+		FieldInvestigation fi = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		TableType tableType = TableType.MAIN_TAB;
-		String tableType1 = "";
-		if (fieldInvestigation.isWorkflow()) {
+		if (fi.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
-			tableType1 = "_Temp";
 		}
 
-		if (fieldInvestigation.isNew()) {
-			fieldInvestigation.setId(Long.parseLong(getFieldInvestigationDAO().save(fieldInvestigation, tableType)));
-			auditHeader.getAuditDetail().setModelData(fieldInvestigation);
-			auditHeader.setAuditReference(String.valueOf(fieldInvestigation.getId()));
+		if (fi.isNew()) {
+			fi.setId(Long.parseLong(fieldInvestigationDAO.save(fi, tableType)));
+			auditHeader.getAuditDetail().setModelData(fi);
+			auditHeader.setAuditReference(String.valueOf(fi.getId()));
 		} else {
-			getFieldInvestigationDAO().update(fieldInvestigation, tableType);
+			fieldInvestigationDAO.update(fi, tableType);
 		}
-		
+
 		// FI documents
-		if (fieldInvestigation.getDocuments() != null && !fieldInvestigation.getDocuments().isEmpty()) {
-			List<AuditDetail> details = fieldInvestigation.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, fieldInvestigation, tableType1);
+		if (fi.getDocuments() != null && !fi.getDocuments().isEmpty()) {
+			List<AuditDetail> details = fi.getAuditDetailMap().get("DocumentDetails");
+			details = saveOrUpdateDocuments(details, fi, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 		
-
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -138,13 +145,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * Method For Preparing List of AuditDetails for Document Details
 	 * 
 	 * @param auditDetails
-	 * @param fieldInvestigation
+	 * @param fi
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails,
-			FieldInvestigation fieldInvestigation, String type) {
-		logger.debug("Entering");
+	private List<AuditDetail> saveOrUpdateDocuments(List<AuditDetail> auditDetails,
+			FieldInvestigation fi, String type) {
+		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -152,131 +159,119 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		boolean approveRec = false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
-
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
 
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
-			if (!documentDetails.isDocIsCustDoc()) {
-				saveRecord = false;
-				updateRecord = false;
-				deleteRecord = false;
-				approveRec = false;
-				String rcdType = "";
-				String recordStatus = "";
-				boolean isTempRecord = false;
-				if (StringUtils.isEmpty(type) || type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
-					approveRec = true;
-					documentDetails.setRoleCode("");
-					documentDetails.setNextRoleCode("");
-					documentDetails.setTaskId("");
-					documentDetails.setNextTaskId("");
-				}
-				documentDetails.setLastMntBy(fieldInvestigation.getLastMntBy());
-				documentDetails.setWorkflowId(0);
 
-				if (documentDetails.isDocIsCustDoc()) {
-					approveRec = true;
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			boolean isTempRecord = false;
+			if (StringUtils.isEmpty(type) || type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+				approveRec = true;
+				documentDetails.setRoleCode("");
+				documentDetails.setNextRoleCode("");
+				documentDetails.setTaskId("");
+				documentDetails.setNextTaskId("");
+			}
+			documentDetails.setLastMntBy(fi.getLastMntBy());
+			documentDetails.setWorkflowId(0);
+
+			if (documentDetails.isDocIsCustDoc()) {
+				approveRec = true;
+			}
+
+			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+				isTempRecord = true;
+			} else if (documentDetails.isNewRecord()) {
+				saveRecord = true;
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					deleteRecord = true;
-					isTempRecord = true;
-				} else if (documentDetails.isNewRecord()) {
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
 					saveRecord = true;
-					if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}
-
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					if (approveRec) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-					updateRecord = true;
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					if (approveRec) {
-						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				}
-
-				if (approveRec) {
-					rcdType = documentDetails.getRecordType();
-					recordStatus = documentDetails.getRecordStatus();
-					documentDetails.setRecordType("");
-					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				}
-				if (saveRecord) {
-					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
-						documentDetails.setReferenceId(String.valueOf(fieldInvestigation.getVerificationId()));
-					}
-					//documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-					// Save the document (documentDetails object) into DocumentManagerTable using documentManagerDAO.save(?) get the long Id.
-					// This will be used in the getDocumentDetailsDAO().save, Update & delete methods
-					if (documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
-					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
-					getDocumentDetailsDAO().save(documentDetails, type);
-				}
-
-				if (updateRecord) {
-					// When a document is updated, insert another file into the DocumentManager table's.
-					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
-					getDocumentDetailsDAO().update(documentDetails, type);
-				}
-
-				if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
-					if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
-						getDocumentDetailsDAO().delete(documentDetails, type);
-					}
-				}
-
-				if (approveRec) {
-					documentDetails.setFinEvent("");
-					documentDetails.setRecordType(rcdType);
-					documentDetails.setRecordStatus(recordStatus);
-				}
-				auditDetails.get(i).setModelData(documentDetails);
-			} else {/*
-				CustomerDocument custdoc = getCustomerDocument(documentDetails, fieldInvestigation);
-				if (custdoc.isNewRecord()) {
-					getCustomerDocumentDAO().save(custdoc, "");
 				} else {
-					getCustomerDocumentDAO().update(custdoc, "");
+					updateRecord = true;
 				}
-			*/}
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (documentDetails.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = documentDetails.getRecordType();
+				recordStatus = documentDetails.getRecordStatus();
+				documentDetails.setRecordType("");
+				documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
+					documentDetails.setReferenceId(String.valueOf(fi.getVerificationId()));
+				}
+				if (documentDetails.getDocRefId() <= 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(documentDetails.getDocImage());
+					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+				}
+				// Pass the docRefId here to save this in place of docImage column. Or add another column for now to
+				// save this.
+				documentDetailsDAO.save(documentDetails, type);
+			}
+
+			if (updateRecord) {
+				// When a document is updated, insert another file into the DocumentManager table's.
+				// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
+				if (documentDetails.getDocRefId() <= 0) {
+					DocumentManager documentManager = new DocumentManager();
+					documentManager.setDocImage(documentDetails.getDocImage());
+					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+				}
+				documentDetailsDAO.update(documentDetails, type);
+			}
+
+			if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
+				if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+					documentDetailsDAO.delete(documentDetails, type);
+				}
+			}
+
+			if (approveRec) {
+				documentDetails.setFinEvent("");
+				documentDetails.setRecordType(rcdType);
+				documentDetails.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(documentDetails);
+
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
-	
+
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table verification_fi by using verification_fiDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -286,6 +281,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
@@ -293,17 +289,18 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
-		getFieldInvestigationDAO().delete(fieldInvestigation, TableType.MAIN_TAB);
+		auditDetails.addAll(deleteChilds(fieldInvestigation, "", auditHeader.getAuditTranType()));
+		fieldInvestigationDAO.delete(fieldInvestigation, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * getverification_fi fetch the details by using verification_fiDAO's
-	 * getverification_fiById method.
+	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation.
@@ -311,51 +308,44 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 */
 	@Override
 	public FieldInvestigation getFieldInvestigation(long id) {
-		 FieldInvestigation fieldInvestigation=getFieldInvestigationDAO().getFieldInvestigation(id,"_View");
-		 if(fieldInvestigation!=null){
+		FieldInvestigation fieldInvestigation = fieldInvestigationDAO.getFieldInvestigation(id, "_View");
+		if (fieldInvestigation != null) {
 			// FI Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(String.valueOf(id),
-						VerificationType.FI.getCode(), "", "_View");
-				if (fieldInvestigation.getDocuments() != null && !fieldInvestigation.getDocuments().isEmpty()) {
-					fieldInvestigation.getDocuments().addAll(documentList);
-				} else {
-					fieldInvestigation.setDocuments(documentList);
-				}
-		 }
-		 
-		 return fieldInvestigation;
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
+					VerificationType.FI.getCode(), "", "_View");
+			if (fieldInvestigation.getDocuments() != null && !fieldInvestigation.getDocuments().isEmpty()) {
+				fieldInvestigation.getDocuments().addAll(documentList);
+			} else {
+				fieldInvestigation.setDocuments(documentList);
+			}
+		}
+
+		return fieldInvestigation;
 	}
 
 	/**
-	 * getApprovedverification_fiById fetch the details by using
-	 * verification_fiDAO's getverification_fiById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * verification_fi.
+	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
+	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
 	 * 
 	 * @param id
 	 *            id of the FieldInvestigation. (String)
 	 * @return verification_fi
 	 */
 	public FieldInvestigation getApprovedFieldInvestigation(long id) {
-		return getFieldInvestigationDAO().getFieldInvestigation(id,"");
+		return fieldInvestigationDAO.getFieldInvestigation(id, "");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFieldInvestigationDAO().delete with parameters
-	 * fieldInvestigation,"" b) NEW Add new record in to main table by using
-	 * getFieldInvestigationDAO().save with parameters fieldInvestigation,"" c)
-	 * EDIT Update record in the main table by using
-	 * getFieldInvestigationDAO().update with parameters fieldInvestigation,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getFieldInvestigationDAO().delete with parameters
-	 * fieldInvestigation,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and Adtverification_fi by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using fieldInvestigationDAO.delete with
+	 * parameters fieldInvestigation,"" b) NEW Add new record in to main table by using fieldInvestigationDAO.save
+	 * with parameters fieldInvestigation,"" c) EDIT Update record in the main table by using
+	 * fieldInvestigationDAO.update with parameters fieldInvestigation,"" 3) Delete the record from the workFlow
+	 * table by using fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 4) Audit the record
+	 * in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -366,8 +356,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.info(Literal.ENTERING);
 
 		String tranType = "";
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
 		if (!auditHeader.isNextProcess()) {
@@ -379,13 +369,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		BeanUtils.copyProperties((FieldInvestigation) auditHeader.getAuditDetail().getModelData(), fi);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fi.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(fieldInvestigationDAO.getFieldInvestigation(fi.getId(),""));
+			auditHeader.getAuditDetail().setBefImage(fieldInvestigationDAO.getFieldInvestigation(fi.getId(), ""));
 		}
 
 		if (fi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			auditDetails.addAll(listDeletion(fi, "", tranType));
-			getFieldInvestigationDAO().delete(fi, TableType.MAIN_TAB);
+			auditDetails.addAll(deleteChilds(fi, "", tranType));
+			fieldInvestigationDAO.delete(fi, TableType.MAIN_TAB);
 		} else {
 			fi.setRoleCode("");
 			fi.setNextRoleCode("");
@@ -396,84 +386,81 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			if (fi.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				fi.setRecordType("");
-				getFieldInvestigationDAO().save(fi, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
+				fieldInvestigationDAO.save(fi, TableType.MAIN_TAB);
+				verificationDAO.updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				fi.setRecordType("");
-				getFieldInvestigationDAO().update(fi, TableType.MAIN_TAB);
-				getVerificationDAO().updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
+				fieldInvestigationDAO.update(fi, TableType.MAIN_TAB);
+				verificationDAO.updateVerifiaction(fi.getId(), fi.getDate(), fi.getStatus());
 			}
-			
-			//FI Document Details
+
+			// FI Document Details
 			List<DocumentDetails> documentsList = fi.getDocuments();
 			if (documentsList != null && documentsList.size() > 0) {
 				List<AuditDetail> details = fi.getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, fi, "");
+				details = saveOrUpdateDocuments(details, fi, "");
 				auditDetails.addAll(details);
 			}
-			
+
 		}
-		
-		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
+
+		List<AuditDetail> auditDetailList = new ArrayList<>();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FieldInvestigation(), fi.getExcludeFields());
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			
-			auditDetailList.addAll(listDeletion(fi, "_Temp", auditHeader.getAuditTranType()));
-			getFieldInvestigationDAO().delete(fi, TableType.TEMP_TAB);
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-					fi.getBefImage(), fi));
-			auditHeader.setAuditDetails(auditDetailList);
-			getAuditHeaderDAO().addAudit(auditHeader);
+		auditDetailList.addAll(deleteChilds(fi, "_Temp", auditHeader.getAuditTranType()));
+		fieldInvestigationDAO.delete(fi, TableType.TEMP_TAB);
+
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], fi.getBefImage(), fi));
+		auditHeader.setAuditDetails(auditDetailList);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(fi);
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
-	
+
 	// Method for Deleting all records related to FI setup in _Temp/Main tables depend on method type
+	public List<AuditDetail> deleteChilds(FieldInvestigation fi, String tableType, String auditTranType) {
+		logger.debug("Entering");
 
-		public List<AuditDetail> listDeletion(FieldInvestigation fi, String tableType, String auditTranType) {
-			logger.debug("Entering");
+		List<AuditDetail> auditList = new ArrayList<>();
 
-			List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-
-			// Document Details. 
-			List<AuditDetail> documentDetails = fi.getAuditDetailMap().get("DocumentDetails");
-			if (documentDetails != null && documentDetails.size() > 0) {
-				DocumentDetails document = new DocumentDetails();
-				DocumentDetails documentDetail = null;
-				List<DocumentDetails> docList = new ArrayList<DocumentDetails>();
-				String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
-				for (int i = 0; i < documentDetails.size(); i++) {
-					documentDetail = (DocumentDetails) documentDetails.get(i).getModelData();
-					documentDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-					docList.add(documentDetail);
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetail.getBefImage(),
-							documentDetail));
-				}
-				getDocumentDetailsDAO().deleteList(docList, tableType);
+		// Document Details.
+		List<AuditDetail> documentDetails = fi.getAuditDetailMap().get("DocumentDetails");
+		if (documentDetails != null && documentDetails.size() > 0) {
+			DocumentDetails document = new DocumentDetails();
+			List<DocumentDetails> documents = new ArrayList<>();
+			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+			for (int i = 0; i < documentDetails.size(); i++) {
+				document = (DocumentDetails) documentDetails.get(i).getModelData();
+				document.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				documents.add(document);
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], document.getBefImage(), document));
 			}
-
-			logger.debug("Leaving");
-			return auditList;
+			documentDetailsDAO.deleteList(documents, tableType);
 		}
+
+		logger.debug("Leaving");
+		return auditList;
+	}
 
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFieldInvestigationDAO().delete with parameters fieldInvestigation,"_Temp" 3) Audit the
+	 * workFlow table by using fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 3) Audit the
 	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
@@ -489,30 +476,29 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		
-		String[] fields = PennantJavaUtil.getFieldDetails(new FieldInvestigation(), fieldInvestigation.getExcludeFields());
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new FieldInvestigation(),
+				fieldInvestigation.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				fieldInvestigation.getBefImage(), fieldInvestigation));
 
-		auditDetails.addAll(listDeletion(fieldInvestigation, "_Temp", auditHeader.getAuditTranType()));
-		getFieldInvestigationDAO().delete(fieldInvestigation, TableType.TEMP_TAB);
+		auditDetails.addAll(deleteChilds(fieldInvestigation, "_Temp", auditHeader.getAuditTranType()));
+		fieldInvestigationDAO.delete(fieldInvestigation, TableType.TEMP_TAB);
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -521,18 +507,18 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		auditHeader = getAuditDetails(auditHeader, method);
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditDetail.getModelData();
 		String usrLanguage = fieldInvestigation.getUserDetails().getLanguage();
-		
-		//FI Document details Validation
-		List<DocumentDetails> documentDetailsList = fieldInvestigation.getDocuments();
-		if (documentDetailsList != null && !documentDetailsList.isEmpty()) {
+
+		// FI Document details Validation
+		List<DocumentDetails> docuemnts = fieldInvestigation.getDocuments();
+		if (docuemnts != null && !docuemnts.isEmpty()) {
 			List<AuditDetail> details = fieldInvestigation.getAuditDetailMap().get("DocumentDetails");
 			details = getDocumentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
@@ -545,10 +531,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFieldInvestigationDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from fieldInvestigationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -563,7 +548,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -574,7 +559,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
@@ -587,9 +572,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			}
 		}
 
-		//FI Document Details
+		// FI Document Details
 		if (fieldInvestigation.getDocuments() != null && fieldInvestigation.getDocuments().size() > 0) {
-			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(fieldInvestigation, auditTranType, method));
+			auditDetailMap.put("DocumentDetails",
+					setDocumentDetailsAuditData(fieldInvestigation, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 		fieldInvestigation.setAuditDetailMap(auditDetailMap);
@@ -612,7 +598,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			String method) {
 		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		DocumentDetails document = new DocumentDetails();
 		String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
@@ -666,7 +652,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	}
 
 	@Override
-	public List<Long> getFieldInvestigationIds(List<Verification> verifications,String keyRef) {
+	public List<Long> getFieldInvestigationIds(List<Verification> verifications, String keyRef) {
 		List<Long> fiIds = new ArrayList<>();
 		List<FieldInvestigation> fiList = fieldInvestigationDAO.getList(keyRef);
 		for (FieldInvestigation fieldInvestigation : fiList) {
@@ -679,7 +665,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 		return fiIds;
 	}
-	
+
 	@Override
 	public void save(CustomerDetails applicant, List<CustomerPhoneNumber> phoneNumbers, Verification item) {
 		for (CustomerAddres address : applicant.getAddressList()) {
@@ -695,7 +681,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	private void setFiFields(Verification verification, CustomerAddres address,
 			List<CustomerPhoneNumber> phoneNumbers) {
-		
+
 		FieldInvestigation fi = new FieldInvestigation();
 
 		fi.setVerificationId(verification.getId());
@@ -726,7 +712,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		verification.setFieldInvestigation(fi);
 	}
-	
+
 	private void setAudit(FieldInvestigation fi) {
 		String workFlowType = ModuleUtil.getWorkflowType("FieldInvestigation");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workFlowType);
@@ -781,14 +767,14 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 		return verifications;
 	}
-	
+
 	@Override
 	public Verification getFiVeriFication(Verification verification) {
 		logger.info(Literal.ENTERING);
 		List<Verification> preVerifications = verificationDAO.getFiVeriFications(verification.getKeyReference(),
 				VerificationType.FI.getKey());
 		List<Verification> screenVerifications = getScreenVerifications(verification);
-		
+
 		setLastStatus(screenVerifications);
 
 		if (!preVerifications.isEmpty()) {
@@ -802,10 +788,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 				}
 			}
 		}
-		
-		screenVerifications.addAll(getChangedVerifications(preVerifications, screenVerifications,verification.getKeyReference()));
-		verification.setVerifications(compareVerifications(screenVerifications, preVerifications,verification.getKeyReference()));
-		
+
+		screenVerifications
+				.addAll(getChangedVerifications(preVerifications, screenVerifications, verification.getKeyReference()));
+		verification.setVerifications(
+				compareVerifications(screenVerifications, preVerifications, verification.getKeyReference()));
+
 		logger.info(Literal.LEAVING);
 		return verification;
 	}
@@ -834,9 +822,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 	}
 
-	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,String keyReference) {
+	private List<Verification> getChangedVerifications(List<Verification> oldList, List<Verification> newList,
+			String keyReference) {
 		List<Verification> verifications = new ArrayList<>();
-		List<Long> fiIds=getFieldInvestigationIds(oldList,keyReference);
+		List<Long> fiIds = getFieldInvestigationIds(oldList, keyReference);
 		for (Verification oldVer : oldList) {
 			for (Verification newVer : newList) {
 				if (oldVer.getCustId().compareTo(newVer.getCustId()) == 0
@@ -902,8 +891,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		List<Verification> tempList = new ArrayList<>();
 		tempList.addAll(screenVerifications);
 		tempList.addAll(preVerifications);
-		List<Long> fiIds=getFieldInvestigationIds(preVerifications,keyReference);
-		
+		List<Long> fiIds = getFieldInvestigationIds(preVerifications, keyReference);
+
 		screenVerifications.addAll(preVerifications);
 
 		for (Verification vrf : tempList) {
@@ -923,7 +912,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		return screenVerifications;
 	}
-	
+
 	@Override
 	public boolean isAddressesAdded(List<CustomerAddres> screenCustomerAddresses,
 			List<CustomerAddres> savedCustomerAddresses) {
@@ -986,55 +975,13 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		return false;
 	}
-	
+
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
 		@Override
 		public int compare(CustomerPhoneNumber o1, CustomerPhoneNumber o2) {
 			return o2.getPhoneTypePriority() - o1.getPhoneTypePriority();
 		}
 
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the fieldInvestigationDAO
-	 */
-	public FieldInvestigationDAO getFieldInvestigationDAO() {
-		return fieldInvestigationDAO;
-	}
-
-	/**
-	 * @param fieldInvestigationDAO
-	 *            the fieldInvestigationDAO to set
-	 */
-	public void setFieldInvestigationDAO(FieldInvestigationDAO fieldInvestigationDAO) {
-		this.fieldInvestigationDAO = fieldInvestigationDAO;
-	}
-
-	public VerificationDAO getVerificationDAO() {
-		return verificationDAO;
-	}
-
-	public void setVerificationDAO(VerificationDAO verificationDAO) {
-		this.verificationDAO = verificationDAO;
 	}
 
 	@Override
@@ -1044,38 +991,8 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO, customerDocumentDAO);
 		}
 		return documentValidation;
 	}
-
-	public void setDocumentValidation(DocumentDetailValidation documentValidation) {
-		this.documentValidation = documentValidation;
-	}
-
-	public DocumentDetailsDAO getDocumentDetailsDAO() {
-		return documentDetailsDAO;
-	}
-
-	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
-		this.documentDetailsDAO = documentDetailsDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
-	public CustomerDocumentDAO getCustomerDocumentDAO() {
-		return customerDocumentDAO;
-	}
-
-	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
-		this.customerDocumentDAO = customerDocumentDAO;
-	}
-	
 }

@@ -95,6 +95,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -148,6 +149,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	//private List<ValueLabel>	documentTypes	      = PennantAppUtil.getDocumentTypes();
 	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
 	protected Div docDiv;
+	
+	private String								moduleName;
+	private boolean isEditable;
 
 	/**
 	 * default constructor.<br>
@@ -247,6 +251,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							(String) arguments.get("roleCode"),
 							"DocumentDetailsDialog");
 				}
+			}
+			
+			if (arguments.containsKey("moduleName")) {
+				this.moduleName = (String) arguments.get("moduleName");
+			}
+			
+			if (arguments.containsKey("isEditable")) {
+				isEditable = Boolean.parseBoolean(arguments.get("isEditable").toString());
 			}
 
 			doLoadWorkFlow(this.finDocumentDetail.isWorkflow(),
@@ -848,6 +860,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			btnDelete.setVisible(false);
 		} else {
 			btnDelete.setVisible(true);
+		}
+		
+		if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)) {
+			this.btnDelete.setVisible(isEditable);
+			this.btnSave.setVisible(isEditable);
+			this.documnetName.setDisabled(true);
+			this.btnUploadDoc.setDisabled(!isEditable);
+			this.docReceived.setDisabled(!isEditable);
 		}
 
 		

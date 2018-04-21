@@ -5265,9 +5265,4 @@
 		<property name="authorizationLimitService" ref="authorizationLimitService"/>
 	</bean>
 	
-	<bean id="fieldInvestigationDocumentDialogCtrl"
-		class="com.pennant.webui.verification.fieldinvestigation.FieldInvestigationDocumentDialogCtrl"
-		parent="basisListCtrl" scope="prototype">
-	</bean>
-	
 </beans>

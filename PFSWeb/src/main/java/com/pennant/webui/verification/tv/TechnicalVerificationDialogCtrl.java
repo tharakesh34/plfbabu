@@ -23,11 +23,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
@@ -36,7 +40,10 @@ import org.zkoss.zul.North;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -48,6 +55,7 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -62,11 +70,14 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
@@ -118,7 +129,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	
 	protected North north;
 	protected South south;
-
+	
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected String selectMethodName = "onSelectTab";
+	
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 	private transient TechnicalVerificationListCtrl technicalVerificationListCtrl;
 	private transient TechnicalVerificationService technicalVerificationService;
 	private transient CollateralSetupService collateralSetupService;
@@ -406,6 +424,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		// Extended Field details
 		appendExtendedFieldDetails(tv);
 		
+		// Document Detail Tab Addition
+		appendDocumentDetailTab();
+
 		// Verification details
 		appendVerificationFieldDetails(tv);
 		
@@ -413,6 +434,70 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for Rendering Document Details Data in finance
+	 */
+	private void appendDocumentDetailTab() {
+		logger.debug("Entering");
+		createTab("DOCUMENTDETAIL", true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("documentDetails", getTechnicalVerification().getDocuments());
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel("DOCUMENTDETAIL"), map);
+		logger.debug("Leaving");
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", this);
+		map.put("isNotFinanceProcess", true);
+		map.put("moduleName", VerificationType.FI.name());
+
+		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(technicalVerification.getRecordStatus()) || enqiryModule) {
+			map.put("isEditable", false);
+		} else {
+			map.put("isEditable", true);
+		}
+
+		return map;
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * This method is for append extended field details
 	 */
@@ -602,13 +687,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 
 		doRemoveValidation();
-		if (!wve.isEmpty()) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
-			}
-			throw new WrongValuesException(wvea);
-		}
+		showErrorDetails(wve, this.verificationDetails);
+		showErrorDetails(wve, this.extendedDetailsTab);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -697,7 +777,33 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+	/**
+	 * Method to show error details if occurred
+	 * 
+	 **/
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug("Entering");
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			tab.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+				if (i == 0) {
+					Component comp = wvea[i].getComponent();
+					if (comp instanceof HtmlBasedComponent) {
+						Clients.scrollIntoView(comp);
+					}
+				}
+				logger.debug(wvea[i]);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug("Leaving");
+	}
 	
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
@@ -909,6 +1015,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			}
 		}
 
+		// Document Details Saving
+
+		if (documentDetailDialogCtrl != null) {
+			tv.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
+		} else {
+			tv.setDocuments(getTechnicalVerification().getDocuments());
+		}
+
 		try {
 			if (doProcess(tv, tranType)) {
 				refreshList();
@@ -1013,6 +1127,32 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				}
 			}
 
+			// Document Details
+			if (tv.getDocuments() != null && !tv.getDocuments().isEmpty()) {
+				for (DocumentDetails details : tv.getDocuments()) {
+					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
+						continue;
+					}
+
+					details.setReferenceId(String.valueOf(tv.getVerificationId()));
+					details.setDocModule(VerificationType.TV.getCode());
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(tv.getRecordStatus());
+					details.setWorkflowId(tv.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(tv.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(tv.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
+			
 			
 			auditHeader = getAuditHeader(tv, tranType);
 			String operationRefs = getServiceOperations(taskId, tv);
@@ -1161,4 +1301,30 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void setCcyFormat(int ccyFormat) {
 		this.ccyFormat = ccyFormat;
 	}
+
+	public TechnicalVerification getTechnicalVerification() {
+		return technicalVerification;
+	}
+
+	public void setTechnicalVerification(TechnicalVerification technicalVerification) {
+		this.technicalVerification = technicalVerification;
+	}
+
+	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
+		return financeCheckListReferenceDialogCtrl;
+	}
+
+	public void setFinanceCheckListReferenceDialogCtrl(
+			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
+		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
+	}
+
+	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
+		return documentDetailDialogCtrl;
+	}
+
+	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
+		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
+	}
+	
 }

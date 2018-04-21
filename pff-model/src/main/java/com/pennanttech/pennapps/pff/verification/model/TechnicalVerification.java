@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -62,6 +63,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String contactNumber1;
 	private String contactNumber2;
 	private String lovrelationdesc;
+	private List<DocumentDetails> documents = null;
 
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
@@ -105,6 +107,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("contactNumber1");
 		excludeFields.add("contactNumber2");
 		excludeFields.add("lovrelationdesc");
+		excludeFields.add("documents");
 		return excludeFields;
 	}
 
@@ -378,6 +381,14 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public void setAgency(String agency) {
 		this.agency = agency;
+	}
+	
+	public List<DocumentDetails> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<DocumentDetails> documents) {
+		this.documents = documents;
 	}
 
 	public Timestamp getCreatedOn() {

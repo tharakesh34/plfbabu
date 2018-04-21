@@ -75,6 +75,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.facility.facility.FacilityDocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -90,8 +91,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	ExtendedCombobox            docCategory;                                                                  //autowired
 
-	private DocumentDetails	              documentDetail;	
-	private List<DocumentType>	documentTypes	      = PennantAppUtil.getDocumentTypesList();
+	private DocumentDetails documentDetail;
+	private List<DocumentType> documentTypes = PennantAppUtil.getDocumentTypesList();
 
 	private DocumentDetailDialogCtrl documentDetailDialogCtrl;
 	private FacilityDocumentDetailDialogCtrl facilityDocumentDetailDialogCtrl;
@@ -100,7 +101,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private Facility facility;
 	private boolean isFacility = false;
 	private boolean isNotFinanceProcess = false;
-	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
+	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	private List<Object> custDetails = null;
 	
 	/**
@@ -173,8 +174,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 
 			if (arguments.containsKey("window")) {
-				this.window_documentDetailDialog = (Component) arguments
-						.get("window");
+				this.window_documentDetailDialog = (Component) arguments.get("window");
 			}
 			
 			doShowDialog();
@@ -223,11 +223,11 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * @throws Exception
 	 */
 	public void doShowDialog() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
-			doSetFieldProperties(); 
-			
+			doSetFieldProperties();
+
 			this.window_DocumentTypeSelectDialog.setHeight("150px");
 			this.window_DocumentTypeSelectDialog.setWidth("80%");
 			this.window_DocumentTypeSelectDialog.doModal();
@@ -238,7 +238,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 

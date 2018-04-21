@@ -90,6 +90,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
@@ -104,28 +105,29 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_documentDetailDialog;								// autoWired
-	protected Borderlayout						borderlayoutDocumentDetail;									// autoWired
+	protected Window window_documentDetailDialog; // autoWired
+	protected Borderlayout borderlayoutDocumentDetail; // autoWired
 
-	protected Button							btnNew_DocumentDetails;										// autoWired
-	protected Listbox							listBoxDocumentDetails;										// autoWired
-	protected Map<String, DocumentDetails>		docDetailMap			= null;
-	private List<DocumentDetails>				documentDetailsList		= new ArrayList<DocumentDetails>();
-	private transient FinanceDetailService		financeDetailService	= null;
-	private transient CustomerDocumentService	customerDocumentService	= null;
-	private ExternalDocumentManager				externalDocumentManager	= null;
+	protected Button btnNew_DocumentDetails; // autoWired
+	protected Listbox listBoxDocumentDetails; // autoWired
+	protected Map<String, DocumentDetails> docDetailMap = null;
+	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+	private transient FinanceDetailService financeDetailService = null;
+	private transient CustomerDocumentService customerDocumentService = null;
+	private ExternalDocumentManager externalDocumentManager = null;
 
-	private Object								financeMainDialogCtrl	= null;
-	private FinanceDetail						financeDetail			= null;
+	private Object financeMainDialogCtrl = null;
+	private FinanceDetail financeDetail = null;
 
-	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
-	protected Groupbox							finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	protected Groupbox finBasicdetails;
 
-	private boolean								headerNotrequired		= false;
-	private String								moduleDefiner			= "";
-	private boolean								isNotFinanceProcess		= false;
-	private String								moduleName;
+	private boolean headerNotrequired = false;
+	private String moduleDefiner = "";
+	private boolean isNotFinanceProcess = false;
+	private String moduleName;
+	private boolean isEditable;
 
 	/**
 	 * default constructor.<br>
@@ -161,7 +163,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else {
 				enqiryModule = false;
 			}
-			
+
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
@@ -183,19 +185,23 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("isNotFinanceProcess")) {
 				isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
 			}
-			
+
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
+			
+			if (arguments.containsKey("isEditable")) {
+				isEditable = Boolean.parseBoolean(arguments.get("isEditable").toString());
+			}			
 
-			// append finance basic details 
+			// append finance basic details
 			if (arguments.containsKey("finHeaderList")) {
-				appendFinBasicDetails((ArrayList<Object> )arguments.get("finHeaderList"));
+				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 			} else {
 				this.finBasicdetails.setZclass("null");
 			}
-			
-			//Document details
+
+			// Document details
 			if (arguments.containsKey("documentDetails")) {
 				setDocumentDetailsList((List<DocumentDetails>) arguments.get("documentDetails"));
 			}
@@ -220,10 +226,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 
 		try {
-			
-			//New button visibility.
+
+			// New button visibility.
 			this.btnNew_DocumentDetails.setVisible(!enqiryModule);
-			
+
 			// fill the components with the data
 			if (getDocumentDetailsList() != null && getDocumentDetailsList().size() > 0) {
 				doFillDocumentDetails(getDocumentDetailsList());
@@ -243,6 +249,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			getBorderLayoutHeight();
 			this.listBoxDocumentDetails.setHeight(this.borderLayoutHeight - 210 + "px");
 			this.window_documentDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+
+			if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)) {
+				this.btnNew_DocumentDetails.setVisible(isEditable);
+			}
 
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -264,7 +274,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		map.put("documentDetailDialogCtrl", this);
-		if(!isNotFinanceProcess){
+		if (!isNotFinanceProcess) {
 			map.put("custDetails", getCustomerBasicDetails());
 			map.put("financeDetail", getFinanceDetail());
 		}
@@ -285,6 +295,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		map.put("isFacility", false);
 		map.put("window", window_documentDetailDialog);
+		map.put("moduleCode", moduleCode);
+		map.put("isEditable", isEditable);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/DocumentTypeSelectDialog.zul",
 				window_documentDetailDialog, map);
 		logger.debug("Leaving" + event.toString());
@@ -302,13 +314,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("roleCode", getRole());
 		map.put("isCheckList", isCheckList);
 		if (getFinanceDetail() != null) {
-			map.put("isDocAllowedForInput", isDocAllowedForInput(checkListDetail.getDocType(),checkListDetail.getCheckListId()));
+			map.put("isDocAllowedForInput",
+					isDocAllowedForInput(checkListDetail.getDocType(), checkListDetail.getCheckListId()));
 		} else {
 			if (isNotFinanceProcess) {
 				map.put("isDocAllowedForInput", true);
 			}
 		}
-		
+
 		List<Object> list = getCustomerBasicDetails();
 		if (checkListDetail != null && checkListDetail.isDocIsCustDOC()) {
 			CustomerDocument customerDocument = new CustomerDocument();
@@ -316,7 +329,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
 			customerDocument.setLovDescCustDocCategory(checkListDetail.getAnsDesc());
 			customerDocument.setWorkflowId(0);
-			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) :  0);
+			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) : 0);
 			customerDocument.setLovDescCustCIF(list != null ? String.valueOf(list.get(1).toString()) : "");
 			customerDocument.setLovDescCustShrtName(list != null ? String.valueOf(list.get(2).toString()) : "");
 
@@ -330,8 +343,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
 			}
 
-			if ((PennantConstants.CPRCODE.equals(checkListDetail.getDocType()) || PennantConstants.PASSPORT
-					.equals(checkListDetail.getDocType())) && getFinanceMainDialogCtrl() != null) {
+			if ((PennantConstants.CPRCODE.equals(checkListDetail.getDocType())
+					|| PennantConstants.PASSPORT.equals(checkListDetail.getDocType()))
+					&& getFinanceMainDialogCtrl() != null) {
 				if (getFinanceMainDialogCtrl().getClass().getMethod("getCustomerIDNumber", String.class) != null) {
 					String idNumber = (String) getFinanceMainDialogCtrl().getClass()
 							.getMethod("getCustomerIDNumber", String.class)
@@ -434,8 +448,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
-			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				updateExistingDocument(finDocumentDetail, 0, false);
@@ -444,12 +458,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public boolean isDocAllowedForInput(String docCategory,long checklistID) {
+	public boolean isDocAllowedForInput(String docCategory, long checklistID) {
 		logger.debug("Entering");
 		List<FinanceReferenceDetail> list = getFinanceDetail().getCheckList();
 		if (list != null && !list.isEmpty()) {
-			String roleCode = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain()
-					.getNextRoleCode());
+			String roleCode = StringUtils
+					.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode());
 
 			for (FinanceReferenceDetail financeReferenceDetail : list) {
 
@@ -459,7 +473,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 					for (CheckListDetail checkListDetail : checkListDetails) {
 
-						if(checklistID != checkListDetail.getCheckListId()){
+						if (checklistID != checkListDetail.getCheckListId()) {
 							continue;
 						}
 
@@ -471,17 +485,15 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							if (roleCode != null && roleCode.contains(",")) {
 								roleList = roleCode.split(",");
 								for (String roleCd : roleList) {
-									isExist = StringUtils
-											.trimToEmpty(financeReferenceDetail.getAllowInputInStage()).contains(
-													roleCd);
+									isExist = StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage())
+											.contains(roleCd);
 									return isExist;
 								}
 							}
-							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage()).contains(
-									roleCode);
+							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage())
+									.contains(roleCode);
 						}
 
-					
 					}
 				}
 			}
@@ -503,9 +515,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("enqiryModule", enqiryModule);
 		map.put("isCheckList", finDocumentDetail.isDocIsCustDoc() ? true : (checklistID > 0 ? true : false));
 		map.put("customerDialogCtrl", this);
+		map.put("moduleName", moduleName);
+		map.put("isEditable", isEditable);
+
 		// map.put("newRecord", "true");
 		if (getFinanceDetail() != null) {
-			map.put("isDocAllowedForInput", isDocAllowedForInput(finDocumentDetail.getDocCategory(),checklistID));
+			map.put("isDocAllowedForInput", isDocAllowedForInput(finDocumentDetail.getDocCategory(), checklistID));
 		} else {
 			if (isNotFinanceProcess) {
 				map.put("isDocAllowedForInput", true);
@@ -525,7 +540,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (customerDocument == null && finDocumentDetail.isDocIsCustDoc()) {
 			customerDocument = new CustomerDocument();
 
-			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) :  0);
+			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) : 0);
 			customerDocument.setLovDescCustCIF(list != null ? String.valueOf(list.get(1).toString()) : "");
 			customerDocument.setLovDescCustShrtName(list != null ? String.valueOf(list.get(2).toString()) : "");
 			customerDocument.setCustDocImage(finDocumentDetail.getDocImage());
@@ -591,22 +606,24 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 	}
 
-	private DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list, HashMap<String, Object> map) {
+	private DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
+			HashMap<String, Object> map) {
 		if (finDocumentDetail.isDocIsCustDoc()) {
-			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(list != null ? 
-					Long.valueOf(list.get(0).toString()) : 0, finDocumentDetail.getDocCategory());
+			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(
+					list != null ? Long.valueOf(list.get(0).toString()) : 0, finDocumentDetail.getDocCategory());
 		} else {
 			finDocumentDetail = getFinanceDetailService().getDocumentDetails(finDocumentDetail.getDocId(), "_View");
 			map.put("finDocumentDetail", finDocumentDetail);
 		}
-		
-		if(finDocumentDetail.getDocImage() == null) {
+
+		if (finDocumentDetail.getDocImage() == null) {
 			if (finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
 				finDocumentDetail.setDocImage(PennantApplicationUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
 			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
 				// Fetch document from interface
-				String custCif=finDocumentDetail.getLovDescCustCIF();
-				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(),finDocumentDetail.getDocUri(),custCif);
+				String custCif = finDocumentDetail.getLovDescCustCIF();
+				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(),
+						finDocumentDetail.getDocUri(), custCif);
 				if (detail != null && detail.getDocImage() != null) {
 					finDocumentDetail.setDocImage(detail.getDocImage());
 					finDocumentDetail.setDocName(detail.getDocName());
@@ -624,8 +641,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	@SuppressWarnings("unchecked")
 	private List<Object> getCustomerBasicDetails() {
 		try {
-			List<Object> custBasicDetails = (List<Object>) getFinanceMainDialogCtrl().getClass().getMethod("getCustomerBasicDetails")
-					.invoke(getFinanceMainDialogCtrl());
+			List<Object> custBasicDetails = (List<Object>) getFinanceMainDialogCtrl().getClass()
+					.getMethod("getCustomerBasicDetails").invoke(getFinanceMainDialogCtrl());
 			if (custBasicDetails != null) {
 				return custBasicDetails;
 			}
@@ -644,10 +661,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);
-			if(isNotFinanceProcess){
-				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",this.finBasicdetails, map);
-			}else {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			if (isNotFinanceProcess) {
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
+						this.finBasicdetails, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
+						this.finBasicdetails, map);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -668,9 +687,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
-		if(isNotFinanceProcess){
+		if (isNotFinanceProcess) {
 			getCollateralBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
-		}else{
+		} else {
 			getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 		}
 	}
@@ -716,7 +735,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 		return customerDocument;
 	}
-		
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -724,6 +743,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -731,6 +751,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -738,6 +759,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 		this.documentDetailsList = documentDetailsList;
 	}
+
 	public List<DocumentDetails> getDocumentDetailsList() {
 		return documentDetailsList;
 	}
@@ -745,6 +767,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public Map<String, DocumentDetails> getDocDetailMap() {
 		return docDetailMap;
 	}
+
 	public void setDocDetailMap(Map<String, DocumentDetails> docDetailMap) {
 		this.docDetailMap = docDetailMap;
 	}
@@ -752,6 +775,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -759,6 +783,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public CustomerDocumentService getCustomerDocumentService() {
 		return customerDocumentService;
 	}
+
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
@@ -766,6 +791,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
+
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
@@ -773,11 +799,13 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public CollateralBasicDetailsCtrl getCollateralBasicDetailsCtrl() {
 		return collateralBasicDetailsCtrl;
 	}
+
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
+
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
 	}
-	
+
 }

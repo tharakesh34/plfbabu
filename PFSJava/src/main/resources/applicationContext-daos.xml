@@ -11230,14 +11230,7 @@
 		</property>
 	</bean>
 	
-	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl" >
-	<property name="fieldInvestigationDAO" ref="fieldInvestigationDAO" />
-	<property name="verificationDAO" ref="verificationDAO"/>
-	<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
-	<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-	<property name="documentManagerDAO" ref="documentManagerDAO" />
-	<property name="customerDocumentDAO" ref="customerDocumentDAO" />
-	</bean>
+	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl"/>
 	
 	<!-- Technical Verification -->
 	<bean id="technicalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAOImpl" parent="sequenceDao"/>
@@ -11252,7 +11245,7 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
@@ -11261,13 +11254,7 @@
 		</property>
 	</bean>
 	
-	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl" >
-		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
-		<property name="technicalVerificationDAO" ref="technicalVerificationDAO" />
-		<property name="verificationDAO" ref="verificationDAO"/>
-		<property name="collateralSetupDAO" ref="collateralSetupDAO"/>
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService"/>
-	</bean>
+	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl"/>
 	
 	<!-- Authorization Limit -->
 	<bean id="authorizationLimitDAO" class="com.pennant.backend.dao.authorization.impl.AuthorizationLimitDAOImpl"  parent="basisNextidDao">

@@ -25,6 +25,7 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -44,6 +45,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 
 public class ExtendedFieldDetailsService {
 
@@ -197,7 +199,72 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param detail
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	public List<AuditDetail> setDocumentDetailsAuditData(FieldInvestigation fieldInvestigation, String auditTranType,
+			String method) {
+		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		DocumentDetails document = new DocumentDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+
+		for (int i = 0; i < fieldInvestigation.getDocuments().size(); i++) {
+			DocumentDetails documentDetails = fieldInvestigation.getDocuments().get(i);
+
+			if (StringUtils.isEmpty(StringUtils.trimToEmpty(documentDetails.getRecordType()))) {
+				continue;
+			}
+
+			documentDetails.setWorkflowId(fieldInvestigation.getWorkflowId());
+			boolean isRcdType = false;
+
+			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (fieldInvestigation.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				documentDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			documentDetails.setRecordStatus(fieldInvestigation.getRecordStatus());
+			documentDetails.setUserDetails(fieldInvestigation.getUserDetails());
+			documentDetails.setLastMntOn(fieldInvestigation.getLastMntOn());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetails.getBefImage(),
+					documentDetails));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
+	
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Extended FieldDetails
 	 * 
