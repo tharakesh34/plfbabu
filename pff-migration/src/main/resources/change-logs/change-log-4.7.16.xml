@@ -795,5 +795,57 @@ UNION ALL
 			INSERT INTO ErrorDetails VALUES('92008','EN','E','{0} in header should be {1} format.','','Approved','','','','','',0,current_timestamp,1000,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="18" author="Vinay">
+		<addColumn tableName="COLLATERALSTRUCTURE"  >
+			 <column name="valuationFrequency"  type="varchar(5)" defaultValue=""/>
+			 <column name="nextValuationDate" type="datetime" defaultValue="now()" />
+			 <column name="valuationPending" type="boolean" defaultValue="0" />
+			 <column name="queryId"  type="number(18,0)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="COLLATERALSTRUCTURE_TEMP"  >
+			 <column name="valuationFrequency"  type="varchar(5)" defaultValue=""/>
+			 <column name="nextValuationDate" type="datetime" defaultValue="now()" />
+			 <column name="valuationPending" type="boolean" defaultValue="0" />
+			 <column name="queryId"  type="number(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="19" author="Vinay">
+		<createView viewName="COLLATERALSTRUCTURE_AVIEW" replaceIfExists="true">
+			SELECT 	  			T1.CollateralType, T1.CollateralDesc, T1.LtvType, T1.LtvPercentage, T1.MarketableSecurities, T1.PreValidationReq,			
+								T1.PostValidationReq, T1.CollateralLocReq, T1.CollateralValuatorReq, T1.Remarks, T1.AllowLtvWaiver,PreValidation, T1.PostValidation,				
+								T1.MaxLtvWaiver, T1.ActualBlock, T1.SQLRule, T1.Fields, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+								T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+								T1.ValuationFrequency, T1.nextValuationDate, T1.valuationPending, T1.QueryId,
+								T2.QueryCode, T2.QuerySubCode
+			FROM 				CollateralStructure T1
+			LEFT OUTER JOIN 	DedupParams T2 ON T1.QueryId = T2.QueryId and QueryModule = 'Collateral'
+		</createView>
+		
+		<createView viewName="COLLATERALSTRUCTURE_VIEW" replaceIfExists="true">
+			SELECT 	  			T1.CollateralType, T1.CollateralDesc, T1.LtvType, T1.LtvPercentage, T1.MarketableSecurities, T1.PreValidationReq,			
+								T1.PostValidationReq, T1.CollateralLocReq, T1.CollateralValuatorReq, T1.Remarks, T1.AllowLtvWaiver,PreValidation, T1.PostValidation,				
+								T1.MaxLtvWaiver, T1.ActualBlock, T1.SQLRule, T1.Fields, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+								T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+								T1.ValuationFrequency, T1.nextValuationDate, T1.valuationPending, T1.QueryId,
+								T2.QueryCode, T2.QuerySubCode
+			FROM 				CollateralStructure_Temp T1
+			LEFT OUTER JOIN 	DedupParams T2 ON T1.QueryId = T2.QueryId and QueryModule = 'Collateral'
+			
+			UNION ALL
+			
+			SELECT 	  			T1.CollateralType, T1.CollateralDesc, T1.LtvType, T1.LtvPercentage, T1.MarketableSecurities, T1.PreValidationReq,			
+								T1.PostValidationReq, T1.CollateralLocReq, T1.CollateralValuatorReq, T1.Remarks, T1.AllowLtvWaiver,PreValidation, T1.PostValidation,				
+								T1.MaxLtvWaiver, T1.ActualBlock, T1.SQLRule, T1.Fields, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+								T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+								T1.ValuationFrequency, T1.nextValuationDate, T1.valuationPending, T1.QueryId,
+								T2.QueryCode, T2.QuerySubCode
+			FROM 				CollateralStructure T1
+			LEFT OUTER JOIN 	DedupParams T2 ON T1.QueryId = T2.QueryId and QueryModule = 'Collateral'
+			
+			WHERE  NOT EXISTS  (SELECT 1 FROM CollateralStructure_Temp  WHERE CollateralType = T1.CollateralType)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
