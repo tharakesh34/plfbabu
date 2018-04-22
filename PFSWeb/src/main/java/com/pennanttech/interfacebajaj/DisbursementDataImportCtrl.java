@@ -98,7 +98,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			if ("DISB_CITI_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
 				if ("DISB_CITI_IMPORT".equals(configName)) {
 					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_CITI_IMPORT");
-					valueLabel = new ValueLabel(configName, "CITI Bank Disbursement Response");
+					valueLabel = new ValueLabel(configName, "Bank Disbursement Response");
 					doFillPanel(config, DISB_STP_IMPORT_STATUS);
 					menuList.add(valueLabel);
 				} else {
