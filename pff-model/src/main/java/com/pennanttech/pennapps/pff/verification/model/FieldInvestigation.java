@@ -52,6 +52,10 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private String zipCode;
 	private String contactNumber1;
 	private String contactNumber2;
+	private String countryDesc;
+	private String provinceDesc;
+	private String cityDesc;
+	
 
 	private Date date;
 	private int type;
@@ -116,6 +120,9 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		excludeFields.add("agencyId");
 		excludeFields.add("agencyName");
 		excludeFields.add("documents");
+		excludeFields.add("countryDesc");
+		excludeFields.add("provinceDesc");
+		excludeFields.add("cityDesc");
 		return excludeFields;
 	}
 
@@ -533,6 +540,30 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 
 	public void setAgencyName(String agencyName) {
 		this.agencyName = agencyName;
+	}
+
+	public String getCountryDesc() {
+		return countryDesc;
+	}
+
+	public void setCountryDesc(String countryDesc) {
+		this.countryDesc = countryDesc;
+	}
+
+	public String getProvinceDesc() {
+		return provinceDesc;
+	}
+
+	public void setProvinceDesc(String provinceDesc) {
+		this.provinceDesc = provinceDesc;
+	}
+
+	public String getCityDesc() {
+		return cityDesc;
+	}
+
+	public void setCityDesc(String cityDesc) {
+		this.cityDesc = cityDesc;
 	}
 
 	public List<DocumentDetails> getDocuments() {

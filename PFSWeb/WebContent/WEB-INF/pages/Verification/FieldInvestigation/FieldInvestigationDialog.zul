@@ -200,6 +200,9 @@
 														id="spaceverifications_Country" spacing="2px" />
 													<textbox
 														id="country" width="155px" readonly="true" />
+													<label
+														id="countryDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 												<label
 													id="label_Province"
@@ -209,6 +212,9 @@
 														id="space_Province" spacing="2px" />
 													<textbox
 														id="province" width="155px" readonly="true" />
+													<label
+														id="provinceDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 											</row>
 											<row id="row6">
@@ -219,6 +225,9 @@
 														id="space_City" spacing="2px" />
 													<textbox id="city"
 														width="155px" readonly="true" />
+													<label
+														id="CityDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 												<label
 													id="label_ZipCode"

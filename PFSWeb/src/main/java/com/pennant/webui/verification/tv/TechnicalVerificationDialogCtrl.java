@@ -461,13 +461,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
 		map.put("moduleName", VerificationType.FI.name());
-
-		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(technicalVerification.getRecordStatus()) || enqiryModule) {
-			map.put("isEditable", false);
-		} else {
-			map.put("isEditable", true);
-		}
-
+		map.put("enqiryModule", enqiryModule);
+		map.put("isEditable", !isReadOnly("TechnicalVerificationDialog_Documents"));
+		
 		return map;
 	}
 

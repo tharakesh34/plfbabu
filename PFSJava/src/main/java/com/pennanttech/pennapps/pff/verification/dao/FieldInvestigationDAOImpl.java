@@ -218,9 +218,11 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationid, name, addresstype, housenumber,flatnumber, street,");
 		sql.append(
-				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, zipcode, contactnumber1, contactnumber2,");
+				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, countryDesc, ");
 		sql.append(
-				" date, type, yearsatpresentaddress, personmet, ownershipstatus, relationship, neighbourhoodfeedback, contactnumber, observationremarks,");
+				" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, date, type, ");
+		sql.append(
+				"  yearsatpresentaddress, personmet, ownershipstatus, relationship, neighbourhoodfeedback, contactnumber, observationremarks,");
 		sql.append(
 				" livingstandard, negativecheck, noofattempts, agentcode, agentname, status, reason, summaryremarks,");
 		if (type.equalsIgnoreCase("_view")) {
