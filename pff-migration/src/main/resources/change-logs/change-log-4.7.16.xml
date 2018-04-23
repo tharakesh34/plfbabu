@@ -3272,5 +3272,13 @@ UNION ALL
           WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid));
 </createView>
 </changeSet>
+
+<changeSet id="26" author="Vinay">
+		<sql>
+			Delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'finAgetilldate';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values 
+			('FEES','EARLYPAY','finAgetilldate','months between loan start data and app date','int',9,'1','1',' ','static','  '); 
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
