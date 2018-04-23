@@ -872,9 +872,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			int borderLayout;
 			if (fromLoan) {
-				borderLayout = 340;
+				borderLayout = 360;
 			} else {
-				borderLayout = 300;
+				borderLayout = 320;
 			}
 			this.listBoxChequeDetail.setHeight(this.borderLayoutHeight - borderLayout + "px");
 			//this.window_ChequeDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
