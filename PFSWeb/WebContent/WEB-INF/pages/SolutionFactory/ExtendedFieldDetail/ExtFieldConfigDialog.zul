@@ -201,7 +201,7 @@
 													<label value="${c:l('label_ExtendedFieldConfig_Module.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<combobox id="module" width="110px"  />
+														<combobox id="module" width="150px"  />
 													</hbox>
 													<label value="${c:l('label_ExtendedFieldConfig_SubModule.value')}" id="label_SubModule"/>
 													<hbox>

@@ -97,10 +97,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
  
 public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> implements Serializable {
@@ -157,6 +157,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	
 	private List<ValueLabel>   configList = PennantStaticListUtil.getConfigTypes();
 	private List<ValueLabel>   custCtgList = PennantAppUtil.getcustCtgCodeList();
+	private List<ValueLabel>   verificatinList = PennantStaticListUtil.getVerificatinTypes();
 	
 	private String subModuleVal;
 
@@ -270,25 +271,33 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 	public void onChange$module(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
-		String type = this.module.getSelectedItem().getValue().toString();
-		visibleComponent(type);
+		String moduleVal = this.module.getSelectedItem().getValue().toString();
+		visibleComponent(moduleVal, "");
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private void visibleComponent(String type) {
-		if (type.equals(ExtendedFieldConstants.MODULE_CUSTOMER)) {
+	private void visibleComponent(String moduleVal, String subModuleVal) {
+		if (moduleVal.equals(ExtendedFieldConstants.MODULE_CUSTOMER)) {
 			this.subModule.setVisible(true);
 			this.space_subModule.setVisible(true);
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(false);
 			this.product.setValue(null);
-			fillComboBox(subModule, "", custCtgList, "");
-		} else if (type.equals(ExtendedFieldConstants.MODULE_LOAN)) {
+			fillComboBox(subModule, subModuleVal, custCtgList, "");
+		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_LOAN)) {
 			this.subModule.setVisible(false);
 			this.space_subModule.setVisible(false);
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(true);
+			this.product.setValue(subModuleVal);
 			fillComboBox(subModule, "", custCtgList, "");
+		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_VERIFICATION)) {
+			this.subModule.setVisible(true);
+			this.space_subModule.setVisible(true);
+			this.label_SubModule.setVisible(true);
+			this.product.setVisible(false);
+			this.product.setValue(null);
+			fillComboBox(subModule, subModuleVal, verificatinList, "");
 		} else {
 			this.subModule.setVisible(false);
 			this.space_subModule.setVisible(false);
@@ -723,14 +732,12 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		this.tabHeading.setValue(extendedFieldHeader.getTabHeading());
 
 		if (extendedFieldHeader.isNewRecord()) {
-			visibleComponent(ExtendedFieldConstants.MODULE_CUSTOMER);
+			visibleComponent(ExtendedFieldConstants.MODULE_CUSTOMER,"");
 			fillComboBox(module, ExtendedFieldConstants.MODULE_CUSTOMER, configList, "");
 		} else {
-			visibleComponent(extendedFieldHeader.getModuleName());
+			visibleComponent(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
 			fillComboBox(module, extendedFieldHeader.getModuleName(), configList, "");
 		}
-		fillComboBox(subModule, extendedFieldHeader.getSubModuleName(), custCtgList, "");
-		this.product.setValue(extendedFieldHeader.getSubModuleName());
 		
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
@@ -903,19 +910,25 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
-
-		// Basic Details tab
+		
+		String module = this.module.getSelectedItem().getValue();
+		
 		if (!this.module.isDisabled()) {
 			this.module.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_Module.value"), configList, true));
 		}
+		
 		if (!this.subModule.isDisabled() && this.subModule.isVisible()) {
-			this.subModule.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), custCtgList, true));
+			if (ExtendedFieldConstants.MODULE_VERIFICATION.equals(module)) {
+				this.subModule.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), verificatinList, true));
+			} else if (ExtendedFieldConstants.MODULE_CUSTOMER.equals(module)) {
+				this.subModule.setConstraint(new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), custCtgList, true));
+			}
 		}
 		 
 		if (!this.tabHeading.isDisabled()) {
 			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldConfig_TabHeading.value"),PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
- 
+ 	
 		logger.debug(Literal.LEAVING);
 	}
 

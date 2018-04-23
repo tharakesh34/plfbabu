@@ -228,6 +228,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> presentmentMapping;
 	private static ArrayList<ValueLabel> responseStatus;
 	private static ArrayList<ValueLabel> expenseCalculatedOn;
+	private static ArrayList<ValueLabel> verificatinTypes;
 	
 	//Expense Upload
 	private static ArrayList<ValueLabel> uploadLevels;
@@ -3047,8 +3048,19 @@ public class PennantStaticListUtil {
 			configTypes = new ArrayList<ValueLabel>(3);
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_CUSTOMER, Labels.getLabel("label_ExtendedFieldModule_Customer.value")));
 			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_LOAN, Labels.getLabel("label_ExtendedFieldModule_Loan.value")));
+			configTypes.add(new ValueLabel(ExtendedFieldConstants.MODULE_VERIFICATION, Labels.getLabel("label_ExtendedFieldModule_Verification.value")));
 		}
 		return configTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getVerificatinTypes() {
+		if (verificatinTypes == null) {
+			verificatinTypes = new ArrayList<ValueLabel>(3);
+			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_LV, Labels.getLabel("label_ExtendedFieldModule_Verification_LV.value")));
+			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_RCU, Labels.getLabel("label_ExtendedFieldModule_Verification_RCU.value")));
+			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_FI, Labels.getLabel("label_ExtendedFieldModule_Verification_FI.value")));
+		}
+		return verificatinTypes;
 	}
 
 	public static ArrayList<ValueLabel> getConfigNames() {
