@@ -1507,4 +1507,33 @@
 		   </sql>
 	  </changeSet>
 	  
+	  <changeSet id="19" author="Durga Prasad G">
+	<sql>
+		<![CDATA[
+			UPDATE seqSecgrouprights SET SEQNO= (SELECT MAX(grprightid) FROM Secgrouprights);
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('TECHNICALVERIFICATION_MAKER','TECHNICALVERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'TechnicalVerificationDialog_Documents');
+			
+			Delete from SecRights where RightName = 'TechnicalVerificationDialog_Documents';
+			
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('FIELDINVESTIGATION_MAKER','FIELDINVESTIGATION_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'FieldInvestigationDialog_Documents');
+			
+			Delete from SecRights where RightName = 'FieldInvestigationDialog_Documents';
+			
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'FieldInvestigationDialog_Documents', 'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='FieldInvestigationDialog_Documents')
+			,1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'TechnicalVerificationDialog_Documents', 'TechnicalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='TECHNICALVERIFICATION_MAKER'),(select RightId from secRights where RightName='TechnicalVerificationDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+		  
+			UPDATE seqSecgrouprights SET SEQNO= (SELECT MAX(grprightid) FROM Secgrouprights);
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		]]>
+	</sql>
+</changeSet>
+	  
 </databaseChangeLog>
