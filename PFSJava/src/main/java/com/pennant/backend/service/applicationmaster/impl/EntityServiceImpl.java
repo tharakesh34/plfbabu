@@ -213,9 +213,15 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 *            (String)
 	 * @return Entities
 	 */
+	@Override
 	public Entity getApprovedEntity(String entityCode) {
 		return getEntityDAO().getEntity(entityCode,"_AView");
 	}	
+	
+	@Override
+	public Entity getEntityByFinDivision(String divisionCode, String type) {
+		return getEntityDAO().getEntityByFinDivision(divisionCode, type);
+	}
 		
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by

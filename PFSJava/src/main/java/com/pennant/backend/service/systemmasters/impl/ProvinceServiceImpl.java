@@ -324,7 +324,14 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 * @return Province
 	 */
 	public Province getApprovedProvinceById(String cPCountry, String cPProvince) {
-		return getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
+		
+		Province province =  getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
+		
+		if (province != null) {
+			province.setTaxDetailList(taxDetailService.getTaxDetailbystateCode(province.getCPProvince(), "_AView"));
+		}
+		
+		return province;
 	}
 
 	/**

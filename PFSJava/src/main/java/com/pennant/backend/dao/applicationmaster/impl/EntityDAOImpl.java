@@ -287,4 +287,37 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public Entity getEntityByFinDivision(String divisionCode, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DivisionCode", divisionCode);
+
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
+		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
+		if (type.contains("View")) {
+			sql.append(" countryname,ProvinceName,CItyName,pincodename,");
+		}
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber" );
+		sql.append(" From Entity");
+		sql.append(type);
+		sql.append(" Where entityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = :DivisionCode)");
+		
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
+		Entity entity = null;
+		try {
+			entity = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			entity = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return entity;
+	}	
 }	

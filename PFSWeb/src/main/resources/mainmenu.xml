@@ -928,6 +928,9 @@
 			<menuItem id="menu_Item_InterestStatement"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
+			<menuItem id="menu_Item_GST_InvoiceReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> <!-- rightName="menu_Item_GST_InvoiceReport" -->
 		</menu>
 		<menu id="menu_Category_Disbursements" rightName="">
 			<menuItem id="menu_Item_DAILYDISBURSALREPORT"

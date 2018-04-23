@@ -66,6 +66,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -419,6 +420,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
+		}
+		
+		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) {	//Paid by customer and waived by bank has been excluded
+			excluedeFields = excluedeFields + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
 		}
 		
 		fillComboBox(this.feeScheduleMethod, aFinTypeFees.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);

@@ -53,4 +53,5 @@ public interface EntityService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	Entity getEntityByFinDivision(String divisionCode, String type);
 }

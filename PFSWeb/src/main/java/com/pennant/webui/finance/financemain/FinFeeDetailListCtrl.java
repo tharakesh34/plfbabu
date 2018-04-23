@@ -1738,8 +1738,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					paidBox.setValue(BigDecimal.ZERO);
 					waiverBox.setValue(actualBox.getValue());
-				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-						CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					waiverBox.setValue(BigDecimal.ZERO);
 					paidBox.setValue(actualBox.getValue());
@@ -2499,17 +2498,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			return;
 		}
 
-		finScheduleData.setFinFeeDetailList(fetchFeeDetails(finScheduleData,false));
+		finScheduleData.setFinFeeDetailList(fetchFeeDetails(finScheduleData, false));
 		
-		if(StringUtils.isBlank(moduleDefiner)){
+		if (StringUtils.isBlank(moduleDefiner)) {
 			doSetFeeChanges(finScheduleData);
 		}
 		
 		calculateFees(getFinFeeDetailList(), finScheduleData);
 		doFillFinFeeDetailList(getFinFeeDetailList());
 		
-		if(StringUtils.isBlank(moduleDefiner)){
-			fetchFeeDetails(finScheduleData,true);
+		if (StringUtils.isBlank(moduleDefiner)) {
+			fetchFeeDetails(finScheduleData, true);
 		}
 		
 		// Insurance Amounts calculation

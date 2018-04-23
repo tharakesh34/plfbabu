@@ -588,7 +588,8 @@
 	Result = 9 ; return;  
  } else {
 	Result = 0 ; return;  
- } ]]></column>
+ } ]]>
+ 		</column>
 			<where> Rulemodule='GSTRULE' and RULECODE = 'SGST'AND ACTIVE=1</where>
 		</update>
 	</changeSet>
@@ -601,5 +602,127 @@
 }]]></column>
 			<where> Rulemodule='GSTRULE' and RULECODE = 'UGST'AND ACTIVE=1</where>
 		</update>
+	</changeSet>
+
+	<changeSet id="27" author="Kesava">
+		<sql>
+			Update Entity set GSTINAvailable = 0 where GSTINAvailable is null;
+			Update Entity_Temp set GSTINAvailable = 0 where GSTINAvailable is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn">
+			<column name="InvoiceNo" type="varchar(50)">
+				<constraints primaryKey="true"  nullable="false" />
+			</column>
+			<column name="TransactionID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InvoiceDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Invoice_Amt" type="NUMBER(19,5)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CompanyCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CompanyName" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_GSTIN" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address1" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_Address2" type="varchar(1000)"/>
+			<column name="Company_Address3" type="varchar(1000)"/>
+			<column name="Company_PINCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Company_State_Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNNumber" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NatureService" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PanNumber" type="varchar(10)" />
+			<column name="LoanAccountNo" type="varchar(20)" />
+			<column name="CustomerID" type="varchar(20)" />	<!--  Need to clarity with custCif or CustId-->
+			<column name="CustomerName" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerGSTIN" type="varchar(100)"/>
+			<column name="CustomerStateCode" type="varchar(2)" />
+			<column name="CustomerStateName" type="varchar(50)" />
+			<column name="CustomerAddress" type="varchar(1000)" />
+			<column name="Invoice_Status" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="29" author="Kesava">
+		<createTable tableName="GST_Invoice_Txn_Details">
+			<column name="InvoiceNo" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeDescription" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CGST_RATE" type="NUMBER(5,2)" />
+			<column name="CGST_AMT" type="NUMBER(19,5)" />
+			<column name="SGST_RATE" type="NUMBER(5,2)" />
+			<column name="SGST_AMT" type="NUMBER(19,5)" />
+			<column name="IGST_RATE" type="NUMBER(5,2)" />
+			<column name="IGST_AMT" type="NUMBER(19,5)" />
+			<column name="UGST_RATE" type="NUMBER(5,2)" />
+			<column name="UGST_AMT" type="NUMBER(19,5)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="30" author="Kesav">
+		<createTable tableName="SeqGst_invoice_txn">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="31" author="Kesav">
+		<sql>
+			Insert into SeqGst_invoice_txn values (0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="32" author="Kesav">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport');
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_GST_InvoiceReport';
+			
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'GST Invoice Report','GST Invoice Report',1,'InvoiceReport','dataSource',1,'menu_Item_GST_InvoiceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,1,1);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),1,'CustCIF','LOVSEARCH','Customer ID','customerid',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),2,'FinReference','LOVSEARCH','Loan Reference','loanaccountno',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),3,'Invoice Number','TXT','Invoice Number','invoiceno',null,null,null,null,0,20,0,0,3,0,null,null,null,null,250,0,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			Insert into REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),4,'Date','DATERANGE','Date','invoicedate',null,'---Select----',null,null,0,0,0,0,4,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		</sql>
 	</changeSet>
 </databaseChangeLog>

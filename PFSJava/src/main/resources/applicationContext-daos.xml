@@ -4178,6 +4178,7 @@
 		
 		<!-- GST -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="customerService" ref="customerService" />
 	</bean>
 
@@ -11281,5 +11282,29 @@
        <property name="authorizationLimitDAO" ref="authorizationLimitDAO" />
        <property name="authorizationLimitDetailDAO" ref="authorizationLimitDetailDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   <!-- GST -->
+	<bean id="gstInvoiceTxnDAO" class="com.pennant.backend.dao.finance.impl.GSTInvoiceTxnDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+		
+	<bean id="gstInvoiceTxnService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="gstInvoiceTxnServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+ 	<bean name="gstInvoiceTxnServiceTarget" class="com.pennant.backend.service.finance.impl.GSTInvoiceTxnServiceImpl">
+       <property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
+       <property name="entityService" ref="entityService" />
+       <property name="provinceService" ref="provinceService" />
    </bean>
 </beans>

@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  TaxDetailDialogCtrl.java                                                   * 	  
+ * FileName    		:  TaxDetailDialogCtrl.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -117,7 +117,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	private transient ProvinceDialogCtrl	provinceDialogCtrl;
 	private List<TaxDetail>					listTaxDetails;
 	private boolean							fromProvince		= false;
-	private boolean							gstInApplicable		= false;
 	private String							taxStateCode = "";
 	private String							old_country = "";
 	private String							old_state = "";
@@ -262,6 +261,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		this.addressLine4.setMaxlength(100);
 		this.hSNNumber.setMaxlength(100);
 		this.natureService.setMaxlength(100);
+		this.space_HSNNumber.setSclass(PennantConstants.mandateSclass);
+		this.space_NatureService.setSclass(PennantConstants.mandateSclass);
 
 		setStatusDetails();
 
@@ -536,7 +537,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 		Object dataObject = entityCode.getObject();
 		this.taxCode.setErrorMessage("");
-		this.gstInApplicable = false;
 		this.panNumber.setValue("");
 		
 		if (dataObject instanceof String) {
@@ -545,24 +545,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			Entity entity = (Entity) dataObject;
 			if (entity != null) {
 				this.panNumber.setValue(entity.getPANNumber());
-				this.gstInApplicable = entity.isGstinAvailable();
 			}
 		}
 		
-		checkGstAvailability();
-
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private void checkGstAvailability() {
-		String sclass = "";
-		if (this.gstInApplicable) {
-			sclass = PennantConstants.mandateSclass;
-		}
-		this.space_HSNNumber.setSclass(sclass);
-		this.space_NatureService.setSclass(sclass);
-	}
-
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
@@ -715,9 +703,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		
 		this.hSNNumber.setValue(aTaxDetail.getHsnNumber());
 		this.natureService.setValue(aTaxDetail.getNatureService());
-		this.gstInApplicable = aTaxDetail.isGstinAvailable();
-		
-		checkGstAvailability();
 		
 		if (fromProvince) {
 			this.country.setReadonly(true);
@@ -956,13 +941,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_CityCode.value"), null, true, true));
 		}
 		
-		if (this.gstInApplicable) {
-			if (!this.hSNNumber.isReadonly()) {
-				this.hSNNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_HSNNumber.value"), null, true));
-			}
-			if (!this.natureService.isReadonly()) {
-				this.natureService.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"), null, true));
-			}
+		if (!this.hSNNumber.isReadonly()) {
+			this.hSNNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_HSNNumber.value"), null, true));
+		}
+		
+		if (!this.natureService.isReadonly()) {
+			this.natureService.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -996,18 +980,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-
-		//Id
-		//Country
-		//State Code
-		//Entity Code
-		//Tax Code
-		//Address Line 1
-		//Address Line 2
-		//Address Line 3
-		//Address Line 4
-		//Pin Code
-		//City Code
 
 		logger.debug(Literal.LEAVING);
 	}

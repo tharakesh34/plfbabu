@@ -98,7 +98,7 @@
 	<include file="change-logs/change-log-license.xml" />
 	<include file="change-logs/change-log-refactor.xml" /> 
 		<include file="change-logs/change-log-4.7.15.xml" />-->
-		<!-- <include file="change-logs/change-log-GSTCoreChanges.xml" /> -->
+		<include file="change-logs/change-log-GSTCoreChanges.xml" />
 		<include file="change-logs/change-log-4.7.16.xml" />
 <!-- 	<include file="change-logs/change-log-ExtendedFields.xml" /> -->
 <include file="change-logs/change-log-verification-fi.xml" />
