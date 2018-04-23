@@ -3112,5 +3112,165 @@ update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data
 			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_VASSTRUCTURE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="27" author="Ganesh.p">
+<sql>
+		Delete from SecRights where Page = 'ChequeDetailDialog' AND RIGHTNAME ='ChequeDetailDialog_ChequeStatus';
+		Delete from SecRights where Page = 'ChequeDetailDialog' AND RIGHTNAME ='ChequeDetailDialog_AccountType';
+		Delete from SecRights where Page = 'ChequeDetailDialog' AND RIGHTNAME ='ChequeDetailDialog_AccHolderName';
+		
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ChequeDetailDialog_ChequeStatus','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ChequeDetailDialog_AccountType','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ChequeDetailDialog_AccHolderName','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'CHEQUEDETAIL_MAKER' ), (select rightid  from SecRights WHERE RightName='ChequeDetailDialog_ChequeStatus'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'CHEQUEDETAIL_MAKER' ), (select rightid  from SecRights WHERE RightName='ChequeDetailDialog_AccountType'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'CHEQUEDETAIL_MAKER' ), (select rightid  from SecRights WHERE RightName='ChequeDetailDialog_AccHolderName'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+</sql>
+</changeSet>
+
+	<changeSet id="28" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL">
+			<column name="chequeStatus" defaultValue="NEW" type="VARCHAR(10)"></column>
+			<column name="accountType" type="VARCHAR(20)"></column>
+			<column name="accHolderName" type="VARCHAR(200)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="29" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL_TEMP">
+			<column name="chequeStatus" defaultValue="NEW" type="VARCHAR(10)"></column>
+			<column name="accountType" type="VARCHAR(20)"></column>
+			<column name="accHolderName" type="VARCHAR(200)"></column>
+		</addColumn>
+	</changeSet>
+
+<changeSet id="30" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_aview">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype,
+	t1.chequeStatus,
+	t1.accountType,
+	t1.accHolderName
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode;
+	 </createView>
+</changeSet>
+
+<changeSet id="31" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_view">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype,
+	t1.chequeStatus,
+	t1.accountType,
+	t1.accHolderName
+   FROM chequedetail_temp t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+UNION ALL
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype,
+	t1.chequeStatus,
+	t1.accountType,
+	t1.accHolderName
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequedetail_temp
+          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid));
+</createView>
+</changeSet>
 </databaseChangeLog>
 	
