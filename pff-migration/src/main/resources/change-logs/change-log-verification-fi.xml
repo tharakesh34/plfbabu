@@ -1535,5 +1535,151 @@
 		]]>
 	</sql>
 </changeSet>
-	  
+
+<changeSet id="20" author="Durgaprasad G">
+ <createView viewName="verification_fi_view" replaceIfExists="true">
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi_temp fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     JOIN amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	UNION ALL
+	 SELECT fi.verificationid,
+	    fi.agentcode,
+	    fi.agentname,
+	    fi.type,
+	    fi.date,
+	    fi.status,
+	    fi.reason,
+	    r1.code AS reasoncode,
+	    r1.description AS reasondesc,
+	    fi.summaryremarks,
+	    fi.version,
+	    fi.lastmntby,
+	    fi.lastmnton,
+	    fi.recordstatus,
+	    fi.rolecode,
+	    fi.nextrolecode,
+	    fi.taskid,
+	    fi.nexttaskid,
+	    fi.recordtype,
+	    fi.workflowid,
+	    fi.addresstype,
+	    fi.name,
+	    fi.housenumber,
+	    fi.flatnumber,
+	    fi.street,
+	    fi.addressline1,
+	    fi.addressline2,
+	    fi.addressline3,
+	    fi.addressline4,
+	    fi.addressline5,
+	    fi.country,
+	    fi.province,
+	    fi.city,
+	    fi.contactnumber1,
+	    fi.contactnumber2,
+	    fi.pobox,
+	    fi.zipcode,
+	    fi.ownershipstatus,
+	    fi.yearsatpresentaddress,
+	    fi.personmet,
+	    fi.relationship,
+	    r2.prelationdesc AS lovrelationdesc,
+	    fi.contactnumber,
+	    fi.neighbourhoodfeedback,
+	    fi.livingstandard,
+	    fi.negativecheck,
+	    fi.noofattempts,
+	    fi.observationremarks,
+	    c.custcif AS cif,
+	    v.keyreference,
+	    v.createdon,
+	    v.agency,
+	    v.verificationdate,
+	    a.dealername AS agencyname,
+	    v.reinitid,
+	    a.dealertype,
+	    r1.reasontypecode,
+		country.countrydesc,
+		p.cpprovincename as provinceDesc,
+		city.pccityname as cityDesc
+	   FROM verification_fi fi
+	     JOIN verifications v ON v.id = fi.verificationid
+	     JOIN amtvehicledealer a ON a.dealerid = v.agency
+		 JOIN bmtcountries country on country.countrycode = fi.country
+		 JOIN RMTCountryVsProvince p on p.cpprovince = fi.province
+		 JOIN RMTProvinceVsCity city on city.pccity = fi.city
+	     LEFT JOIN customers c ON c.custid = v.custid
+	     LEFT JOIN reasons_aview r1 ON r1.id = fi.reason
+	     LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = fi.relationship
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM verification_fi_temp
+	          WHERE verification_fi_temp.verificationid = fi.verificationid));
+ </createView>
+</changeSet>
 </databaseChangeLog>
