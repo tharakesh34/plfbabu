@@ -519,7 +519,9 @@
 			<menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul" 
 		rightName="menuItem_Finance_FinanceDeviations" />	
 	<menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
-		rightName="menuItem_Finance_QDEFinanceMain" />		
+		rightName="menuItem_Finance_QDEFinanceMain" />
+	<menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
+		rightName="menuItem_FinanceManagement_ReinstateFinance"/> 		
 	</menu>
 
 	<!-- Verification -->
@@ -1531,8 +1533,6 @@
 	<menuItem id="menu_Item_CoreProvision"
 		zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"
 		rightName="menuItem_FinanceManagement_CoreProvision" />
-	 <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" 
-		rightName="menuItem_FinanceManagement_ReinstateFinance"/> 
 	<menuItem id="menu_Item_CancelRepay"
 		zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 		rightName="menuItem_FinanceManagement_RepayCancel" />
