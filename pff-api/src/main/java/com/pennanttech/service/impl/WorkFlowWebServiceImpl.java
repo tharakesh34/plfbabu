@@ -129,7 +129,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 	public WorkFlowDetails getWorkFlowDetails(String workFlowId) throws ServiceException {
 		logger.debug("Entering");
 		// for logging purpose
-		APIErrorHandlerService.logReference("GETWORKFLOWDETAILS"+workFlowId);				
+		APIErrorHandlerService.logReference(workFlowId);				
 		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
 			if(StringUtils.isNotBlank(workFlowId))
 			workFlowDetails.setWorkflowId(Long.valueOf(workFlowId));
