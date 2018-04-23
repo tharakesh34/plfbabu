@@ -729,4 +729,13 @@ public class PennantConstants {
 	public static final String WORKFLOW_TASKID 			= "TASKID";
 	public static final String WORKFLOW_WORKFLOWID 		= "WORKFLOWID";
 	
+	//Cheque Module Status
+	public static final String				CHEQUESTATUS_NEW						= "NEW";
+	public static final String				CHEQUESTATUS_PRESENT					= "PRESENT";
+	public static final String				CHEQUESTATUS_BOUNCE						= "BOUNCE";
+	public static final String				CHEQUESTATUS_REALISE					= "REALISE";
+	public static final String				CHEQUE_AC_TYPE_CA						= "11";
+	public static final String				CHEQUE_AC_TYPE_SA						= "10";
+	public static final String				CHEQUE_AC_TYPE_CC						= "12";
+	
 }

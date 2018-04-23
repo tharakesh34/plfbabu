@@ -239,6 +239,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> statusCodes;
 	private static ArrayList<ValueLabel> sourceInfoList;
 	private static ArrayList<ValueLabel> trackCheckList;
+	private static ArrayList<ValueLabel> chequeStatusList;
+	private static ArrayList<ValueLabel> ChequeAccTypeList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -3139,6 +3141,28 @@ public class PennantStaticListUtil {
 		}
 		return trackCheckList;
 	}
+	
+	public static List<ValueLabel> getChequeStatusList() {
+		if (chequeStatusList == null) {
+			chequeStatusList = new ArrayList<ValueLabel>(4);
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_NEW, Labels.getLabel("label_Finance_Cheque_Status_New")));
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_PRESENT, Labels.getLabel("label_Finance_Cheque_Status_Presented")));
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_BOUNCE, Labels.getLabel("label_Finance_Cheque_Status_Bounced")));
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_REALISE, Labels.getLabel("label_Finance_Cheque_Status_Realised")));
+		}
+		return chequeStatusList;
+	}
+	
+	public static ArrayList<ValueLabel> getChequeAccTypeList() {
+		if(ChequeAccTypeList == null){
+			ChequeAccTypeList = new ArrayList<ValueLabel>(3);
+			ChequeAccTypeList.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_CA,Labels.getLabel("label_Cheque_CA")));
+			ChequeAccTypeList.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_SA,Labels.getLabel("label_Cheque_SA")));
+			ChequeAccTypeList.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_CC,Labels.getLabel("label_Cheque_CC")));
+		}
+		return ChequeAccTypeList;
+	}
+
 
 }
 

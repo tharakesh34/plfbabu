@@ -88,6 +88,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
+		sql.append(" chequeStatus, accountType, accHolderName, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From CHEQUEDETAIL");
@@ -122,6 +123,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
+		sql.append(" chequeStatus, accountType, accHolderName, ");
 		if(type.equals("_View")){
 			sql.append(" bankName as bankBranchIDName, ");
 		}
@@ -190,10 +192,12 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		sql.append(tableType.getSuffix());
 		sql.append("(chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
 		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
+		sql.append(" chequeStatus, accountType, accHolderName, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :chequeDetailsID, :headerID, :bankBranchID, :accountNo, :chequeSerialNo, :chequeDate, ");
 		sql.append(" :eMIRefNo, :amount, :chequeCcy, 'NEW', :active, :documentName, :documentRef, :chequeType, ");
+		sql.append(" :chequeStatus, :accountType, :accHolderName, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		if (chequeDetail.getId() == Long.MIN_VALUE || chequeDetail.getId() == 0) {
 			chequeDetail.setId(getNextidviewDAO().getNextId("SeqChequeDetail"));
@@ -224,6 +228,7 @@ public class ChequeDetailDAOImpl extends BasisNextidDaoImpl<Mandate> implements 
 		sql.append(" chequeSerialNo = :chequeSerialNo, chequeDate = :chequeDate, eMIRefNo = :eMIRefNo, ");
 		sql.append(" amount = :amount, chequeCcy = :chequeCcy, status = :status, ");
 		sql.append(" active = :active, documentName = :documentName, documentRef = :documentRef, chequeType =:chequeType, ");
+		sql.append(" chequeStatus = :chequeStatus, accountType = :accountType, accHolderName = :accHolderName, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

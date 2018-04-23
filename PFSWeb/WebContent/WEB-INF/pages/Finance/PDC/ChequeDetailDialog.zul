@@ -159,6 +159,35 @@
 											maxlength="50" width="200px" readonly="true" />
 									</hbox>
 								</row>
+								<row visible="true">
+									<label
+										value="${c:l('label_ChequeDetailDialog_ChequeStatus.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="chequeStatus"
+											width="200px" />
+									</hbox>
+
+								</row>
+								<row visible="true">
+									<label
+										value="${c:l('label_ChequeDetailDialog_AccType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="accountType"
+											width="200px" />
+									</hbox>
+
+									<label
+										value="${c:l('label_ChequeDetailDialog_AccHolderName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="accHolderName"
+											maxlength="200" width="200px" />
+									</hbox>
+
+								</row>
+
 								<row id="row3">
 									<label id="label_AccNumber"
 										value="${c:l('label_ChequeDetailDialog_AccNumber.value')}" />
@@ -218,6 +247,12 @@
 								label="${c:l('listheader_Amount.label')}" align="right" />
 							<listheader />
 							<listheader />
+							<listheader id="listheader_ChequeStatus"
+								label="${c:l('listheader_ChequeStatus.label')}" align="right" />
+							<listheader id="listheader_AccountType"
+								label="${c:l('listheader_AccountType.label')}" align="right" />
+							<listheader id="listheader_AccHolderName"
+								label="${c:l('listheader_AccHolderName.label')}" align="right" />
 						</listhead>
 					</listbox>
 				</div>

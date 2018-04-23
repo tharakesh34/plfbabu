@@ -77,6 +77,9 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String				eMIRefNo;
 	private BigDecimal			amount;
 	private String				chequeCcy;
+	private String				chequeStatus;
+	private String				accountType;
+	private String				accHolderName;
 	private String				status;
 	private boolean				active				= false;
 	@XmlTransient
@@ -283,4 +286,29 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public void setDocumentName(String documentName) {
 		this.documentName = documentName;
 	}
+
+	public String getChequeStatus() {
+		return chequeStatus;
+	}
+
+	public void setChequeStatus(String chequeStatus) {
+		this.chequeStatus = chequeStatus;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getAccHolderName() {
+		return accHolderName;
+	}
+
+	public void setAccHolderName(String accHolderName) {
+		this.accHolderName = accHolderName;
+	}
+
 }
