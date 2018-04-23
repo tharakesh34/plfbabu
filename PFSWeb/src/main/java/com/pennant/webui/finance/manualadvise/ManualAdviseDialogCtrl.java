@@ -412,7 +412,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	public void setFeeTypeFilters() {
 		logger.debug(Literal.ENTERING);
 		
-		String adviseTypeValue= this.adviseType.getSelectedItem().getValue();
+		String adviseTypeValue= this.adviseType.getSelectedItem().getValue().toString();
 		
 		Filter filter[] = null;
 		
